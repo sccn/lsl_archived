@@ -73,8 +73,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ReceiveDataC", "..\..\examp
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ReceiveStringMarkersC", "..\..\examples\C\ReceiveStringMarkersC\ReceiveStringMarkersC.vcproj", "{F900E3A0-83DC-4507-A0C4-9F2D06286027}"
+	ProjectSection(ProjectDependencies) = postProject
+		{06C12A6B-BF5B-413F-94CA-4EAA289ED93B} = {06C12A6B-BF5B-413F-94CA-4EAA289ED93B}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SendStringMarkersC", "..\..\examples\C\SendStringMarkersC\SendStringMarkersC.vcproj", "{7CA24E05-4823-458C-8911-DA13D12E80E6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{06C12A6B-BF5B-413F-94CA-4EAA289ED93B} = {06C12A6B-BF5B-413F-94CA-4EAA289ED93B}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{8A81A852-D9A8-4A6D-A6B0-4BF5BB6A6664}"
 EndProject
