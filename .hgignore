@@ -13,3 +13,9 @@ syntax: glob
 *.DS_Store
 *~
 *.user
+*.xcindexdb
+*.o
+*.obj
+*-debug
+*.xcactivitylog
+*.exp
