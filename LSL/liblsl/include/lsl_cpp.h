@@ -15,7 +15,7 @@
 *   (for recording, viewing or experiment control).
 *
 * To use this library you need to link to either the liblsl32 or liblsl64 shared library that comes with
-* this header. On Visual Studio the library is linked in automatically.
+* this header. Under Visual Studio the library is linked in automatically.
 */
 
 #include <string>

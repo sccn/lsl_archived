@@ -16,6 +16,6 @@ syntax: glob
 *.xcindexdb
 *.o
 *.obj
-*-debug
+*-debug*
 *.xcactivitylog
 *.exp

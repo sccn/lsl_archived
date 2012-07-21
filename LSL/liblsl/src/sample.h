@@ -21,7 +21,7 @@ namespace lsl {
 
 	/**
 	* The sample data type.
-	* Used to represent samples throughout the library's various buffers and can be serialized (e.g., over the network).
+	* Used to represent samples across the library's various buffers and can be serialized (e.g., over the network).
 	*/
 	struct sample {
 	public:

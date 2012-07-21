@@ -140,7 +140,7 @@ void resolver_impl::next_resolve_wave() {
 		// start a new multicast wave
 		udp_multicast_burst();
 		if (!ucast_endpoints_.empty()) {
-			// we have known peer addresses: we spawn a unicast wave shortly thereafter and the next wave
+			// we have known peer addresses: we spawn a unicast wave and shortly thereafter the next wave
 			unicast_timer_.expires_from_now(millisec(1000*cfg_->multicast_min_rtt()));
 			unicast_timer_.async_wait(boost::bind(&resolver_impl::udp_unicast_burst,this,placeholders::error));
 			wave_timer_.expires_from_now(millisec(1000*((fast_mode_?0:cfg_->continuous_resolve_interval())+(cfg_->multicast_min_rtt()+cfg_->unicast_min_rtt()))));
@@ -210,9 +210,17 @@ void resolver_impl::cancel_resolve() {
 /// Destructor.
 /// Cancels any ongoing processes and waits until they finish.
 resolver_impl::~resolver_impl() {
-	if (background_io_) {
-		cancel();
-		background_io_->join();
+	try {
+		if (background_io_) {
+			cancel();
+			background_io_->join();
+		}
+	} 
+	catch(std::exception &e) {
+		std::cerr << "Error during destruction of a resolver_impl: " << e.what() << std::endl;
+	}
+	catch(...) {
+		std::cerr << "Severe error during destruction of a resolver_impl." << std::endl;
 	}
 }
 

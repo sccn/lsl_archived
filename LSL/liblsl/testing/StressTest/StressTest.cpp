@@ -84,7 +84,7 @@ void random_outlets(double spawn_every=2.0, double duration=0.0, string name=str
         try {
             boost::thread tmp(boost::bind(&run_outlet,duration,name,type,numchan,fmt,srate,seconds_between_failures,chunk_len));
 		} catch(std::exception &e) {
-            std::cerr << "Could not spawn a new outlet thread." << std::endl;
+			std::cerr << "Could not spawn a new outlet thread: " << e.what() << std::endl;
         }
 		boost::this_thread::sleep(boost::posix_time::millisec(1000*spawn_every));
 	}
@@ -148,7 +148,7 @@ void random_inlets(double spawn_every=2.0, double duration=0.0, string name=stri
         try {
             boost::thread tmp(boost::bind(&run_inlet,duration,name,type,in_chunks,request_info,request_time,seconds_between_failures));
 		} catch(std::exception &e) {
-            std::cerr << "Could not spawn a new inlet thread." << std::endl;
+			std::cerr << "Could not spawn a new inlet thread: " << e.what() << std::endl;
         }
         boost::this_thread::sleep(boost::posix_time::millisec(1000*spawn_every));
 	}

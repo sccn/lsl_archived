@@ -27,7 +27,7 @@ namespace lsl {
 	/**
 	* A stream resolver object.
 	* Maintains the necessary resources for a resolve process, 
-	* used by the free-standing resolve functions, the stream_resolver class, and the inlets.
+	* used by the free-standing resolve functions, the continuous_resolver class, and the inlets.
 	*
 	* A resolver instance can be operated in two different ways:
 	* 1) In one shot: The resolver is queried one or more times by calling resolve_oneshot().
@@ -42,6 +42,7 @@ namespace lsl {
 		* A note on resolution logic. If KnownPeers in the api_config is empty, a new multicast wave will be scheduled every mcast_min_rtt 
 		* (until a timeout expires or the desired number of streams has been resolved).If KnownPeers is non-empty, a multicast wave and a 
 		* unicast wave will be schedule in alternation. The spacing between waves will be no shorter than the respective minimum RTTs.
+		* In continuous mode a special set of timings that is somewhat more lax is used (see API config).
 		*/
 		resolver_impl();
 
@@ -66,7 +67,7 @@ namespace lsl {
 		* @param query The query string to send (usually a set of conditions on the properties of the stream info that should be searched,
 		*              for example "name='BioSemi' and type='EEG'" (without the outer ""). See stream_info_impl::matches_query() for the 
 		*			   definition of a query.
-		* @param forget_after If a stream vanishes from the network (e.g. because it was shut down), it will be pruned from the 
+		* @param forget_after If a stream vanishes from the network (e.g., because it was shut down), it will be pruned from the 
 		*                     list this many seconds after it was last seen.
 		* @param prune_interval Prune dead streams from the list every this many seconds.
 		*/

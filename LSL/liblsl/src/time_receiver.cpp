@@ -74,9 +74,16 @@ void time_receiver::time_thread() {
 		// start an async time estimation
 		start_time_estimation();
 		// start the IO object (will keep running until cancelled)
-		time_io_.run();
+		while (true) {
+			try {
+				time_io_.run();
+				break;
+			} catch(std::exception &e) {
+				std::cerr << "Hiccup during time_thread io_service processing: " << e.what() << std::endl;
+			}
+		}
 	} catch(std::exception &e) {
-		std::cerr << "time_thread exited with message: " << e.what() << std::endl;
+		std::cerr << "time_thread failed unexpectedly with message: " << e.what() << std::endl;
 	}
 	conn_.release_watchdog();
 }
@@ -106,11 +113,15 @@ void time_receiver::next_estimate_scheduled(error_code err) {
 
 /// Send the next packet in an exchange
 void time_receiver::send_next_packet(int packet_num) {
-	// form the request & send it
-	std::ostringstream request; request.precision(16); request << "LSL:timedata\r\n" << current_wave_id_ << " " << local_clock() << "\r\n";
-	string_p msg_buffer(new std::string(request.str()));
-	time_sock_.async_send_to(boost::asio::buffer(*msg_buffer), conn_.get_udp_endpoint(),
-		boost::bind(&time_receiver::handle_send_outcome,this,msg_buffer,placeholders::error));
+	try {
+		// form the request & send it
+		std::ostringstream request; request.precision(16); request << "LSL:timedata\r\n" << current_wave_id_ << " " << local_clock() << "\r\n";
+		string_p msg_buffer(new std::string(request.str()));
+		time_sock_.async_send_to(boost::asio::buffer(*msg_buffer), conn_.get_udp_endpoint(),
+			boost::bind(&time_receiver::handle_send_outcome,this,msg_buffer,placeholders::error));
+	} catch(std::exception &e) {
+		std::cerr << "Error trying to send a time packet: " << e.what() << std::endl;
+	}
 	// schedule next packet
 	if (packet_num < cfg_->time_probe_count()) {
 		next_packet_.expires_from_now(millisec(1000.0*cfg_->time_probe_interval()));
@@ -135,19 +146,23 @@ void time_receiver::receive_next_packet() {
 
 /// Handler that gets called once reception of a time packet has completed
 void time_receiver::handle_receive_outcome(error_code err, std::size_t len) {
-	if (!err) {
-		// parse the buffer contents
-		std::istringstream is(std::string(recv_buffer_,len));
-		int wave_id; is >> wave_id;
-		if (wave_id == current_wave_id_) {
-			double t0, t1, t2, t3 = local_clock();
-			is >> t0 >> t1 >> t2;
-			// calculate RTT and offset
-			double rtt = (t3-t0) - (t2-t1);				// round trip time (time passed here - time passed there)
-			double offset = ((t1-t0) + (t2-t3)) / 2;	// averaged clock offset (other clock - my clock) with rtt bias averaged out
-			// store it
-			estimates_.push_back(std::make_pair(rtt,offset));
+	try {
+		if (!err) {
+			// parse the buffer contents
+			std::istringstream is(std::string(recv_buffer_,len));
+			int wave_id; is >> wave_id;
+			if (wave_id == current_wave_id_) {
+				double t0, t1, t2, t3 = local_clock();
+				is >> t0 >> t1 >> t2;
+				// calculate RTT and offset
+				double rtt = (t3-t0) - (t2-t1);				// round trip time (time passed here - time passed there)
+				double offset = ((t1-t0) + (t2-t3)) / 2;	// averaged clock offset (other clock - my clock) with rtt bias averaged out
+				// store it
+				estimates_.push_back(std::make_pair(rtt,offset));
+			}
 		}
+	} catch(std::exception &e) {
+		std::cerr << "Error while processing a time estimation return packet: " << e.what() << std::endl;
 	}
 	if (err != error::operation_aborted)
 		receive_next_packet();

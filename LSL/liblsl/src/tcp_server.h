@@ -97,6 +97,10 @@ namespace lsl {
 		*   instance). Their lifetime is managed by boost::asio and ends when the handler chain ends (e.g., is aborted). Since the TCP server
 		*   is referred to (occasionally) by handler code, the tcp_server is owned also by the client_sessions, and therefore kept alive for as
 		*   long as there is at least one request chain running.
+		* - There is a per-session transfer thread (transfer_samples_thread) that owns the respective client_session and therefore the 
+		*   TCP server, as well (since it may refer to it); it goes out of scope once the server is being shut down.
+		* - The TCP server and client session also have shared ownership of the io_service (since in some cases some transfer threads
+		*	can outlive the stream outlet, and so the io_service is still kept around until all sockets have been properly released).
 		* - So memory is generally owned by the code (functors and stack frames) that needs to refer to it for the duration of the execution.
 		*/
 		class client_session: public boost::enable_shared_from_this<client_session> {

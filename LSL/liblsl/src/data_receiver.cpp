@@ -122,7 +122,7 @@ void data_receiver::data_thread() {
 			try {
 				// --- connection setup ---
 
-				// make a new stream buffer & a stream around it
+				// make a new stream buffer and a stream on top of it
 				boost::asio::cancellable_streambuf<tcp> buffer;
 				buffer.register_at(&conn_);
 				buffer.register_at(this);

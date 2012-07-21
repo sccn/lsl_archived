@@ -35,13 +35,13 @@ namespace lsl {
 		*/
 		inlet_connection(const stream_info_impl &info, bool recover=true);
 
-		/// Prepare the connection and its auto-recovery watchdog thread.
+		/// Prepare the connection and its auto-recovery thread.
 		/// This is called once by the inlet after all other initialization.
 		void engage();
 
 		/// Shut down the connection and all its running operations.
 		/// This is called once by the inlet before any component is destroyed to 
-		// ensure orderly shutdown.
+		/// ensure orderly shutdown.
 		void disengage();
 
 

@@ -81,10 +81,10 @@ namespace lsl {
 		bool connection_completed() { return connected_ || conn_.lost(); }
 
 
-		// the underlying connection queue
+		// the underlying connection
 		inlet_connection &conn_;
 
-		// the background reader thread and its provided data
+		// fields related to the data reader thread
 		boost::thread data_thread_;					// background read thread
 		bool closing_stream_;						// indicates to the data thread that it a close has been requested
 		bool connected_;							// whether the stream has been connected / opened

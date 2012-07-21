@@ -99,7 +99,7 @@ void udp_server::request_next_packet() {
 		boost::bind(&udp_server::handle_receive_outcome, shared_from_this(), placeholders::error, placeholders::bytes_transferred));
 }
 
-/// Handler that gets called when a the next packet was received (or the op was cancelled).
+/// Handler that gets called when the next packet was received (or the op was cancelled).
 void udp_server::handle_receive_outcome(error_code err, std::size_t len) {
 	if (err != error::operation_aborted && err != error::shut_down) {
 		try {

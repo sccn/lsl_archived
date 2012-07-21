@@ -262,7 +262,7 @@ void tcp_server::client_session::handle_send_feedheader_outcome(error_code err, 
 			boost::thread(&client_session::transfer_samples_thread,this,shared_from_this());
 		}
 	} catch(std::exception &e) {
-		std::cerr << "Unexpected error while handling the feedheader send outcome (n= " << n << "; id: " << boost::this_thread::get_id() << "): " << e.what() << std::endl;
+		std::cerr << "Unexpected error while handling the feedheader send outcome (id: " << boost::this_thread::get_id() << "): " << e.what() << std::endl;
 	}
 }
 
