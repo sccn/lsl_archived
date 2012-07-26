@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
 	string field, value;
 	if (argc != 3) {
 		cout << "This connects to a stream which has a particular value for a given field and receives data." << endl;
-		cout << "Please enter a field name and the desired value (e.g. \"type EEG\"):" << endl;
+		cout << "Please enter a field name and the desired value (e.g. \"type EEG\" (without the quotes)):" << endl;
 		cin >> field >> value;
 	} else {
 		field = argv[1];

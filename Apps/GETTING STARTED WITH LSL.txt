@@ -9,11 +9,13 @@ A basic session with LSL works as follows:
 
 * To use the recording program (LabRecorder), you need to install Python 2.6. At SCCN our preferred Python distribution is
   found at /home/software/DevEnvironment/Python-2.6/Windows7/Python(x,y)-2.6.5.6.exe or mirrored at
-  ftp://sccn.ucsd.edu/pub/software/third_party/build_environment/Python-2.6/Windows7/Python(x,y)-2.6.5.6.exe - please install it including
-  all components. If you intend to work with SNAP for stimulus presentation on the same machine, the installation process is slightly different;
-  please follow instead the instructions in the file BUILD_ENVIORNMENT.txt.
+  ftp://sccn.ucsd.edu/pub/software/third_party/build_environment/Python-2.6/Windows7/Python(x,y)-2.6.5.6.exe, but you can as well install 
+  just the basic Python installation found at http://www.python.org/ftp/python/2.6/python-2.6.msi. If you intend to work with SNAP for stimulus 
+  presentation on the same machine, the installation process is slightly different; please follow instead the instructions in the file 
+  APP BUILD ENVIORNMENT.txt.
   
-  When done, please also run in the command line the following line to install the GUI framework:
+  When done, you need to also install the Qt-based GUI framework for Python, PySide. The installer is found at http://qt-project.org/wiki/PySide_Binaries_Windows 
+  Tip: if you have installed the full Python(x,y) installation it is enough to run the following line in the command line to install the GUI framework:
   >> easy_install pyside
 
 * Some hardware device modules require that you first install the drivers for the respective hardware (e.g., BioSemi -- drivers are found on the

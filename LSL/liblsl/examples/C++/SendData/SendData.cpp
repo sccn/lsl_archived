@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
 	string name, type;
 	if (argc != 3) {
 		cout << "This opens a stream under some user-defined name and with a user-defined content type." << endl;
-		cout << "Please enter the stream name and the stream type (e.g. \"BioSemi EEG\"):" << endl;
+		cout << "Please enter the stream name and the stream type (e.g. \"BioSemi EEG\" (without the quotes)):" << endl;
 		cin >> name >> type;
 	} else {
 		name = argv[1];
@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 
 	try {
 
-		// make a new stream_info (200 Hz)
+		// make a new stream_info (100 Hz)
 		lsl::stream_info info(name,type,8,100,lsl::cf_float32,string(name)+=type);
 
 		// add some description fields
