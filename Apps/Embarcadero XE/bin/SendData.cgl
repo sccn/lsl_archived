@@ -1,0 +1,16 @@
+Error 00001. 0x400000 (Thread 0x0AE8):
+Exception 0xC0000005: Access violation at 0x1562A77.
+Call Tree:
+   0x0CD1E0DA(=CG32.DLL:0x01:01D0DA)
+   0x0CD15098(=CG32.DLL:0x01:014098)
+   0x0CD1602E(=CG32.DLL:0x01:01502E)
+   0x0CD2783E(=CG32.DLL:0x01:02683E)
+   0x0CD011BF(=CG32.DLL:0x01:0001BF)
+   0x7779E094(=ntdll.dll:0x01:05D094)
+   0x7779E12F(=ntdll.dll:0x01:05D12F)
+   0x765549FD(=kernel32.dll:0x01:0639FD)
+   0x7653ED6C(=kernel32.dll:0x01:04DD6C)
+   0x777A377B(=ntdll.dll:0x01:06277B)
+   0x777A374E(=ntdll.dll:0x01:06274E)
+
+------------------------------------------

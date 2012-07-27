@@ -1,0 +1,88 @@
+Functions called:
+ delete[] (492 times)
+ new[] (492 times)
+ delete (61 times)
+ realloc (1 times)
+ memcpy (1 times)
+ free (29 times)
+ new (70 times)
+ calloc (10 times)
+ malloc (19 times)
+Resource types used:
+ object array (492 allocs, 1 max)
+ object (70 allocs, 70 max)
+ memory block (30 allocs, 19 max)
+Modules used:
+ 00400000 07/27/2012 11:54:14 C:\DEVEL\Embarcadero
+ XE\EyeCalibrator\..\bin\EyeCalibrator.exe
+ 0CD00000 11/03/2010 14:55:00 C:\Program Files\Embarcadero\RAD
+ Studio\8.0\bin\CG32.DLL
+ 21510000 11/03/2010 14:55:00 C:\Program Files\Embarcadero\RAD
+ Studio\8.0\bin\BORLNDMM.DLL
+ 32B00000 11/03/2010 14:55:00 C:\Windows\system32\CC32110MT.DLL
+ 50030000 11/03/2010 14:55:00 C:\Windows\system32\rtl150.bpl
+ 50250000 11/03/2010 14:55:00 C:\Windows\system32\vcl150.bpl
+ 50760000 11/03/2010 14:55:00 C:\Windows\system32\xmlrtl150.bpl
+ 521C0000 08/12/2011 14:09:36 C:\DEVEL\Embarcadero XE\bin\ALLEG44.DLL
+ 5DA40000 07/10/2012 10:55:10 C:\DEVEL\Embarcadero XE\bin\LIBLSL32.DLL
+ 68DB0000 07/13/2009 18:15:12 C:\Windows\system32\DDRAW.dll
+ 6B050000 07/13/2009 18:16:14 C:\Windows\system32\oledlg.dll
+ 6B390000 06/17/2011 17:27:10
+ C:\Windows\WinSxS\x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.6161_none
+_50934f2ebcb7eb57\MSVCP90.dll
+ 6B420000 06/17/2011 17:27:10
+ C:\Windows\WinSxS\x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.6161_none
+_50934f2ebcb7eb57\MSVCR90.dll
+ 6CCB0000 07/13/2009 18:16:16 C:\Windows\system32\SHFolder.dll
+ 6FA00000 07/27/2012 10:43:38 C:\PROGRA~1\Sophos\SOPHOS~1\SOPHOS~1.DLL
+ 701C0000 07/13/2009 18:15:42 C:\Windows\system32\mpr.dll
+ 71240000 07/13/2009 18:16:22 C:\Windows\system32\wsock32.dll
+ 71420000 07/13/2009 18:16:22 C:\Windows\System32\wshqos.dll
+ 71BB0000 07/13/2009 18:15:12 C:\Windows\system32\DINPUT.dll
+ 71C10000 08/26/2011 21:26:28 C:\Windows\system32\oleacc.dll
+ 71D90000 07/27/2012 10:43:38 C:\ProgramData\Sophos\Web
+ Intelligence\swi_ifslsp.dll
+ 72040000 11/20/2010 14:29:14 C:\Windows\system32\winspool.drv
+ 72130000 07/13/2009 18:15:14 C:\Windows\system32\DSOUND.dll
+ 73410000 07/13/2009 18:15:46 C:\Windows\system32\msimg32.dll
+ 73CD0000 11/20/2010 14:29:20 C:\Windows\system32\WINMM.dll
+ 74160000 07/13/2009 18:15:10 C:\Windows\system32\DCIMAN32.dll
+ 74180000 07/13/2009 18:16:14 C:\Windows\system32\POWRPROF.dll
+ 74390000 07/13/2009 18:15:14 C:\Windows\system32\dwmapi.dll
+ 746C0000 07/13/2009 18:16:18 C:\Windows\system32\uxtheme.dll
+ 74840000 11/20/2010 14:29:08
+ C:\Windows\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.
+7601.17514_none_41e6975e2bd6f2b2\comctl32.dll
+ 74E30000 07/13/2009 18:16:22 C:\Windows\system32\wshtcpip.DLL
+ 74E40000 07/13/2009 18:16:18 C:\Windows\system32\version.dll
+ 74E50000 10/08/2010 15:15:16 C:\ProgramData\Sophos Web
+ Intelligence\swi_lsp.dll
+ 75330000 07/13/2009 18:16:22 C:\Windows\System32\wship6.dll
+ 75340000 11/20/2010 14:29:14 C:\Windows\system32\MSWSOCK.dll
+ 75850000 07/13/2009 18:15:08 C:\Windows\system32\CRYPTBASE.dll
+ 759E0000 07/13/2009 18:15:12 C:\Windows\system32\DEVOBJ.dll
+ 75A30000 07/15/2011 21:27:32 C:\Windows\system32\KERNELBASE.dll
+ 75A80000 11/20/2010 14:29:14 C:\Windows\system32\CFGMGR32.dll
+ 75BD0000 07/13/2009 18:15:44 C:\Windows\system32\MSCTF.dll
+ 75DD0000 12/16/2011 00:53:00 C:\Windows\system32\msvcrt.dll
+ 75F10000 07/13/2009 18:16:14 C:\Windows\SYSTEM32\sechost.dll
+ 760F0000 11/20/2010 14:29:06 C:\Windows\system32\comdlg32.dll
+ 76170000 08/26/2011 21:26:28 C:\Windows\system32\oleaut32.dll
+ 76200000 11/20/2010 14:29:14 C:\Windows\system32\RPCRT4.dll
+ 762B0000 07/13/2009 18:16:14 C:\Windows\system32\PSAPI.DLL
+ 763E0000 11/20/2010 14:29:22 C:\Windows\system32\IMM32.DLL
+ 76400000 11/20/2010 14:29:20 C:\Windows\system32\USP10.dll
+ 764F0000 07/15/2011 21:27:32 C:\Windows\system32\kernel32.dll
+ 765D0000 11/20/2010 14:29:14 C:\Windows\system32\GDI32.dll
+ 76680000 11/20/2010 14:29:08 C:\Windows\system32\SETUPAPI.dll
+ 76820000 11/20/2010 14:29:22 C:\Windows\system32\USER32.dll
+ 768F0000 11/20/2010 14:29:08 C:\Windows\system32\ole32.dll
+ 76A50000 11/20/2010 14:29:22 C:\Windows\system32\advapi32.dll
+ 76AF0000 06/08/2012 21:41:02 C:\Windows\system32\SHELL32.dll
+ 77740000 11/16/2011 22:38:40 C:\Windows\SYSTEM32\ntdll.dll
+ 77880000 11/20/2010 14:29:08 C:\Windows\system32\WS2_32.dll
+ 778C0000 11/20/2010 14:29:04 C:\Windows\system32\SHLWAPI.dll
+ 77920000 07/13/2009 18:16:12 C:\Windows\system32\NSI.dll
+ 77930000 07/13/2009 18:15:38 C:\Windows\system32\LPK.dll
+ 77940000 02/29/2012 22:33:24 C:\Windows\system32\IMAGEHLP.DLL
+==========================================

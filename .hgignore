@@ -1,0 +1,21 @@
+# use glob syntax.
+syntax: glob
+
+*.ncb
+*.suo
+*.pdb
+*.idb
+*.ilk
+*.intermediate.manifest
+*.obj
+*.dep
+*BuildLog.htm
+*.DS_Store
+*~
+*.user
+*.xcindexdb
+*.o
+*.obj
+*-debug*
+*.xcactivitylog
+*.exp

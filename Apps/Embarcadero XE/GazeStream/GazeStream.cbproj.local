@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2011/08/15 13:41:44.000.298,C:\Users\mgrivich\Desktop\X\sccn\trunk\c\datariver\GazeStream\CaptureWorkerForm.h=C:\Users\mgrivich\Desktop\X\sccn\trunk\c\datariver\GazeStream\MainForm.h</Transaction>
+    <Transaction>2011/08/15 13:41:44.000.298,C:\Users\mgrivich\Desktop\X\sccn\trunk\c\datariver\GazeStream\CaptureWorkerForm.dfm=C:\Users\mgrivich\Desktop\X\sccn\trunk\c\datariver\GazeStream\MainForm.dfm</Transaction>
+    <Transaction>2011/09/14 14:00:56.000.390,C:\Users\mgrivich\Desktop\X\sccn\trunk\c\datariver\GazeStream\GazeUtil.h=C:\Users\mgrivich\Desktop\X\sccn\trunk\c\datariver\GazeStream\Unit1.h</Transaction>
+    <Transaction>2012/05/22 10:23:44.000.941,=C:\DEVEL\Embarcadero XE\shared\include\useallegro4.h</Transaction>
+    <Transaction>2012/05/22 10:23:49.000.473,=C:\DEVEL\Embarcadero XE\shared\include\lsl_c.h</Transaction>
+    <Transaction>2012/05/22 10:24:29.000.673,=C:\DEVEL\Embarcadero XE\bin\alleg44.lib</Transaction>
+    <Transaction>2012/05/22 10:24:40.000.168,=C:\DEVEL\Embarcadero XE\bin\liblsl32.lib</Transaction>
+    <Transaction>2012/05/22 10:25:07.000.633,=C:\DEVEL\Embarcadero XE\shared\4.4.0-msvc\include\allegro.h</Transaction>
+    <Transaction>2012/05/22 11:12:08.000.028,C:\DEVEL\Embarcadero XE\bin\alleg44.lib=</Transaction>
+    <Transaction>2012/05/22 11:12:19.000.549,=C:\DEVEL\Embarcadero XE\bin\alleg44.lib</Transaction>
+    <Transaction>2012/05/23 11:30:48.000.087,=C:\DEVEL\Embarcadero XE\shared\StreamThread.cpp</Transaction>
+    <Transaction>2012/07/27 11:34:17.040,=C:\DEVEL\Embarcadero XE\shared\include\console_util.h</Transaction>
+  </Transactions>
+	<ProjectSortOrder AutoSort="0" SortType="0">
+    <File Path="..\..\Embarcadero XE"/>
+    <File Path="..\math"/>
+    <File Path="..\math\CircleFunction.cpp"/>
+    <File Path="..\math\CircleFunction.cpp"/>
+    <File Path="..\math\CircleFunction.h"/>
+    <File Path="..\math\drutil.cpp"/>
+    <File Path="..\math\drutil.cpp"/>
+    <File Path="..\math\drutil.h"/>
+    <File Path="..\math\FitFailedException.cpp"/>
+    <File Path="..\math\FitFailedException.cpp"/>
+    <File Path="..\math\FitFailedException.h"/>
+    <File Path="..\math\FittableFunction.cpp"/>
+    <File Path="..\math\FittableFunction.cpp"/>
+    <File Path="..\math\FittableFunction.h"/>
+    <File Path="..\math\Fitter.cpp"/>
+    <File Path="..\math\Fitter.cpp"/>
+    <File Path="..\math\Fitter.h"/>
+    <File Path="..\math\LinearAlgebra.cpp"/>
+    <File Path="..\math\LinearAlgebra.cpp"/>
+    <File Path="..\math\LinearAlgebra.h"/>
+    <File Path="..\shared"/>
+    <File Path="..\shared\4.4.0-msvc"/>
+    <File Path="..\shared\4.4.0-msvc\include"/>
+    <File Path="..\shared\4.4.0-msvc\include\allegro.h"/>
+    <File Path="..\shared\include"/>
+    <File Path="..\shared\include\console_util.h"/>
+    <File Path="..\shared\include\lsl_c.h"/>
+    <File Path="..\shared\include\useallegro4.h"/>
+    <File Path="..\shared\StreamThread.cpp"/>
+    <File Path="..\shared\StreamThread.cpp"/>
+    <File Path="..\shared\StreamThread.h"/>
+    <File Path="..\bin\alleg44.lib"/>
+    <File Path="CaptureWorkerForm.cpp"/>
+    <File Path="CaptureWorkerForm.cpp"/>
+    <File Path="CaptureWorkerForm.dfm"/>
+    <File Path="CaptureWorkerForm.h"/>
+    <File Path="GazeStream.cpp"/>
+    <File Path="GazeStream.res"/>
+    <File Path="GazeUtil.cpp"/>
+    <File Path="GazeUtil.cpp"/>
+    <File Path="GazeUtil.h"/>
+    <File Path="..\bin\liblsl32.lib"/>
+    <File Path="TFrameThread.cpp"/>
+    <File Path="TFrameThread.cpp"/>
+    <File Path="TFrameThread.h"/>
+    <File Path="TOutline.cpp"/>
+    <File Path="TOutline.cpp"/>
+    <File Path="TOutline.h"/>
+    <File Path="UMainCapture.cpp"/>
+    <File Path="UMainCapture.cpp"/>
+    <File Path="UMainCapture.dfm"/>
+    <File Path="UMainCapture.h"/>
+  </ProjectSortOrder>
+</BorlandProject>
