@@ -1,0 +1,31 @@
+Functions called:
+ fflush (4 times)
+ sin (300 times)
+ cos (300 times)
+ atan (4 times)
+ sqrt (741 times)
+ delete[] (2600 times)
+ new[] (2600 times)
+ memset (11 times)
+ delete (233 times)
+ memmove (34 times)
+ SysReallocMem (46884 times)
+ SysFreeMem (71211 times)
+ SysGetMem (71214 times)
+ free (142 times)
+ _lsetlocale (6 times)
+ new (242 times)
+ calloc (9 times)
+ strlen (133 times)
+ realloc (1 times)
+ strdup (5 times)
+ malloc (127 times)
+ memcpy (68 times)
+Resource types used:
+ object array (2600 allocs, 192 max)
+ object (242 allocs, 59 max)
+ memory block (71356 allocs, 6527 max)
+Modules used:
+ 00400000 07/27/2012 11:44:14 C:\DEVEL\Embarcadero
+ XE\GazeStream\..\bin\GazeStream.exe
+==========================================

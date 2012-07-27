@@ -1,0 +1,60 @@
+This document describes how to load Visual Studio 2008 generated dll's into Embarcadero XE C++ Builder. It gives the path that is known to work, but not necessarily the only legal path.
+
+
+In visual studio, use the dll prototype as shown in lsl_c.h. Do not use c++ prototypes.
+
+#define LIBLSL_C_API __declspec(dllexport)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern LIBLSL_C_API int lsl_protocol_version();
+
+#ifdef __cplusplus
+} /* end extern "C" */
+#endif
+
+
+Generate the standard (not debug) version of the dll in Visual Studio. 
+For those of you taking score, Visual Studio and Embarcadero default to __cdecl convention, but a different name mangling for the convention. See the partially obsolete borland_and_microsoft_dll.pdf.
+
+Copy the generated liblsl32.dll into the bin folder for your embadero project.
+
+From a command line run
+
+tdump -ee -m liblsl32.dll > out.txt
+
+This function is installed with Embarcadero. Look in out.txt to make sure that your prototypes are there.
+
+Then run
+
+implib -a liblsl32.lib liblsl32.dll
+
+This generates a Embarcadero friendly import library. BOTH THE NEW .LIB AND THE OLD .DLL MUST BE SAVED IN THE BIN FOLDER. Otherwise the application will silently fail.
+
+In the embarcadero form, use prototypes of the form:
+
+#define LIBLSL_C_API __declspec(dllimport)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern LIBLSL_C_API int lsl_protocol_version();
+
+#ifdef __cplusplus
+} /* end extern "C" */
+#endif
+
+Add lsl_c.h to the project. Either add liblsl32.lib to the project, or verify that lsl_c.h runs the line #pragma comment (lib,"liblsl32.lib").
+
+Matthew Grivich 2012/05/08
+
+
+
+
+
+
+
+

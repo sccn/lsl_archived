@@ -1,0 +1,24 @@
+Functions called:
+ fflush (4 times)
+ memset (9 times)
+ delete (35 times)
+ memmove (5 times)
+ SysReallocMem (47482 times)
+ SysFreeMem (79277 times)
+ SysGetMem (79278 times)
+ free (20 times)
+ _lsetlocale (6 times)
+ new (44 times)
+ calloc (9 times)
+ strlen (133 times)
+ realloc (1 times)
+ strdup (5 times)
+ malloc (5 times)
+ memcpy (518 times)
+Resource types used:
+ object (44 allocs, 39 max)
+ memory block (79298 allocs, 6516 max)
+Modules used:
+ 00400000 07/27/2012 11:37:34 C:\DEVEL\Embarcadero
+ XE\VideoStream\..\bin\VideoStream.exe
+==========================================
