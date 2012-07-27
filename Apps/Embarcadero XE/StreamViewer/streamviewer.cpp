@@ -4,19 +4,17 @@
 #include <vcl.h>
 #pragma hdrstop
 #include "windows.h"
+#include "console_util.h"
 //---------------------------------------------------------------------------
 USEFORM("UNewViewer2.cpp", Form1);
 USEFORM("ULeds.cpp", FormLEDs);
 //---------------------------------------------------------------------------
-AnsiString par;
+
 bool ok=true;
 WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR str, int)
 {
 
-	BOOL WINAPI console = AllocConsole();
-	if(!console) return 0;
-	freopen("CONOUT$", "w", stdout);
-	par = str;
+	if(CONSOLE) OpenConsole();
 	try
 	{
 		Application->Initialize();
@@ -41,6 +39,7 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR str, int)
 			Application->ShowException(&exception);
 		}
 	}
+	if(CONSOLE) CloseConsole();
 	return 0;
 }
 //---------------------------------------------------------------------------
