@@ -446,8 +446,6 @@ void MainWindow::connect_amp() {
 		try {
 			std::string filename = ui->capLocation->text().toStdString();
 			if (!filename.empty()) {
-				//if (!boost::filesystem::exists(filename)) {
-
 				std::ifstream f(filename.c_str());
 				if (f.fail()) {
 					QMessageBox::critical(this,"Error","The given channel locations file could not be opened.",QMessageBox::Ok);
