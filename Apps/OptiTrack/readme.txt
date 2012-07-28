@@ -1,8 +1,8 @@
 == Usage ==
 
-This program should run out of the box without further dependencies. To operate it, an OptiTrack server program (e.g. Arena) must be running and streaming data.
-
+The OptiTrack connector should run out of the box without further dependencies. To operate it, an OptiTrack server program (e.g. Arena) must be running and streaming data.
 This program connects (upon clicking link) to the given IP address of the OptiTrack server.
+WARNING: This program has not yet been tested with real data (for lack of actual hardware) -- please review the collected data and meta-data before doing production experiments with it.
 
 == Optional ==
 
