@@ -26,6 +26,10 @@ object Form11: TForm11
     Visible = False
     object TabSheet1: TTabSheet
       Caption = 'Locations'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button5: TButton
         Left = 611
         Top = 3
@@ -263,6 +267,10 @@ object Form11: TForm11
     object TabSheet2: TTabSheet
       Caption = 'Touch'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ScrollBox2: TScrollBox
         Left = 0
         Top = 0
@@ -388,6 +396,10 @@ object Form11: TForm11
     object TabSheet3: TTabSheet
       Caption = 'Point to'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ScrollBox3: TScrollBox
         Left = 0
         Top = 0
@@ -540,6 +552,10 @@ object Form11: TForm11
     object TabSheet4: TTabSheet
       Caption = 'Direction'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ScrollBox4: TScrollBox
         Left = 0
         Top = 0
@@ -692,6 +708,10 @@ object Form11: TForm11
     object TabSheet5: TTabSheet
       Caption = 'Grid'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ScrollBox5: TScrollBox
         Left = 0
         Top = 0
@@ -904,6 +924,10 @@ object Form11: TForm11
     object Screen: TTabSheet
       Caption = 'Screen'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ScrollBox6: TScrollBox
         Left = 0
         Top = 0

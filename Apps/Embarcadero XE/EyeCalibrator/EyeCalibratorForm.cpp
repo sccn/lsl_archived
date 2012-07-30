@@ -8,7 +8,7 @@
 #include <vcl.h>
 
 #include "stdio.h"
-#include "drutil.h"
+#include "math_util.h"
 #include "Math.hpp"
 #include "EyeCalibratorForm.h"
 #include "list.h"
@@ -19,7 +19,6 @@
 #include <float.h>
 #include "map.h"
 #include "HotspotTypes.h"
-#include "console_util.h"
 
 
 // ---------------------------------------------------------------------------
@@ -1122,7 +1121,7 @@ void __fastcall TForm4::FormCreate(TObject *Sender)
 	SceneCameraWidthEditChange(this);
 	SceneCameraHeightEditChange(this);
 
-
+    Form4->Caption = UnicodeString("Eye Calibrator, version ") + getVersion();
 
 }
 //---------------------------------------------------------------------------

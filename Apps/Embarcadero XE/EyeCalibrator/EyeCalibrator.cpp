@@ -10,7 +10,7 @@ Written by Matthew Grivich, Swartz Center for Computational Neuroscience, UCSD, 
 #include <tchar.h>
 #include "stdio.h"
 #include "windows.h"
-#include "console_util.h"
+#include "general_util.h"
 //---------------------------------------------------------------------------
 USEFORM("EyeCalibratorForm.cpp", Form4);
 //---------------------------------------------------------------------------

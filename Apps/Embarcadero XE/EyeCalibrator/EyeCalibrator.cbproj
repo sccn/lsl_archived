@@ -23,6 +23,7 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<LinkPackageStatics>rtl.lib;vcl.lib;xmlrtl.lib;dsnap.lib;vcldb.lib;dbrtl.lib</LinkPackageStatics>
 			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<BCC_MonitorGlobalAndStackData>true</BCC_MonitorGlobalAndStackData>
 			<BCC_MonitorInlinePtrAccess>true</BCC_MonitorInlinePtrAccess>
@@ -30,7 +31,6 @@
 			<BCC_PCHCache>true</BCC_PCHCache>
 			<FinalOutputDir>..\bin</FinalOutputDir>
 			<BCC_ExtendedErrorInfo>true</BCC_ExtendedErrorInfo>
-			<LinkPackageImports>rtl.bpi;vcl.bpi;xmlrtl.bpi;dsnap.bpi;vcldb.bpi;dbrtl.bpi</LinkPackageImports>
 			<OutputExt>exe</OutputExt>
 			<PackageImports>vclx.bpi;vcl.bpi;vclimg.bpi;dbrtl.bpi;Rave77VCL.bpi;bdertl.bpi;rtl.bpi;bcbie.bpi;vclactnband.bpi;xmlrtl.bpi;bcbsmp.bpi;vcldb.bpi;vcldbx.bpi;vcltouch.bpi;dsnap.bpi;dsnapcon.bpi;TeeUI.bpi;TeeDB.bpi;Tee.bpi;vclib.bpi;ibxpress.bpi;adortl.bpi;IndyCore.bpi;IndySystem.bpi;IndyProtocols.bpi;inet.bpi;intrawebdb_100_140.bpi;Intraweb_100_140.bpi;VclSmp.bpi;vclie.bpi;inetdb.bpi;webdsnap.bpi;websnap.bpi;inetdbbde.bpi;inetdbxpress.bpi;soaprtl.bpi;vclribbon.bpi;DbxCommonDriver.bpi;DbxClientDriver.bpi;DBXInterBaseDriver.bpi;DBXMySQLDriver.bpi;dbexpress.bpi;dbxcds.bpi;VisioForge_Video_Capture_3_BCB.bpi</PackageImports>
 			<Multithreaded>true</Multithreaded>
@@ -38,7 +38,6 @@
 			<ProjectType>CppVCLApplication</ProjectType>
 			<DCC_CBuilderOutput>JPHNE</DCC_CBuilderOutput>
 			<DynamicRTL>true</DynamicRTL>
-			<UsePackages>true</UsePackages>
 			<IncludePath>..\shared\include\;..\shared\4.4.0-msvc\include\;..\Hotspots\;..\GazeStream\;..\math\;..\;$(BDS)\include;$(BDS)\include\dinkumware;..\shared\boost_1_47_0;C:\DEVEL\Embarcadero XE\shared\pugixml-1.2;..\shared\pugixml-1.2;$(IncludePath)</IncludePath>
 			<ILINK_LibraryPath>..\shared\include\;..\shared\4.4.0-msvc\include\;..\bin\;..\Hotspots\;..\..\..\..\..\sdk\cpp\src\;..\..\..\..\..\sdk\c\src\;..\..\..\..\..\sdk\windows\x32\c\src\;..\..\..\..\bin\windows\x32\sdk\c\;..\..\..\..\bin\sdk\c\;..\..\..\..\shared\include\;..\GazeStream\;..\..\..\..\shared\lib\;..\math\;..\..\..\..\..\bin\windows\x32\sdk\c\;..\..\..\..\shared\;..\;$(BDS)\lib\obj;..\..\..\..\shared\4.4.0-msvc\lib\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
 			<BCC_wpar>false</BCC_wpar>
@@ -103,13 +102,13 @@
 				<DependentOn>..\math\CalculationFailedException.h</DependentOn>
 				<BuildOrder>11</BuildOrder>
 			</CppCompile>
-			<CppCompile Include="..\math\drutil.cpp">
-				<DependentOn>..\math\drutil.h</DependentOn>
-				<BuildOrder>7</BuildOrder>
-			</CppCompile>
 			<CppCompile Include="..\math\LinearAlgebra.cpp">
 				<DependentOn>..\math\LinearAlgebra.h</DependentOn>
 				<BuildOrder>10</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="..\math\math_util.cpp">
+				<DependentOn>..\math\math_util.h</DependentOn>
+				<BuildOrder>7</BuildOrder>
 			</CppCompile>
 			<CppCompile Include="..\math\Minimizer.cpp">
 				<DependentOn>..\math\Minimizer.h</DependentOn>
@@ -118,7 +117,7 @@
 			<None Include="..\shared\4.4.0-msvc\include\allegro.h">
 				<BuildOrder>11</BuildOrder>
 			</None>
-			<None Include="..\shared\include\console_util.h">
+			<None Include="..\shared\include\general_util.h">
 				<BuildOrder>13</BuildOrder>
 			</None>
 			<None Include="..\shared\include\useallegro4.h">
@@ -191,6 +190,12 @@
 						<ProjectProperties Name="ManagePaths">True</ProjectProperties>
 						<ProjectProperties Name="VerifyPackages">True</ProjectProperties>
 					</ProjectProperties>
+					<Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\bcboffice2k150.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\bcbofficexp150.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dcloffice2k150.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dclofficexp150.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+					</Excluded_Packages>
 				</CPlusPlusBuilder.Personality>
 				<Platforms>
 					<Platform value="Win32">True</Platform>

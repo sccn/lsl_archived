@@ -18,9 +18,7 @@
 #include "GazeUtil.h"
 
 #include "stdio.h"
-#include "drutil.h"
-#include "console_util.h"
-
+#include "math_util.h"
 
 
 #pragma package(smart_init)
@@ -965,6 +963,7 @@ BOOL CALLBACK MonitorEnumProc(
 //#include "drlib.h"
 void __fastcall TForm11::FormCreate(TObject *Sender)
 {
+  	Form11->Caption = UnicodeString("Hotspots, version ") + getVersion();
 	allegro_init();
 	set_gdi_color_format();
 	set_color_depth(CDEPTH);

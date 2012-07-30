@@ -19,7 +19,7 @@
 #include<list>
 #include "LinearAlgebra.h"
 #include "map.h"
-#include "drutil.h"
+#include "math_util.h"
 
 
 struct TPoint3D

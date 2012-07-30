@@ -14,7 +14,7 @@ Written by Matthew Grivich, Swartz Center for Computational Neuroscience, UCSD
 #endif
 
 #include "stdio.h"
-#include "drutil.h"
+#include "math_util.h"
 
 enum THeading {UP,LEFT,DOWN, RIGHT} ;
 

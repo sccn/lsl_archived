@@ -17,7 +17,7 @@ after Dumitru Petrusca, University of California, Santa Cruz
 #pragma hdrstop
 
 #include "stdio.h"
-#include "drutil.h"
+#include "math_util.h"
 #include "FittableFunction.h"
 
 //workaround for an obscure embacadero bug.

@@ -3,7 +3,7 @@
 #include <vcl.h>
 #pragma hdrstop
 #include "UMainCapture.h"
-#include "console_util.h"
+#include "general_util.h"
 //---------------------------------------------------------------------------
 
 USEFORM("..\GazeStream\CaptureWorkerForm.cpp", CaptureWorkerForm);

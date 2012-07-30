@@ -16,7 +16,7 @@
 
 
 #include "stdio.h"
-#include "drutil.h"
+#include "math_util.h"
 #include "FittableFunction.h"
 #include "FitFailedException.h"
 #include "Math.hpp"

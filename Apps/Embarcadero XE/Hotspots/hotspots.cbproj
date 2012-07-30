@@ -37,7 +37,7 @@
 			<DCC_UnitSearchPath>..\Common;..\..\Variete\var_dll;..\;.\;$(BDS)\lib;$(BDS)\lib\obj;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
 			<DCC_ResourcePath>..\Common;..\..\Variete\var_dll;..\;$(DCC_ResourcePath)</DCC_ResourcePath>
 			<DCC_IncludePath>..\Common;..\..\Variete\var_dll;..\;.\;$(BDS)\lib;$(BDS)\lib\obj;$(DCC_IncludePath)</DCC_IncludePath>
-			<BCC_IncludePath>..\Common;..\..\Variete\var_dll;..\;$(BDS)\include;$(BDS)\include\dinkumware;$(BDS)\include\vcl;..\..\include;..\include;..\..\dsuitesdk\include;..\..\dsuitesdk\sdk;$(BCC_IncludePath)</BCC_IncludePath>
+			<BCC_IncludePath>..\;$(BDS)\include;$(BDS)\include\dinkumware;$(BCC_IncludePath)</BCC_IncludePath>
 			<BRCC_IncludePath>..\Common;..\..\Variete\var_dll;..\;$(BDS)\include;$(BDS)\include\dinkumware;$(BDS)\include\vcl;..\..\include;..\include;..\..\dsuitesdk\include;..\..\dsuitesdk\sdk;$(BRCC_IncludePath)</BRCC_IncludePath>
 			<PackageImports>vcl.bpi;vclx.bpi;dbrtl.bpi;Rave65VCL.bpi;bdertl.bpi;rtl.bpi;vcldb.bpi;dbxcds.bpi;dbexpress.bpi;vclib.bpi;ibxpress.bpi;xmlrtl.bpi;vclactnband.bpi;inet.bpi;IntrawebDB_90_100.bpi;Intraweb_90_100.bpi;vclie.bpi;inetdbbde.bpi;inetdbxpress.bpi;bcbofficexp.bpi;bcbsmp.bpi;soaprtl.bpi;dsnap.bpi;bcbie.bpi;teeui.bpi;teedb.bpi;tee.bpi;vcldbx.bpi;adortl.bpi;GR32_BDS2006.bpi;GR32_DSGN_BDS2006.bpi;MtxTools210.bpi;MtxCore210.bpi;MtxDb210.bpi;StatCore210.bpi;StatTools210.bpi;SignalCore210.bpi;SignalTool210.bpi;Classifiers110.bpi;DCLClassifiersDB110.bpi;ClassifiersDB110.bpi;ZylSerialPortPack.bpi;indy.bpi</PackageImports>
 			<BCC_PCHCache>true</BCC_PCHCache>
@@ -131,18 +131,18 @@
 				<DependentOn>UEdit3D.h</DependentOn>
 				<BuildOrder>1</BuildOrder>
 			</CppCompile>
-			<CppCompile Include="..\math\drutil.cpp">
-				<DependentOn>..\math\drutil.h</DependentOn>
-				<BuildOrder>17</BuildOrder>
-			</CppCompile>
 			<CppCompile Include="..\math\LinearAlgebra.cpp">
 				<DependentOn>..\math\LinearAlgebra.h</DependentOn>
 				<BuildOrder>11</BuildOrder>
 			</CppCompile>
+			<CppCompile Include="..\math\math_util.cpp">
+				<DependentOn>..\math\math_util.h</DependentOn>
+				<BuildOrder>17</BuildOrder>
+			</CppCompile>
 			<None Include="..\shared\4.4.0-msvc\include\allegro.h">
 				<BuildOrder>19</BuildOrder>
 			</None>
-			<None Include="..\shared\include\console_util.h">
+			<None Include="..\shared\include\general_util.h">
 				<BuildOrder>20</BuildOrder>
 			</None>
 			<None Include="..\shared\include\lsl_c.h">
@@ -228,10 +228,10 @@
 						<Parameters Name="RemoteDebug">False</Parameters>
 					</Parameters>
 					<Excluded_Packages>
-						<Excluded_Packages Name="$(BDSBIN)\bcboffice2k140.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
-						<Excluded_Packages Name="$(BDSBIN)\dclofficexp140.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
-						<Excluded_Packages Name="$(BDSBIN)\dcloffice2k140.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-						<Excluded_Packages Name="$(BDSBIN)\bcbofficexp140.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\bcboffice2k150.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\bcbofficexp150.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dcloffice2k150.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dclofficexp150.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
 					</Excluded_Packages>
 					<Source>
 						<Source Name="MainSource">hotspots.cpp</Source>

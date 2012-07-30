@@ -9,7 +9,7 @@
 			<Projects Include="ReceiveData\ReceiveData.cbproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="math\drmath.cbproj">
+			<Projects Include="math\math.cbproj">
 				<Dependencies/>
 			</Projects>
 			<Projects Include="Hotspots\hotspots.cbproj">
@@ -53,14 +53,14 @@
 		<Target Name="ReceiveData:Make">
 			<MSBuild Projects="ReceiveData\ReceiveData.cbproj" Targets="Make"/>
 		</Target>
-		<Target Name="drmath">
-			<MSBuild Projects="math\drmath.cbproj"/>
+		<Target Name="math">
+			<MSBuild Projects="math\math.cbproj"/>
 		</Target>
-		<Target Name="drmath:Clean">
-			<MSBuild Projects="math\drmath.cbproj" Targets="Clean"/>
+		<Target Name="math:Clean">
+			<MSBuild Projects="math\math.cbproj" Targets="Clean"/>
 		</Target>
-		<Target Name="drmath:Make">
-			<MSBuild Projects="math\drmath.cbproj" Targets="Make"/>
+		<Target Name="math:Make">
+			<MSBuild Projects="math\math.cbproj" Targets="Make"/>
 		</Target>
 		<Target Name="hotspots">
 			<MSBuild Projects="Hotspots\hotspots.cbproj"/>
@@ -108,13 +108,13 @@
 			<MSBuild Projects="StreamViewer\streamviewer.cbproj" Targets="Make"/>
 		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="SendData;ReceiveData;drmath;hotspots;VideoStream;GazeStream;EyeCalibrator;streamviewer"/>
+			<CallTarget Targets="SendData;ReceiveData;math;hotspots;VideoStream;GazeStream;EyeCalibrator;streamviewer"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="SendData:Clean;ReceiveData:Clean;drmath:Clean;hotspots:Clean;VideoStream:Clean;GazeStream:Clean;EyeCalibrator:Clean;streamviewer:Clean"/>
+			<CallTarget Targets="SendData:Clean;ReceiveData:Clean;math:Clean;hotspots:Clean;VideoStream:Clean;GazeStream:Clean;EyeCalibrator:Clean;streamviewer:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="SendData:Make;ReceiveData:Make;drmath:Make;hotspots:Make;VideoStream:Make;GazeStream:Make;EyeCalibrator:Make;streamviewer:Make"/>
+			<CallTarget Targets="SendData:Make;ReceiveData:Make;math:Make;hotspots:Make;VideoStream:Make;GazeStream:Make;EyeCalibrator:Make;streamviewer:Make"/>
 		</Target>
 		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')" Project="$(BDS)\Bin\CodeGear.Group.Targets"/>
 	</Project>

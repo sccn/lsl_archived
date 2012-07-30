@@ -30,7 +30,7 @@
 
 #include <ddraw.h>
 #include <stdio.h>
-#include <drutil.h>
+#include <math_util.h>
 
 TForm1 *Form1;
 
@@ -369,7 +369,7 @@ extern  bool ok;
 void __fastcall TForm1::FormCreate(TObject *Sender)
 {
 
-
+	Form1->Caption = UnicodeString("Stream Viewer, version ") + getVersion();
 	bool bMMF = false;
 	bool bIndy = false;
 

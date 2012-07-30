@@ -285,13 +285,13 @@ object Form4: TForm4
     Caption = 'GridPanel1'
     ColumnCollection = <
       item
-        Value = 33.333333333333330000
+        Value = 33.333333333333340000
       end
       item
-        Value = 33.333333333333330000
+        Value = 33.333333333333340000
       end
       item
-        Value = 33.333333333333330000
+        Value = 33.333333333333340000
       end>
     ControlCollection = <
       item
@@ -849,13 +849,13 @@ object Form4: TForm4
     Caption = 'GridPanel2'
     ColumnCollection = <
       item
-        Value = 33.333333333333330000
+        Value = 33.333333333333340000
       end
       item
-        Value = 33.333333333333330000
+        Value = 33.333333333333340000
       end
       item
-        Value = 33.333333333333330000
+        Value = 33.333333333333340000
       end>
     ControlCollection = <
       item

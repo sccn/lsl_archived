@@ -11,7 +11,7 @@ Written by Matthew Grivich, Swartz Center for Computational Neuroscience, UCSD
 #pragma hdrstop
 #include "windows.h"
 #include "stdio.h"
-#include "console_util.h"
+#include "general_util.h"
 //---------------------------------------------------------------------------
 USEFORM("CaptureWorkerForm.cpp", CaptureWorkerForm);
 USEFORM("UMainCapture.cpp", MainCaptureForm);

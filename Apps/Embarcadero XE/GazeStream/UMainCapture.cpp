@@ -8,7 +8,7 @@ Written by Matthew Grivich and Andre Vankov, Swartz Center for Computational Neu
 #include "useallegro4.h"
 #include <vcl.h>
 #pragma hdrstop
-#include "drutil.h"
+#include "math_util.h"
 #include "UMainCapture.h"
 #include "stdio.h"
 #include "Shlobj.h"
@@ -17,7 +17,6 @@ Written by Matthew Grivich and Andre Vankov, Swartz Center for Computational Neu
 #include "CaptureWorkerForm.h"
 #include "Math.hpp"
 #include "StreamThread.h"
-#include "console_util.h"
 
 
 //---------------------------------------------------------------------------
@@ -109,7 +108,7 @@ void AssignListToComboBox (TComboBox* ComboBox, String List, int Index)
 void __fastcall TMainCaptureForm::FormCreate(TObject *Sender)
 {
 
-
+     MainCaptureForm->Caption = UnicodeString("Gaze Stream, version ") + getVersion();
 	//There has to be some option other than silent failure and dialog box, but I haven't found it yet.
 	//	_control87(MCW_EM, MCW_EM);  //Turn off FPU generated floating point exceptions. Threads still fail however.
 	_control87( 0x1372, 0x137F ); //turns on dialog exceptions, but not in TThread. Exceptions in TThread cause the thread to die.
@@ -865,6 +864,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 
 	else if (isKind == isVideo)  // Video
 	{
+
   //	printf("%g\n", lsl_local_clock());
 
 		lsl_push_sample_itp(outlet, &(nFrames), lsl_local_clock(),1);
@@ -1278,7 +1278,7 @@ void TMainCaptureForm::SetToVideoMode() {
 		isKind = isVideo;
 		PageControl2->ActivePage = tsVideo;
 		Caption = "Video stream: video camera";
-
+		MainCaptureForm->Caption = UnicodeString("Video Stream, version ") + getVersion();
   /*		if(outlet) {
 			lsl_destroy_outlet(outlet);
 			outlet = NULL;
