@@ -2,7 +2,7 @@
 		<PropertyGroup>
 			<ProjectGuid>{6317E0A4-CCB4-4316-A7E2-0F722548D738}</ProjectGuid>
 			<ProjectVersion>12.3</ProjectVersion>
-			<MainSource>drmath.cpp</MainSource>
+			<MainSource>math.cpp</MainSource>
 			<Config Condition="'$(Config)'==''">Debug</Config>
 			<Base>True</Base>
 			<Platform>Win32</Platform>
@@ -23,21 +23,20 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<LinkPackageStatics>rtl.lib;vcl.lib</LinkPackageStatics>
 			<FinalOutputDir>..\</FinalOutputDir>
 			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<BCC_MonitorGlobalAndStackData>true</BCC_MonitorGlobalAndStackData>
 			<OutputExt>exe</OutputExt>
 			<BCC_MonitorThis>true</BCC_MonitorThis>
 			<BCC_MonitorInlinePtrAccess>true</BCC_MonitorInlinePtrAccess>
-			<LinkPackageImports>rtl.bpi;vcl.bpi</LinkPackageImports>
 			<Multithreaded>true</Multithreaded>
 			<ProjectType>CppVCLApplication</ProjectType>
 			<PackageImports>vclx.bpi;vcl.bpi;vclimg.bpi;dbrtl.bpi;Rave77VCL.bpi;bdertl.bpi;rtl.bpi;bcbie.bpi;vclactnband.bpi;xmlrtl.bpi;bcbsmp.bpi;vcldb.bpi;vcldbx.bpi;vcltouch.bpi;dsnap.bpi;dsnapcon.bpi;TeeUI.bpi;TeeDB.bpi;Tee.bpi;vclib.bpi;ibxpress.bpi;adortl.bpi;IndyCore.bpi;IndySystem.bpi;IndyProtocols.bpi;inet.bpi;intrawebdb_100_140.bpi;Intraweb_100_140.bpi;VclSmp.bpi;vclie.bpi;inetdb.bpi;webdsnap.bpi;websnap.bpi;inetdbbde.bpi;inetdbxpress.bpi;soaprtl.bpi;vclribbon.bpi;DbxCommonDriver.bpi;DbxClientDriver.bpi;DBXInterBaseDriver.bpi;DBXMySQLDriver.bpi;dbexpress.bpi;dbxcds.bpi;VisioForge_Video_Capture_3_BCB.bpi</PackageImports>
 			<AllPackageLibs>rtl.lib;vcl.lib</AllPackageLibs>
 			<DCC_CBuilderOutput>JPHNE</DCC_CBuilderOutput>
-			<UsePackages>true</UsePackages>
-			<IncludePath>$(BDS)\include;$(BDS)\include\dinkumware;..\shared\boost_1_47_0;$(IncludePath)</IncludePath>
-			<ILINK_LibraryPath>dsMatrix\;matrix\;..\..\..\Desktop\X\sccn\trunk\c\datariver\math\;$(BDS)\lib\obj;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+			<IncludePath>..\shared\include\;$(BDS)\include;$(BDS)\include\dinkumware;..\shared\boost_1_47_0;$(IncludePath)</IncludePath>
+			<ILINK_LibraryPath>..\shared\include\;dsMatrix\;matrix\;..\..\..\Desktop\X\sccn\trunk\c\datariver\math\;$(BDS)\lib\obj;$(ILINK_LibraryPath)</ILINK_LibraryPath>
 			<BCC_wpar>false</BCC_wpar>
 			<BCC_OptimizeForSpeed>true</BCC_OptimizeForSpeed>
 			<BCC_ExtendedErrorInfo>true</BCC_ExtendedErrorInfo>
@@ -76,16 +75,6 @@
 				<DependentOn>CircleFunction.h</DependentOn>
 				<BuildOrder>7</BuildOrder>
 			</CppCompile>
-			<CppCompile Include="drmath.cpp">
-				<BuildOrder>0</BuildOrder>
-			</CppCompile>
-			<ResFiles Include="drmath.res">
-				<BuildOrder>1</BuildOrder>
-			</ResFiles>
-			<CppCompile Include="drutil.cpp">
-				<DependentOn>drutil.h</DependentOn>
-				<BuildOrder>6</BuildOrder>
-			</CppCompile>
 			<CppCompile Include="FitFailedException.cpp">
 				<DependentOn>FitFailedException.h</DependentOn>
 				<BuildOrder>8</BuildOrder>
@@ -110,15 +99,29 @@
 				<DependentOn>LinearAlgebra.h</DependentOn>
 				<BuildOrder>12</BuildOrder>
 			</CppCompile>
+			<CppCompile Include="math.cpp">
+				<BuildOrder>0</BuildOrder>
+			</CppCompile>
+			<ResFiles Include="math.res">
+				<ModuleName>math.res</ModuleName>
+				<BuildOrder>1</BuildOrder>
+			</ResFiles>
 			<CppCompile Include="MathForm.cpp">
 				<Form>Form2</Form>
 				<DependentOn>MathForm.h</DependentOn>
 				<BuildOrder>2</BuildOrder>
 			</CppCompile>
+			<CppCompile Include="math_util.cpp">
+				<DependentOn>math_util.h</DependentOn>
+				<BuildOrder>6</BuildOrder>
+			</CppCompile>
 			<CppCompile Include="Minimizer.cpp">
 				<DependentOn>Minimizer.h</DependentOn>
 				<BuildOrder>9</BuildOrder>
 			</CppCompile>
+			<None Include="..\shared\include\general_util.h">
+				<BuildOrder>12</BuildOrder>
+			</None>
 			<FormResources Include="MathForm.dfm"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
@@ -140,7 +143,7 @@
 			<BorlandProject>
 				<CPlusPlusBuilder.Personality>
 					<Source>
-						<Source Name="MainSource">drmath.cpp</Source>
+						<Source Name="MainSource">math.cpp</Source>
 					</Source>
 					<VersionInfo>
 						<VersionInfo Name="IncludeVerInfo">False</VersionInfo>
@@ -186,6 +189,12 @@
 						<ProjectProperties Name="ManagePaths">True</ProjectProperties>
 						<ProjectProperties Name="VerifyPackages">True</ProjectProperties>
 					</ProjectProperties>
+					<Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\bcboffice2k150.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\bcbofficexp150.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dcloffice2k150.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dclofficexp150.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+					</Excluded_Packages>
 				</CPlusPlusBuilder.Personality>
 				<Platforms>
 					<Platform value="Win32">True</Platform>
