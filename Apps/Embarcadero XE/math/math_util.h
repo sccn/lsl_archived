@@ -5,11 +5,12 @@
 #include<vcl.h>
 #pragma hdrstop
 #include<list.h>
+#include "general_util.h"
 
 //---------------------------------------------------------------------------
 
-#ifndef drutilH
-#define drutilH
+#ifndef math_utilH
+#define math_utilH
 //---------------------------------------------------------------------------
 
 #ifndef NAN
@@ -21,6 +22,8 @@
 #endif
 
 #define PI 3.1415926535897932384626433832795
+
+
 
 //use as array2D[width][height]
 template<typename T> T ** new2D(int width, int height, T initialValue) {
@@ -192,19 +195,7 @@ template<typename T> UnicodeString vectorToUnicodeString(ublas::vector<T> v) {
 	return result;
 }
 
-//std::vector<UnicodeString> strs = splitString(pC->Name, L'_');
-std::vector<UnicodeString> splitString(UnicodeString string, wchar_t splitCharacter) {
-	int startPoint = 1;
-	std::vector<UnicodeString> subStrings;
-	for(int i =1; i<=string.Length(); i++) {
-	if(string[i] == splitCharacter) {
-			subStrings.push_back(string.SubString(startPoint, i-startPoint));
-			startPoint = i+1;
-		}
-	}
-	if(startPoint<=string.Length()) subStrings.push_back(string.SubString(startPoint, string.Length()));
-	return subStrings;
-}
+
 
 template<typename T> ublas::vector<T> unicodeStringToVector(UnicodeString string) {
 	std::vector<UnicodeString> strs = splitString(string, L',');
@@ -232,12 +223,6 @@ template<typename T> ublas::matrix<T> unicodeStringToMatrix(UnicodeString string
 	return result;
 }
 
-char * generateGUID() {
-	TGUID guid;
-	CreateGUID(guid);
-	char * charGuid = ((AnsiString) Sysutils::GUIDToString(guid)).c_str();
 
-	return charGuid;
-}
 #endif
 
