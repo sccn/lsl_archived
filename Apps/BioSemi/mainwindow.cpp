@@ -526,9 +526,6 @@ void MainWindow::read_thread(std::map<std::string,std::vector<std::string> > loc
 		.append_child_value("labelscheme",capdesign.c_str());
 	// <amplifier> meta-data
 	info.desc().append_child("amplifier")
-		.append_child_value("manufacturer","BioSemi")
-		.append_child_value("model",biosemi_->is_mk2() ? "ActiveTwo Mk2" : "ActiveTwo Mk1")
-		.append_child_value("precision","24")
 		.append_child("settings")
 			.append_child_value("speedmode",boost::lexical_cast<std::string>(biosemi_->speed_mode()).c_str());
 	// <location_measurement> meta-data
@@ -578,6 +575,9 @@ void MainWindow::read_thread(std::map<std::string,std::vector<std::string> > loc
 
 	// <acqusition> meta-data
 	info.desc().append_child("acquisition")
+		.append_child_value("manufacturer","BioSemi")
+		.append_child_value("model",biosemi_->is_mk2() ? "ActiveTwo Mk2" : "ActiveTwo Mk1")
+		.append_child_value("precision","24")
 		.append_child_value("compensated_lag",boost::lexical_cast<std::string>(compensated_lag).c_str())
 		.append_child_value("causal_correction",boost::lexical_cast<std::string>(sigproc_lag).c_str());
 
