@@ -98,7 +98,7 @@ stream_outlet_impl::~stream_outlet_impl() {
 		// join the IO threads
 		for (unsigned k=0;k<io_threads_.size();k++)
 			if (!io_threads_[k]->try_join_for(boost::chrono::milliseconds(1000))) {
- 				// .. using force, if necessary
+ 				// .. using force, if necessary (should only ever happen if the CPU is maxed out)
 				std::cerr << "Tearing down stream_outlet of thread " << io_threads_[k]->get_id() << " (in id: " << boost::this_thread::get_id() << "): " << std::endl;
 				ios_[k]->stop();
 				for (int attempt=1; !io_threads_[k]->try_join_for(boost::chrono::milliseconds(1000)); attempt++) {
