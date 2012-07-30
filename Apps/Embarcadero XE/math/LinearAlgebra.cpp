@@ -7,7 +7,7 @@
 #pragma hdrstop
 
 #include "LinearAlgebra.h"
-#include "drutil.h"
+#include "math_util.h"
 
 //---------------------------------------------------------------------------
 

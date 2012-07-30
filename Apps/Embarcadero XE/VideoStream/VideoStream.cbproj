@@ -113,10 +113,6 @@
 				<DependentOn>..\math\CircleFunction.h</DependentOn>
 				<BuildOrder>14</BuildOrder>
 			</CppCompile>
-			<CppCompile Include="..\math\drutil.cpp">
-				<DependentOn>..\math\drutil.h</DependentOn>
-				<BuildOrder>11</BuildOrder>
-			</CppCompile>
 			<CppCompile Include="..\math\FitFailedException.cpp">
 				<DependentOn>..\math\FitFailedException.h</DependentOn>
 				<BuildOrder>15</BuildOrder>
@@ -133,11 +129,15 @@
 				<DependentOn>..\math\LinearAlgebra.h</DependentOn>
 				<BuildOrder>18</BuildOrder>
 			</CppCompile>
+			<CppCompile Include="..\math\math_util.cpp">
+				<DependentOn>..\math\math_util.h</DependentOn>
+				<BuildOrder>11</BuildOrder>
+			</CppCompile>
 			<None Include="..\shared\4.4.0-msvc\include\allegro.h">
 				<BuildOrder>17</BuildOrder>
 			</None>
-			<None Include="..\shared\include\console_util.h">
-				<BuildOrder>19</BuildOrder>
+			<None Include="..\shared\include\general_util.h">
+				<BuildOrder>20</BuildOrder>
 			</None>
 			<None Include="..\shared\include\lsl_c.h">
 				<BuildOrder>16</BuildOrder>
@@ -226,7 +226,6 @@
 						<ProjectProperties Name="VerifyPackages">True</ProjectProperties>
 					</ProjectProperties>
 					<Excluded_Packages>
-						<Excluded_Packages Name="C:\Users\mgrivich\Desktop\X\bin\windows\x32\datariver\VisioForge_Video_Capture_3_BCB.bpl">VisioForge_Video_Capture_3_BCB</Excluded_Packages>
 						<Excluded_Packages Name="$(BDSBIN)\bcboffice2k150.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
 						<Excluded_Packages Name="$(BDSBIN)\bcbofficexp150.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
 						<Excluded_Packages Name="$(BDSBIN)\dcloffice2k150.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>

@@ -4,12 +4,11 @@
 #include <vcl.h>
 #pragma hdrstop
 #include "windows.h"
-#include "console_util.h"
+#include "general_util.h"
 //---------------------------------------------------------------------------
 USEFORM("UNewViewer2.cpp", Form1);
 USEFORM("ULeds.cpp", FormLEDs);
 //---------------------------------------------------------------------------
-
 bool ok=true;
 WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR str, int)
 {

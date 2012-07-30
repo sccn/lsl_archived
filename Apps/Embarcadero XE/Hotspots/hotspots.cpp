@@ -6,7 +6,7 @@
 #pragma hdrstop
 #include "stdio.h"
 #include "windows.h"
-#include "console_util.h"
+#include "general_util.h"
 //---------------------------------------------------------------------------
 USEFORM("UEdit3D.cpp", Form3);
 USEFORM("GridDialog.cpp", GridForm);

@@ -8,7 +8,7 @@
 #ifndef FittableFunctionH
 #define FittableFunctionH
 
-#include "drutil.h"
+#include "math_util.h"
 
 
 

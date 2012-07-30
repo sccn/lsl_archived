@@ -16,7 +16,7 @@ Written by Matthew Grivich, Swartz Center for Computational Neuroscience, UCSD, 
 #include "XMLDoc.hpp"
 #include "math.h"
 
-#include "drutil.h"
+#include "math_util.h"
 
 
 class TGazeUtil {
