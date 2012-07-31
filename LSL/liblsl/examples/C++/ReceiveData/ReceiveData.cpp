@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
 		value = argv[2];
 	}
 
-	try {
+	//try {
 
 		// resolve the stream of interet
 		cout << "Now resolving streams..." << endl;
@@ -43,9 +43,9 @@ int main(int argc, char* argv[]) {
 			cout << endl;
 		}
 
-	} catch(std::exception &e) {
-		cerr << "Got an exception: " << e.what() << endl;
-	}
+	//} catch(std::exception &e) {
+	//	cerr << "Got an exception: " << e.what() << endl;
+	//}
 	cout << "Press any key to exit. " << endl; cin.get();
 	return 0;
 }

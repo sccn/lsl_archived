@@ -27,8 +27,12 @@ resolver_impl::resolver_impl(): cfg_(api_config::get_instance()), cancelled_(fal
 	// parse the multicast addresses into endpoints and store them
 	std::vector<std::string> mcast_addrs = cfg_->multicast_addresses();
 	int mcast_port = cfg_->multicast_port();
-	for (unsigned k=0;k<mcast_addrs.size();k++)
-		mcast_endpoints_.push_back(udp::endpoint(ip::address::from_string(mcast_addrs[k]),(unsigned short)mcast_port));
+	for (unsigned k=0;k<mcast_addrs.size();k++) {
+		try {
+			mcast_endpoints_.push_back(udp::endpoint(ip::address::from_string(mcast_addrs[k]),(unsigned short)mcast_port));
+		} 
+		catch(std::exception &) { }
+	}
 
 	// parse the per-host addresses into endpoints, and store them, too
 	std::vector<std::string> peers = cfg_->known_peers();
@@ -46,13 +50,13 @@ resolver_impl::resolver_impl(): cfg_(api_config::get_instance()), cancelled_(fal
 	}
 
 	// generate the list of protocols to use
-	if (cfg_->ipv6() == "disable" || cfg_->ipv6() == "allow") {
-		udp_protocols_.push_back(udp::v4());
-		tcp_protocols_.push_back(tcp::v4());
-	}
 	if (cfg_->ipv6() == "force" || cfg_->ipv6() == "allow") {
 		udp_protocols_.push_back(udp::v6());
 		tcp_protocols_.push_back(tcp::v6());
+	}
+	if (cfg_->ipv6() == "disable" || cfg_->ipv6() == "allow") {
+		udp_protocols_.push_back(udp::v4());
+		tcp_protocols_.push_back(tcp::v4());
 	}
 }
 
@@ -156,9 +160,14 @@ void resolver_impl::next_resolve_wave() {
 /// Start a new resolver attepmpt on the multicast hosts.
 void resolver_impl::udp_multicast_burst() {
 		// start one per IP stack under consideration
-		for (unsigned k=0;k<udp_protocols_.size();k++) {
-			resolve_burst_udp_p attempt(new resolve_attempt_udp(*io_,udp_protocols_[k],mcast_endpoints_,query_,results_,results_mut_,cfg_->multicast_max_rtt(),this));
-			attempt->begin();
+		for (unsigned k=0,failures=0;k<udp_protocols_.size();k++) {
+			try {
+				resolve_attempt_udp_p attempt(new resolve_attempt_udp(*io_,udp_protocols_[k],mcast_endpoints_,query_,results_,results_mut_,cfg_->multicast_max_rtt(),this));
+				attempt->begin();
+			} catch(std::exception &e) {
+				if (++failures == udp_protocols_.size())
+					std::cerr << "Could not start a multicast resolve attempt for any of the allowed protocol stacks: " << e.what() << std::endl;
+			}
 		}
 
 }
@@ -167,9 +176,14 @@ void resolver_impl::udp_multicast_burst() {
 void resolver_impl::udp_unicast_burst(error_code err) {
 	if (err != error::operation_aborted) {
 		// start one per IP stack under consideration
-		for (unsigned k=0;k<udp_protocols_.size();k++) {
-			resolve_burst_udp_p attempt(new resolve_attempt_udp(*io_,udp_protocols_[k],ucast_endpoints_,query_,results_,results_mut_,cfg_->unicast_max_rtt(),this));
-			attempt->begin();
+		for (unsigned k=0,failures=0;k<udp_protocols_.size();k++) {
+			try {
+				resolve_attempt_udp_p attempt(new resolve_attempt_udp(*io_,udp_protocols_[k],ucast_endpoints_,query_,results_,results_mut_,cfg_->unicast_max_rtt(),this));
+				attempt->begin();
+			} catch(std::exception &e) {
+				if (++failures == udp_protocols_.size())
+					std::cerr << "Could not start a multicast resolve attempt for any of the allowed protocol stacks: " << e.what() << std::endl;
+			}
 		}
 	}
 }
