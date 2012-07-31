@@ -19,7 +19,7 @@ namespace lsl {
 	typedef std::map<std::string,std::pair<stream_info_impl,double> > result_container;
 
 	/// Pointer to a UDP resolve attempt.
-	typedef boost::shared_ptr<class resolve_attempt_udp> resolve_burst_udp_p;
+	typedef boost::shared_ptr<class resolve_attempt_udp> resolve_attempt_udp_p;
 	/// Pointer to a deadline timer
 	typedef boost::shared_ptr<boost::asio::deadline_timer> deadline_timer_p;
 	/// Pointer to an io_service
