@@ -11,7 +11,9 @@
 // hard-coded data about EGI packets
 const int block_header_bytes = 16;	// number of header bytes per block
 const int sample_header_bytes = 32;	// number of header bytes per sample
-const int samples_per_chunk = 32;	// number of samples per chunk sent into LSL (has nothing to do with EGI)
+
+// number of samples per chunk sent into LSL (has nothing to do with EGI)
+const int samples_per_chunk = 32;
 
 MainWindow::MainWindow(QWidget *parent, const std::string &config_file) :
 QMainWindow(parent),
@@ -220,7 +222,7 @@ void MainWindow::read_thread(const std::string &address, int amplifierId, int sa
 			dataStream_->read((char*)&lengthB,4); lengthB = ntohl(lengthB);
 
 			// determine length in bytes; note that the byte shuffling in the 
-			// sample code is actually incorrect, so we're a bit more tolerant here
+			// sample code is note quite right, so we're a bit more tolerant here
 			if (lengthA && lengthB && (lengthA!=lengthB))
 				// length is larger than 4GB... we can basically read forever
 				bytes = std::numeric_limits<unsigned>::max();
