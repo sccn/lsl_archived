@@ -3108,7 +3108,7 @@ object Form1: TForm1
     Top = 20
     Width = 613
     Height = 558
-    ActivePage = TabSheet1
+    ActivePage = TabSheet32
     MultiLine = True
     TabOrder = 3
     TabPosition = tpLeft
@@ -3453,10 +3453,6 @@ object Form1: TForm1
     object TabSheet32: TTabSheet
       Caption = '3D'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Image4: TImage
         Left = 6
         Top = 34

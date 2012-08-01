@@ -2,10 +2,11 @@
 #define GeneralUtilH
 
 
-#define VERSION 1000001
+#define VERSION 1000002
 #define CONSOLE 0
 #include <ios>
 #include <vector>
+#include "stdio.h"
 
 void OpenConsole() {
 	 // create the console
