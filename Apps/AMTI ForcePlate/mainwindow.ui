@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>190</width>
-    <height>174</height>
+    <height>175</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -53,13 +53,8 @@
          <item row="1" column="1">
           <widget class="QComboBox" name="samplingRate">
            <property name="currentIndex">
-            <number>2</number>
+            <number>0</number>
            </property>
-           <item>
-            <property name="text">
-             <string>50</string>
-            </property>
-           </item>
            <item>
             <property name="text">
              <string>100</string>
@@ -122,7 +117,7 @@
      <x>0</x>
      <y>0</y>
      <width>190</width>
-     <height>18</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

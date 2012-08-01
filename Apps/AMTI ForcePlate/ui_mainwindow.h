@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Wed Aug 1 00:55:51 2012
+** Created: Wed Aug 1 02:07:16 2012
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -60,7 +60,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(190, 174);
+        MainWindow->resize(190, 175);
         actionLoad_Configuration = new QAction(MainWindow);
         actionLoad_Configuration->setObjectName(QString::fromUtf8("actionLoad_Configuration"));
         actionSave_Configuration = new QAction(MainWindow);
@@ -135,7 +135,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 190, 18));
+        menuBar->setGeometry(QRect(0, 0, 190, 21));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QString::fromUtf8("menuFile"));
         MainWindow->setMenuBar(menuBar);
@@ -151,7 +151,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        samplingRate->setCurrentIndex(2);
+        samplingRate->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -169,7 +169,6 @@ public:
         label->setText(QApplication::translate("MainWindow", "Sampling Rate", 0, QApplication::UnicodeUTF8));
         samplingRate->clear();
         samplingRate->insertItems(0, QStringList()
-         << QApplication::translate("MainWindow", "50", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "100", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "200", 0, QApplication::UnicodeUTF8)
         );

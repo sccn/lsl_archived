@@ -17,7 +17,7 @@ const char cmd_50Hz = 0x72;			// set to 50-Hz sampling
 const char cmd_100Hz = 0x66;		// set to 100-Hz sampling
 const char cmd_200Hz = 0x76;		// set to 200-Hz sampling
 
-// acknowledgements that can come back from the devce
+// acknowledgements that can come back from the device
 const char ack_start_single = 0x55;		// transmission starting, one device connected
 const char ack_start_dual = 0x56;		// transmission starting, two devices connected
 const char ack_autozero_single = 0x54;	// calibration completed, one device connected
@@ -78,28 +78,30 @@ void MainWindow::load_config(const std::string &filename) {
 	try {
 		ui->comPort->setValue(pt.get<int>("settings.comport",1));
 		ui->samplingRate->setCurrentIndex(pt.get<int>("settings.samplingrate",0));
-		// these two calibration matrices are for our devices; they are device-specific and provided by the vendor
-        std::string calib[2] = {pt.get<std::string>("settings.calibration_matrix1","[0.0088010,-0.0003439,-0.0002374,-0.0091382, 0.0002286,-0.0011453, \
-                                                                                     -0.0000572, 0.0089623, 0.0005131,-0.0003076, 0.0086073,-0.0000008, \
-                                                                                     -0.0016028,-0.0009292,-0.0885598, 0.0000639, 0.0000603,-0.0867306, \
-                                                                                      0.0000000, 0.0000000,-0.6305114, 0.0000000, 0.0000000,-0.6221169, \
-                                                                                      0.0000000, 0.0000000, 0.6524594, 0.0000000, 0.0000000,-0.6378316, \
-                                                                                     -0.0931016, 0.0958635, 0.0012947, 0.0966692,-0.0920663, 0.0012679]"), 
-                                pt.get<std::string>("settings.calibration_matrix2","[0.0087575,-0.0000330, 0.0001908,-0.0085257,-0.0003653,-0.0004479, \
-                                                                                     -0.0002277,-0.0084864,-0.0010120, 0.0004282,-0.0087719,-0.0007067, \
-                                                                                     -0.0003682, 0.0002382,-0.0868983,-0.0004845, 0.0002808,-0.0880958, \
-                                                                                      0.0000000, 0.0000000, 0.6244931, 0.0000000, 0.0000000, 0.6209047, \
-                                                                                      0.0000000, 0.0000000, 0.6425910, 0.0000000, 0.0000000,-0.6428833, \
-                                                                                      0.0926413,-0.0907731, 0.0012704,-0.0901891, 0.0938268, 0.0012879]")};
+		// there can be 2 calibration matrices since two devices can be connected in a multi-plexed manner; the one below is calibration data for our force plate -- the numbers are device-specific and vendor-provided
+        std::string calib[max_devices] = {pt.get<std::string>("settings.calibration_matrix1","[0.0088010,-0.0003439,-0.0002374,-0.0091382, 0.0002286,-0.0011453, 0.0087575,-0.0000330, 0.0001908,-0.0085257,-0.0003653,-0.0004479, \
+																					          -0.0000572, 0.0089623, 0.0005131,-0.0003076, 0.0086073,-0.0000008,-0.0002277,-0.0084864,-0.0010120, 0.0004282,-0.0087719,-0.0007067, \
+                                                                                              -0.0016028,-0.0009292,-0.0885598, 0.0000639, 0.0000603,-0.0867306,-0.0003682, 0.0002382,-0.0868983,-0.0004845, 0.0002808,-0.0880958, \
+                                                                                               0.0000000, 0.0000000,-0.6305114, 0.0000000, 0.0000000,-0.6221169, 0.0000000, 0.0000000, 0.6244931, 0.0000000, 0.0000000, 0.6209047, \
+                                                                                               0.0000000, 0.0000000, 0.6524594, 0.0000000, 0.0000000,-0.6378316, 0.0000000, 0.0000000, 0.6425910, 0.0000000, 0.0000000,-0.6428833, \
+                                                                                              -0.0931016, 0.0958635, 0.0012947, 0.0966692,-0.0920663, 0.0012679, 0.0926413,-0.0907731, 0.0012704,-0.0901891, 0.0938268, 0.0012879]"), 
+                                pt.get<std::string>("settings.calibration_matrix2","[]")};
 		// for each device...
-		for (unsigned d=0;d<2;d++) {
-			// split matrix into number-strings
-			std::vector<std::string> tmp; boost::algorithm::split(tmp,calib[d].substr(1,calib[d].size()-2),boost::algorithm::is_any_of(", "),boost::algorithm::token_compress_on);
-			// transfer into float matrix...
-			unsigned k=0;
-			for (unsigned y=0;y<6;y++)
-				for (unsigned x=0;x<6;x++)
-					calib_[d][x][y] = boost::lexical_cast<float>(tmp[k++]);
+		for (unsigned d=0;d<max_devices;d++) {
+			if (calib[d].size()>3) {
+				// split matrix into number-strings
+				std::vector<std::string> tmp; boost::algorithm::split(tmp,calib[d].substr(1,calib[d].size()-2),boost::algorithm::is_any_of(", \t"),boost::algorithm::token_compress_on);
+				// transfer into float matrix...
+				unsigned k=0;
+				for (unsigned y=0;y<out_chns_per_device;y++)
+					for (unsigned x=0;x<in_chns_per_device;x++)
+						calib_[d][x][y] = boost::lexical_cast<float>(tmp[k++]);
+			} else {
+				// otherwise use the identity matrix
+				for (unsigned y=0;y<out_chns_per_device;y++)
+					for (unsigned x=0;x<in_chns_per_device;x++)
+						calib_[d][x][y] = (x==y);
+			}
 		}
 	} catch(std::exception &) {
 		QMessageBox::information(this,"Error in Config File","Could not read out config parameters.",QMessageBox::Ok);
@@ -150,6 +152,7 @@ void MainWindow::link_amti() {
 		HANDLE hPort = NULL;
 		DWORD dwBytesWritten, dwBytesRead;
 		unsigned char cmd=0, resp=0;
+		int bytes_skipped=0;
 		try {
 			// get the UI parameters...
 			int comPort = ui->comPort->value();
@@ -182,8 +185,12 @@ void MainWindow::link_amti() {
 			// set some reasonable buffer sizes
 			SetupComm(hPort,buffer_size,buffer_size);
 
-			// send a stop command, just to be sure...
+			// send a stop command and give it some time to settle
 			cmd = cmd_stop;
+			if (!WriteFile(hPort,(LPSTR)&cmd,1,&dwBytesWritten,NULL))
+				throw std::runtime_error("Cannot send commands to the device.");
+			if (!WriteFile(hPort,(LPSTR)&cmd,1,&dwBytesWritten,NULL))
+				throw std::runtime_error("Cannot send commands to the device.");
 			if (!WriteFile(hPort,(LPSTR)&cmd,1,&dwBytesWritten,NULL))
 				throw std::runtime_error("Cannot send commands to the device.");
 			boost::this_thread::sleep(boost::posix_time::millisec(100));
@@ -193,13 +200,17 @@ void MainWindow::link_amti() {
 			if (!WriteFile(hPort,(LPSTR)&cmd,1,&dwBytesWritten,NULL))
 				throw std::runtime_error("Cannot send commands to the device.");
 
-			// wait for the acknowledgement
-			if (!ReadFile(hPort,&resp,1,&dwBytesRead,NULL) || !dwBytesRead)
-				throw std::runtime_error("Did not receive a response from the device.");
-			if (resp != cmd)
-				throw std::runtime_error("Received an unexpected response from the device.");
+			// ... and scan for the acknowledgement (may have to shift out the old buffer contents)
+			resp = 0;
+			bytes_skipped=0;
+			while (resp != cmd) {
+				if (!ReadFile(hPort,&resp,1,&dwBytesRead,NULL) || !dwBytesRead)
+					throw std::runtime_error("Did not receive a response from the device.");
+				if (++bytes_skipped > 2*buffer_size)
+					throw std::runtime_error("Device does not response in an expected way. Please make sure that this software is compatible with your type of force plate.");
+			}
 
-			// perform the auto-zero calibration and check the ack (note: may take up to 10 seconds for it to finish that)
+			// perform the auto-zero calibration and check the ack (may take up to 10 seconds)
 			cmd = cmd_autozero;
 			if (!WriteFile(hPort,(LPSTR)&cmd,1,&dwBytesWritten,NULL))
 				throw std::runtime_error("Device stopped responding.");
@@ -209,12 +220,20 @@ void MainWindow::link_amti() {
 				throw std::runtime_error("Received an unexpected response from the device. Please make sure that this software is compatible with your type of force plate.");
 			numDevices = (resp == ack_autozero_single) ? 1 : 2;
 
-			// start transmission and check the ack
+			// start transmission
 			cmd = cmd_start;
 			if (!WriteFile(hPort,(LPSTR)&cmd,1,&dwBytesWritten,NULL))
 				throw std::runtime_error("Device stopped responding while sending the start command.");
-			if (!ReadFile(hPort,&resp,1,&dwBytesRead,NULL) || !dwBytesRead)
-				throw std::runtime_error("Device stopped responding while waiting for the start ack.");
+			
+			// and check the ack (discard any reponse that came after the auto-zero calibration)
+			resp = 0;
+			bytes_skipped=0;
+			while ((resp != ack_start_single) && (resp != ack_start_dual)) {
+				if (!ReadFile(hPort,&resp,1,&dwBytesRead,NULL) || !dwBytesRead)
+					throw std::runtime_error("Device stopped responding while waiting for the start ack.");
+				if (++bytes_skipped > 256)
+					throw std::runtime_error("Device stopped responding while waiting for the start ack or gave unexpected outputs.");
+			}
 			if ((resp != ack_start_single) && (resp != ack_start_dual))
 				throw std::runtime_error("Device produces unknown outputs in response to the start command.");
 			if (resp != ((numDevices == 1) ? ack_start_single : ack_start_dual))
@@ -239,8 +258,8 @@ void MainWindow::link_amti() {
 
 // background data reader thread
 void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int numDevices) {
-	std::string deviceTag[] = {"1","2"};
-	int channelCount = numDevices*6+1; // plus 1 trigger channel
+	std::string deviceTag[] = {"1","2","3","4"};
+	int channelCount = numDevices*out_chns_per_device+1; // plus 1 trigger channel
 
 	// create streaminfo
 	lsl::stream_info info("AMTI Force Plate","Force",channelCount,samplingRate,lsl::cf_float32,"AMTI_Plate" + boost::lexical_cast<std::string>(channelCount) + "_" + boost::asio::ip::host_name());
@@ -275,8 +294,8 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int nu
 	// make a new outlet
 	lsl::stream_outlet outlet(info,samples_per_chunk);
 	
-	std::vector<float> sample(channelCount);				// the final sample
-	std::vector<unsigned char> shift_buffer(numDevices*12);	// this is a circular buffer that holds the last data words (12 bytes per device)
+	std::vector<float> sample(channelCount);									// the final sample
+	std::vector<unsigned char> shift_buffer(numDevices*in_chns_per_device*2);	// this is a circular buffer that holds the last data words that make up a measurement
 	DWORD bytes_read;
 
 	// enter transmission loop
@@ -290,25 +309,33 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int nu
 				return;
 			}
 			// check termination condition
+			bool match = true;
 			if ((shift_buffer[1]>>4) != 0 && (shift_buffer[1]>>4) != 0xF)
 				continue;
-			for (unsigned k=1;k<numDevices*6;k++)
-				if ((shift_buffer[1+k*2]>>4) != k)
-					continue;
-			break;
+			for (unsigned k=1;k<shift_buffer.size()/2;k++)
+				if ((shift_buffer[1+k*2]>>4) != k) {
+					match = false;
+					break;
+				}
+			if (match)
+				break;
 		}
 		// assign the trigger channel
 		sample.back() = shift_buffer[1]>>4 == 0xF;
 		// calculate the remaining values
 		short *values = (short*)(&shift_buffer[0]);
-		for (unsigned k=0;k<numDevices*6;k++)
+		for (unsigned k=0;k<shift_buffer.size()/2;k++)
 			values[k] = (values[k] & 0x0FFF) - 2048;
 		// for each device...
 		for (unsigned d=0;d<numDevices;d++) {
 			// for each output channel...
-			for (unsigned oc=0; oc<6; oc++)
-				sample[d*6 + oc] = values[d*6+0]*calib_[d][0][oc] + values[d*6+1]*calib_[d][1][oc] + values[d*6+2]*calib_[d][2][oc]
-								 + values[d*6+3]*calib_[d][3][oc] + values[d*6+4]*calib_[d][4][oc] + values[d*6+5]*calib_[d][5][oc];
+			for (unsigned oc=0; oc<out_chns_per_device; oc++) {
+				double acc = 0;
+				// perform an inner product across all input channels with the calibration mapping for this device & output channel
+				for (unsigned ic=0; ic<in_chns_per_device; ic++)
+					acc += values[d*in_chns_per_device + ic] * calib_[d][ic][oc];
+				sample[oc] = acc;
+			}
 		}		
 		// push into the outlet
 		outlet.push_sample(sample);

@@ -16,6 +16,11 @@
 #define WIN32_LEAN_AND_MEAN
 #include "windows.h"
 
+// data formatting settings
+const int in_chns_per_device = 12;	// number of input channels per device (raw sensors)
+const int out_chns_per_device = 6;	// number of output channels per device (Fx,Fy,Fz,Mx,My,Mz)
+const int max_devices = 2;			// maximum number of devices that can be multiplexed into a stream
+
 namespace Ui {
 class MainWindow;
 }
@@ -46,9 +51,9 @@ private:
     void load_config(const std::string &filename);
     void save_config(const std::string &filename);
 	
-	bool stop_;											// whether the reader thread is supposed to stop
-	float calib_[2][6][6];								// device calibration matrices (one per device, 6x6)
-    boost::shared_ptr<boost::thread> reader_thread_;	// our reader thread
+	bool stop_;															// whether the reader thread is supposed to stop
+	float calib_[max_devices][in_chns_per_device][out_chns_per_device];	// device calibration matrices (one per device, 6x6)
+    boost::shared_ptr<boost::thread> reader_thread_;					// our reader thread
 
     Ui::MainWindow *ui;
 };
