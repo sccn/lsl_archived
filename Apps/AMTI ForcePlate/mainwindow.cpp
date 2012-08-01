@@ -165,18 +165,10 @@ void MainWindow::link_amti() {
 			if (hPort == INVALID_HANDLE_VALUE)
 				throw std::runtime_error("Could not open serial port. Please make sure that the device is plugged in, turned on, and that you have the correct port number.");
 
-			// set the baud rate
-			DCB dcb = {0};
-			dcb.DCBlength = sizeof(DCB);
-			GetCommState(hPort,&dcb);
-			dcb.BaudRate = samplingRate == 50 ? 57600 : 115200;			
-			if (!SetCommState(hPort,&dcb))
-				QMessageBox::information(this,"Note","Could not set baud rate of serial connection.",QMessageBox::Ok);
-
 			// set some timeouts
 			COMMTIMEOUTS timeouts = {0};
 			timeouts.ReadIntervalTimeout = 10000;
-			timeouts.ReadTotalTimeoutConstant = 1000;
+			timeouts.ReadTotalTimeoutConstant = 5000;
 			timeouts.ReadTotalTimeoutMultiplier = 50;
 			timeouts.WriteTotalTimeoutConstant = 500;
 			timeouts.WriteTotalTimeoutMultiplier = 50;
@@ -185,27 +177,30 @@ void MainWindow::link_amti() {
 			// set some reasonable buffer sizes
 			SetupComm(hPort,buffer_size,buffer_size);
 
+			// set the desired baud rate
+			DCB dcb = {0};
+			dcb.DCBlength = sizeof(DCB);
+			GetCommState(hPort,&dcb);
+			dcb.BaudRate = samplingRate == 50 ? 57600 : 115200;
+			if (!SetCommState(hPort,&dcb))
+				QMessageBox::information(this,"Note","Could not set baud rate of serial connection.",QMessageBox::Ok);
+
 			// send a stop command and give it some time to settle
 			cmd = cmd_stop;
 			if (!WriteFile(hPort,(LPSTR)&cmd,1,&dwBytesWritten,NULL))
 				throw std::runtime_error("Cannot send commands to the device.");
-			if (!WriteFile(hPort,(LPSTR)&cmd,1,&dwBytesWritten,NULL))
-				throw std::runtime_error("Cannot send commands to the device.");
-			if (!WriteFile(hPort,(LPSTR)&cmd,1,&dwBytesWritten,NULL))
-				throw std::runtime_error("Cannot send commands to the device.");
 			boost::this_thread::sleep(boost::posix_time::millisec(100));
 
-			// communicate baud rate to device
-			cmd = (samplingRate==50) ? cmd_50Hz : ((samplingRate==100) ? cmd_100Hz : cmd_200Hz);
-			if (!WriteFile(hPort,(LPSTR)&cmd,1,&dwBytesWritten,NULL))
-				throw std::runtime_error("Cannot send commands to the device.");
-
-			// ... and scan for the acknowledgement (may have to shift out the old buffer contents)
+			// set new baud rate and scan for the acknowledgement (may have to shift out the old buffer contents)
 			resp = 0;
 			bytes_skipped=0;
+			cmd = cmd_50Hz; (samplingRate==50) ? cmd_50Hz : ((samplingRate==100) ? cmd_100Hz : cmd_200Hz);
 			while (resp != cmd) {
-				if (!ReadFile(hPort,&resp,1,&dwBytesRead,NULL) || !dwBytesRead)
-					throw std::runtime_error("Did not receive a response from the device.");
+				// communicate baud rate
+				if (!WriteFile(hPort,(LPSTR)&cmd,1,&dwBytesWritten,NULL))
+					throw std::runtime_error("Cannot send commands to the device.");
+				if ((!ReadFile(hPort,&resp,1,&dwBytesRead,NULL) || !dwBytesRead))
+					throw std::runtime_error("Did not receive a response from the device after baud rate choice. Please make sure that your COM port has a baud rate of " + boost::lexical_cast<std::string>(dcb.BaudRate) + " set (see Control Panel / System / Device Manager / Ports).");
 				if (++bytes_skipped > 2*buffer_size)
 					throw std::runtime_error("Device does not response in an expected way. Please make sure that this software is compatible with your type of force plate.");
 			}
@@ -213,9 +208,9 @@ void MainWindow::link_amti() {
 			// perform the auto-zero calibration and check the ack (may take up to 10 seconds)
 			cmd = cmd_autozero;
 			if (!WriteFile(hPort,(LPSTR)&cmd,1,&dwBytesWritten,NULL))
-				throw std::runtime_error("Device stopped responding.");
+				throw std::runtime_error("Device stopped responding after baud-rate reset.");
 			if (!ReadFile(hPort,&resp,1,&dwBytesRead,NULL) || !dwBytesRead)
-				throw std::runtime_error("Device stopped responding.");
+				throw std::runtime_error("Device stopped responding during auto-zero calibration.");
 			if (resp != ack_autozero_single && resp != ack_autozero_dual)
 				throw std::runtime_error("Received an unexpected response from the device. Please make sure that this software is compatible with your type of force plate.");
 			numDevices = (resp == ack_autozero_single) ? 1 : 2;
@@ -309,9 +304,9 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int nu
 				return;
 			}
 			// check termination condition
-			bool match = true;
 			if ((shift_buffer[1]>>4) != 0 && (shift_buffer[1]>>4) != 0xF)
 				continue;
+			bool match = true;
 			for (unsigned k=1;k<shift_buffer.size()/2;k++)
 				if ((shift_buffer[1+k*2]>>4) != k) {
 					match = false;
