@@ -10,7 +10,7 @@
 
 #pragma package(smart_init)
 
-#define MAX_CHANNELS 128
+
 
 /*
  * Use this constructor when reading data manually.
@@ -26,7 +26,8 @@ TStreamThread::TStreamThread(char *typeNam):TThread(false)
 	ProcessDataF32 = NULL;
 	ProcessDataF64 = NULL;
 	ProcessDataString = NULL;
-
+	count = resampleCount = 0;
+	resamplingRate = -1;
 	connected = false;
 }
 
@@ -38,6 +39,8 @@ TStreamThread::TStreamThread(char * typeNam, TProcessDataI32 PD):TThread(false)
 		ProcessDataF32 = NULL;
 		ProcessDataF64 = NULL;
 		ProcessDataString = NULL;
+		count = resampleCount = 0;
+		resamplingRate = -1.0;
 		connected = false;
 
 		//if(errcode != 0)
@@ -53,6 +56,8 @@ TStreamThread::TStreamThread(char * typeNam, TProcessDataF32 PD):TThread(false)
 		ProcessDataF32 = PD;
 		ProcessDataF64 = NULL;
 		ProcessDataString = NULL;
+		count = resampleCount = 0;
+		resamplingRate = -1.0;
 		connected = false;
 
 		//if(errcode != 0)
@@ -68,7 +73,8 @@ TStreamThread::TStreamThread(char * typeNam, TProcessDataF64 PD):TThread(false)
 		ProcessDataF32 = NULL;
 		ProcessDataF64 = PD;
 		ProcessDataString = NULL;
-
+		count = resampleCount = 0;
+		resamplingRate = -1.0;
 		connected = false;
 
 };
@@ -81,7 +87,8 @@ TStreamThread::TStreamThread(char * typeNam, TProcessDataString PD):TThread(fals
 		ProcessDataF32 = NULL;
 		ProcessDataF64 = NULL;
 		ProcessDataString = PD;
-
+		count = resampleCount = 0;
+		resamplingRate = -1.0;
 		connected = false;
 
 };
@@ -91,7 +98,16 @@ __fastcall TStreamThread::~TStreamThread()
 	lsl_destroy_inlet(inlet);
 };
 
+void TStreamThread::SetResamplingRate(double rsamplingRate)
+{
+	resamplingRate = rsamplingRate;
+}
 
+double TStreamThread::GetResamplingRate()
+{
+	if(resamplingRate < 0) return samplingRate;
+	else return resamplingRate;
+}
 
 void __fastcall TStreamThread::Execute()
 {
@@ -138,41 +154,79 @@ void __fastcall TStreamThread::Execute()
 		}
 
 		if(ProcessDataI32) {
-			int buf[MAX_CHANNELS];
-			double timestamp = lsl_pull_sample_i(inlet,buf, nChannels, 1.0, &errcode);
 
-			if(timestamp) ProcessDataI32(buf, nChannels, samplingRate);
-			else {
+			double timestamp = lsl_pull_sample_i(inlet,i32buf, nChannels, 1.0, &errcode);
+
+			if(timestamp) {
+				if(resamplingRate <= 0)
+					ProcessDataI32(i32buf, nChannels, samplingRate);
+				else if(resamplingRate > samplingRate) {  //need to check
+					while(resampleCount/resamplingRate < count/samplingRate) {
+						ProcessDataI32(i32buf, nChannels, resamplingRate);
+						resampleCount++;
+					}
+				} else { //if(resamplingRate < samplingRate)
+				   if(count/samplingRate > resampleCount/resamplingRate) {
+
+						ProcessDataI32(i32buf, nChannels, resamplingRate);
+						resampleCount++;
+				   }
+				}
+				count++;
+			} else {
 				Sleep(5);
 				continue;
 			}
 		}
 
 		if(ProcessDataF32) {
-			float buf[MAX_CHANNELS];
-			double timestamp = lsl_pull_sample_f(inlet,buf, nChannels, 1.0, &errcode);
 
-			if(timestamp) ProcessDataF32(buf, nChannels, samplingRate);
-			else {
+			double timestamp = lsl_pull_sample_f(inlet,f32buf, nChannels, 1.0, &errcode);
+
+			if(timestamp) {
+				if(resamplingRate <= 0)
+					ProcessDataF32(f32buf, nChannels, samplingRate);
+				else if(resamplingRate > samplingRate) {  //need to check
+					while(resampleCount/resamplingRate < count/samplingRate) {
+						ProcessDataF32(f32buf, nChannels, resamplingRate);
+						resampleCount++;
+					}
+				} else { //if(resamplingRate < samplingRate)
+				   if(count/samplingRate > resampleCount/resamplingRate) {
+
+						ProcessDataF32(f32buf, nChannels, resamplingRate);
+						resampleCount++;
+				   }
+				}
+				count++;
+			} else {
 				Sleep(5);
 				continue;
 			}
 		}
 
-		else if(ProcessDataF64) {
-			double buf[MAX_CHANNELS];
-			double timestamp = lsl_pull_sample_d(inlet,buf, nChannels, 1.0, &errcode);
-			if(timestamp) ProcessDataF64(buf, nChannels,samplingRate);
-			else {
+		if(ProcessDataF64) {
+
+			double timestamp = lsl_pull_sample_d(inlet,f64buf, nChannels, 1.0, &errcode);
+			if(timestamp) {
+				ProcessDataF64(f64buf, nChannels,samplingRate);
+				count++;
+			} else {
 				Sleep(5);
 				continue;
 			}
-		} else if(ProcessDataString) {
-			char *buf = NULL;
-			double timestamp = lsl_pull_sample_str(inlet, &buf, 1, 1.0, &errcode);
-			if(timestamp) ProcessDataString(buf, nChannels, samplingRate);
-		} else {
-			Sleep(5);
+		}
+
+		if(ProcessDataString) {
+
+			double timestamp = lsl_pull_sample_str(inlet, &sbuf, 1, 1.0, &errcode);
+			if(timestamp) {
+				ProcessDataString(sbuf, nChannels, samplingRate);
+				count++;
+			} else {
+				Sleep(5);
+				continue;
+			}
 		}
 	}
 }
