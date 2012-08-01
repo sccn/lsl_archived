@@ -130,7 +130,7 @@ void MainWindow::link_cogionics() {
 
 			// try to open the serial port
 			std::string fname = "\\\\.\\COM" + boost::lexical_cast<std::string>(comPort);
-			HANDLE hPort = CreateFileA(fname.c_str(),GENERIC_READ|GENERIC_WRITE,0,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
+			hPort = CreateFileA(fname.c_str(),GENERIC_READ|GENERIC_WRITE,0,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
 			if (hPort == INVALID_HANDLE_VALUE)
 				throw std::runtime_error("Could not open serial port. Please make sure that the device is paired (pairing code 0000) and that you have the right serial port number.");
 
