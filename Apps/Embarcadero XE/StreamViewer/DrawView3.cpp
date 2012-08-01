@@ -118,11 +118,6 @@ int InRange(int val, int Max)
 
 extern TStringList * dynarr;
 
-union Tul
-{
-	long l;
-	unsigned long u;
-};
 
 long GetValue(/*TDataRiver *sample,*/int i/*stream number*/,int n/*channel number*/)
 {
@@ -147,7 +142,7 @@ int CChannelN::DisplaySample(float *fsample, int nChannels, float samplingRate) 
 }
 
 
-int CChannelN::DisplaySample(/*TDataRiver *sample*/double *sample, int nChannels, float samplingRate)
+int CChannelN::DisplaySample(double *sample, int nChannels, float samplingRate)
 {
 	int ThisPos= m_nCurPosition;
 	int PrevPos=(ThisPos+m_sSize.x-1)%m_sSize.x;
@@ -161,11 +156,8 @@ int CChannelN::DisplaySample(/*TDataRiver *sample*/double *sample, int nChannels
 		int h=pImage->ClientHeight ;
 		int PenCol;
 
-	//	TMaxArray ma;
-		Tul ul;
-	   //	_di_IXMLNode Node  = FindNode(Form1->xd->DocumentElement, "stream");
-		float sr = samplingRate;//Node->GetAttribute("sampling_rate");
-		float bw= 1000.0 / sr;
+
+		float bw= 1000.0 / samplingRate;
 
 
 		LOCK;

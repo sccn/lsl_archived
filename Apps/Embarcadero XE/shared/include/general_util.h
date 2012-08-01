@@ -1,6 +1,8 @@
 #ifndef GeneralUtilH
 #define GeneralUtilH
 
+
+#define VERSION 1000001
 #define CONSOLE 0
 #include <ios>
 #include <vector>
@@ -20,7 +22,6 @@ void CloseConsole() {
 	fclose(stdout);
 }
 
-#define VERSION 1000000
 
 UnicodeString getVersion() {
 	char version[16];
