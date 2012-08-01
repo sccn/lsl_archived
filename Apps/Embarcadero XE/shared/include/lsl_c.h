@@ -206,6 +206,9 @@ extern LIBLSL_C_API double lsl_local_clock();
 * @param buffer A user-allocated buffer to hold the resolve results.
 *				Note: it is the user's responsibility to either destroy the resulting streaminfo 
 *				objects or to pass them back to the LSL during during creation of an inlet.
+*				Note 2: The stream_info's returned by the resolver are only short versions that do not
+*				include the .desc() field (which can be arbitrarily big). To obtain the full
+*				stream information you need to call .info() on the inlet after you have created one.
 * @param buffer_elements The user-provided buffer length.
 * @param wait_time The waiting time for the operation, in seconds, to search for streams.
 *				   The recommended wait time is 1 second (or 2 for a busy and large recording operation).
@@ -222,6 +225,9 @@ extern LIBLSL_C_API int lsl_resolve_all(lsl_streaminfo *buffer, unsigned buffer_
 * @param buffer A user-allocated buffer to hold the resolve results.
 *				Note: it is the user's responsibility to either destroy the resulting streaminfo 
 *				objects or to pass them back to the LSL during during creation of an inlet.
+*				Note 2: The stream_info's returned by the resolver are only short versions that do not
+*				include the .desc() field (which can be arbitrarily big). To obtain the full
+*				stream information you need to call .info() on the inlet after you have created one.
 * @param buffer_elements The user-provided buffer length.
 * @param prop The streaminfo property that should have a specific value ("name", "type", "source_id", or, e.g., "desc/manufaturer" if present).
 * @param value The string value that the property should have (e.g., "EEG" as the type).
@@ -240,6 +246,9 @@ extern LIBLSL_C_API int lsl_resolve_byprop(lsl_streaminfo *buffer, unsigned buff
 * @param buffer A user-allocated buffer to hold the resolve results.
 *				Note: it is the user's responsibility to either destroy the resulting streaminfo 
 *				objects or to pass them back to the LSL during during creation of an inlet.
+*				Note 2: The stream_info's returned by the resolver are only short versions that do not
+*				include the .desc() field (which can be arbitrarily big). To obtain the full
+*				stream information you need to call .info() on the inlet after you have created one.
 * @param buffer_elements The user-provided buffer length.
 * @param pred The predicate string, e.g. "name='BioSemi'" or "type='EEG' and starts-with(name,'BioSemi') and count(info/desc/channel)=32"
 * @param minimum Return at least this number of streams.
@@ -744,6 +753,9 @@ extern LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_bypre
 * @param buffer A user-allocated buffer to hold the current resolve results.
 *				Note: it is the user's responsibility to either destroy the resulting streaminfo 
 *				objects or to pass them back to the LSL during during creation of an inlet.
+*				Note 2: The stream_info's returned by the resolver are only short versions that do not
+*				include the .desc() field (which can be arbitrarily big). To obtain the full
+*				stream information you need to call .info() on the inlet after you have created one.
 * @param buffer_elements The user-provided buffer length.
 * @return The number of results written into the buffer (never more than the provided # of slots) 
 *		  or a negative number if an error has occurred (values corresponding to lsl_error_code_t).

@@ -8,7 +8,6 @@
 #include <boost/foreach.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-// the following two things have to match
 const int num_channels = 18; // plus 2 confidence channels
 
 MainWindow::MainWindow(QWidget *parent, const std::string &config_file) :
@@ -256,7 +255,7 @@ void MainWindow::read_thread(udp_socket_p socket, std::string serverAddress) {
 		.append_child_value("unit","normalized");
 
 	info.desc().append_child("acquisition")
-		.append_child_value("manufacturer","SMP")
+		.append_child_value("manufacturer","SMI")
 		.append_child_value("model","iViewX");
 
 	// make a new outlet

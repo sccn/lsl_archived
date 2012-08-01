@@ -11,6 +11,8 @@
 #else
 	#include "lsl_c.h"
 #endif
+
+#include "general_util.h"
 typedef void (* TProcessDataI32)(int * data, int size, double samplingRate);
 
 typedef void (* TProcessDataF32)(float * data, int size, double samplingRate);
@@ -18,6 +20,8 @@ typedef void (* TProcessDataF32)(float * data, int size, double samplingRate);
 typedef void (* TProcessDataF64)(double * data, int size, double samplingRate);
 
 typedef void (* TProcessDataString) (char * data, int size, double samplingRate);
+
+#define MAX_CHANNELS 512
 
 class TStreamThread: public TThread
 {
@@ -29,7 +33,10 @@ public:
 	bool connected;
 	char typeName[512];
 	char * xmlHeader;
-	double samplingRate;
+
+
+	long count;
+	long resampleCount;
 
 	int Tail;
 	TProcessDataI32 ProcessDataI32;
@@ -43,6 +50,15 @@ public:
 	TStreamThread(char * typeNam, TProcessDataString PD);
 	__fastcall ~TStreamThread();
 	void __fastcall Execute();
+	void SetResamplingRate(double rsamplingRate);
+    double GetResamplingRate();
+private:
+	int i32buf[MAX_CHANNELS];
+	float f32buf[MAX_CHANNELS];
+	double f64buf[MAX_CHANNELS];
+	char *sbuf;
+	double samplingRate;
+	double resamplingRate;
 };
 
 #endif

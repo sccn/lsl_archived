@@ -265,12 +265,12 @@ void ProcessDataInt(int *data, int nChannels, double samplingRate) {
 
 
 void ProcessData(float *data, int nChannels, double samplingRate) {
-	Form1->Edit2->Text = nChannels/4;
+ 	Form1->Edit2->Text = nChannels/4;
 	if(processDataCount == 0) {
 		vector<UnicodeString> lines = splitString(UnicodeString(listenThread->xmlHeader), L'\n');
 		Form1->Memo1->Clear();
 		for(int i=0; i<lines.size(); i++) {
-			Form1->Memo1->Lines->Add(lines[i]);//UnicodeString(listenThread->xmlHeader);
+			Form1->Memo1->Lines->Add(lines[i]);
 		}
 	}
 	if(samplingRate == 0.0) return;
@@ -278,26 +278,18 @@ void ProcessData(float *data, int nChannels, double samplingRate) {
 	HWND hWnd;
 	HDC 	hDC;
 	RECT r;
-  //	char data[10000];
-   //	TMaxArray  * pMS = (TMaxArray  *)data;
-  //	TDataRiver dr;
+
 
 	bool isTime = Form1->PageControl2->ActivePageIndex==0;
 	if (isTime)  //disply traces
 	{
-		//int samples = 0;
-	   //	while (samples++ < 1000)
-	   //	{
-			//int ok = ds_Read(hInStream,data);
-			//if (!ok)
-			//	break;
+
 
 			if (Form1->CheckBox1->Checked) HiPass(data, nChannels);
 
-			//SStoDRiver(&dr, data);
-			//Display->DisplaySample(&dr);
+
 			Form1->Display->DisplaySample(data, nChannels, samplingRate);
-		//}
+
 		if(((int)((processDataCount++) * 100.0/samplingRate))%5 == 0) {
 			hWnd =Form1->PageControl2->ActivePage->Handle;
 			hDC = GetDC(hWnd);
@@ -308,16 +300,10 @@ void ProcessData(float *data, int nChannels, double samplingRate) {
 			ReleaseDC(hWnd,hDC);
 		}
 	}
-	else  //display 3d
+	else
 	{
 		bool ok;
-	  //	do
-	  //		ok = ds_Read(hInStream,data);
-	  //	while (ok);
 
-
-		  //	SStoDRiver(&dr, data);
-		  //	Display3D->DisplaySample(&dr);
 		  Form1->Display3D->DisplaySample(data,nChannels,samplingRate);
 
 		if(((int)((processDataCount++) * 100.0/samplingRate)) % 5 == 0) {
@@ -429,6 +415,9 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 	*/
 
 	if(resolver) lsl_destroy_continuous_resolver(resolver);
+
+	delete Display;
+	delete Display3D;
 }
 //---------------------------------------------------------------------------
 
@@ -661,8 +650,8 @@ void __fastcall TForm1::ComboBox1Select(TObject *Sender)
 		listenThread = NULL;
    }
 
-      //	char temp[512]; //Why does this not work? Embarcadero bug?
-   char * temp = (char *) malloc(512);
+   char temp[512]; //Why does this not work? Embarcadero bug?
+  // char * temp = (char *) malloc(512);
    sprintf(temp, "name='%s'", ((AnsiString) ComboBox1->Text).c_str());
    processDataCount = 0;
 
@@ -684,6 +673,7 @@ void __fastcall TForm1::ComboBox1Select(TObject *Sender)
 		Application->MessageBoxA(L"LSL Stream type is not implemented.", L"Error", MB_OK);
 		return;
    }
+   listenThread->SetResamplingRate(200.0);
    listenThread->Resume();
 
 //	AnsiString s = ComboBox1->Text;
@@ -691,7 +681,7 @@ void __fastcall TForm1::ComboBox1Select(TObject *Sender)
 	CumulBuf.ClearBuf();
 	PageControl1->ActivePageIndex=0;
 	PageControl1Change(0);
-	free(temp);
+ //	free(temp);
 	lsl_destroy_streaminfo(info);
 }
 //---------------------------------------------------------------------------

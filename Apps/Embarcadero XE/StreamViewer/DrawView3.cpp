@@ -118,11 +118,6 @@ int InRange(int val, int Max)
 
 extern TStringList * dynarr;
 
-union Tul
-{
-	long l;
-	unsigned long u;
-};
 
 long GetValue(/*TDataRiver *sample,*/int i/*stream number*/,int n/*channel number*/)
 {
@@ -147,7 +142,7 @@ int CChannelN::DisplaySample(float *fsample, int nChannels, float samplingRate) 
 }
 
 
-int CChannelN::DisplaySample(/*TDataRiver *sample*/double *sample, int nChannels, float samplingRate)
+int CChannelN::DisplaySample(double *sample, int nChannels, float samplingRate)
 {
 	int ThisPos= m_nCurPosition;
 	int PrevPos=(ThisPos+m_sSize.x-1)%m_sSize.x;
@@ -161,11 +156,8 @@ int CChannelN::DisplaySample(/*TDataRiver *sample*/double *sample, int nChannels
 		int h=pImage->ClientHeight ;
 		int PenCol;
 
-	//	TMaxArray ma;
-		Tul ul;
-	   //	_di_IXMLNode Node  = FindNode(Form1->xd->DocumentElement, "stream");
-		float sr = samplingRate;//Node->GetAttribute("sampling_rate");
-		float bw= 1000.0 / sr;
+
+		float bw= 1000.0 / samplingRate;
 
 
 		LOCK;
@@ -526,15 +518,15 @@ int TDisplay3D::DisplaySample(/*TDataRiver *sample*/double *sample, int nChannel
 		zero=false;
 	}
 
-	int chCount = nChannels;
+	int chCount = nChannels/4;
 	if (chCount > Form1->UpDown2->Position)
 		chCount = Form1->UpDown2->Position;
 	for (int ch = 0; ch < chCount; ch++)
-		if (FormLEDs->CheckBoxLED[ch > 72 ? 0: ch]->Checked)
+		if (FormLEDs->CheckBoxLED[ch]->Checked)
 		{
-			x =(sample[ch*4]/*GetValue(sample,i,0+ch*3)*/-x0)* Form1->TrackBarGain->Position/100;
-			y =(sample[1+ch*4]/*GetValue(sample,i,1+ch*3)*/-y0)* Form1->TrackBarGain->Position/100;
-			z =(sample[2+ch*4]/*GetValue(sample,i,2+ch*3)*/-z0)* Form1->TrackBarGain->Position/100;;
+			x =(sample[ch*4]-x0)* Form1->TrackBarGain->Position/100;
+			y =(sample[1+ch*4]-y0)* Form1->TrackBarGain->Position/100;
+			z =(sample[2+ch*4]-z0)* Form1->TrackBarGain->Position/100;;
 
 			Display3DBuffer[ch].AddSample(x,y,z);
 			pos1 = Display3DBuffer[ch].pos;

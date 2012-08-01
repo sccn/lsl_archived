@@ -24,6 +24,9 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<BCC_MonitorInlinePtrAccess>true</BCC_MonitorInlinePtrAccess>
+			<BCC_MonitorGlobalAndStackData>true</BCC_MonitorGlobalAndStackData>
+			<BCC_MonitorThis>true</BCC_MonitorThis>
 			<_TCHARMapping>char</_TCHARMapping>
 			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<IncludePath>..\math\;..\shared\;..\shared\4.4.0-msvc\include\;..\shared\include\;..\;..\shared\boost_1_47_0;$(IncludePath)</IncludePath>
@@ -98,7 +101,7 @@
 			<None Include="..\shared\4.4.0-msvc\include\allegro.h">
 				<BuildOrder>10</BuildOrder>
 			</None>
-			<None Include="..\shared\include\console_util.h">
+			<None Include="..\shared\include\general_util.h">
 				<BuildOrder>14</BuildOrder>
 			</None>
 			<None Include="..\shared\include\lsl_c.h">
