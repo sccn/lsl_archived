@@ -174,16 +174,17 @@ void MainWindow::link_amti() {
 			timeouts.WriteTotalTimeoutMultiplier = 50;
 			SetCommTimeouts(hPort,&timeouts);
 
-			// set some reasonable buffer sizes
-			SetupComm(hPort,buffer_size,buffer_size);
-
 			// set the desired baud rate
 			DCB dcb = {0};
 			dcb.DCBlength = sizeof(DCB);
 			GetCommState(hPort,&dcb);
+			dcb.ByteSize = 8;
 			dcb.BaudRate = samplingRate == 50 ? 57600 : 115200;
 			if (!SetCommState(hPort,&dcb))
 				QMessageBox::information(this,"Note","Could not set baud rate of serial connection.",QMessageBox::Ok);
+
+			// set some reasonable buffer sizes
+			SetupComm(hPort,buffer_size,buffer_size);
 
 			// send a stop command and give it some time to settle
 			cmd = cmd_stop;
@@ -194,13 +195,13 @@ void MainWindow::link_amti() {
 			// set new baud rate and scan for the acknowledgement (may have to shift out the old buffer contents)
 			resp = 0;
 			bytes_skipped=0;
-			cmd = cmd_50Hz; (samplingRate==50) ? cmd_50Hz : ((samplingRate==100) ? cmd_100Hz : cmd_200Hz);
+			cmd = (samplingRate==50) ? cmd_50Hz : ((samplingRate==100) ? cmd_100Hz : cmd_200Hz);
+			if (!WriteFile(hPort,(LPSTR)&cmd,1,&dwBytesWritten,NULL))
+				throw std::runtime_error("Cannot send commands to the device.");
 			while (resp != cmd) {
 				// communicate baud rate
-				if (!WriteFile(hPort,(LPSTR)&cmd,1,&dwBytesWritten,NULL))
-					throw std::runtime_error("Cannot send commands to the device.");
 				if ((!ReadFile(hPort,&resp,1,&dwBytesRead,NULL) || !dwBytesRead))
-					throw std::runtime_error("Did not receive a response from the device after baud rate choice. Please make sure that your COM port has a baud rate of " + boost::lexical_cast<std::string>(dcb.BaudRate) + " set (see Control Panel / System / Device Manager / Ports).");
+					throw std::runtime_error("Did not receive a response from the device after baud rate choice. Please make sure that your COM port supports a baud rate of " + boost::lexical_cast<std::string>(dcb.BaudRate) + ".");
 				if (++bytes_skipped > 2*buffer_size)
 					throw std::runtime_error("Device does not response in an expected way. Please make sure that this software is compatible with your type of force plate.");
 			}
