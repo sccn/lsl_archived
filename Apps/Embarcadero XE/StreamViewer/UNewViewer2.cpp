@@ -415,6 +415,9 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 	*/
 
 	if(resolver) lsl_destroy_continuous_resolver(resolver);
+
+	delete Display;
+	delete Display3D;
 }
 //---------------------------------------------------------------------------
 

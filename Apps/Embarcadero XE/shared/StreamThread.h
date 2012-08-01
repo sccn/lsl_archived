@@ -11,6 +11,8 @@
 #else
 	#include "lsl_c.h"
 #endif
+
+#include "general_util.h"
 typedef void (* TProcessDataI32)(int * data, int size, double samplingRate);
 
 typedef void (* TProcessDataF32)(float * data, int size, double samplingRate);

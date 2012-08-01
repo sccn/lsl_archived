@@ -122,7 +122,7 @@ void __fastcall TStreamThread::Execute()
 			int streamsFound = lsl_resolve_bypred(&info,1, typeName, 1,1.0);
 
 			if(streamsFound < 1) {
-				printf("Requested Stream not resolved by timeout.\n");
+				if(CONSOLE) printf("Requested Stream not resolved by timeout.\n");
 				Sleep(5);
 				continue;
 			}
@@ -134,7 +134,7 @@ void __fastcall TStreamThread::Execute()
 			info = lsl_get_fullinfo(inlet,1.0,&errcode);
 
 			if(errcode) {
-				printf("error opening stream: %d\n", errcode);
+				if(CONSOLE) printf("error opening stream: %d\n", errcode);
 				Sleep(5);
 
 				continue;
@@ -143,9 +143,9 @@ void __fastcall TStreamThread::Execute()
 				nChannels = lsl_get_channel_count(info);
 				samplingRate = lsl_get_nominal_srate(info);
 				xmlHeader = lsl_get_xml(info);
-				printf("%s\n", xmlHeader);
+				if(CONSOLE) printf("%s\n", xmlHeader);
 				if(nChannels > MAX_CHANNELS) {
-					printf("Too many channels\n");
+					if(CONSOLE) printf("Too many channels\n");
 					Sleep(5);
 					continue;
 					//THROW ERROR or replace with new1d
