@@ -357,7 +357,7 @@ private:
 				write_chunk(ct_clockoffset,content.str());
 				// also append to the offset lists
 				boost::mutex::scoped_lock lock(offset_mut_);
-				offset_lists_[streamid].push_back(std::make_pair(now,offset));
+				offset_lists_[streamid].push_back(std::make_pair(now-offset,offset));
 			}
 		} 
 		catch(boost::thread_interrupted &) { 
