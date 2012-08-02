@@ -84,7 +84,7 @@ function [streams,fileheader] = load_xdf(filename)
 %                                Contains portions of xml2struct Copyright (c) 2010, Wouter Falkena,
 %                                ASTI, TUDelft, 21-08-2010
 %
-%                                version 1.04
+%                                version 1.05
 
 
 % uncompress if necessary
@@ -173,6 +173,8 @@ while 1
             temp(id).last_timestamp = 0;
             temp(id).time_series = {};
             temp(id).time_stamps = {};
+            temp(id).clock_times = [];
+            temp(id).clock_values = [];
             if temp(id).srate > 0
                 temp(id).sampling_interval = 1/temp(id).srate;
             else
@@ -192,8 +194,16 @@ while 1
         case 1
             % [FileHeader] chunk
             fileheader = parse_xml_struct(fread(f,len-2,'*char')');
+        case 4
+            % [ClockOffset] chunk
+            % [StreamId]
+            id = idmap(fread(f,1,'uint32'));
+            % [CollectionTime]
+            temp(id).clock_times(end+1) = fread(f,1,'double');
+            % [OffsetValue]
+            temp(id).clock_values(end+1) = fread(f,1,'double');
         otherwise
-            % skip other chunks (ClockOffset,Boundary, ...)
+            % skip other chunks (Boundary, ...)
             fread(f,len-2,'*uint8');
     end
 end
@@ -207,10 +217,9 @@ for k=1:length(temp)
     temp(k).time_stamps = [temp(k).time_stamps{:}];
     if ~isempty(temp(k).time_stamps) && ~isempty(temp(k).time_series)
         try
-            % calculate clock offset
-            clock_offsets = [streams{k}.info.clock_offsets.offset{:}];
-            clock_times = cellfun(@str2num,{clock_offsets.time});
-            clock_values = cellfun(@str2num,{clock_offsets.value});
+            clock_times = temp(k).clock_times;
+            clock_values = temp(k).clock_values;
+            % calculate clock offset mapping
             try
                 mapping = robustfit(clock_times,clock_values);
             catch %#ok<CTCH>
