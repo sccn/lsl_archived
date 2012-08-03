@@ -47,8 +47,8 @@ void MainWindow::link_keyboard() {
 	if (outlet_) {
 		// === perform unlink action ===
 		try {
-			outlet_.reset();
 			UnhookWindowsHookEx(kbdHook_);
+			outlet_.reset();
 		} catch(std::exception &e) {
 			QMessageBox::critical(this,"Error",(std::string("Unable to unlink: ")+=e.what()).c_str(),QMessageBox::Ok);
 			return;
@@ -56,17 +56,21 @@ void MainWindow::link_keyboard() {
 		ui->linkButton->setText("Link");
 	} else {
 		// === perform link action ===
+		bool hooked = false;
 		try {
 			// install low-level keyboard hook
 			kbdHook_ = SetWindowsHookEx(WH_KEYBOARD_LL,(HOOKPROC)keyboard_callback,GetModuleHandle(NULL),0);
 			if (!kbdHook_)
 				throw std::runtime_error("Cannot install keyboard hook. Please make sure that this program has the permission to grab the Windows keyboard events.");
+			hooked = true;
 			// create streaminfo and outlet
 			lsl::stream_info info("Keyboard","Markers",1,lsl::IRREGULAR_RATE,lsl::cf_string,"KeyboardCapture_" + boost::asio::ip::host_name());
 			outlet_.reset(new lsl::stream_outlet(info));
 			// now we are linked
 			ui->linkButton->setText("Unlink");
 		} catch(std::runtime_error &e) {
+			if (hooked)
+				UnhookWindowsHookEx(kbdHook_);
 			// and show message box
 			QMessageBox::critical(this,"Initialization Error", (std::string("Unable to link: ") += e.what()).c_str(),QMessageBox::Ok);
 		}		
