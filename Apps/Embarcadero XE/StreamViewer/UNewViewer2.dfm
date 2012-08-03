@@ -3108,7 +3108,7 @@ object Form1: TForm1
     Top = 20
     Width = 613
     Height = 558
-    ActivePage = TabSheet32
+    ActivePage = TabSheet1
     MultiLine = True
     TabOrder = 3
     TabPosition = tpLeft
@@ -3150,26 +3150,14 @@ object Form1: TForm1
         OnChange = PageControl1Change
         object TabSheet3: TTabSheet
           Caption = 'Ch.0-31'
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet4: TTabSheet
           Caption = 'Ch.32-63'
           ImageIndex = 1
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet5: TTabSheet
           Caption = 'Ch.64-95'
           ImageIndex = 2
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet6: TTabSheet
           Caption = 'Ch.96-127'
@@ -3178,130 +3166,66 @@ object Form1: TForm1
         object TabSheet7: TTabSheet
           Caption = 'Ch.128-159'
           ImageIndex = 4
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet8: TTabSheet
           Caption = 'Ch.160-191'
           ImageIndex = 5
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet9: TTabSheet
           Caption = 'Ch.192-223'
           ImageIndex = 6
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet10: TTabSheet
           Caption = 'Ch.224-255'
           ImageIndex = 7
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet11: TTabSheet
           Caption = 'Ch.256-287'
           ImageIndex = 8
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet12: TTabSheet
           Caption = 'Ch.288-319'
           ImageIndex = 9
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet13: TTabSheet
           Caption = 'ch.320-351'
           ImageIndex = 10
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet14: TTabSheet
           Caption = 'ch.352-383'
           ImageIndex = 11
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet15: TTabSheet
           Caption = 'ch.384-415'
           ImageIndex = 12
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet16: TTabSheet
           Caption = 'ch.416-447'
           ImageIndex = 13
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet17: TTabSheet
           Caption = 'ch.448-479'
           ImageIndex = 14
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet18: TTabSheet
           Caption = 'ch.480-511'
           ImageIndex = 15
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet19: TTabSheet
           Caption = 'ch.512-543'
           ImageIndex = 16
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet20: TTabSheet
           Caption = 'ch.544-575'
           ImageIndex = 17
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet21: TTabSheet
           Caption = 'ch.576-607'
           ImageIndex = 18
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
         object TabSheet22: TTabSheet
           Caption = 'ch.608-639'
           ImageIndex = 19
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
         end
       end
       object UpDown1: TUpDown
@@ -3311,7 +3235,6 @@ object Form1: TForm1
         Height = 19
         Min = -24
         Max = 24
-        Position = 10
         TabOrder = 1
         OnMouseUp = UpDown1MouseUp
       end

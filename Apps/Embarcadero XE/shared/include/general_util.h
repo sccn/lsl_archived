@@ -2,11 +2,22 @@
 #define GeneralUtilH
 
 
-#define VERSION 1000002
+#define VERSION 1000003
 #define CONSOLE 0
 #include <ios>
 #include <vector>
 #include "stdio.h"
+
+
+UnicodeString getVersion() {
+	char version[16];
+	int major = VERSION/1000000;
+	int minor = (VERSION/1000) % 1000;
+	int revision = VERSION % 1000;
+	sprintf(version,"%d.%d.%d",major,minor,revision);
+	return UnicodeString(version);
+
+}
 
 void OpenConsole() {
 	 // create the console
@@ -21,17 +32,6 @@ void OpenConsole() {
 void CloseConsole() {
 	FreeConsole();
 	fclose(stdout);
-}
-
-
-UnicodeString getVersion() {
-	char version[16];
-	int major = VERSION/1000000;
-	int minor = (VERSION/1000) % 1000;
-	int revision = VERSION % 1000;
-	sprintf(version,"%d.%d.%d",major,minor,revision);
-	return UnicodeString(version);
-
 }
 
 //std::vector<UnicodeString> strs = splitString(pC->Name, L'_');

@@ -160,7 +160,7 @@ void __fastcall TStreamThread::Execute()
 			if(timestamp) {
 				if(resamplingRate <= 0)
 					ProcessDataI32(i32buf, nChannels, samplingRate);
-				else if(resamplingRate > samplingRate) {  //need to check
+				else if(resamplingRate > samplingRate) {
 					while(resampleCount/resamplingRate < count/samplingRate) {
 						ProcessDataI32(i32buf, nChannels, resamplingRate);
 						resampleCount++;
@@ -186,7 +186,7 @@ void __fastcall TStreamThread::Execute()
 			if(timestamp) {
 				if(resamplingRate <= 0)
 					ProcessDataF32(f32buf, nChannels, samplingRate);
-				else if(resamplingRate > samplingRate) {  //need to check
+				else if(resamplingRate > samplingRate) {
 					while(resampleCount/resamplingRate < count/samplingRate) {
 						ProcessDataF32(f32buf, nChannels, resamplingRate);
 						resampleCount++;
@@ -209,7 +209,20 @@ void __fastcall TStreamThread::Execute()
 
 			double timestamp = lsl_pull_sample_d(inlet,f64buf, nChannels, 1.0, &errcode);
 			if(timestamp) {
-				ProcessDataF64(f64buf, nChannels,samplingRate);
+				if(resamplingRate <= 0)
+					ProcessDataF64(f64buf, nChannels, samplingRate);
+				else if(resamplingRate > samplingRate) {
+					while(resampleCount/resamplingRate < count/samplingRate) {
+						ProcessDataF64(f64buf, nChannels, resamplingRate);
+						resampleCount++;
+					}
+				} else { //if(resamplingRate < samplingRate)
+				   if(count/samplingRate > resampleCount/resamplingRate) {
+
+						ProcessDataF64(f64buf, nChannels, resamplingRate);
+						resampleCount++;
+				   }
+				}
 				count++;
 			} else {
 				Sleep(5);

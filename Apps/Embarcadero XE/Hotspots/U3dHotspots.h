@@ -128,7 +128,6 @@ __published:	// IDE-managed Components
 	TProgressBar *ProgressBar1;
 	TComboBox *PhaseComboBox;
 	TLabel *Label36;
-	TButton *Button1;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 
@@ -189,7 +188,6 @@ __published:	// IDE-managed Components
 	void __fastcall OpenDisplaysButtonClick(TObject *Sender);
 	void __fastcall CloseDisplaysButtonClick(TObject *Sender);
 	void __fastcall PhaseComboBoxChange(TObject *Sender);
-	void __fastcall Button1Click(TObject *Sender);
 private:	// User declarations
 	int FindMmfBuffer();
 	pugi::xml_document doc;

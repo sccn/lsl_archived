@@ -578,12 +578,18 @@ void __fastcall TForm4::eyeCalibration() {
 	double **error = new2D<double>(stddevEyeXs.size(),2,0.0);
 
 	for(unsigned int i=0; i<markerXs.size(); i++) {
-		 coords[i][0] = scaledMarkerXs[i];
-		 coords[i][1] = scaledMarkerYs[i];
-		 data[i][0] = scaledMeanEyeXs[i];
-		 data[i][1] = scaledMeanEyeYs[i];
-		 error[i][0] = scaledStddevEyeXs[i];
-		 error[i][1] = scaledStddevEyeYs[i];
+		if(_isnan(scaledMarkerXs[i]) || _isnan(scaledMarkerYs[i]) ||
+		   _isnan(scaledMeanEyeXs[i]) || _isnan(scaledMeanEyeYs[i]) ||
+		   _isnan(scaledStddevEyeXs[i]) || _isnan(scaledStddevEyeYs[i])) {
+		   Application->MessageBoxA(L"Eye data is missing points.", L"Error", MB_OK);
+		   return;
+		}
+		coords[i][0] = scaledMarkerXs[i];
+		coords[i][1] = scaledMarkerYs[i];
+		data[i][0] = scaledMeanEyeXs[i];
+		data[i][1] = scaledMeanEyeYs[i];
+		error[i][0] = scaledStddevEyeXs[i];
+		error[i][1] = scaledStddevEyeYs[i];
 	}
 
 	double *params = new1D<double>(11, 0.0);
@@ -719,12 +725,18 @@ void __fastcall TForm4::sceneCalibration() {
 	double **error = new2D<double>(stddevSceneXs.size(),2,0.0);
 
 	for(unsigned int i=0; i<markerXs.size(); i++) {
-		 coords[i][0] = scaledMarkerXs[i];
-		 coords[i][1] = scaledMarkerYs[i];
-		 data[i][0] = meanSceneXs[i];
-		 data[i][1] = meanSceneYs[i];
-		 error[i][0] = stddevSceneXs[i];
-		 error[i][1] = stddevSceneYs[i];
+		if(_isnan(scaledMarkerXs[i]) || _isnan(scaledMarkerYs[i]) ||
+		   _isnan(meanSceneXs[i]) || _isnan(meanSceneYs[i]) ||
+		   _isnan(stddevSceneXs[i]) || _isnan(stddevSceneYs[i])) {
+		   Application->MessageBoxA(L"Scene data is missing points.", L"Error", MB_OK);
+		   return;
+		}
+		coords[i][0] = scaledMarkerXs[i];
+		coords[i][1] = scaledMarkerYs[i];
+		data[i][0] = meanSceneXs[i];
+		data[i][1] = meanSceneYs[i];
+		error[i][0] = stddevSceneXs[i];
+		error[i][1] = stddevSceneYs[i];
 	}
 
 	double *params = new1D<double>(10, 0.0);

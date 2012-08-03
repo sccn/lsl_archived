@@ -2290,13 +2290,4 @@ void __fastcall TForm11::CloseDisplaysButtonClick(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
-#define MAX_CHANNELS 256
-void __fastcall TForm11::Button1Click(TObject *Sender)
-{
-
-
-	phasespaceThread = new TStreamThread("PhaseSpace",ProcessData);
-	phasespaceThread->Resume();
-}
-//---------------------------------------------------------------------------
 
