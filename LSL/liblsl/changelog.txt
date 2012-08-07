@@ -55,4 +55,5 @@ Changes for distribution 1.0.21 (library version 1.02) -- after extensive stress
 * Fixed an occasional "not a socket" error in the TCP server shutdown
 * Fixed handling of some unusual parameter settings in the inlet (buffer size=0)
 
-
+Library version 1.03
+* Added support for Windows XP
