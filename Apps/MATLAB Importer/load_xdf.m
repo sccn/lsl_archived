@@ -84,9 +84,11 @@ function [streams,fileheader] = load_xdf(filename)
 %                                Contains portions of xml2struct Copyright (c) 2010, Wouter Falkena,
 %                                ASTI, TUDelft, 21-08-2010
 %
-%                                version 1.05
+%                                version 1.06
 
-
+if ~exist(filename,'file')
+    error(['The file "' filename '" does not exist.']); end
+    
 % uncompress if necessary
 [p,n,x] = fileparts(filename);
 if strcmp(x,'.xdfz')
@@ -111,6 +113,11 @@ idmap = sparse(2^31-1,1);   % remaps stream id's onto indices in streams
 temp = struct();            % struct array of temporary per-stream information
 fileheader = struct();      % the file header
 
+% check whether we have a working mex file for the inner loop
+have_mex = exist('load_xdf_innerloop','file');
+if ~have_mex
+    disp('NOTE: apparently you are missing a compiled binary version of the inner loop code. Using the slow MATLAB code instead.'); end
+
 % === read the file ===
 
 % [MagicCode]
@@ -125,41 +132,49 @@ while 1
         break; end
     % [Tag]
     switch fread(f,1,'uint16')
+        % [Samples] chunk
         case 3
-            % [Samples] chunk
             % [StreamId]
             id = idmap(fread(f,1,'uint32'));
-            % [NumSampleBytes], [NumSamples]
-            num = read_varlen_int(f);
-            % allocate space
-            timestamps = zeros(1,num);
-            if strcmp(temp(id).readfmt,'*string')
-                values = cell(temp(id).chns,num);
-            else
-                values = zeros(temp(id).chns,num);
-            end
-            % for each sample...
-            for s=1:num
-                % read or deduce time stamp
-                if fread(f,1,'*uint8')
-                    timestamps(s) = fread(f,1,'double');
-                else
-                    timestamps(s) = temp(id).last_timestamp + temp(id).sampling_interval;
-                end
-                % read the values
+            if have_mex
+                % read the chunk data at once
+                data = fread(f,len-6,'*uint8');
+                % run the mex kernel
+                [values,timestamps] = load_xdf_innerloop(data, temp(id).chns, temp(id).readfmt, temp(id).sampling_interval, temp(id).last_timestamp);
+                temp(id).last_timestamp = timestamps(end);
+            else                
+                % [NumSampleBytes], [NumSamples]
+                num = read_varlen_int(f);
+                % allocate space
+                timestamps = zeros(1,num);
                 if strcmp(temp(id).readfmt,'*string')
-                    for v = 1:size(values,1)
-                        values{v,s} = fread(f,read_varlen_int(f),'*char')'; end
+                    values = cell(temp(id).chns,num);
                 else
-                    values(:,s) = fread(f,size(values,1),temp(id).readfmt);
+                    values = zeros(temp(id).chns,num);
                 end
-                temp(id).last_timestamp = timestamps(s);
+                % for each sample...
+                for s=1:num
+                    % read or deduce time stamp
+                    if fread(f,1,'*uint8')
+                        timestamps(s) = fread(f,1,'double');
+                    else
+                        timestamps(s) = temp(id).last_timestamp + temp(id).sampling_interval;
+                    end
+                    % read the values
+                    if strcmp(temp(id).readfmt,'*string')
+                        for v = 1:size(values,1)
+                            values{v,s} = fread(f,read_varlen_int(f),'*char')'; end
+                    else
+                        values(:,s) = fread(f,size(values,1),temp(id).readfmt);
+                    end
+                    temp(id).last_timestamp = timestamps(s);
+                end
             end
             % append to the time series...
             temp(id).time_series{end+1} = values;
-            temp(id).time_stamps{end+1} = timestamps;            
+            temp(id).time_stamps{end+1} = timestamps;
+        % [StreamHeader] chunk
         case 2
-            % [StreamHeader] chunk
             % [StreamId]
             streamid = fread(f,1,'uint32');
             id = length(streams)+1;
@@ -183,19 +198,19 @@ while 1
             % fread parsing format for data values
             temp(id).readfmt = ['*' header.info.channel_format];
             if strcmp(temp(id).readfmt,'*double64')
-                temp(id).readfmt = 'double'; end
+                temp(id).readfmt = 'double'; end               
+        % [StreamFooter] chunk
         case 6
-            % [StreamFooter] chunk
             % [StreamId]
             id = idmap(fread(f,1,'uint32'));
             % [Content]
             footer = parse_xml_struct(fread(f,len-6,'*char')');
             streams{id} = hlp_superimposedata(footer,streams{id});
-        case 1
-            % [FileHeader] chunk
+        % [FileHeader] chunk
+        case 1            
             fileheader = parse_xml_struct(fread(f,len-2,'*char')');
+        % [ClockOffset] chunk
         case 4
-            % [ClockOffset] chunk
             % [StreamId]
             id = idmap(fread(f,1,'uint32'));
             % [CollectionTime]
