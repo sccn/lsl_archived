@@ -65,9 +65,10 @@ else
     % init shared handles
     [fig,ax,lines] = deal([]);
         
-    % determine a variable name to hold the stream's data
-    varname = genvarname(opts.streamname);
-    buffername = ['lsl_' genvarname(opts.streamname) '_stream'];
+    % choose variable names to hold the stream's data (in the base workspace)
+    taken = evalin('base','whos(''lsl*'')');
+    chunkname = genvarname(['lsl_' opts.streamname '_chunk'],{taken.name});
+    buffername = genvarname(['lsl_' opts.streamname '_stream'],{taken.name});
         
     % create a stream inlet
     inlet = create_inlet(opts);
@@ -88,10 +89,9 @@ end
 
     % create a new figure and axes
     function create_figure(opts)
-        fig = figure('Tag',['Fig' varname],'Name',['LSL:Stream''' opts.streamname ''''],'CloseRequestFcn','delete(gcbf)', ...
+        fig = figure('Tag',['Fig' buffername],'Name',['LSL:Stream''' opts.streamname ''''],'CloseRequestFcn','delete(gcbf)', ...
             'KeyPressFcn',@(varargin)on_key(varargin{2}.Key));
         ax = axes('Parent',fig, 'Tag','LSLViewer', 'YDir','reverse');
-        title(ax,opts.streamname);
         xlabel(ax,'Time (sec)','FontSize',12);
         ylabel(ax,'Activation (\mu V^2)','FontSize',12);
     end
@@ -101,24 +101,25 @@ end
             % check if the buffer is still there
             if evalin('base',['exist(''' buffername ''',''var'')'])
                 
-                % === update buffer contents ===
                 
-                % pull a new chunk from LSL and store it in the base workspace
-                chunkname = ['lsl_' varname '_chunk'];
+                % === update buffer contents (happens in the base workspace) ===
+                
+                % pull a new chunk from LSL
                 assignin('base',chunkname,inlet.pull_chunk());
                 
-                % append it to the circular buffer
+                % append it to the stream buffer
                 evalin('base',['[' buffername '.smax,' buffername '.data(:,1+mod(' buffername '.smax:' buffername '.smax+size(' chunkname ',2)-1,' buffername '.pnts))] = deal(' buffername '.smax + size(' chunkname ',2),' chunkname ');']);
                 
-                % get the stream buffer from the base workspace
+                % get the updated stream buffer
                 stream = evalin('base',buffername);
-                samples_to_get = min(stream.pnts, round(stream.srate*stream.opts.timerange));
                 
                 % reformat the stream buffer to contain only the current block that should be displayed
+                samples_to_get = min(stream.pnts, round(stream.srate*stream.opts.timerange));
                 stream.data = stream.data(:, 1+mod(stream.smax-samples_to_get:stream.smax-1,stream.pnts));
                 [stream.nbchan,stream.pnts,stream.trials] = size(stream.data);
                 stream.xmax = stream.smax/stream.srate;
                 stream.xmin = stream.xmax - (stream.pnts-1)/stream.srate;
+                
                 
                 % === data post-processing for plotting ===
                 
@@ -134,7 +135,7 @@ end
                 
                 % re-reference
                 if stream.opts.reref
-                    plotdata = plotdata - mean(plotdata); end
+                    plotdata = bsxfun(@minus,plotdata,mean(plotdata)); end
                 
                 % zero-mean
                 plotdata = bsxfun(@minus, plotdata, mean(plotdata,1));
@@ -143,12 +144,14 @@ end
                 plotoffsets = (0:size(plotdata,1)-1)*stream.opts.datascale;
                 plotdata = bsxfun(@plus, plotdata', plotoffsets);
                 
+                
                 % === actual drawing ===
                 
                 % draw the block contents...
                 if ~isempty(plotdata)
                     if ~exist('lines','var') || isempty(lines)                        
                         lines = plot(ax,plottime,plotdata);
+                        title(ax,opts.streamname);
                     else
                         for k=1:length(lines)
                             set(lines(k),'Ydata',plotdata(:,k));
@@ -173,7 +176,7 @@ end
                 delete(th);
             end
         catch e
-            if isempty(findobj('Tag',['Fig' varname]))
+            if isempty(findobj('Tag',['Fig' buffername]))
                 disp('Figure was closed.');
             else
                 disp('An error occurred during the stream viewer update: ');

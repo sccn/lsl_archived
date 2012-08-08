@@ -15,7 +15,7 @@ if ~isfield(tracking,'arg_sys')
     tracking.arg_sys = struct(); end
 if ~isfield(tracking.arg_sys,'tickets')
     tracking.arg_sys.tickets = java.util.concurrent.LinkedBlockingDeque();
-    for k=50000:-1:1
+    for k=5000:-1:1
         tracking.arg_sys.tickets.addLast(k); end
 end
 ticket = tracking.arg_sys.tickets.removeLast();
