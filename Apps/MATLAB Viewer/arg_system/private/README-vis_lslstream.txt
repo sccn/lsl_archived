@@ -1,5 +1,4 @@
 This folder contains a modified version of the PropertyGrid toolbox:
-
 Major changes:
 * PropertyType accepts [] for types that are 'scalar'.
 * The PropertyGrid can be constructed from an argument specification (as created by the arg system).
@@ -13,3 +12,9 @@ The folder also contains a subset of the guifunc package of EEGLAB 10.0.1.0, inc
 * supergui.m
 * inputgui.m
 * finputcheck.m
+
+Lastly, there are a few functions from the BCILAB toolbox included:
+* hlp_* (commonly-used helper functions)
+* parse_help.m
+* disp_once.m
+* env_doc.m
