@@ -10,7 +10,7 @@
 const int LSL_PROTOCOL_VERSION = 100;
 
 // the library version
-const int LSL_LIBRARY_VERSION = 102;
+const int LSL_LIBRARY_VERSION = 103;
 
 
 // === Auto-generated target platform version defines (for Microsoft and asio) ===

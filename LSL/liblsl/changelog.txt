@@ -56,4 +56,8 @@ Changes for distribution 1.0.21 (library version 1.02) -- after extensive stress
 * Fixed handling of some unusual parameter settings in the inlet (buffer size=0)
 
 Library version 1.03
-* Added support for Windows XP
+* Added support for Windows XP (required more tolerance in case of missing IPv6 support)
+* Fixed a case where an inlet could spam an outlet with rapid reconnect requests
+* Rebuilt against a sufficiently old Linux to run out-of-the-box for most distributions
+
+

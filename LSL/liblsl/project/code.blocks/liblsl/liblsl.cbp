@@ -18,6 +18,7 @@
 				<Compiler>
 					<Add option="-g" />
 					<Add option="-fPIC" />
+					<Add option="-fvisibility=hidden" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -32,6 +33,7 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-fPIC" />
+					<Add option="-fvisibility=hidden" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -40,11 +42,13 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add option="-fexceptions -fvisibility=hidden" />
+			<Add option="-fexceptions -fvisibility=hidden -fvisibility-inlines-hidden" />
 			<Add directory="../../../external" />
 		</Compiler>
 		<Linker>
 			<Add option="-pthread -lrt -fvisibility=hidden" />
+			<Add option="-fvisibility-inlines-hidden" />
+			<Add option="--version-script=version.script" />
 			<Add directory="../../../external/lib/boost-static-linux64" />
 		</Linker>
 		<Unit filename="../../../external/src/chrono/chrono.cpp" />

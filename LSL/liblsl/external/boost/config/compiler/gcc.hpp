@@ -123,10 +123,10 @@
 #    define BOOST_SYMBOL_EXPORT __attribute__((dllexport))
 #    define BOOST_SYMBOL_IMPORT __attribute__((dllimport))
 #  else
-#    define BOOST_SYMBOL_EXPORT __attribute__((visibility("default")))
+#    define BOOST_SYMBOL_EXPORT
 #    define BOOST_SYMBOL_IMPORT
 #  endif
-#  define BOOST_SYMBOL_VISIBLE __attribute__((visibility("default")))
+#  define BOOST_SYMBOL_VISIBLE
 #else
 // config/platform/win32.hpp will define BOOST_SYMBOL_EXPORT, etc., unless already defined  
 #  define BOOST_SYMBOL_EXPORT
