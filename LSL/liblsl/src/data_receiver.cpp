@@ -33,7 +33,7 @@ data_receiver::~data_receiver() {
 		conn_.unregister_onlost(this);
 		if (data_thread_.joinable())
 			data_thread_.join();
-	} 
+	}
 	catch(std::exception &e) {
 		std::cerr << "Unexpected error during destruction of a data_receiver: " << e.what() << std::endl;
 	}
@@ -59,7 +59,7 @@ void data_receiver::open_stream(double timeout) {
 	if (!connection_completed()) {
 		// start thread if not yet running
 		if (!data_thread_.joinable())
-			data_thread_ = boost::thread(&data_receiver::data_thread,this);		
+			data_thread_ = boost::thread(&data_receiver::data_thread,this);
 		// wait until the connection attempt completes (or we time out)
 		if (timeout >= FOREVER)
 			connected_upd_.wait(lock, boost::bind(&data_receiver::connection_completed,this));
@@ -141,46 +141,45 @@ void data_receiver::data_thread() {
 				eos::portable_iarchive inarch_(server_stream);
 				std::string infomsg; inarch_ >> infomsg;
 				stream_info_impl info; info.from_shortinfo_message(infomsg);
-				// if the stream has changed since we established the connection we reconnect
-				if (info.uid() != conn_.current_uid())
-					continue; 
+				// if the stream has not changed since we established the connection...
+				if (info.uid() == conn_.current_uid()) {
+                    // parse the subsequent two test-pattern samples and check if they are formatted as expected
+                    sample samp1(conn_.type_info(),0.0,false), samp2(conn_.type_info(),0.0,false), proof1(conn_.type_info(),0.0,false), proof2(conn_.type_info(),0.0,false);
+                    proof1.assign_test_pattern(4);
+                    proof2.assign_test_pattern(2);
+                    inarch_ >> samp1 >> samp2;
+                    if (!(samp1 == proof1) || !(samp2 == proof2))
+                        throw std::runtime_error("The received test-pattern samples do not match the specification. The protocol versions are likely incompatible.");
 
-				// parse the subsequent two test-pattern samples and check if they are formatted as expected
-				sample samp1(conn_.type_info(),0.0,false), samp2(conn_.type_info(),0.0,false), proof1(conn_.type_info(),0.0,false), proof2(conn_.type_info(),0.0,false);
-				proof1.assign_test_pattern(4);
-				proof2.assign_test_pattern(2);
-				inarch_ >> samp1 >> samp2;
-				if (!(samp1 == proof1) || !(samp2 == proof2))
-					throw std::runtime_error("The received test-pattern samples do not match the specification. The protocol versions are likely incompatible.");
+                    // signal to accessor functions on other threads that the protocol negotiation has been successful,
+                    // so we're now connected (and remain to be even if we later recover silently)
+                    {
+                        boost::lock_guard<boost::mutex> lock(connected_mut_);
+                        connected_ = true;
+                    }
+                    connected_upd_.notify_all();
 
-				// signal to accessor functions on other threads that the protocol negotiation has been successful, 
-				// so we're now connected (and remain to be even if we later recover silently)
-				{
-					boost::lock_guard<boost::mutex> lock(connected_mut_);
-					connected_ = true;
-				}
-				connected_upd_.notify_all();
+                    // --- transmission loop ---
 
-				// --- transmission loop ---
-
-				double last_timestamp = 0.0;
-				double srate = conn_.current_srate();
-				while (!conn_.lost() && !conn_.shutdown() && !closing_stream_) {
-					// allocate and fetch a new sample
-					sample_p samp(new sample(conn_.type_info(),0.0,false));
-					inarch_ >> *samp;
-					// deduce timestamp if necessary
-					if (samp->timestamp == DEDUCED_TIMESTAMP) {
-						if (srate == IRREGULAR_RATE)
-							samp->timestamp = last_timestamp;
-						else
-							samp->timestamp = last_timestamp + 1.0/srate;
-					}
-					last_timestamp = samp->timestamp;
-					// push it into the sample queue
-					sample_queue_.push_sample(samp);
-					// update the last receive time to keep the watchdog happy
-					conn_.update_receive_time(local_clock());
+                    double last_timestamp = 0.0;
+                    double srate = conn_.current_srate();
+                    while (!conn_.lost() && !conn_.shutdown() && !closing_stream_) {
+                        // allocate and fetch a new sample
+                        sample_p samp(new sample(conn_.type_info(),0.0,false));
+                        inarch_ >> *samp;
+                        // deduce timestamp if necessary
+                        if (samp->timestamp == DEDUCED_TIMESTAMP) {
+                            if (srate == IRREGULAR_RATE)
+                                samp->timestamp = last_timestamp;
+                            else
+                                samp->timestamp = last_timestamp + 1.0/srate;
+                        }
+                        last_timestamp = samp->timestamp;
+                        // push it into the sample queue
+                        sample_queue_.push_sample(samp);
+                        // update the last receive time to keep the watchdog happy
+                        conn_.update_receive_time(local_clock());
+                    }
 				}
 			}
 			catch(error_code &) {
@@ -201,7 +200,7 @@ void data_receiver::data_thread() {
 		}
 	}
 	catch(lost_error &) {
-		// the connection was irrecoverably lost: since the pull_sample() function may 
+		// the connection was irrecoverably lost: since the pull_sample() function may
 		// be waiting for the next sample we need to wake it up by passing a sentinel
 		sample_queue_.push_sample(sample_p());
 	}
