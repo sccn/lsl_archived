@@ -134,45 +134,52 @@ while 1
     switch fread(f,1,'uint16')
         % [Samples] chunk
         case 3
-            % [StreamId]
-            id = idmap(fread(f,1,'uint32'));
-            if have_mex
-                % read the chunk data at once
-                data = fread(f,len-6,'*uint8');
-                % run the mex kernel
-                [values,timestamps] = load_xdf_innerloop(data, temp(id).chns, temp(id).readfmt, temp(id).sampling_interval, temp(id).last_timestamp);
-                temp(id).last_timestamp = timestamps(end);
-            else                
-                % [NumSampleBytes], [NumSamples]
-                num = read_varlen_int(f);
-                % allocate space
-                timestamps = zeros(1,num);
-                if strcmp(temp(id).readfmt,'*string')
-                    values = cell(temp(id).chns,num);
+            try
+                % [StreamId]
+                id = idmap(fread(f,1,'uint32'));
+                if have_mex
+                    % read the chunk data at once
+                    data = fread(f,len-6,'*uint8');
+                    % run the mex kernel
+                    [values,timestamps] = load_xdf_innerloop(data, temp(id).chns, temp(id).readfmt, temp(id).sampling_interval, temp(id).last_timestamp);
+                    temp(id).last_timestamp = timestamps(end);
                 else
-                    values = zeros(temp(id).chns,num);
-                end
-                % for each sample...
-                for s=1:num
-                    % read or deduce time stamp
-                    if fread(f,1,'*uint8')
-                        timestamps(s) = fread(f,1,'double');
-                    else
-                        timestamps(s) = temp(id).last_timestamp + temp(id).sampling_interval;
-                    end
-                    % read the values
+                    % [NumSampleBytes], [NumSamples]
+                    num = read_varlen_int(f);
+                    % allocate space
+                    timestamps = zeros(1,num);
                     if strcmp(temp(id).readfmt,'*string')
-                        for v = 1:size(values,1)
-                            values{v,s} = fread(f,read_varlen_int(f),'*char')'; end
+                        values = cell(temp(id).chns,num);
                     else
-                        values(:,s) = fread(f,size(values,1),temp(id).readfmt);
+                        values = zeros(temp(id).chns,num);
                     end
-                    temp(id).last_timestamp = timestamps(s);
+                    % for each sample...
+                    for s=1:num
+                        % read or deduce time stamp
+                        if fread(f,1,'*uint8')
+                            timestamps(s) = fread(f,1,'double');
+                        else
+                            timestamps(s) = temp(id).last_timestamp + temp(id).sampling_interval;
+                        end
+                        % read the values
+                        if strcmp(temp(id).readfmt,'*string')
+                            for v = 1:size(values,1)
+                                values{v,s} = fread(f,read_varlen_int(f),'*char')'; end
+                        else
+                            values(:,s) = fread(f,size(values,1),temp(id).readfmt);
+                        end
+                        temp(id).last_timestamp = timestamps(s);
+                    end
                 end
+                % append to the time series...
+                temp(id).time_series{end+1} = values;
+                temp(id).time_stamps{end+1} = timestamps;
+            catch e
+                % an error occurred (perhaps a chopped-off file): emit a warning 
+                % and return the file up to this point
+                warning(e.identifier,e.message);
+                break;                
             end
-            % append to the time series...
-            temp(id).time_series{end+1} = values;
-            temp(id).time_stamps{end+1} = timestamps;
         % [StreamHeader] chunk
         case 2
             % [StreamId]
