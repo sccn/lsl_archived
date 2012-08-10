@@ -84,7 +84,7 @@ function [streams,fileheader] = load_xdf(filename)
 %                                Contains portions of xml2struct Copyright (c) 2010, Wouter Falkena,
 %                                ASTI, TUDelft, 21-08-2010
 %
-%                                version 1.06
+%                                version 1.07
 
 if ~exist(filename,'file')
     error(['The file "' filename '" does not exist.']); end
