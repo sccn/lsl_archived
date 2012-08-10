@@ -66,7 +66,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     /* temporaries */
     unsigned bytes, num_chars;
-    mxArray *tmp;
+    char *tmp;
     
     /* check input/output argument formats */   
     if (nrhs != 5)
@@ -184,9 +184,11 @@ void mexFunction( int nlhs, mxArray *plhs[],
                     mexErrMsgTxt("This importer cannot yet handle strings with more than 4 billion characters.");
                 string_dims[1] = num_chars;
                 /* copy data */
-                tmp = mxCreateCharArray(2,string_dims);
-                memcpy(mxGetData(tmp), data, num_chars);
-                mxSetCell(plhs[0],c + s*num_channels,tmp);
+                tmp = malloc(num_chars+1); 
+                memcpy(tmp, data, num_chars);
+                tmp[num_chars] = 0;
+                mxSetCell(plhs[0],c + s*num_channels,mxCreateString(tmp));
+                free(tmp);
                 data += num_chars;
             }
         }
