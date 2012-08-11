@@ -60,4 +60,7 @@ Library version 1.03
 * Fixed a case where an inlet could spam an outlet with rapid reconnect requests
 * Rebuilt against a sufficiently old Linux to run out-of-the-box for most distributions
 
+Library version 1.03.1
+* Made the resolver tolerant w.r.t. invalid hostnames in the KnownPeers config variable
+
 
