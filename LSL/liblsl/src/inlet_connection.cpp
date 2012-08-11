@@ -205,20 +205,22 @@ void inlet_connection::watchdog_thread() {
 
 /// Issue a recovery attempt if a connection loss was detected.
 void inlet_connection::try_recover_from_error() {
-	if (!recovery_enabled_) {
-		// if the stream is irrecoverable it is now lost, 
-		// so we need to notify the other inlet components
-		lost_ = true;
-		try {
-			boost::lock_guard<boost::mutex> lock(client_status_mut_);
-			for(std::map<void*,boost::condition_variable*>::iterator i=onlost_.begin(),e=onlost_.end();i!=e;i++)
-				i->second->notify_all();
-		} catch(std::exception &e) {
-			std::cerr << "Unexpected problem while trying to issue a connection loss notification: " << e.what() << std::endl;
-		}
-		throw lost_error("The stream read by this inlet has been lost. To recover, you need to re-resolve the source and re-create the inlet.");
-	} else
-        try_recover();
+	if (!shutdown_) {
+		if (!recovery_enabled_) {
+			// if the stream is irrecoverable it is now lost, 
+			// so we need to notify the other inlet components
+			lost_ = true;
+			try {
+				boost::lock_guard<boost::mutex> lock(client_status_mut_);
+				for(std::map<void*,boost::condition_variable*>::iterator i=onlost_.begin(),e=onlost_.end();i!=e;i++)
+					i->second->notify_all();
+			} catch(std::exception &e) {
+				std::cerr << "Unexpected problem while trying to issue a connection loss notification: " << e.what() << std::endl;
+			}
+			throw lost_error("The stream read by this inlet has been lost. To recover, you need to re-resolve the source and re-create the inlet.");
+		} else
+			try_recover();
+	}
 }
 
 
