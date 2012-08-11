@@ -192,7 +192,8 @@ void data_receiver::data_thread() {
 			}
 			catch(std::exception &) {
 				// some perhaps more serious transmission or parsing error (could be indicative of a protocol issue)
-				std::cerr << "Stream transmission broke off; re-connecting..." << std::endl;
+				if (!conn_.shutdown())
+					std::cerr << "Stream transmission broke off; re-connecting..." << std::endl;
 				conn_.try_recover_from_error();
 			}
             // wait for a few msec so as to not spam the provider with reconnects
