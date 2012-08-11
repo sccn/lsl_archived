@@ -43,9 +43,11 @@ resolver_impl::resolver_impl(): cfg_(api_config::get_instance()), cancelled_(fal
 		// for each known peer...
 		for (unsigned k=0;k<peers.size();k++) {
 			// resolve into endpoints and add to list
-			udp::resolver::query q(peers[k],port_str);
-			for (udp::resolver::iterator i=udp_resolver.resolve(q); i != udp::resolver::iterator(); i++)
-				ucast_endpoints_.push_back(*i);
+			try {
+				udp::resolver::query q(peers[k],port_str);
+				for (udp::resolver::iterator i=udp_resolver.resolve(q); i != udp::resolver::iterator(); i++)
+					ucast_endpoints_.push_back(*i);
+			} catch(std::exception &) { }
 		}
 	}
 
