@@ -25,7 +25,7 @@ const char ack_autozero_dual = 0x64;	// calibration completed, two devices conne
 
 // transmission settings
 const int buffer_size = 32768;		// for the serial port
-const int samples_per_chunk = 32;	// for the lab streaming layer
+const int samples_per_chunk = 5;	// for the lab streaming layer
 
 
 MainWindow::MainWindow(QWidget *parent, const std::string &config_file) :
@@ -65,7 +65,7 @@ void MainWindow::closeEvent(QCloseEvent *ev) {
 void MainWindow::load_config(const std::string &filename) {
 	using boost::property_tree::ptree;
 	ptree pt;
-
+	unsigned k=0;
 	// parse file
 	try {
 		read_xml(filename, pt);
@@ -79,23 +79,26 @@ void MainWindow::load_config(const std::string &filename) {
 		ui->comPort->setValue(pt.get<int>("settings.comport",1));
 		ui->samplingRate->setCurrentIndex(pt.get<int>("settings.samplingrate",0));
 		// there can be 2 calibration matrices since two devices can be connected in a multi-plexed manner; the one below is calibration data for our force plate -- the numbers are device-specific and vendor-provided
-        std::string calib[max_devices] = {pt.get<std::string>("settings.calibration_matrix1","[0.0088010,-0.0003439,-0.0002374,-0.0091382, 0.0002286,-0.0011453, 0.0087575,-0.0000330, 0.0001908,-0.0085257,-0.0003653,-0.0004479, \
-																					          -0.0000572, 0.0089623, 0.0005131,-0.0003076, 0.0086073,-0.0000008,-0.0002277,-0.0084864,-0.0010120, 0.0004282,-0.0087719,-0.0007067, \
-                                                                                              -0.0016028,-0.0009292,-0.0885598, 0.0000639, 0.0000603,-0.0867306,-0.0003682, 0.0002382,-0.0868983,-0.0004845, 0.0002808,-0.0880958, \
-                                                                                               0.0000000, 0.0000000,-0.6305114, 0.0000000, 0.0000000,-0.6221169, 0.0000000, 0.0000000, 0.6244931, 0.0000000, 0.0000000, 0.6209047, \
-                                                                                               0.0000000, 0.0000000, 0.6524594, 0.0000000, 0.0000000,-0.6378316, 0.0000000, 0.0000000, 0.6425910, 0.0000000, 0.0000000,-0.6428833, \
-                                                                                              -0.0931016, 0.0958635, 0.0012947, 0.0966692,-0.0920663, 0.0012679, 0.0926413,-0.0907731, 0.0012704,-0.0901891, 0.0938268, 0.0012879]"), 
-                                pt.get<std::string>("settings.calibration_matrix2","[]")};
+        calibstr_[0] = pt.get<std::string>("settings.calibration_matrix1","[0.0088010,-0.0003439,-0.0002374,-0.0091382, 0.0002286,-0.0011453, 0.0087575,-0.0000330, 0.0001908,-0.0085257,-0.0003653,-0.0004479, \
+																	       -0.0000572, 0.0089623, 0.0005131,-0.0003076, 0.0086073,-0.0000008,-0.0002277,-0.0084864,-0.0010120, 0.0004282,-0.0087719,-0.0007067, \
+                                                                           -0.0016028,-0.0009292,-0.0885598, 0.0000639, 0.0000603,-0.0867306,-0.0003682, 0.0002382,-0.0868983,-0.0004845, 0.0002808,-0.0880958, \
+                                                                            0.0000000, 0.0000000,-0.6305114, 0.0000000, 0.0000000,-0.6221169, 0.0000000, 0.0000000, 0.6244931, 0.0000000, 0.0000000, 0.6209047, \
+                                                                            0.0000000, 0.0000000, 0.6524594, 0.0000000, 0.0000000,-0.6378316, 0.0000000, 0.0000000, 0.6425910, 0.0000000, 0.0000000,-0.6428833, \
+                                                                           -0.0931016, 0.0958635, 0.0012947, 0.0966692,-0.0920663, 0.0012679, 0.0926413,-0.0907731, 0.0012704,-0.0901891, 0.0938268, 0.0012879]");
+        calibstr_[1] = pt.get<std::string>("settings.calibration_matrix2","[]");
 		// for each device...
 		for (unsigned d=0;d<max_devices;d++) {
-			if (calib[d].size()>3) {
+			if (calibstr_[d].size()>3) {
 				// split matrix into number-strings
-				std::vector<std::string> tmp; boost::algorithm::split(tmp,calib[d].substr(1,calib[d].size()-2),boost::algorithm::is_any_of(", \t"),boost::algorithm::token_compress_on);
-				// transfer into float matrix...
-				unsigned k=0;
+				std::string tmpstr = boost::algorithm::trim_copy(calibstr_[d]);
+				std::vector<std::string> tmp; boost::algorithm::split(tmp,tmpstr.substr(1,tmpstr.size()-2),boost::algorithm::is_any_of(", \t"),boost::algorithm::token_compress_on);
+				// transfer into float matrix...				
 				for (unsigned y=0;y<out_chns_per_device;y++)
-					for (unsigned x=0;x<in_chns_per_device;x++)
+					for (unsigned x=0;x<in_chns_per_device;x++) {
+						while(boost::algorithm::trim_copy(tmp[k]).empty())
+							k++;
 						calib_[d][x][y] = boost::lexical_cast<float>(tmp[k++]);
+					}
 			} else {
 				// otherwise use the identity matrix
 				for (unsigned y=0;y<out_chns_per_device;y++)
@@ -103,8 +106,8 @@ void MainWindow::load_config(const std::string &filename) {
 						calib_[d][x][y] = (x==y);
 			}
 		}
-	} catch(std::exception &) {
-		QMessageBox::information(this,"Error in Config File","Could not read out config parameters.",QMessageBox::Ok);
+	} catch(std::exception &e) {
+		QMessageBox::information(this,"Error in Config File",(std::string("Could not prepare settings for saving: ")+=e.what()).c_str(),QMessageBox::Ok);
 		return;
 	}
 }
@@ -117,6 +120,8 @@ void MainWindow::save_config(const std::string &filename) {
 	try {
 		pt.put("settings.comport",ui->comPort->value());
 		pt.put("settings.samplingrate",ui->samplingRate->currentIndex());
+		pt.put("settings.calibration_matrix1",calibstr_[0]);
+		pt.put("settings.calibration_matrix2",calibstr_[1]);
 		// note: calibration matrix is not GUI-editable, no need to save
 	} catch(std::exception &e) {
 		QMessageBox::critical(this,"Error",(std::string("Could not prepare settings for saving: ")+=e.what()).c_str(),QMessageBox::Ok);
@@ -201,7 +206,7 @@ void MainWindow::link_amti() {
 			while (resp != cmd) {
 				// communicate baud rate
 				if ((!ReadFile(hPort,&resp,1,&dwBytesRead,NULL) || !dwBytesRead))
-					throw std::runtime_error("Did not receive a response from the device after baud rate choice. Please make sure that your COM port supports a baud rate of " + boost::lexical_cast<std::string>(dcb.BaudRate) + ".");
+					throw std::runtime_error("Did not receive a response from the device (after baud rate choice). Please make sure that your device is set up properly and that your COM port supports a baud rate of " + boost::lexical_cast<std::string>(dcb.BaudRate) + ".");
 				if (++bytes_skipped > 2*buffer_size)
 					throw std::runtime_error("Device does not response in an expected way. Please make sure that this software is compatible with your type of force plate.");
 			}
