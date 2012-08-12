@@ -52,6 +52,7 @@ private:
     void save_config(const std::string &filename);
 	
 	bool stop_;															// whether the reader thread is supposed to stop
+	std::string calibstr_[2];											// the original strings that describes the calibration matrices
 	float calib_[max_devices][in_chns_per_device][out_chns_per_device];	// device calibration matrices (one per device, 6x6)
     boost::shared_ptr<boost::thread> reader_thread_;					// our reader thread
 
