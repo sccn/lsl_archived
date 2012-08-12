@@ -29,6 +29,14 @@ function vis_stream(varargin)
 %   Rereference : Apply common-average re-referencing to the data. Useful for noisy EEG streams.
 %                 Default=false
 %
+%   PageOffset : Channel page offset. Allows to flip forward or backward pagewise through the displayed channels.
+%                Default=0
+%
+%   Position : Figure position. Allows to script the position at which the figures should appear.
+%              This is a 4-element vector of the form [X-offset,Y-offset,Width,Height]
+%              with all values in pixes.
+%              Default=[]
+%
 %                                Christian Kothe, Swartz Center for Computational Neuroscience, UCSD
 %                                2012-07-10
 %
@@ -52,7 +60,8 @@ opts = arg_define(varargin, ...
     arg({'samplingrate','SamplingRate'},100,[],'Sampling rate for display. This is the sampling rate that is used for plotting; for faster drawing.'), ...
     arg({'refreshrate','RefreshRate'},10,[],'Refresh rate for display. This is the rate at which the graphics are updated.'), ...
     arg({'reref','Rereference'},false,[],'Common average reference. Enable this to view the data with a common average reference filter applied.'), ...
-    arg_nogui({'pageoffset','PageOffset'},0,[],'Channel page offset. Allows to flip forward or backward pagewise through the displayed channels.'));
+    arg_nogui({'pageoffset','PageOffset'},0,[],'Channel page offset. Allows to flip forward or backward pagewise through the displayed channels.'), ...
+    arg_nogui({'position','Position'},[],[],'Figure position. Allows to script the position at which the figures should appear.'));
 
 
 if isempty(varargin)
@@ -91,9 +100,9 @@ end
     function create_figure(opts)
         fig = figure('Tag',['Fig' buffername],'Name',['LSL:Stream''' opts.streamname ''''],'CloseRequestFcn','delete(gcbf)', ...
             'KeyPressFcn',@(varargin)on_key(varargin{2}.Key));
+        if ~isempty(opts.position)
+            set(fig,'Position',opts.position); end
         ax = axes('Parent',fig, 'Tag','LSLViewer', 'YDir','reverse');
-        xlabel(ax,'Time (sec)','FontSize',12);
-        ylabel(ax,'Activation (\mu V^2)','FontSize',12);
     end
 
     function on_timer(varargin)
@@ -152,6 +161,8 @@ end
                     if ~exist('lines','var') || isempty(lines)                        
                         lines = plot(ax,plottime,plotdata);
                         title(ax,opts.streamname);
+                        xlabel(ax,'Time (sec)','FontSize',12);
+                        ylabel(ax,'Activation','FontSize',12);
                     else
                         for k=1:length(lines)
                             set(lines(k),'Ydata',plotdata(:,k));
