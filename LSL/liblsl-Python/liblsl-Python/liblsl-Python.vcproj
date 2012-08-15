@@ -41,6 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(PYTHON_INCLUDE)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBLSLPYTHON_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -60,6 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="$(PYTHON_LIB)"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -114,7 +116,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;C:\DEVEL\CKF\Framework\Panda3D-1.7.2\python\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(PYTHON_INCLUDE)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBLSLPYTHON_EXPORTS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -133,9 +135,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="$(PYTHON_LIB)"
 				OutputFile="$(OutDir)\..\_pylsl.pyd"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(SolutionDir)/../liblsl/bin/;&quot;C:\DEVEL\CKF\Framework\Panda3D-1.7.2\python\libs&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)/../liblsl/bin/&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -171,6 +174,24 @@
 		<File
 			RelativePath="..\pylsl.i"
 			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					CommandLine="swig -c++ -python ../pylsl.i"
+					Outputs="pylsl_wrap.cxx"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					CommandLine="swig -c++ -python ../pylsl.i"
+					Outputs="pylsl_wrap.cxx"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath="..\pylsl_wrap.cxx"
