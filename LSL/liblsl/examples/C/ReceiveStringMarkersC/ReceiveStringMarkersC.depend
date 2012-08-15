@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1332056560 source:/home/john/Desktop/LSL-1.05/liblsl/examples/C/ReceiveStringMarkersC/ReceiveStringMarkersC.c
+	"../../../include/lsl_c.h"
+	<stdio.h>
+
+1331630772 /home/john/Desktop/LSL-1.05/liblsl/include/lsl_c.h
+
+1332056560 source:/home/john/Desktop/LSL-1.06/liblsl/examples/C/ReceiveStringMarkersC/ReceiveStringMarkersC.c
+	"../../../include/lsl_c.h"
+	<stdio.h>
+
+1331630772 /home/john/Desktop/LSL-1.06/liblsl/include/lsl_c.h
+

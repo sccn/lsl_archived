@@ -1,0 +1,7 @@
+=== For Developers ===
+
+This information is only relevant if your are trying to build apps that are consistent with those that are already included in the distribution.
+If you are at SCCN, follow the installation instructions located in /home/software/DevEnvironment to set up a build environment that lets you
+develop modules for LSL (and their GUIs) painlessly.
+
+The material is also available to external developers through ftp://sccn.ucsd.edu/pub/software/third_party/build_environment/
