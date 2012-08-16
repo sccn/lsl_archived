@@ -147,7 +147,7 @@ end
                     plotdata = bsxfun(@minus,plotdata,mean(plotdata)); end
                 
                 % zero-mean
-                plotdata = bsxfun(@minus, plotdata, mean(plotdata,1));
+                plotdata = bsxfun(@minus, plotdata, mean(plotdata,2));
                 
                 % arrange for plotting
                 plotoffsets = (0:size(plotdata,1)-1)*stream.opts.datascale;
