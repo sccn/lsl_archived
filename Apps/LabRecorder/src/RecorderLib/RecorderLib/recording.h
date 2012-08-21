@@ -21,6 +21,11 @@
 
 #include "lsl_cpp.h"
 
+#include <boost/type_traits/is_integral.hpp>
+#include <boost/type_traits/is_signed.hpp>
+#include <boost/type_traits/is_arithmetic.hpp>
+#include <boost/type_traits/is_floating_point.hpp>
+
 // support for endianness and binary floating-point storage
 // this import scheme is part of the portable_archive code by
 // christian.pfligersdorffer@eos.info (under boost license)
@@ -31,20 +36,22 @@
 #include <boost/spirit/home/support/detail/integer/endian.hpp>
 #include <boost/spirit/home/support/detail/math/fpclassify.hpp>
 #else
-#include <boost/spirit/home/support/detail/endian.hpp>
+#include <boost/spirit/home/support/detail/endian/endian.hpp>
 #include <boost/spirit/home/support/detail/math/fpclassify.hpp>
 #endif
 
-#include <boost/type_traits/is_integral.hpp>
-#include <boost/type_traits/is_signed.hpp>
-#include <boost/type_traits/is_arithmetic.hpp>
-#include <boost/type_traits/is_floating_point.hpp>
-
-// namespace alias
+// namespace alias fp_classify
 #if BOOST_VERSION < 103800
 namespace fp = boost::math;
 #else
 namespace fp = boost::spirit::math;
+#endif
+
+// namespace alias endian
+#if BOOST_VERSION < 104800
+namespace endian = boost::detail;
+#else
+namespace endian = boost::spirit::detail;
 #endif
 
 
@@ -494,7 +501,7 @@ private:
 	// derived from portable archive code by christian.pfligersdorffer@eos.info (under boost license)
 	template <typename T> typename boost::enable_if<boost::is_integral<T> >::type write_little_endian(std::streambuf *dst,const T &t) {
 		T temp;
-		boost::detail::store_little_endian<T,sizeof(T)>(&temp,t);
+		endian::store_little_endian<T,sizeof(T)>(&temp,t);
 		dst->sputn((char*)&temp,sizeof(temp));
 	}
 

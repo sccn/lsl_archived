@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\DEVEL\CKF\Framework\Panda3D-1.7.2\python\include&quot;;../../../../../LSL/liblsl/include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="&quot;$(PYTHON_INCLUDE)&quot;;../../../../../LSL/liblsl/include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;RECORDERLIB_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,8 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="$(PYTHON_LIB)"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;C:\DEVEL\CKF\Framework\Panda3D-1.7.2\python\libs&quot;;../../../../../LSL/liblsl/bin;&quot;$(BOOST_ROOT)/lib&quot;"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -135,9 +136,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="$(PYTHON_LIB)"
 				OutputFile="$(OutDir)\_$(ProjectName).pyd"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;C:\DEVEL\CKF\Framework\Panda3D-1.7.2\python\libs&quot;;../../../../../LSL/liblsl/bin;&quot;$(BOOST_ROOT)/lib&quot;"
+				AdditionalLibraryDirectories="../../../../../LSL/liblsl/bin;&quot;$(BOOST_ROOT)/lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -232,7 +234,7 @@
 				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="swig -python RecorderLib.i"
+					CommandLine="swig -python RecorderLib.i&#x0D;&#x0A;"
 					Outputs="RecorderLib_wrap.c"
 				/>
 			</FileConfiguration>
