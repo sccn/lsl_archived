@@ -1,26 +1,31 @@
-function hlib = lsl_loadlib
+function hlib = lsl_loadlib(binarypath,debugging)
 % Load the lab streaming layer library.
-% [LibHandle] = lsl_loadlib
+% [LibHandle] = lsl_loadlib(BinaryPath,DebugVersion)
 %
 % This operation loads the library, after which its functions (starting with lsl_) can be used.
+%
+% In:
+%   BinaryPath : Optionally the path to the locations of the liblsl bin folder (default: relative
+%                to this .m file).
+%
+%   DebugVersion : Optionally load the debug version of the library (default: false)
 %
 % Out:
 %   Handle : handle to the library
 %            when the handle is deleted, the library will be unloaded
 %
 % Notes:
-%   Do not delete this handles while you still have LSL objects (streaminfos, inlets, outlets)
+%   Do not delete this handle while you still have LSL objects (streaminfos, inlets, outlets)
 %   alive.
 %
 %                                Christian Kothe, Swartz Center for Computational Neuroscience, UCSD
 %                                2012-03-05
 
-
-debugging = false; % set this to true to link against the debug version of the library
-
-% find out which library path we need
-basepath = [fileparts(mfilename('fullpath')) filesep];
-
+if ~exist('debugging','var') || isempty(debugging)
+    debugging = false; end
+if ~exist('binarypath','var') || isempty(binarypath)
+    binarypath = [fileparts(mfilename('fullpath')) filesep 'bin']; end
+    
 if ispc
     ext = '.dll';
 elseif ismac
@@ -28,7 +33,7 @@ elseif ismac
 elseif isunix
     ext = '.so';
 else
-    error('Operating System not supported by this version of the lab streaming layer API.');
+    error('Your operating system is not supported by this version of the lab streaming layer API.');
 end
 
 if strfind(computer,'64')
@@ -43,8 +48,7 @@ else
     debug = '';
 end
 
-dllpath = [basepath 'bin' filesep 'liblsl' bitness debug ext];
-
+dllpath = [binarypath filesep 'liblsl' bitness debug ext];
 
 if ~exist(dllpath,'file')
     error(['Apparently the file "' dllpath '" is missing on your computer. Cannot load the lab streaming layer.']); end

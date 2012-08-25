@@ -47,7 +47,13 @@ function vis_stream(varargin)
 % make sure that everything is on the path and LSL is loaded
 if ~exist('arg_define','file')
     addpath(genpath(fileparts(mfilename('fullpath')))); end
-lib = lsl_loadlib();
+if ~exist('env_translatepath','file')
+    % standalone case
+    lib = lsl_loadlib();
+else
+    % if we're within BCILAB we want to make sure that the library is also found if the toolbox is compiled
+    lib = lsl_loadlib(env_translatepath('dependencies:/liblsl-Matlab/bin'));
+end
 
 % handle input arguments
 streamnames = find_streams;
