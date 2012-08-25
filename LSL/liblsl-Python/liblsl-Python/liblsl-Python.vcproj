@@ -139,9 +139,9 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="$(PYTHON_LIB)"
-				OutputFile="$(OutDir)\..\_pylsl.pyd"
+				OutputFile="$(OutDir)\..\_liblsl.pyd"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)/../liblsl/bin/&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)/../liblsl/bin/&quot;;&quot;$(PYTHON_INCLUDE)/../libs&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -328,7 +328,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\pylsl.i"
+			RelativePath="..\liblsl.i"
 			>
 			<FileConfiguration
 				Name="Debug|Win32"
@@ -344,8 +344,8 @@
 				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="swig -c++ -python ../pylsl.i&#x0D;&#x0A;"
-					Outputs="pylsl_wrap.cxx"
+					CommandLine="swig -c++ -python ../liblsl.i&#x0D;&#x0A;"
+					Outputs="liblsl_wrap.cxx"
 				/>
 			</FileConfiguration>
 			<FileConfiguration
@@ -368,7 +368,7 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\pylsl_wrap.cxx"
+			RelativePath="..\liblsl_wrap.cxx"
 			>
 		</File>
 	</Files>
