@@ -1,5 +1,5 @@
 
-%module pylsl
+%module liblsl
 %{
 #include "../liblsl/include/lsl_cpp.h"
 using namespace lsl;
