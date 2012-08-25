@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
-	<ActiveTarget name="Debug" />
+	<ActiveTarget name="Release" />
 	<File name="../../../external/src/chrono/chrono.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="454" topLine="0" />
 	</File>
@@ -10,13 +10,13 @@
 	<File name="../../../src/cancellable_streambuf.h" open="0" top="0" tabpos="0">
 		<Cursor position="2305" topLine="55" />
 	</File>
-	<File name="../../../src/inlet_connection.h" open="1" top="0" tabpos="4">
+	<File name="../../../src/inlet_connection.h" open="0" top="0" tabpos="4">
 		<Cursor position="5499" topLine="119" />
 	</File>
-	<File name="../../../src/resolve_attempt_udp.cpp" open="1" top="0" tabpos="5">
+	<File name="../../../src/resolve_attempt_udp.cpp" open="0" top="0" tabpos="5">
 		<Cursor position="1667" topLine="25" />
 	</File>
-	<File name="../../../src/resolve_attempt_udp.h" open="1" top="1" tabpos="1">
+	<File name="../../../src/resolve_attempt_udp.h" open="0" top="0" tabpos="1">
 		<Cursor position="4715" topLine="92" />
 	</File>
 	<File name="../../../src/stream_outlet_impl.cpp" open="0" top="0" tabpos="5">
@@ -34,10 +34,10 @@
 	<File name="../../../src/udp_server.cpp" open="0" top="0" tabpos="2">
 		<Cursor position="1442" topLine="22" />
 	</File>
-	<File name="../../../src/udp_server.h" open="1" top="0" tabpos="3">
+	<File name="../../../src/udp_server.h" open="0" top="0" tabpos="3">
 		<Cursor position="0" topLine="8" />
 	</File>
-	<File name="../../../src/version.h" open="1" top="0" tabpos="2">
+	<File name="../../../src/version.h" open="0" top="0" tabpos="2">
 		<Cursor position="539" topLine="5" />
 	</File>
 	<File name="../../../src/xml_element.cpp" open="0" top="0" tabpos="1">
