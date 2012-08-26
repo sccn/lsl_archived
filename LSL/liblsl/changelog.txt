@@ -63,4 +63,6 @@ Library version 1.03
 Library version 1.03.1
 * Made the resolver tolerant w.r.t. invalid hostnames in the KnownPeers config variable
 
-
+Library version 1.03.2
+* Moved a definition inside the C++ header file to make SWIG happy (which is needed for certain features in the Python wrapper to be enabled)
+* pylsl should now work out of the box on all Windows platforms and all recent Python versions
