@@ -53,7 +53,7 @@ namespace pugi { class xml_node; struct xml_node_struct; }
 
 
 namespace lsl {
-
+	
 
 	/**
 	* Constant to indicate that a stream has variable sampling rate.
@@ -142,6 +142,7 @@ namespace lsl {
 	* the stream on the network. Recipients who discover the outlet can query the stream_info; it is also
 	* written to disk when recording the stream (playing a similar role as a file header).
 	*/
+	class LIBLSL_CPP_API xml_element;
 	class LIBLSL_CPP_API stream_info {
 	public:
 		/**
@@ -269,8 +270,8 @@ namespace lsl {
 		* Important: if you use a stream content type for which meta-data recommendations exist, please 
 		* try to lay out your meta-data in agreement with these recommendations for compatibility with other applications.
 		*/
-		class xml_element desc();
-		class xml_element desc() const;
+		xml_element desc();
+		xml_element desc() const;
 
 
 		// ===============================
