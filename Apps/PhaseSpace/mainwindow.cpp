@@ -450,12 +450,12 @@ void MainWindow::read_thread(float srate, int interpolation, std::vector<OWLCame
 	while (true) {
 		// spin until we get the number of markers that we're looking for...
 		while (owlGetMarkers(&tmp_markers[0],tmp_markers.size()) < markers.size())
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+			boost::this_thread::yield();
 
 		if (!rigids.empty()) {
 			// spin until we get the number of rigids that we're looking for...
 			while (owlGetRigids(&tmp_rigids[0],tmp_rigids.size()) < rigids.size())
-				boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+				boost::this_thread::yield();
 		}
 
 		// construct a sample for the main outlet
