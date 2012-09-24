@@ -248,7 +248,7 @@ for k=1:length(temp)
                 try
                     mapping = regress(clock_values',[ones(length(clock_times),1) clock_times']);
                 catch %#ok<CTCH>
-                    mapping = [median(clock_values),0];
+                    mapping = clock_values / [ones(1,length(clock_times)); clock_times];
                 end
             end
             % apply offset correction
@@ -282,15 +282,23 @@ for k=1:length(temp)
             segments = repmat(struct(),1,length(ranges));
             for r=1:length(ranges)
                 range = ranges{r};
+                segments(r).num_samples = range(2)-range(1)+1;
+                segments(r).index_range = range;
+                % re-calculate the time stamps within the range (linearly interpolated)
+                if segments(r).num_samples > 0
+                    indices = segments(r).index_range(1):segments(r).index_range(2);
+                    stamps = temp(k).time_stamps(indices);
+                    try
+                        mapping = regress(stamps',[ones(length(indices),1) indices']);
+                    catch %#ok<CTCH>
+                        mapping = stamps / [ones(1,length(indices)); indices];
+                    end
+                    temp(k).time_stamps(indices) = mapping(1) + mapping(2) * indices;
+                end
                 segments(r).t_begin = temp(k).time_stamps(range(1));
                 segments(r).t_end = temp(k).time_stamps(range(2));
                 segments(r).duration = segments(r).t_end - segments(r).t_begin;
-                segments(r).num_samples = range(2)-range(1)+1;
                 segments(r).effective_srate = segments(r).num_samples / segments(r).duration;
-                segments(r).index_range = range;
-                % re-calculate the time stamps within the range (linearly interpolated)
-                if segments(r).duration > 0
-                    temp(k).time_stamps(segments(r).index_range(1):segments(r).index_range(2)) = segments(r).t_begin : (segments(r).duration/(segments(r).num_samples-1)) : segments(r).t_end; end
             end
             
             % calculate the weighted mean sampling rate over all segments
