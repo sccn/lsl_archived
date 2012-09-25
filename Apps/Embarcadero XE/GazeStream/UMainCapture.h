@@ -97,6 +97,8 @@ __published:	// IDE-managed Components
 	TLabeledEdit *xParallaxCorrectionEdit;
 	TLabeledEdit *yParallaxCorrectionEdit;
 	TCheckBox *cbCompress;
+	TComboBox *cbSceneCalibColor;
+	TLabel *Label5;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall cbVideoInputDeviceChange(TObject *Sender);
 	void __fastcall cbVideoInputFormatChange(TObject *Sender);
@@ -129,6 +131,7 @@ __published:	// IDE-managed Components
 	void __fastcall maxEccentricityEditChange(TObject *Sender);
 	void __fastcall xParallaxCorrectionEditChange(TObject *Sender);
 	void __fastcall yParallaxCorrectionEditChange(TObject *Sender);
+	void __fastcall cbSceneCalibColorChange(TObject *Sender);
 
 private:	// User declarations
 	void __fastcall TMainCaptureForm::Start();

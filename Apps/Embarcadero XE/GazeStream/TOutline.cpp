@@ -142,6 +142,8 @@
 
 	int TOutline::findOutline(const unsigned char **data, signed char **mask,
 		int startingX, int startingY, unsigned char **image) {
+
+  /*
 		mask[startingX][startingY] = 1;
 
 
@@ -160,7 +162,7 @@
 		} else {
 			int x = startingX;
 			int y = startingY;
-			boolean sameDirection = true;
+
 			heading = RIGHT;
 			//while walking around the edge of the outline.
 			while(true) {
@@ -274,6 +276,153 @@
 		}
 
 	 //	drawSpot(image,mask, data);
+
+		return nPoints;
+	*/
+
+		mask[startingX][startingY] = 1;
+
+
+		this->addPoint(startingX, startingY);
+
+		if(
+				(startingY==0 || data[startingX][startingY-1] == 0) &&
+				(startingX==width-1 || data[startingX+1][startingY] == 0) &&
+				(startingY==height-1 || data[startingX][startingY+1] == 0) &&
+				(startingX==0 || data[startingX-1][startingY] ==0)
+		) {
+
+			if(startingX < width - 1) mask[startingX+1][startingY] = -1;
+
+			//					drawPoint(image,startingX, startingY);
+		} else {
+			int x = startingX;
+			int y = startingY;
+
+			heading = RIGHT;
+			//while walking around the edge of the outline.
+			while(true) {
+				switch(heading) {
+				case UP:
+					//if new point left
+					if(x > 0 && data[x-1][y] == 1) {
+						--x;
+						heading = LEFT;
+					} else {
+						mask[x][y] = 1;
+						//if new point up
+						if (y > 0 && data[x][y-1] == 1) {
+							--y;
+							heading = UP;
+						} else {
+							//if at original position and orientation, we are done
+							if(x==startingX && y == startingY) return nPoints;
+							//if new point right
+							if(x < width-1 && data[x+1][y] == 1) {
+
+								++x;
+								heading = RIGHT;
+								//new point down
+							} else {
+								if(x < width - 1) mask[x+1][y] = -1;
+								++y;
+
+								heading = DOWN;
+							}
+						}
+					}
+					break;
+				case RIGHT:
+					//if new point up
+					if(y > 0 && data[x][y-1] == 1) {
+						--y;
+						heading = UP;
+					} else {
+						//if at original position and orientation, we are done
+						if(x==startingX && y == startingY && nPoints > 1) return nPoints;
+						//if new point right
+						if (x < width-1 && data[x+1][y] == 1) {
+							++x;
+							heading = RIGHT;
+						} else {
+							if(x < width - 1) mask[x+1][y] = -1;
+							//if new point down
+							if(y < height-1 && data[x][y+1] == 1) {
+								++y;
+								heading = DOWN;
+								//new point left
+							} else {
+								--x;
+								heading = LEFT;
+							}
+						}
+					}
+					break;
+				case DOWN:
+					//if at original position and orientation, we are done
+					if(x==startingX && y == startingY) return nPoints;
+					//if new point right
+					if(x < width-1 && data[x+1][y] == 1) {
+						++x;
+						heading = RIGHT;
+					} else {
+						if(x < width - 1) mask[x+1][y] = -1;
+						//if new point down
+						if (y < height-1 && data[x][y+1] == 1) {
+							++y;
+							heading = DOWN;
+						} else {
+							//if new left
+							if(x > 0 && data[x-1][y] == 1) {
+								--x;
+								heading = LEFT;
+								//new point up
+							} else {
+								mask[x][y] = 1;
+								--y;
+								heading = UP;
+							}
+						}
+					}
+					break;
+				case LEFT:
+					//if new point down
+					if(y < height-1 && data[x][y+1] == 1) {
+						++y;
+						heading = DOWN;
+					} else {
+						//if new point left
+						if (x > 0 && data[x-1][y] == 1) {
+							--x;
+							heading = LEFT;
+						} else {
+							mask[x][y] = 1;
+							//if new up
+							if(y > 0 && data[x][y-1] == 1) {
+								--y;
+								heading = UP;
+								//new point right;
+							} else {
+								//if at original position and orientation, we are done
+								if(x==startingX && y == startingY) return nPoints;
+								++x;
+								heading = RIGHT;
+
+							}
+						}
+					}
+					break;
+
+				}
+
+				//	if((xValues.size() == 10000) break; escape valve if infinite loop, for testing only,
+				//set set maximum number of points above this value in worm finder to mark which object are in infinite loop.
+				//set minimum number of points high to filter out objects that were found correctly.
+				this->addPoint(x, y);
+
+			}
+
+		}
 
 		return nPoints;
 	}
