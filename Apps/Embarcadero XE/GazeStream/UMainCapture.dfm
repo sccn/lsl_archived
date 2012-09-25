@@ -27,10 +27,6 @@ object MainCaptureForm: TMainCaptureForm
     object TabSheet2: TTabSheet
       Caption = 'Video in'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 11
         Top = 2
@@ -90,10 +86,6 @@ object MainCaptureForm: TMainCaptureForm
     object TabSheet1: TTabSheet
       Caption = 'Video out'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label2: TLabel
         Left = 14
         Top = -2
@@ -193,15 +185,11 @@ object MainCaptureForm: TMainCaptureForm
     Top = 161
     Width = 910
     Height = 584
-    ActivePage = tsVideo
+    ActivePage = tsEyeTracker
     TabOrder = 1
     object tsScene: TTabSheet
       Caption = 'Scene'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object xParallaxCorrectionEdit: TLabeledEdit
         Left = 14
         Top = 160
@@ -239,17 +227,16 @@ object MainCaptureForm: TMainCaptureForm
     object tsVideo: TTabSheet
       Caption = 'Video'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
     end
     object tsEyeTracker: TTabSheet
       Caption = 'Eyetracker'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      object Label5: TLabel
+        Left = 3
+        Top = 425
+        Width = 97
+        Height = 12
+        Caption = 'Scene Calibrate Color'
+      end
       object tbUpper: TTrackBar
         Left = 123
         Top = 70
@@ -421,6 +408,21 @@ object MainCaptureForm: TMainCaptureForm
         TabOrder = 15
         Text = '0.9'
         OnChange = maxEccentricityEditChange
+      end
+      object cbSceneCalibColor: TComboBox
+        Left = 3
+        Top = 443
+        Width = 110
+        Height = 20
+        ItemIndex = 2
+        TabOrder = 16
+        Text = 'Blue'
+        OnChange = cbSceneCalibColorChange
+        Items.Strings = (
+          'Red'
+          'Green'
+          'Blue'
+          'White')
       end
     end
   end

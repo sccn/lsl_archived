@@ -139,6 +139,7 @@ void __fastcall TMainCaptureForm::FormCreate(TObject *Sender)
 	maxEccentricityEditChange(this);
 	xParallaxCorrectionEditChange(this);
 	yParallaxCorrectionEditChange(this);
+	cbSceneCalibColorChange(this);
 	gu = new TGazeUtil();
 
 
@@ -336,6 +337,8 @@ void __fastcall TMainCaptureForm::FormDestroy(TObject *Sender)
 
 enum TKind {isEye,isSceneCalib,isScene, isVideo} ;
 TKind isKind = -1;
+enum SceneCalibColor {RED, GREEN, BLUE, WHITE};
+SceneCalibColor sceneCalibColor = -1;
 
 
 void drawEllipse(BITMAP *bmp, double x0, double y0, double rA, double rB, double theta, int color) {
@@ -388,9 +391,25 @@ TOutline* TMainCaptureForm::findLargestOutline(BITMAP *aBmp, boolean above,
 					[(x*subsampling+xOffset)*(CDEPTH/8)+1];
 				int red = aBmp->line[y*subsampling+yOffset]
 					[(x*subsampling+xOffset)*(CDEPTH/8)+2];
-				//if scene calib, look explicitly for a positive blue spot.
+				//if scene calib, look explicitly for a positive colored spot.
 				if(isKind==isSceneCalib) {
-					if(255*blue/(blue+green+red+.01) >= crThreshold->Position && blue >= crThreshold->Position) {
+					bool isGood;
+					switch(sceneCalibColor) {
+						case RED:
+							isGood = 255*red/(blue+green+red+.01) >= crThreshold->Position && red >= crThreshold->Position;
+							break;
+						case GREEN:
+							isGood = 255*green/(blue+green+red+.01) >= crThreshold->Position && green >= crThreshold->Position;
+							break;
+						case BLUE:
+							isGood = 255*blue/(blue+green+red+.01) >= crThreshold->Position && blue >= crThreshold->Position;
+							break;
+						case WHITE:
+							isGood = (blue+green+red) / 3.0 >= crThreshold->Position;
+							break;
+
+					}
+					if(isGood) {
 						subsampled[x][y] = 1;
 						if(paint) {
 							bmpCanvas->line[(y*subsampling+yOffset)/spatialDivisor]
@@ -1459,5 +1478,14 @@ void __fastcall TMainCaptureForm::yParallaxCorrectionEditChange(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
+
+
+void __fastcall TMainCaptureForm::cbSceneCalibColorChange(TObject *Sender)
+{
+if(cbSceneCalibColor->ItemIndex != -1) {
+		sceneCalibColor = cbSceneCalibColor->ItemIndex;
+	}
+}
+//---------------------------------------------------------------------------
 
 
