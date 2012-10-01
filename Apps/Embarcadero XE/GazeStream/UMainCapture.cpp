@@ -159,10 +159,19 @@ void __fastcall TMainCaptureForm::cbVideoInputDeviceChange(TObject *Sender)
 	if(cbVideoInputDevice->ItemIndex != -1) {
 		CaptureWorkerForm->VideoGrabber->VideoDevice = cbVideoInputDevice->ItemIndex;
 		AssignListToComboBox (cbVideoInputFormat, CaptureWorkerForm->VideoGrabber->VideoSizes, CaptureWorkerForm->VideoGrabber->VideoSize);
+		AssignListToComboBox (cbVideoInput, CaptureWorkerForm->VideoGrabber->VideoInputs, CaptureWorkerForm->VideoGrabber->VideoInput);
 		cbVideoInputFormatChange(this);
+		cbVideoInputChange(this);
 	}
 }
 
+
+void __fastcall TMainCaptureForm::cbVideoInputChange(TObject *Sender)
+{
+	if(cbVideoInput->ItemIndex != -1) {
+		CaptureWorkerForm->VideoGrabber->VideoInput = cbVideoInput->ItemIndex;
+	}
+}
 //---------------------------------------------------------------------------
 
 void __fastcall TMainCaptureForm::cbVideoInputFormatChange(TObject *Sender)
@@ -233,6 +242,7 @@ void __fastcall TMainCaptureForm::btStopClick(TObject *Sender)
 	nFrames = 0;
 
 	cbVideoInputDevice->Enabled = true;
+	cbVideoInput->Enabled = true;
 	cbVideoInputFormat->Enabled = true;
 	SpatialDivisorEdit->Enabled = true;
 
@@ -1075,6 +1085,7 @@ void __fastcall TMainCaptureForm::BitBtnPlayClick(TObject *Sender)
 		*/
 	}
 	cbVideoInputDevice->Enabled = false;
+	cbVideoInput->Enabled = false;
 	cbVideoInputFormat->Enabled = false;
 	SpatialDivisorEdit->Enabled = false;
 
@@ -1488,4 +1499,7 @@ if(cbSceneCalibColor->ItemIndex != -1) {
 }
 //---------------------------------------------------------------------------
 
+
+
+//---------------------------------------------------------------------------
 
