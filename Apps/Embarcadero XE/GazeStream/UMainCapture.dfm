@@ -20,30 +20,38 @@ object MainCaptureForm: TMainCaptureForm
     Left = 6
     Top = 6
     Width = 380
-    Height = 149
+    Height = 181
     ActivePage = TabSheet2
     TabOrder = 0
     TabPosition = tpBottom
     object TabSheet2: TTabSheet
       Caption = 'Video in'
       ImageIndex = 1
+      ExplicitHeight = 124
       object Label1: TLabel
         Left = 11
-        Top = 2
-        Width = 57
+        Top = 0
+        Width = 58
         Height = 12
-        Caption = 'Input device'
+        Caption = 'Video Device'
       end
       object Label36: TLabel
-        Left = 10
-        Top = 41
+        Left = 11
+        Top = 80
         Width = 57
         Height = 12
         Caption = 'Input format'
       end
+      object Label6: TLabel
+        Left = 11
+        Top = 41
+        Width = 53
+        Height = 12
+        Caption = 'Video Input'
+      end
       object cbVideoInputDevice: TComboBox
         Left = 11
-        Top = 20
+        Top = 15
         Width = 189
         Height = 20
         Style = csDropDownList
@@ -52,7 +60,7 @@ object MainCaptureForm: TMainCaptureForm
       end
       object cbVideoInputFormat: TComboBox
         Left = 11
-        Top = 58
+        Top = 95
         Width = 189
         Height = 20
         Style = csDropDownList
@@ -74,7 +82,7 @@ object MainCaptureForm: TMainCaptureForm
       end
       object edtFrameRate: TLabeledEdit
         Left = 11
-        Top = 95
+        Top = 130
         Width = 78
         Height = 20
         EditLabel.Width = 50
@@ -82,10 +90,25 @@ object MainCaptureForm: TMainCaptureForm
         EditLabel.Caption = 'Frame Rate'
         TabOrder = 3
       end
+      object cbVideoInput: TComboBox
+        Left = 11
+        Top = 56
+        Width = 189
+        Height = 21
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 4
+        OnChange = cbVideoInputChange
+      end
     end
     object TabSheet1: TTabSheet
       Caption = 'Video out'
       ImageIndex = 2
+      ExplicitHeight = 124
       object Label2: TLabel
         Left = 14
         Top = -2
@@ -182,7 +205,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object PageControl2: TPageControl
     Left = 6
-    Top = 161
+    Top = 193
     Width = 910
     Height = 584
     ActivePage = tsEyeTracker
@@ -261,9 +284,9 @@ object MainCaptureForm: TMainCaptureForm
       end
       object tbLeft: TTrackBar
         Left = 143
-        Top = 47
+        Top = 29
         Width = 112
-        Height = 17
+        Height = 19
         Max = 640
         Frequency = 0
         Position = 65
@@ -271,9 +294,9 @@ object MainCaptureForm: TMainCaptureForm
       end
       object tbRight: TTrackBar
         Left = 251
-        Top = 47
+        Top = 29
         Width = 122
-        Height = 17
+        Height = 19
         Max = 640
         Frequency = 0
         Position = 543
@@ -281,9 +304,9 @@ object MainCaptureForm: TMainCaptureForm
       end
       object tbThreshold: TTrackBar
         Left = 379
-        Top = 47
+        Top = 29
         Width = 526
-        Height = 17
+        Height = 19
         Max = 255
         Frequency = 0
         TabOrder = 4
@@ -357,9 +380,9 @@ object MainCaptureForm: TMainCaptureForm
       end
       object crRoiRight: TTrackBar
         Left = 251
-        Top = 24
+        Top = 6
         Width = 122
-        Height = 17
+        Height = 19
         Max = 640
         Frequency = 0
         Position = 420
@@ -367,9 +390,9 @@ object MainCaptureForm: TMainCaptureForm
       end
       object crRoiLeft: TTrackBar
         Left = 143
-        Top = 24
+        Top = 6
         Width = 112
-        Height = 17
+        Height = 19
         Max = 640
         Frequency = 0
         Position = 295
@@ -377,9 +400,9 @@ object MainCaptureForm: TMainCaptureForm
       end
       object crThreshold: TTrackBar
         Left = 379
-        Top = 24
+        Top = 6
         Width = 526
-        Height = 17
+        Height = 19
         Max = 255
         Frequency = 0
         Position = 255
@@ -540,10 +563,10 @@ object MainCaptureForm: TMainCaptureForm
     OnChange = FrameDivisorEditChange
   end
   object tPanel: TPanel
-    Left = 163
-    Top = 256
-    Width = 632
-    Height = 480
+    Left = 161
+    Top = 270
+    Width = 631
+    Height = 492
     BevelOuter = bvNone
     BorderStyle = bsSingle
     Color = clNone
