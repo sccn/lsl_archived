@@ -21,13 +21,12 @@ object MainCaptureForm: TMainCaptureForm
     Top = 6
     Width = 380
     Height = 181
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     TabOrder = 0
     TabPosition = tpBottom
     object TabSheet2: TTabSheet
       Caption = 'Video in'
       ImageIndex = 1
-      ExplicitHeight = 124
       object Label1: TLabel
         Left = 11
         Top = 0
@@ -108,7 +107,6 @@ object MainCaptureForm: TMainCaptureForm
     object TabSheet1: TTabSheet
       Caption = 'Video out'
       ImageIndex = 2
-      ExplicitHeight = 124
       object Label2: TLabel
         Left = 14
         Top = -2

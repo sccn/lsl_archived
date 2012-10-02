@@ -760,8 +760,8 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		sample[1] = x0;
 		sample[2] = y0;
 		sample[3] = radius;
-
-		lsl_push_sample_ftp(outlet, sample, lsl_local_clock(), 1);
+		float timestamp = lsl_local_clock();
+		lsl_push_sample_ftp(outlet, sample, timestamp, 1);
 
   /*		FrameStamp.drf.Event=(nFrames % 10 == 0) ? nFrames : 0;
 		FrameStamp.drf.item_size = 4;// default is 4
@@ -784,6 +784,8 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		ds_Write(handleWrScene,(char *)&FrameStamp,	sizeof FrameStamp);
 	*/
 		nFrames++;
+  		edFrame->Text = nFrames;
+		edTimestamp->Text = timestamp;
 		if(paint) {
 			hline(bmpCanvas, crRoiLeftPosition/spatialDivisor, crRoiTopPosition/spatialDivisor, crRoiRightPosition/spatialDivisor, makecol(255,0,0));
 			hline(bmpCanvas, crRoiLeftPosition/spatialDivisor, crRoiBottomPosition/spatialDivisor, crRoiRightPosition/spatialDivisor, makecol(255,0,0));
@@ -855,8 +857,8 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		sample[10] = xParallaxCorrection; //pixels
 		sample[11] = yParallaxCorrection; //pixels
 
-
-		lsl_push_sample_ftp(outlet, sample, lsl_local_clock(), 1);
+		float timestamp = lsl_local_clock();
+		lsl_push_sample_ftp(outlet, sample, timestamp, 1);
 
   /*		FrameStamp.drf.Event=(nFrames % 10 == 0) ? nFrames : 0;
 		FrameStamp.drf.item_size = 4;// default is 4
@@ -881,6 +883,8 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		ds_Write(handleWrScene,(char *)&FrameStamp,	sizeof FrameStamp);
   */
 		nFrames++;
+		edFrame->Text = nFrames;
+		edTimestamp->Text = timestamp;
 		if(paint) {
 			circlefill(bmpCanvas, xScene/spatialDivisor, yScene/spatialDivisor, 5, makecol(0,0,0));
 			circlefill(bmpCanvas, xScene/spatialDivisor, yScene/spatialDivisor, 3, makecol(255,255,0));
@@ -896,8 +900,13 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 
   //	printf("%g\n", lsl_local_clock());
 
-		lsl_push_sample_itp(outlet, &(nFrames), lsl_local_clock(),1);
+		int sample [1];
+		sample[0] = nFrames;
+  		double timestamp = lsl_local_clock();
+		lsl_push_sample_itp(outlet, sample, timestamp,1);
 		nFrames++;
+		edFrame->Text = nFrames;
+		edTimestamp->Text = timestamp;
  /*		FrameNumber.drf.Event = nFrames;
 		FrameNumber.drf.TimeStampOrig= ds_TimestampMs();
 		FrameNumber.TimeStampRecv= FrameNumber.drf.TimeStampOrig;
@@ -987,8 +996,8 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		sample[5] = angle;//radians
 
 
-
-		lsl_push_sample_ftp(outlet, sample, lsl_local_clock(), 1);
+		double timestamp = lsl_local_clock();
+		lsl_push_sample_ftp(outlet, sample, timestamp, 1);
 /*
 		FrameStamp.drf.Event = (nFrames % 10 == 0) ? nFrames : 0;
 		FrameStamp.drf.item_size = 4;// default is 4
@@ -1013,6 +1022,9 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
   */
 
 		nFrames++;
+		edFrame->Text = nFrames;
+		edTimestamp->Text = timestamp;
+
 		if(paint) {
 
 			/////drawing ellipse lines
