@@ -247,26 +247,12 @@ void ProcessDataString(char *data, int nChannels, double samplingRate) {
 		ReleaseDC(hWnd,hDC);
 	}
 }
-void ProcessDataInt(int *data, int nChannels, double samplingRate) {
-	HWND hWnd;
-	HDC 	hDC;
-	RECT r;
-	if(samplingRate == 0.0) {
-		Form1->Display->ShowCode(lsl_local_clock(), data[0]);
-		hWnd =Form1->PageControl2->ActivePage->Handle;
-		hDC = GetDC(hWnd);
-		r=Form1->Image3->BoundsRect;
-		draw_to_hdc (hDC,Form1->Display->bmpCanvas,r.left,r.top);
-		r=Form1->ImageCode->BoundsRect;
-		draw_to_hdc (hDC,Form1->Display->bmpCodeCanvas,r.left,r.top);
-		ReleaseDC(hWnd,hDC);
-	}
-}
+
 
 
 void ProcessData(float *data, int nChannels, double samplingRate) {
  	Form1->Edit2->Text = nChannels/4;
-	if(processDataCount == 0) {
+	if(processDataCount == 0 && Form1->cbParseData->Checked) {
 		vector<UnicodeString> lines = splitString(UnicodeString(listenThread->xmlHeader), L'\n');
 		Form1->Memo1->Clear();
 		for(int i=0; i<lines.size(); i++) {
@@ -316,6 +302,29 @@ void ProcessData(float *data, int nChannels, double samplingRate) {
 			ReleaseDC(hWnd,hDC);
 		}
 	}
+}
+
+void ProcessDataInt(int *data, int nChannels, double samplingRate) {
+	HWND hWnd;
+	HDC 	hDC;
+	RECT r;
+	if(samplingRate == 0.0) {
+		Form1->Display->ShowCode(lsl_local_clock(), data[0]);
+		hWnd =Form1->PageControl2->ActivePage->Handle;
+		hDC = GetDC(hWnd);
+		r=Form1->Image3->BoundsRect;
+		draw_to_hdc (hDC,Form1->Display->bmpCanvas,r.left,r.top);
+		r=Form1->ImageCode->BoundsRect;
+		draw_to_hdc (hDC,Form1->Display->bmpCodeCanvas,r.left,r.top);
+		ReleaseDC(hWnd,hDC);
+	} else {
+		float * datafloat = new1D(nChannels, 0.0f);
+		for(int i=0; i<nChannels; i++) {
+			datafloat[i] = (float) data[i];
+		}
+		ProcessData(datafloat, nChannels,samplingRate);
+	}
+
 }
 
 void TForm1::GetDDRect(TImage * pImg,RECT & rThis)

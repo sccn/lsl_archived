@@ -116,6 +116,7 @@ __published:	// IDE-managed Components
 	TXMLDocument *xd;
 	TCheckBox *cbPlay;
 	TImage *ImageCode;
+	TCheckBox *cbParseData;
 		void __fastcall UpDown1MouseUp(TObject *Sender,
 		  TMouseButton Button, TShiftState Shift, int X, int Y);
 	void __fastcall FormCreate(TObject *Sender);

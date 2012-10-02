@@ -3089,9 +3089,9 @@ object Form1: TForm1
   end
   object Memo1: TMemo
     Left = 626
-    Top = 16
+    Top = 47
     Width = 450
-    Height = 557
+    Height = 526
     TabOrder = 1
   end
   object Button2: TButton
@@ -3108,7 +3108,7 @@ object Form1: TForm1
     Top = 20
     Width = 613
     Height = 558
-    ActivePage = TabSheet1
+    ActivePage = TabSheet32
     MultiLine = True
     TabOrder = 3
     TabPosition = tpLeft
@@ -3595,6 +3595,14 @@ object Form1: TForm1
     Caption = 'Play audio'
     TabOrder = 6
     OnClick = cbPlayClick
+  end
+  object cbParseData: TCheckBox
+    Left = 656
+    Top = 16
+    Width = 97
+    Height = 17
+    Caption = 'Parse Data?'
+    TabOrder = 7
   end
   object TimerDisp: TTimer
     Enabled = False
