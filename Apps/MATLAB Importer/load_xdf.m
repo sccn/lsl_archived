@@ -1,6 +1,6 @@
-function [streams,fileheader] = load_xdf(filename)
+function [streams,fileheader] = load_xdf(filename,varargin)
 % Import an XDF file.
-% [Streams,FileHeader] = load_xdf(Filename)
+% [Streams,FileHeader] = load_xdf(Filename, Options...)
 %
 % This is a simple MATLAB importer for mult-stream XDF (Extensible Data Format) recordings. All
 % information covered by the XDF 1.0 specification is imported, plus any additional meta-data
@@ -10,6 +10,20 @@ function [streams,fileheader] = load_xdf(filename)
 %
 % In:
 %   Filename : name of the file to import (*.xdf or *.xdfz)
+%
+%   Options... : a list of optional name-value arguments. The allowed names are listed in
+%                the following: 
+%
+%                'OnChunk' : Function that is called for each chunk of data as it 
+%                            is being retrieved from the file; the function is allowed to modify the
+%                            data (for example, sub-sample it). The four input arguments are 1) the
+%                            matrix of [#channels x #samples] values (either numeric or 2d cell
+%                            array of strings), 2) the vector of unprocessed local time stamps (one
+%                            per sample), 3) the info struct for the stream (same as the .info field
+%                            in the final output, buth without the .effective_srate sub-field), and
+%                            4) the scalar stream number (1-based integers). The three return values
+%                            are 1) the (optionally modified) data, 2) the (optionally modified)
+%                            time stamps, and 3) the (optionally modified) header.
 %
 % Out:
 %   Streams : cell array of structs, one for each stream; the structs have the following content:
@@ -84,7 +98,12 @@ function [streams,fileheader] = load_xdf(filename)
 %                                Contains portions of xml2struct Copyright (c) 2010, Wouter Falkena,
 %                                ASTI, TUDelft, 21-08-2010
 %
-%                                version 1.08
+%                                version 1.09
+
+% handle options
+opts = cell2struct(varargin(2:2:end),varargin(1:2:end),2);
+if ~isfield(opts,'OnChunk')
+    opts.OnChunk = @default_OnChunk; end
 
 if ~exist(filename,'file')
     error(['The file "' filename '" does not exist.']); end
@@ -171,6 +190,8 @@ while 1
                         temp(id).last_timestamp = timestamps(s);
                     end
                 end
+                % send through the OnChunk function
+                [values,timestamps,streams{id}] = opts.OnChunk(values,timestamps,streams{id},id);
                 % append to the time series...
                 temp(id).time_series{end+1} = values;
                 temp(id).time_stamps{end+1} = timestamps;
@@ -410,6 +431,10 @@ result = parseChildNodes(xmlread(tmp));
 end
 
 
+function [data,timestamps,header] = default_OnChunk(data,timestamps,header,streamnum)
+    % nothing to do...
+end
+
 function res = hlp_superimposedata(varargin)
 % Merge multiple partially populated data structures into one fully populated one.
 % Result = hlp_superimposedata(Data1, Data2, Data3, ...)
@@ -566,3 +591,4 @@ function C = grow_cell(C,idx)
 tmp = sprintf('%i,',idx);
 eval(['C{' tmp(1:end-1) '} = [];']);
 end
+    
