@@ -258,7 +258,7 @@ for k=1:length(temp)
     % concatenate the signal
     temp(k).time_series = [temp(k).time_series{:}];
     temp(k).time_stamps = [temp(k).time_stamps{:}];
-    if ~isempty(temp(k).time_stamps) && ~isempty(temp(k).time_series)
+    if ~isempty(temp(k).time_stamps)
         try
             clock_times = temp(k).clock_times;
             clock_values = temp(k).clock_values;
