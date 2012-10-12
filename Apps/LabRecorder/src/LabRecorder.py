@@ -142,38 +142,44 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def refreshStreams(self):
         """ Refresh the stream list. """
         # get all streams on the lab network
-        self.ResolvedStreams = pylsl.resolve_streams(1.0)
+        self.ResolvedStreams = list(pylsl.resolve_streams(1.0))
+        # sort them by UID to get a reproducible order
+        self.ResolvedStreams.sort(key=lambda x: x.uid())
         # get their names
         self.ResolvedNames = [];
         for k in range(len(self.ResolvedStreams)):
-            self.ResolvedNames.append(self.ResolvedStreams[k].name())
+            self.ResolvedNames.append(self.ResolvedStreams[k].name() + ' (' + self.ResolvedStreams[k].hostname() +')')
         # find those that are required but missing
         missing = [n for n in self.RequiredStreams if (n not in self.ResolvedNames)]
         self.MissingStreams = missing
         allnames = []
         allnames += self.ResolvedNames
         allnames += missing
-        allnames.sort()
         # update the listbox contents
         good_brush = QBrush()
         good_brush.setColor(QColor(0,128,0))
         bad_brush = QBrush()
         bad_brush.setColor(QColor(255,0,0))
         
-        # keep track of what was unchecked before
+        # keep track of the UIDs of the streams that were unchecked before
         previously_unchecked = []
         for i in range(self.streamList.count()):
             item = self.streamList.item(i)
-            if item.checkState() == Qt.Unchecked: 
-                previously_unchecked.append(item.text())
+            if item.checkState() == Qt.Unchecked and item.stream_uid is not None:
+                previously_unchecked.append(item.stream_uid)
 
         self.streamList.clear()
-        for n in allnames:
+        for k in range(len(allnames)):
+            n = allnames[k]
             item = QListWidgetItem(n,self.streamList) 
             item.setForeground(bad_brush if n in missing else good_brush)
             item.setFlags(item.flags() & Qt.ItemIsUserCheckable)
+            if k < len(self.ResolvedStreams):
+                item.stream_uid = self.ResolvedStreams[k].uid()
+            else:
+                item.stream_uid = None
             # check what's required (or all otherwise default), EXCEPT for what was specifically unchecked before...
-            item.setCheckState(Qt.Checked if ((n in self.RequiredStreams) or len(self.RequiredStreams)==0) and not (n in previously_unchecked) else Qt.Unchecked)
+            item.setCheckState(Qt.Checked if ((n in self.RequiredStreams) or len(self.RequiredStreams)==0) and not (item.stream_uid in previously_unchecked) else Qt.Unchecked)
             self.streamList.addItem(item)
 
     def startRecording(self):
@@ -252,9 +258,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 item = self.streamList.item(i)                
                 if item.checkState() == Qt.Checked:
                     if item.text() in self.MissingStreams:
-                        into_watchfor.append("name='" + item.text() + "'")
+                        name_and_host = item.text()[:-1].split(' (')
+                        into_watchfor.append("name='" + name_and_host[0] + "' and hostname='" +  name_and_host[1] + "'")
                     elif item.text() in self.ResolvedNames:
-                        into_streams.append(self.ResolvedStreams[self.ResolvedNames.index(item.text())])
+                        into_streams.append(self.ResolvedStreams[i])
             
             # determine the streams to record from...
             num_streams = len(into_streams)
