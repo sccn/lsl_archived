@@ -25,6 +25,16 @@ function [streams,fileheader] = load_xdf(filename,varargin)
 %                            are 1) the (optionally modified) data, 2) the (optionally modified)
 %                            time stamps, and 3) the (optionally modified) header.
 %
+%                'BreakThresholdSeconds' : An interruption in a regularly-sampled stream of at least this
+%                                          many seconds will be considered as a potential break (if also
+%                                          the BreakThresholdSamples is crossed) and multiple segments
+%                                          will be returned. Default: 1
+%
+%                'BreakThresholdSamples' : An interruption in a regularly-sampled stream of at least this
+%                                          many samples will be considered as a potential break (if also
+%                                          the BreakThresholdSeconds is crossed) and multiple segments
+%                                          will be returned. Default: 500
+%
 % Out:
 %   Streams : cell array of structs, one for each stream; the structs have the following content:
 %             .time_series field: contains the stream's time series [#Channels x #Samples]
@@ -98,12 +108,16 @@ function [streams,fileheader] = load_xdf(filename,varargin)
 %                                Contains portions of xml2struct Copyright (c) 2010, Wouter Falkena,
 %                                ASTI, TUDelft, 21-08-2010
 %
-%                                version 1.09
+%                                version 1.10
 
 % handle options
 opts = cell2struct(varargin(2:2:end),varargin(1:2:end),2);
 if ~isfield(opts,'OnChunk')
     opts.OnChunk = @default_OnChunk; end
+if ~isfield(opts,'BreakThresholdSeconds')
+    opts.BreakThresholdSeconds = 1; end
+if ~isfield(opts,'BreakThresholdSamples')
+    opts.BreakThresholdSamples = 500; end
 
 if ~exist(filename,'file')
     error(['The file "' filename '" does not exist.']); end
@@ -225,8 +239,8 @@ while 1
             end
             % fread parsing format for data values
             temp(id).readfmt = ['*' header.info.channel_format];
-            if strcmp(temp(id).readfmt,'*double64')
-                temp(id).readfmt = 'double'; end               
+            if strcmp(temp(id).readfmt,'*double64') && ~have_mex
+                temp(id).readfmt = '*double'; end % for fread()
         % [StreamFooter] chunk
         case 6
             % [StreamId]
@@ -280,15 +294,9 @@ for k=1:length(temp)
         
         % do some fix-ups if the time series is regularly sampled
         if temp(k).srate
-            segment_threshold = [1,500]; % time that has to pass without data from a regularly sampled
-            % stream to assume that the stream is fragmented into segments
-            % (breaks shorter than this will be assumed to be time-stamping
-            % glitches) in seconds and in samples (both thresholds have to
-            % be exceeded)
-            
             % check for segment breaks
             diffs = diff(temp(k).time_stamps);
-            breaks_at = diffs > max(segment_threshold(1),segment_threshold(2)*temp(k).sampling_interval);
+            breaks_at = diffs > max(opts.BreakThresholdSeconds,opts.BreakThresholdSamples*temp(k).sampling_interval);
             if any(breaks_at)
                 % turn the break mask into a cell array of [begin,end] index ranges
                 tmp = find(breaks_at)';
