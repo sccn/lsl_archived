@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Tue Jul 31 00:02:52 2012
+** Created: Wed Oct 24 18:59:21 2012
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -112,7 +112,7 @@ public:
         comPort = new QSpinBox(groupBox);
         comPort->setObjectName(QString::fromUtf8("comPort"));
         comPort->setMinimum(1);
-        comPort->setMaximum(20);
+        comPort->setMaximum(256);
 
         formLayout->setWidget(0, QFormLayout::FieldRole, comPort);
 

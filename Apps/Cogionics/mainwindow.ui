@@ -75,7 +75,7 @@ C2</string>
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>20</number>
+            <number>256</number>
            </property>
           </widget>
          </item>
