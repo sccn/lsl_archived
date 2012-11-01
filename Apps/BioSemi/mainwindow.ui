@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>339</width>
+    <height>292</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>BioSemi Device</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Experiment Information</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Reference Channels</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="referenceChannels">
+         <property name="toolTip">
+          <string>It is very important to list the correct reference channels here, if any (since BioSemi has no dedicated reference).</string>
+         </property>
+         <property name="text">
+          <string>EX1, EX2</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Location File</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="capLocation">
+         <property name="toolTip">
+          <string>If this is a name of an .sfp location file (e.g. from Zebris), the channel locations will be included in the recording. Make sure that the labels correspond the BioSemi channel names (A1-A32, B1-B32, ... ,EX1-EX8, AUX1-AUX16, AIB1-AIB32) and ideally some standard fiducials.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QPushButton" name="browseLocation">
+         <property name="text">
+          <string>&amp;Browse...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Cap Design</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="capDesign">
+         <property name="toolTip">
+          <string>If you are working with multiple cap layouts, it is very important to use systematic names for them and take note of which was used.</string>
+         </property>
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+         <item>
+          <property name="text">
+           <string>Rita-MoBI-2010-07</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>EEG Channel Subset</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="channelSubset">
+         <property name="toolTip">
+          <string>Record only a subset of EEG channels (note: this is per box in daisy-chained setups). EX channels will always be recorded.</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>all</string>
+          </property>
+         </item>
+          <item>
+            <property name="text">
+              <string>160</string>
+            </property>
+          </item>
+          <item>
+          <property name="text">
+           <string>128</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>64</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>32</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>all, no AUX</string>
+          </property>
+         </item>
+          <item>
+            <property name="text">
+              <string>160, no AUX</string>
+            </property>
+          </item>
+          <item>
+          <property name="text">
+           <string>128, no AUX</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>64, no AUX</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>32, no AUX</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Cap Circumference</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QSpinBox" name="capCircumference">
+         <property name="toolTip">
+          <string>The cap circumference in centimeters. 54 is average.</string>
+         </property>
+         <property name="minimum">
+          <number>40</number>
+         </property>
+         <property name="maximum">
+          <number>70</number>
+         </property>
+         <property name="value">
+          <number>54</number>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Resample to 512 Hz</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QCheckBox" name="resamplingOn">
+         <property name="toolTip">
+          <string>Doing this saves space and bandwidth but will introduce 10ms of pre/post-rining artifacts in the EEG (and trigger) channel -- not optimal for studies of sharp timing effects.</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>10</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="connectButton">
+        <property name="text">
+         <string>&amp;Link</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+   <zorder>verticalSpacer</zorder>
+   <zorder>groupBox</zorder>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>339</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFilw">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionLoad_Configuration"/>
+    <addaction name="action_Save_Configuration"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <addaction name="menuFilw"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionLoad_Configuration">
+   <property name="text">
+    <string>&amp;Load Configuration...</string>
+   </property>
+  </action>
+  <action name="action_Save_Configuration">
+   <property name="text">
+    <string>&amp;Save Configuration...</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
