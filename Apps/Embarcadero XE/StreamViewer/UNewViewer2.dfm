@@ -2,8 +2,8 @@ object Form1: TForm1
   Left = 43
   Top = 0
   Caption = 'StreamViewer'
-  ClientHeight = 581
-  ClientWidth = 1084
+  ClientHeight = 637
+  ClientWidth = 624
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -3073,15 +3073,15 @@ object Form1: TForm1
     Height = 37
   end
   object Label6: TLabel
-    Left = 25
-    Top = 584
+    Left = 8
+    Top = 704
     Width = 68
     Height = 12
     Caption = 'Reading stream'
   end
   object ProgressBar1: TProgressBar
-    Left = 344
-    Top = 582
+    Left = 478
+    Top = 702
     Width = 213
     Height = 16
     Smooth = True
@@ -3095,8 +3095,8 @@ object Form1: TForm1
     TabOrder = 1
   end
   object Button2: TButton
-    Left = 562
-    Top = 582
+    Left = 696
+    Top = 702
     Width = 56
     Height = 19
     Caption = '<<'
@@ -3107,13 +3107,14 @@ object Form1: TForm1
     Left = 7
     Top = 20
     Width = 613
-    Height = 558
+    Height = 613
     ActivePage = TabSheet32
     MultiLine = True
     TabOrder = 3
     TabPosition = tpLeft
     object TabSheet1: TTabSheet
       Caption = 'Time'
+      ExplicitHeight = 550
       object Bevel1: TBevel
         Left = 401
         Top = 414
@@ -3376,11 +3377,13 @@ object Form1: TForm1
     object TabSheet32: TTabSheet
       Caption = '3D'
       ImageIndex = 2
+      ExplicitLeft = 27
+      ExplicitTop = 0
       object Image4: TImage
         Left = 6
         Top = 34
         Width = 480
-        Height = 480
+        Height = 447
         OnMouseDown = Image4MouseDown
         OnMouseMove = Image4MouseMove
         OnMouseUp = Image4MouseUp
@@ -3414,6 +3417,27 @@ object Form1: TForm1
         Brush.Color = clYellow
         Pen.Color = clAqua
         Shape = stCircle
+      end
+      object Label7: TLabel
+        Left = 153
+        Top = 491
+        Width = 33
+        Height = 12
+        Caption = 'X (mm)'
+      end
+      object Label8: TLabel
+        Left = 272
+        Top = 491
+        Width = 33
+        Height = 12
+        Caption = 'Y (mm)'
+      end
+      object Label9: TLabel
+        Left = 394
+        Top = 491
+        Width = 33
+        Height = 12
+        Caption = 'Z (mm)'
       end
       object TrackBarGain: TTrackBar
         Left = 210
@@ -3516,8 +3540,8 @@ object Form1: TForm1
         end
       end
       object UpDown3: TUpDown
-        Left = 302
-        Top = 520
+        Left = 569
+        Top = 555
         Width = 15
         Height = 20
         Associate = LabeledEdit4
@@ -3528,8 +3552,8 @@ object Form1: TForm1
         Visible = False
       end
       object LabeledEdit4: TLabeledEdit
-        Left = 272
-        Top = 520
+        Left = 533
+        Top = 555
         Width = 30
         Height = 20
         EditLabel.Width = 44
@@ -3567,6 +3591,154 @@ object Form1: TForm1
         Text = 'Edit3'
         Visible = False
       end
+      object sensor0Edit: TLabeledEdit
+        Left = 50
+        Top = 510
+        Width = 57
+        Height = 21
+        EditLabel.Width = 39
+        EditLabel.Height = 12
+        EditLabel.Caption = 'Sensor 0'
+        LabelPosition = lpLeft
+        TabOrder = 12
+        Text = '0'
+        OnChange = sensor0EditChange
+      end
+      object sensor1Edit: TLabeledEdit
+        Left = 50
+        Top = 534
+        Width = 57
+        Height = 18
+        EditLabel.Width = 39
+        EditLabel.Height = 12
+        EditLabel.Caption = 'Sensor 1'
+        LabelPosition = lpLeft
+        TabOrder = 13
+        Text = '0'
+        OnChange = sensor1EditChange
+      end
+      object sensor2Edit: TLabeledEdit
+        Left = 50
+        Top = 555
+        Width = 57
+        Height = 21
+        EditLabel.Width = 39
+        EditLabel.Height = 12
+        EditLabel.Caption = 'Sensor 2'
+        LabelPosition = lpLeft
+        TabOrder = 14
+        Text = '0'
+        OnChange = sensor2EditChange
+      end
+      object sensor3Edit: TLabeledEdit
+        Left = 50
+        Top = 579
+        Width = 57
+        Height = 21
+        EditLabel.Width = 39
+        EditLabel.Height = 12
+        EditLabel.Caption = 'Sensor 3'
+        LabelPosition = lpLeft
+        TabOrder = 15
+        Text = '0'
+        OnChange = sensor3EditChange
+      end
+      object x0Edit: TEdit
+        Left = 109
+        Top = 510
+        Width = 121
+        Height = 21
+        ReadOnly = True
+        TabOrder = 16
+      end
+      object y0Edit: TEdit
+        Left = 232
+        Top = 510
+        Width = 121
+        Height = 21
+        ReadOnly = True
+        TabOrder = 17
+      end
+      object z0Edit: TEdit
+        Left = 354
+        Top = 510
+        Width = 121
+        Height = 21
+        ReadOnly = True
+        TabOrder = 18
+      end
+      object x1Edit: TEdit
+        Left = 109
+        Top = 534
+        Width = 121
+        Height = 18
+        ReadOnly = True
+        TabOrder = 19
+      end
+      object y1Edit: TEdit
+        Left = 232
+        Top = 534
+        Width = 121
+        Height = 18
+        ReadOnly = True
+        TabOrder = 20
+      end
+      object z1Edit: TEdit
+        Left = 354
+        Top = 534
+        Width = 121
+        Height = 18
+        ReadOnly = True
+        TabOrder = 21
+      end
+      object x2Edit: TEdit
+        Left = 109
+        Top = 555
+        Width = 121
+        Height = 21
+        ReadOnly = True
+        TabOrder = 22
+      end
+      object y2Edit: TEdit
+        Left = 232
+        Top = 555
+        Width = 121
+        Height = 21
+        ReadOnly = True
+        TabOrder = 23
+      end
+      object z2Edit: TEdit
+        Left = 354
+        Top = 555
+        Width = 121
+        Height = 21
+        ReadOnly = True
+        TabOrder = 24
+      end
+      object x3Edit: TEdit
+        Left = 109
+        Top = 579
+        Width = 121
+        Height = 21
+        ReadOnly = True
+        TabOrder = 25
+      end
+      object y3Edit: TEdit
+        Left = 232
+        Top = 579
+        Width = 121
+        Height = 21
+        ReadOnly = True
+        TabOrder = 26
+      end
+      object z3Edit: TEdit
+        Left = 354
+        Top = 579
+        Width = 121
+        Height = 21
+        ReadOnly = True
+        TabOrder = 27
+      end
     end
   end
   object ComboBox1: TComboBox
@@ -3579,8 +3751,8 @@ object Form1: TForm1
     OnSelect = ComboBox1Select
   end
   object Memo2: TMemo
-    Left = 208
-    Top = 632
+    Left = 128
+    Top = 656
     Width = 185
     Height = 89
     Lines.Strings = (
@@ -3588,8 +3760,8 @@ object Form1: TForm1
     TabOrder = 5
   end
   object cbPlay: TCheckBox
-    Left = 241
-    Top = 582
+    Left = 375
+    Top = 702
     Width = 97
     Height = 17
     Caption = 'Play audio'

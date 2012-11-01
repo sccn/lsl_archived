@@ -134,6 +134,7 @@ void __fastcall TMainCaptureForm::FormCreate(TObject *Sender)
 	nOutlinesEditChange(this);
 	crRadiusMultiplierEditChange(this);
 	crRadiusMaxEditChange(this);
+	eyeRadiusMaxEditChange(this);
 	FrameDivisorEditChange(this);
 	SpatialDivisorEditChange(this);
 	maxEccentricityEditChange(this);
@@ -252,7 +253,7 @@ void __fastcall TMainCaptureForm::btStopClick(TObject *Sender)
 
 void __fastcall TMainCaptureForm::Start()
 {
-
+ 		CaptureWorkerForm->VideoGrabber->VideoProcessing_FlipVertical = flipVertCheckbox->Checked;
 		CaptureWorkerForm->VideoGrabber->AnalogVideoStandard = CaptureWorkerForm->VideoGrabber->AnalogVideoStandardIndex ("NTSC M");
 		cbRecord->Enabled =false;
 		CaptureWorkerForm->VideoGrabber->RecordingInNativeFormat = false;
@@ -811,14 +812,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		radiusAscene = data[3];
 		radiusBscene = data[4];
 		angleScene = data[5];
-   /*		TMaxArray fr;
 
-		while (ds_Read(handleRd,(char *)&fr)) {
-			x0scene = fr.Data[0]/100000.0;
-			y0scene = fr.Data[1]/100000.0;
-			radiusscene = fr.Data[2]/100000.0;
-		}
-	 */
 
 		double xMonitor = x0scene;
 		double yMonitor = y0scene;
@@ -955,6 +949,12 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 
 		fitEllipse(aBmp, largestOutline, &x0, &y0, &radiusA, &radiusB, &angle, crX0, crY0, crRadius, false,
 			tbLeftPosition, tbRightPosition, tbLowerPosition, tbUpperPosition, paint);
+
+					//If autothreshold is checked, try to keep the number of spots constant.
+		//This is fairly robust to contrast and gain changes.
+		if(autoThresholdBox->Checked == true && sqrt(radiusA*radiusB) > eyeRadiusMax) {
+			tbThreshold->Position = tbThreshold->Position - 2;
+		}
 
 		if(storeFit) {
 			ds_Ellipse ellipse;
@@ -1511,7 +1511,18 @@ if(cbSceneCalibColor->ItemIndex != -1) {
 }
 //---------------------------------------------------------------------------
 
+ void __fastcall TMainCaptureForm::eyeRadiusMaxEditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		eyeRadiusMaxEdit->Text.ToDouble();
+	} catch (...) {
+		ex = true;
+	}
 
+	if(!ex) eyeRadiusMax = eyeRadiusMaxEdit->Text.ToDouble();
+}
 
 //---------------------------------------------------------------------------
+
 

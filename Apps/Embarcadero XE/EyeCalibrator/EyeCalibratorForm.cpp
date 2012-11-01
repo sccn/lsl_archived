@@ -1891,3 +1891,4 @@ void TForm4::LoadConfig(const System::UnicodeString FileName)
 
 
 
+

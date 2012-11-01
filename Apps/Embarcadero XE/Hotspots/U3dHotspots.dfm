@@ -20,12 +20,16 @@ object Form11: TForm11
     Top = 49
     Width = 781
     Height = 531
-    ActivePage = TabSheet1
+    ActivePage = TabSheet5
     Align = alClient
     TabOrder = 0
     Visible = False
     object TabSheet1: TTabSheet
       Caption = 'Locations'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Button5: TButton
         Left = 611
         Top = 3
@@ -263,6 +267,10 @@ object Form11: TForm11
     object TabSheet2: TTabSheet
       Caption = 'Touch'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ScrollBox2: TScrollBox
         Left = 0
         Top = 0
@@ -388,6 +396,10 @@ object Form11: TForm11
     object TabSheet3: TTabSheet
       Caption = 'Point to'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ScrollBox3: TScrollBox
         Left = 0
         Top = 0
@@ -540,6 +552,10 @@ object Form11: TForm11
     object TabSheet4: TTabSheet
       Caption = 'Direction'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ScrollBox4: TScrollBox
         Left = 0
         Top = 0
@@ -703,7 +719,7 @@ object Form11: TForm11
           Left = 0
           Top = 0
           Width = 596
-          Height = 19
+          Height = 25
           Align = alTop
           ColumnCollection = <
             item
@@ -808,7 +824,7 @@ object Form11: TForm11
           TabOrder = 0
           DesignSize = (
             596
-            19)
+            25)
           object Label27: TLabel
             Left = 32
             Top = 5
@@ -825,8 +841,8 @@ object Form11: TForm11
             Height = 12
             Anchors = []
             Caption = 'X'
-            ExplicitLeft = 72
-            ExplicitTop = 2
+            Visible = False
+            ExplicitLeft = 80
           end
           object Label28: TLabel
             Left = 163
@@ -835,8 +851,8 @@ object Form11: TForm11
             Height = 12
             Anchors = []
             Caption = 'Y'
-            ExplicitLeft = 122
-            ExplicitTop = 2
+            Visible = False
+            ExplicitLeft = 133
           end
           object Label29: TLabel
             Left = 229
@@ -845,6 +861,7 @@ object Form11: TForm11
             Height = 12
             Anchors = []
             Caption = 'Z'
+            Visible = False
             ExplicitLeft = 171
             ExplicitTop = 2
           end
@@ -855,6 +872,7 @@ object Form11: TForm11
             Height = 12
             Anchors = []
             Caption = 'Delta X'
+            Visible = False
             ExplicitLeft = 208
             ExplicitTop = 2
           end
@@ -865,6 +883,7 @@ object Form11: TForm11
             Height = 12
             Anchors = []
             Caption = 'DeltaY'
+            Visible = False
             ExplicitLeft = 260
             ExplicitTop = 2
           end
@@ -875,6 +894,7 @@ object Form11: TForm11
             Height = 12
             Anchors = []
             Caption = 'Delta Z'
+            Visible = False
             ExplicitLeft = 308
             ExplicitTop = 2
           end
@@ -885,6 +905,7 @@ object Form11: TForm11
             Height = 12
             Anchors = []
             Caption = 'Sensor'
+            Visible = False
             ExplicitLeft = 357
             ExplicitTop = 2
           end
@@ -895,6 +916,7 @@ object Form11: TForm11
             Height = 12
             Anchors = []
             Caption = 'Device #    '
+            Visible = False
             ExplicitLeft = 397
             ExplicitTop = 2
           end
@@ -904,6 +926,10 @@ object Form11: TForm11
     object Screen: TTabSheet
       Caption = 'Screen'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ScrollBox6: TScrollBox
         Left = 0
         Top = 0

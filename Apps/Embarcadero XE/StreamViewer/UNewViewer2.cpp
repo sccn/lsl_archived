@@ -70,6 +70,8 @@ int GetAttribute(_di_IXMLNode Node, AnsiString attr)
 TStringList * labellist = 0;
 int nEegChans = 0;
 
+int sensor0, sensor1, sensor2, sensor3;
+
 void * AcquireMMF(char * Id)
 {         /*
 		char nm[200] = "/tmp/";
@@ -300,6 +302,33 @@ void ProcessData(float *data, int nChannels, double samplingRate) {
 			draw_to_hdc (hDC,Form1->Display3D->bmpCanvas,r.left,r.top);
 
 			ReleaseDC(hWnd,hDC);
+
+			if(sensor0 >= 0 && sensor0*4 < nChannels) {
+				Form1->x0Edit->Text = FormatFloat("0.00",data[sensor0*4]*1000);
+				Form1->y0Edit->Text = FormatFloat("0.00",data[sensor0*4+1]*1000);
+				Form1->z0Edit->Text = FormatFloat("0.00",data[sensor0*4+2]*1000);
+			}
+
+			if(sensor1 >= 0 && sensor1*4 < nChannels) {
+				Form1->x1Edit->Text = FormatFloat("0.00",data[sensor1*4]*1000);
+				Form1->y1Edit->Text = FormatFloat("0.00",data[sensor1*4+1]*1000);
+				Form1->z1Edit->Text = FormatFloat("0.00",data[sensor1*4+2]*1000);
+
+			}
+			if(sensor1 >= 0 && sensor2*4 < nChannels) {
+				Form1->x2Edit->Text = FormatFloat("0.00",data[sensor2*4]*1000);
+				Form1->y2Edit->Text = FormatFloat("0.00",data[sensor2*4+1]*1000);
+				Form1->z2Edit->Text = FormatFloat("0.00",data[sensor2*4+2]*1000);
+
+			}
+
+			if(sensor1 >= 0 && sensor3*4 < nChannels) {
+				Form1->x3Edit->Text = FormatFloat("0.00",data[sensor3*4]*1000);
+				Form1->y3Edit->Text = FormatFloat("0.00",data[sensor3*4+1]*1000);
+				Form1->z3Edit->Text = FormatFloat("0.00",data[sensor3*4+2]*1000);
+
+			}
+
 		}
 	}
 }
@@ -406,6 +435,11 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
 	TimerDisp->Enabled=true;
 	resolver = lsl_create_continuous_resolver(1.0);
+
+	sensor0EditChange(this);
+	sensor1EditChange(this);
+	sensor2EditChange(this);
+	sensor3EditChange(this);
 
 }
 //---------------------------------------------------------------------------
@@ -744,4 +778,58 @@ void __fastcall TForm1::cbPlayClick(TObject *Sender)
 
 
 
+
+
+
+void __fastcall TForm1::sensor0EditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		sensor0Edit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex) sensor0 = sensor0Edit->Text.ToInt();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::sensor1EditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		sensor1Edit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex) sensor1 = sensor1Edit->Text.ToInt();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::sensor2EditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		sensor2Edit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex) sensor2 = sensor2Edit->Text.ToInt();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::sensor3EditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		sensor3Edit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex) sensor3 = sensor3Edit->Text.ToInt();
+}
+//---------------------------------------------------------------------------
 

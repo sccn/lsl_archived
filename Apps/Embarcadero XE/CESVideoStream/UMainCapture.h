@@ -19,8 +19,7 @@
 #include <XMLDoc.hpp>
 #include <xmldom.hpp>
 #include <XMLIntf.hpp>
-#include "GazeUtil.h"
-#include "TOutline.h"
+#include "CaptureWorkerForm.h"
 
 #ifdef _DEBUG
 	#undef _DEBUG  //prevent loading of debug version of library.
@@ -31,19 +30,10 @@
 #endif
 
 
-//---------------------------------------------------------------------------
-
-typedef struct {
-	double x0;
-	double y0;
-	double a;
-	double b;
-	double angle;
-} ds_Ellipse;
-
 class TMainCaptureForm : public TForm
 {
 __published:	// IDE-managed Components
+
 	TPageControl *PageControl1;
 	TTabSheet *TabSheet2;
 	TLabel *Label1;
@@ -61,48 +51,29 @@ __published:	// IDE-managed Components
 	TEdit *edTimestamp;
 	TLabel *Label3;
 	TEdit *edFrame;
-	TPageControl *PageControl2;
-	TTabSheet *tsScene;
 	TBitBtn *BitBtnPlay;
 	TBitBtn *BitBtnStop;
-	TRadioGroup *RadioGroup1;
-	TTabSheet *tsVideo;
 	TLabeledEdit *BacklogEdit;
 	TLabeledEdit *droppedFramesEdit;
 	TOpenDialog *OpenDialog1;
 	TXMLDocument *xdoc_in;
-	TTabSheet *tsEyeTracker;
-	TTrackBar *tbUpper;
-	TTrackBar *tbLower;
-	TPanel *tPanel;
-	TTrackBar *tbLeft;
-	TTrackBar *tbRight;
-	TTrackBar *tbThreshold;
-	TLabeledEdit *SubsamplingEdit;
-	TButton *LoadCalibration;
 	TLabeledEdit *edtFrameRate;
-	TCheckBox *autoThresholdBox;
-	TLabeledEdit *crRadiusMultiplierEdit;
-	TLabeledEdit *nOutlinesEdit;
-	TTrackBar *crRoiTop;
-	TTrackBar *crRoiBottom;
-	TTrackBar *crRoiRight;
-	TTrackBar *crRoiLeft;
-	TTrackBar *crThreshold;
-	TLabeledEdit *crRadiusMaxEdit;
 	TLabeledEdit *FrameDivisorEdit;
 	TLabeledEdit *SpatialDivisorEdit;
-	TLabeledEdit *maxEccentricityEdit;
 	TCheckBox *cbRecordAudio;
-	TLabeledEdit *xParallaxCorrectionEdit;
-	TLabeledEdit *yParallaxCorrectionEdit;
 	TCheckBox *cbCompress;
-	TComboBox *cbSceneCalibColor;
-	TLabel *Label5;
 	TComboBox *cbVideoInput;
 	TLabel *Label6;
-	TLabeledEdit *eyeRadiusMaxEdit;
-	TCheckBox *flipVertCheckbox;
+	TPanel *tPanel;
+	TPanel *tPanel1;
+	TLabeledEdit *BacklogEdit1;
+	TLabeledEdit *droppedFramesEdit1;
+	TLabeledEdit *droppedFramesEdit2;
+	TLabeledEdit *droppedFramesEdit3;
+	TLabeledEdit *BacklogEdit2;
+	TLabeledEdit *BacklogEdit3;
+	TPanel *tPanel2;
+	TPanel *tPanel3;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall cbVideoInputDeviceChange(TObject *Sender);
 	void __fastcall cbVideoInputFormatChange(TObject *Sender);
@@ -119,25 +90,12 @@ __published:	// IDE-managed Components
 	 */
 	void __fastcall BitBtnPlayClick(TObject *Sender);
 	void __fastcall Timer1Timer(TObject *Sender);
-	void __fastcall CheckBox1Click(TObject *Sender);
 
-	/**
-	 * Determine which mode will be used.
-	 */
-	void __fastcall RadioGroup1Click(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
-	void __fastcall LoadCalibrationClick(TObject *Sender);
-	void __fastcall crRadiusMultiplierEditChange(TObject *Sender);
-	void __fastcall nOutlinesEditChange(TObject *Sender);
-	void __fastcall eyeRadiusMaxEditChange(TObject *Sender);
 	void __fastcall FrameDivisorEditChange(TObject *Sender);
 	void __fastcall SpatialDivisorEditChange(TObject *Sender);
-	void __fastcall maxEccentricityEditChange(TObject *Sender);
-	void __fastcall xParallaxCorrectionEditChange(TObject *Sender);
-	void __fastcall yParallaxCorrectionEditChange(TObject *Sender);
-	void __fastcall cbSceneCalibColorChange(TObject *Sender);
 	void __fastcall cbVideoInputChange(TObject *Sender);
-	void __fastcall crRadiusMaxEditChange(TObject *Sender);
+
 
 private:	// User declarations
 	void __fastcall TMainCaptureForm::Start();
@@ -146,21 +104,16 @@ private:	// User declarations
 	Graphics::TBitmap *pBmpRecGr;
 	Graphics::TBitmap *pBmpPauGr;
 
-	queue<BITMAP*> bmpQueue;
+	queue<BITMAP*> bmpQueue,bmpQueue1,bmpQueue2,bmpQueue3;
 	double crRadiusMultiplier;
 	double crRadiusMax;
 	double eyeRadiusMax;
 	int nOutlinesDesired;
+	TCaptureWorkerForm *CaptureWorkerForm;
+	TCaptureWorkerForm *CaptureWorkerForm1;
+	TCaptureWorkerForm *CaptureWorkerForm2;
+	TCaptureWorkerForm *CaptureWorkerForm3;
 public:		// User declarations
-
-TOutline* findLargestOutline(BITMAP *aBmp, boolean above,
-	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint);
-
-void fitCircle(BITMAP *aBmp, TOutline *largestOutline, double *x0, double *y0, double *radius, double crX0, double crY0, double crRadius, boolean above,
-	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint);
-
-void fitEllipse(BITMAP *aBmp, TOutline *largestOutline, double *x0, double *y0, double *radiusA, double *radiusB, double *angle, double crX0, double crY0, double crRadius, boolean above,
-	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint);
 	/**
 	 * Find at fit a circle in the image. Used for tracking the eye, the
 	 * calibration spot, or the cornea reflection.
@@ -181,11 +134,9 @@ void fitEllipse(BITMAP *aBmp, TOutline *largestOutline, double *x0, double *y0, 
 	 * Process a video frame.
 	 *
 	 */
-	void __fastcall DoFrame(BITMAP *aBmp);
+	void __fastcall DoFrame(BITMAP *aBmp, HANDLE hMutex);
 	__fastcall TMainCaptureForm(TComponent* Owner);
-	TGazeUtil *gu;
 
-	std::list<ds_Ellipse> storedPupils;//x0,y0,a,b,angle
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TMainCaptureForm *MainCaptureForm;

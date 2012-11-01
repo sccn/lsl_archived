@@ -117,6 +117,25 @@ __published:	// IDE-managed Components
 	TCheckBox *cbPlay;
 	TImage *ImageCode;
 	TCheckBox *cbParseData;
+	TLabeledEdit *sensor0Edit;
+	TLabeledEdit *sensor1Edit;
+	TLabeledEdit *sensor2Edit;
+	TLabeledEdit *sensor3Edit;
+	TEdit *x0Edit;
+	TEdit *y0Edit;
+	TEdit *z0Edit;
+	TEdit *x1Edit;
+	TEdit *y1Edit;
+	TEdit *z1Edit;
+	TEdit *x2Edit;
+	TEdit *y2Edit;
+	TEdit *z2Edit;
+	TEdit *x3Edit;
+	TEdit *y3Edit;
+	TEdit *z3Edit;
+	TLabel *Label7;
+	TLabel *Label8;
+	TLabel *Label9;
 		void __fastcall UpDown1MouseUp(TObject *Sender,
 		  TMouseButton Button, TShiftState Shift, int X, int Y);
 	void __fastcall FormCreate(TObject *Sender);
@@ -139,6 +158,10 @@ __published:	// IDE-managed Components
 	void __fastcall udMoChChangingEx(TObject *Sender, bool &AllowChange, short NewValue,
           TUpDownDirection Direction);
 	void __fastcall cbPlayClick(TObject *Sender);
+	void __fastcall sensor0EditChange(TObject *Sender);
+	void __fastcall sensor1EditChange(TObject *Sender);
+	void __fastcall sensor2EditChange(TObject *Sender);
+	void __fastcall sensor3EditChange(TObject *Sender);
 private:	// User declarations
 
 public:		// User declarations

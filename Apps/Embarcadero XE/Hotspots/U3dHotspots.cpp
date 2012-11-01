@@ -370,7 +370,7 @@ void TForm11::UpdateInfo()
 		eventOutlet = NULL;
 	}
 
-	lsl_streaminfo eventInfo = lsl_create_streaminfo("HotspotEvents", "HotspotEvents", 1,0, cft_int32,"");
+	lsl_streaminfo eventInfo = lsl_create_streaminfo("HotspotEvents", "HotspotEvents", 1,0, cft_string,generateGUID());
 
 	//see liblsl/C API/lsl_xml_element_c.cpp,  http://pugixml.googlecode.com/svn/tags/release-0.9/docs/manual/modify.html
 	//lsl_xml_ptr is binary equivalent to pugi::xml_node_struct*
@@ -647,10 +647,14 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 			{
 				if (pHs->unchangedCount>4 && pHs->isIn) // only moving into the hotspot after being out for 4 samples!
 				{   changedCount++;
-				  //	HotspotSample.drf.Event = code;
-					lsl_push_sample_itp(eventOutlet, &code, lsl_local_clock(), 1);
+
+					char *codeStr = (char *) malloc(sizeof(char)*256);
+					sprintf(codeStr, "%d", code);
+					lsl_push_sample_strtp(eventOutlet, &codeStr, lsl_local_clock(), 1);
 					changedNames.push_back(code);
+                	free(codeStr);
 				}
+
 				pHs->unchangedCount = 0;
 			}
 			else
@@ -709,8 +713,11 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 					if (pHs->unchangedCount>4 && pHs->isIn) // only moving into the hotspot after being out for 4 samples!
 					{
 				   //		HotspotSample.drf.Event = code;
-				   	lsl_push_sample_itp(eventOutlet, &code, lsl_local_clock(), 1);
+						char *codeStr = (char *) malloc(sizeof(char)*256);
+						sprintf(codeStr, "%d", code);
+						lsl_push_sample_strtp(eventOutlet, &codeStr, lsl_local_clock(), 1);
 						changedNames.push_back(code);
+						free(codeStr);
 					}
 					pHs->unchangedCount = 0;
 				}
@@ -820,9 +827,11 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 			{
 				if (hotspotScreen->unchangedCount>4 && hotspotScreen->isIn) // only moving into the hotspot after being out for 4 samples!
 				{
-			 //		HotspotSample.drf.Event = code;
-			 		lsl_push_sample_itp(eventOutlet, &code, lsl_local_clock(), 1);
+					char *codeStr = (char *) malloc(sizeof(char)*256);
+					sprintf(codeStr, "%d", code);
+					lsl_push_sample_strtp(eventOutlet, &codeStr, lsl_local_clock(), 1);
 					changedNames.push_back(code);
+					free(codeStr);
 				}
 				hotspotScreen->unchangedCount = 0;
 			}
@@ -1365,12 +1374,12 @@ void TForm11::addRectangular(THotspotGrid *hotspotGrid, int x, int y, int z, int
 
 		TEdit * pE =new TEdit(GridPanel5);
 		GridPanel5->Height += pE->Height+2;
-		pE->Text = pHs->x;
+
+
+  /*		pE->Text = pHs->x;
 		pE->Parent = GridPanel5;
 		pHs->xEdit = pE;
 		pE->ReadOnly = true;
-
-
 
 
 		pE =new TEdit(GridPanel5);
@@ -1409,7 +1418,7 @@ void TForm11::addRectangular(THotspotGrid *hotspotGrid, int x, int y, int z, int
 		pE->Parent = GridPanel5;
 		pHs->sensorEdit = pE;
 		pE->ReadOnly = true;
-
+      */
 		pE =new TEdit(GridPanel5);
 		pE->Text = pHs->value;
 		pE->Parent = GridPanel5;
@@ -1421,6 +1430,7 @@ void TForm11::addRectangular(THotspotGrid *hotspotGrid, int x, int y, int z, int
 		if (res!=WAIT_OBJECT_0) return;
 		__try {
 			hotspotGrid->rectHotspots.push_back(pHs);
+			printf("%d\n", device);
 		} __finally {
 			ReleaseMutex(hMutex);
 		}
@@ -1654,8 +1664,6 @@ void __fastcall TForm11::GridPanel1Click(TObject *Sender)
 			} __finally {
 				ReleaseMutex(hMutex);
 			}
-
-
 
 		}
 	}

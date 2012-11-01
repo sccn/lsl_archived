@@ -22,7 +22,8 @@
 		double qc = bx*bx+by*by+bz*bz-rEye*rEye;
 		double uradical = qb*qb-4*qa*qc;
 
-		if(uradical < 0 || qa == 0.0) {
+
+		if(_isnan(uradical) || uradical < 0 || qa == 0.0) {
 			*yIn = NAN;
 			*zIn = NAN;
 			return;

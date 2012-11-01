@@ -2,8 +2,8 @@ object MainCaptureForm: TMainCaptureForm
   Left = 0
   Top = 0
   Caption = 'GazeStream'
-  ClientHeight = 797
-  ClientWidth = 924
+  ClientHeight = 981
+  ClientWidth = 1732
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,7 +19,7 @@ object MainCaptureForm: TMainCaptureForm
   object PageControl1: TPageControl
     Left = 6
     Top = 6
-    Width = 380
+    Width = 427
     Height = 181
     ActivePage = TabSheet2
     TabOrder = 0
@@ -27,10 +27,6 @@ object MainCaptureForm: TMainCaptureForm
     object TabSheet2: TTabSheet
       Caption = 'Video in'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 11
         Top = 0
@@ -70,19 +66,6 @@ object MainCaptureForm: TMainCaptureForm
         TabOrder = 1
         OnChange = cbVideoInputFormatChange
       end
-      object RadioGroup1: TRadioGroup
-        Left = 206
-        Top = 3
-        Width = 150
-        Height = 89
-        Caption = 'Use as:'
-        Items.Strings = (
-          'Eye camera'
-          'Scene camera (Calibrate)'
-          'Scene camera')
-        TabOrder = 2
-        OnClick = RadioGroup1Click
-      end
       object edtFrameRate: TLabeledEdit
         Left = 11
         Top = 130
@@ -91,7 +74,7 @@ object MainCaptureForm: TMainCaptureForm
         EditLabel.Width = 50
         EditLabel.Height = 12
         EditLabel.Caption = 'Frame Rate'
-        TabOrder = 3
+        TabOrder = 2
       end
       object cbVideoInput: TComboBox
         Left = 11
@@ -104,17 +87,13 @@ object MainCaptureForm: TMainCaptureForm
         Font.Name = 'MS Sans Serif'
         Font.Style = []
         ParentFont = False
-        TabOrder = 4
+        TabOrder = 3
         OnChange = cbVideoInputChange
       end
     end
     object TabSheet1: TTabSheet
       Caption = 'Video out'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label2: TLabel
         Left = 14
         Top = -2
@@ -190,8 +169,6 @@ object MainCaptureForm: TMainCaptureForm
         Height = 12
         Alignment = taLeftJustify
         Caption = 'Audio'
-        Checked = True
-        State = cbChecked
         TabOrder = 5
         OnClick = cbRecordClick
       end
@@ -207,291 +184,11 @@ object MainCaptureForm: TMainCaptureForm
         TabOrder = 6
         OnClick = cbRecordClick
       end
-      object flipVertCheckbox: TCheckBox
-        Left = 268
-        Top = 78
-        Width = 75
-        Height = 12
-        Alignment = taLeftJustify
-        Caption = 'Flip verrtical'
-        TabOrder = 7
-        OnClick = cbRecordClick
-      end
-    end
-  end
-  object PageControl2: TPageControl
-    Left = 6
-    Top = 193
-    Width = 910
-    Height = 584
-    ActivePage = tsEyeTracker
-    TabOrder = 1
-    object tsScene: TTabSheet
-      Caption = 'Scene'
-      ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
-      object xParallaxCorrectionEdit: TLabeledEdit
-        Left = 14
-        Top = 160
-        Width = 75
-        Height = 20
-        EditLabel.Width = 57
-        EditLabel.Height = 12
-        EditLabel.Caption = 'X Correction'
-        TabOrder = 0
-        Text = '0.0'
-        OnChange = xParallaxCorrectionEditChange
-      end
-      object yParallaxCorrectionEdit: TLabeledEdit
-        Left = 13
-        Top = 200
-        Width = 76
-        Height = 20
-        EditLabel.Width = 57
-        EditLabel.Height = 12
-        EditLabel.Caption = 'Y Correction'
-        TabOrder = 1
-        Text = '0.0'
-        OnChange = yParallaxCorrectionEditChange
-      end
-      object LoadCalibration: TButton
-        Left = 14
-        Top = 238
-        Width = 84
-        Height = 25
-        Caption = 'Load Calibration'
-        TabOrder = 2
-        OnClick = LoadCalibrationClick
-      end
-    end
-    object tsVideo: TTabSheet
-      Caption = 'Video'
-      ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
-    end
-    object tsEyeTracker: TTabSheet
-      Caption = 'Eyetracker'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
-      object Label5: TLabel
-        Left = 3
-        Top = 425
-        Width = 97
-        Height = 12
-        Caption = 'Scene Calibrate Color'
-      end
-      object tbUpper: TTrackBar
-        Left = 123
-        Top = 70
-        Width = 24
-        Height = 130
-        Max = 480
-        Orientation = trVertical
-        Frequency = 0
-        Position = 40
-        TabOrder = 0
-      end
-      object tbLower: TTrackBar
-        Left = 124
-        Top = 206
-        Width = 25
-        Height = 137
-        Max = 480
-        Orientation = trVertical
-        Frequency = 0
-        Position = 438
-        TabOrder = 1
-      end
-      object tbLeft: TTrackBar
-        Left = 143
-        Top = 29
-        Width = 112
-        Height = 19
-        Max = 640
-        Frequency = 0
-        Position = 65
-        TabOrder = 2
-      end
-      object tbRight: TTrackBar
-        Left = 251
-        Top = 29
-        Width = 122
-        Height = 19
-        Max = 640
-        Frequency = 0
-        Position = 543
-        TabOrder = 3
-      end
-      object tbThreshold: TTrackBar
-        Left = 379
-        Top = 29
-        Width = 526
-        Height = 19
-        Max = 255
-        Frequency = 0
-        TabOrder = 4
-      end
-      object SubsamplingEdit: TLabeledEdit
-        Left = 3
-        Top = 142
-        Width = 78
-        Height = 20
-        EditLabel.Width = 57
-        EditLabel.Height = 12
-        EditLabel.Caption = 'Subsampling'
-        TabOrder = 5
-        Text = '1'
-      end
-      object autoThresholdBox: TCheckBox
-        Left = 3
-        Top = 47
-        Width = 97
-        Height = 17
-        Caption = 'Auto Threshold'
-        Checked = True
-        State = cbChecked
-        TabOrder = 6
-      end
-      object crRadiusMultiplierEdit: TLabeledEdit
-        Left = 3
-        Top = 206
-        Width = 78
-        Height = 20
-        EditLabel.Width = 88
-        EditLabel.Height = 12
-        EditLabel.Caption = 'CR Radius Multiplier'
-        TabOrder = 7
-        Text = '3'
-        OnChange = crRadiusMultiplierEditChange
-      end
-      object nOutlinesEdit: TLabeledEdit
-        Left = 3
-        Top = 86
-        Width = 80
-        Height = 20
-        EditLabel.Width = 87
-        EditLabel.Height = 12
-        EditLabel.Caption = 'Number of Outlines'
-        TabOrder = 8
-        Text = '125'
-        OnChange = nOutlinesEditChange
-      end
-      object crRoiTop: TTrackBar
-        Left = 98
-        Top = 70
-        Width = 25
-        Height = 130
-        Max = 480
-        Orientation = trVertical
-        Frequency = 0
-        Position = 301
-        TabOrder = 9
-      end
-      object crRoiBottom: TTrackBar
-        Left = 98
-        Top = 206
-        Width = 25
-        Height = 137
-        Max = 480
-        Orientation = trVertical
-        Frequency = 0
-        Position = 387
-        TabOrder = 10
-      end
-      object crRoiRight: TTrackBar
-        Left = 251
-        Top = 6
-        Width = 122
-        Height = 19
-        Max = 640
-        Frequency = 0
-        Position = 420
-        TabOrder = 11
-      end
-      object crRoiLeft: TTrackBar
-        Left = 143
-        Top = 6
-        Width = 112
-        Height = 19
-        Max = 640
-        Frequency = 0
-        Position = 295
-        TabOrder = 12
-      end
-      object crThreshold: TTrackBar
-        Left = 379
-        Top = 6
-        Width = 526
-        Height = 19
-        Max = 255
-        Frequency = 0
-        Position = 255
-        TabOrder = 13
-      end
-      object crRadiusMaxEdit: TLabeledEdit
-        Left = 3
-        Top = 242
-        Width = 78
-        Height = 20
-        EditLabel.Width = 66
-        EditLabel.Height = 12
-        EditLabel.Caption = 'CR Radius Max'
-        TabOrder = 14
-        Text = '40'
-        OnChange = crRadiusMaxEditChange
-      end
-      object maxEccentricityEdit: TLabeledEdit
-        Left = 3
-        Top = 385
-        Width = 80
-        Height = 20
-        EditLabel.Width = 73
-        EditLabel.Height = 12
-        EditLabel.Caption = 'Max Eccentricity'
-        TabOrder = 15
-        Text = '0.9'
-        OnChange = maxEccentricityEditChange
-      end
-      object cbSceneCalibColor: TComboBox
-        Left = 3
-        Top = 443
-        Width = 110
-        Height = 20
-        ItemIndex = 2
-        TabOrder = 16
-        Text = 'Blue'
-        OnChange = cbSceneCalibColorChange
-        Items.Strings = (
-          'Red'
-          'Green'
-          'Blue'
-          'White')
-      end
-      object eyeRadiusMaxEdit: TLabeledEdit
-        Left = 3
-        Top = 282
-        Width = 78
-        Height = 20
-        EditLabel.Width = 70
-        EditLabel.Height = 12
-        EditLabel.Caption = 'Eye Radius Max'
-        TabOrder = 17
-        Text = '40'
-        OnChange = eyeRadiusMaxEditChange
-      end
     end
   end
   object BitBtnPlay: TBitBtn
-    Left = 392
-    Top = 8
+    Left = 8
+    Top = 208
     Width = 64
     Height = 20
     DoubleBuffered = True
@@ -531,12 +228,12 @@ object MainCaptureForm: TMainCaptureForm
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000}
     ParentDoubleBuffered = False
-    TabOrder = 2
+    TabOrder = 1
     OnClick = BitBtnPlayClick
   end
   object BitBtnStop: TBitBtn
-    Left = 476
-    Top = 8
+    Left = 92
+    Top = 208
     Width = 59
     Height = 20
     DoubleBuffered = True
@@ -577,76 +274,166 @@ object MainCaptureForm: TMainCaptureForm
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000}
     ParentDoubleBuffered = False
-    TabOrder = 3
+    TabOrder = 2
     OnClick = btStopClick
   end
   object BacklogEdit: TLabeledEdit
-    Left = 392
-    Top = 88
+    Left = 8
+    Top = 296
     Width = 101
     Height = 20
-    EditLabel.Width = 67
+    EditLabel.Width = 75
     EditLabel.Height = 12
-    EditLabel.Caption = 'Frame Backlog'
-    TabOrder = 4
+    EditLabel.Caption = 'Frame Backlog 0'
+    TabOrder = 3
   end
   object FrameDivisorEdit: TLabeledEdit
-    Left = 392
-    Top = 135
+    Left = 8
+    Top = 343
     Width = 101
     Height = 20
     EditLabel.Width = 97
     EditLabel.Height = 12
     EditLabel.Caption = 'Frame Display Divisor'
-    TabOrder = 6
-    Text = '1'
+    TabOrder = 5
+    Text = '5'
     OnChange = FrameDivisorEditChange
   end
-  object tPanel: TPanel
-    Left = 161
-    Top = 270
-    Width = 631
-    Height = 492
-    BevelOuter = bvNone
-    BorderStyle = bsSingle
-    Color = clNone
-    TabOrder = 7
-  end
   object droppedFramesEdit: TLabeledEdit
-    Left = 392
-    Top = 48
+    Left = 8
+    Top = 256
     Width = 101
     Height = 20
-    EditLabel.Width = 120
+    EditLabel.Width = 102
     EditLabel.Height = 12
-    EditLabel.Caption = 'Estimated Dropped Frames'
-    TabOrder = 5
+    EditLabel.Caption = 'Est. Dropped Frames 0'
+    TabOrder = 4
   end
   object SpatialDivisorEdit: TLabeledEdit
-    Left = 512
-    Top = 135
+    Left = 115
+    Top = 343
     Width = 101
     Height = 20
     EditLabel.Width = 98
     EditLabel.Height = 12
     EditLabel.Caption = 'Spatial Display Divisor'
-    TabOrder = 8
+    TabOrder = 6
     Text = '1'
     OnChange = SpatialDivisorEditChange
+  end
+  object tPanel: TPanel
+    Left = 440
+    Top = 10
+    Width = 640
+    Height = 480
+    BevelOuter = bvNone
+    BorderStyle = bsSingle
+    Color = clNone
+    TabOrder = 7
+  end
+  object tPanel1: TPanel
+    Left = 1080
+    Top = 10
+    Width = 640
+    Height = 480
+    BevelOuter = bvNone
+    BorderStyle = bsSingle
+    Color = clNone
+    TabOrder = 8
+  end
+  object BacklogEdit1: TLabeledEdit
+    Left = 115
+    Top = 295
+    Width = 101
+    Height = 20
+    EditLabel.Width = 75
+    EditLabel.Height = 12
+    EditLabel.Caption = 'Frame Backlog 1'
+    TabOrder = 9
+  end
+  object droppedFramesEdit1: TLabeledEdit
+    Left = 115
+    Top = 256
+    Width = 101
+    Height = 20
+    EditLabel.Width = 102
+    EditLabel.Height = 12
+    EditLabel.Caption = 'Est. Dropped Frames 1'
+    TabOrder = 10
+  end
+  object droppedFramesEdit2: TLabeledEdit
+    Left = 222
+    Top = 256
+    Width = 101
+    Height = 20
+    EditLabel.Width = 102
+    EditLabel.Height = 12
+    EditLabel.Caption = 'Est. Dropped Frames 2'
+    TabOrder = 11
+  end
+  object droppedFramesEdit3: TLabeledEdit
+    Left = 329
+    Top = 256
+    Width = 101
+    Height = 20
+    EditLabel.Width = 102
+    EditLabel.Height = 12
+    EditLabel.Caption = 'Est. Dropped Frames 3'
+    TabOrder = 12
+  end
+  object BacklogEdit2: TLabeledEdit
+    Left = 222
+    Top = 292
+    Width = 101
+    Height = 20
+    EditLabel.Width = 75
+    EditLabel.Height = 12
+    EditLabel.Caption = 'Frame Backlog 2'
+    TabOrder = 13
+  end
+  object BacklogEdit3: TLabeledEdit
+    Left = 329
+    Top = 292
+    Width = 101
+    Height = 20
+    EditLabel.Width = 75
+    EditLabel.Height = 12
+    EditLabel.Caption = 'Frame Backlog 3'
+    TabOrder = 14
+  end
+  object tPanel2: TPanel
+    Left = 440
+    Top = 490
+    Width = 640
+    Height = 480
+    BevelOuter = bvNone
+    BorderStyle = bsSingle
+    Color = clNone
+    TabOrder = 15
+  end
+  object tPanel3: TPanel
+    Left = 1080
+    Top = 490
+    Width = 640
+    Height = 480
+    BevelOuter = bvNone
+    BorderStyle = bsSingle
+    Color = clNone
+    TabOrder = 16
   end
   object Timer1: TTimer
     Interval = 50
     OnTimer = Timer1Timer
-    Left = 760
-    Top = 48
+    Left = 176
+    Top = 728
   end
   object OpenDialog1: TOpenDialog
-    Left = 640
-    Top = 48
+    Left = 136
+    Top = 728
   end
   object xdoc_in: TXMLDocument
-    Left = 704
-    Top = 48
+    Left = 200
+    Top = 728
     DOMVendorDesc = 'MSXML'
   end
 end
