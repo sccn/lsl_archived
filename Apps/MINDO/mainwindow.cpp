@@ -193,7 +193,7 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int ch
 	std::vector<float> sample(channelCount);
 
 	DWORD dwBytesWritten = 0;
-	if (protocolVersion == 1) {
+	if (protocolVersion >= 1) {
 		// send startup command sequence
 		unsigned char cmd_beginseq = 0xFE;
 		unsigned char cmd_start = log2(samplingRate);
@@ -212,17 +212,60 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int ch
 	signed char stemp;
 	int msb, lsb2, lsb1;
 	unsigned long bytes_read;
+
+	int curCounter = -1;
 	while (!stop_) {
 		temp = 0;
-		// scan for the sync byte
-		while (!stop_ && (temp != 0xFF))
+		if (protocolVersion < 2) {
+			// scan for the sync byte
+			while (!stop_ && (temp != 0xFF))
+				ReadFile(hPort,&temp,1,&bytes_read,NULL);
+			if (stop_)
+				break;
+			// skip the counter
 			ReadFile(hPort,&temp,1,&bytes_read,NULL);
-		if (stop_)
-			break;
+		}
+		if (protocolVersion >= 2) {
+			// new header handling code
+			unsigned char bytesPerChannel = (bitDepth == 0) ? 3 : 2;
+			unsigned char bytesPerSample = 2 + 2 + bytesPerChannel * channelCount;
+			if (curCounter < 0) {
+				// no synchronization, need to find header again
+				std::vector<unsigned char> shift_buffer(bytesPerSample*16);	// this is a circular buffer that holds the last data words that make up a measurement
+				// shift in bytes at the end until we get a complete measurement
+				while (!stop_) {
+					for (unsigned k=0;k<shift_buffer.size()-1;k++)
+						shift_buffer[k] = shift_buffer[k+1];
+					if (!ReadFile(hPort,&shift_buffer.back(),1,&bytes_read,NULL)) {
+						QMessageBox::critical(this,"Error","Connection broke off.",QMessageBox::Ok);
+						return;
+					}
+					// check if this is matching
+					bool match = true;
+					for (unsigned k=0;k<16;k++) {
+						if (shift_buffer[k*bytesPerSample] != 240+k) {
+							match = false;
+							break;
+						}
+					}
+					if (match)
+						break;
+				}
+				curCounter = 0;
+			}
 
-		// skip the counter
-		ReadFile(hPort,&temp,1,&bytes_read,NULL);
-		
+			// read header & confirm that we're still synchronized
+			ReadFile(hPort,&temp,1,&bytes_read,NULL);
+			if (temp != curCounter+240) {
+				// synch loss
+				curCounter = -1;
+				continue;
+			} else
+				curCounter = (curCounter+1) % 16;
+			// skip the magic byte
+			ReadFile(hPort,&temp,1,&bytes_read,NULL);
+		}
+
 		// get next sample
 		if (protocolVersion == 0) {
 			for(int c=0; c < channelCount; c++) {
@@ -233,7 +276,7 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int ch
 				sample[c] = (double)((lsb2-64)*64 + (lsb1-64));
 			}
 		}
-		if (protocolVersion == 1) {
+		if (protocolVersion >= 1) {
 			if (bitDepth == 0) {
 				// 24 bit
 				for(int c=0; c < channelCount; c++) {
@@ -256,6 +299,7 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int ch
 					sample[c] = (2.4 * (double)(msb*65536 + lsb2*256)) * value_scale;
 				}
 			}
+
 			// read the two "lead-off" bytes
 			ReadFile(hPort,&temp,1,&bytes_read,NULL);
 			ReadFile(hPort,&temp,1,&bytes_read,NULL);
