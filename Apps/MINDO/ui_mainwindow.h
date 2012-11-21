@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Fri Aug 31 15:51:12 2012
+** Created: Mon Nov 19 17:57:36 2012
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -276,6 +276,7 @@ public:
         protocolVersion->insertItems(0, QStringList()
          << QApplication::translate("MainWindow", "Version 0", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "Version 1 (2012)", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "Version 2 (2012)", 0, QApplication::UnicodeUTF8)
         );
         label_5->setText(QApplication::translate("MainWindow", "Bit Depth", 0, QApplication::UnicodeUTF8));
         bitDepth->clear();
