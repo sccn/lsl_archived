@@ -142,6 +142,11 @@ O2</string>
              <string>Version 1 (2012)</string>
             </property>
            </item>
+            <item>
+              <property name="text">
+                <string>Version 2 (2012)</string>
+              </property>
+            </item>
           </widget>
          </item>
          <item row="1" column="0">
