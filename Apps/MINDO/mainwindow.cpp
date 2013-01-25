@@ -192,11 +192,13 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int ch
 	// reserve memory
 	std::vector<float> sample(channelCount);
 
+	int leadOffBytes = max(2,std::ceil(channelCount/16.0)); // the number of lead-off bytes depends on the #channels
+
 	DWORD dwBytesWritten = 0;
 	if (protocolVersion >= 1) {
 		// send startup command sequence
 		unsigned char cmd_beginseq = 0xFE;
-		unsigned char cmd_start = log2(samplingRate);
+		unsigned char cmd_start = 0x07;
 		unsigned char cmd_resolution_srate = (bitDepth << 4) | log2(samplingRate);
 		unsigned char cmd_gain_chns = (ampGain << 4) | log2(channelCount);
 		unsigned char cmd_endseq = 0xFF;
@@ -228,7 +230,7 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int ch
 		if (protocolVersion >= 2) {
 			// new header handling code
 			unsigned char bytesPerChannel = (bitDepth == 0) ? 3 : 2;
-			unsigned char bytesPerSample = 2 + 2 + bytesPerChannel * channelCount;
+			unsigned char bytesPerSample = 2 + leadOffBytes + bytesPerChannel * channelCount;
 			if (curCounter < 0) {
 				// no synchronization, need to find header again
 				std::vector<unsigned char> shift_buffer(bytesPerSample*16);	// this is a circular buffer that holds the last data words that make up a measurement
@@ -300,9 +302,9 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int ch
 				}
 			}
 
-			// read the two "lead-off" bytes
-			ReadFile(hPort,&temp,1,&bytes_read,NULL);
-			ReadFile(hPort,&temp,1,&bytes_read,NULL);
+			// read the "lead-off" bytes
+			for (int k=0;k<leadOffBytes;k++)
+				ReadFile(hPort,&temp,1,&bytes_read,NULL);
 		}
 
 		// push into the outlet
