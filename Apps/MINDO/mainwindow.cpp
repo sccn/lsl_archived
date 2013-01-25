@@ -192,7 +192,7 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int ch
 	// reserve memory
 	std::vector<float> sample(channelCount);
 
-	int leadOffBytes = max(2,std::ceil(channelCount/16.0)); // the number of lead-off bytes depends on the #channels
+	int leadOffBytes = max(2,std::ceil(channelCount/8.0)); // the number of lead-off bytes depends on the #channels
 
 	DWORD dwBytesWritten = 0;
 	if (protocolVersion >= 1) {
