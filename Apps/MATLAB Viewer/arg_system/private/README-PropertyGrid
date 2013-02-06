@@ -1,0 +1,39 @@
+Property grid using JIDE implementation
+Copyright 2010 Levente Hunyadi
+
+A graphical user control based on the JIDE PropertyGrid that mimics MatLab's property inspector.
+
+The property grid (also known as property browser, inspector, pane and sheet) displays a list of (object) properties with values editable in-place. Each property has an associated semantics (or type) that restricts the possible values the property can take and helps visualize the property value in a natural manner, e.g.
+* a character array is displayed as a string and can be edited in-place;
+* a scalar logical is mapped to a checkbox;
+* an integer value that has a limited range is manipulated with a spinner;
+* a selection from a set of values is presented as a drop-down list;
+* a cell array of strings (either row or column vector) can be edited as multi-line text in a pop-up text box;
+* a logical vector that is an indicator for a set (e.g. [false false true] for 'C' from the universe {'A','B','C'}]) is visualized as a checkbox list;
+* numeric vectors and matrices can be edited element-wise in a pop-up window (use F2 to activate);
+* parent-child relationships are presented with the help of expandable properties.
+
+Supported types include all shapes (scalar, vector and matrix) of all primitive types (logicals, integers, real/complex double/single) as well as cell arrays of strings, structures, and MatLab objects with both value and handle semantics with arbitrary level of nesting.
+
+JIDE is a feature-rich collection of Java Swing components by JIDE Software, see http://www.jidesoft.com/products/index.htm for details. Functions and classes in this package use the JIDE PropertyGrid and related controls. These set of controls are an integrated part of MatLab, no installation of external dependencies is required.
+
+USAGE
+
+The property grid has a procedural and a declarative interface.
+
+When using the procedural interface, the programmer is expected to explicitly assemble a list of PropertyGridField instances, which store metadata information on the property to visualize. This means at minimum property name and initial value, and optionally type information, property category, displayed name, description and whether the property is read only. This allows maximum control over how properties are presented to the user. In this approach, the GetPropertyValues() method is used to fetch updated properties as a structure.
+
+The declarative interface uses the concept of object binding. The programmer passes a MatLab structure or object to the property grid, and the grid reads property values and automatically discovers name, type, description and other metadata. Any changes made in the grid are reflected in the bound object.
+
+EXAMPLE
+
+The file example_propertygrid.m contains a basic example on manual procedural setup and declarative usage (with object binding).
+
+DISCLAIMER
+
+This component is provided in the hope that it will be useful, but no claims are made as to the fitness for any purpose. In particular, the component relies on undocumented MatLab features that might have a low risk of breaking in future MatLab versions. You are welcome to submit bug reports directly to the author; comments made at the MathWorks File Exchange site might be ignored.
+
+CONTACT INFORMATION
+
+Levente Hunyadi
+http://hunyadi.info.hu/
