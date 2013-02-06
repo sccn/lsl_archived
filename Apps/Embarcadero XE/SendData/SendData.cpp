@@ -47,7 +47,7 @@ int _tmainx(int argc, _TCHAR* argv[])
 	desc = lsl_get_desc(info);
 	lsl_append_child_value(desc,"manufacturer","BioSemi");
 	for (c=0;c<8;c++) {
-		chn = lsl_append_child(desc,"channel");
+		chn = lsl_append_child(desc,"channels");
 		lsl_append_child_value(chn,"name",channels[c]);
 		lsl_append_child_value(chn,"unit","microvolts");
 		lsl_append_child_value(chn,"type","EEG");
@@ -89,7 +89,7 @@ int _tmainxx(int argc, _TCHAR* argv[])
 	desc = lsl_get_desc(info);
 	lsl_append_child_value(desc,"manufacturer","BioSemi");
  /*	for (c=0;c<8;c++) {
-		chn = lsl_append_child(desc,"channel");
+		chn = lsl_append_child(desc,"channels");
 		lsl_append_child_value(chn,"name",channels[c]);
 		lsl_append_child_value(chn,"unit","microvolts");
 		lsl_append_child_value(chn,"type","EEG");
@@ -138,7 +138,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	desc = lsl_get_desc(info);
 	lsl_append_child_value(desc,"manufacturer","BioSemi");
 	for (c=0;c<nChannels;c++) {
-		chn = lsl_append_child(desc,"channel");
+		chn = lsl_append_child(desc,"channels");
 //		lsl_append_child_value(chn,"name",channels[c]);
 //		lsl_append_child_value(chn,"unit","microvolts");
 //		lsl_append_child_value(chn,"type","EEG");

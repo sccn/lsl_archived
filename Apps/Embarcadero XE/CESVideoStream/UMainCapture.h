@@ -74,6 +74,9 @@ __published:	// IDE-managed Components
 	TLabeledEdit *BacklogEdit3;
 	TPanel *tPanel2;
 	TPanel *tPanel3;
+	TComboBox *cbVideoInputDevice1;
+	TComboBox *cbVideoInputDevice2;
+	TComboBox *cbVideoInputDevice3;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall cbVideoInputDeviceChange(TObject *Sender);
 	void __fastcall cbVideoInputFormatChange(TObject *Sender);
@@ -95,6 +98,9 @@ __published:	// IDE-managed Components
 	void __fastcall FrameDivisorEditChange(TObject *Sender);
 	void __fastcall SpatialDivisorEditChange(TObject *Sender);
 	void __fastcall cbVideoInputChange(TObject *Sender);
+	void __fastcall cbVideoInputDevice1Change(TObject *Sender);
+	void __fastcall cbVideoInputDevice2Change(TObject *Sender);
+	void __fastcall cbVideoInputDevice3Change(TObject *Sender);
 
 
 private:	// User declarations

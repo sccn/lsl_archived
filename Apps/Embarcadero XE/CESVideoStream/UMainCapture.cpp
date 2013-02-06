@@ -131,8 +131,11 @@ void __fastcall TMainCaptureForm::FormCreate(TObject *Sender)
 	SetToVideoMode();
 
 	   // let's refresh the controls according to the TVideoGrabber's states
-   AssignListToComboBox (cbVideoInputDevice, CaptureWorkerForm->VideoGrabber->VideoDevices, CaptureWorkerForm->VideoGrabber->VideoDevice);//to MainCaptureForm
-  
+   AssignListToComboBox (cbVideoInputDevice, CaptureWorkerForm->VideoGrabber->VideoDevices, CaptureWorkerForm->VideoGrabber->VideoDevice);
+   AssignListToComboBox (cbVideoInputDevice1, CaptureWorkerForm1->VideoGrabber->VideoDevices, CaptureWorkerForm1->VideoGrabber->VideoDevice);
+   AssignListToComboBox (cbVideoInputDevice2, CaptureWorkerForm2->VideoGrabber->VideoDevices, CaptureWorkerForm2->VideoGrabber->VideoDevice);
+   AssignListToComboBox (cbVideoInputDevice3, CaptureWorkerForm3->VideoGrabber->VideoDevices, CaptureWorkerForm3->VideoGrabber->VideoDevice);
+
 }
 
 
@@ -142,25 +145,54 @@ void __fastcall TMainCaptureForm::cbVideoInputDeviceChange(TObject *Sender)
 {
 	if(cbVideoInputDevice->ItemIndex != -1) {
 		CaptureWorkerForm->VideoGrabber->VideoDevice = cbVideoInputDevice->ItemIndex;
-		CaptureWorkerForm1->VideoGrabber->VideoDevice = cbVideoInputDevice->ItemIndex;
-		CaptureWorkerForm2->VideoGrabber->VideoDevice = cbVideoInputDevice->ItemIndex;
-		CaptureWorkerForm3->VideoGrabber->VideoDevice = cbVideoInputDevice->ItemIndex;
 
 		AssignListToComboBox (cbVideoInputFormat, CaptureWorkerForm->VideoGrabber->VideoSizes, CaptureWorkerForm->VideoGrabber->VideoSize);
 		AssignListToComboBox (cbVideoInput, CaptureWorkerForm->VideoGrabber->VideoInputs, CaptureWorkerForm->VideoGrabber->VideoInput);
-		AssignListToComboBox (cbVideoInputFormat, CaptureWorkerForm1->VideoGrabber->VideoSizes, CaptureWorkerForm2->VideoGrabber->VideoSize);
-		AssignListToComboBox (cbVideoInput, CaptureWorkerForm1->VideoGrabber->VideoInputs, CaptureWorkerForm2->VideoGrabber->VideoInput);
-		AssignListToComboBox (cbVideoInputFormat, CaptureWorkerForm2->VideoGrabber->VideoSizes, CaptureWorkerForm3->VideoGrabber->VideoSize);
-		AssignListToComboBox (cbVideoInput, CaptureWorkerForm2->VideoGrabber->VideoInputs, CaptureWorkerForm3->VideoGrabber->VideoInput);
-
-		AssignListToComboBox (cbVideoInputFormat, CaptureWorkerForm3->VideoGrabber->VideoSizes, CaptureWorkerForm3->VideoGrabber->VideoSize);
-		AssignListToComboBox (cbVideoInput, CaptureWorkerForm3->VideoGrabber->VideoInputs, CaptureWorkerForm3->VideoGrabber->VideoInput);
-
 
 		cbVideoInputFormatChange(this);
 		cbVideoInputChange(this);
 	}
 }
+
+void __fastcall TMainCaptureForm::cbVideoInputDevice1Change(TObject *Sender)
+{
+	if(cbVideoInputDevice1->ItemIndex != -1) {
+		CaptureWorkerForm1->VideoGrabber->VideoDevice = cbVideoInputDevice1->ItemIndex;
+		AssignListToComboBox (cbVideoInputFormat, CaptureWorkerForm1->VideoGrabber->VideoSizes, CaptureWorkerForm1->VideoGrabber->VideoSize);
+		AssignListToComboBox (cbVideoInput, CaptureWorkerForm1->VideoGrabber->VideoInputs, CaptureWorkerForm1->VideoGrabber->VideoInput);
+
+		cbVideoInputFormatChange(this);
+		cbVideoInputChange(this);
+
+	}
+}
+
+void __fastcall TMainCaptureForm::cbVideoInputDevice2Change(TObject *Sender)
+{
+	if(cbVideoInputDevice2->ItemIndex != -1) {
+		CaptureWorkerForm2->VideoGrabber->VideoDevice = cbVideoInputDevice2->ItemIndex;
+		AssignListToComboBox (cbVideoInputFormat, CaptureWorkerForm2->VideoGrabber->VideoSizes, CaptureWorkerForm2->VideoGrabber->VideoSize);
+		AssignListToComboBox (cbVideoInput, CaptureWorkerForm2->VideoGrabber->VideoInputs, CaptureWorkerForm2->VideoGrabber->VideoInput);
+
+		cbVideoInputFormatChange(this);
+		cbVideoInputChange(this);
+
+	}
+}
+
+void __fastcall TMainCaptureForm::cbVideoInputDevice3Change(TObject *Sender)
+{
+	if(cbVideoInputDevice3->ItemIndex != -1) {
+		CaptureWorkerForm3->VideoGrabber->VideoDevice = cbVideoInputDevice3->ItemIndex;
+		AssignListToComboBox (cbVideoInputFormat, CaptureWorkerForm3->VideoGrabber->VideoSizes, CaptureWorkerForm3->VideoGrabber->VideoSize);
+		AssignListToComboBox (cbVideoInput, CaptureWorkerForm3->VideoGrabber->VideoInputs, CaptureWorkerForm3->VideoGrabber->VideoInput);
+
+		cbVideoInputFormatChange(this);
+		cbVideoInputChange(this);
+
+	}
+}
+//---------------------------------------------------------------------------
 
 
 
@@ -284,6 +316,9 @@ void __fastcall TMainCaptureForm::btStopClick(TObject *Sender)
 	nFrames = 0;
 
 	cbVideoInputDevice->Enabled = true;
+	cbVideoInputDevice1->Enabled = true;
+	cbVideoInputDevice2->Enabled = true;
+	cbVideoInputDevice3->Enabled = true;
 	cbVideoInput->Enabled = true;
 	cbVideoInputFormat->Enabled = true;
 	SpatialDivisorEdit->Enabled = true;
@@ -309,10 +344,10 @@ void __fastcall TMainCaptureForm::Start()
 		CaptureWorkerForm3->VideoGrabber->RecordingInNativeFormat = false;
 
 		if(cbRecord->Checked == true) {
-			CaptureWorkerForm->VideoGrabber->VideoProcessing_FlipVertical = true;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
-			CaptureWorkerForm1->VideoGrabber->VideoProcessing_FlipVertical = true;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
-			CaptureWorkerForm2->VideoGrabber->VideoProcessing_FlipVertical = true;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
-			CaptureWorkerForm3->VideoGrabber->VideoProcessing_FlipVertical = true;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
+		  //	CaptureWorkerForm->VideoGrabber->VideoProcessing_FlipVertical = true;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
+		  //	CaptureWorkerForm1->VideoGrabber->VideoProcessing_FlipVertical = true;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
+		  //	CaptureWorkerForm2->VideoGrabber->VideoProcessing_FlipVertical = true;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
+		  //	CaptureWorkerForm3->VideoGrabber->VideoProcessing_FlipVertical = true;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
 
 
 			CaptureWorkerForm->SetQueue(bmpQueue, hMutex, outlet);
@@ -420,6 +455,8 @@ void __fastcall TMainCaptureForm::Start()
 			CaptureWorkerForm1->VideoGrabber->StartPreview();
 			CaptureWorkerForm2->VideoGrabber->StartPreview();
 			CaptureWorkerForm3->VideoGrabber->StartPreview();
+
+
 		}
 
 }
@@ -563,7 +600,7 @@ void __fastcall TMainCaptureForm::BitBtnPlayClick(TObject *Sender)
 
 	lsl_streaminfo info = lsl_create_streaminfo("VideoStream_0","VideoStream_0",1,30,cft_int32,"");
 	lsl_xml_ptr desc = lsl_get_desc(info);
-	lsl_xml_ptr chn = lsl_append_child(desc, "channel");
+	lsl_xml_ptr chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","frame");
 	lsl_append_child_value(chn,"unit","number");
 
@@ -571,7 +608,7 @@ void __fastcall TMainCaptureForm::BitBtnPlayClick(TObject *Sender)
 
 	info = lsl_create_streaminfo("VideoStream_1","VideoStream_1",1,30,cft_int32,"");
 	desc = lsl_get_desc(info);
-	chn = lsl_append_child(desc, "channel");
+	chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","frame");
 	lsl_append_child_value(chn,"unit","number");
 
@@ -579,7 +616,7 @@ void __fastcall TMainCaptureForm::BitBtnPlayClick(TObject *Sender)
 
 	info = lsl_create_streaminfo("VideoStream_2","VideoStream_2",1,30,cft_int32,"");
 	desc = lsl_get_desc(info);
-	chn = lsl_append_child(desc, "channel");
+	chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","frame");
 	lsl_append_child_value(chn,"unit","number");
 
@@ -587,7 +624,7 @@ void __fastcall TMainCaptureForm::BitBtnPlayClick(TObject *Sender)
 
 	info = lsl_create_streaminfo("VideoStream_3","VideoStream_3",1,30,cft_int32,"");
 	desc = lsl_get_desc(info);
-	chn = lsl_append_child(desc, "channel");
+	chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","frame");
 	lsl_append_child_value(chn,"unit","number");
 
@@ -595,6 +632,9 @@ void __fastcall TMainCaptureForm::BitBtnPlayClick(TObject *Sender)
 
 
 	cbVideoInputDevice->Enabled = false;
+	cbVideoInputDevice1->Enabled = false;
+	cbVideoInputDevice2->Enabled = false;
+	cbVideoInputDevice3->Enabled = false;
 	cbVideoInput->Enabled = false;
 	cbVideoInputFormat->Enabled = false;
 	SpatialDivisorEdit->Enabled = false;
@@ -604,11 +644,17 @@ void __fastcall TMainCaptureForm::BitBtnPlayClick(TObject *Sender)
 	frameThread1 = new TFrameThread(this, bmpQueue1, hMutex1, false);
 	frameThread2 = new TFrameThread(this, bmpQueue2, hMutex2, false);
 	frameThread3 = new TFrameThread(this, bmpQueue3, hMutex3, false);
+
 	BitBtnStop->Enabled=true;
 	BitBtnPlay->Enabled=false;
 
-	edtFrameRate->Text = FormatFloat ("0.00", CaptureWorkerForm->VideoGrabber->CurrentFrameRate);
+	edtFrameRate->Text = 15.0;//HACK FOR POINTGREY BUG FormatFloat ("0.00", CaptureWorkerForm->VideoGrabber->CurrentFrameRate);
 
+	  /*			Sleep(100);
+			printf("sleep0: %g\n", frameThread->sleepTime);
+			printf("sleep1: %g\n", frameThread1->sleepTime);
+			printf("sleep2: %g\n", frameThread2->sleepTime);
+			printf("sleep3: %g\n", frameThread3->sleepTime);  */
 }
 //---------------------------------------------------------------------------
 
@@ -743,16 +789,7 @@ void __fastcall TMainCaptureForm::SpatialDivisorEditChange(TObject *Sender)
 		cbVideoInputFormatChange(this);
 	}
 }
-//---------------------------------------------------------------------------
 
-
-
-
-
-//---------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------
 
 
 

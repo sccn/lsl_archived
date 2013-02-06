@@ -27,9 +27,6 @@
 			<Projects Include="StreamViewer\streamviewer.cbproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="C:\Users\mgrivich\Downloads\vidgrab_8.5.2.4.7_purchased\CBuilder\DEMOS\_MainDemo\MainDemo.cbproj">
-				<Dependencies/>
-			</Projects>
 			<Projects Include="CESVideoStream\CESVideoStream.cbproj">
 				<Dependencies/>
 			</Projects>
@@ -113,15 +110,6 @@
 		<Target Name="streamviewer:Make">
 			<MSBuild Projects="StreamViewer\streamviewer.cbproj" Targets="Make"/>
 		</Target>
-		<Target Name="MainDemo">
-			<MSBuild Projects="C:\Users\mgrivich\Downloads\vidgrab_8.5.2.4.7_purchased\CBuilder\DEMOS\_MainDemo\MainDemo.cbproj"/>
-		</Target>
-		<Target Name="MainDemo:Clean">
-			<MSBuild Projects="C:\Users\mgrivich\Downloads\vidgrab_8.5.2.4.7_purchased\CBuilder\DEMOS\_MainDemo\MainDemo.cbproj" Targets="Clean"/>
-		</Target>
-		<Target Name="MainDemo:Make">
-			<MSBuild Projects="C:\Users\mgrivich\Downloads\vidgrab_8.5.2.4.7_purchased\CBuilder\DEMOS\_MainDemo\MainDemo.cbproj" Targets="Make"/>
-		</Target>
 		<Target Name="CESVideoStream">
 			<MSBuild Projects="CESVideoStream\CESVideoStream.cbproj"/>
 		</Target>
@@ -132,13 +120,13 @@
 			<MSBuild Projects="CESVideoStream\CESVideoStream.cbproj" Targets="Make"/>
 		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="SendData;ReceiveData;math;hotspots;VideoStream;GazeStream;EyeCalibrator;streamviewer;MainDemo;CESVideoStream"/>
+			<CallTarget Targets="SendData;ReceiveData;math;hotspots;VideoStream;GazeStream;EyeCalibrator;streamviewer;CESVideoStream"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="SendData:Clean;ReceiveData:Clean;math:Clean;hotspots:Clean;VideoStream:Clean;GazeStream:Clean;EyeCalibrator:Clean;streamviewer:Clean;MainDemo:Clean;CESVideoStream:Clean"/>
+			<CallTarget Targets="SendData:Clean;ReceiveData:Clean;math:Clean;hotspots:Clean;VideoStream:Clean;GazeStream:Clean;EyeCalibrator:Clean;streamviewer:Clean;CESVideoStream:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="SendData:Make;ReceiveData:Make;math:Make;hotspots:Make;VideoStream:Make;GazeStream:Make;EyeCalibrator:Make;streamviewer:Make;MainDemo:Make;CESVideoStream:Make"/>
+			<CallTarget Targets="SendData:Make;ReceiveData:Make;math:Make;hotspots:Make;VideoStream:Make;GazeStream:Make;EyeCalibrator:Make;streamviewer:Make;CESVideoStream:Make"/>
 		</Target>
 		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')" Project="$(BDS)\Bin\CodeGear.Group.Targets"/>
 	</Project>

@@ -13,8 +13,7 @@
 
 //#include "GetMMFId.h"
 
-//#include "DataArraysx.h"
-//#include "drlib.h"
+
 #include "GazeUtil.h"
 
 #include "stdio.h"
@@ -55,12 +54,14 @@ std::map<int, TPoint3D*> p3Ds;
 
 std::vector<MonitorDrawer*> monitorDrawers;
 
+double dist, xOffset, yOffset;
+
 int nId=1;
-//TMaxArray MaxArray;
 
 HANDLE hMutex = 0, hGazeMutex = 0;
 
-//TMaxArray HotspotSample;
+int dataChannels = 0;
+
 enum HS_TYPE {IS_UNDEF,IS_TOUCH,IS_DIR,IS_POINTTO};
 
 //enum for virtual phasespace point, positive numbers are real phasespace points.
@@ -68,7 +69,8 @@ enum VIRTUAL_PS {IS_NONE=-1, IS_EYE=-2,IS_GAZE=-3};
 
 lsl_outlet eventOutlet = NULL;
 lsl_outlet hotGazeOutlet = NULL;
-#define GAZE_CHANNELS 15
+lsl_outlet dataOutlet = NULL;
+#define GAZE_CHANNELS 16
 #define MAX_STREAMS 16
 
 TGazeUtil *gu;
@@ -238,6 +240,8 @@ void  TForm11::GenerateXMLHeader()
 		gridElement.append_attribute("device") = s;
 		sprintf(s,"%d", hotspotScreen->monitorNumber);
 		gridElement.append_attribute("monitor") = s;
+		sprintf(s,"%g", hotspotScreen->monitorDepth);
+		gridElement.append_attribute("monitorDepth") = s;
 
 	}
 
@@ -337,7 +341,8 @@ void TForm11::LoadConfig(const System::UnicodeString FileName)
 				node->Attributes["sensor0"],
 				node->Attributes["sensor1"],
 				node->Attributes["device"],
-				node->Attributes["monitor"]);
+				node->Attributes["monitor"],
+				node->Attributes["monitorDepth"]);
 
 			} else {
 				Application->MessageBoxA((UnicodeString(L"Node: ") + node->NodeName + UnicodeString(" not recognized.")).w_str(), L"Error", MB_OK);
@@ -370,7 +375,12 @@ void TForm11::UpdateInfo()
 		eventOutlet = NULL;
 	}
 
-	lsl_streaminfo eventInfo = lsl_create_streaminfo("HotspotEvents", "HotspotEvents", 1,0, cft_string,generateGUID());
+	if(dataOutlet) {
+		lsl_destroy_outlet(dataOutlet);
+		dataOutlet = NULL;
+	}
+
+	lsl_streaminfo eventInfo = lsl_create_streaminfo("HotspotEvents", "HotspotEvents", 1,0, cft_string,"");
 
 	//see liblsl/C API/lsl_xml_element_c.cpp,  http://pugixml.googlecode.com/svn/tags/release-0.9/docs/manual/modify.html
 	//lsl_xml_ptr is binary equivalent to pugi::xml_node_struct*
@@ -384,14 +394,25 @@ void TForm11::UpdateInfo()
 	char *xmlHeader = lsl_get_xml(eventInfo);
  //	printf("here\n%s\n", xmlHeader);
 
+	dataChannels = hotspots.size();
 
+	for(std::list<THotspotGrid*>::iterator hsg = hotspotGrids.begin(); hsg != hotspotGrids.end(); ++hsg){
+		THotspotGrid *hotspotGrid = *hsg;
+		dataChannels += hotspotGrid->nSquares;
+	}
+	for(std::list<THotspotScreen*>::iterator hss = hotspotScreens.begin(); hss != hotspotScreens.end(); ++ hss) {
+		dataChannels += 2;
+	}
 
+	lsl_streaminfo dataInfo = lsl_create_streaminfo("HotspotData", "HotspotData", dataChannels, (phasespaceThread) ? phasespaceThread->GetResamplingRate() : 0.0, cft_float32, "");
+
+	dataOutlet = lsl_create_outlet(dataInfo,0,360);
 
 
 }
 
 int gazeFrame = 0;
-ublas::vector<double> gazePoint(3), eyeCur(3);
+ublas::vector<double> gazePoint(3), sceneCameraPoint(3);
 
 void ProcessGazeData(float *data, int size, double samplingRate) {
 
@@ -411,78 +432,70 @@ void ProcessGazeData(float *data, int size, double samplingRate) {
 	double yMonitor = y0;
 	double xScene = 0.0;
 	double yScene = 0.0;
-	double xRotatedMonitor = 0.0;
-	double yRotatedMonitor = 0.0;
 
 	unsigned int res = WaitForSingleObject(hGazeMutex,INFINITE);
 	if (res!=WAIT_OBJECT_0) return;
 
 	__try {
 		if(gu->rEye != 0.0 && x0 != 0.0 ) {
-			gu->inverseEyeMap(&xMonitor,&yMonitor);
+
+			gu->inverseEyeMap(dist, &xMonitor,&yMonitor);
+
 //			if(pr) printf("xMonitor: %g\n", xMonitor);
 //			if(pr) printf("yMonitor: %g\n", yMonitor);
-			xScene = xMonitor;
-			yScene = yMonitor;
-			gu->sceneMap(&xScene, &yScene);
-			if(pr) printf("xScene: %g\n", xScene);
-			if(pr) printf("yScene: %g\n", yScene);
+			xMonitor+=xOffset;
+			yMonitor+=yOffset;
 			if(pr) print("headCur", gu->headCur);
 			if(pr) print("headRef", gu->headRef);
-			if(!_isnan(xMonitor) && !_isnan(yMonitor)&& !hasNan(gu->headCur)) {
+			if(!_isnan(xMonitor) && !_isnan(yMonitor) && !hasNan(gu->headCur)) {
 				//determine the motion of the head
 				ublas::vector<double> priorTranslation(3);
 				ublas::vector<double> postTranslation(3);
-			   //	print("gu->headRef:", gu->headRef);
-			   //	print("gu->headCur:", gu->headCur);
+
 				ublas::matrix<double> rotation(3,3);
+
 				findRigidBody(gu->headRef, gu->headCur, priorTranslation, rotation, postTranslation);
-  //				if(pr) print("rotation", rotation);
-				 //	if(pr) print("priorTrans", priorTranslation);
-				 //	if(pr) print("postTrans", postTranslation);
+				//if(!hasNan(rotation))  {
+	  //				if(pr) print("rotation", rotation);
+					 //	if(pr) print("priorTrans", priorTranslation);
+					 //	if(pr) print("postTrans", postTranslation);
 
+					 //move scene camera to line up with current head position
+					ublas::matrix<double> sceneCameraCur = moveRigidBody(gu->sceneCameraRef, priorTranslation, rotation, postTranslation);
+				   if(pr) print("sceneCameraCur", sceneCameraCur);
+					sceneCameraPoint = ublas::column(sceneCameraCur,3);
 
-					//translate rotated monitor coordinates to phasespace coordinates
-					//monitor side 1 is a vector, monitor side 2 is a vector.  use vectors to draw in real space
-				ublas::matrix<double> displayCur = moveRigidBody(gu->displayRef, priorTranslation, rotation, postTranslation);
-
-				ublas::vector<double> displayLeftToRight = ublas::column(displayCur, 3) - ublas::column(displayCur,2);
-				ublas::vector<double> displayBottomToTop = ublas::column(displayCur, 0) - ublas::column(displayCur,2);
-				gazePoint = displayLeftToRight*((gu->monitorWidth-xMonitor)/gu->monitorWidth) + displayBottomToTop*((gu->monitorHeight-yMonitor)/gu->monitorHeight) + ublas::column(displayCur,2);
-
-				  //	print("displayLeftToRight", displayLeftToRight);
-				  //	print("displayBottomToTop", displayBottomToTop);
-			   //		if(pr) print("BLref", ublas::column(displayRef,2));
-			   //		if(pr) print("BL", ublas::column(displayCur,2));
-					//intersect eyeCur -> gazePoint, with physical (non-rotated) monitor
-				eyeCur = moveRigidVector(gu->eyePositionRef, priorTranslation, rotation, postTranslation);
+					//use unit vectors to determine current gaze point
+					gazePoint =
+						(-ublas::column(sceneCameraCur,0) + sceneCameraPoint)*xMonitor +//scene camera xhat * magnitude
+						(ublas::column(sceneCameraCur,1) - sceneCameraPoint)*yMonitor +//scene camera yhat * magnitude
+						(ublas::column(sceneCameraCur,2) - sceneCameraPoint)*dist +//scene camera zhat * magnitude
+						sceneCameraPoint; //scene camera origin
+					if(pr) print("sceneCameraPoint", sceneCameraPoint);
 					if(pr) print("gazePoint", gazePoint);
-					if(pr) print("                 eyeCur", eyeCur);
-				gu->eyeToMonitorHeadFree(eyeCur, gazePoint, ublas::column(gu->displayRef, 2), ublas::column(gu->displayRef, 3),
-						ublas::column(gu->displayRef, 0),&xRotatedMonitor, &yRotatedMonitor);
-					//find point in non-rotated monitor (intersection of line with plane)
-
+		   //		}
 
 			}
 		}
 
-		float sample [15];
+		float sample [GAZE_CHANNELS];
 
 		sample[0] = x0;
 		sample[1] = y0;
-		sample[2] = 1.0 - 1.0*xMonitor/gu->monitorWidth; //percentage coordinates
-		sample[3] = 1.0 - 1.0*yMonitor/gu->monitorHeight; //percentage coordinates
+		sample[2] = xMonitor; //mm x distance to target, from scene camera
+		sample[3] = yMonitor; //mm y distance to target, from scene camera
 		sample[4] = radiusA; //pixels
 		sample[5] = radiusB; //pixels
 		sample[6] = angle;
-		sample[7] = xRotatedMonitor/gu->monitorWidth; //percentageWidth
-		sample[8] = 1.0 - 1.0*yRotatedMonitor/gu->monitorHeight;
-		sample[9] = eyeCur(0)/1000.0;  //m
-		sample[10] = eyeCur(1)/1000.0; //m
-		sample[11] = eyeCur(2)/1000.0; //m
+		sample[7] = xOffset; //mm x offset in scene camera space
+		sample[8] = yOffset; //mm z offset in scene camera space
+		sample[9] = sceneCameraPoint(0)/1000.0;  //m
+		sample[10] = sceneCameraPoint(1)/1000.0; //m
+		sample[11] = sceneCameraPoint(2)/1000.0; //m
 		sample[12] = gazePoint(0)/1000.0; //m
 		sample[13] = gazePoint(1)/1000.0; //m
 		sample[14] = gazePoint(2)/1000.0; //m
+		sample[15] = dist;   //mm, assumed distance to target, from scene camera
 
 
 		lsl_push_sample_ftp(hotGazeOutlet, sample, lsl_local_clock(), 1);
@@ -514,7 +527,6 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 	std::list<int> changedNames;
 	static int count =0;
 
-	int changedCount = 0;
 
 	unsigned int res = WaitForSingleObject(hMutex,INFINITE);
 	if (res!=WAIT_OBJECT_0) return;
@@ -532,17 +544,7 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 
 			phaseData[i] = data[i];
 		}
-	/*	HotspotSample.drf.item_size = 2;// Type = 1;
-		HotspotSample.drf.nItems = hotspots.size();
-		for(std::list<THotspotGrid*>::iterator hsg = hotspotGrids.begin(); hsg != hotspotGrids.end(); ++hsg){
-			THotspotGrid *hotspotGrid = *hsg;
-			HotspotSample.drf.nItems += hotspotGrid->nSquares;
-		}
-		for(std::list<THotspotScreen*>::iterator hss = hotspotScreens.begin(); hss != hotspotScreens.end(); ++ hss) {
-			HotspotSample.drf.nItems+=2;
-		}
-	  */
-	   //	memcpy(&MaxArray, data,size);
+
 		count++;
 		if(hGazeMutex && gu->initialized) {
 			for(int marker = 0; marker < gu->headMarkers.size(); marker++) {
@@ -552,10 +554,7 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 			}
 		}
 
-	//	HotspotSample.drf.TimeStampOrig = MaxArray.drf.TimeStampOrig ;
-	//	HotspotSample.TimeStampRecv = MaxArray.TimeStampRecv;
-
-	//	HotspotSample.drf.Event = 0;
+		float *buffer = new1D<float>(dataChannels, 0.0);
 		int i=0;
 		for(std::list<THotspot*>::iterator hs = hotspots.begin(); hs != hotspots.end(); ++hs){
 			THotspot * pHs = *hs;
@@ -566,9 +565,9 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 				y = 0.0;
 				z = 0.0;
 			} else if(ch1 == IS_EYE) {
-			   x = eyeCur(0);
-			   y = eyeCur(1);
-			   z = eyeCur(2);
+			   x = sceneCameraPoint(0);
+			   y = sceneCameraPoint(1);
+			   z = sceneCameraPoint(2);
 			} else if (ch1 == IS_GAZE) {
 			   x = gazePoint(0);
 			   y = gazePoint(1);
@@ -588,9 +587,9 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 				z = 0.0;
 				isTouch = true;  // no "to" sensor
 			} else if(ch2 == IS_EYE) {
-			   x = eyeCur(0);
-			   y = eyeCur(1);
-			   z = eyeCur(2);
+			   x = sceneCameraPoint(0);
+			   y = sceneCameraPoint(1);
+			   z = sceneCameraPoint(2);
 			} else if (ch2 == IS_GAZE) {
 			   x = gazePoint(0);
 			   y = gazePoint(1);
@@ -606,8 +605,7 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 			bool in;
 			if (isTouch)
 			{
-		   //		float f = pHs->Distance(pt1);
-		   //		HotspotSample.Data[i] = f;
+				buffer[i] = pHs->Distance(pt1);
 				in = pHs->Includes(pt1);
 			}
 			else // is point-to or dist
@@ -618,8 +616,7 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 					int sz = pHs->r;
 					TVectorToHotspot PointingTo(pt1,pt2,sz );
 					TVectorToHotspot TargetIs(pt1,*pHs,sz);
-			 //		float deg = PointingTo.Distance(TargetIs);
-			//		HotspotSample.Data[i]=deg*10;
+					buffer[i]=PointingTo.Distance(TargetIs);
 					in =   PointingTo.Includes(TargetIs);
 				}
 				else
@@ -627,8 +624,8 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 					int sz = pHs->r;
 					TVectorToHotspot PointingTo(pt1,pt2,sz );
 					TVectorToHotspot TargetIs(pt1,*pHs,sz);
-			  //		float deg = PointingTo.Distance(TargetIs);
-			 //		HotspotSample.Data[i]=deg*10;
+					double deg = PointingTo.Distance(TargetIs);
+					buffer[i]=deg;
 					in =   PointingTo.Includes(TargetIs);
 				}
 			}
@@ -646,13 +643,13 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 			if (pHs->isChanged)
 			{
 				if (pHs->unchangedCount>4 && pHs->isIn) // only moving into the hotspot after being out for 4 samples!
-				{   changedCount++;
+				{
 
 					char *codeStr = (char *) malloc(sizeof(char)*256);
 					sprintf(codeStr, "%d", code);
 					lsl_push_sample_strtp(eventOutlet, &codeStr, lsl_local_clock(), 1);
 					changedNames.push_back(code);
-                	free(codeStr);
+					free(codeStr);
 				}
 
 				pHs->unchangedCount = 0;
@@ -677,9 +674,9 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 					y = 0.0;
 					z = 0.0;
 				} else if(ch1 == IS_EYE) {
-				   x = eyeCur(0);
-				   y = eyeCur(1);
-				   z = eyeCur(2);
+				   x = sceneCameraPoint(0);
+				   y = sceneCameraPoint(1);
+				   z = sceneCameraPoint(2);
 				} else if (ch1 == IS_GAZE) {
 				   x = gazePoint(0);
 				   y = gazePoint(1);
@@ -693,8 +690,8 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 
 				int code;
 				bool in;
-			   //	float f = pHs->Distance(pt3D);
-			   //	HotspotSample.Data[i] = f;
+
+				buffer[i] = pHs->Distance(pt3D);
 				in = pHs->Includes(pt3D);
 
 				if (in)
@@ -712,7 +709,6 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 				{
 					if (pHs->unchangedCount>4 && pHs->isIn) // only moving into the hotspot after being out for 4 samples!
 					{
-				   //		HotspotSample.drf.Event = code;
 						char *codeStr = (char *) malloc(sizeof(char)*256);
 						sprintf(codeStr, "%d", code);
 						lsl_push_sample_strtp(eventOutlet, &codeStr, lsl_local_clock(), 1);
@@ -742,12 +738,12 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 				ch1vect(1) = NAN;
 				ch1vect(2) = NAN;
 			} else if(ch1 == IS_EYE) {
-				if(eyeCur(0) == 0) {
+				if(sceneCameraPoint(0) == 0) {
 					ch1vect(0) = NAN;
 					ch1vect(1) = NAN;
 					ch1vect(2) = NAN;
 				} else {
-					ch1vect = eyeCur;
+					ch1vect = sceneCameraPoint;
 				}
 
 			} else if (ch1 == IS_GAZE) {
@@ -770,12 +766,12 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 				ch2vect(2) = NAN;
 			} else if(ch2 == IS_EYE) {
 
-				if(eyeCur(0) == 0) {
+				if(sceneCameraPoint(0) == 0) {
 					ch2vect(0) = NAN;
 					ch2vect(1) = NAN;
 					ch2vect(2) = NAN;
 				} else {
-					ch2vect = eyeCur;
+					ch2vect = sceneCameraPoint;
 				}
 
 			} else if (ch2 == IS_GAZE) {
@@ -804,10 +800,10 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 			double monitorPosX = 0, monitorPosY = 0;
 			hotspotScreen->pointToScreen(ch1vect, ch2vect, &monitorPosX, &monitorPosY);
 
-				monitorDrawers[hotspotScreen->monitorNumber-1]->drawMarkerSmooth( monitorPosX, monitorPosY);
+			monitorDrawers[hotspotScreen->monitorNumber-1]->drawMarkerSmooth( monitorPosX, monitorPosY);
 
-		   //	HotspotSample.Data[i++] = (int)(monitorPosX*32767.0);
-		   //	HotspotSample.Data[i++] = (int)(monitorPosY*32767.0);
+			buffer[i++] = monitorPosX;
+			buffer[i++] = monitorPosY;
 
 			bool in = hotspotScreen->Includes(monitorPosX, monitorPosY);
 
@@ -840,8 +836,11 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 				hotspotScreen->unchangedCount++;  // count time unchanged
 			}
 
+
 		}
 
+		lsl_push_sample_ftp(dataOutlet,buffer, lsl_local_clock(), 1);
+		delete1D(buffer);
 		progress =  count % 1250;
 
 	}
@@ -859,10 +858,7 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 	for(std::list<int>::iterator i=changedNames.begin(); i != changedNames.end(); i++)
 		Form11->Memo1->Lines->Add(*i) ;
 
-	if(changedCount > 1) {
-		Form11->Memo1->Lines->Add(UnicodeString(
-			"Simultaneous events detected.  Only one was transmitted.  Typically this occurs when multiple hotspots have the same definition."));
-	}
+
 
 }
 
@@ -1053,6 +1049,9 @@ void __fastcall TForm11::FormCreate(TObject *Sender)
 	gu = new TGazeUtil();
    hMutex = CreateMutex(0,false,0);
    hGazeMutex = CreateMutex(0,false,0);
+   xOffsetEditChange(this);
+   yOffsetEditChange(this);
+   distanceEditChange(this);
 
 }
 
@@ -1438,11 +1437,11 @@ void TForm11::addRectangular(THotspotGrid *hotspotGrid, int x, int y, int z, int
 
 
 void TForm11::addScreen(int topLeft, int topRight, int bottomLeft, int bottomRight,
-			int sensor0, int sensor1, int device, int monitorNumber) {
+			int sensor0, int sensor1, int device, int monitorNumber, double monitorDepth) {
 
 		THotspotScreen * pHs = new THotspotScreen(
 			p3Ds, topLeft, topRight, bottomLeft, bottomRight,
-			sensor0, sensor1, device, monitorNumber);
+			sensor0, sensor1, device, monitorNumber, monitorDepth);
 
 
 		TShape * pSh = new TShape(GridPanel6);
@@ -1686,6 +1685,7 @@ void __fastcall TForm11::GridPanel1Click(TObject *Sender)
 			int sensor1 = ScreenForm->sensor1;
 			int device = ScreenForm->device;
 			int monitorNumber = ScreenForm->monitorNumber;
+			double monitorDepth = ScreenForm->monitorDepth;
 
 			if(p3Ds.find(topLeftID) == p3Ds.end())  {
 				Application->MessageBoxA(L"Top Left ID is not valid.", L"Error", MB_OK);
@@ -1714,7 +1714,7 @@ void __fastcall TForm11::GridPanel1Click(TObject *Sender)
 				Application->MessageBoxA(L"Monitor number does not exist.", L"Error", MB_OK);
 				return;
 			}
-			addScreen(topLeftID, topRightID, bottomLeftID, bottomRightID, sensor0, sensor1, device, monitorNumber);
+			addScreen(topLeftID, topRightID, bottomLeftID, bottomRightID, sensor0, sensor1, device, monitorNumber, monitorDepth);
 		}
 
 	}
@@ -2127,66 +2127,70 @@ void __fastcall TForm11::GazeComboBoxChange(TObject *Sender)
 
 	lsl_streaminfo gazeInfo = lsl_create_streaminfo("HotGazeStream","HotGazeStream", GAZE_CHANNELS, 30, cft_float32,"");
 	lsl_xml_ptr desc = lsl_get_desc(gazeInfo);
-	lsl_xml_ptr chn = lsl_append_child(desc, "channel");
+	lsl_xml_ptr chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","pupil position x");
 	lsl_append_child_value(chn,"unit","pixels");
 
-	chn = lsl_append_child(desc, "channel");
+	chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","pupil position y");
 	lsl_append_child_value(chn,"unit","pixels");
 
-	chn = lsl_append_child(desc, "channel");
-	lsl_append_child_value(chn, "name","screen position x");
-	lsl_append_child_value(chn,"unit","x/monitorWidth");
+	chn = lsl_append_child(desc, "channels");
+	lsl_append_child_value(chn, "name","target position x");
+	lsl_append_child_value(chn,"unit","mm");
 
-	chn = lsl_append_child(desc, "channel");
-	lsl_append_child_value(chn, "name","screen position y");
-	lsl_append_child_value(chn,"unit","y/monitorHeight");
+	chn = lsl_append_child(desc, "channels");
+	lsl_append_child_value(chn, "name","target position y");
+	lsl_append_child_value(chn,"unit","mm");
 
 
-	chn = lsl_append_child(desc, "channel");
+	chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","pupil radius A");
 	lsl_append_child_value(chn,"unit","pixels");
 
-	chn = lsl_append_child(desc, "channel");
+	chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","pupil radius B");
 	lsl_append_child_value(chn,"unit","pixels");
 
-	chn = lsl_append_child(desc, "channel");
+	chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","pupil angle");
 	lsl_append_child_value(chn,"unit","radians");
 
-	chn = lsl_append_child(desc, "channel");
-	lsl_append_child_value(chn, "name","rotated screen position x");
-	lsl_append_child_value(chn,"unit","x/monitorWidth");
+	chn = lsl_append_child(desc, "channels");
+	lsl_append_child_value(chn, "name","x offset, scene camera");
+	lsl_append_child_value(chn,"unit","mm");
 
-	chn = lsl_append_child(desc, "channel");
-	lsl_append_child_value(chn, "name","rotated screen position y");
-	lsl_append_child_value(chn,"unit","y/monitorHeight");
+	chn = lsl_append_child(desc, "channels");
+	lsl_append_child_value(chn, "name","y offset, scene camera");
+	lsl_append_child_value(chn,"unit","mm");
 
-	chn = lsl_append_child(desc, "channel");
-	lsl_append_child_value(chn, "name","eye position x");
+	chn = lsl_append_child(desc, "channels");
+	lsl_append_child_value(chn, "name","camera position x");
 	lsl_append_child_value(chn,"unit","m");
 
-	chn = lsl_append_child(desc, "channel");
-	lsl_append_child_value(chn, "name","eye position y");
+	chn = lsl_append_child(desc, "channels");
+	lsl_append_child_value(chn, "name","camera position y");
 	lsl_append_child_value(chn,"unit","m");
 
-	chn = lsl_append_child(desc, "channel");
-	lsl_append_child_value(chn, "name","eye position z");
+	chn = lsl_append_child(desc, "channels");
+	lsl_append_child_value(chn, "name","camera position z");
 	lsl_append_child_value(chn,"unit","m");
 
-	chn = lsl_append_child(desc, "channel");
+	chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","gaze position x");
 	lsl_append_child_value(chn,"unit","m");
 
-	chn = lsl_append_child(desc, "channel");
+	chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","gaze position y");
 	lsl_append_child_value(chn,"unit","m");
 
-	chn = lsl_append_child(desc, "channel");
+	chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","gaze position z");
 	lsl_append_child_value(chn,"unit","m");
+
+	chn = lsl_append_child(desc, "channels");
+	lsl_append_child_value(chn, "name","assumed target distance, scene camera");
+	lsl_append_child_value(chn,"unit","mm");
 
 
 	hotGazeOutlet = lsl_create_outlet(gazeInfo,0,360);
@@ -2227,9 +2231,7 @@ void __fastcall TForm11::GazeComboBoxChange(TObject *Sender)
 
 void __fastcall TForm11::LoadCalibrationClick(TObject *Sender)
 {
-  std::cout << "foo" <<endl;
-  std::cout.flush();
-  //  printf("printf\n");
+
 	if(OpenDialog1->Execute()) {
 		gu->LoadGazeCalibration(OpenDialog1->FileName, xdoc_in);
 
@@ -2244,10 +2246,8 @@ void __fastcall TForm11::LoadCalibrationClick(TObject *Sender)
 void __fastcall TForm11::FormDestroy(TObject *Sender)
 {
 	clear();
- /*	if(handleRd1) ds_Close(handleRd1);
-	if(gazeHandleRd) ds_Close(gazeHandleRd);
-	if(hotGazeHandleWr) ds_Close(hotGazeHandleWr);
- */	if(hMutex) CloseHandle(hMutex);
+
+	if(hMutex) CloseHandle(hMutex);
 	if(hGazeMutex) CloseHandle(hGazeMutex);
 
 	if(gu) delete gu;
@@ -2267,6 +2267,12 @@ void __fastcall TForm11::FormDestroy(TObject *Sender)
 	if(eventOutlet) {
 		lsl_destroy_outlet(eventOutlet);
 		eventOutlet = NULL;
+	}
+
+	if(dataOutlet) {
+		lsl_destroy_outlet(dataOutlet);
+		dataOutlet = NULL;
+
 	}
 	if(phaseData) {
 		delete1D(phaseData);
@@ -2297,5 +2303,46 @@ void __fastcall TForm11::CloseDisplaysButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
+
+
+void __fastcall TForm11::distanceEditChange(TObject *Sender)
+{
+ 	bool ex = false;
+	try {
+		distanceEdit->Text.ToDouble();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex) dist = distanceEdit->Text.ToDouble();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm11::xOffsetEditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		xOffsetEdit->Text.ToDouble();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex) xOffset = xOffsetEdit->Text.ToDouble();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm11::yOffsetEditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		yOffsetEdit->Text.ToDouble();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex) yOffset = yOffsetEdit->Text.ToDouble();
+}
+//---------------------------------------------------------------------------
 
 

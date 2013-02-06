@@ -22,6 +22,7 @@ private:	// User declarations
 	queue<BITMAP*>* bmpQueue;
 	BITMAP * bmpCanvas;
 	HANDLE hMutex;
+
 protected:  // User declarations
 	void __fastcall Execute();
 

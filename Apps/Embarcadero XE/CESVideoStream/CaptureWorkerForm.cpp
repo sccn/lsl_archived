@@ -1137,7 +1137,8 @@ void __fastcall TCaptureWorkerForm::VideoGrabberFrameBitmap(TObject *Sender,
 	if(nFrames == 0) {
 		firstTimestamp = timestamp;
 		oldTimestamp = firstTimestamp;
-		frameRate = VideoGrabber->CurrentFrameRate;
+		frameRate = 15.0;//HACK FOR POINT GREY BUG;   VideoGrabber->CurrentFrameRate;
+	 //	printf("frameRateInit: %g\n", frameRate);
 	 } else {
 		currentTimestamp = timestamp;
 		double interval = (currentTimestamp - oldTimestamp);
@@ -1146,12 +1147,12 @@ void __fastcall TCaptureWorkerForm::VideoGrabberFrameBitmap(TObject *Sender,
 			goodFrames++;
 			goodTime += interval;
 			frameRate = goodFrames/goodTime;
+	 //		printf("frameRate: %g    %g\n", frameRate, VideoGrabber->CurrentFrameRate);
 
 		}
 		oldTimestamp = currentTimestamp;
 		dropped = (currentTimestamp - firstTimestamp)*frameRate  - nFrames;
    //		printf("%g    %g   %g\n", dropped, currentTimestamp, firstTimestamp);
-	//	droppedFramesEdit->Text =  FormatFloat ("0", dropped);
 	}
 	nFrames++;
 

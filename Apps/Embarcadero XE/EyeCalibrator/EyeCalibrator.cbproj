@@ -76,6 +76,10 @@
 				<IgnorePath>true</IgnorePath>
 				<BuildOrder>9</BuildOrder>
 			</LibFiles>
+			<LibFiles Include="..\bin\cvWrapper.lib">
+				<IgnorePath>true</IgnorePath>
+				<BuildOrder>15</BuildOrder>
+			</LibFiles>
 			<LibFiles Include="..\bin\liblsl32.lib">
 				<IgnorePath>true</IgnorePath>
 				<BuildOrder>10</BuildOrder>
@@ -117,6 +121,9 @@
 			</CppCompile>
 			<None Include="..\shared\4.4.0-msvc\include\allegro.h">
 				<BuildOrder>11</BuildOrder>
+			</None>
+			<None Include="..\shared\include\cvWrapper.h">
+				<BuildOrder>14</BuildOrder>
 			</None>
 			<None Include="..\shared\include\general_util.h">
 				<BuildOrder>13</BuildOrder>

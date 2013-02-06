@@ -103,6 +103,8 @@ __published:	// IDE-managed Components
 	TLabel *Label6;
 	TLabeledEdit *eyeRadiusMaxEdit;
 	TCheckBox *flipVertCheckbox;
+	TComboBox *cbReferenceCalibColor;
+	TLabel *Label7;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall cbVideoInputDeviceChange(TObject *Sender);
 	void __fastcall cbVideoInputFormatChange(TObject *Sender);
@@ -138,6 +140,7 @@ __published:	// IDE-managed Components
 	void __fastcall cbSceneCalibColorChange(TObject *Sender);
 	void __fastcall cbVideoInputChange(TObject *Sender);
 	void __fastcall crRadiusMaxEditChange(TObject *Sender);
+	void __fastcall cbReferenceCalibColorChange(TObject *Sender);
 
 private:	// User declarations
 	void __fastcall TMainCaptureForm::Start();
@@ -155,6 +158,9 @@ public:		// User declarations
 
 TOutline* findLargestOutline(BITMAP *aBmp, boolean above,
 	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint);
+
+list<TOutline*> findLargestOutlines(BITMAP *aBmp, boolean above,
+	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint, int count);
 
 void fitCircle(BITMAP *aBmp, TOutline *largestOutline, double *x0, double *y0, double *radius, double crX0, double crY0, double crRadius, boolean above,
 	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint);

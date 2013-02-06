@@ -102,4 +102,14 @@ object ScreenForm: TScreenForm
     EditLabel.Caption = 'Monitor Number'
     TabOrder = 8
   end
+  object MonitorDepthEdit: TLabeledEdit
+    Left = 296
+    Top = 64
+    Width = 121
+    Height = 21
+    EditLabel.Width = 95
+    EditLabel.Height = 13
+    EditLabel.Caption = 'Monitor Depth (mm)'
+    TabOrder = 9
+  end
 end

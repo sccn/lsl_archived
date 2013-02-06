@@ -14,6 +14,7 @@
 #include <ExtCtrls.hpp>
 #include <Dialogs.hpp>
 #include <ComCtrls.hpp>
+#include "vector.h"
 
 #ifdef _DEBUG
 	#undef _DEBUG  //prevent loading of debug version of library.
@@ -92,47 +93,6 @@ __published:	// IDE-managed Components
 	TSaveDialog *SaveDialog1;
 	TButton *ClearCalibrationPointsBtn;
 	TPanel *sceneCalibPanel;
-	TGridPanel *GridPanel2;
-	TEdit *aInSceneEdit;
-	TEdit *aRangeSceneEdit;
-	TEdit *aOutSceneEdit;
-	TEdit *bInSceneEdit;
-	TEdit *bRangeSceneEdit;
-	TEdit *bOutSceneEdit;
-	TEdit *gInSceneEdit;
-	TEdit *gRangeSceneEdit;
-	TEdit *gOutSceneEdit;
-	TEdit *bxInSceneEdit;
-	TEdit *bxRangeSceneEdit;
-	TEdit *bxOutSceneEdit;
-	TEdit *byInSceneEdit;
-	TEdit *byRangeSceneEdit;
-	TEdit *byOutSceneEdit;
-	TEdit *bzInSceneEdit;
-	TEdit *bzRangeSceneEdit;
-	TEdit *bzOutSceneEdit;
-	TEdit *fcInSceneEdit;
-	TEdit *fcRangeSceneEdit;
-	TEdit *fcOutSceneEdit;
-	TEdit *kInSceneEdit;
-	TEdit *kRangeSceneEdit;
-	TEdit *kOutSceneEdit;
-	TEdit *ydInSceneEdit;
-	TEdit *ydRangeSceneEdit;
-	TEdit *ydOutSceneEdit;
-	TEdit *zdInSceneEdit;
-	TEdit *zdRangeSceneEdit;
-	TEdit *zdOutSceneEdit;
-	TLabel *Label15;
-	TLabel *Label16;
-	TLabel *Label17;
-	TLabel *Label18;
-	TLabel *Label19;
-	TLabel *Label20;
-	TLabel *Label21;
-	TLabel *Label22;
-	TLabel *Label23;
-	TLabel *Label24;
 	TLabeledEdit *SceneCameraWidthEdit;
 	TLabeledEdit *SceneCameraHeightEdit;
 	TProgressBar *GazeProgressBar;
@@ -143,12 +103,6 @@ __published:	// IDE-managed Components
 	TLabeledEdit *HeadMarker2Edit;
 	TLabeledEdit *HeadMarker3Edit;
 	TButton *ReferenceHeadButton;
-	TLabeledEdit *WandNear0Edit;
-	TLabeledEdit *WandNear1Edit;
-	TLabeledEdit *WandFarEdit;
-	TButton *WandPosition0Button;
-	TButton *WandPosition1Button;
-	TLabeledEdit *DisplayMarkerEdit;
 	TButton *testEye;
 	TButton *eyeTestDone;
 	TTimer *Timer2;
@@ -161,10 +115,13 @@ __published:	// IDE-managed Components
 	TButton *CalibrationWindowButton;
 	TTimer *Timer3;
 	TOpenDialog *OpenDialog2;
-	TButton *DisplayULButton;
-	TButton *DisplayURButton;
-	TButton *DisplayBLButton;
-	TButton *DisplayBRButton;
+	TButton *phasespaceTestStart;
+	TButton *phasespaceTestStop;
+	TLabeledEdit *phasespaceMarker0Edit;
+	TLabeledEdit *phasespaceMarker1Edit;
+	TLabeledEdit *monitorDepthEdit;
+	TButton *MonitorPositionButton;
+	TButton *AbortCalibrationButton;
 
 	/**
 	 * Main loop. Pulls all available data from input streams. Stores data
@@ -200,12 +157,7 @@ __published:	// IDE-managed Components
 	 */
 	void __fastcall eyeCalibration();
 
-	/**
-	 * Given a series of scene calibration points (position of the center of the
-	 calibratin spot in the scene camera), find fit parameters.
-	 *
-	 */
-	void __fastcall sceneCalibration();
+
 	void __fastcall SceneCameraWidthEditChange(TObject *Sender);
 	void __fastcall SceneCameraHeightEditChange(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
@@ -213,17 +165,6 @@ __published:	// IDE-managed Components
 	 * Click when head is in head-fixed position.
 	 */
 	void __fastcall ReferenceHeadButtonClick(TObject *Sender);
-
-	/**
-	 * Click while sighting down calibration wand with tracked eye.
-	 */
-	void __fastcall WandPosition0ButtonClick(TObject *Sender);
-
-	/**
-	 * Click while sighting down calibration wand with tracked eye.
-	 * Use a significantly different angle of approach than position 0.
-	 */
-	void __fastcall WandPosition1ButtonClick(TObject *Sender);
 
 	/**
 	 * Starts an eye test, which will print out the location of the eye
@@ -260,13 +201,22 @@ __published:	// IDE-managed Components
 	void __fastcall Timer3Timer(TObject *Sender);
 	void __fastcall FormKeyPress(TObject *Sender, wchar_t &Key);
 	void __fastcall FormKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
-	void __fastcall DisplayULButtonClick(TObject *Sender);
-	void __fastcall DisplayURButtonClick(TObject *Sender);
-	void __fastcall DisplayBLButtonClick(TObject *Sender);
-	void __fastcall DisplayBRButtonClick(TObject *Sender);
+	void __fastcall phasespaceTestStartClick(TObject *Sender);
+	void __fastcall phasespaceTestStopClick(TObject *Sender);
+	void __fastcall monitorDepthEditChange(TObject *Sender);
+	void __fastcall MonitorPositionButtonClick(TObject *Sender);
+	void __fastcall HeadMarker0EditChange(TObject *Sender);
+	void __fastcall HeadMarker1EditChange(TObject *Sender);
+	void __fastcall HeadMarker2EditChange(TObject *Sender);
+	void __fastcall HeadMarker3EditChange(TObject *Sender);
+	void __fastcall phasespaceMarker0EditChange(TObject *Sender);
+	void __fastcall phasespaceMarker1EditChange(TObject *Sender);
+	void __fastcall AbortCalibrationButtonClick(TObject *Sender);
+
 
 private:	// User declarations
-	void LoadConfig(const System::UnicodeString FileName);
+	void LoadHotspotsConfig(const System::UnicodeString FileName);
+	void poseFinder(std::vector<double> xs, std::vector<double> ys);
 public:		// User declarations
 	__fastcall TForm4(TComponent* Owner);
 
@@ -278,11 +228,6 @@ public:		// User declarations
 	 */
 	void scaleToPhysical();
 
-	/**
-	 * If all four corners of calibration monitor have been mapped, measure monitor
-	 * size.
-	 */
-	void updateMonitorMeasurement();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm4 *Form4;

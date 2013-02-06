@@ -128,6 +128,9 @@ __published:	// IDE-managed Components
 	TProgressBar *ProgressBar1;
 	TComboBox *PhaseComboBox;
 	TLabel *Label36;
+	TLabeledEdit *xOffsetEdit;
+	TLabeledEdit *distanceEdit;
+	TLabeledEdit *yOffsetEdit;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 
@@ -188,6 +191,9 @@ __published:	// IDE-managed Components
 	void __fastcall OpenDisplaysButtonClick(TObject *Sender);
 	void __fastcall CloseDisplaysButtonClick(TObject *Sender);
 	void __fastcall PhaseComboBoxChange(TObject *Sender);
+	void __fastcall distanceEditChange(TObject *Sender);
+	void __fastcall xOffsetEditChange(TObject *Sender);
+	void __fastcall yOffsetEditChange(TObject *Sender);
 private:	// User declarations
 	int FindMmfBuffer();
 	pugi::xml_document doc;
@@ -236,7 +242,7 @@ public:		// User declarations
 	void addRectangular(THotspotGrid *hotspotGrid, int x, int y, int z, int Xthickness, int Ythickness, int Zthickness, int sensor, int device);
 
 	void addScreen(int topLeft, int topRight, int bottomLeft, int bottomRight,
-				int sensor0, int sensor1, int device, int monitorNumber);
+				int sensor0, int sensor1, int device, int monitorNumber, double monitorDepth);
 
 	void UpdateInfo();
 
@@ -246,3 +252,4 @@ public:		// User declarations
 
 extern PACKAGE TForm11 *Form11;
 #endif
+

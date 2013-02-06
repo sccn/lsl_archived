@@ -20,30 +20,34 @@ object MainCaptureForm: TMainCaptureForm
     Left = 6
     Top = 6
     Width = 427
-    Height = 181
+    Height = 315
     ActivePage = TabSheet2
     TabOrder = 0
     TabPosition = tpBottom
     object TabSheet2: TTabSheet
       Caption = 'Video in'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 11
         Top = 0
-        Width = 58
+        Width = 62
         Height = 12
-        Caption = 'Video Device'
+        Caption = 'Video Devices'
       end
       object Label36: TLabel
-        Left = 11
-        Top = 80
+        Left = 12
+        Top = 170
         Width = 57
         Height = 12
         Caption = 'Input format'
       end
       object Label6: TLabel
-        Left = 11
-        Top = 41
+        Left = 12
+        Top = 128
         Width = 53
         Height = 12
         Caption = 'Video Input'
@@ -58,8 +62,8 @@ object MainCaptureForm: TMainCaptureForm
         OnChange = cbVideoInputDeviceChange
       end
       object cbVideoInputFormat: TComboBox
-        Left = 11
-        Top = 95
+        Left = 12
+        Top = 185
         Width = 189
         Height = 20
         Style = csDropDownList
@@ -67,8 +71,8 @@ object MainCaptureForm: TMainCaptureForm
         OnChange = cbVideoInputFormatChange
       end
       object edtFrameRate: TLabeledEdit
-        Left = 11
-        Top = 130
+        Left = 12
+        Top = 231
         Width = 78
         Height = 20
         EditLabel.Width = 50
@@ -77,8 +81,8 @@ object MainCaptureForm: TMainCaptureForm
         TabOrder = 2
       end
       object cbVideoInput: TComboBox
-        Left = 11
-        Top = 56
+        Left = 12
+        Top = 146
         Width = 189
         Height = 21
         Font.Charset = DEFAULT_CHARSET
@@ -90,10 +94,41 @@ object MainCaptureForm: TMainCaptureForm
         TabOrder = 3
         OnChange = cbVideoInputChange
       end
+      object cbVideoInputDevice1: TComboBox
+        Left = 12
+        Top = 41
+        Width = 189
+        Height = 20
+        Style = csDropDownList
+        TabOrder = 4
+        OnChange = cbVideoInputDevice1Change
+      end
+      object cbVideoInputDevice2: TComboBox
+        Left = 12
+        Top = 67
+        Width = 189
+        Height = 20
+        Style = csDropDownList
+        TabOrder = 5
+        OnChange = cbVideoInputDevice2Change
+      end
+      object cbVideoInputDevice3: TComboBox
+        Left = 12
+        Top = 93
+        Width = 189
+        Height = 20
+        Style = csDropDownList
+        TabOrder = 6
+        OnChange = cbVideoInputDevice3Change
+      end
     end
     object TabSheet1: TTabSheet
       Caption = 'Video out'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label2: TLabel
         Left = 14
         Top = -2
@@ -188,7 +223,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object BitBtnPlay: TBitBtn
     Left = 8
-    Top = 208
+    Top = 384
     Width = 64
     Height = 20
     DoubleBuffered = True
@@ -233,7 +268,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object BitBtnStop: TBitBtn
     Left = 92
-    Top = 208
+    Top = 384
     Width = 59
     Height = 20
     DoubleBuffered = True
@@ -279,7 +314,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object BacklogEdit: TLabeledEdit
     Left = 8
-    Top = 296
+    Top = 472
     Width = 101
     Height = 20
     EditLabel.Width = 75
@@ -289,19 +324,19 @@ object MainCaptureForm: TMainCaptureForm
   end
   object FrameDivisorEdit: TLabeledEdit
     Left = 8
-    Top = 343
+    Top = 519
     Width = 101
     Height = 20
     EditLabel.Width = 97
     EditLabel.Height = 12
     EditLabel.Caption = 'Frame Display Divisor'
     TabOrder = 5
-    Text = '5'
+    Text = '1'
     OnChange = FrameDivisorEditChange
   end
   object droppedFramesEdit: TLabeledEdit
     Left = 8
-    Top = 256
+    Top = 432
     Width = 101
     Height = 20
     EditLabel.Width = 102
@@ -311,7 +346,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object SpatialDivisorEdit: TLabeledEdit
     Left = 115
-    Top = 343
+    Top = 519
     Width = 101
     Height = 20
     EditLabel.Width = 98
@@ -343,7 +378,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object BacklogEdit1: TLabeledEdit
     Left = 115
-    Top = 295
+    Top = 471
     Width = 101
     Height = 20
     EditLabel.Width = 75
@@ -353,7 +388,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object droppedFramesEdit1: TLabeledEdit
     Left = 115
-    Top = 256
+    Top = 432
     Width = 101
     Height = 20
     EditLabel.Width = 102
@@ -363,7 +398,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object droppedFramesEdit2: TLabeledEdit
     Left = 222
-    Top = 256
+    Top = 432
     Width = 101
     Height = 20
     EditLabel.Width = 102
@@ -373,7 +408,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object droppedFramesEdit3: TLabeledEdit
     Left = 329
-    Top = 256
+    Top = 432
     Width = 101
     Height = 20
     EditLabel.Width = 102
@@ -383,7 +418,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object BacklogEdit2: TLabeledEdit
     Left = 222
-    Top = 292
+    Top = 468
     Width = 101
     Height = 20
     EditLabel.Width = 75
@@ -393,7 +428,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object BacklogEdit3: TLabeledEdit
     Left = 329
-    Top = 292
+    Top = 468
     Width = 101
     Height = 20
     EditLabel.Width = 75

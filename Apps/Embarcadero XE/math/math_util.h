@@ -118,6 +118,38 @@ template<typename T> void calculateStats(list<T>& data, double *mean, double *st
 
 }
 
+//use as
+//vector<T> data;
+//double mean, stddev;
+//calculateStats(data, &mean, &stddev);
+template<typename T> void calculateStats(vector<T>& data, double *mean, double *stddev) {
+	double sum = 0.0;
+	double sumSq = 0.0;
+	double n = 0.0;
+	vector<T>::iterator i;
+	for(i=data.begin(); i != data.end(); ++i) {
+		sum += (double) *i;
+		sumSq += (double) (*i)*(*i);
+		++n;
+	}
+	if(_isnan(sum)) {
+		*mean =  NAN;
+		*stddev = NAN;
+		return;
+	}
+	*mean = (n > 0.0) ? sum/n : NAN;
+	if (n < 2.0) {
+		*stddev = NAN;
+	} else {
+		//prevent floating point error from causing sqrt of negative
+		double temp = (sumSq - sum*sum/n)/(n-1);
+		if (temp < 0.0) *stddev = 0.0;
+		else *stddev = sqrt(temp);
+	}
+
+
+}
+
 template<typename T> ublas::matrix<T> calculateCovariance2D(T *dataX, T *dataY, int dataLength) {
 
 	ublas::matrix<T> covariance(2,2);

@@ -3,7 +3,7 @@ object Form4: TForm4
   Top = 0
   Caption = 'Form4'
   ClientHeight = 913
-  ClientWidth = 887
+  ClientWidth = 886
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -49,23 +49,23 @@ object Form4: TForm4
   object Label5: TLabel
     Left = 954
     Top = 100
-    Width = 112
+    Width = 94
     Height = 13
-    Caption = 'monitor position x (mm)'
+    Caption = 'eye position x (mm)'
   end
   object Label6: TLabel
     Left = 954
     Top = 126
-    Width = 112
+    Width = 94
     Height = 13
-    Caption = 'monitor position y (mm)'
+    Caption = 'eye position y (mm)'
   end
   object Label7: TLabel
     Left = 955
     Top = 152
-    Width = 111
+    Width = 93
     Height = 13
-    Caption = 'monitor position z (mm)'
+    Caption = 'eye position z (mm)'
   end
   object Label8: TLabel
     Left = 1019
@@ -116,76 +116,6 @@ object Form4: TForm4
     Height = 13
     Caption = 'focal length (camera pixels)'
   end
-  object Label15: TLabel
-    Left = 1017
-    Top = 417
-    Width = 47
-    Height = 13
-    Caption = 'yaw (rad)'
-  end
-  object Label16: TLabel
-    Left = 1014
-    Top = 442
-    Width = 50
-    Height = 13
-    Caption = 'pitch (rad)'
-  end
-  object Label17: TLabel
-    Left = 1023
-    Top = 467
-    Width = 41
-    Height = 13
-    Caption = 'roll (rad)'
-  end
-  object Label18: TLabel
-    Left = 953
-    Top = 492
-    Width = 111
-    Height = 13
-    Caption = 'camera position x (mm)'
-  end
-  object Label19: TLabel
-    Left = 953
-    Top = 517
-    Width = 111
-    Height = 13
-    Caption = 'camera position y (mm)'
-  end
-  object Label20: TLabel
-    Left = 955
-    Top = 542
-    Width = 110
-    Height = 13
-    Caption = 'camera position z (mm)'
-  end
-  object Label21: TLabel
-    Left = 931
-    Top = 567
-    Width = 132
-    Height = 13
-    Caption = 'focal length (camera pixels)'
-  end
-  object Label22: TLabel
-    Left = 924
-    Top = 592
-    Width = 139
-    Height = 13
-    Caption = 'distortion factor (1/pixels^2)'
-  end
-  object Label23: TLabel
-    Left = 940
-    Top = 617
-    Width = 124
-    Height = 13
-    Caption = 'distortion offset y (pixels)'
-  end
-  object Label24: TLabel
-    Left = 941
-    Top = 642
-    Width = 123
-    Height = 13
-    Caption = 'distortion offset z (pixels)'
-  end
   object CalculateCalibrationBtn: TButton
     Left = 8
     Top = 140
@@ -224,7 +154,7 @@ object Form4: TForm4
   end
   object CameraWidthEdit: TLabeledEdit
     Left = 8
-    Top = 310
+    Top = 350
     Width = 121
     Height = 21
     EditLabel.Width = 127
@@ -236,7 +166,7 @@ object Form4: TForm4
   end
   object CameraHeightEdit: TLabeledEdit
     Left = 8
-    Top = 351
+    Top = 391
     Width = 121
     Height = 21
     EditLabel.Width = 130
@@ -531,7 +461,7 @@ object Form4: TForm4
       Height = 26
       Align = alClient
       TabOrder = 3
-      Text = '-570.0'
+      Text = '0.0'
       ExplicitHeight = 21
     end
     object x0RangeEdit: TEdit
@@ -561,7 +491,7 @@ object Form4: TForm4
       Height = 26
       Align = alClient
       TabOrder = 6
-      Text = '130.0'
+      Text = '0.0'
       ExplicitHeight = 21
     end
     object y0RangeEdit: TEdit
@@ -591,7 +521,7 @@ object Form4: TForm4
       Height = 26
       Align = alClient
       TabOrder = 9
-      Text = '300.0'
+      Text = '0.0'
       ExplicitHeight = 21
     end
     object z0RangeEdit: TEdit
@@ -841,527 +771,27 @@ object Form4: TForm4
     Height = 327
     TabOrder = 11
   end
-  object GridPanel2: TGridPanel
-    Left = 1070
-    Top = 413
-    Width = 321
-    Height = 257
-    Caption = 'GridPanel2'
-    ColumnCollection = <
-      item
-        Value = 33.333333333333340000
-      end
-      item
-        Value = 33.333333333333340000
-      end
-      item
-        Value = 33.333333333333340000
-      end>
-    ControlCollection = <
-      item
-        Column = 0
-        Control = aInSceneEdit
-        Row = 0
-      end
-      item
-        Column = 1
-        Control = aRangeSceneEdit
-        Row = 0
-      end
-      item
-        Column = 2
-        Control = aOutSceneEdit
-        Row = 0
-      end
-      item
-        Column = 0
-        Control = bInSceneEdit
-        Row = 1
-      end
-      item
-        Column = 1
-        Control = bRangeSceneEdit
-        Row = 1
-      end
-      item
-        Column = 2
-        Control = bOutSceneEdit
-        Row = 1
-      end
-      item
-        Column = 0
-        Control = gInSceneEdit
-        Row = 2
-      end
-      item
-        Column = 1
-        Control = gRangeSceneEdit
-        Row = 2
-      end
-      item
-        Column = 2
-        Control = gOutSceneEdit
-        Row = 2
-      end
-      item
-        Column = 0
-        Control = bxInSceneEdit
-        Row = 3
-      end
-      item
-        Column = 1
-        Control = bxRangeSceneEdit
-        Row = 3
-      end
-      item
-        Column = 2
-        Control = bxOutSceneEdit
-        Row = 3
-      end
-      item
-        Column = 0
-        Control = byInSceneEdit
-        Row = 4
-      end
-      item
-        Column = 1
-        Control = byRangeSceneEdit
-        Row = 4
-      end
-      item
-        Column = 2
-        Control = byOutSceneEdit
-        Row = 4
-      end
-      item
-        Column = 0
-        Control = bzInSceneEdit
-        Row = 5
-      end
-      item
-        Column = 1
-        Control = bzRangeSceneEdit
-        Row = 5
-      end
-      item
-        Column = 2
-        Control = bzOutSceneEdit
-        Row = 5
-      end
-      item
-        Column = 0
-        Control = fcInSceneEdit
-        Row = 6
-      end
-      item
-        Column = 1
-        Control = fcRangeSceneEdit
-        Row = 6
-      end
-      item
-        Column = 2
-        Control = fcOutSceneEdit
-        Row = 6
-      end
-      item
-        Column = 0
-        Control = kInSceneEdit
-        Row = 7
-      end
-      item
-        Column = 1
-        Control = kRangeSceneEdit
-        Row = 7
-      end
-      item
-        Column = 2
-        Control = kOutSceneEdit
-        Row = 7
-      end
-      item
-        Column = 0
-        Control = ydInSceneEdit
-        Row = 8
-      end
-      item
-        Column = 1
-        Control = ydRangeSceneEdit
-        Row = 8
-      end
-      item
-        Column = 2
-        Control = ydOutSceneEdit
-        Row = 8
-      end
-      item
-        Column = 0
-        Control = zdInSceneEdit
-        Row = 9
-      end
-      item
-        Column = 1
-        Control = zdRangeSceneEdit
-        Row = 9
-      end
-      item
-        Column = 2
-        Control = zdOutSceneEdit
-        Row = 9
-      end>
-    RowCollection = <
-      item
-        Value = 10.000000000000000000
-      end
-      item
-        Value = 10.000000000000000000
-      end
-      item
-        Value = 10.000000000000000000
-      end
-      item
-        Value = 10.000000000000000000
-      end
-      item
-        Value = 10.000000000000000000
-      end
-      item
-        Value = 10.000000000000000000
-      end
-      item
-        Value = 10.000000000000000000
-      end
-      item
-        Value = 10.000000000000000000
-      end
-      item
-        Value = 10.000000000000000000
-      end
-      item
-        Value = 10.000000000000000000
-      end>
-    TabOrder = 12
-    object aInSceneEdit: TEdit
-      Left = 1
-      Top = 1
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 0
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-    object aRangeSceneEdit: TEdit
-      Left = 107
-      Top = 1
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 1
-      Text = '1.5'
-      ExplicitHeight = 21
-    end
-    object aOutSceneEdit: TEdit
-      Left = 213
-      Top = 1
-      Width = 107
-      Height = 25
-      Align = alClient
-      TabOrder = 2
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-    object bInSceneEdit: TEdit
-      Left = 1
-      Top = 26
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 3
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-    object bRangeSceneEdit: TEdit
-      Left = 107
-      Top = 26
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 4
-      Text = '1.5'
-      ExplicitHeight = 21
-    end
-    object bOutSceneEdit: TEdit
-      Left = 213
-      Top = 26
-      Width = 107
-      Height = 25
-      Align = alClient
-      TabOrder = 5
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-    object gInSceneEdit: TEdit
-      Left = 1
-      Top = 51
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 6
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-    object gRangeSceneEdit: TEdit
-      Left = 107
-      Top = 51
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 7
-      Text = '1.5'
-      ExplicitHeight = 21
-    end
-    object gOutSceneEdit: TEdit
-      Left = 213
-      Top = 51
-      Width = 107
-      Height = 25
-      Align = alClient
-      TabOrder = 8
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-    object bxInSceneEdit: TEdit
-      Left = 1
-      Top = 76
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 9
-      Text = '650.0'
-      ExplicitHeight = 21
-    end
-    object bxRangeSceneEdit: TEdit
-      Left = 107
-      Top = 76
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 10
-      Text = '50.0'
-      ExplicitHeight = 21
-    end
-    object bxOutSceneEdit: TEdit
-      Left = 213
-      Top = 76
-      Width = 107
-      Height = 25
-      Align = alClient
-      TabOrder = 11
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-    object byInSceneEdit: TEdit
-      Left = 1
-      Top = 101
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 12
-      Text = '350.0'
-      ExplicitHeight = 21
-    end
-    object byRangeSceneEdit: TEdit
-      Left = 107
-      Top = 101
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 13
-      Text = '50.0'
-      ExplicitHeight = 21
-    end
-    object byOutSceneEdit: TEdit
-      Left = 213
-      Top = 101
-      Width = 107
-      Height = 25
-      Align = alClient
-      TabOrder = 14
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-    object bzInSceneEdit: TEdit
-      Left = 1
-      Top = 126
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 15
-      Text = '310.0'
-      ExplicitHeight = 21
-    end
-    object bzRangeSceneEdit: TEdit
-      Left = 107
-      Top = 126
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 16
-      Text = '50.0'
-      ExplicitHeight = 21
-    end
-    object bzOutSceneEdit: TEdit
-      Left = 213
-      Top = 126
-      Width = 107
-      Height = 25
-      Align = alClient
-      TabOrder = 17
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-    object fcInSceneEdit: TEdit
-      Left = 1
-      Top = 151
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 18
-      Text = '419.0'
-      ExplicitHeight = 21
-    end
-    object fcRangeSceneEdit: TEdit
-      Left = 107
-      Top = 151
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 19
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-    object fcOutSceneEdit: TEdit
-      Left = 213
-      Top = 151
-      Width = 107
-      Height = 25
-      Align = alClient
-      TabOrder = 20
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-    object kInSceneEdit: TEdit
-      Left = 1
-      Top = 176
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 21
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-    object kRangeSceneEdit: TEdit
-      Left = 107
-      Top = 176
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 22
-      Text = '-1E-06'
-      ExplicitHeight = 21
-    end
-    object kOutSceneEdit: TEdit
-      Left = 213
-      Top = 176
-      Width = 107
-      Height = 25
-      Align = alClient
-      TabOrder = 23
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-    object ydInSceneEdit: TEdit
-      Left = 1
-      Top = 201
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 24
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-    object ydRangeSceneEdit: TEdit
-      Left = 107
-      Top = 201
-      Width = 106
-      Height = 25
-      Align = alClient
-      TabOrder = 25
-      Text = '1000.0'
-      ExplicitHeight = 21
-    end
-    object ydOutSceneEdit: TEdit
-      Left = 213
-      Top = 201
-      Width = 107
-      Height = 25
-      Align = alClient
-      TabOrder = 26
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-    object zdInSceneEdit: TEdit
-      Left = 1
-      Top = 226
-      Width = 106
-      Height = 30
-      Align = alClient
-      TabOrder = 27
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-    object zdRangeSceneEdit: TEdit
-      Left = 107
-      Top = 226
-      Width = 106
-      Height = 30
-      Align = alClient
-      TabOrder = 28
-      Text = '1000.0'
-      ExplicitHeight = 21
-    end
-    object zdOutSceneEdit: TEdit
-      Left = 213
-      Top = 226
-      Width = 107
-      Height = 30
-      Align = alClient
-      TabOrder = 29
-      Text = '0.0'
-      ExplicitHeight = 21
-    end
-  end
   object SceneCameraWidthEdit: TLabeledEdit
     Left = 8
-    Top = 403
+    Top = 443
     Width = 121
     Height = 21
     EditLabel.Width = 138
     EditLabel.Height = 13
     EditLabel.Caption = 'Scene Camera Width (pixels)'
-    TabOrder = 13
+    TabOrder = 12
     Text = '640'
     OnChange = SceneCameraWidthEditChange
   end
   object SceneCameraHeightEdit: TLabeledEdit
     Left = 8
-    Top = 453
+    Top = 493
     Width = 121
     Height = 21
     EditLabel.Width = 141
     EditLabel.Height = 13
     EditLabel.Caption = 'Scene Camera Height (pixels)'
-    TabOrder = 14
+    TabOrder = 13
     Text = '480'
     OnChange = SceneCameraHeightEditChange
   end
@@ -1372,21 +802,21 @@ object Form4: TForm4
     Height = 17
     DoubleBuffered = False
     ParentDoubleBuffered = False
-    TabOrder = 15
+    TabOrder = 14
   end
   object SceneProgressBar: TProgressBar
     Left = 8
     Top = 610
     Width = 145
     Height = 21
-    TabOrder = 16
+    TabOrder = 15
   end
   object PhasespaceProgressBar: TProgressBar
     Left = 8
     Top = 675
     Width = 145
     Height = 17
-    TabOrder = 17
+    TabOrder = 16
   end
   object HeadMarker0Edit: TLabeledEdit
     Left = 32
@@ -1396,8 +826,9 @@ object Form4: TForm4
     EditLabel.Width = 70
     EditLabel.Height = 13
     EditLabel.Caption = 'Head Marker 0'
-    TabOrder = 18
-    Text = '3'
+    TabOrder = 17
+    Text = '0'
+    OnChange = HeadMarker0EditChange
   end
   object HeadMarker1Edit: TLabeledEdit
     Left = 123
@@ -1407,101 +838,42 @@ object Form4: TForm4
     EditLabel.Width = 70
     EditLabel.Height = 13
     EditLabel.Caption = 'Head Marker 1'
-    TabOrder = 19
-    Text = '4'
+    TabOrder = 18
+    Text = '1'
+    OnChange = HeadMarker1EditChange
   end
   object HeadMarker2Edit: TLabeledEdit
-    Left = 232
+    Left = 216
     Top = 804
     Width = 59
     Height = 21
     EditLabel.Width = 70
     EditLabel.Height = 13
     EditLabel.Caption = 'Head Marker 2'
-    TabOrder = 20
-    Text = '5'
+    TabOrder = 19
+    Text = '2'
+    OnChange = HeadMarker2EditChange
   end
   object HeadMarker3Edit: TLabeledEdit
-    Left = 311
+    Left = 297
     Top = 804
     Width = 58
     Height = 21
     EditLabel.Width = 70
     EditLabel.Height = 13
     EditLabel.Caption = 'Head Marker 3'
-    TabOrder = 21
-    Text = '6'
+    TabOrder = 20
+    Text = '29'
+    OnChange = HeadMarker3EditChange
   end
   object ReferenceHeadButton: TButton
-    Left = 408
-    Top = 771
+    Left = 399
+    Top = 843
     Width = 137
     Height = 25
     Caption = 'Reference Head Position'
-    TabOrder = 22
+    TabOrder = 21
     OnClick = ReferenceHeadButtonClick
-  end
-  object WandNear0Edit: TLabeledEdit
-    Left = 16
-    Top = 849
-    Width = 59
-    Height = 21
-    EditLabel.Width = 99
-    EditLabel.Height = 13
-    EditLabel.Caption = 'Near Wand Marker 0'
-    TabOrder = 23
-    Text = '0'
-  end
-  object WandNear1Edit: TLabeledEdit
-    Left = 123
-    Top = 849
-    Width = 54
-    Height = 21
-    EditLabel.Width = 99
-    EditLabel.Height = 13
-    EditLabel.Caption = 'Near Wand Marker 1'
-    TabOrder = 24
-    Text = '1'
-  end
-  object WandFarEdit: TLabeledEdit
-    Left = 232
-    Top = 849
-    Width = 59
-    Height = 21
-    EditLabel.Width = 83
-    EditLabel.Height = 13
-    EditLabel.Caption = 'Far Wand Marker'
-    TabOrder = 25
-    Text = '2'
-  end
-  object WandPosition0Button: TButton
-    Left = 408
-    Top = 805
-    Width = 137
-    Height = 25
-    Caption = 'Wand Position 0'
-    TabOrder = 26
-    OnClick = WandPosition0ButtonClick
-  end
-  object WandPosition1Button: TButton
-    Left = 408
-    Top = 836
-    Width = 137
-    Height = 25
-    Caption = 'Wand Position 1'
-    TabOrder = 27
-    OnClick = WandPosition1ButtonClick
-  end
-  object DisplayMarkerEdit: TLabeledEdit
-    Left = 328
-    Top = 849
-    Width = 59
-    Height = 21
-    EditLabel.Width = 70
-    EditLabel.Height = 13
-    EditLabel.Caption = 'Display Marker'
-    TabOrder = 28
-    Text = '7'
   end
   object testEye: TButton
     Left = 931
@@ -1509,7 +881,7 @@ object Form4: TForm4
     Width = 137
     Height = 25
     Caption = 'testEye'
-    TabOrder = 29
+    TabOrder = 22
     OnClick = testEyeClick
   end
   object eyeTestDone: TButton
@@ -1518,7 +890,7 @@ object Form4: TForm4
     Width = 137
     Height = 25
     Caption = 'eyeTestDone'
-    TabOrder = 30
+    TabOrder = 23
     OnClick = eyeTestDoneClick
   end
   object GazeComboBox: TComboBox
@@ -1527,7 +899,7 @@ object Form4: TForm4
     Top = 525
     Width = 137
     Height = 21
-    TabOrder = 31
+    TabOrder = 24
     Text = '<Select gaze stream>'
     OnChange = GazeComboBoxChange
   end
@@ -1537,7 +909,7 @@ object Form4: TForm4
     Top = 583
     Width = 137
     Height = 21
-    TabOrder = 32
+    TabOrder = 25
     Text = '<Select scene stream>'
     OnChange = SceneComboBoxChange
   end
@@ -1547,7 +919,7 @@ object Form4: TForm4
     Top = 648
     Width = 137
     Height = 21
-    TabOrder = 33
+    TabOrder = 26
     Text = '<Select phase stream>'
     OnChange = PhaseComboBoxChange
   end
@@ -1558,88 +930,124 @@ object Form4: TForm4
     Height = 116
     Lines.Strings = (
       '')
-    TabOrder = 34
+    TabOrder = 27
   end
   object CalibrationWindowButton: TButton
-    Left = 408
-    Top = 867
+    Left = 399
+    Top = 808
     Width = 137
     Height = 25
     Caption = 'Calibration Window'
-    TabOrder = 35
+    TabOrder = 28
     OnClick = CalibrationWindowButtonClick
   end
-  object DisplayULButton: TButton
+  object phasespaceTestStart: TButton
     Left = 551
     Top = 771
-    Width = 130
+    Width = 135
     Height = 25
-    Caption = 'Display Upper Left'
-    TabOrder = 36
-    OnClick = DisplayULButtonClick
+    Caption = 'Phasespace Test Start'
+    TabOrder = 29
+    OnClick = phasespaceTestStartClick
   end
-  object DisplayURButton: TButton
+  object phasespaceTestStop: TButton
     Left = 551
-    Top = 805
-    Width = 130
+    Top = 808
+    Width = 135
     Height = 25
-    Caption = 'Display Upper Right'
-    TabOrder = 37
-    OnClick = DisplayURButtonClick
+    Caption = 'Phasespace Test Stop'
+    TabOrder = 30
+    OnClick = phasespaceTestStopClick
   end
-  object DisplayBLButton: TButton
-    Left = 551
-    Top = 836
-    Width = 130
-    Height = 25
-    Caption = 'Display Bottom Left'
-    TabOrder = 38
-    OnClick = DisplayBLButtonClick
+  object phasespaceMarker0Edit: TLabeledEdit
+    Left = 32
+    Top = 846
+    Width = 65
+    Height = 21
+    EditLabel.Width = 102
+    EditLabel.Height = 13
+    EditLabel.Caption = 'Phasespace Marker 0'
+    TabOrder = 31
+    Text = '0'
+    OnChange = phasespaceMarker0EditChange
   end
-  object DisplayBRButton: TButton
-    Left = 551
-    Top = 867
-    Width = 130
+  object phasespaceMarker1Edit: TLabeledEdit
+    Left = 141
+    Top = 846
+    Width = 65
+    Height = 21
+    EditLabel.Width = 102
+    EditLabel.Height = 13
+    EditLabel.Caption = 'Phasespace Marker 1'
+    TabOrder = 32
+    Text = '1'
+    OnChange = phasespaceMarker1EditChange
+  end
+  object monitorDepthEdit: TLabeledEdit
+    Left = 8
+    Top = 305
+    Width = 121
+    Height = 21
+    EditLabel.Width = 95
+    EditLabel.Height = 13
+    EditLabel.Caption = 'Monitor Depth (mm)'
+    TabOrder = 33
+    Text = '16'
+    OnChange = monitorDepthEditChange
+  end
+  object MonitorPositionButton: TButton
+    Left = 399
+    Top = 771
+    Width = 137
     Height = 25
-    Caption = 'Display Bottom Right'
-    TabOrder = 39
-    OnClick = DisplayBRButtonClick
+    Caption = 'Load Monitor Position'
+    TabOrder = 34
+    OnClick = MonitorPositionButtonClick
+  end
+  object AbortCalibrationButton: TButton
+    Left = 399
+    Top = 876
+    Width = 137
+    Height = 25
+    Caption = 'Abort Calibration'
+    TabOrder = 35
+    OnClick = AbortCalibrationButtonClick
   end
   object xd: TXMLDocument
-    Left = 1202
-    Top = 731
+    Left = 1322
+    Top = 723
     DOMVendorDesc = 'MSXML'
   end
   object Timer1: TTimer
     Interval = 10
     OnTimer = Timer1Timer
-    Left = 1354
-    Top = 723
+    Left = 1474
+    Top = 715
   end
   object xdoc_out: TXMLDocument
-    Left = 1128
-    Top = 731
+    Left = 1248
+    Top = 723
     DOMVendorDesc = 'MSXML'
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = 'xml'
-    Left = 1296
-    Top = 723
+    Left = 1416
+    Top = 715
   end
   object Timer2: TTimer
     OnTimer = Timer2Timer
-    Left = 1248
-    Top = 779
+    Left = 1368
+    Top = 771
   end
   object OpenDialog1: TOpenDialog
     DefaultExt = 'csv'
-    Left = 1152
-    Top = 779
+    Left = 1272
+    Top = 771
   end
   object SaveDialog2: TSaveDialog
     DefaultExt = 'csv'
-    Left = 1296
-    Top = 779
+    Left = 1416
+    Top = 771
   end
   object Timer3: TTimer
     Enabled = False

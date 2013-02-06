@@ -8,7 +8,7 @@
 #include "stdio.h"
 #include "math.hpp"
 
-
+//Follows numerical recepies, section 10.4, Downhill Simplex Method in Multidimensions.
 
 class MinimizerFunction {
 	protected:
@@ -262,11 +262,11 @@ public:
 
 	EyeDeltaFunction(double **coords, double **data, double **sigma, int nPoints, int nDims, double* params,
 		int nParams) : MinimizerFunction(params, nParams) {
-		this->coords = coords;
+		this->coords = coords; //ncoords not passed. Known to be 3.
 		this->data = data;
 		this->sigma = sigma;
 		this->nPoints = nPoints;
-		this->nDims = nDims;
+		this->nDims = nDims;  //goes with data. Known to be 2.
 
 		modeled = new2D(nPoints, nDims, 0.0);
 
@@ -292,10 +292,11 @@ public:
 		double bz = params[9]; //camera offset, vertical, mm
 		double fc = params[10]; //focal length of camera, camera pixels
 
-		double y = coords[0];
-		double z = coords[1];
+		double x = coords[0];
+		double y = coords[1];
+		double z = coords[2];
 
-		double d =  sqrt((y - y0)*(y-y0) + (z - z0)*(z - z0) + x0*x0);
+
 
 		double sa = sin(a);
 		double sb = sin(b);
@@ -315,17 +316,44 @@ public:
 		double r21 = cb*sg;
 		double r22 = cb*cg;
 
-		double yOut = -(fc*(by - (R*(r11)*(y - y0))/d + (R*(- r12)*(z - z0))/d -
-		 (R*x0*r10)/d))/(dc + (R*(- r01)*(y - y0))/d -
-		  (R*(r02)*(z - z0))/d - (R*x0*r00)/d);
 
-		double zOut = -(fc*(bz + (R*x0*(-r20))/d - (R*r22*(z - z0))/d -
+	   //	equivalent to below
+	   /*	double x1 = x-x0;
+		double y1 = y-y0;
+		double z1 = z-z0;
+
+		double d = sqrt(x1*x1+y1*y1+z1*z1);
+		double x2 = R*x1/d;
+		double y2 = R*y1/d;
+		double z2 = R*z1/d;
+
+		double x3 = r00*x2 + r01*y2 + r02*z2;
+		double y3 = r10*x2 + r11*y2 + r12*z2;
+		double z3 = r20*x2 + r21*y2 + r22*z2;
+
+		double x4 = fc;
+		double y4 = (y3-by)*fc/(dc-x3);
+		double z4 = (z3-bz)*fc/(dc-x3);
+
+		modeledPoint[0] = y4;
+		modeledPoint[1] = z4;
+         */
+
+
+		double d =  sqrt((x-x0)*(x-x0) + (y - y0)*(y-y0) + (z - z0)*(z - z0));
+		double yOut = -(fc*(by - (R*(r11)*(y - y0))/d + (R*(- r12)*(z - z0))/d -
+		 (R*(x-x0)*r10)/d))/(dc + (R*(- r01)*(y - y0))/d -
+		  (R*(r02)*(z - z0))/d - (R*(x-x0)*r00)/d);
+
+		double zOut = -(fc*(bz + (R*(x-x0)*(-r20))/d - (R*r22*(z - z0))/d -
 		 (R*r21*(y - y0))/d))/(dc + (R*(- r01)*(y - y0))/d -
-		  (R*(r02)*(z - z0))/d - (R*x0*r00)/d);
+		  (R*(r02)*(z - z0))/d - (R*(x-x0)*r00)/d);
 
 
 		modeledPoint[0] = yOut;
 		modeledPoint[1] = zOut;
+
+
 	}
 
 	int getNDims() {
@@ -349,7 +377,7 @@ public:
 
 
 
-// describes the distance between modeled and actual data, for an scene calibration.
+// describes the distance between modeled and actual data, for a scene calibration.
 class SceneDeltaFunction : public MinimizerFunction {
 public:
 	double** coords; // [points][dims] coordinates corresponding to data.
@@ -386,7 +414,7 @@ public:
 		double a = params[0]; //yaw, radians
 		double b = params[1]; //pitch, radians
 		double g = params[2]; //roll, radians
-		double bx = params[3]; //distance from eye center to camera, mm
+		double bx = params[3]; //distance from camera to target, mm
 		double by = params[4]; //camera offset, horizontal, mm
 		double bz = params[5]; //camera offset, vertical, mm
 		double fc = params[6]; //focal length of camera, camera pixels

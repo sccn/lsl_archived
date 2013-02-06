@@ -21,11 +21,13 @@ __published:	// IDE-managed Components
 	TLabeledEdit *Sensor1Edit;
 	TLabeledEdit *DeviceEdit;
 	TLabeledEdit *MonitorNumberEdit;
+	TLabeledEdit *MonitorDepthEdit;
 	void __fastcall DoneButtonClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
 	int topLeftID, topRightID, bottomLeftID, bottomRightID;
 	int sensor0, sensor1, device, monitorNumber;
+	double monitorDepth;
 	__fastcall TScreenForm(TComponent* Owner);
 };
 //---------------------------------------------------------------------------

@@ -95,15 +95,15 @@ class MonitorDrawer {
 		xRes = rect.right - rect.left;
 		yRes = rect.bottom - rect.top;
 
-		markerSize = 50;//100;
+		markerSize = 100;//50;
 		bmpSprite = create_bitmap_ex(CDEPTH,markerSize,markerSize);
 		clear_bitmap(bmpSprite);
-		circlefill(bmpSprite, markerSize/2, markerSize/2, markerSize/2-1, makecol(0,0,255));
+		circlefill(bmpSprite, markerSize/2, markerSize/2, markerSize/2-1, makecol(255,0,0));
 		circlefill(bmpSprite, markerSize/2, markerSize/2, markerSize/20, makecol(0,0,0));
 
 		bmpBackground = create_bitmap_ex(CDEPTH,markerSize,markerSize);
 		clear_bitmap(bmpBackground);
-		circlefill(bmpBackground, markerSize/2, markerSize/2, markerSize/2-1, makecol(128,0,0));
+		circlefill(bmpBackground, markerSize/2, markerSize/2, markerSize/2-1, makecol(0,0,255));
 		circlefill(bmpBackground, markerSize/2, markerSize/2, markerSize/20, makecol(0,0,0));
 
 		bmpBlackFullBackground = create_bitmap_ex(CDEPTH,xRes,yRes);

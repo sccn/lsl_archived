@@ -36,7 +36,7 @@
 			<AllPackageLibs>rtl.lib;vcl.lib</AllPackageLibs>
 			<DCC_CBuilderOutput>JPHNE</DCC_CBuilderOutput>
 			<IncludePath>..\shared\include\;$(BDS)\include;$(BDS)\include\dinkumware;..\shared\boost_1_47_0;$(IncludePath)</IncludePath>
-			<ILINK_LibraryPath>..\shared\include\;dsMatrix\;matrix\;..\..\..\Desktop\X\sccn\trunk\c\datariver\math\;$(BDS)\lib\obj;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+			<ILINK_LibraryPath>..\bin\;..\shared\include\;dsMatrix\;matrix\;..\..\..\Desktop\X\sccn\trunk\c\datariver\math\;$(BDS)\lib\obj;$(ILINK_LibraryPath)</ILINK_LibraryPath>
 			<BCC_wpar>false</BCC_wpar>
 			<BCC_OptimizeForSpeed>true</BCC_OptimizeForSpeed>
 			<BCC_ExtendedErrorInfo>true</BCC_ExtendedErrorInfo>
@@ -71,9 +71,17 @@
 			<ILINK_TranslatedLibraryPath>$(BDS)\lib\$(LANGDIR)\release;$(ILINK_TranslatedLibraryPath)</ILINK_TranslatedLibraryPath>
 		</PropertyGroup>
 		<ItemGroup>
+			<LibFiles Include="..\bin\cvWrapper.lib">
+				<IgnorePath>true</IgnorePath>
+				<BuildOrder>15</BuildOrder>
+			</LibFiles>
 			<CppCompile Include="CircleFunction.cpp">
 				<DependentOn>CircleFunction.h</DependentOn>
 				<BuildOrder>7</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="epnp.cpp">
+				<DependentOn>epnp.h</DependentOn>
+				<BuildOrder>13</BuildOrder>
 			</CppCompile>
 			<CppCompile Include="FitFailedException.cpp">
 				<DependentOn>FitFailedException.h</DependentOn>
@@ -103,7 +111,6 @@
 				<BuildOrder>0</BuildOrder>
 			</CppCompile>
 			<ResFiles Include="math.res">
-				<ModuleName>math.res</ModuleName>
 				<BuildOrder>1</BuildOrder>
 			</ResFiles>
 			<CppCompile Include="MathForm.cpp">
@@ -119,6 +126,9 @@
 				<DependentOn>Minimizer.h</DependentOn>
 				<BuildOrder>9</BuildOrder>
 			</CppCompile>
+			<None Include="..\shared\include\cvWrapper.h">
+				<BuildOrder>14</BuildOrder>
+			</None>
 			<None Include="..\shared\include\general_util.h">
 				<BuildOrder>12</BuildOrder>
 			</None>

@@ -14,6 +14,8 @@
 #include "stdio.h"
 //#include "Matrix.h"
 #include "LinearAlgebra.h"
+#include "epnp.h"
+#include "cvWrapper.h"
 #define DUB_PI 6.28318531
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -584,9 +586,214 @@ void testFindMidpoint() {
 	print("result", result);//yields 2, 1, 0
 }
 
+void testEPNP() {
+
+	ublas::matrix<double> boardPoints(3,12);
+	int p=0;
+	for(int w=0; w<2/*7*/; w++) {
+				for(int h=0; h<6; h++) {
+					boardPoints(0,p) = -20.0+w*5.0;
+					boardPoints(1,p) = -20.0 + h*5.0;
+					boardPoints(2,p) = 0.0;
+					p++;
+				}
+	}
+
+	ublas::matrix<double> cameraMatrix(3,3);
+
+	cameraMatrix(0,0) = 654.8611202347574;
+	cameraMatrix(0,1) = 0;
+	cameraMatrix(0,2) = 319.5;
+	cameraMatrix(1,0) = 0;
+	cameraMatrix(1,1) = 654.8611202347574;
+	cameraMatrix(1,2) = 239.5;
+	cameraMatrix(2,0) = 0;
+	cameraMatrix(2,1) = 0;
+	cameraMatrix(2,2) = 1;
+
+	ublas::vector<double> distCoeffVec(5);
+	distCoeffVec(0) = -0.3669624087278113;
+	distCoeffVec(1) = -0.07638290902180184;
+	distCoeffVec(2) = 0;
+	distCoeffVec(3) = 0;
+	distCoeffVec(4) = 0.5764668364450144;
+
+	ublas::matrix<double> foundPoints(2,12);
+
+
+	foundPoints(0,0) = 122.56181;
+	foundPoints(1,0) = 64.894775;
+	foundPoints(0,1) = 163.85579;
+	foundPoints(1,1) = 63.682297;
+	foundPoints(0,2) = 204.5;
+	foundPoints(1,2) = 62;
+	foundPoints(0,2) = 245.62991;
+	foundPoints(1,2) = 61.093784;
+	foundPoints(0,3) = 283;
+	foundPoints(1,3) = 61;
+	foundPoints(0,4) = 319.81903;
+	foundPoints(1,4) = 61.967384;
+	foundPoints(0,5) = 354.08017;
+	foundPoints(1,5) = 62.274704;
+	foundPoints(0,6) = 123;
+	foundPoints(1,6) = 104.5;
+	foundPoints(0,7) = 164.5;
+	foundPoints(1,7) = 102.5;
+	foundPoints(0,8) = 204.5;
+	foundPoints(1,8) = 100.5;
+	foundPoints(0,9) = 244;
+	foundPoints(1,9) = 99.5;
+	foundPoints(0,10) = 281.5;
+	foundPoints(1,10) = 99;
+	foundPoints(0,11) = 318.5;
+	foundPoints(1,11) = 99;
+   /*	foundPoints(353.72653, 96.017204));
+	foundPoints(124.62646,144.43448));
+	foundPoints(165.5,142.5));
+	foundPoints(206.03426,140.04895));
+	foundPoints(245,138.5));
+	foundPoints(283,137.5));
+	foundPoints(319,136));
+	foundPoints(354.5,134.5));
+	foundPoints(127.50209,184.51553));
+	foundPoints(167.5,181.5));
+	foundPoints(207,179));
+	foundPoints(245.5,177));
+	foundPoints(283,175));
+	foundPoints(318.88574,174.8522));
+	foundPoints(353.5,170.5));
+	foundPoints(128.28163,224.11998));
+	foundPoints(169,220.5));
+	foundPoints(210.13632,217.0213));
+	foundPoints(247,214.5));
+	foundPoints(282.64105,212.52209));
+	foundPoints(319.19608,209.22551));
+	foundPoints(343,206));
+	foundPoints(134,260.5));
+	foundPoints(172.92181,256.8718));
+	foundPoints(211,255));
+	foundPoints(248.5,250.5));
+	foundPoints(285,248));
+	foundPoints(319.5,243));
+	foundPoints(353.30963,240.85687));  */
+
+	 epnp PnP(cameraMatrix, boardPoints, foundPoints/*undistortedPoints*/);
+	 ublas::matrix<double> R (3,3);
+	 ublas::vector<double> tvec(3);
+   	 PnP.compute_pose(R,tvec);
+	 print("R", R);
+	 print("tvec", tvec);
+}
+
+void testPose() {
+	printf("openCV_version: %d\n", openCV_version());
+	int nPoints = 12;
+	double ** objectPoints = new2D<double>(nPoints, 3, 0.0);
+	double ** imagePoints = new2D<double>(nPoints, 2, 0.0);
+	double ** cameraMatrix = new2D<double>(3,3,0.0);
+	double * distanceCoeffs = new1D<double>(5,0.0);
+	double ** rMat = new2D<double>(3,3,0.0);
+	double * tVec = new1D<double>(3,0.0);
+
+    int p=0;
+	for(int w=0; w<2/*7*/; w++) {
+				for(int h=0; h<6; h++) {
+					objectPoints[p][0] = -20.0+w*5.0;
+					objectPoints[p][1] = -20.0 + h*5.0;
+					objectPoints[p][2] = 0.0;
+					p++;
+				}
+	}
+
+
+	cameraMatrix[0][0] = 654.8611202347574;
+	cameraMatrix[0][1] = 0;
+	cameraMatrix[0][2] = 319.5;
+	cameraMatrix[1][0] = 0;
+	cameraMatrix[1][1] = 654.8611202347574;
+	cameraMatrix[1][2] = 239.5;
+	cameraMatrix[2][0] = 0;
+	cameraMatrix[2][1] = 0;
+	cameraMatrix[2][2] = 1;
+
+	distanceCoeffs[0] = -0.3669624087278113;
+	distanceCoeffs[1] = -0.07638290902180184;
+	distanceCoeffs[2] = 0;
+	distanceCoeffs[3] = 0;
+	distanceCoeffs[4] = 0.5764668364450144;
+
+
+
+	imagePoints[0][0] = 122.56181;
+	imagePoints[0][1] = 64.894775;
+	imagePoints[1][0] = 163.85579;
+	imagePoints[1][1] = 63.682297;
+	imagePoints[2][0] = 204.5;
+	imagePoints[2][1] = 62;
+	imagePoints[3][0] = 245.62991;
+	imagePoints[3][1] = 61.093784;
+	imagePoints[4][0] = 283;
+	imagePoints[4][1] = 61;
+	imagePoints[5][0] = 319.81903;
+	imagePoints[5][1] = 61.967384;
+	imagePoints[6][0] = 354.08017;
+	imagePoints[6][1] = 62.274704;
+	imagePoints[7][0] = 123;
+	imagePoints[7][1] = 104.5;
+	imagePoints[8][0] = 164.5;
+	imagePoints[8][1] = 102.5;
+	imagePoints[9][0] = 204.5;
+	imagePoints[9][1] = 100.5;
+	imagePoints[10][0] = 244;
+	imagePoints[10][1] = 99.5;
+	imagePoints[11][0] = 281.5;
+	imagePoints[11][1] = 99;
+
+	openCV_findPose(objectPoints, imagePoints, nPoints, cameraMatrix, distanceCoeffs, rMat, tVec);
+
+	for(int i=0; i<3; i++) {
+	for(int j=0; j<3; j++) {
+	printf("rMat[%d][%d]: %g\n", i,j, rMat[i][j]);
+	}
+	}
+
+	/* output:
+openCV_version: 2
+rMat[0][0]: 0.0440691
+rMat[0][1]: 0.782867
+rMat[0][2]: 0.620627
+rMat[1][0]: 0.998206
+rMat[1][1]: -0.0597012
+rMat[1][2]: 0.00442775
+rMat[2][0]: 0.0405185
+rMat[2][1]: 0.619319
+rMat[2][2]: -0.784093
+tvec[0]: -13.5792
+tvec[1]: -18.099
+tvec[2]: 143.858
+*/
+
+
+	for(int i=0; i<3; i++) {
+		printf("tvec[%d]: %g\n", i, tVec[i]);
+	}
+
+	delete2D(objectPoints, nPoints);
+	delete2D(imagePoints, nPoints);
+	delete2D(cameraMatrix, 3);
+	delete1D(distanceCoeffs);
+	delete2D(rMat, 3);
+	delete1D(tVec);
+
+
+
+}
+
 void __fastcall TForm2::FormCreate(TObject *Sender)
 {
-	testCircleFit();
+	testPose();
+   //	testEPNP();
+	//testCircleFit();
 	//testCovariance2D();
 	//testLinearSolve();
  /*	double **mat = newMatrix(3, 3);

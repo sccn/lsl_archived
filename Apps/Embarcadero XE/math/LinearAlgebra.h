@@ -48,6 +48,8 @@ bool hasNan(ublas::vector<double> v);
  */
 double length(ublas::vector<double> v);
 
+ublas::vector<double> cross(ublas::vector<double> a, ublas::vector<double> b);
+
 double norm(ublas::vector<double> v);
 
 /*
@@ -142,4 +144,6 @@ ublas::matrix<double> inverse(ublas::matrix<double> TB);
  * Based on code samples (Matlab and Java) at http://homepages.inf.ed.ac.uk/cgi/rbf/CVONLINE/entries.pl?TAG384
  */
 void FitEllipse(double **data, int nPoints, double *x0, double *y0, double *rA, double *rB, double *angle);
+
+ublas::matrix<double> removeColumn(ublas::matrix<double> inMatrix, int column);
 #endif

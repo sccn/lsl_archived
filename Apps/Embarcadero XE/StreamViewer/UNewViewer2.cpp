@@ -253,7 +253,7 @@ void ProcessDataString(char *data, int nChannels, double samplingRate) {
 
 
 void ProcessData(float *data, int nChannels, double samplingRate) {
- 	Form1->Edit2->Text = nChannels/4;
+   /*	Form1->Edit2->Text = nChannels/4; */
 	if(processDataCount == 0 && Form1->cbParseData->Checked) {
 		vector<UnicodeString> lines = splitString(UnicodeString(listenThread->xmlHeader), L'\n');
 		Form1->Memo1->Clear();
@@ -261,6 +261,7 @@ void ProcessData(float *data, int nChannels, double samplingRate) {
 			Form1->Memo1->Lines->Add(lines[i]);
 		}
 	}
+	//printf("sampling rate %g\n", samplingRate);
 	if(samplingRate == 0.0) return;
 	Form1->ProgressBar1->Position= ((int)((processDataCount++) * 100.0/samplingRate))% 125;
 	HWND hWnd;
@@ -693,9 +694,9 @@ void __fastcall TForm1::ComboBox1Select(TObject *Sender)
 		listenThread = NULL;
    }
 
-   char temp[512]; //Why does this not work? Embarcadero bug?
-  // char * temp = (char *) malloc(512);
-   sprintf(temp, "name='%s'", ((AnsiString) ComboBox1->Text).c_str());
+   std::vector<UnicodeString> strs = splitString(ComboBox1->Text, L';');
+   char temp[512];
+   sprintf(temp, "uid='%s'", AnsiString(strs[1]).c_str());
    processDataCount = 0;
 
    lsl_streaminfo info;
@@ -742,7 +743,9 @@ void __fastcall TForm1::Timer1Timer(TObject *Sender)
 	if (streamsFound !=ComboBox1->Items->Count) {
 		ComboBox1->Items->Clear();
 		for (int i = 0; i < streamsFound; i++) {
-			ComboBox1->Items->Append(lsl_get_name(infos[i]));
+			char temp[256];
+			sprintf(temp,"%s;%s", lsl_get_name(infos[i]), lsl_get_uid(infos[i]));
+			ComboBox1->Items->Append(temp);
 			lsl_destroy_streaminfo(infos[i]);
 		}
 
@@ -832,4 +835,6 @@ void __fastcall TForm1::sensor3EditChange(TObject *Sender)
 	if(!ex) sensor3 = sensor3Edit->Text.ToInt();
 }
 //---------------------------------------------------------------------------
+
+
 

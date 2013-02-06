@@ -26,38 +26,36 @@ class TGazeUtil {
 		double monitorWidth, monitorHeight, cameraWidth, cameraHeight;
 		double r00, r10, r20, r01, r11, r21, r02, r12, r22;
 
-		double aScene, bScene, gScene, bxScene, byScene;
-		double bzScene, fcScene, kScene, ycScene, zcScene;
 		double sceneCameraWidth, sceneCameraHeight;
-		double r00Scene, r10Scene, r20Scene, r01Scene, r11Scene, r21Scene, r02Scene, r12Scene, r22Scene;
 
+		ublas::matrix<double> sceneCameraMatrix;
+		ublas::vector<double> sceneDistortionCoeffs;
 
 		ublas::matrix<double> headRef;
 		ublas::matrix<double> headCur;
 		ublas::vector<int> headMarkers;
-		ublas::vector<double> eyePositionRef;
 		ublas::matrix<double> displayRef;
+		ublas::matrix<double> sceneCameraRef;
 
 		bool initialized;
 
 		TGazeUtil() {
-			rEye = 0.0; x0Eye = 0.0; y0Eye = 0.0; z0Eye = 0.0; a = 0.0; b = 0.0; g= 0.0; bx = 0.0; by = 0.0; bz = 0.0; fc = 0.0;
+   			rEye = 0.0; x0Eye = 0.0; y0Eye = 0.0; z0Eye = 0.0; a = 0.0; b = 0.0; g= 0.0; bx = 0.0; by = 0.0; bz = 0.0; fc = 0.0;
 			monitorWidth = 1.0; monitorHeight = 1.0; cameraWidth = 1.0; cameraHeight = 1.0;
 			r00 = 0.0; r10 = 0.0; r20 = 0.0; r01 = 0.0; r11 = 0.0; r21 = 0.0; r02 = 0.0; r12 = 0.0; r22 = 0.0;
 
-			aScene = 0.0; bScene = 0.0; gScene = 0.0; bxScene = 0.0; byScene = 0.0;
-			bzScene = 0.0; fcScene = 0.0; kScene = 0.0; ycScene = 0.0; zcScene = 0.0;
 			sceneCameraWidth=0.0; sceneCameraHeight=0.0;
-			r00Scene = 0.0; r10Scene = 0.0; r20Scene = 0.0; r01Scene = 0.0; r11Scene = 0.0; r21Scene = 0.0; r02Scene = 0.0; r12Scene = 0.0; r22Scene = 0.0;
 
-			initialized = false;
+			sceneCameraMatrix = ublas::matrix<double>(3,3);
+			sceneDistortionCoeffs = ublas::vector<double>(5);
 
 			headRef = ublas::matrix<double>(3,4);
 			headCur = ublas::matrix<double>(3,4);
 			headMarkers = ublas::vector<int>(4);
-			eyePositionRef = ublas::vector<double>(3);
 			displayRef = ublas::matrix<double>(3,4);
+			sceneCameraRef = ublas::matrix<double>(3,4);
 
+			initialized = false;
 
 		};
 
@@ -67,12 +65,12 @@ class TGazeUtil {
 		/**
 		 * Map from eye coordinates to calibration monitor coordinates.
 		 */
-		void inverseEyeMap(double *yIn, double *zIn);
+		void inverseEyeMap(double distanceFromSceneCamToTarget, double *yIn, double *zIn);
 
 		/**
 		 * Map from eye coordinates to scene coordinates.
 		 */
-		void sceneMap(double *yIn, double *zIn);
+		void sceneMap(double distanceFromSceneCamToTarget, double *yIn, double *zIn);
 
 		/**
 		 * Map from eye coordinates to monitor coordinates, when the head is free to move.
@@ -89,3 +87,4 @@ class TGazeUtil {
 };
 //---------------------------------------------------------------------------
 #endif
+

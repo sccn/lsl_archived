@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 0
   Caption = 'StreamViewer'
   ClientHeight = 637
-  ClientWidth = 624
+  ClientWidth = 880
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -3108,13 +3108,12 @@ object Form1: TForm1
     Top = 20
     Width = 613
     Height = 613
-    ActivePage = TabSheet32
+    ActivePage = TabSheet1
     MultiLine = True
     TabOrder = 3
     TabPosition = tpLeft
     object TabSheet1: TTabSheet
       Caption = 'Time'
-      ExplicitHeight = 550
       object Bevel1: TBevel
         Left = 401
         Top = 414
@@ -3377,8 +3376,6 @@ object Form1: TForm1
     object TabSheet32: TTabSheet
       Caption = '3D'
       ImageIndex = 2
-      ExplicitLeft = 27
-      ExplicitTop = 0
       object Image4: TImage
         Left = 6
         Top = 34
@@ -3540,7 +3537,7 @@ object Form1: TForm1
         end
       end
       object UpDown3: TUpDown
-        Left = 569
+        Left = 563
         Top = 555
         Width = 15
         Height = 20
@@ -3595,7 +3592,7 @@ object Form1: TForm1
         Left = 50
         Top = 510
         Width = 57
-        Height = 21
+        Height = 20
         EditLabel.Width = 39
         EditLabel.Height = 12
         EditLabel.Caption = 'Sensor 0'
@@ -3608,7 +3605,7 @@ object Form1: TForm1
         Left = 50
         Top = 534
         Width = 57
-        Height = 18
+        Height = 20
         EditLabel.Width = 39
         EditLabel.Height = 12
         EditLabel.Caption = 'Sensor 1'
@@ -3621,7 +3618,7 @@ object Form1: TForm1
         Left = 50
         Top = 555
         Width = 57
-        Height = 21
+        Height = 20
         EditLabel.Width = 39
         EditLabel.Height = 12
         EditLabel.Caption = 'Sensor 2'
@@ -3634,7 +3631,7 @@ object Form1: TForm1
         Left = 50
         Top = 579
         Width = 57
-        Height = 21
+        Height = 20
         EditLabel.Width = 39
         EditLabel.Height = 12
         EditLabel.Caption = 'Sensor 3'
@@ -3647,7 +3644,7 @@ object Form1: TForm1
         Left = 109
         Top = 510
         Width = 121
-        Height = 21
+        Height = 20
         ReadOnly = True
         TabOrder = 16
       end
@@ -3655,7 +3652,7 @@ object Form1: TForm1
         Left = 232
         Top = 510
         Width = 121
-        Height = 21
+        Height = 20
         ReadOnly = True
         TabOrder = 17
       end
@@ -3663,7 +3660,7 @@ object Form1: TForm1
         Left = 354
         Top = 510
         Width = 121
-        Height = 21
+        Height = 20
         ReadOnly = True
         TabOrder = 18
       end
@@ -3671,7 +3668,7 @@ object Form1: TForm1
         Left = 109
         Top = 534
         Width = 121
-        Height = 18
+        Height = 20
         ReadOnly = True
         TabOrder = 19
       end
@@ -3679,7 +3676,7 @@ object Form1: TForm1
         Left = 232
         Top = 534
         Width = 121
-        Height = 18
+        Height = 20
         ReadOnly = True
         TabOrder = 20
       end
@@ -3687,7 +3684,7 @@ object Form1: TForm1
         Left = 354
         Top = 534
         Width = 121
-        Height = 18
+        Height = 20
         ReadOnly = True
         TabOrder = 21
       end
@@ -3695,7 +3692,7 @@ object Form1: TForm1
         Left = 109
         Top = 555
         Width = 121
-        Height = 21
+        Height = 20
         ReadOnly = True
         TabOrder = 22
       end
@@ -3703,7 +3700,7 @@ object Form1: TForm1
         Left = 232
         Top = 555
         Width = 121
-        Height = 21
+        Height = 20
         ReadOnly = True
         TabOrder = 23
       end
@@ -3711,7 +3708,7 @@ object Form1: TForm1
         Left = 354
         Top = 555
         Width = 121
-        Height = 21
+        Height = 20
         ReadOnly = True
         TabOrder = 24
       end
@@ -3719,7 +3716,7 @@ object Form1: TForm1
         Left = 109
         Top = 579
         Width = 121
-        Height = 21
+        Height = 20
         ReadOnly = True
         TabOrder = 25
       end
@@ -3727,7 +3724,7 @@ object Form1: TForm1
         Left = 232
         Top = 579
         Width = 121
-        Height = 21
+        Height = 20
         ReadOnly = True
         TabOrder = 26
       end
@@ -3735,7 +3732,7 @@ object Form1: TForm1
         Left = 354
         Top = 579
         Width = 121
-        Height = 21
+        Height = 20
         ReadOnly = True
         TabOrder = 27
       end
@@ -3744,7 +3741,7 @@ object Form1: TForm1
   object ComboBox1: TComboBox
     Left = 97
     Top = 0
-    Width = 114
+    Width = 344
     Height = 20
     TabOrder = 4
     Text = '         <Select>'

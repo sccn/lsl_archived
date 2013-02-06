@@ -175,6 +175,7 @@ object MainCaptureForm: TMainCaptureForm
         Width = 87
         Height = 20
         TabOrder = 3
+        Text = '0'
       end
       object edFrame: TEdit
         Left = 107
@@ -182,6 +183,7 @@ object MainCaptureForm: TMainCaptureForm
         Width = 80
         Height = 20
         TabOrder = 4
+        Text = '0'
       end
       object cbRecordAudio: TCheckBox
         Left = 206
@@ -224,7 +226,7 @@ object MainCaptureForm: TMainCaptureForm
     Top = 193
     Width = 910
     Height = 584
-    ActivePage = tsEyeTracker
+    ActivePage = tsScene
     TabOrder = 1
     object tsScene: TTabSheet
       Caption = 'Scene'
@@ -287,6 +289,13 @@ object MainCaptureForm: TMainCaptureForm
         Width = 97
         Height = 12
         Caption = 'Scene Calibrate Color'
+      end
+      object Label7: TLabel
+        Left = 3
+        Top = 476
+        Width = 114
+        Height = 12
+        Caption = 'Reference Calibrate Color'
       end
       object tbUpper: TTrackBar
         Left = 123
@@ -465,9 +474,9 @@ object MainCaptureForm: TMainCaptureForm
         Top = 443
         Width = 110
         Height = 20
-        ItemIndex = 2
+        ItemIndex = 0
         TabOrder = 16
-        Text = 'Blue'
+        Text = 'Red'
         OnChange = cbSceneCalibColorChange
         Items.Strings = (
           'Red'
@@ -486,6 +495,21 @@ object MainCaptureForm: TMainCaptureForm
         TabOrder = 17
         Text = '40'
         OnChange = eyeRadiusMaxEditChange
+      end
+      object cbReferenceCalibColor: TComboBox
+        Left = 3
+        Top = 491
+        Width = 110
+        Height = 20
+        ItemIndex = 2
+        TabOrder = 18
+        Text = 'Blue'
+        OnChange = cbReferenceCalibColorChange
+        Items.Strings = (
+          'Red'
+          'Green'
+          'Blue'
+          'White')
       end
     end
   end

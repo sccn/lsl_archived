@@ -33,11 +33,13 @@ __fastcall TMainCaptureForm::TMainCaptureForm(TComponent* Owner)
 
 #include "CircleFunction.h"
 #include "Fitter.h"
+#define REFERENCE_MARKER_COUNT 13
 
 bool storeFit = false;
 
 
-int nFrames;
+int nFrames = 0;
+float timestamp = 0;
 
 
 /*
@@ -141,6 +143,7 @@ void __fastcall TMainCaptureForm::FormCreate(TObject *Sender)
 	xParallaxCorrectionEditChange(this);
 	yParallaxCorrectionEditChange(this);
 	cbSceneCalibColorChange(this);
+	cbReferenceCalibColorChange(this);
 	gu = new TGazeUtil();
 
 
@@ -346,10 +349,11 @@ void __fastcall TMainCaptureForm::FormDestroy(TObject *Sender)
 
 
 
-enum TKind {isEye,isSceneCalib,isScene, isVideo} ;
+enum TKind {isEye,isSceneCalib,isScene, isVideo, isSceneMultiCalib} ;
 TKind isKind = -1;
 enum SceneCalibColor {RED, GREEN, BLUE, WHITE};
 SceneCalibColor sceneCalibColor = -1;
+SceneCalibColor referenceCalibColor = -1;
 
 
 void drawEllipse(BITMAP *bmp, double x0, double y0, double rA, double rB, double theta, int color) {
@@ -375,6 +379,124 @@ void drawEllipse(BITMAP *bmp, double x0, double y0, double rA, double rB, double
 
 }
 
+list<TOutline*> TMainCaptureForm::findLargestOutlines(BITMAP *aBmp, boolean above,
+	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint, int nOutlinesToFind) {
+
+		int subsampling = SubsamplingEdit->Text.ToIntDef(10);
+		int subWidth = (tbRightPosition - tbLeftPosition) /subsampling;
+		int subHeight = (tbLowerPosition - tbUpperPosition)/subsampling;
+		if(subWidth <=0 || subHeight <=0) {
+			list<TOutline*> emptyList;
+			return emptyList;
+		}
+		unsigned char ** subsampled = new2D<unsigned char>(subWidth, subHeight, 0);
+		signed char ** mask = new2D<signed char>(subWidth, subHeight, 0);
+		int xOffset = subsampling/2+tbLeftPosition;
+		int yOffset =  subsampling/2+tbUpperPosition;
+		int totalPoints = 0;
+
+		boolean withinThresh = false;
+
+		//subsample and threshold the image.
+		for(int y=0; y<subHeight; y++) {
+			for(int x=0; x<subWidth; x++) {
+				int blue = aBmp->line[y*subsampling+yOffset]
+					[(x*subsampling+xOffset)*(CDEPTH/8)];
+				int green = aBmp->line[y*subsampling+yOffset]
+					[(x*subsampling+xOffset)*(CDEPTH/8)+1];
+				int red = aBmp->line[y*subsampling+yOffset]
+					[(x*subsampling+xOffset)*(CDEPTH/8)+2];
+				//if scene calib, look explicitly for a positive colored spot.
+
+				bool isGood;
+				switch(referenceCalibColor) {
+					case RED:
+						isGood = 255*red/(blue+green+red+.01) >= crThreshold->Position && red >= crThreshold->Position;
+						break;
+					case GREEN:
+						isGood = 255*green/(blue+green+red+.01) >= crThreshold->Position && green >= crThreshold->Position;
+						break;
+					case BLUE:
+						isGood = 255*blue/(blue+green+red+.01) >= crThreshold->Position && blue >= crThreshold->Position;
+						break;
+					case WHITE:
+						isGood = (blue+green+red) / 3.0 >= crThreshold->Position;
+						break;
+
+				}
+				if(isGood) {
+					subsampled[x][y] = 1;
+					if(paint) {
+						bmpCanvas->line[(y*subsampling+yOffset)/spatialDivisor]
+							[(x*subsampling+xOffset)/spatialDivisor*(CDEPTH/8)] = 0;
+						bmpCanvas->line[(y*subsampling+yOffset)/spatialDivisor]
+							[(x*subsampling+xOffset)/spatialDivisor*(CDEPTH/8)+1] = 0;
+						bmpCanvas->line[(y*subsampling+yOffset)/spatialDivisor]
+							[(x*subsampling+xOffset)/spatialDivisor*(CDEPTH/8)+2] = 255;
+					}
+					totalPoints++;
+				} else {
+					subsampled[x][y] = 0;
+				}
+
+
+			}
+		}
+		//find outlines
+		list<TOutline*> outlines;
+	   //	TOutline *largestOutline = new TOutline(subWidth, subHeight);
+		for(int y=0; y<subHeight; y++) {
+			int inSpot = 0;
+			for(int x=0; x<subWidth; x++) {
+				//inSpot and mask together keep track of boundary transitions.
+				//mask[x][y] = +1 when a spot is entered, -1 when it is exited.
+				//Donut holes are removed/ignored, because interior boundaries are never tested.
+				inSpot = mask[x][y] + inSpot;
+				if(inSpot == 0) {
+					if(subsampled[x][y] == 1) {
+						TOutline *outline = new TOutline(subWidth, subHeight);
+						int nPointsInSpot = outline->findOutline((const unsigned char **) subsampled, mask,x, y, bmpCanvas->line);
+				//		outline->drawSpot(bmpCanvas->line, mask); for testing purposes
+						list<TOutline*>::iterator i = outlines.begin();
+						int position = 0;
+
+						while(i!= outlines.end() && ((TOutline*) (*i))->getNumberOfPoints() > nPointsInSpot) {
+								++i;
+								++position;
+							}
+
+						//if new spot is in the largest nOutlinesToFind
+						if (position < nOutlinesToFind) {
+
+							outline->estimateParams();
+
+							//if eccentricity is somewhat circle like. This cuts long edges is the data.
+							if(!_isnan(outline->eccentricity) && outline->eccentricity < maxEccentricity
+									&& !_isnan(outline->r)) {
+								outlines.insert(i, outline);
+							} else {
+								delete outline;
+							}
+
+						} else {
+							delete outline;
+						}
+						inSpot++;
+					}
+				}
+
+			}
+		}
+
+		while(outlines.size() > nOutlinesToFind) {
+			delete outlines.back();
+			outlines.pop_back();
+		}
+
+		delete2D(mask, subWidth);
+		delete2D(subsampled, subWidth);
+		return outlines;
+}
 
 TOutline* TMainCaptureForm::findLargestOutline(BITMAP *aBmp, boolean above,
 	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint) {
@@ -403,7 +525,7 @@ TOutline* TMainCaptureForm::findLargestOutline(BITMAP *aBmp, boolean above,
 				int red = aBmp->line[y*subsampling+yOffset]
 					[(x*subsampling+xOffset)*(CDEPTH/8)+2];
 				//if scene calib, look explicitly for a positive colored spot.
-				if(isKind==isSceneCalib) {
+				if(isKind==isSceneCalib || isKind==isSceneMultiCalib) {
 					bool isGood;
 					switch(sceneCalibColor) {
 						case RED:
@@ -740,11 +862,63 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 	int crRoiBottomPosition = crRoiBottom->Position;
 
 
-	static int n=0;
-	n++;
+   if (isKind == isSceneMultiCalib)
+	{
+
+		float sample [100];
+		int nOutlinesToFind = REFERENCE_MARKER_COUNT-1;
+		int sampleIndex = 0;
+		sample[sampleIndex++] = nFrames;
+		sample[sampleIndex++] = REFERENCE_MARKER_COUNT;
+		double x0, y0, radius;
+		TOutline* largestOutline =  findLargestOutline(aBmp, true,
+			crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint);
+
+			fitCircle(aBmp, largestOutline, &x0, &y0, &radius, 0.0, 0.0, 0.0, true,
+				crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint);
+
+		sample[sampleIndex++] = x0;
+		sample[sampleIndex++] = y0;
 
 
-	if (isKind == isSceneCalib)  // Scene, Calibration mode
+		list<TOutline*> outlines =  findLargestOutlines(aBmp, true,
+			crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint, nOutlinesToFind);
+
+		for(std::list<TOutline*>::iterator outlineIterator = outlines.begin(); outlineIterator != outlines.end(); ++outlineIterator) {
+			TOutline *pOutline = *outlineIterator;
+
+			fitCircle(aBmp, pOutline, &x0, &y0, &radius, 0.0, 0.0, 0.0, true,
+				crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint);
+			sample[sampleIndex++] = x0;
+			sample[sampleIndex++] = y0;
+
+		}
+
+
+
+		float timestamp = lsl_local_clock();
+		lsl_push_sample_ftp(outlet, sample, timestamp, 1);
+
+
+		nFrames++;
+
+		if(paint) {
+			hline(bmpCanvas, crRoiLeftPosition/spatialDivisor, crRoiTopPosition/spatialDivisor, crRoiRightPosition/spatialDivisor, makecol(255,0,0));
+			hline(bmpCanvas, crRoiLeftPosition/spatialDivisor, crRoiBottomPosition/spatialDivisor, crRoiRightPosition/spatialDivisor, makecol(255,0,0));
+			vline(bmpCanvas, crRoiLeftPosition/spatialDivisor,crRoiTopPosition/spatialDivisor, crRoiBottomPosition/spatialDivisor, makecol(255,0,0));
+			vline(bmpCanvas, crRoiRightPosition/spatialDivisor,crRoiTopPosition/spatialDivisor, crRoiBottomPosition/spatialDivisor, makecol(255,0,0));
+
+	   //		hline(bmpCanvas, 0, y0/spatialDivisor, bmpCanvas->w, makecol(0,255,255));
+	   //		vline(bmpCanvas, x0/spatialDivisor, 0, bmpCanvas->h, makecol(0,255,255));
+
+			HWND hWnd = tPanel->Handle;
+			HDC hDC = GetDC(hWnd);
+			draw_to_hdc (hDC,bmpCanvas,0,0);
+			ReleaseDC(hWnd,hDC);
+		}
+		return;
+
+	} else if (isKind == isSceneCalib)  // Scene, Calibration mode
 	{
 		double x0, y0, radius;
 //		findAndFitCircle(aBmp, &x0, &y0, &radius, 0.0,0.0,0.0, true,crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint);
@@ -764,37 +938,17 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		float timestamp = lsl_local_clock();
 		lsl_push_sample_ftp(outlet, sample, timestamp, 1);
 
-  /*		FrameStamp.drf.Event=(nFrames % 10 == 0) ? nFrames : 0;
-		FrameStamp.drf.item_size = 4;// default is 4
-		FrameStamp.drf.nItems = 10;//set to make visible in stream viewer;
-		FrameStamp.Data[0] = (int) (x0*100000.0); //trick to save precision in int form
-		FrameStamp.Data[1] = (int) (y0*100000.0);
 
-		FrameStamp.Data[2] = (int) (radius*100000.0);
-		FrameStamp.Data[3] = 0;
-		FrameStamp.Data[4] = 0;
-		FrameStamp.Data[5] = 0;
-
-		FrameStamp.Data[6] =0;
-		FrameStamp.Data[7] =0;
-		FrameStamp.Data[8] =0;
-		FrameStamp.Data[9] =0;
-
-		FrameStamp.drf.TimeStampOrig= ds_TimestampMs();
-		FrameStamp.TimeStampRecv= FrameStamp.drf.TimeStampOrig;
-		ds_Write(handleWrScene,(char *)&FrameStamp,	sizeof FrameStamp);
-	*/
 		nFrames++;
-  		edFrame->Text = nFrames;
-		edTimestamp->Text = timestamp;
+
 		if(paint) {
 			hline(bmpCanvas, crRoiLeftPosition/spatialDivisor, crRoiTopPosition/spatialDivisor, crRoiRightPosition/spatialDivisor, makecol(255,0,0));
 			hline(bmpCanvas, crRoiLeftPosition/spatialDivisor, crRoiBottomPosition/spatialDivisor, crRoiRightPosition/spatialDivisor, makecol(255,0,0));
 			vline(bmpCanvas, crRoiLeftPosition/spatialDivisor,crRoiTopPosition/spatialDivisor, crRoiBottomPosition/spatialDivisor, makecol(255,0,0));
 			vline(bmpCanvas, crRoiRightPosition/spatialDivisor,crRoiTopPosition/spatialDivisor, crRoiBottomPosition/spatialDivisor, makecol(255,0,0));
 
-			hline(bmpCanvas, 0, y0/spatialDivisor, bmpCanvas->w, makecol(0,255,255));
-			vline(bmpCanvas, x0/spatialDivisor, 0, bmpCanvas->h, makecol(0,255,255));
+   //			hline(bmpCanvas, 0, y0/spatialDivisor, bmpCanvas->w, makecol(0,255,255));
+   //			vline(bmpCanvas, x0/spatialDivisor, 0, bmpCanvas->h, makecol(0,255,255));
 
 			HWND hWnd = tPanel->Handle;
 			HDC hDC = GetDC(hWnd);
@@ -802,8 +956,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 			ReleaseDC(hWnd,hDC);
 		}
 		return;
-	}
-	else if (isKind == isScene) {
+	} else if (isKind == isScene) {
 		float data[6];
 		int errcode;
 		while(lsl_pull_sample_f(gazestreamThread->inlet,data, 6, 0.0, &errcode));
@@ -818,12 +971,17 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		double yMonitor = y0scene;
 		double xScene = 0.0;
 		double yScene = 0.0;
-
+		double distance = 500;
 		if(gu->rEye != 0.0 && radiusAscene !=0 && radiusBscene != 0) {
-				gu->inverseEyeMap(&xMonitor,&yMonitor);
+				gu->inverseEyeMap(distance, &xMonitor,&yMonitor);
+
+
 				xScene = xMonitor;
 				yScene = yMonitor;
-				gu->sceneMap(&xScene, &yScene);
+
+				gu->sceneMap(distance, &xScene, &yScene);
+
+			  //	 printf("xMonitor: %g yMonitor: %g xScene: %g yScene: %g\n", xMonitor, yMonitor, xScene, yScene);
 
 		}
 
@@ -833,52 +991,31 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		CaptureWorkerForm->xScene = xScene;
 		CaptureWorkerForm->yScene = yScene;
 
-		float sample [12];
+		float sample [13];
 
 
 		sample[0] = nFrames;
 		sample[1] = x0scene; //pixels
 		sample[2] = y0scene; //pixels
-		sample[3] = (1.0 - xMonitor/gu->monitorWidth); //percentage
-		sample[4] = (1.0 - yMonitor/gu->monitorHeight);//percentage
+		sample[3] = xMonitor; //mm x distance to target, from scene camera
+		sample[4] = yMonitor;//mm  y distance to target, from scene camera
 		sample[5] = radiusAscene; //pixels
 		sample[6] = radiusBscene; //pixels
-		sample[7] = angleScene; //radius
+		sample[7] = angleScene; //radians
 
 		sample[8] = xScene; //pixels
 		sample[9] = yScene; //pixels
 
 		sample[10] = xParallaxCorrection; //pixels
 		sample[11] = yParallaxCorrection; //pixels
+		sample[12] = distance; //mm, assumed distance to target, from scene camera
 
 		float timestamp = lsl_local_clock();
 		lsl_push_sample_ftp(outlet, sample, timestamp, 1);
 
-  /*		FrameStamp.drf.Event=(nFrames % 10 == 0) ? nFrames : 0;
-		FrameStamp.drf.item_size = 4;// default is 4
-		FrameStamp.drf.nItems = 10;//set to make visible in stream viewer;
 
-		FrameStamp.Data[0] = (int) (x0scene*100000.0); //trick to save precision in int form, mm*100000
-		FrameStamp.Data[1] = (int) (y0scene*100000.0); //mm*10000
-		FrameStamp.Data[2] =(int) (100000.0*radiusscene); //pixels
-
-		FrameStamp.Data[3] = (int) (1000.0 - 1000.0*xMonitor/gu->monitorWidth); //to pixels
-		FrameStamp.Data[4] = (int) (1000.0 - 1000.0*yMonitor/gu->monitorHeight);//to pixels
-
-		FrameStamp.Data[5] = (int) (xScene*100000.0); //mm*10000
-		FrameStamp.Data[6] = (int) (yScene*100000.0); //mm*10000
-
-		FrameStamp.Data[7] =(int) (xParallaxCorrection*100000.0);
-		FrameStamp.Data[8] =(int) (yParallaxCorrection*100000.0);
-		FrameStamp.Data[9] =0;
-
-		FrameStamp.drf.TimeStampOrig= ds_TimestampMs();
-		FrameStamp.TimeStampRecv= FrameStamp.drf.TimeStampOrig;
-		ds_Write(handleWrScene,(char *)&FrameStamp,	sizeof FrameStamp);
-  */
 		nFrames++;
-		edFrame->Text = nFrames;
-		edTimestamp->Text = timestamp;
+
 		if(paint) {
 			circlefill(bmpCanvas, xScene/spatialDivisor, yScene/spatialDivisor, 5, makecol(0,0,0));
 			circlefill(bmpCanvas, xScene/spatialDivisor, yScene/spatialDivisor, 3, makecol(255,255,0));
@@ -887,38 +1024,20 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 			draw_to_hdc (hDC,bmpCanvas,0,0);
 			ReleaseDC(hWnd,hDC);
 		}
-	}
 
-	else if (isKind == isVideo)  // Video
+		return;
+	} else if (isKind == isVideo)  // Video
 	{
 
-  //	printf("%g\n", lsl_local_clock());
+
 
 		int sample [1];
 		sample[0] = nFrames;
   		double timestamp = lsl_local_clock();
 		lsl_push_sample_itp(outlet, sample, timestamp,1);
 		nFrames++;
-		edFrame->Text = nFrames;
-		edTimestamp->Text = timestamp;
- /*		FrameNumber.drf.Event = nFrames;
-		FrameNumber.drf.TimeStampOrig= ds_TimestampMs();
-		FrameNumber.TimeStampRecv= FrameNumber.drf.TimeStampOrig;
 
-		edTimestamp->Text = FrameNumber.drf.TimeStampOrig;
-		edFrame->Text = nFrames;
 
-		Zero.drf.Event = 0;
-		Zero.drf.TimeStampOrig= ds_TimestampMs();
-		Zero.TimeStampRecv= FrameNumber.drf.TimeStampOrig;
-
-		int sz = Zero.GetUsedSizeInBytes();
-
-		if (nFrames  % 10 == 0)
-			ds_Write(handleWrVideo,(char *)&FrameNumber,sz);
-		else
-			ds_Write(handleWrVideo,(char *)&Zero,sz);
-	   */
 		if(paint) {
 
 			HWND hWnd = tPanel->Handle;
@@ -954,6 +1073,9 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		//This is fairly robust to contrast and gain changes.
 		if(autoThresholdBox->Checked == true && sqrt(radiusA*radiusB) > eyeRadiusMax) {
 			tbThreshold->Position = tbThreshold->Position - 2;
+			eyeRadiusMaxEdit->Color = clRed;
+		} else {
+			eyeRadiusMaxEdit->Color = clWhite;
 		}
 
 		if(storeFit) {
@@ -968,20 +1090,21 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		}
 
 
+        /* NOT USED, TO DELETE
 		double xMonitor = x0;
 		double yMonitor = y0;
 		double xScene = 0.0;
 		double yScene = 0.0;
 		double xRotatedMonitor = 0.0;
 		double yRotatedMonitor = 0.0;
-
+		double distance = 500;
 		if(gu->rEye != 0.0 && radius !=0 ) {
-				gu->inverseEyeMap(&xMonitor,&yMonitor);
+				gu->inverseEyeMap(distance, &xMonitor,&yMonitor);
 				xScene = xMonitor;
 				yScene = yMonitor;
-				gu->sceneMap(&xScene, &yScene);
+				gu->sceneMap(distance, &xScene, &yScene);
 
-		}
+		}   */
 
 		if(pr && CONSOLE) printf("x0: %g\n", x0);
 		if(pr && CONSOLE) printf("y0: %g\n", y0);
@@ -998,32 +1121,9 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 
 		double timestamp = lsl_local_clock();
 		lsl_push_sample_ftp(outlet, sample, timestamp, 1);
-/*
-		FrameStamp.drf.Event = (nFrames % 10 == 0) ? nFrames : 0;
-		FrameStamp.drf.item_size = 4;// default is 4
-		FrameStamp.drf.nItems = 10;//set to make visible in stream viewer;
-		FrameStamp.Data[0] = (int) (x0*100000.0); //trick to save precision in int form, mm*100000
-		FrameStamp.Data[1] = (int) (y0*100000.0); //mm*10000
 
-		FrameStamp.Data[2] = (int) (100000.0*radiusA); //pixels
-		FrameStamp.Data[3] = (int) (100000.0*radiusB); //pixels
-
-		FrameStamp.Data[4] = (int) (100000.0*angle); //radians
-		FrameStamp.Data[5] = 0;
-
-		FrameStamp.Data[6] =0;
-		FrameStamp.Data[7] =0;
-		FrameStamp.Data[8] =0;
-		FrameStamp.Data[9] =0;
-
-		FrameStamp.drf.TimeStampOrig= ds_TimestampMs();
-		FrameStamp.TimeStampRecv= FrameStamp.drf.TimeStampOrig;
-		ds_Write(handleWr1,(char *)&FrameStamp,	sizeof FrameStamp);
-  */
 
 		nFrames++;
-		edFrame->Text = nFrames;
-		edTimestamp->Text = timestamp;
 
 		if(paint) {
 
@@ -1081,7 +1181,7 @@ void __fastcall TMainCaptureForm::BitBtnPlayClick(TObject *Sender)
 
 		lsl_streaminfo info = lsl_create_streaminfo("VideoStream","VideoStream",1,30,cft_int32,"");
 		lsl_xml_ptr desc = lsl_get_desc(info);
-		lsl_xml_ptr chn = lsl_append_child(desc, "channel");
+		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","frame");
 		lsl_append_child_value(chn,"unit","number");
 
@@ -1122,6 +1222,8 @@ void __fastcall TMainCaptureForm::Timer1Timer(TObject *Sender)
 {
 	if(frameThread) {
 		BacklogEdit->Text = bmpQueue.size();
+		edFrame->Text = nFrames;
+		 edTimestamp->Text = timestamp;
 	}
 }
 //---------------------------------------------------------------------------
@@ -1159,39 +1261,90 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 		lsl_streaminfo info = lsl_create_streaminfo("GazeStream","GazeStream",6,30,cft_float32,generateGUID());
 
 		lsl_xml_ptr desc = lsl_get_desc(info);
-		lsl_xml_ptr chn = lsl_append_child(desc, "channel");
+		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","frame");
 		lsl_append_child_value(chn,"unit","number");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","pupil position x");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","pupil position y");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","pupil radius A");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","pupil radius B");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","pupil angle");
 		lsl_append_child_value(chn,"unit","radians");
 		outlet = lsl_create_outlet(info,0,360);
 
 
 	}
+
+	else
+	//scene camera multi-spot calibrate
+	if (RadioGroup1->ItemIndex==1)//-1)
+	{
+
+
+
+		crRoiLeft->Position = 40;
+		crRoiRight->Position = 600;
+		crRoiTop->Position = 40;
+		crRoiBottom->Position = 440;
+		isKind = isSceneMultiCalib;
+		PageControl2->ActivePage = tsEyeTracker;
+		Caption = "Video stream: scene camera";
+
+
+		if(outlet) {
+			lsl_destroy_outlet(outlet);
+			outlet = NULL;
+		}
+		lsl_streaminfo info = lsl_create_streaminfo("SceneMultiCalibrateStream","SceneMultiCalibrateStream",2 + REFERENCE_MARKER_COUNT*2,30,cft_float32,generateGUID());
+		lsl_xml_ptr desc = lsl_get_desc(info);
+		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
+		lsl_append_child_value(chn, "name","frame");
+		lsl_append_child_value(chn,"unit","number");
+
+		chn = lsl_append_child(desc, "channels");
+		lsl_append_child_value(chn, "name","reference marker count");
+		lsl_append_child_value(chn,"unit","count");
+
+		chn = lsl_append_child(desc, "channels");
+		lsl_append_child_value(chn, "name","scene position x");
+		lsl_append_child_value(chn,"unit","pixels");
+
+		chn = lsl_append_child(desc, "channels");
+		lsl_append_child_value(chn, "name","scene position y");
+		lsl_append_child_value(chn,"unit","pixels");
+
+		for(int i=0; i<REFERENCE_MARKER_COUNT; i++) {
+			chn = lsl_append_child(desc, "channels");
+			lsl_append_child_value(chn, "name","reference position x");
+			lsl_append_child_value(chn,"unit","pixels");
+
+			chn = lsl_append_child(desc, "channels");
+			lsl_append_child_value(chn, "name","reference position y");
+			lsl_append_child_value(chn,"unit","pixels");
+		}
+
+
+		outlet = lsl_create_outlet(info,0,360);
+
+	}
 	else
 	//scene camera calibrate
 	if (RadioGroup1->ItemIndex==1)
 	{
-
-
 
 		crRoiLeft->Position = 40;
 		crRoiRight->Position = 600;
@@ -1208,28 +1361,24 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 		}
 		lsl_streaminfo info = lsl_create_streaminfo("SceneCalibrateStream","SceneCalibrateStream",4,30,cft_float32,generateGUID());
 		lsl_xml_ptr desc = lsl_get_desc(info);
-		lsl_xml_ptr chn = lsl_append_child(desc, "channel");
+		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","frame");
 		lsl_append_child_value(chn,"unit","number");
 
 		lsl_append_child_value(chn, "name","scene position x");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","scene position y");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","radius");
 		lsl_append_child_value(chn,"unit","pixels");
 
 		outlet = lsl_create_outlet(info,0,360);
 
-	/*	handleWrScene = ds_Open("/tmp/SceneCalibrateStream");
-		ds_XMLSetSamplerate(handleWrScene,30);
-		ds_XMLSetDatasize(handleWrScene, 10, 4);
-		WriteXMLtoFile(handleWrScene,"/tmp/SceneCalibrateStream.xml");
-	  */
+
 	}
 	else
 	//scene display
@@ -1244,54 +1393,54 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 			lsl_destroy_outlet(outlet);
 			outlet = NULL;
 		}
-		lsl_streaminfo info = lsl_create_streaminfo("SceneStream","SceneStream",12,30,cft_float32,generateGUID());
+		lsl_streaminfo info = lsl_create_streaminfo("SceneStream","SceneStream",13,30,cft_float32,generateGUID());
 		lsl_xml_ptr desc = lsl_get_desc(info);
-		lsl_xml_ptr chn = lsl_append_child(desc, "channel");
+		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","frame");
 		lsl_append_child_value(chn,"unit","number");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","pupil position x");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","pupil position y");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","screen position x");
 		lsl_append_child_value(chn,"unit","x/monitorWidth");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","screen position y");
 		lsl_append_child_value(chn,"unit","y/monitorHeight");
 
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","pupil radius A");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","pupil radius B");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","pupil angle");
 		lsl_append_child_value(chn,"unit","radians");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","scene position x");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","scene position y");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","parallax correction x");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channel");
+		chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","parallax correction y");
 		lsl_append_child_value(chn,"unit","pixels");
 
@@ -1328,7 +1477,7 @@ void TMainCaptureForm::SetToVideoMode() {
 		lsl_streaminfo info = lsl_create_streaminfo("VideoStream","VideoStream",1,30,cft_int32,"");
 
 		lsl_xml_ptr desc = lsl_get_desc(info);
-		lsl_xml_ptr chn = lsl_append_child(desc, "channel");
+		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","frame");
 		lsl_append_child_value(chn,"unit","number");
 		outlet = lsl_create_outlet(info,0,360);
@@ -1523,6 +1672,15 @@ if(cbSceneCalibColor->ItemIndex != -1) {
 	if(!ex) eyeRadiusMax = eyeRadiusMaxEdit->Text.ToDouble();
 }
 
+//---------------------------------------------------------------------------
+
+
+void __fastcall TMainCaptureForm::cbReferenceCalibColorChange(TObject *Sender)
+{
+	if(cbReferenceCalibColor->ItemIndex != -1) {
+		referenceCalibColor = cbReferenceCalibColor->ItemIndex;
+	}
+}
 //---------------------------------------------------------------------------
 
 

@@ -1889,3 +1889,4 @@ void __fastcall TCaptureWorkerForm::mnuExitClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+

@@ -69,6 +69,15 @@ bool hasNan(ublas::vector<double> v) {
 	return false;
 }
 
+ublas::vector<double> cross(ublas::vector<double> a, ublas::vector<double> b) {
+	if(a.size() != 3 || b.size() != 3) throw new IllegalArgumentException("Cross products require vectors of length 3.\n");
+
+	ublas::vector<double> out(3);
+	out(0) = a(1)*b(2) - a(2)*b(1);
+	out(1) = a(2)*b(0) - a(0)*b(2);
+	out(2) = a(0)*b(1) - a(1)*b(0);
+	return out;
+}
 
 double length(ublas::vector<double> v) {
 	double val = 0.0;
@@ -334,6 +343,22 @@ void svdcmp(ublas::matrix<double> a, ublas::matrix<double> &u, ublas::vector<dou
 	u = a;
 }
 
+ublas::matrix<double> removeColumn(ublas::matrix<double> inMatrix, int column) {
+
+	unsigned int nRows = inMatrix.size1();
+	unsigned int nColumns = inMatrix.size2();
+	ublas::matrix<double> outMatrix(nRows, nColumns-1);
+
+	unsigned int outCol = 0;
+	for(unsigned int inCol=0; inCol<nColumns; inCol++) {
+		if(column==inCol) inCol++;
+		for(int row=0; row<nRows; row++) {
+			outMatrix(row,outCol) = inMatrix(row,inCol);
+		}
+		outCol++;
+	}
+	return outMatrix;
+}
 
  void findRigidBody(ublas::matrix<double> dataOrig, ublas::matrix<double> dataCurrent,
 		ublas::vector<double> &translationOrig, ublas::matrix<double> &rotation, ublas::vector<double> &translationCurrent) {
@@ -341,9 +366,35 @@ void svdcmp(ublas::matrix<double> a, ublas::matrix<double> &u, ublas::vector<dou
 	int nDimensions = dataOrig.size1();
 	if(nDimensions != 3) throw IllegalArgumentException("findRigidBody: nDimensions should be 3.\n");
 	if(hasNan(dataOrig)) throw IllegalArgumentException("findRigidBody: dataOrig has NANs.\n");
-	if(hasNan(dataCurrent)) throw IllegalArgumentException("findRigidBody: dataCurrent has NANs.\n");
+    if(hasNan(dataCurrent)) throw IllegalArgumentException("findRigidBody: dataCurrent has NANs.\n");
 
+	/*
+	while(hasNan(dataCurrent)) {
+		for(unsigned int dim=0; dim<nDimensions; dim++) {
+			for(unsigned int point=0; point<nPoints; point++) {
+				if(_isnan(dataCurrent(dim,point))) {
+					dataCurrent = removeColumn(dataCurrent, point);
+					dataOrig = removeColumn(dataCurrent, point);
+					nPoints--;
+					point--;
+					goto end;
+				}
+			}
+		}
+		end:
+	}
+	if(nPoints < 3) {
+		for(int dim=0; dim<nDimensions; dim++) {
+			translationOrig(dim) = NAN;
+			translationCurrent(dim) = NAN;
+			for(int point=0; point<nPoints; point++) {
+				rotation(dim,point) = NAN;
+			}
+		}
 
+		return;
+	}
+	*/
 	translationOrig(0) = 0;
 	translationOrig(1) = 0;
 	translationOrig(2) = 0;

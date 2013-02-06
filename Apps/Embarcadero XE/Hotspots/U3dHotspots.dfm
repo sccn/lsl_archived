@@ -3,7 +3,7 @@ object Form11: TForm11
   Top = 0
   Caption = 'Hotspots'
   ClientHeight = 754
-  ClientWidth = 781
+  ClientWidth = 933
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,7 +18,7 @@ object Form11: TForm11
   object PageControl1: TPageControl
     Left = 0
     Top = 49
-    Width = 781
+    Width = 933
     Height = 531
     ActivePage = TabSheet5
     Align = alClient
@@ -708,6 +708,10 @@ object Form11: TForm11
     object TabSheet5: TTabSheet
       Caption = 'Grid'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ScrollBox5: TScrollBox
         Left = 0
         Top = 0
@@ -1117,7 +1121,7 @@ object Form11: TForm11
   object Panel2: TPanel
     Left = 0
     Top = 580
-    Width = 781
+    Width = 933
     Height = 174
     Align = alBottom
     TabOrder = 1
@@ -1229,13 +1233,13 @@ object Form11: TForm11
   object Panel3x: TPanel
     Left = 0
     Top = 0
-    Width = 781
+    Width = 933
     Height = 49
     Align = alTop
     Alignment = taLeftJustify
     TabOrder = 2
     object Label37: TLabel
-      Left = 312
+      Left = 208
       Top = 0
       Width = 105
       Height = 12
@@ -1249,8 +1253,8 @@ object Form11: TForm11
       Caption = 'Reading phasespace data from:'
     end
     object GazeComboBox: TComboBox
-      Left = 312
-      Top = 18
+      Left = 208
+      Top = 15
       Width = 145
       Height = 20
       TabOrder = 0
@@ -1258,7 +1262,7 @@ object Form11: TForm11
       OnChange = GazeComboBoxChange
     end
     object LoadCalibration: TButton
-      Left = 472
+      Left = 367
       Top = 13
       Width = 84
       Height = 25
@@ -1274,6 +1278,42 @@ object Form11: TForm11
       TabOrder = 2
       Text = '<Select phasespace stream>'
       OnChange = PhaseComboBoxChange
+    end
+    object xOffsetEdit: TLabeledEdit
+      Left = 551
+      Top = 15
+      Width = 66
+      Height = 20
+      EditLabel.Width = 62
+      EditLabel.Height = 12
+      EditLabel.Caption = 'X Offset (mm)'
+      TabOrder = 3
+      Text = '0'
+      OnChange = xOffsetEditChange
+    end
+    object distanceEdit: TLabeledEdit
+      Left = 466
+      Top = 15
+      Width = 71
+      Height = 20
+      EditLabel.Width = 64
+      EditLabel.Height = 12
+      EditLabel.Caption = 'Distance (mm)'
+      TabOrder = 4
+      Text = '500'
+      OnChange = distanceEditChange
+    end
+    object yOffsetEdit: TLabeledEdit
+      Left = 640
+      Top = 15
+      Width = 74
+      Height = 20
+      EditLabel.Width = 62
+      EditLabel.Height = 12
+      EditLabel.Caption = 'Z Offset (mm)'
+      TabOrder = 5
+      Text = '0'
+      OnChange = yOffsetEditChange
     end
   end
   object Timer1: TTimer

@@ -236,6 +236,7 @@ class THotspotScreen {
 	public:
 		int topLeftID, bottomLeftID, topRightID, bottomRightID, sensor0, sensor1, device;
 		int monitorNumber;
+		double monitorDepth;
 		ublas::vector<double> monitorTL, monitorTR, monitorBL, monitorBR;
 
 		TEdit *nameEdit,  *topLeftEdit, *topRightEdit, *bottomLeftEdit, *bottomRightEdit;
@@ -248,7 +249,7 @@ class THotspotScreen {
 		double positionY;
 
 	THotspotScreen(std::map<int, TPoint3D*> p3Ds, int topLft, int topRght, int bottomLft, int bottomRght,
-		int sensr0, int sensr1, int devce, int monitrNumber):
+		int sensr0, int sensr1, int devce, int monitrNumber, double monitrDepth):
 		topLeftID(topLft),
 		topRightID(topRght),
 		bottomLeftID(bottomLft),
@@ -256,19 +257,31 @@ class THotspotScreen {
 		sensor0(sensr0),
 		sensor1(sensr1),
 		device(devce),
-		monitorNumber(monitrNumber) {
-
+		monitorNumber(monitrNumber),
+		monitorDepth(monitrDepth) {
 
 			monitorTL = p3Ds[topLeftID]->toDoubleVector();
 			monitorTR = p3Ds[topRightID]->toDoubleVector();
 			monitorBL = p3Ds[bottomLeftID]->toDoubleVector();
 			monitorBR = p3Ds[bottomRightID]->toDoubleVector();
+
+			//given the depth, push the monitor back by the requested amount.
+			ublas::vector<double> tot = cross(monitorTR-monitorTL, monitorBL-monitorTL) +
+				 cross(monitorBR-monitorTR, monitorTL-monitorTR) +
+				  cross(monitorBL-monitorBR, monitorTR-monitorBR) + cross(monitorTL-monitorBL, monitorBR-monitorBL);
+			tot = monitorDepth*tot/length(tot);
+
+			monitorTL += tot;
+			monitorTR += tot;
+			monitorBL += tot;
+			monitorBR += tot;
+
 			isChanged = isIn = false;
 			unchangedCount = 0;
 			positionX = -1.0;
 			positionY = -1.0;
 
-		};
+	};
 
 	/**
 	 * Given screen coordinates, returns the location in phasespace coordinates.
@@ -321,15 +334,10 @@ class THotspotScreen {
 
 		ublas::vector<double> scaleFactors = linearSolve(A,b);
 		if(pr) printf("monitorPosX: %g   monitorPosY: %g   monitorPosZ: %g\n", scaleFactors(0), scaleFactors(1), scaleFactors(2));
-		//scale to between 0 and 32767, preparing for transport on datariver
-//		if(scaleFactors(1) < 0.0 || scaleFactors(2) < 0.0 || scaleFactors(1) > 1.0 || scaleFactors(2) > 1.0) {
-//			*monitorPosX = NAN;//-32768;
-//			*monitorPosY = NAN;//-32768;
-//			return;
-//		}
 
-		*monitorPosX = scaleFactors(1);//((int) (scaleFactors(1)*0x7FFF));// & 0x7FFF;
-		*monitorPosY = scaleFactors(2);//((int) (scaleFactors(2)*0x7FFF));// & 0x7FFF;
+
+		*monitorPosX = scaleFactors(1);
+		*monitorPosY = scaleFactors(2);
 		positionX = *monitorPosX;
 		positionY = *monitorPosY;
 		  if(pr) 	printf("monitorPosX: %g   monitorPosY: %g\n", *monitorPosX, *monitorPosY);

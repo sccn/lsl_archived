@@ -19,6 +19,7 @@
 #include <float.h>
 #include "map.h"
 #include "HotspotTypes.h"
+#include "cvWrapper.h"
 
 
 // ---------------------------------------------------------------------------
@@ -31,18 +32,15 @@ TForm4 *Form4;
 
 
 
-//void *hGazeStream = 0, *hSceneStream = 0 , *hPhasespace = 0;
-
-double monitorWidth=0.0 ,monitorHeight=0.0, cameraWidth=0.0,cameraHeight=0.0;
+double monitorWidth=0.0 ,monitorHeight=0.0, cameraWidth=0.0,cameraHeight=0.0, monitorDepth = 0.0;
 double sceneCameraWidth=0.0, sceneCameraHeight=0.0;
 
 double r=0.0, x0=0.0, y0=0.0, z0=0.0;
 double a=0.0, b=0.0, g=0.0, bx=0.0, by=0.0, bz=0.0, fc=0.0;
 
-double aScene=0.0, bScene=0.0, gScene=0.0, bxScene=0.0, byScene=0.0, bzScene=0.0, fcScene=0.0;
-double kScene=0.0, ycScene=0.0, zcScene=0.0;
-
 int channelsPerMarker = 4;
+
+int head0, head1, head2, head3, phase0, phase1;
 
 BITMAP * bmpCanvas;
 BITMAP * sceneCanvas;
@@ -50,38 +48,69 @@ BITMAP * sceneCanvas;
 std::vector<int> monitors;
 std::vector<double> markerXs, markerYs; //true marker position
 std::vector<double> meanEyeXs, meanEyeYs, stddevEyeXs, stddevEyeYs;//pupil position in camera
-std::vector<double> meanSceneXs, meanSceneYs, stddevSceneXs,stddevSceneYs;//marker position in scene camera
+std::vector<double> meanSceneXs, meanSceneYs, meanSceneZs, stddevSceneXs,stddevSceneYs,stddevSceneZs;//marker position in scene camera
 
-std::vector<double> scaledMarkerXs, scaledMarkerYs;
+std::vector<double> scaledMarkerXs, scaledMarkerYs, scaledMarkerZs;
 std::vector<double> scaledMeanEyeXs, scaledMeanEyeYs, scaledStddevEyeXs, scaledStddevEyeYs;
 
-std::vector<double> modeledXs, modeledYs, modeledSceneXs, modeledSceneYs;
+std::vector<double> modeledXs, modeledYs;
 
-int nHeadPoints = 7; //four for the head, three for the calibration wand
+int nHeadPoints = 4; //four for the head
 vector< list<double> > headXsList(nHeadPoints, list<double>());
 vector< list<double> > headYsList(nHeadPoints, list<double>());
 vector< list<double> > headZsList(nHeadPoints, list<double>());
 
-ublas::matrix<double> headRef(3,4);
-ublas::matrix<double> wand0Ref(3,3);
-ublas::matrix<double> wand1Ref(3,3);
+int nSceneCamPoints = 4;
+vector< list<double> > sceneCamXsList(nHeadPoints, list<double>());
+vector< list<double> > sceneCamYsList(nHeadPoints, list<double>());
+vector< list<double> > sceneCamZsList(nHeadPoints, list<double>());
+
+ublas::matrix<double> sceneCamCur(3,nSceneCamPoints);
+
+ublas::matrix<double> headRef(3,nHeadPoints);
 ublas::matrix<double> displayRef(3,4);
 
+ublas::matrix<double> sceneCamRef(3,nSceneCamPoints);
 
-enum TimerMode {isStandard,isHead, isWand0, isWand1, isEyeTest} ;
+ublas::vector<double> phasespace0(3);
+ublas::vector<double> phasespace1(3);
+
+ublas::matrix<double> cameraMatrix(3,3);
+ublas::vector<double> distortionCoeffs(5);
+
+
+
+/**************************************************************************
+
+ Begin marker control code.
+
+***************************************************************************/
+
+std::vector<MonitorDrawer*> monitorDrawers;
+
+std::vector<int> monitorsTodo;
+std::vector<double> markerXsTodo;
+std::vector<double> markerYsTodo;
+
+int currentSpot = -1;
+
+/**************************************************************************
+
+ End marker control code.
+
+***************************************************************************/
+
+
+enum TimerMode {isStandard,isHead, isEyeTest, isPhasespaceTest} ;
 TimerMode timerMode = isStandard;
 
 int **tot = NULL;
 
 
-
-
-
-
 int readCount = 0;
 int progress = 0;
 
-double pupilX = 0.0, pupilY = 0.0, sceneX = 0.0, sceneY = 0.0;
+double pupilX = 0.0, pupilY = 0.0, sceneX = 0.0, sceneY = 0.0, sceneZ = 0.0;
 std::vector<double> headXs(nHeadPoints,0.0), headYs(nHeadPoints,0.0), headZs(nHeadPoints,0.0);
 double markerX = -1, markerY = -1;
 int monitor = -1;
@@ -92,12 +121,12 @@ std::list<double>pupilYs;
 
 std::list<double> sceneXs;
 std::list<double> sceneYs;
+std::list<double> sceneZs;
 
 int headCount = 0;
-bool wand0RefAvailable = false;
-bool wand1RefAvailable = false;
+
 ublas::vector<double> eyePosition(3,0.0);
-ublas::vector<double> displayMarkerPosition(3,0.0);
+ublas::vector<double> phaseMarkerPosition(3,0.0);
 
 lsl_inlet gazeInlet = NULL;
 int gazeChannels = 0;
@@ -136,6 +165,7 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 		delete1D(buf);
 	}
 	if(sceneInlet) {
+		/*
 		float *buf = new1D<float>(sceneChannels,0);
 		while(lsl_pull_sample_f(sceneInlet,buf,sceneChannels,0.0,&errcode)) {
 			static int sceneSamples = 0;
@@ -146,6 +176,131 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 			sceneSamples++;
 		}
 		delete1D(buf);
+		*/
+
+		//Convert from x,y in pixels to x,y,z in mm with respect to camera
+		float *buf = new1D<float>(sceneChannels,0);
+		while(lsl_pull_sample_f(sceneInlet,buf,sceneChannels,0.0,&errcode)) {
+			static int sceneSamples = 0;
+			sceneSamples++;
+			Form4->SceneProgressBar->Position = sceneSamples % 120;
+			std::list<double> refMarkerXs;
+			std::list<double> refMarkerYs;
+
+			int nSpots = (int) buf[1];
+
+			for(int i=2; i<sceneChannels;) {
+				refMarkerXs.push_back(buf[i++]);
+				refMarkerYs.push_back(sceneCameraHeight - buf[i++]);
+			}
+
+			if(refMarkerXs.size() != markerXsTodo.size()) {
+				printf("There are %d markers from scenestream and %d markers displayed.\n", refMarkerXs.size(), markerXsTodo.size());
+				continue;
+			}
+
+
+			//rescale markerXsTodo to scene camera pixels (markerXsTodoInPixels.
+
+			double oldMean, oldStddev, newMean, newStddev;
+
+			calculateStats(markerXsTodo, &oldMean, &oldStddev);
+			calculateStats(refMarkerXs, &newMean, &newStddev);
+ //	  printf("oldMean: %g, oldStddev: %g, newMean: %g, newStddev
+			if(_isnan(oldMean) || _isnan(oldStddev) || _isnan(newMean) || _isnan(newStddev)) {
+				sceneX = NAN;
+				sceneY = NAN;
+				sceneZ = NAN;
+				printf("Unable to calculate stats for markers.\n");
+				continue;
+			}
+
+			std::vector<double> markerXsTodoInPixels;
+			for(int i=0; i<markerXsTodo.size(); i++) {
+
+				markerXsTodoInPixels.push_back(newStddev*(markerXsTodo[i]-oldMean)/oldStddev + newMean);
+			}
+
+			//rescale markerYsTodo to scene camera pixels (markerYsTodoInPixels)
+			calculateStats(markerYsTodo, &oldMean, &oldStddev);
+			calculateStats(refMarkerYs, &newMean, &newStddev);
+
+			if(_isnan(oldMean) || _isnan(oldStddev) || _isnan(newMean) || _isnan(newStddev)) {
+				sceneX = NAN;
+				sceneY = NAN;
+				sceneZ = NAN;
+				printf("Unable to calculate stats for markers.\n");
+				continue;
+			}
+
+			std::vector<double> markerYsTodoInPixels;
+			for(int i=0; i<markerYsTodo.size(); i++) {
+				markerYsTodoInPixels.push_back(newStddev*(markerYsTodo[i]-oldMean)/oldStddev + newMean);
+			//	printf("mx: %g, my: %g  px: %g, py %g\n", markerXsTodo[i], markerYsTodo[i], markerXsTodoInPixels[i], markerYsTodoInPixels[i]);
+
+			}
+
+
+			//remove refMarkers, one by one. put in sorted refMarkers
+			//remove the refMarker that is closest to the monitor markers
+			std::vector<double> sortedRefMarkerXs;
+			std::vector<double> sortedRefMarkerYs;
+
+			for(int i=0; i<markerXsTodoInPixels.size(); i++) {
+				double mx = markerXsTodoInPixels[i];
+				double my = markerYsTodoInPixels[i];
+
+				std::list<double>::iterator minXIndex;
+				std::list<double>::iterator minYIndex;
+				double minX;
+				double minY;
+				double storedX;
+				double storedY;
+
+				double minDist = INF;
+				std::list<double>::iterator xIndex = refMarkerXs.end();
+				std::list<double>::iterator yIndex = refMarkerYs.end();
+
+				while(xIndex != refMarkerXs.begin() && yIndex != refMarkerYs.begin()) {
+					--xIndex;
+					--yIndex;
+
+					double x = *xIndex;
+					double y = *yIndex;
+
+					double curDist =  (x-mx)*(x-mx)+(y-my)*(y-my);
+					if(curDist < minDist) {
+						minDist = curDist;
+						minXIndex = xIndex;
+						minYIndex = yIndex;
+						minX = x;
+						minY = y;
+						storedX = mx;
+						storedY = my;
+					}
+
+				}
+
+				sortedRefMarkerXs.push_back(minX);
+				sortedRefMarkerYs.push_back(minY);
+			//	printf("minX:%g      minY: %g    storedX:%g   storedY:%g\n", minX, minY,storedX,storedY);
+				refMarkerXs.erase(minXIndex);
+				refMarkerYs.erase(minYIndex);
+
+
+			}
+		   //	static q = 0;
+		   //	if((q++)%30 == 0)
+
+			//sets sceneX, sceneY, sceneZ, sceneCamCur
+			poseFinder(sortedRefMarkerXs, sortedRefMarkerYs);
+
+ // printf("\n\n");
+
+
+		}
+		delete1D(buf);
+
 	}
 
 
@@ -156,23 +311,29 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 		while(lsl_pull_sample_f(phasespaceInlet,buf,phasespaceChannels,0.0,&errcode)) {
 			Form4->PhasespaceProgressBar->Position = (headCount/16) % 120;
 			headCount++;
+
+
+			phasespace0(0) = buf[phase0*channelsPerMarker] == 0 ? NAN : 1000.0*buf[phase0*channelsPerMarker] ;
+			phasespace0(1) = buf[phase0*channelsPerMarker+1] == 0 ? NAN : 1000.0*buf[phase0*channelsPerMarker+1] ;
+			phasespace0(2) = buf[phase0*channelsPerMarker+2] == 0 ? NAN : 1000.0*buf[phase0*channelsPerMarker+2] ;
+
+			phasespace1(0) = buf[phase1*channelsPerMarker] == 0 ? NAN : 1000.0*buf[phase1*channelsPerMarker] ;
+			phasespace1(1) = buf[phase1*channelsPerMarker+1] == 0 ? NAN : 1000.0*buf[phase1*channelsPerMarker+1] ;
+			phasespace1(2) = buf[phase1*channelsPerMarker+2] == 0 ? NAN : 1000.0*buf[phase1*channelsPerMarker+2] ;
+
 			bool headIsNan = false;
-			int head0 =  HeadMarker0Edit->Text.ToInt();
 			headXs[0] = buf[head0*channelsPerMarker] == 0 ? NAN : 1000.0*buf[head0*channelsPerMarker] ;
 			headYs[0] = buf[head0*channelsPerMarker+1]== 0 ? NAN : 1000.0*buf[head0*channelsPerMarker+1];
 			headZs[0] = buf[head0*channelsPerMarker+2]== 0 ? NAN : 1000.0*buf[head0*channelsPerMarker+2];
 
-			int head1 = HeadMarker1Edit->Text.ToInt();
 			headXs[1] = buf[head1*channelsPerMarker]== 0 ? NAN : 1000.0*buf[head1*channelsPerMarker];
 			headYs[1] = buf[head1*channelsPerMarker+1]== 0 ? NAN : 1000.0*buf[head1*channelsPerMarker+1];
 			headZs[1] = buf[head1*channelsPerMarker+2]== 0 ? NAN : 1000.0*buf[head1*channelsPerMarker+2];
 
-			int head2 = HeadMarker2Edit->Text.ToInt();
 			headXs[2] = buf[head2*channelsPerMarker]== 0 ? NAN : 1000.0*buf[head2*channelsPerMarker];
 			headYs[2] = buf[head2*channelsPerMarker+1]== 0 ? NAN : 1000.0*buf[head2*channelsPerMarker+1];
 			headZs[2] = buf[head2*channelsPerMarker+2]== 0 ? NAN : 1000.0*buf[head2*channelsPerMarker+2];
 
-			int head3 = HeadMarker3Edit->Text.ToInt();
 			headXs[3] = buf[head3*channelsPerMarker]== 0 ? NAN : 1000.0*buf[head3*channelsPerMarker];
 			headYs[3] = buf[head3*channelsPerMarker+1]== 0 ? NAN : 1000.0*buf[head3*channelsPerMarker+1];
 			headZs[3] = buf[head3*channelsPerMarker+2]== 0 ? NAN : 1000.0*buf[head3*channelsPerMarker+2];
@@ -183,74 +344,65 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 				}
 			}
 
-			int head4 = WandNear0Edit->Text.ToInt();
-			headXs[4] = buf[head4*channelsPerMarker]== 0 ? NAN : 1000.0*buf[head4*channelsPerMarker];
-			headYs[4] = buf[head4*channelsPerMarker+1]== 0 ? NAN : 1000.0*buf[head4*channelsPerMarker+1];
-			headZs[4] = buf[head4*channelsPerMarker+2]== 0 ? NAN : 1000.0*buf[head4*channelsPerMarker+2];
 
-			int head5 = WandNear1Edit->Text.ToInt();
-			headXs[5] = buf[head5*channelsPerMarker]== 0 ? NAN : 1000.0*buf[head5*channelsPerMarker];
-			headYs[5] = buf[head5*channelsPerMarker+1]== 0 ? NAN : 1000.0*buf[head5*channelsPerMarker+1];
-			headZs[5] = buf[head5*channelsPerMarker+2]== 0 ? NAN : 1000.0*buf[head5*channelsPerMarker+2];
-
-			int head6 = WandFarEdit->Text.ToInt();
-			headXs[6] = buf[head6*channelsPerMarker]== 0 ? NAN : 1000.0*buf[head6*channelsPerMarker];
-			headYs[6] = buf[head6*channelsPerMarker+1]== 0 ? NAN : 1000.0*buf[head6*channelsPerMarker+1];
-			headZs[6] = buf[head6*channelsPerMarker+2]== 0 ? NAN : 1000.0*buf[head6*channelsPerMarker+2];
-
-			int displayMarker = DisplayMarkerEdit->Text.ToInt();
-			displayMarkerPosition(0) = buf[displayMarker*channelsPerMarker]== 0 ? NAN :1000.0*buf[displayMarker*channelsPerMarker];
-			displayMarkerPosition(1) = buf[displayMarker*channelsPerMarker+1]== 0 ? NAN :1000.0*buf[displayMarker*channelsPerMarker+1];
-			displayMarkerPosition(2) = buf[displayMarker*channelsPerMarker+2]== 0 ? NAN :1000.0*buf[displayMarker*channelsPerMarker+2];
+			phaseMarkerPosition(0) = buf[phase0*channelsPerMarker]== 0 ? NAN :1000.0*buf[phase0*channelsPerMarker];
+			phaseMarkerPosition(1) = buf[phase0*channelsPerMarker+1]== 0 ? NAN :1000.0*buf[phase0*channelsPerMarker+1];
+			phaseMarkerPosition(2) = buf[phase0*channelsPerMarker+2]== 0 ? NAN :1000.0*buf[phase0*channelsPerMarker+2];
 
 
-			if(timerMode == isEyeTest) {
-
-				ublas::matrix<double> headCur(3,4);
-
-				for(int i=0; i<4; i++) {
-					headCur(0, i) = headXs[i];
-					headCur(1, i) = headYs[i];
-					headCur(2, i) = headZs[i];
-				}
-
-				ublas::vector<double> priorTranslation(3);
-				ublas::vector<double> postTranslation(3);
-				ublas::matrix<double> rotation(3,3);
-
-
-				if(!headIsNan) {
-					findRigidBody(headRef, headCur, priorTranslation, rotation, postTranslation);
-					ublas::vector<double> rotatedEye = moveRigidVector(eyePosition, priorTranslation, rotation, postTranslation);
-					if(headCount % 500 == 0) {
-					//	print("priorTranslation", priorTranslation);
-					//	print("postTranslation", postTranslation);
-						print("marker", displayMarkerPosition);
-						print("rotatedEye", rotatedEye);
+			if(timerMode == isPhasespaceTest) {
+				if(headCount % 480 ==0) {
+					bool nans = false;
+					if(hasNan(phasespace0)) {
+						StatusMemo->Lines->Add("Phasespace marker 0 is not visible.");
+						nans = true;
 					}
+
+					if(hasNan(phasespace1)) {
+						StatusMemo->Lines->Add("Phasespace marker 1 is not visible.");
+
+						nans = true;
+					}
+					if(!nans) {
+						double dist = length(phasespace0-phasespace1);
+						StatusMemo->Lines->Add(UnicodeString("Distance: ") + FormatFloat ("0.00", dist));
+					}
+
 				}
 
 
-				else {
-					if(headCount % 500 == 0 && CONSOLE) printf("findRigidBody inputs have NANs.\n");
-				}
+
+
 			}
 
-			if(timerMode == isHead || timerMode == isWand0 || timerMode == isWand1) {
+			if(timerMode == isHead) {
 				//if tracking head or wand, store one second (480 samples) of data
 				if(headCount < 480) {
 					for(int i=0; i<nHeadPoints; i++) {
 						//don't add if phasespace could not see the point
-						if(headXs[i] != 0 && headYs[i] != 0 && headZs[i] != 0) {
+						if(!_isnan(headXs[i]) && !_isnan(headYs[i]) && !_isnan(headZs[i])) {
 							headXsList[i].push_back(headXs[i]);
 							headYsList[i].push_back(headYs[i]);
 							headZsList[i].push_back(headZs[i]);
 						}
+
+
 					}
-				//done getting head and wand data.  average and store.
+
+					for(int i=0; i<nSceneCamPoints; i++) {
+						if(!hasNan(sceneCamCur)) {
+						static v = 0;
+						if(v++%30==0) print("sceneCamCurAdding", sceneCamCur);
+							sceneCamXsList[i].push_back(sceneCamCur(0,i));
+							sceneCamYsList[i].push_back(sceneCamCur(1,i));
+							sceneCamZsList[i].push_back(sceneCamCur(2,i));
+						}
+					}
+
+				//done getting head data.  average and store.
 				} else {
-					ublas::matrix<double> wandCur(3,3);
-					ublas::matrix<double> headCur(3,4);
+					ReferenceHeadButton->Caption = "Reference Head Position";
+
 					for(int i=0; i<nHeadPoints; i++) {
 						boolean outliersRemain = true;
 						double meanX, stddevX, meanY, stddevY, meanZ, stddevZ;
@@ -260,6 +412,7 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 							calculateStats(headXsList[i], &meanX, &stddevX);
 							calculateStats(headYsList[i], &meanY, &stddevY);
 							calculateStats(headZsList[i], &meanZ, &stddevZ);
+
 
 							std::list<double>::iterator ix = headXsList[i].begin();
 							std::list<double>::iterator iy = headYsList[i].begin();
@@ -282,150 +435,86 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 								}
 							}
 
-		//					printf("Head Point: %d :: X: %g +/- %g, Y: %g +/- %g, Z: %g +/- %g\n", i, meanX, stddevX, meanY, stddevY, meanZ, stddevZ);
-							if(timerMode == isHead) {
-								ReferenceHeadButton->Caption = "Reference Head Position";
 
-								if(i<4) {
-									headRef(0,i) = meanX;
-									headRef(1,i) = meanY;
-									headRef(2,i) = meanZ;
-								}
+							headRef(0,i) = meanX;
+							headRef(1,i) = meanY;
+							headRef(2,i) = meanZ;
 
-							}
 
-							if(timerMode == isWand0 || timerMode == isWand1) {
-								WandPosition0Button->Caption = "Wand Position 0";
-								WandPosition1Button->Caption = "Wand Position 1";
+						}
+					}
 
-								if(i<4) {
-									headCur(0,i) = meanX;
-									headCur(1,i) = meanY;
-									headCur(2,i) = meanZ;
+					for(int i=0; i<nSceneCamPoints; i++) {
+						boolean outliersRemain = true;
+						double meanX, stddevX, meanY, stddevY, meanZ, stddevZ;
+						while (outliersRemain) {
 
+							outliersRemain = false;
+							calculateStats(sceneCamXsList[i], &meanX, &stddevX);
+							calculateStats(sceneCamYsList[i], &meanY, &stddevY);
+							calculateStats(sceneCamZsList[i], &meanZ, &stddevZ);
+
+
+							std::list<double>::iterator ix = sceneCamXsList[i].begin();
+							std::list<double>::iterator iy = sceneCamYsList[i].begin();
+							std::list<double>::iterator iz = sceneCamZsList[i].begin();
+							while( ix != sceneCamXsList[i].end() ) {
+								if(_isnan(meanX) || _isnan(meanY) || _isnan(meanZ) ||
+								   _isnan(stddevX) || _isnan(stddevY) || _isnan(stddevZ) ||
+								   fabs(*ix - meanX) > stddevX * 5.0 ||
+								   fabs(*iy - meanY) > stddevY * 5.0 ||
+								   fabs(*iz - meanZ) > stddevZ * 5.0 ) {
+
+									ix = sceneCamXsList[i].erase(ix);
+									iy = sceneCamYsList[i].erase(iy);
+									iz = sceneCamZsList[i].erase(iz);
+									outliersRemain = true;
 								} else {
-									wandCur(0, i-4) = meanX;
-									wandCur(1, i-4) = meanY;
-									wandCur(2, i-4) = meanZ;
-
+									++ix;
+									++iy;
+									++iz;
 								}
-
 							}
 
+
+							sceneCamRef(0,i) = meanX;
+							sceneCamRef(1,i) = meanY;
+							sceneCamRef(2,i) = meanZ;
+
 						}
 					}
 
-					if(timerMode == isHead) {
-						if(hasNan(headRef)) {
-							StatusMemo->Lines->Add("Head position measurement failed. At least one phasespace marker is not visible.");
-							StatusMemo->Color = clRed;
-						}
-						else {
-							StatusMemo->Lines->Add("Head position measurement succeeded.");
-							StatusMemo->Color = clWindow;
-						}
-						print("headRef", headRef);
+
+					if(hasNan(headRef) || hasNan(sceneCamRef)) {
+						StatusMemo->Lines->Add("Head position measurement failed.");
+						if(_isnan(headRef(0,0))) StatusMemo->Lines->Add("Head marker A is not visible.");
+						if(_isnan(headRef(0,1))) StatusMemo->Lines->Add("Head marker B is not visible.");
+						if(_isnan(headRef(0,2))) StatusMemo->Lines->Add("Head marker C is not visible.");
+						if(_isnan(headRef(0,3))) StatusMemo->Lines->Add("Head marker D is not visible.");
+						if(hasNan(sceneCamRef)) StatusMemo->Lines->Add("Scene Camera location not found.");
+						StatusMemo->Color = clRed;
 					}
-
-
-					if(timerMode == isWand0 || timerMode == isWand1) {
-						if(hasNan(headCur)) {
-							StatusMemo->Lines->Add("Head position measurement failed. At least one phasespace marker is not visible.");
-							StatusMemo->Color = clRed;
-							timerMode = isStandard;
-							return;
-						}
-						else {
-							StatusMemo->Lines->Add("Head position measurement succeeded.");
-							StatusMemo->Color = clWindow;
-						}
-
-						if(hasNan(wandCur)) {
-							StatusMemo->Lines->Add("Wand position measurement failed. At least one phasespace marker is not visible.");
-							StatusMemo->Color = clRed;
-							timerMode = isStandard;
-							return;
-						}
-						else {
-							StatusMemo->Lines->Add("Wand position measurement succeeded.");
-							StatusMemo->Color = clWindow;
-						}
-
-					  //	print("headCur", headCur);
-					  //	print("wandCur", wandCur);
-						ublas::vector<double> priorTranslation(3);
-						ublas::vector<double> postTranslation(3);
-						ublas::matrix<double> rotation(3,3);
-
-						try {
-							findRigidBody(headRef, headCur, priorTranslation, rotation, postTranslation);
-						} catch (IllegalArgumentException &ex) {
-							//shouldn't get here. Nans are caught earlier.
-							StatusMemo->Lines->Add("Find Rigid Body failed.");
-							StatusMemo->Color = clRed;
-							timerMode = isStandard;
-							return;
-						}
-					//	print("rotation", rotation);
-					//	print("priorTrans", priorTranslation);
-					//	print("postTrans", postTranslation);
-
-						//move the wand to the head origin
-						if(timerMode == isWand0) {
-							//wand0Ref = moveRigidBody(wandCur, priorTranslation, rotation, postTranslation);
-							wand0Ref = moveRigidBody(wandCur, postTranslation, trans(rotation), priorTranslation);
-							print("wand0Cur", wandCur);
-							print("wand0Ref", wand0Ref);
-							wand0RefAvailable = true;
-						} else {
-
-							//wand1Ref = moveRigidBody(wandCur, priorTranslation, rotation, postTranslation);
-							wand1Ref = moveRigidBody(wandCur, postTranslation, trans(rotation), priorTranslation);
-							print("wand1Cur", wandCur);
-							print("wand1Ref", wand1Ref);
-							wand1RefAvailable = true;
-						}
-						//find the centerpoint between the two wand positions
-						if(wand0RefAvailable && wand1RefAvailable) {
-							ublas::vector<double> wand0Near(3);
-							wand0Near(0) = (wand0Ref(0,0) + wand0Ref(0,1))/2.0;
-							wand0Near(1) = (wand0Ref(1,0) + wand0Ref(1,1))/2.0;
-							wand0Near(2) = (wand0Ref(2,0) + wand0Ref(2,1))/2.0;
-
-							ublas::vector<double> wand0Far(3);
-							wand0Far(0) = wand0Ref(0,2);
-							wand0Far(1) = wand0Ref(1,2);
-							wand0Far(2) = wand0Ref(2,2);
-
-							ublas::vector<double> wand1Near(3);
-							wand1Near(0) = (wand1Ref(0,0) + wand1Ref(0,1))/2.0;
-							wand1Near(1) = (wand1Ref(1,0) + wand1Ref(1,1))/2.0;
-							wand1Near(2) = (wand1Ref(2,0) + wand1Ref(2,1))/2.0;
-
-							ublas::vector<double> wand1Far(3);
-							wand1Far(0) = wand1Ref(0,2);
-							wand1Far(1) = wand1Ref(1,2);
-							wand1Far(2) = wand1Ref(2,2);
-
-							eyePosition = findMidpoint(wand0Near,wand0Far,wand1Near, wand1Far);
-							print("eyePosition", eyePosition);
-							StatusMemo->Lines->Add("Eye position calculated.");
-
-						}
-
+					else {
+						StatusMemo->Lines->Add("Head position measurement succeeded.");
+						StatusMemo->Color = clWindow;
 					}
+					if(CONSOLE) print("headRef", headRef);
+					if(CONSOLE) print("sceneCamRef", sceneCamRef);
 
 					timerMode = isStandard;
 					break;
 				}
+
 			}
+
 		}
+
 		delete1D(buf);
 	}
 
 	//if gaze changed
 	if(gazeChanged && timerMode == isStandard) {
-		if(readCount%10==0 && CONSOLE) printf("%d %g %g %g %g %g %g\n", readCount, markerX, markerY, sceneX, sceneY, pupilX, pupilY);
+		if(readCount%10==0 && CONSOLE) printf("%d %g %g %g %g %g %g %g\n", readCount, markerX, markerY, sceneX, sceneY, sceneZ, pupilX, pupilY);
 		readCount++;
 		//and marker moved, average data for this location, and update plots
 		if (markerX != oldMarkerX || markerY != oldMarkerY) {
@@ -434,12 +523,15 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 			if(oldMarkerX >= 0.0) {
 				double meanX = 0.0, stddevX = 0.0;
 				double meanY = 0.0, stddevY = 0.0;
+				double meanZ = 0.0, stddevZ = 0.0;
 				double meanSceneX = 0.0, stddevSceneX = 0.0;
 				double meanSceneY = 0.0, stddevSceneY = 0.0;
+				double meanSceneZ = 0.0, stddevSceneZ = 0.0;
 
 				int count=0;
 				std::list<double>::iterator ix = pupilXs.begin();
 				std::list<double>::iterator iy = pupilYs.begin();
+				std::list<double>::iterator iz;
 				//remove points from before settling time.
 			  //	while(pupilXs.size() > 30) {
 				while (count++ < 15) {
@@ -474,10 +566,12 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 				count=0;
 				ix = sceneXs.begin();
 				iy = sceneYs.begin();
+				iz = sceneZs.begin();
 			 //	while(sceneXs.size() > 30) {
 				while (count++ < 15) {
 					ix = sceneXs.erase(ix);
 					iy = sceneYs.erase(iy);
+					iz = sceneZs.erase(iz);
 				}
 
 
@@ -487,25 +581,29 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 					outliersRemain = false;
 					calculateStats(sceneXs, &meanSceneX, &stddevSceneX);
 					calculateStats(sceneYs, &meanSceneY, &stddevSceneY);
+					calculateStats(sceneZs, &meanSceneZ, &stddevSceneZ);
 
 					std::list<double>::iterator ix = sceneXs.begin();
 					std::list<double>::iterator iy = sceneYs.begin();
+					std::list<double>::iterator iz = sceneZs.begin();
 
 
 					ix = sceneXs.begin();
 					while( ix != sceneXs.end() ) {
-						if(_isnan(meanSceneX) || _isnan(meanSceneY) || _isnan(stddevSceneX) || _isnan(stddevSceneY) ||
-						   fabs(*ix - meanSceneX) > stddevSceneX * 5.0 || fabs(*iy - meanSceneY) > stddevSceneY * 5.0) {
+						if(_isnan(meanSceneX) || _isnan(meanSceneY) || _isnan(stddevSceneX) || _isnan(stddevSceneY) || _isnan(stddevSceneZ) ||
+						   fabs(*ix - meanSceneX) > stddevSceneX * 5.0 || fabs(*iy - meanSceneY) > stddevSceneY * 5.0 || fabs(*iz - meanSceneZ) > stddevSceneZ * 5.0) {
 							ix = sceneXs.erase(ix);
 							iy = sceneYs.erase(iy);
+							iz = sceneZs.erase(iz);
 							outliersRemain = true;
 						} else {
 							++ix;
 							++iy;
+							++iz;
 						}
 					}
 
-					if(CONSOLE) printf("Scene: X: %g +/- %g, Y: %g +/- %g\n", meanSceneX, stddevSceneX, meanSceneY, stddevSceneY);
+					if(CONSOLE) printf("Scene: X: %g +/- %g, Y: %g +/- %g, Z: %g +/- %g\n", meanSceneX, stddevSceneX, meanSceneY, stddevSceneY, meanSceneZ, stddevSceneZ);
 				} //end while(outliersRemain)
 			bool replaced = false;
 			//replace the position if it has already been measured.
@@ -524,6 +622,11 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 					meanSceneYs[i] = meanSceneY;
 					//prevent 0 standard deviation
 					stddevSceneYs[i] = (stddevSceneY < .1) ? .1 : stddevSceneY;
+
+					meanSceneZs[i] = meanSceneZ;
+					//prevent 0 standard deviation
+					stddevSceneZs[i] = (stddevSceneZ < .1) ? .1 : stddevSceneZ;
+
 					replaced = true;
 					break;
 				}
@@ -541,6 +644,9 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 				stddevEyeYs.push_back(stddevY);
 				meanSceneYs.push_back(meanSceneY);
 				stddevSceneYs.push_back(stddevSceneY);
+
+				meanSceneZs.push_back(meanSceneZ);
+				stddevSceneZs.push_back(stddevSceneZ);
 			}
 			drawCalibration();
 
@@ -551,6 +657,7 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 
 			sceneXs.clear();
 			sceneYs.clear();
+			sceneZs.clear();
 
 			oldMarkerX = markerX;
 			oldMarkerY = markerY;
@@ -560,9 +667,10 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 			pupilXs.push_back(pupilX);
 			pupilYs.push_back(pupilY);
 		}
-		if(sceneX > 0.0 && sceneY > 0.0) {
+		if(!_isnan(sceneX) && !_isnan(sceneY) && !_isnan(sceneZ)) {
 			sceneXs.push_back(sceneX);
 			sceneYs.push_back(sceneY);
+			sceneZs.push_back(sceneZ);
 		}
    }
 
@@ -573,19 +681,20 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 
 void __fastcall TForm4::eyeCalibration() {
 
-	double **coords = new2D<double>(markerXs.size(), 2, 0.0);
+	double **coords = new2D<double>(markerXs.size(), 3, 0.0);
 	double **data = new2D<double>(meanEyeXs.size(), 2, 0.0);
 	double **error = new2D<double>(stddevEyeXs.size(),2,0.0);
 
 	for(unsigned int i=0; i<markerXs.size(); i++) {
-		if(_isnan(scaledMarkerXs[i]) || _isnan(scaledMarkerYs[i]) ||
+		if(_isnan(scaledMarkerXs[i]) || _isnan(scaledMarkerYs[i]) || _isnan(scaledMarkerZs[i]) ||
 		   _isnan(scaledMeanEyeXs[i]) || _isnan(scaledMeanEyeYs[i]) ||
 		   _isnan(scaledStddevEyeXs[i]) || _isnan(scaledStddevEyeYs[i])) {
-		   Application->MessageBoxA(L"Eye data is missing points.", L"Error", MB_OK);
+		   Application->MessageBoxA(L"Eye or scene data is missing points.", L"Error", MB_OK);
 		   return;
 		}
 		coords[i][0] = scaledMarkerXs[i];
 		coords[i][1] = scaledMarkerYs[i];
+		coords[i][2] = scaledMarkerZs[i];
 		data[i][0] = scaledMeanEyeXs[i];
 		data[i][1] = scaledMeanEyeYs[i];
 		error[i][0] = scaledStddevEyeXs[i];
@@ -606,6 +715,9 @@ void __fastcall TForm4::eyeCalibration() {
 	params[10] = fcInEdit->Text.ToDouble();
 
 	double *spread = new1D<double>(11, 0.0);
+
+	spread[2] = y0RangeEdit->Text.ToDouble();
+	spread[3] = z0RangeEdit->Text.ToDouble();
 	spread[4] = aRangeEdit->Text.ToDouble();
 	spread[5] = bRangeEdit->Text.ToDouble();
 	spread[6] = gRangeEdit->Text.ToDouble();
@@ -635,8 +747,6 @@ void __fastcall TForm4::eyeCalibration() {
 	}
 
 	spread[1] = x0RangeEdit->Text.ToDouble();
-	spread[2] = y0RangeEdit->Text.ToDouble();
-	spread[3] = z0RangeEdit->Text.ToDouble();
 	df->setStartingSpread(spread);
 	m->DoMinimize();
 	pOut = df->getParameters();
@@ -706,7 +816,10 @@ void __fastcall TForm4::eyeCalibration() {
 	for(unsigned int i=0; i<meanEyeXs.size(); i++) {
 		modeledXs.push_back(df->modeled[i][0]);
 		modeledYs.push_back(df->modeled[i][1]);
+			printf("sceneX: %g, sceneY: %g, sceneZ: %g modeledX: %g modeledY: %g\n", coords[i][0], coords[i][1], coords[i][2], df->modeled[i][0], df->modeled[i][1]);
 	}
+
+
 	delete m;
 	delete df;
 	delete1D(spread);
@@ -717,135 +830,224 @@ void __fastcall TForm4::eyeCalibration() {
 }
 
 
+void TForm4::poseFinder(std::vector<double> xs, std::vector<double> ys) {
 
-void __fastcall TForm4::sceneCalibration() {
+	double **coords = new2D<double>(markerXsTodo.size(), 3, 0.0);
+	double **data = new2D<double>(xs.size(), 2, 0.0);
 
-	double **coords = new2D<double>(markerXs.size(), 2, 0.0);
-	double **data = new2D<double>(meanSceneXs.size(), 2, 0.0);
-	double **error = new2D<double>(stddevSceneXs.size(),2,0.0);
+	double producerWidth = 1.0;
+	double producerHeight = 1.0;
 
-	for(unsigned int i=0; i<markerXs.size(); i++) {
-		if(_isnan(scaledMarkerXs[i]) || _isnan(scaledMarkerYs[i]) ||
-		   _isnan(meanSceneXs[i]) || _isnan(meanSceneYs[i]) ||
-		   _isnan(stddevSceneXs[i]) || _isnan(stddevSceneYs[i])) {
-		   Application->MessageBoxA(L"Scene data is missing points.", L"Error", MB_OK);
-		   return;
+	for(unsigned int i=0; i<xs.size(); i++) {
+		if(timerMode == isHead) {
+			//centered at zero
+			coords[i][0] = monitorWidth*(markerXsTodo[i]-0.5); //to mm
+			coords[i][1] = monitorHeight*(markerYsTodo[i]-0.5); //to mm
+			coords[i][2] = 0.0;
+		} else {
+			//make current marker 0,0,0. This way, rotations do not have to be understood or used.
+			coords[i][0] = monitorWidth*(markerXsTodo[i]-markerXsTodo[currentSpot]); //to mm
+			coords[i][1] = monitorHeight*(markerYsTodo[i]-markerYsTodo[currentSpot]); //to mm
+			coords[i][2] = 0.0;
 		}
-		coords[i][0] = scaledMarkerXs[i];
-		coords[i][1] = scaledMarkerYs[i];
-		data[i][0] = meanSceneXs[i];
-		data[i][1] = meanSceneYs[i];
-		error[i][0] = stddevSceneXs[i];
-		error[i][1] = stddevSceneYs[i];
+   //		printf("coords[%d][0]: %g coords[%d][1]: %g", i, coords[i][0], i, coords[i][1]);
+		data[i][0] = xs[i];
+		data[i][1] = ys[i];
+   //		printf("  data[%d][0]: %g data[%d][1]: %g\n", i, data[i][0], i, data[i][1]);
+
+	}
+	  //	printf("\n\n");
+
+	double ** cameraM = new2D<double>(3,3,0.0);
+	double * distanceC = new1D<double>(5,0.0);
+	double ** rMat = new2D<double>(3,3,0.0);
+	double * tVec = new1D<double>(3,0.0);
+	cameraM[0][0] = 557;//654.8611202347574;fcInSceneEdit->Text.ToDouble();
+	cameraM[0][1] = 0;
+	cameraM[0][2] = (sceneCameraWidth - 1)/2;//319.5;
+	cameraM[1][0] = 0;
+	cameraM[1][1] = 557;//654.8611202347574;fcInSceneEdit->Text.ToDouble();
+	cameraM[1][2] = (sceneCameraHeight -1)/2;//239.5;
+	cameraM[2][0] = 0;
+	cameraM[2][1] = 0;
+	cameraM[2][2] = 1;
+
+	distanceC[0] = -0.3669624087278113;
+	distanceC[1] = -0.07638290902180184;
+	distanceC[2] = 0;
+	distanceC[3] = 0;
+	distanceC[4] = 0.5764668364450144;
+
+	openCV_findPose(coords, data, xs.size(), cameraM, distanceC, rMat, tVec);
+	//millimiters (determined by calibration screen size and camera calibration matrix)
+	//centered at center of scene camera field of view.
+	//Tracked object moving up, right, and away from the camera is positive.
+	sceneX = tVec[0]; //right
+	sceneY = tVec[1]; //up
+	sceneZ = tVec[2]; //away
+
+
+
+ 	//screen coordinates must be centered for this to be legit.
+	static q=0;
+	if(phasespaceInlet && (timerMode == isHead || timerMode == isEyeTest)) {
+
+		if(q %30 == 0 && !_isnan(sceneX) && !_isnan(sceneY) && !_isnan(sceneZ)) printf("sceneX: %g sceneY: %g sceneZ: %g distance: %g\n",sceneX,sceneY,sceneZ, sqrt(sceneX*sceneX+sceneY*sceneY+sceneZ*sceneZ));
+
+		ublas::matrix<double> sceneRotation(3,3);
+		ublas::vector<double> sceneTranslation(3);
+
+		ublas::matrix<double> cameraPositionOpenCV(3,4); //xhat,yhat,zhat, cameraPos, openCV coordinates
+		ublas::matrix<double> cameraPosition(3,4); //xhat, yhat, zhat, cameraPos, phasespace coordinates
+
+		for(int i=0; i<3; i++) {
+			sceneTranslation(i) = -tVec[i];
+			for(int j=0; j<3; j++) {
+				sceneRotation(i,j) = rMat[j][i]; //transposed
+			}
+		}
+
+		//if(q %30 == 0) print("sceneTranslation", sceneTranslation);
+		//if(q %30 == 0) print("sceneRotation", sceneRotation);
+
+		cameraPositionOpenCV(0,0) = 1;
+		cameraPositionOpenCV(1,0) = 0;
+		cameraPositionOpenCV(2,0) = 0;
+		cameraPositionOpenCV(0,1) = 0;
+		cameraPositionOpenCV(1,1) = 1;
+		cameraPositionOpenCV(2,1) = 0;
+		cameraPositionOpenCV(0,2) = 0;
+		cameraPositionOpenCV(1,2) = 0;
+		cameraPositionOpenCV(2,2) = 1;
+		cameraPositionOpenCV(0,3) = 0;
+		cameraPositionOpenCV(1,3) = 0;
+		cameraPositionOpenCV(2,3) = 0;
+
+		for(int i=0; i<3; i++) {
+			for(int j=0; j<4; j++) {
+				cameraPositionOpenCV(i,j) += sceneTranslation(i);
+			}
+		}
+
+		cameraPositionOpenCV = ublas::prod(sceneRotation, cameraPositionOpenCV);
+
+	  //	if(q%30==0)	printf("cameraPositionOpenCV: %g\n",360/2/3.14159*atan(cameraPositionOpenCV(2,0)/cameraPositionOpenCV(0,0)));
+
+	   //	if(q%30 == 0) print("rotated foo", cameraPositionOpenCV);
+
+
+
+	   //	if(q %30 == 0) print("cameraPositionOpenCV", cameraPositionOpenCV);
+
+		//map from opencv coords to phasespace coords ( z -> x, x -> z, y -> y )
+		cameraPosition(2,0) = cameraPositionOpenCV(0,0);
+		cameraPosition(0,0) = cameraPositionOpenCV(2,0);
+		cameraPosition(1,0) = cameraPositionOpenCV(1,0);
+
+		cameraPosition(2,1) = cameraPositionOpenCV(0,1);
+		cameraPosition(0,1) = cameraPositionOpenCV(2,1);
+		cameraPosition(1,1) = cameraPositionOpenCV(1,1);
+
+		cameraPosition(2,2) = cameraPositionOpenCV(0,2);
+		cameraPosition(0,2) = cameraPositionOpenCV(2,2);
+		cameraPosition(1,2) = cameraPositionOpenCV(1,2);
+
+		cameraPosition(2,3) = cameraPositionOpenCV(0,3);
+		cameraPosition(0,3) = cameraPositionOpenCV(2,3);
+		cameraPosition(1,3) = cameraPositionOpenCV(1,3);
+
+		 //  if(q%30==0)	printf("cameraPosition: %g\n",360/2/3.14159* atan((cameraPosition(0,0)-cameraPosition(0,3))/(cameraPosition(2,0)-cameraPosition(2,3))));
+
+		ublas::vector<double> priorTranslation(3);
+		ublas::vector<double> postTranslation(3);
+		ublas::matrix<double> rotation(3,3);
+
+
+		ublas::matrix<double> displayAtOrigin(3,4); //phasespace coordinates
+		//Top left
+		displayAtOrigin(0,0) = 0;
+		displayAtOrigin(1,0) = (monitorHeight-1)/2;
+		displayAtOrigin(2,0) = -(monitorWidth-1)/2;
+
+		//top right
+		displayAtOrigin(0,1) = 0;
+		displayAtOrigin(1,1) = (monitorHeight-1)/2;
+		displayAtOrigin(2,1) = (monitorWidth-1)/2;
+
+		//bottom left
+		displayAtOrigin(0,2) = 0;
+		displayAtOrigin(1,2) = -(monitorHeight-1)/2;
+		displayAtOrigin(2,2) = -(monitorWidth-1)/2;
+
+		//bottom right
+		displayAtOrigin(0,3) = 0;
+		displayAtOrigin(1,3) = -(monitorHeight-1)/2;
+		displayAtOrigin(2,3) = (monitorWidth-1)/2;
+
+		double tot = 0.0;
+		for(int i=0; i<3; i++) {
+			for(int j=0; j<4; j++) {
+				if(_isnan(displayRef(i,j))) {
+					if(q%30 ==0) printf("display ref has NaNs\n");
+					return;
+				}
+				tot += displayRef(i,j);
+
+			}
+
+		}
+		if(tot == 0) {
+			if(q%30 ==0)printf("displayRef has not been measured yet.\n");
+			return;
+		}
+
+   //	if(q %30 ==0) print("displayAtOrigin", displayAtOrigin);
+   //		if(q %30 ==0) print("displayRef", displayRef);
+		//determine manipulation to get display from origin to actual displayRef (phasespace) position
+		findRigidBody(displayAtOrigin, displayRef, priorTranslation, rotation, postTranslation);
+	//	if(q%30 == 0) print("priorTranslation", priorTranslation);
+	//	if(q%30 == 0) print("postTranslation", postTranslation);
+		//if(q%30 == 0) print("cameraPosition", cameraPosition);
+		//put scene camera pose in the same coordinates as display ref
+		sceneCamCur = moveRigidBody(cameraPosition, priorTranslation, rotation, postTranslation);
+
+  //	if(q%30==0)	printf("sceneCamCur: %g\n\n",360/2/3.14159*atan((sceneCamCur(2,0))/(sceneCamCur(0,0))));
+
+		if(q%30==0 && !_isnan(phaseMarkerPosition(0)) && !_isnan(phaseMarkerPosition(1)) && !_isnan(phaseMarkerPosition(2))) {
+		 printf("distance, marker: %g\n",
+		sqrt(
+		(phaseMarkerPosition(0) - postTranslation(0))*(phaseMarkerPosition(0) - postTranslation(0))+
+		(phaseMarkerPosition(1) - postTranslation(1))* (phaseMarkerPosition(1) - postTranslation(1))+
+		(phaseMarkerPosition(2) - postTranslation(2))*(phaseMarkerPosition(2) - postTranslation(2))));
+		if(!hasNan(sceneCamCur)) printf("distance betwixt: %g\n",
+			sqrt(
+			(phaseMarkerPosition(0)-sceneCamCur(0,3))*(phaseMarkerPosition(0)-sceneCamCur(0,3))+
+			(phaseMarkerPosition(1)-sceneCamCur(1,3))*(phaseMarkerPosition(1)-sceneCamCur(1,3))+
+			(phaseMarkerPosition(2)-sceneCamCur(2,3))*(phaseMarkerPosition(2)-sceneCamCur(2,3))));
+		}
+		if(q % 30 ==0) printf("display marker x: %g y: %g z: %g\n", phaseMarkerPosition(0), phaseMarkerPosition(1), phaseMarkerPosition(2));
+		if(q % 30 ==0) printf("scene camera x: %g y: %g z: %g\n", sceneCamCur(0,3), sceneCamCur(1,3), sceneCamCur(2,3));
+
+		if(q %30 == 0) print("sceneCamCur", sceneCamCur);
+
+	}
+		 q++;
+
+	delete2D(cameraM, 3);
+	delete1D(distanceC);
+	delete2D(rMat,3);
+	delete1D(tVec);
+
+	delete2D(coords, markerXsTodo.size());
+	delete2D(data, xs.size());
 	}
 
-	double *params = new1D<double>(10, 0.0);
-	params[0] = aInSceneEdit->Text.ToDouble();
-	params[1] = bInSceneEdit->Text.ToDouble();
-	params[2] = gInSceneEdit->Text.ToDouble();
-	params[3] = bxInSceneEdit->Text.ToDouble();
-	params[4] = byInSceneEdit->Text.ToDouble();
-	params[5] = bzInSceneEdit->Text.ToDouble();
-	params[6] = fcInSceneEdit->Text.ToDouble();
-	params[7] = kInSceneEdit->Text.ToDouble();
-	params[8] = ydInSceneEdit->Text.ToDouble();
-	params[9] = zdInSceneEdit->Text.ToDouble();
 
-	double *spread = new1D<double>(10, 0.0);
-	spread[0] = aRangeSceneEdit->Text.ToDouble();
-	spread[1] = bRangeSceneEdit->Text.ToDouble();
-	spread[2] = gRangeSceneEdit->Text.ToDouble();
-	spread[3] = bxRangeSceneEdit->Text.ToDouble();
-	spread[4] = byRangeSceneEdit->Text.ToDouble();
-	spread[5] = bzRangeSceneEdit->Text.ToDouble();
-	spread[6] = fcRangeSceneEdit->Text.ToDouble();
-
-	SceneDeltaFunction *df = new SceneDeltaFunction(coords, data, error, markerXs.size(), 2, params, 10);
-
-	df->setStartingSpread(spread);
-	Minimizer *m = new Minimizer(df);
-
-	m->DoMinimize();
-
-	double* pOut = df->getParameters();
-	if(CONSOLE) {
-		printf("\n");
-		printf("a: %g\n", pOut[0]);
-		printf("b: %g\n", pOut[1]);
-		printf("g: %g\n", pOut[2]);
-		printf("bx: %g\n", pOut[3]);
-		printf("by: %g\n", pOut[4]);
-		printf("bz: %g\n", pOut[5]);
-		printf("fc: %g\n", pOut[6]);
-		printf("K: %g\n", pOut[7]);
-		printf("yc: %g\n", pOut[8]);
-		printf("zc: %g\n", pOut[9]);
-	}
-
-	spread[7] = kRangeSceneEdit->Text.ToDouble();
-	spread[8] = ydRangeSceneEdit->Text.ToDouble();
-	spread[9] = zdRangeSceneEdit->Text.ToDouble();
-
-	df->setStartingSpread(spread);
-	m->DoMinimize();
-
-	if(CONSOLE) {
-		printf("\n");
-		printf("a: %g\n", pOut[0]);
-		printf("b: %g\n", pOut[1]);
-		printf("g: %g\n", pOut[2]);
-		printf("bx: %g\n", pOut[3]);
-		printf("by: %g\n", pOut[4]);
-		printf("bz: %g\n", pOut[5]);
-		printf("fc: %g\n", pOut[6]);
-		printf("K: %g\n", pOut[7]);
-		printf("yc: %g\n", pOut[8]);
-		printf("zc: %g\n", pOut[9]);
-	}
-
-	aOutSceneEdit->Text = FormatFloat("0.00", pOut[0]);
-	bOutSceneEdit->Text = FormatFloat("0.00", pOut[1]);
-	gOutSceneEdit->Text = FormatFloat("0.00", pOut[2]);
-	bxOutSceneEdit->Text = FormatFloat("0.00", pOut[3]);
-	byOutSceneEdit->Text = FormatFloat("0.00", pOut[4]);
-	bzOutSceneEdit->Text = FormatFloat("0.00", pOut[5]);
-	fcOutSceneEdit->Text = FormatFloat("0.00", pOut[6]);
-	kOutSceneEdit->Text = FormatFloat("0.0E+00", pOut[7]);
-	ydOutSceneEdit->Text = FormatFloat("0.00", pOut[8]);
-	zdOutSceneEdit->Text = FormatFloat("0.00", pOut[9]);
-
-	aScene = pOut[0];
-	bScene = pOut[1];
-	gScene = pOut[2];
-	bxScene = pOut[3];
-	byScene = pOut[4];
-	bzScene = pOut[5];
-	fcScene = pOut[6];
-	kScene = pOut[7];
-	ycScene = pOut[8];
-	zcScene = pOut[9];
-
-	modeledSceneXs.clear();
-	modeledSceneYs.clear();
-	for(unsigned int i=0; i<meanEyeXs.size(); i++) {
-		modeledSceneXs.push_back(df->modeled[i][0]);
-		modeledSceneYs.push_back(df->modeled[i][1]);
-	}
-
-	delete m;
-	delete df;
-	delete1D(spread);
-	delete1D(params);
-	delete2D(coords, markerXs.size());
-	delete2D(data, meanSceneXs.size());
-	delete2D(error, stddevSceneXs.size());
-}
 
 
 void __fastcall TForm4::CalculateCalibrationBtnClick(TObject *Sender) {
 	scaleToPhysical();
 	eyeCalibration();
-	sceneCalibration();
 	drawCalibration();
 }
 
@@ -873,16 +1075,8 @@ void __fastcall TForm4::SaveCalibrationBtnClick(TObject *Sender)
 		nodeElement->Attributes["fc"] = UnicodeString(fc);
 
 		nodeElement = Form4->xdoc_out->DocumentElement->AddChild("SceneCalibration", -1);
-		nodeElement->Attributes["a"] = UnicodeString(aScene);
-		nodeElement->Attributes["b"] = UnicodeString(bScene);
-		nodeElement->Attributes["g"] = UnicodeString(gScene);
-		nodeElement->Attributes["bx"] = UnicodeString(bxScene);
-		nodeElement->Attributes["by"] = UnicodeString(byScene);
-		nodeElement->Attributes["bz"] = UnicodeString(bzScene);
-		nodeElement->Attributes["fc"] = UnicodeString(fcScene);
-		nodeElement->Attributes["k"] = UnicodeString(kScene);
-		nodeElement->Attributes["yc"] = UnicodeString(ycScene);
-		nodeElement->Attributes["zc"] = UnicodeString(zcScene);
+		nodeElement->Attributes["cameraMatrix"] = matrixToUnicodeString(cameraMatrix);
+		nodeElement->Attributes["distortionCoeffs"] = vectorToUnicodeString(distortionCoeffs);
 
 		nodeElement = Form4->xdoc_out->DocumentElement->AddChild("Scaling", -1);
 		nodeElement->Attributes["monitorWidth"] = UnicodeString(monitorWidth);
@@ -894,15 +1088,14 @@ void __fastcall TForm4::SaveCalibrationBtnClick(TObject *Sender)
 
 		nodeElement = Form4->xdoc_out->DocumentElement->AddChild("ReferencePositions", -1);
 		nodeElement->Attributes["head"] = matrixToUnicodeString(headRef);
-
 		ublas::vector<int> headMarkers(4);
 		headMarkers(0) = HeadMarker0Edit->Text.ToInt();
 		headMarkers(1) = HeadMarker1Edit->Text.ToInt();
 		headMarkers(2) = HeadMarker2Edit->Text.ToInt();
 		headMarkers(3) = HeadMarker3Edit->Text.ToInt();
 		nodeElement->Attributes["headMarkers"] = vectorToUnicodeString(headMarkers);
-		nodeElement->Attributes["eye"] = vectorToUnicodeString(eyePosition);
 		nodeElement->Attributes["display"] = matrixToUnicodeString(displayRef);
+        nodeElement->Attributes["sceneCamera"] = matrixToUnicodeString(sceneCamCur);
 
 		Form4->xdoc_out->SaveToFile(SaveDialog1->FileName);
 	}
@@ -925,8 +1118,10 @@ void __fastcall TForm4::LoadCalibrationPointsBtnClick(TObject *Sender)
 		stddevEyeYs.clear();
 		meanSceneXs.clear();
 		meanSceneYs.clear();
+		meanSceneZs.clear();
 		stddevSceneXs.clear();
 		stddevSceneYs.clear();
+		stddevSceneZs.clear();
 
 		std::ifstream ifs;
 		ifs.open (AnsiString(OpenDialog1->FileName).c_str());
@@ -971,14 +1166,21 @@ void __fastcall TForm4::LoadCalibrationPointsBtnClick(TObject *Sender)
 			meanSceneYs.push_back(atof(value.c_str()));
 
 			getline(ifs, value, ',');
+			meanSceneZs.push_back(atof(value.c_str()));
+
+			getline(ifs, value, ',');
 			stddevSceneXs.push_back(atof(value.c_str()));
 
-			getline(ifs, value);
+			getline(ifs, value, ',');
 			stddevSceneYs.push_back(atof(value.c_str()));
-	 //		printf("%g %g %g %g %g %g %g %g %g %g\n\n", markerXs[i], markerYs[i], meanEyeXs[i], meanEyeYs[i], stddevEyeXs[i], stddevEyeYs[i], meanSceneXs[i], meanSceneYs[i], stddevSceneXs[i], stddevSceneYs[i]);
+
+			getline(ifs, value);
+			stddevSceneZs.push_back(atof(value.c_str()));
+			printf("%g %g %g %g %g %g %g %g %g %g %g %g\n\n", markerXs[i], markerYs[i], meanEyeXs[i], meanEyeYs[i], stddevEyeXs[i], stddevEyeYs[i], meanSceneXs[i], meanSceneYs[i], meanSceneZs[i], stddevSceneXs[i], stddevSceneYs[i], stddevSceneZs[i]);
 		}
 
 		ifs.close();
+		scaleToPhysical();
 		drawCalibration();
 	}
 }
@@ -1010,16 +1212,20 @@ void TForm4::scaleToPhysical() {
 	double producerHeight = 1.0; //producer window coordinates
 	scaledMarkerXs.clear();
 	scaledMarkerYs.clear();
+	scaledMarkerZs.clear();
 	scaledMeanEyeXs.clear();
 	scaledMeanEyeYs.clear();
 	scaledStddevEyeXs.clear();
 	scaledStddevEyeYs.clear();
 	for(unsigned int i=0; i<markerXs.size(); i++) {
 
-		scaledMarkerXs.push_back(monitorWidth*((producerWidth - markerXs[i])/producerWidth));  //to mm
-		scaledMarkerYs.push_back(monitorHeight*((producerHeight - markerYs[i])/producerHeight)); // to mm
-		scaledMeanEyeXs.push_back(meanEyeXs[i]-cameraWidth/2.0); //to camera pixels, centered at zero
-		scaledMeanEyeYs.push_back(cameraHeight/2.0 - meanEyeYs[i]); //to camera pixels, centered at zero
+	 //	scaledMarkerXs.push_back(monitorWidth*((producerWidth - markerXs[i])/producerWidth));  //to mm
+	 //	scaledMarkerYs.push_back(monitorHeight*((producerHeight - markerYs[i])/producerHeight)); // to mm
+		scaledMarkerXs.push_back(meanSceneZs[i]); //covert from monitor centric to eye centric x,y,z still mm, still centered at zero
+		scaledMarkerYs.push_back(-meanSceneXs[i]); //covert from monitor centric to eye centric x,y,z still mm, still centered at zero
+		scaledMarkerZs.push_back(meanSceneYs[i]); //covert from monitor centric to eye centric x,y,z still mm, still centered at zero
+		scaledMeanEyeXs.push_back(meanEyeXs[i]-(cameraWidth-1)/2.0); //to camera pixels, centered at zero
+		scaledMeanEyeYs.push_back((cameraHeight-1)/2.0 - meanEyeYs[i]); //to camera pixels, centered at zero
 		scaledStddevEyeXs.push_back(stddevEyeXs[i]); //remain in camera pixels
 		scaledStddevEyeYs.push_back(stddevEyeYs[i]); //remain in camera pixels
 	}
@@ -1071,25 +1277,12 @@ void __fastcall TForm4::drawCalibration() {
 	double tempMax;
 	clear_bitmap(sceneCanvas);
 	minMax(meanSceneXs, &minX, &maxX);
-	minMax(modeledSceneXs, &tempMin, &tempMax);
-	minX = (tempMin < minX) ? tempMin : minX;
-	maxX = (tempMax > maxX) ? tempMax : maxX;
+
 
 	minMax(meanSceneYs, &minY, &maxY);
-	minMax(modeledSceneYs, &tempMin, &tempMax);
-	minY = (tempMin < minY) ? tempMin : minY;
-	maxY = (tempMax > maxY) ? tempMax : maxY;
 
 
-	//draw modeled scene Xs and Ys.
-	for(unsigned int i=0; i<modeledSceneXs.size(); i++) {
-		x = modeledSceneXs[i];
-		y = modeledSceneYs[i];
-//		printf("modeled, x: %g  y: %g\n", x, y);
 
-		rescaleForPanel(&x,&y, minX-10, maxX + 10, minY - 10, maxY + 10);
-		circlefill(sceneCanvas,x, y, 2, makecol(255,0,0));
-	}
 
 	//draw measured scene Xs and Ys.
 	for(unsigned int i=0; i<meanSceneXs.size(); i++) {
@@ -1117,6 +1310,26 @@ void __fastcall TForm4::drawCalibration() {
 
 }
 
+void setCameraParams() {
+	cameraMatrix(0,0) = 557;//654.8611202347574;
+	cameraMatrix(0,1) = 0;
+	cameraMatrix(0,2) = (sceneCameraWidth - 1)/2;//319.5;
+	cameraMatrix(1,0) = 0;
+	cameraMatrix(1,1) = 557;//654.8611202347574;
+	cameraMatrix(1,2) = (sceneCameraHeight -1)/2;//239.5;
+	cameraMatrix(2,0) = 0;
+	cameraMatrix(2,1) = 0;
+	cameraMatrix(2,2) = 1;
+
+	distortionCoeffs[0] = -0.3669624087278113;
+	distortionCoeffs[1] = -0.07638290902180184;
+	distortionCoeffs[2] = 0;
+	distortionCoeffs[3] = 0;
+	distortionCoeffs[4] = 0.5764668364450144;
+
+
+}
+
 void __fastcall TForm4::FormCreate(TObject *Sender)
 {
 	allegro_init();
@@ -1128,12 +1341,23 @@ void __fastcall TForm4::FormCreate(TObject *Sender)
 	clear_bitmap(sceneCanvas);
 	MonitorWidthEditChange(this);
 	MonitorHeightEditChange(this);
+	monitorDepthEditChange(this);
 	CameraWidthEditChange(this);
 	CameraHeightEditChange(this);
 	SceneCameraWidthEditChange(this);
 	SceneCameraHeightEditChange(this);
+	HeadMarker0EditChange(this);
+	HeadMarker1EditChange(this);
+	HeadMarker2EditChange(this);
+	HeadMarker3EditChange(this);
+    phasespaceMarker0EditChange(this);
+	phasespaceMarker1EditChange(this);
 
-    Form4->Caption = UnicodeString("Eye Calibrator, version ") + getVersion();
+
+
+	Form4->Caption = UnicodeString("Eye Calibrator, version ") + getVersion();
+
+    setCameraParams();
 
 }
 //---------------------------------------------------------------------------
@@ -1166,12 +1390,14 @@ void __fastcall TForm4::CameraHeightEditChange(TObject *Sender)
 void __fastcall TForm4::SceneCameraWidthEditChange(TObject *Sender)
 {
 	sceneCameraWidth = SceneCameraWidthEdit->Text.ToDouble();
+	setCameraParams();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm4::SceneCameraHeightEditChange(TObject *Sender)
 {
 	sceneCameraHeight = SceneCameraHeightEdit->Text.ToDouble();
+	setCameraParams();
 }
 //---------------------------------------------------------------------------
 
@@ -1181,11 +1407,11 @@ void __fastcall TForm4::SaveCalibrationPointsBtnClick(TObject *Sender)
 	if(SaveDialog2->Execute()) {
 		FILE *fp = fopen(AnsiString(SaveDialog2->FileName).c_str(), "w");
 		if(fp) {
-			fprintf(fp, "markerXs,markerYs,meanEyeXs,meanEyeYs,stddevEyeXs,stddevEyeYs,meanSceneXs,meanSceneYs,stddevSceneXs,stddevSceneYs\n");
+			fprintf(fp, "markerXs,markerYs,meanEyeXs,meanEyeYs,stddevEyeXs,stddevEyeYs,meanSceneXs,meanSceneYs,meanSceneZs,stddevSceneXs,stddevSceneYs,stddevSceneZs\n");
 			for(unsigned int i=0; i < markerXs.size(); ++i) {
-				fprintf(fp, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n", markerXs[i], markerYs[i],
+				fprintf(fp, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n", markerXs[i], markerYs[i],
 					meanEyeXs[i], meanEyeYs[i], stddevEyeXs[i], stddevEyeYs[i],
-					meanSceneXs[i], meanSceneYs[i], stddevSceneXs[i], stddevSceneYs[i]);
+					meanSceneXs[i], meanSceneYs[i], meanSceneZs[i],stddevSceneXs[i], stddevSceneYs[i],stddevSceneZs[i]);
 			}
 			fclose(fp);
 		}
@@ -1203,12 +1429,12 @@ void __fastcall TForm4::ClearCalibrationPointsBtnClick(TObject *Sender)
 	stddevEyeYs.clear();
 	meanSceneXs.clear();
 	meanSceneYs.clear();
+	meanSceneZs.clear();
 	stddevSceneXs.clear();
 	stddevSceneYs.clear();
+	stddevSceneZs.clear();
 	modeledXs.clear();
 	modeledYs.clear();
-	modeledSceneXs.clear();
-	modeledSceneYs.clear();
 	drawCalibration();
 }
 //---------------------------------------------------------------------------
@@ -1221,9 +1447,7 @@ void __fastcall TForm4::FormClose(TObject *Sender, TCloseAction &Action)
 	if(gazeInlet) lsl_destroy_inlet(gazeInlet);
 	if(sceneInlet) lsl_destroy_inlet(sceneInlet);
 	if(phasespaceInlet) lsl_destroy_inlet(phasespaceInlet);
-   /*	if(hGazeStream) ds_Close(hGazeStream);
-	if(hSceneStream) ds_Close(hSceneStream);
-	if(hPhasespace) ds_Close(hPhasespace);  */
+
 }
 //---------------------------------------------------------------------------
 
@@ -1237,6 +1461,11 @@ void __fastcall TForm4::ReferenceHeadButtonClick(TObject *Sender)
 		headYsList[i].clear();
 		headZsList[i].clear();
 	}
+	for(int i=0; i<nSceneCamPoints; i++) {
+		sceneCamXsList[i].clear();
+		sceneCamYsList[i].clear();
+		sceneCamZsList[i].clear();
+	}
 	timerMode = isHead;
 	headCount = 0;
 
@@ -1244,179 +1473,15 @@ void __fastcall TForm4::ReferenceHeadButtonClick(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
-void __fastcall TForm4::WandPosition0ButtonClick(TObject *Sender)
-{
-	WandPosition0Button->Caption = "Please Hold Still";
-	for(int i=0; i<nHeadPoints; i++) {
-		headXsList[i].clear();
-		headYsList[i].clear();
-		headZsList[i].clear();
-	}
-	timerMode = isWand0;
-	headCount = 0;
-}
-//---------------------------------------------------------------------------
 
 
-void __fastcall TForm4::WandPosition1ButtonClick(TObject *Sender)
-{
-	WandPosition1Button->Caption = "Please Hold Still";
-	for(int i=0; i<nHeadPoints; i++) {
-		headXsList[i].clear();
-		headYsList[i].clear();
-		headZsList[i].clear();
-	}
-	timerMode = isWand1;
-	headCount = 0;
-}
-//---------------------------------------------------------------------------
 
 
-void TForm4::updateMonitorMeasurement() {
-	for(unsigned int i=0; i<displayRef.size1(); i++) {
-		for(unsigned int j=0; j<displayRef.size2(); j++) {
-			if(displayRef(i,j) == 0.0) return; //not all data available
-		}
-	}
-	monitorWidth = (length(ublas::column(displayRef, 3) - ublas::column(displayRef,2)) +
-	length(ublas::column(displayRef, 1) - ublas::column(displayRef,0)))/2;
-	MonitorWidthEdit->Text = monitorWidth;
-
-	monitorHeight = (length(ublas::column(displayRef, 2) - ublas::column(displayRef,0)) +
-	length(ublas::column(displayRef, 3) - ublas::column(displayRef,1)))/2;
-	MonitorHeightEdit->Text = monitorHeight;
-	StatusMemo->Lines->Add("Monitor measurement updated.");
-}
 
 
-void __fastcall TForm4::DisplayULButtonClick(TObject *Sender)
-{
-	Timer1->Enabled = false;
-	Sleep(2);
-   //	TMaxArray fr;
-	displayRef(0,0) = displayRef(1,0) = displayRef(2,0) = 0;
- //	while(ds_Read(hPhasespace, (char *) &fr)) {
-	if(phasespaceInlet) {
-		float *buf = new1D<float>(phasespaceChannels,0);
-		int errcode;
-		while(lsl_pull_sample_f(phasespaceInlet,buf,phasespaceChannels,0.0,&errcode));
-
-		int disp =  DisplayMarkerEdit->Text.ToInt();
-		displayRef(0,0) = buf[disp*channelsPerMarker]*1000.0;
-		displayRef(1,0) = buf[disp*channelsPerMarker+1]*1000.0;
-		displayRef(2,0) = buf[disp*channelsPerMarker+2]*1000.0;
-		if(CONSOLE) printf("display marker: %g %g %g\n", buf[disp*4]*1000.0, buf[disp*4+1]*1000.0, buf[disp*4+2]*1000.0);
-		delete1D(buf);
-   }
-	if(displayRef(0,0) == 0) {
-		StatusMemo->Lines->Add("Display measurement failed. Phasespace marker is not visible.");
-		StatusMemo->Color = clRed;
-	}
-	else {
-		updateMonitorMeasurement();
-		StatusMemo->Lines->Add("Display measurement succeeded.");
-		StatusMemo->Color = clWindow;
-	}
-   Timer1->Enabled = true;
-}
-//---------------------------------------------------------------------------
 
 
-void __fastcall TForm4::DisplayURButtonClick(TObject *Sender)
-{
-	Timer1->Enabled = false;
-	Sleep(2);
-   //	TMaxArray fr;
-	displayRef(0,1) = displayRef(1,1) = displayRef(2,1) = 0;
-   //	while(ds_Read(hPhasespace, (char *) &fr)) {
-	if(phasespaceInlet) {
-		float *buf = new1D<float>(phasespaceChannels,0);
-		int errcode;
-		while(lsl_pull_sample_f(phasespaceInlet,buf,phasespaceChannels,0.0,&errcode));
-		int disp =  DisplayMarkerEdit->Text.ToInt();
-		displayRef(0,1) = buf[disp*channelsPerMarker]*1000.0;
-		displayRef(1,1) = buf[disp*channelsPerMarker+1]*1000.0;
-		displayRef(2,1) = buf[disp*channelsPerMarker+2]*1000.0;
-		if(CONSOLE) printf("display marker: %g %g %g\n", buf[disp*channelsPerMarker]*1000.0, buf[disp*channelsPerMarker+1]*1000.0, buf[disp*channelsPerMarker+2]*1000.0);
 
-		delete1D(buf);
-	}
-	if(displayRef(0,1) == 0) {
-		StatusMemo->Lines->Add("Display measurement failed. Phasespace marker is not visible.");
-		StatusMemo->Color = clRed;
-	}
-	else {
-		updateMonitorMeasurement();
-		StatusMemo->Lines->Add("Display measurement succeeded.");
-		StatusMemo->Color = clWindow;
-	}
-	Timer1->Enabled = true;
-}
-//---------------------------------------------------------------------------
-
-
-void __fastcall TForm4::DisplayBLButtonClick(TObject *Sender)
-{
-	Timer1->Enabled = false;
-	Sleep(2);
-   //	TMaxArray fr;
-	displayRef(0,2) = displayRef(1,2) = displayRef(2,2) = 0;
-   //	while(ds_Read(hPhasespace, (char *) &fr)) {
-	if(phasespaceInlet) {
-		float *buf = new1D<float>(phasespaceChannels,0);
-		int errcode;
-		while(lsl_pull_sample_f(phasespaceInlet,buf,phasespaceChannels,0.0,&errcode));
-		int disp =  DisplayMarkerEdit->Text.ToInt();
-		displayRef(0,2) = buf[disp*channelsPerMarker]*1000.0;
-		displayRef(1,2) = buf[disp*channelsPerMarker+1]*1000.0;
-		displayRef(2,2) = buf[disp*channelsPerMarker+2]*1000.0;
-		if(CONSOLE) printf("display marker: %g %g %g\n", buf[disp*channelsPerMarker]*1000.0, buf[disp*channelsPerMarker+1]*1000.0, buf[disp*channelsPerMarker+2]*1000.0);
-		delete1D(buf);
-   }
-	if(displayRef(0,2) == 0) {
-		StatusMemo->Lines->Add("Display measurement failed. Phasespace marker is not visible.");
-		StatusMemo->Color = clRed;
-	}
-	else {
-		updateMonitorMeasurement();
-		StatusMemo->Lines->Add("Display measurement succeeded.");
-		StatusMemo->Color = clWindow;
-	}
-	Timer1->Enabled = true;
-}
-//---------------------------------------------------------------------------
-
-
-void __fastcall TForm4::DisplayBRButtonClick(TObject *Sender)
-{
-	Timer1->Enabled = false;
-	Sleep(2);
-  //	TMaxArray fr;
-	displayRef(0,3) = displayRef(1,3) = displayRef(2,3) = 0;
-  //	while(ds_Read(hPhasespace, (char *) &fr)) {
-	if(phasespaceInlet) {
-		float *buf = new1D<float>(phasespaceChannels,0);
-		int errcode;
-		while(lsl_pull_sample_f(phasespaceInlet,buf,phasespaceChannels,0.0,&errcode));
-		int disp =  DisplayMarkerEdit->Text.ToInt();
-		displayRef(0,3) = buf[disp*channelsPerMarker]*1000.0;
-		displayRef(1,3) = buf[disp*channelsPerMarker+1]*1000.0;
-		displayRef(2,3) = buf[disp*channelsPerMarker+2]*1000.0;
-		if(CONSOLE) printf("display marker: %g %g %g\n", buf[disp*channelsPerMarker]*1000.0, buf[disp*channelsPerMarker+1]*1000.0, buf[disp*channelsPerMarker+2]*1000.0);
-		delete1D(buf);
-	}
-	if(displayRef(0,3) == 0) {
-		StatusMemo->Lines->Add("Display measurement failed. Phasespace marker is not visible.");
-		StatusMemo->Color = clRed;
-	}
-	else {
-		updateMonitorMeasurement();
-		StatusMemo->Lines->Add("Display measurement succeeded.");
-		StatusMemo->Color = clWindow;
-	}
-	Timer1->Enabled = true;
-}
-//---------------------------------------------------------------------------
 
 
 void __fastcall TForm4::testEyeClick(TObject *Sender)
@@ -1555,19 +1620,94 @@ void __fastcall TForm4::PhaseComboBoxChange(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
+
+
+void TForm4::LoadHotspotsConfig(const System::UnicodeString FileName)
+{
+
+	std::map<int, TPoint3D*> p3Ds;
+	Form4->xdoc_out->LoadFromFile(FileName);
+
+	_di_IXMLNode nodeElement =
+		Form4->xdoc_out->ChildNodes->FindNode("Configuration")->ChildNodes->FindNode("Locations");
+
+	if (nodeElement != NULL) {
+
+		for (int i = 0; i < nodeElement->ChildNodes->Count; i++) {
+			const _di_IXMLNode node = nodeElement->ChildNodes->Get(i);
+
+			int id = node->Attributes["id"];
+			p3Ds[id] =  new TPoint3D(node->Attributes["x"],node->Attributes["y"],node->Attributes["z"], node->Attributes["id"]);
+
+		}
+	} else {
+				Application->MessageBoxA(L"Unable to find Locations group.", L"Error", MB_OK);
+	}
+
+	nodeElement = Form4->xdoc_out->ChildNodes->FindNode("Configuration")->ChildNodes->FindNode("Hotspots");
+
+	if (nodeElement != NULL) {
+		int desiredMonitor = 3;
+		for (int i = 0; i < nodeElement->ChildNodes->Count; i++) {
+			const _di_IXMLNode node = nodeElement->ChildNodes->Get(i);
+
+			 if (node->NodeName == UnicodeString("Screen")) {
+				int monitor = node->Attributes["monitor"];
+				if(monitor == desiredMonitor) {
+
+					int topLeftID = node->Attributes["topLeft"];
+					int topRightID = node->Attributes["topRight"];
+					int bottomLeftID = node->Attributes["bottomLeft"];
+					int bottomRightID = node->Attributes["bottomRight"];
+
+					ublas::vector<double> TL = p3Ds[topLeftID]->toDoubleVector();
+					ublas::vector<double> TR = p3Ds[topRightID]->toDoubleVector();
+					ublas::vector<double> BL = p3Ds[bottomLeftID]->toDoubleVector();
+					ublas::vector<double> BR = p3Ds[bottomRightID]->toDoubleVector();
+
+					double monitorDepth = node->Attributes["monitorDepth"];
+
+					//measure the actual width and height.
+					monitorWidth = (length(BR - BL) + length(TR - TL))/2;
+					MonitorWidthEdit->Text = monitorWidth;
+					monitorHeight = (length(BL - TL) + 	length(BR - TR))/2;
+					MonitorHeightEdit->Text = monitorHeight;
+
+					//given the depth, push the monitor back by the requested amount.
+					ublas::vector<double> tot = cross(TR-TL, BL-TL) + cross(BR-TR, TL-TR) + cross(BL-BR, TR-BR) + cross(TL-BL, BR-BL);
+					tot = monitorDepth*tot/length(tot);
+					StatusMemo->Lines->Add("Monitor measurement updated.");
+					print("TL", TL);
+					print("TR", TR);
+					print("BL", BL);
+					print("BR", BR);
+					for(int i=0; i<3; i++) {
+							displayRef(i,0) = TL(i) + tot(i);
+							displayRef(i,1) = TR(i) + tot(i);
+							displayRef(i,2) = BL(i) + tot(i);
+							displayRef(i,3) = BR(i) + tot(i);
+					}
+					print("tot", tot);
+					print("displayRef", displayRef);
+
+				}
+			}
+
+		}
+	} else {
+			Application->MessageBoxA(L"Unable to find Hotspots group.", L"Error", MB_OK);
+	}
+}
+
+
 /**************************************************************************
 
  Begin marker control code.
 
 ***************************************************************************/
 
-std::vector<MonitorDrawer*> monitorDrawers;
 
-std::vector<int> monitorsTodo;
-std::vector<double> markerXsTodo;
-std::vector<double> markerYsTodo;
 
-int currentSpot = -1;
 
 void __fastcall TForm4::FormKeyPress(TObject *Sender, wchar_t &Key)
 {
@@ -1582,6 +1722,7 @@ void __fastcall TForm4::FormKeyPress(TObject *Sender, wchar_t &Key)
 				if(currentSpot >= 0 && currentSpot < markerXsTodo.size())
 					monitorDrawers[monitorsTodo[currentSpot]-1]->drawMarkers(markerXsTodo[currentSpot],markerYsTodo[currentSpot],false);
 				currentSpot--;
+				if(currentSpot < 0) currentSpot = 0;
 				if(currentSpot >= 0 && currentSpot < markerXsTodo.size())
 					monitorDrawers[monitorsTodo[currentSpot]-1]->drawMarkers(markerXsTodo[currentSpot],markerYsTodo[currentSpot],true);
 				markerX = -1.0;
@@ -1699,7 +1840,7 @@ BOOL CALLBACK MonitorEnumProc(
 					szAppName,
 					"Basic Win32 Application",
 					WS_POPUP/* | WS_VISIBLE */ ,
-				   	x-2,
+					x-2,
 					y-2,
 					width+4,
 					height+4,
@@ -1819,76 +1960,126 @@ void __fastcall TForm4::Timer3Timer(TObject *Sender)
 
 
 
-/*
-//---------------------------------------------------------------------------
-std::map<int, TPoint3D*> p3Ds;
 
-void __fastcall TForm4::LoadCalibrationButtonClick(TObject *Sender)
+
+
+
+void __fastcall TForm4::phasespaceTestStartClick(TObject *Sender)
+{
+	timerMode = isPhasespaceTest;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm4::phasespaceTestStopClick(TObject *Sender)
+{
+	timerMode = isStandard;
+}
+//---------------------------------------------------------------------------
+
+
+
+void __fastcall TForm4::monitorDepthEditChange(TObject *Sender)
+{
+	monitorDepth = monitorDepthEdit->Text.ToDouble();
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm4::MonitorPositionButtonClick(TObject *Sender)
 {
 	if (OpenDialog2->Execute())
 	{
-		LoadConfig(OpenDialog2->FileName);
+		LoadHotspotsConfig(OpenDialog2->FileName);
 	}
 }
 //---------------------------------------------------------------------------
 
 
-void TForm4::LoadConfig(const System::UnicodeString FileName)
+void __fastcall TForm4::HeadMarker0EditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		HeadMarker0Edit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex)  head0 =  HeadMarker0Edit->Text.ToInt();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm4::HeadMarker1EditChange(TObject *Sender)
+{
+ 	bool ex = false;
+	try {
+		HeadMarker1Edit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex)  head1 =  HeadMarker1Edit->Text.ToInt();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm4::HeadMarker2EditChange(TObject *Sender)
+{
+ 	bool ex = false;
+	try {
+		HeadMarker2Edit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex)  head2 =  HeadMarker2Edit->Text.ToInt();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm4::HeadMarker3EditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		HeadMarker3Edit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex)  head3 =  HeadMarker3Edit->Text.ToInt();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm4::phasespaceMarker0EditChange(TObject *Sender)
 {
 
-
-	Form4->xdoc_out->LoadFromFile(FileName);
-
-	_di_IXMLNode nodeElement =
-		Form4->xdoc_out->ChildNodes->FindNode("Configuration")->ChildNodes->FindNode("Locations");
-
-	if (nodeElement != NULL) {
-
-		for (int i = 0; i < nodeElement->ChildNodes->Count; i++) {
-			const _di_IXMLNode node = nodeElement->ChildNodes->Get(i);
-
-			TPoint3D *    p3D =  new TPoint3D(node->Attributes["x"],node->Attributes["y"],node->Attributes["z"], node->Attributes["id"]);
-			int id = node->Attributes["id"];
-			p3Ds[id] = p3D;
-
-		}
-	} else {
-		Application->MessageBoxA(L"Unable to find Locations group.", L"Error", MB_OK);
+	bool ex = false;
+	try {
+		phasespaceMarker0Edit->Text.ToInt();
+	} catch (...) {
+		ex = true;
 	}
 
-	nodeElement = Form4->xdoc_out->ChildNodes->FindNode("Configuration")->ChildNodes->FindNode("Hotspots");
-
-	if (nodeElement != NULL) {
-
-		for (int i = 0; i < nodeElement->ChildNodes->Count; i++) {
-			const _di_IXMLNode node = nodeElement->ChildNodes->Get(i);
-
-		if (node->NodeName == UnicodeString("Screen")) {
-
-
-				THotspotScreen * pHs = new THotspotScreen(
-				p3Ds,
-				(int) node->Attributes["topLeft"],
-				(int) node->Attributes["topRight"],
-				(int) node->Attributes["bottomLeft"],
-				(int) node->Attributes["bottomRight"],
-				(int) node->Attributes["sensor0"],
-				(int) node->Attributes["sensor1"],
-				(int) node->Attributes["device"],
-				(int) node->Attributes["monitor"]);
-				hotspotScreens.push_back(pHs);
-			} else {
-				Application->MessageBoxA((UnicodeString(L"Node: ") + node->NodeName + UnicodeString(" not recognized.")).w_str(), L"Error", MB_OK);
-			}
-
-		}
-	} else {
-			Application->MessageBoxA(L"Unable to find Hotspots group.", L"Error", MB_OK);
-	}
+	if(!ex)  phase0 = phasespaceMarker0Edit->Text.ToInt();
 }
+//---------------------------------------------------------------------------
 
-  */
+void __fastcall TForm4::phasespaceMarker1EditChange(TObject *Sender)
+{
+ 	bool ex = false;
+	try {
+		phasespaceMarker1Edit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
 
+	if(!ex)  phase1 = phasespaceMarker1Edit->Text.ToInt();
+}
+//---------------------------------------------------------------------------
 
-
+void __fastcall TForm4::AbortCalibrationButtonClick(TObject *Sender)
+{
+		for(unsigned int monitor=1; monitor<=monitorDrawers.size(); monitor++) {
+			if(monitorDrawers[monitor-1]->visible)  monitorDrawers[monitor-1]->setVisible(SW_HIDE);
+		}
+		currentSpot = -1;
+}
+//---------------------------------------------------------------------------
 

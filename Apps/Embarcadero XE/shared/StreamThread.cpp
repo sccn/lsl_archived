@@ -93,6 +93,7 @@ TStreamThread::TStreamThread(char * typeNam, TProcessDataString PD):TThread(fals
 
 };
 
+
 __fastcall TStreamThread::~TStreamThread()
 {
 	lsl_destroy_inlet(inlet);
@@ -182,7 +183,6 @@ void __fastcall TStreamThread::Execute()
 		if(ProcessDataF32) {
 
 			double timestamp = lsl_pull_sample_f(inlet,f32buf, nChannels, 1.0, &errcode);
-
 			if(timestamp) {
 				if(resamplingRate <= 0)
 					ProcessDataF32(f32buf, nChannels, samplingRate);
