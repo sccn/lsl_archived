@@ -54,7 +54,9 @@ else ()
     external/src/thread/pthread/thread.cpp
     external/src/thread/tss_null.cpp
     )
-    set_property (TARGET boost PROPERTY COMPILE_FLAGS "-fPIC")
+    if (NOT MSVC)
+      set_property (TARGET boost PROPERTY COMPILE_FLAGS "-fPIC")
+    endif ()
 endif (USE_SYSTEM_BOOST)
 
 add_subdirectory (src)
