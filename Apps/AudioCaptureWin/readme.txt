@@ -1,0 +1,4 @@
+This program should work out of the box on Windows Vista or later. It uses the native WASAPI audio interface of the operating system which (in theory) allows for accurate time-stamping of every collected sample. Note that the actual accuracy of the time stamps is up to the used sound card and card drivers, so it is recommended to use known-to-be-good hardware or at least test the ms-level synchronicity of the audio prior to relying on it too much. In the worst case the offset is likely never greater than the total latency of the audio chain (which may be between 30ms and 80ms depending on hardware).
+
+For Windows XP there is an older LSL audio recording app available on request; it uses the irrKlank audio library, which in turn uses DirectX audio. That application does not support support accurate time synchronization and is therefore deprecated.
+
