@@ -28,6 +28,6 @@ add_library (lsl SHARED
   udp_server.cpp
   xml_element.cpp
   pugixml/pugixml.cpp
-  )
+)
 
 target_link_libraries (lsl ${Boost_LIBRARIES})

@@ -14,7 +14,8 @@ else ()
   set (Boost_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/external)
   set (Boost_LIBRARIES boost)
   include_directories (${Boost_INCLUDE_DIRS})
-  add_library (boost
+  
+  set (Boost_FILES  # Platform-independent sources
     external/src/chrono/chrono.cpp
     external/src/filesystem/codecvt_error_category.cpp
     external/src/filesystem/operations.cpp
@@ -50,13 +51,23 @@ else ()
     external/src/serialization/void_cast.cpp
     external/src/system/error_code.cpp
     external/src/system/local_free_on_destruction.hpp
-    external/src/thread/pthread/once.cpp
-    external/src/thread/pthread/thread.cpp
     external/src/thread/tss_null.cpp
+  )
+  if (UNIX)
+    add_library (boost
+      ${Boost_FILES}
+      external/src/thread/pthread/once.cpp
+      external/src/thread/pthread/thread.cpp
     )
-    if (NOT MSVC)
-      set_property (TARGET boost PROPERTY COMPILE_FLAGS "-fPIC")
-    endif ()
+    set_property (TARGET boost PROPERTY COMPILE_FLAGS "-fPIC")
+  else ()
+    add_library (boost
+      ${Boost_FILES}
+      external/src/thread/win32/thread.cpp
+      external/src/thread/win32/tss_dll.cpp
+      external/src/thread/win32/tss_pe.cpp
+    )
+  endif (UNIX)
 endif (USE_SYSTEM_BOOST)
 
 add_subdirectory (src)
