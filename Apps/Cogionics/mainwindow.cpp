@@ -134,6 +134,20 @@ void MainWindow::link_cogionics() {
 			if (hPort == INVALID_HANDLE_VALUE)
 				throw std::runtime_error("Could not open serial port. Please make sure that the device is paired (pairing code 0000) and that you have the right serial port number.");
 
+			//setup serial port parameters
+			DCB dcbSerialParams = {0};
+			if (!GetCommState(hPort, &dcbSerialParams)) {
+				QMessageBox::critical(this,"Error","Could not get COM port state.",QMessageBox::Ok);
+			}
+			dcbSerialParams.BaudRate=1500000;
+			dcbSerialParams.ByteSize=8;
+			dcbSerialParams.StopBits=ONESTOPBIT;
+			dcbSerialParams.Parity=NOPARITY;
+
+			if(!SetCommState(hPort, &dcbSerialParams)) {
+				QMessageBox::critical(this,"Error","Could not set baud rate.",QMessageBox::Ok);
+			}
+
 			// try to set timeouts
 			COMMTIMEOUTS timeouts = {0};
 			timeouts.ReadIntervalTimeout = 500;
@@ -141,7 +155,10 @@ void MainWindow::link_cogionics() {
 			timeouts.ReadTotalTimeoutMultiplier = 10;
 			timeouts.WriteTotalTimeoutConstant = 50;
 			timeouts.WriteTotalTimeoutMultiplier = 10;
-			SetCommTimeouts(hPort,&timeouts);
+		
+			if (!SetCommTimeouts(hPort,&timeouts)) {
+				QMessageBox::critical(this,"Error","Could not set COM port timeouts.",QMessageBox::Ok);
+			}
 
 			// start reading
 			stop_ = false;
