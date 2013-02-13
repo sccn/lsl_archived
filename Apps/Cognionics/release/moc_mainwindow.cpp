@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mainwindow.h'
 **
-** Created: Mon Feb 11 17:08:25 2013
+** Created: Wed Feb 13 12:54:43 2013
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -34,14 +34,14 @@ static const uint qt_meta_data_MainWindow[] = {
       12,   11,   11,   11, 0x08,
       33,   11,   11,   11, 0x08,
       54,   11,   11,   11, 0x08,
-      74,   71,   11,   11, 0x08,
+      75,   72,   11,   11, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_MainWindow[] = {
     "MainWindow\0\0load_config_dialog()\0"
-    "save_config_dialog()\0link_cogionics()\0"
+    "save_config_dialog()\0link_cognionics()\0"
     "ev\0closeEvent(QCloseEvent*)\0"
 };
 
@@ -53,7 +53,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         switch (_id) {
         case 0: _t->load_config_dialog(); break;
         case 1: _t->save_config_dialog(); break;
-        case 2: _t->link_cogionics(); break;
+        case 2: _t->link_cognionics(); break;
         case 3: _t->closeEvent((*reinterpret_cast< QCloseEvent*(*)>(_a[1]))); break;
         default: ;
         }

@@ -23,7 +23,7 @@ ui(new Ui::MainWindow)
 
 	// make GUI connections
 	QObject::connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
-	QObject::connect(ui->linkButton, SIGNAL(clicked()), this, SLOT(link_cogionics()));
+	QObject::connect(ui->linkButton, SIGNAL(clicked()), this, SLOT(link_cognionics()));
 	QObject::connect(ui->actionLoad_Configuration, SIGNAL(triggered()), this, SLOT(load_config_dialog()));
 	QObject::connect(ui->actionSave_Configuration, SIGNAL(triggered()), this, SLOT(save_config_dialog()));
 }
@@ -98,8 +98,8 @@ void MainWindow::save_config(const std::string &filename) {
 }
 
 
-// start/stop the cogionics connection
-void MainWindow::link_cogionics() {
+// start/stop the cognionics connection
+void MainWindow::link_cognionics() {
 	if (reader_thread_) {
 		// === perform unlink action ===
 		try {
@@ -136,17 +136,15 @@ void MainWindow::link_cogionics() {
 
 			//setup serial port parameters
 			DCB dcbSerialParams = {0};
-			if (!GetCommState(hPort, &dcbSerialParams)) {
+			if (!GetCommState(hPort, &dcbSerialParams))
 				QMessageBox::critical(this,"Error","Could not get COM port state.",QMessageBox::Ok);
-			}
 			dcbSerialParams.BaudRate=1500000;
 			dcbSerialParams.ByteSize=8;
 			dcbSerialParams.StopBits=ONESTOPBIT;
 			dcbSerialParams.Parity=NOPARITY;
 
-			if(!SetCommState(hPort, &dcbSerialParams)) {
+			if(!SetCommState(hPort, &dcbSerialParams))
 				QMessageBox::critical(this,"Error","Could not set baud rate.",QMessageBox::Ok);
-			}
 
 			// try to set timeouts
 			COMMTIMEOUTS timeouts = {0};
@@ -156,9 +154,8 @@ void MainWindow::link_cogionics() {
 			timeouts.WriteTotalTimeoutConstant = 50;
 			timeouts.WriteTotalTimeoutMultiplier = 10;
 		
-			if (!SetCommTimeouts(hPort,&timeouts)) {
+			if (!SetCommTimeouts(hPort,&timeouts))
 				QMessageBox::critical(this,"Error","Could not set COM port timeouts.",QMessageBox::Ok);
-			}
 
 			// start reading
 			stop_ = false;
@@ -167,7 +164,7 @@ void MainWindow::link_cogionics() {
 		catch(std::exception &e) {
 			if (hPort != INVALID_HANDLE_VALUE)
 				CloseHandle(hPort);
-			QMessageBox::critical(this,"Error",(std::string("Could not initialize the Cogionics interface: ")+=e.what()).c_str(),QMessageBox::Ok);
+			QMessageBox::critical(this,"Error",(std::string("Could not initialize the Cognionics interface: ")+=e.what()).c_str(),QMessageBox::Ok);
 			return;
 		}
 
@@ -181,7 +178,7 @@ void MainWindow::link_cogionics() {
 void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int channelCount, std::vector<std::string> channelLabels) {
 
 	// create streaminfo
-	lsl::stream_info info("Cogionics","EEG",channelCount,samplingRate,lsl::cf_float32,"Cogionics_C" + boost::lexical_cast<std::string>(channelCount));
+	lsl::stream_info info("Cognionics","EEG",channelCount,samplingRate,lsl::cf_float32,"Cognionics_C" + boost::lexical_cast<std::string>(channelCount));
 	// append some meta-data
 	lsl::xml_element channels = info.desc().append_child("channels");
 	for (int k=0;k<channelLabels.size();k++) {
@@ -191,7 +188,7 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int ch
 			.append_child_value("unit","microvolts");
 	}
 	info.desc().append_child("acquisition")
-		.append_child_value("manufacturer","Cogionics");
+		.append_child_value("manufacturer","Cognionics");
 
 	// make a new outlet
 	lsl::stream_outlet outlet(info,samples_per_chunk);

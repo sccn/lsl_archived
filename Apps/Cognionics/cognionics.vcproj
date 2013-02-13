@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="Cogionics"
+	Name="Cognionics"
 	ProjectGUID="{F63650CA-477B-3725-8C9E-DF4E4A710E9C}"
 	Keyword="Qt4VSv1.0"
 	TargetFrameworkVersion="0"
@@ -260,7 +260,7 @@
 				IgnoreImportLibrary="true"
 				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
 				AdditionalDependencies="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\qtmain.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtGui4.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtCore4.lib"
-				OutputFile="$(OutDir)\Cogionics.exe"
+				OutputFile="$(OutDir)\Cognionics.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\LSL\liblsl\bin;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib&quot;;&quot;$(BOOST_ROOT)\lib&quot;"

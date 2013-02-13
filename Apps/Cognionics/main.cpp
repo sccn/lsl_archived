@@ -6,7 +6,7 @@
 int main(int argc, char *argv[])
 {
     // determine the startup config file...
-    std::string config_file = "cogionics_config.cfg";
+    std::string config_file = "cognionics_config.cfg";
     for (int k=1;k<argc;k++)
         if (std::string(argv[k]) == "-c" || std::string(argv[k]) == "--config")
             config_file = argv[k+1];

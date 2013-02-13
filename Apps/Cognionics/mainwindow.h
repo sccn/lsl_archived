@@ -33,8 +33,8 @@ private slots:
     void load_config_dialog();
     void save_config_dialog();
 
-    // start the cogionics connection
-    void link_cogionics();
+    // start the cognionics connection
+    void link_cognionics();
 
     // close event (potentially disabled)
     void closeEvent(QCloseEvent *ev);
