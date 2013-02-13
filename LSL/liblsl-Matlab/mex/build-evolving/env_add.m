@@ -1,0 +1,1 @@
+any(cellfun(@exist,{'lsl_library_version', 'lsl_samples_available', 'lsl_loadlib_', 'lsl_push_sample'})==3)
