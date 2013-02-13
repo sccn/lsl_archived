@@ -1,6 +1,6 @@
 == Usage ==
 
-To use this program, you first need to have your Cogionics EEG system paired to your computer via Bluetooth. The pairing code for the device is 0000. 
+To use this program, you first need to have your Cognionics EEG system paired to your computer via Bluetooth. The pairing code for the device is 0000. 
 
 (Side note: If necessary, please consult your operating system documentation on how to pair a device with your computer (on Windows, it essentially amounts to right-clicking the Bluetooth icon in the systray, selecting "Add Device...", picking the Cogionics device, selecting the "pair with a pairing code" option, typing in 0000, and waiting until the device is successfully added. As the device is getting paired, it is being assigned a COM port (a.k.a. serial port) number by your OS. On Windows, you see the assigned port number as a pop-up notification in your taskbar (saying something along the lines of "COM3" or some other number). You can also look it up in the device properties after it has been added.)
 
