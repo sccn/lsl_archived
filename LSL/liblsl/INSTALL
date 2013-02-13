@@ -1,1 +1,125 @@
- 
+=======
+General
+=======
+
+This manual describes the process of building liblsl from source for Windows, Mac OS X, and Linux. Since liblsl is cross-platform (it is written in standard C++ and uses some boost libraries), this process should be pretty straightforward. The following paragraphs provide a step-by-step instruction of the build process on all three platforms.
+
+To get an overview of the project structure, the following tree lists the directory hierarchy of the source after you've unpacked the compressed source archive:
+
+  labstreaminglayer
+  ├── Apps
+  │   ├── AMTI ForcePlate
+  │   ├── AudioCaptureWin
+  │   ├── BAlert
+  │   ├── BioSemi
+  │   ├── Cogionics
+  │   ├── EGIAmpServer
+  │   ├── Embarcadero XE
+  │   ├── Enobio
+  │   ├── EyeLink
+  │   ├── GameController
+  │   ├── Keyboard
+  │   ├── KinectMocap
+  │   ├── LabRecorder
+  │   ├── MATLAB Importer
+  │   ├── MATLAB Viewer
+  │   ├── MINDO
+  │   ├── Mouse
+  │   ├── Neuroscan
+  │   ├── OptiTrack
+  │   ├── PhaseSpace
+  │   ├── SMI iViewX
+  │   ├── Tobii
+  │   └── Wiimote
+  └── LSL
+      ├── liblsl [*]
+      │   ├── bin
+      │   ├── docs
+      │   ├── examples
+      │   ├── external
+      │   │   ├── boost
+      │   │   └── src
+      │   ├── include
+      │   ├── output
+      │   ├── project
+      │   ├── src
+      │   │   ├── portable_archive
+      │   │   └── pugixml
+      │   └── testing
+      ├── liblsl-Matlab
+      │   ├── bin
+      │   ├── examples
+      │   └── mex
+      └── liblsl-Python
+
+To build liblsl, we are primarily interested in the directory labstreaminglayer/LSL/liblsl (marked with [*] in the tree above). Therefore, we will denote this directory as $LIBLSL_ROOT in this manual.
+
+
+=======
+Windows
+=======
+
+Tested platforms:
+* Windows 7 (32bit)
+
+Prerequisites:
+* Visual Studio Express 2012
+* cmake
+
+Build process:
+* Unpack the source archive (or check out the latest development version via Mercurial)
+* Create a folder named "build" inside $LIBLSL_ROOT
+* Start CMake (cmake-gui)
+* In "Where is the source code", enter $LIBLSL_ROOT
+* In "Where to build the binaries", enter $LIBLSL_ROOT/build
+* Click "Configure"
+* Choose "Visual Studio 11" and "Use default native compilers" and click "Finish"
+* Click "Generate" -- this will create (among other things) a Visual Studio solution file in $LIBLSL_ROOT/build
+* Open $LIBLSL_ROOT/build/liblsl.sln with Visual Studio (double-clicking should just work)
+* In the "Solution Configuration" drop-down list, select either "Release" or "Debug", depending on what you want to build
+* Hit F7 (or click "Build Solution")
+* The resulting library (lsl.dll) will be located in $LIBLSL_ROOT/build/src/Release or $LIBLSL_ROOT/build/src/Debug
+
+
+========
+Mac OS X
+========
+
+Tested platforms:
+* Mac OS X 10.8 (Mountain Lion)
+
+Prerequisites:
+* Xcode
+* cmake (either from the official cmake website or via MacPorts)
+
+Build process:
+* See the Linux section below
+
+
+=====
+Linux
+=====
+
+Tested platforms:
+* Arch Linux (64bit)
+
+Prerequisites:
+* GNU toolchain (make, gcc, binutils)
+* cmake
+
+Build process:
+* Open a terminal
+* Unpack the source archive (or check out the latest development version via Mercurial)
+* Change into $LIBLSL_ROOT
+  $ cd $LIBLSL_ROOT
+* Create a build folder
+  $ mkdir build
+  $ cd build
+* Execute cmake
+  * If you want to compile and use the included boost libraries:
+    $ cmake ..
+  * If you want to use your system boost libraries:
+    $ cmake .. -DUSE_SYSTEM_BOOST=ON
+* Build the library
+  $ make
+* Once the build finishes, the library (liblsl.so) can be found in $LIBLSL_ROOT/build/src
