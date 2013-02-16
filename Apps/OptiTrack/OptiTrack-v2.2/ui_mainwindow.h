@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Wed Aug 1 13:23:43 2012
+** Created: Fri Feb 15 18:43:17 2013
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -42,8 +42,16 @@ public:
     QFormLayout *formLayout;
     QLabel *label;
     QLineEdit *serverAddress;
+    QLabel *label_2;
+    QLineEdit *clientAddress;
+    QLabel *label_4;
+    QLineEdit *commandPort;
+    QLabel *label_5;
+    QLineEdit *dataPort;
     QLabel *label_3;
     QComboBox *cameraType;
+    QLabel *label_6;
+    QLineEdit *multicastAddress;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
     QPushButton *linkButton;
@@ -55,7 +63,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(254, 133);
+        MainWindow->resize(284, 271);
         actionLoad_Configuration = new QAction(MainWindow);
         actionLoad_Configuration->setObjectName(QString::fromUtf8("actionLoad_Configuration"));
         action_Save_Configuration = new QAction(MainWindow);
@@ -71,27 +79,69 @@ public:
         formLayout = new QFormLayout();
         formLayout->setSpacing(6);
         formLayout->setObjectName(QString::fromUtf8("formLayout"));
+        formLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
         label = new QLabel(centralWidget);
         label->setObjectName(QString::fromUtf8("label"));
 
-        formLayout->setWidget(0, QFormLayout::LabelRole, label);
+        formLayout->setWidget(1, QFormLayout::LabelRole, label);
 
         serverAddress = new QLineEdit(centralWidget);
         serverAddress->setObjectName(QString::fromUtf8("serverAddress"));
         serverAddress->setMinimumSize(QSize(106, 0));
 
-        formLayout->setWidget(0, QFormLayout::FieldRole, serverAddress);
+        formLayout->setWidget(1, QFormLayout::FieldRole, serverAddress);
+
+        label_2 = new QLabel(centralWidget);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+
+        formLayout->setWidget(3, QFormLayout::LabelRole, label_2);
+
+        clientAddress = new QLineEdit(centralWidget);
+        clientAddress->setObjectName(QString::fromUtf8("clientAddress"));
+
+        formLayout->setWidget(3, QFormLayout::FieldRole, clientAddress);
+
+        label_4 = new QLabel(centralWidget);
+        label_4->setObjectName(QString::fromUtf8("label_4"));
+
+        formLayout->setWidget(4, QFormLayout::LabelRole, label_4);
+
+        commandPort = new QLineEdit(centralWidget);
+        commandPort->setObjectName(QString::fromUtf8("commandPort"));
+
+        formLayout->setWidget(4, QFormLayout::FieldRole, commandPort);
+
+        label_5 = new QLabel(centralWidget);
+        label_5->setObjectName(QString::fromUtf8("label_5"));
+
+        formLayout->setWidget(5, QFormLayout::LabelRole, label_5);
+
+        dataPort = new QLineEdit(centralWidget);
+        dataPort->setObjectName(QString::fromUtf8("dataPort"));
+        dataPort->setLayoutDirection(Qt::LeftToRight);
+
+        formLayout->setWidget(5, QFormLayout::FieldRole, dataPort);
 
         label_3 = new QLabel(centralWidget);
         label_3->setObjectName(QString::fromUtf8("label_3"));
 
-        formLayout->setWidget(1, QFormLayout::LabelRole, label_3);
+        formLayout->setWidget(0, QFormLayout::LabelRole, label_3);
 
         cameraType = new QComboBox(centralWidget);
         cameraType->setObjectName(QString::fromUtf8("cameraType"));
         cameraType->setEditable(true);
 
-        formLayout->setWidget(1, QFormLayout::FieldRole, cameraType);
+        formLayout->setWidget(0, QFormLayout::FieldRole, cameraType);
+
+        label_6 = new QLabel(centralWidget);
+        label_6->setObjectName(QString::fromUtf8("label_6"));
+
+        formLayout->setWidget(6, QFormLayout::LabelRole, label_6);
+
+        multicastAddress = new QLineEdit(centralWidget);
+        multicastAddress->setObjectName(QString::fromUtf8("multicastAddress"));
+
+        formLayout->setWidget(6, QFormLayout::FieldRole, multicastAddress);
 
 
         verticalLayout->addLayout(formLayout);
@@ -114,7 +164,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 254, 18));
+        menuBar->setGeometry(QRect(0, 0, 284, 18));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QString::fromUtf8("menuFile"));
         MainWindow->setMenuBar(menuBar);
@@ -141,6 +191,12 @@ public:
         action_Quit->setText(QApplication::translate("MainWindow", "&Quit", 0, QApplication::UnicodeUTF8));
         label->setText(QApplication::translate("MainWindow", "OptiTrack Server Address", 0, QApplication::UnicodeUTF8));
         serverAddress->setText(QString());
+        label_2->setText(QApplication::translate("MainWindow", "Local Client Address", 0, QApplication::UnicodeUTF8));
+        clientAddress->setText(QApplication::translate("MainWindow", "127.0.0.1", 0, QApplication::UnicodeUTF8));
+        label_4->setText(QApplication::translate("MainWindow", "OptiTrack Command Port", 0, QApplication::UnicodeUTF8));
+        commandPort->setText(QApplication::translate("MainWindow", "3131", 0, QApplication::UnicodeUTF8));
+        label_5->setText(QApplication::translate("MainWindow", "OptiTrack Data Port", 0, QApplication::UnicodeUTF8));
+        dataPort->setText(QApplication::translate("MainWindow", "3130", 0, QApplication::UnicodeUTF8));
         label_3->setText(QApplication::translate("MainWindow", "Camera Type", 0, QApplication::UnicodeUTF8));
         cameraType->clear();
         cameraType->insertItems(0, QStringList()
@@ -151,6 +207,8 @@ public:
          << QApplication::translate("MainWindow", "V120:Trio", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "V120:SLIM", 0, QApplication::UnicodeUTF8)
         );
+        label_6->setText(QApplication::translate("MainWindow", "Multicast Address", 0, QApplication::UnicodeUTF8));
+        multicastAddress->setText(QApplication::translate("MainWindow", "(default)", 0, QApplication::UnicodeUTF8));
         linkButton->setText(QApplication::translate("MainWindow", "Link", 0, QApplication::UnicodeUTF8));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", 0, QApplication::UnicodeUTF8));
     } // retranslateUi

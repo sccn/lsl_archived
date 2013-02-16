@@ -1,0 +1,1 @@
+swig -java -c++ liblsl.i
