@@ -77,6 +77,10 @@ void MainWindow::load_config(const string &filename) {
 			ui->cameraType->setCurrentIndex(idx);
 		// and assign the configured server address
 		ui->serverAddress->setText(pt.get<string>("server.address","").c_str());
+		ui->clientAddress->setText(pt.get<string>("client.address","127.0.0.1").c_str());
+		ui->multicastAddress->setText(pt.get<string>("server.multicast_address","(default)").c_str());
+		ui->commandPort->setText(pt.get<string>("server.commandport","3131").c_str());
+		ui->dataPort->setText(pt.get<string>("server.dataport","3130").c_str());
 	} catch(exception &) {
 		QMessageBox::information(this,"Error in Config File","Could not read out config parameters.",QMessageBox::Ok);
 		return;
@@ -89,6 +93,10 @@ void MainWindow::save_config(const string &filename) {
 	// transfer UI content into property tree
 	try {
 		pt.put("server.address",ui->serverAddress->text().toStdString());
+		pt.put("server.multicast_address",ui->multicastAddress->text().toStdString());
+		pt.put("client.address",ui->clientAddress->text().toStdString());
+		pt.put("server.commandport",ui->commandPort->text().toStdString());
+		pt.put("server.dataport",ui->dataPort->text().toStdString());
 		ostringstream camtypes;
 		camtypes << "[";
 		for (int k=0;k<ui->cameraType->count();k++)
@@ -135,15 +143,20 @@ void MainWindow::link_optitrack() {
 			unsigned char natnet_version[4];
 			nnc->NatNetVersion(natnet_version);
 
-			// set callback handlers
+			// set a bunch of properties
 			nnc->SetMessageCallback(error_callback);
 			nnc->SetVerbosityLevel(verbosity_level);
 			nnc->SetDataCallback(data_callback,this);
+			string multicast_addr = ui->multicastAddress->text().toStdString();
+			char mc_addr[128]={0};strcpy(mc_addr,multicast_addr.c_str()); 
+			if (!multicast_addr.empty() && multicast_addr != "(default)")
+				nnc->SetMulticastAddress(mc_addr);
 
-			// connect to NatNet server (using NatNet default port assigments)
-			string server_name = ui->serverAddress->text().toStdString();
-			char my_ip[128]="127.0.0.1", server_ip[128]={0}; strcpy(server_ip,server_name.c_str());
-			int errcode = nnc->Initialize(my_ip, server_ip);
+			// connect to NatNet server
+			string server_addr = ui->serverAddress->text().toStdString();
+			string client_addr = ui->clientAddress->text().toStdString();
+			char my_ip[128]={0}, server_ip[128]={0}; strcpy(server_ip,server_addr.c_str()); strcpy(my_ip,client_addr.c_str());
+			int errcode = nnc->Initialize(my_ip, server_ip, ui->commandPort->text().toInt(), ui->dataPort->text().toInt());
 			if (errcode != ErrorCode_OK)
 				throw runtime_error(string("Could not connect to OptiTrack server. Is the server running and the IP address correct? ErrorCode: ") += lexical_cast<string>(errcode));
 			is_initialized = true;
@@ -204,7 +217,7 @@ void MainWindow::link_optitrack() {
 			num_channels = 3*mrk_labels.size() + 8*rig_id2slot.size();
 
 			// create stream info 
-			stream_info info("OptiTrack","Mocap",num_channels,srate,cf_float32,server_name + "_OptiTrack");
+			stream_info info("OptiTrack","Mocap",num_channels,srate,cf_float32,server_addr + "_OptiTrack");
 
 			// camera setup information
 			xml_element setup = info.desc().append_child("setup");
@@ -335,7 +348,7 @@ void MainWindow::link_optitrack() {
 			acq.append_child_value("manufacturer","NaturalPoint");
 			acq.append_child_value("model","OptiTrack");
 			acq.append_child("natnet_server")
-				.append_child_value("address",server_name.c_str())
+				.append_child_value("address",server_addr.c_str())
 				.append_child_value("hostname",ServerDescription.szHostComputerName)
 				.append_child_value("app_name",ServerDescription.szHostApp)
 				.append_child_value("app_version",(lexical_cast<string>((int)ServerDescription.HostAppVersion[0]) + "." + lexical_cast<string>((int)ServerDescription.HostAppVersion[1]) + "." + lexical_cast<string>((int)ServerDescription.HostAppVersion[2]) + "." + lexical_cast<string>((int)ServerDescription.HostAppVersion[3])).c_str())
