@@ -1,14 +1,15 @@
 #include "udp_server.h"
 #include "api_config.h"
 #include "socket_utils.h"
-#include <boost/bind.hpp>
-#include <boost/algorithm/string.hpp>
+#include <lslboost/bind.hpp>
+#include <lslboost/algorithm/string.hpp>
 #include <iostream>
 
 //
 // === implementation of the udp_server class ===
 //
 
+namespace boost = lslboost;
 using namespace lsl;
 using namespace boost::asio;
 
@@ -37,33 +38,29 @@ udp_server::udp_server(const stream_info_impl_p &info, io_service &io, udp proto
 * This server will listen on a multicast address and responds only to LSL:shortinfo requests. This is for multicast/broadcast local service discovery.
 */
 udp_server::udp_server(const stream_info_impl_p &info, io_service &io, const std::string &address, int port, int ttl): info_(info), io_(io), socket_(new udp::socket(io)), time_services_enabled_(false) {
-	// determine whether the given address is in IPv4 or IPv6 format
 	ip::address addr = ip::address::from_string(address);
 	bool is_broadcast = address=="255.255.255.255";
 
 	// set up the endpoint where we listen (note: this is not yet the multicast address)
 	udp::endpoint listen_endpoint;
-	if (is_broadcast)
+	if (addr.is_v4())
 		listen_endpoint = udp::endpoint(udp::v4(), (unsigned short)port);
 	else
-		if (addr.is_v4())
-			listen_endpoint = udp::endpoint(udp::v4(), (unsigned short)port);
-		else
-			listen_endpoint = udp::endpoint(udp::v6(), (unsigned short)port);
+		listen_endpoint = udp::endpoint(udp::v6(), (unsigned short)port);
 
 	// open the socket and make sure that we can reuse the address, and bind it
 	socket_->open(listen_endpoint.protocol());
 	socket_->set_option(udp::socket::reuse_address(true));
 
 	// set the multicast TTL
-	if (!is_broadcast)
+	if (addr.is_multicast() && !is_broadcast)
 		socket_->set_option(ip::multicast::hops(ttl));
 
 	// bind to the listen endpoint
 	socket_->bind(listen_endpoint);
 
 	// join the multicast group, if any
-	if (!is_broadcast) {
+	if (addr.is_multicast() && !is_broadcast) {
 		if (addr.is_v4())
 			socket_->set_option(ip::multicast::join_group(addr.to_v4(),listen_endpoint.address().to_v4()));
 		else
@@ -86,7 +83,7 @@ void udp_server::begin_serving() {
 /// Initiate teardown of UDP traffic.
 void udp_server::end_serving() {
 	// gracefully close the socket; this will eventually lead to the cancellation of the IO operation(s) tied to its socket
-	io_.post(boost::bind(&udp_server::close_if_open,socket_));
+	io_.post(boost::bind(&close_if_open<udp_socket_p>,socket_));
 }
 
 
@@ -153,9 +150,4 @@ void udp_server::handle_send_outcome(string_p /*replymsg*/, error_code err) {
 		request_next_packet();
 }
 
-/// Gracefully shut down a socket.
-void udp_server::close_if_open(udp_socket_p sock) {
-	if (sock->is_open())
-		sock->close();
-}
 

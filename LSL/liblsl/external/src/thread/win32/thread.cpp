@@ -1,6 +1,6 @@
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// http://www.lslboost.org/LICENSE_1_0.txt)
 // (C) Copyright 2007 Anthony Williams
 // (C) Copyright 2007 David Deakins
 
@@ -12,29 +12,29 @@
 #define WINVER 0x400
 #endif
 
-#include <boost/thread/thread.hpp>
+#include <lslboost/thread/thread.hpp>
 #include <algorithm>
 #ifndef UNDER_CE
 #include <process.h>
 #endif
 #include <stdio.h>
-#include <boost/thread/once.hpp>
-#include <boost/thread/tss.hpp>
-#include <boost/assert.hpp>
-#include <boost/throw_exception.hpp>
-#include <boost/thread/detail/tss_hooks.hpp>
-#include <boost/date_time/posix_time/conversion.hpp>
+#include <lslboost/thread/once.hpp>
+#include <lslboost/thread/tss.hpp>
+#include <lslboost/assert.hpp>
+#include <lslboost/throw_exception.hpp>
+#include <lslboost/thread/detail/tss_hooks.hpp>
+#include <lslboost/date_time/posix_time/conversion.hpp>
 #include <windows.h>
 #include <memory>
 
-namespace boost
+namespace lslboost
 {
     namespace
     {
 #ifdef BOOST_THREAD_PROVIDES_ONCE_CXX11
-        boost::once_flag current_thread_tls_init_flag;
+        lslboost::once_flag current_thread_tls_init_flag;
 #else
-        boost::once_flag current_thread_tls_init_flag=BOOST_ONCE_INIT;
+        lslboost::once_flag current_thread_tls_init_flag=BOOST_ONCE_INIT;
 #endif
         #if defined(UNDER_CE)
         // Windows CE does not define the TLS_OUT_OF_INDEXES constant.
@@ -71,11 +71,11 @@ namespace boost
 
         void set_current_thread_data(detail::thread_data_base* new_data)
         {
-            boost::call_once(current_thread_tls_init_flag,create_current_thread_tls_key);
+            lslboost::call_once(current_thread_tls_init_flag,create_current_thread_tls_key);
             if(current_thread_tls_key!=tls_out_of_index)
                 BOOST_VERIFY(TlsSetValue(current_thread_tls_key,new_data));
             else
-                boost::throw_exception(thread_resource_error());
+                lslboost::throw_exception(thread_resource_error());
         }
 
 #ifndef BOOST_HAS_THREADEX
@@ -121,10 +121,10 @@ namespace boost
     {
         struct thread_exit_callback_node
         {
-            boost::detail::thread_exit_function_base* func;
+            lslboost::detail::thread_exit_function_base* func;
             thread_exit_callback_node* next;
 
-            thread_exit_callback_node(boost::detail::thread_exit_function_base* func_,
+            thread_exit_callback_node(lslboost::detail::thread_exit_function_base* func_,
                                       thread_exit_callback_node* next_):
                 func(func_),next(next_)
             {}
@@ -133,11 +133,11 @@ namespace boost
         struct tss_data_node
         {
             void const* key;
-            boost::shared_ptr<boost::detail::tss_cleanup_function> func;
+            lslboost::shared_ptr<lslboost::detail::tss_cleanup_function> func;
             void* value;
             tss_data_node* next;
 
-            tss_data_node(void const* key_,boost::shared_ptr<boost::detail::tss_cleanup_function> func_,void* value_,
+            tss_data_node(void const* key_,lslboost::shared_ptr<lslboost::detail::tss_cleanup_function> func_,void* value_,
                           tss_data_node* next_):
                 key(key_),func(func_),value(value_),next(next_)
             {}
@@ -161,9 +161,9 @@ namespace boost
                         if(current_node->func)
                         {
                             (*current_node->func)();
-                            boost::detail::heap_delete(current_node->func);
+                            lslboost::detail::heap_delete(current_node->func);
                         }
-                        boost::detail::heap_delete(current_node);
+                        lslboost::detail::heap_delete(current_node);
                     }
                     while(current_thread_data->tss_data)
                     {
@@ -173,7 +173,7 @@ namespace boost
                         {
                             (*current_node->func)(current_node->value);
                         }
-                        boost::detail::heap_delete(current_node);
+                        lslboost::detail::heap_delete(current_node);
                     }
                 }
 
@@ -211,7 +211,7 @@ namespace boost
         uintptr_t const new_thread=_beginthreadex(0,0,&thread_start_function,thread_info.get(),CREATE_SUSPENDED,&thread_info->id);
         if(!new_thread)
         {
-            boost::throw_exception(thread_resource_error());
+            lslboost::throw_exception(thread_resource_error());
         }
         intrusive_ptr_add_ref(thread_info.get());
         thread_info->thread_handle=(detail::win32::handle)(new_thread);
@@ -224,7 +224,7 @@ namespace boost
       uintptr_t const new_thread=_beginthreadex(0,attr.get_stack_size(),&thread_start_function,thread_info.get(),CREATE_SUSPENDED,&thread_info->id);
       if(!new_thread)
       {
-          boost::throw_exception(thread_resource_error());
+          lslboost::throw_exception(thread_resource_error());
       }
       intrusive_ptr_add_ref(thread_info.get());
       thread_info->thread_handle=(detail::win32::handle)(new_thread);
@@ -300,7 +300,7 @@ namespace boost
     {
         if (this_thread::get_id() == get_id())
         {
-            boost::throw_exception(thread_resource_error(system::errc::resource_deadlock_would_occur, "boost thread: trying joining itself"));
+            lslboost::throw_exception(thread_resource_error(system::errc::resource_deadlock_would_occur, "lslboost thread: trying joining itself"));
         }
         detail::thread_data_ptr local_thread_info=(get_thread_info)();
         if(local_thread_info)
@@ -310,11 +310,11 @@ namespace boost
         }
     }
 
-    bool thread::timed_join(boost::system_time const& wait_until)
+    bool thread::timed_join(lslboost::system_time const& wait_until)
     {
         if (this_thread::get_id() == get_id())
         {
-            boost::throw_exception(thread_resource_error(system::errc::resource_deadlock_would_occur, "boost thread: trying joining itself"));
+            lslboost::throw_exception(thread_resource_error(system::errc::resource_deadlock_would_occur, "lslboost thread: trying joining itself"));
         }
         detail::thread_data_ptr local_thread_info=(get_thread_info)();
         if(local_thread_info)
@@ -334,7 +334,7 @@ namespace boost
     {
       if (this_thread::get_id() == get_id())
       {
-        boost::throw_exception(thread_resource_error(system::errc::resource_deadlock_would_occur, "boost thread: trying joining itself"));
+        lslboost::throw_exception(thread_resource_error(system::errc::resource_deadlock_would_occur, "lslboost thread: trying joining itself"));
       }
       detail::thread_data_ptr local_thread_info=(get_thread_info)();
       if(local_thread_info)
@@ -652,7 +652,7 @@ namespace boost
             return NULL;
         }
 
-        void set_tss_data(void const* key,boost::shared_ptr<tss_cleanup_function> func,void* tss_data,bool cleanup_existing)
+        void set_tss_data(void const* key,lslboost::shared_ptr<tss_cleanup_function> func,void* tss_data,bool cleanup_existing)
         {
             if(tss_data_node* const current_node=find_tss_data(key))
             {
@@ -680,12 +680,12 @@ namespace boost
 
     BOOST_THREAD_DECL void __cdecl on_process_exit()
     {
-        boost::cleanup_tls_key();
+        lslboost::cleanup_tls_key();
     }
 
     BOOST_THREAD_DECL void __cdecl on_thread_exit()
     {
-        boost::run_thread_exit_callbacks();
+        lslboost::run_thread_exit_callbacks();
     }
 
 }

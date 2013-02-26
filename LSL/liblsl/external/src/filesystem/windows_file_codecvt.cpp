@@ -3,13 +3,13 @@
 //  Copyright Beman Dawes 2009
 
 //  Distributed under the Boost Software License, Version 1.0.
-//  See http://www.boost.org/LICENSE_1_0.txt
+//  See http://www.lslboost.org/LICENSE_1_0.txt
 
-//  Library home page: http://www.boost.org/libs/filesystem
+//  Library home page: http://www.lslboost.org/libs/filesystem
 
 //--------------------------------------------------------------------------------------// 
 
-// define BOOST_FILESYSTEM_SOURCE so that <boost/system/config.hpp> knows
+// define BOOST_FILESYSTEM_SOURCE so that <lslboost/system/config.hpp> knows
 // the library is being built (possibly exporting rather than importing code)
 #define BOOST_FILESYSTEM_SOURCE 
 
@@ -17,7 +17,7 @@
 # define BOOST_SYSTEM_NO_DEPRECATED
 #endif
 
-#include <boost/filesystem/config.hpp>
+#include <lslboost/filesystem/config.hpp>
 #include <cwchar>  // for mbstate_t
 
 #ifdef BOOST_WINDOWS_API

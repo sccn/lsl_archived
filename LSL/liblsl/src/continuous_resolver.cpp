@@ -5,6 +5,7 @@
 // === Implementation of the continuous_resolver class ===
 //
 
+namespace boost = lslboost;
 using namespace lsl;
 
 continuous_resolver::continuous_resolver(double forget_after):  impl_(new resolver_impl()) { 

@@ -5,24 +5,24 @@
 // (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// http://www.lslboost.org/LICENSE_1_0.txt)
 
-//  See http://www.boost.org for updates, documentation, and revision history.
+//  See http://www.lslboost.org for updates, documentation, and revision history.
 
 #include <algorithm>
 #include <set>
-#include <boost/assert.hpp>
+#include <lslboost/assert.hpp>
 #include <typeinfo>
 #include <cstddef> // NULL
 
-#include <boost/detail/no_exceptions_support.hpp>
+#include <lslboost/detail/no_exceptions_support.hpp>
 
-#include <boost/serialization/singleton.hpp>
+#include <lslboost/serialization/singleton.hpp>
 
 #define BOOST_SERIALIZATION_SOURCE
-#include <boost/serialization/extended_type_info_typeid.hpp>
+#include <lslboost/serialization/extended_type_info_typeid.hpp>
 
-namespace boost { 
+namespace lslboost { 
 namespace serialization { 
 namespace typeid_system {
 
@@ -46,7 +46,7 @@ typedef std::multiset<
     
 BOOST_SERIALIZATION_DECL(bool) 
 extended_type_info_typeid_0::is_less_than(
-    const boost::serialization::extended_type_info & rhs
+    const lslboost::serialization::extended_type_info & rhs
 ) const {
     // shortcut for common case
     if(this == & rhs)
@@ -58,7 +58,7 @@ extended_type_info_typeid_0::is_less_than(
 
 BOOST_SERIALIZATION_DECL(bool) 
 extended_type_info_typeid_0::is_equal(
-    const boost::serialization::extended_type_info & rhs
+    const lslboost::serialization::extended_type_info & rhs
 ) const {
     return 
         // note: std::type_info == operator returns an int !!!
@@ -158,4 +158,4 @@ extended_type_info_typeid_0::get_extended_type_info(
 
 } // namespace detail
 } // namespace serialization
-} // namespace boost
+} // namespace lslboost

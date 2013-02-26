@@ -1,13 +1,14 @@
 #include "consumer_queue.h"
 #include "send_buffer.h"
-#include <boost/bind.hpp>
-#include <boost/chrono.hpp>
+#include <lslboost/bind.hpp>
+#include <lslboost/chrono.hpp>
 #include <iostream>
 
 //
 // === implementation of the consumer_queue class ===
 //
 
+namespace boost = lslboost;
 using namespace lsl;
 
 /**

@@ -4,6 +4,7 @@
 // === Implementation of the stream_info class ===
 //
 
+namespace boost = lslboost;
 using namespace lsl;
 
 // boilerplate code calling the private implementation

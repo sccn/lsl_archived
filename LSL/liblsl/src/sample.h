@@ -3,14 +3,15 @@
 
 #include "../include/lsl_cpp.h"
 #include "stream_info_impl.h"
-#include <boost/variant.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/serialization/split_member.hpp>
-#include <boost/cstdint.hpp>
+#include <lslboost/variant.hpp>
+#include <lslboost/shared_ptr.hpp>
+#include <lslboost/lexical_cast.hpp>
+#include <lslboost/serialization/split_member.hpp>
+#include <lslboost/cstdint.hpp>
 #include <vector>
 #include <string>
 
+namespace boost = lslboost;
 namespace lsl {
 	// used in the protocol
 	const char TAG_DEDUCED_TIMESTAMP = 1;

@@ -3,11 +3,11 @@
 // Copyright (C) 2009 Anthony Williams
 //
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying 
-//  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//  file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
 
-// boostinspect:nounnamed
+// lslboostinspect:nounnamed
 
-#include <boost/assert.hpp>
+#include <lslboost/assert.hpp>
 
 namespace {
 const int MILLISECONDS_PER_SECOND = 1000;
@@ -17,11 +17,11 @@ const int NANOSECONDS_PER_MILLISECOND = 1000000;
 const int MICROSECONDS_PER_SECOND = 1000000;
 const int NANOSECONDS_PER_MICROSECOND = 1000;
 
-inline void to_time(int milliseconds, boost::xtime& xt)
+inline void to_time(int milliseconds, lslboost::xtime& xt)
 {
     int res = 0;
-    res = boost::xtime_get(&xt, boost::TIME_UTC_);
-    BOOST_ASSERT(res == boost::TIME_UTC_); (void)res;
+    res = lslboost::xtime_get(&xt, lslboost::TIME_UTC_);
+    BOOST_ASSERT(res == lslboost::TIME_UTC_); (void)res;
 
     xt.sec += (milliseconds / MILLISECONDS_PER_SECOND);
     xt.nsec += ((milliseconds % MILLISECONDS_PER_SECOND) *
@@ -34,7 +34,7 @@ inline void to_time(int milliseconds, boost::xtime& xt)
     }
 }
 #if defined(BOOST_HAS_PTHREADS)
-inline void to_timespec(const boost::xtime& xt, timespec& ts)
+inline void to_timespec(const lslboost::xtime& xt, timespec& ts)
 {
     ts.tv_sec = static_cast<int>(xt.sec);
     ts.tv_nsec = static_cast<int>(xt.nsec);
@@ -47,19 +47,19 @@ inline void to_timespec(const boost::xtime& xt, timespec& ts)
 
 inline void to_time(int milliseconds, timespec& ts)
 {
-    boost::xtime xt;
+    lslboost::xtime xt;
     to_time(milliseconds, xt);
     to_timespec(xt, ts);
 }
 
-inline void to_timespec_duration(const boost::xtime& xt, timespec& ts)
+inline void to_timespec_duration(const lslboost::xtime& xt, timespec& ts)
 {
-    boost::xtime cur;
+    lslboost::xtime cur;
     int res = 0;
-    res = boost::xtime_get(&cur, boost::TIME_UTC_);
-    BOOST_ASSERT(res == boost::TIME_UTC_); (void)res;
+    res = lslboost::xtime_get(&cur, lslboost::TIME_UTC_);
+    BOOST_ASSERT(res == lslboost::TIME_UTC_); (void)res;
 
-    if (boost::xtime_cmp(xt, cur) <= 0)
+    if (lslboost::xtime_cmp(xt, cur) <= 0)
     {
         ts.tv_sec = 0;
         ts.tv_nsec = 0;
@@ -83,14 +83,14 @@ inline void to_timespec_duration(const boost::xtime& xt, timespec& ts)
 }
 #endif
 
-inline void to_duration(boost::xtime xt, int& milliseconds)
+inline void to_duration(lslboost::xtime xt, int& milliseconds)
 {
-    boost::xtime cur;
+    lslboost::xtime cur;
     int res = 0;
-    res = boost::xtime_get(&cur, boost::TIME_UTC_);
-    BOOST_ASSERT(res == boost::TIME_UTC_); (void)res;
+    res = lslboost::xtime_get(&cur, lslboost::TIME_UTC_);
+    BOOST_ASSERT(res == lslboost::TIME_UTC_); (void)res;
 
-    if (boost::xtime_cmp(xt, cur) <= 0)
+    if (lslboost::xtime_cmp(xt, cur) <= 0)
         milliseconds = 0;
     else
     {
@@ -105,14 +105,14 @@ inline void to_duration(boost::xtime xt, int& milliseconds)
     }
 }
 
-inline void to_microduration(boost::xtime xt, int& microseconds)
+inline void to_microduration(lslboost::xtime xt, int& microseconds)
 {
-    boost::xtime cur;
+    lslboost::xtime cur;
     int res = 0;
-    res = boost::xtime_get(&cur, boost::TIME_UTC_);
-    BOOST_ASSERT(res == boost::TIME_UTC_); (void)res;
+    res = lslboost::xtime_get(&cur, lslboost::TIME_UTC_);
+    BOOST_ASSERT(res == lslboost::TIME_UTC_); (void)res;
 
-    if (boost::xtime_cmp(xt, cur) <= 0)
+    if (lslboost::xtime_cmp(xt, cur) <= 0)
         microseconds = 0;
     else
     {

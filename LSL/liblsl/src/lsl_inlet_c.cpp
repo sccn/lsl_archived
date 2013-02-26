@@ -6,6 +6,7 @@
 // === implementation of the stream_inlet class ===
 //
 
+namespace boost = lslboost;
 using namespace lsl;
 
 /**
@@ -375,6 +376,47 @@ LIBLSL_C_API double lsl_pull_sample_str(lsl_inlet in, char **buffer, int buffer_
 	}
 	return 0.0;
 }
+
+LIBLSL_C_API double lsl_pull_sample_buf(lsl_inlet in, char **buffer, unsigned *buffer_lengths, int buffer_elements, double timeout, int *ec) {
+	if (ec)
+		*ec = lsl_no_error;
+	try {
+		// capture output in a temporary string buffer
+		std::vector<std::string> tmp;
+		double result = ((stream_inlet_impl*)in)->pull_sample(tmp,timeout);
+        if (buffer_elements < (int)tmp.size())
+            throw std::range_error("The provided buffer has fewer elements than the stream's number of channels.");
+		// allocate memory and copy over into buffer
+		for (unsigned k=0;k<tmp.size();k++) {
+			buffer[k] = (char*)malloc(tmp[k].size());
+			buffer_lengths[k] = tmp[k].size();
+			memcpy(buffer[k],&tmp[k][0],tmp[k].size());
+		}
+		return result;
+	}
+	catch(timeout_error &) { 
+		if (ec)
+			*ec = lsl_timeout_error; 
+	}
+	catch(lost_error &) { 
+		if (ec)
+			*ec = lsl_lost_error; 
+	}
+	catch(std::invalid_argument &) { 
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::range_error &) {
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::exception &) { 
+		if (ec)
+			*ec = lsl_internal_error; 
+	}
+	return 0.0;
+}
+
 
 /**
 * Pull a sample from the inlet and read it into a custom struct or buffer. 

@@ -5,16 +5,16 @@
 // Andrew Lumsdaine, Indiana University (lums@osl.iu.edu). 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// http://www.lslboost.org/LICENSE_1_0.txt)
 
 #define BOOST_WARCHIVE_SOURCE
-#include <boost/archive/codecvt_null.hpp>
+#include <lslboost/archive/codecvt_null.hpp>
 
 // codecvt implementation for passing wchar_t objects to char output
 // without any translation whatever.  Used to implement binary output
 // of wchar_t objects.
 
-namespace boost {
+namespace lslboost {
 namespace archive {
 
 BOOST_WARCHIVE_DECL(std::codecvt_base::result)
@@ -80,4 +80,4 @@ codecvt_null<wchar_t>::do_in(
 }
 
 } // namespace archive
-} // namespace boost
+} // namespace lslboost

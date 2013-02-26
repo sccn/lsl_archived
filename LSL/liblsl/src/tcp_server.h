@@ -8,11 +8,12 @@
 #include "send_buffer.h"
 #include "api_config.h"
 #include "portable_archive/portable_oarchive.hpp"
-#include <boost/asio.hpp>
-#include <boost/thread.hpp>
-#include <boost/enable_shared_from_this.hpp>
+#include <lslboost/asio.hpp>
+#include <lslboost/thread.hpp>
+#include <lslboost/enable_shared_from_this.hpp>
 #include <set>
 
+namespace boost = lslboost;
 using boost::asio::ip::tcp;
 using boost::system::error_code;
 
@@ -82,10 +83,6 @@ namespace lsl {
 
 		/// Post a close of all in-flight sockets.
 		void close_inflight_sockets();
-
-		/// Gracefully shut down a socket.
-		static void shutdown_and_close(tcp_socket_p sock);
-
 
 		/**
 		* Active session with a TCP client.

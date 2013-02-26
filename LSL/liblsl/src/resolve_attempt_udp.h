@@ -4,11 +4,12 @@
 #include "version.h"
 #include "stream_info_impl.h"
 #include "cancellation.h"
-#include <boost/asio.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/thread.hpp>
+#include <lslboost/asio.hpp>
+#include <lslboost/enable_shared_from_this.hpp>
+#include <lslboost/thread.hpp>
 #include <map>
 
+namespace boost = lslboost;
 using boost::asio::ip::udp;
 using boost::asio::ip::tcp;
 using boost::system::error_code;

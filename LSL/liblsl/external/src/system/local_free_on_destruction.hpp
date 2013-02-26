@@ -4,15 +4,15 @@
 //  Copyright (c) 2010 Beman Dawes
 
 //  Distributed under the Boost Software License, Version 1.0.
-//  See http://www.boost.org/LICENSE_1_0.txt
+//  See http://www.lslboost.org/LICENSE_1_0.txt
 
-//  This is derived from boost/asio/detail/local_free_on_block_exit.hpp to avoid
+//  This is derived from lslboost/asio/detail/local_free_on_block_exit.hpp to avoid
 //  a dependency on asio. Thanks to Chris Kohlhoff for pointing it out.
 
 #ifndef BOOST_SYSTEM_LOCAL_FREE_ON_EXIT_HPP
 #define BOOST_SYSTEM_LOCAL_FREE_ON_EXIT_HPP
 
-namespace boost {
+namespace lslboost {
 namespace system {
 namespace detail {
 
@@ -35,6 +35,6 @@ private:
 
 } // namespace detail
 } // namespace system
-} // namespace boost
+} // namespace lslboost
 
 #endif  // BOOST_SYSTEM_LOCAL_FREE_ON_EXIT_HPP

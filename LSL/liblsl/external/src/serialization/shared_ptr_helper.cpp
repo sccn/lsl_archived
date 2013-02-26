@@ -4,14 +4,14 @@
 #endif
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-// shared_ptr_helper.hpp: serialization for boost shared pointern
+// shared_ptr_helper.hpp: serialization for lslboost shared pointern
 
 // (C) Copyright 2004-2009 Robert Ramey, Martin Ecker and Takatoshi Kondo
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// http://www.lslboost.org/LICENSE_1_0.txt)
 
-//  See http://www.boost.org for updates, documentation, and revision history.
+//  See http://www.lslboost.org for updates, documentation, and revision history.
 
 #include <map>
 #include <list>
@@ -23,13 +23,13 @@
 // same modules are marked export and import.
 #define BOOST_SERIALIZATION_SOURCE
 
-#include <boost/serialization/throw_exception.hpp>
-#include <boost/serialization/void_cast.hpp>
-#include <boost/serialization/extended_type_info.hpp>
-#include <boost/archive/shared_ptr_helper.hpp>
-#include <boost/archive/archive_exception.hpp>
+#include <lslboost/serialization/throw_exception.hpp>
+#include <lslboost/serialization/void_cast.hpp>
+#include <lslboost/serialization/extended_type_info.hpp>
+#include <lslboost/archive/shared_ptr_helper.hpp>
+#include <lslboost/archive/archive_exception.hpp>
 
-namespace boost {
+namespace lslboost {
 namespace archive{
 namespace detail {
 
@@ -41,8 +41,8 @@ namespace detail {
 BOOST_ARCHIVE_DECL(shared_ptr<void>)
 shared_ptr_helper::get_od(
         const void * t,
-        const boost::serialization::extended_type_info * true_type, 
-        const boost::serialization::extended_type_info * this_type
+        const lslboost::serialization::extended_type_info * true_type, 
+        const lslboost::serialization::extended_type_info * this_type
 ){
     // get void pointer to the most derived type
     // this uniquely identifies the object referred to
@@ -52,7 +52,7 @@ shared_ptr_helper::get_od(
         t
     );
     if(NULL == od)
-        boost::serialization::throw_exception(
+        lslboost::serialization::throw_exception(
             archive_exception(
                 archive_exception::unregistered_cast,
                 true_type->get_debug_info(),
@@ -78,7 +78,7 @@ shared_ptr_helper::get_od(
         i->get()
     );
     if(NULL == od)
-        boost::serialization::throw_exception(
+        lslboost::serialization::throw_exception(
             archive_exception(
                 archive_exception::unregistered_cast,
                 true_type->get_debug_info(),
@@ -93,7 +93,7 @@ shared_ptr_helper::get_od(
 }
 
 BOOST_ARCHIVE_DECL(void)
-shared_ptr_helper::append(const boost::shared_ptr<const void> &sp){
+shared_ptr_helper::append(const lslboost::shared_ptr<const void> &sp){
     // make tracking array if necessary
     if(NULL == m_pointers)
         m_pointers = new collection_type;
@@ -109,9 +109,9 @@ shared_ptr_helper::append(const boost::shared_ptr<const void> &sp){
 
 //  #ifdef BOOST_SERIALIZATION_SHARED_PTR_132_HPP
 BOOST_ARCHIVE_DECL(void)
-shared_ptr_helper::append(const boost_132::shared_ptr<const void> & t){
+shared_ptr_helper::append(const lslboost_132::shared_ptr<const void> & t){
     if(NULL == m_pointers_132)
-        m_pointers_132 = new std::list<boost_132::shared_ptr<const void> >;
+        m_pointers_132 = new std::list<lslboost_132::shared_ptr<const void> >;
     m_pointers_132->push_back(t);
 }
 //  #endif
@@ -134,5 +134,5 @@ shared_ptr_helper::~shared_ptr_helper(){
 
 } // namespace detail
 } // namespace serialization
-} // namespace boost
+} // namespace lslboost
 

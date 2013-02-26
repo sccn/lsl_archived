@@ -5,21 +5,21 @@
 // (C) Copyright 2007 David Deakins
 // Use, modification and distribution are subject to the
 // Boost Software License, Version 1.0. (See accompanying file
-// LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
 
-#include <boost/thread/detail/config.hpp>
+#include <lslboost/thread/detail/config.hpp>
 
 #if defined(BOOST_HAS_WINTHREADS) && defined(BOOST_THREAD_BUILD_LIB) 
 
 #if (defined(__MINGW32__) && !defined(_WIN64)) || defined(__MINGW64__)
 
-#include <boost/thread/detail/tss_hooks.hpp>
+#include <lslboost/thread/detail/tss_hooks.hpp>
 
 #include <windows.h>
 
 #include <cstdlib>
 
-namespace boost
+namespace lslboost
 {
     void tss_cleanup_implemented() {}
 }
@@ -31,7 +31,7 @@ namespace {
         {
         case DLL_THREAD_DETACH:
         {
-            boost::on_thread_exit();
+            lslboost::on_thread_exit();
             break;
         }
         }
@@ -47,9 +47,9 @@ extern "C"
 #else
 extern "C" {
 
-    void (* after_ctors )() __attribute__((section(".ctors")))     = boost::on_process_enter;
-    void (* before_dtors)() __attribute__((section(".dtors")))     = boost::on_thread_exit;
-    void (* after_dtors )() __attribute__((section(".dtors.zzz"))) = boost::on_process_exit;
+    void (* after_ctors )() __attribute__((section(".ctors")))     = lslboost::on_process_enter;
+    void (* before_dtors)() __attribute__((section(".dtors")))     = lslboost::on_thread_exit;
+    void (* after_dtors )() __attribute__((section(".dtors.zzz"))) = lslboost::on_process_exit;
 
     ULONG __tls_index__ = 0;
     char __tls_end__ __attribute__((section(".tls$zzz"))) = 0;
@@ -73,7 +73,7 @@ extern "C" const IMAGE_TLS_DIRECTORY32 _tls_used __attribute__ ((section(".rdata
 
 #elif  defined(_MSC_VER) && !defined(UNDER_CE)
 
-    #include <boost/thread/detail/tss_hooks.hpp>
+    #include <lslboost/thread/detail/tss_hooks.hpp>
 
     #include <stdlib.h>
 
@@ -215,18 +215,18 @@ extern "C" const IMAGE_TLS_DIRECTORY32 _tls_used __attribute__ ((section(".rdata
             //for destructors of global objects, so that
             //shouldn't be a problem.
 
-            atexit(boost::on_thread_exit);
+            atexit(lslboost::on_thread_exit);
 
             //Call Boost process entry callback here
 
-            boost::on_process_enter();
+            lslboost::on_process_enter();
 
             return INIRETSUCCESS;
         }
 
         PVAPI on_process_term()
         {
-            boost::on_process_exit();
+            lslboost::on_process_exit();
             return INIRETSUCCESS;
         }
 
@@ -235,7 +235,7 @@ extern "C" const IMAGE_TLS_DIRECTORY32 _tls_used __attribute__ ((section(".rdata
             switch (dwReason)
             {
             case DLL_THREAD_DETACH:
-                boost::on_thread_exit();
+                lslboost::on_thread_exit();
                 break;
             }
         }
@@ -245,10 +245,10 @@ extern "C" const IMAGE_TLS_DIRECTORY32 _tls_used __attribute__ ((section(".rdata
             switch (dwReason)
             {
             case DLL_THREAD_DETACH:
-                boost::on_thread_exit();
+                lslboost::on_thread_exit();
                 break;
             case DLL_PROCESS_DETACH:
-                boost::on_process_exit();
+                lslboost::on_process_exit();
                 break;
             }
             return true;
@@ -259,7 +259,7 @@ extern "C"
 {
     extern BOOL (WINAPI * const _pRawDllMain)(HANDLE, DWORD, LPVOID)=&dll_callback;
 }
-namespace boost
+namespace lslboost
 {
     void tss_cleanup_implemented()
     {

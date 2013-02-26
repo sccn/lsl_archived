@@ -7,6 +7,7 @@
 // === implementation of the continuous_resolver class ===
 //
 
+namespace boost = lslboost;
 using namespace lsl;
 
 /**

@@ -3,13 +3,13 @@
 //  Copyright Beman Dawes 2008, 2009
 
 //  Distributed under the Boost Software License, Version 1.0.
-//  See http://www.boost.org/LICENSE_1_0.txt
+//  See http://www.lslboost.org/LICENSE_1_0.txt
 
-//  Library home page: http://www.boost.org/libs/filesystem
+//  Library home page: http://www.lslboost.org/libs/filesystem
 
 //--------------------------------------------------------------------------------------//
 
-// define BOOST_FILESYSTEM_SOURCE so that <boost/system/config.hpp> knows
+// define BOOST_FILESYSTEM_SOURCE so that <lslboost/system/config.hpp> knows
 // the library is being built (possibly exporting rather than importing code)
 #define BOOST_FILESYSTEM_SOURCE 
 
@@ -17,17 +17,17 @@
 # define BOOST_SYSTEM_NO_DEPRECATED
 #endif
 
-#include <boost/filesystem/config.hpp>
-#include <boost/filesystem/path_traits.hpp>
-#include <boost/system/system_error.hpp>
-#include <boost/scoped_array.hpp>
+#include <lslboost/filesystem/config.hpp>
+#include <lslboost/filesystem/path_traits.hpp>
+#include <lslboost/system/system_error.hpp>
+#include <lslboost/scoped_array.hpp>
 #include <locale>   // for codecvt_base::result
 #include <cstring>  // for strlen
 #include <cwchar>   // for wcslen
 
-namespace pt = boost::filesystem::path_traits;
-namespace fs = boost::filesystem;
-namespace bs = boost::system;
+namespace pt = lslboost::filesystem::path_traits;
+namespace fs = lslboost::filesystem;
+namespace bs = lslboost::system;
 
 //--------------------------------------------------------------------------------------//
 //                                  configuration                                       //
@@ -78,7 +78,7 @@ namespace {
     {
       //std::cout << " result is " << static_cast<int>(res) << std::endl;
       BOOST_FILESYSTEM_THROW(bs::system_error(res, fs::codecvt_error_category(),
-        "boost::filesystem::path codecvt to wstring"));
+        "lslboost::filesystem::path codecvt to wstring"));
     }
     target.append(to, to_next); 
   }
@@ -112,7 +112,7 @@ namespace {
     {
       //std::cout << " result is " << static_cast<int>(res) << std::endl;
       BOOST_FILESYSTEM_THROW(bs::system_error(res, fs::codecvt_error_category(),
-        "boost::filesystem::path codecvt to string"));
+        "lslboost::filesystem::path codecvt to string"));
     }
     target.append(to, to_next); 
   }
@@ -123,7 +123,7 @@ namespace {
 //                                   path_traits                                        //
 //--------------------------------------------------------------------------------------//
 
-namespace boost { namespace filesystem { namespace path_traits {
+namespace lslboost { namespace filesystem { namespace path_traits {
 
 //--------------------------------------------------------------------------------------//
 //                          convert const char* to wstring                             //
@@ -149,7 +149,7 @@ namespace boost { namespace filesystem { namespace path_traits {
     //  dynamically allocate a buffer only if source is unusually large
     if (buf_size > default_codecvt_buf_size)
     {
-      boost::scoped_array< wchar_t > buf(new wchar_t [buf_size]);
+      lslboost::scoped_array< wchar_t > buf(new wchar_t [buf_size]);
       convert_aux(from, from_end, buf.get(), buf.get()+buf_size, to, cvt);
     }
     else
@@ -188,7 +188,7 @@ namespace boost { namespace filesystem { namespace path_traits {
     //  dynamically allocate a buffer only if source is unusually large
     if (buf_size > default_codecvt_buf_size)
     {
-      boost::scoped_array< char > buf(new char [buf_size]);
+      lslboost::scoped_array< char > buf(new char [buf_size]);
       convert_aux(from, from_end, buf.get(), buf.get()+buf_size, to, cvt);
     }
     else
@@ -197,4 +197,4 @@ namespace boost { namespace filesystem { namespace path_traits {
       convert_aux(from, from_end, buf, buf+default_codecvt_buf_size, to, cvt);
     }
   }
-}}} // namespace boost::filesystem::path_traits
+}}} // namespace lslboost::filesystem::path_traits

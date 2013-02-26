@@ -3,8 +3,9 @@
 
 #include <string>
 #include <vector>
-#include <boost/thread/once.hpp>
+#include <lslboost/thread/once.hpp>
 
+namespace boost = lslboost;
 namespace lsl {
 
 	/**

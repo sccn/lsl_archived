@@ -4,9 +4,9 @@
 // (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// http://www.lslboost.org/LICENSE_1_0.txt)
 
-//  See http://www.boost.org for updates, documentation, and revision history.
+//  See http://www.lslboost.org for updates, documentation, and revision history.
 
 #if (defined _MSC_VER) && (_MSC_VER == 1200)
 #  pragma warning (disable : 4786) // too long name, harmless warning
@@ -15,29 +15,29 @@
 #include <algorithm>
 #include <set>
 #include <utility>
-#include <boost/assert.hpp>
+#include <lslboost/assert.hpp>
 #include <cstddef> // NULL
 
-#include <boost/config.hpp> // msvc needs this to suppress warning
+#include <lslboost/config.hpp> // msvc needs this to suppress warning
 
 #include <cstring>
 #if defined(BOOST_NO_STDC_NAMESPACE)
 namespace std{ using ::strcmp; }
 #endif
 
-#include <boost/detail/no_exceptions_support.hpp>
-#include <boost/serialization/singleton.hpp>
-#include <boost/serialization/force_include.hpp>
+#include <lslboost/detail/no_exceptions_support.hpp>
+#include <lslboost/serialization/singleton.hpp>
+#include <lslboost/serialization/force_include.hpp>
 
 #define BOOST_SERIALIZATION_SOURCE
-#include <boost/serialization/extended_type_info.hpp>
+#include <lslboost/serialization/extended_type_info.hpp>
 
 #ifdef BOOST_MSVC
 #  pragma warning(push)
 #  pragma warning(disable : 4511 4512)
 #endif
 
-namespace boost { 
+namespace lslboost { 
 namespace serialization {
 namespace detail {
 
@@ -185,4 +185,4 @@ extended_type_info::operator==(const extended_type_info &rhs) const {
 }
 
 } // namespace serialization
-} // namespace boost
+} // namespace lslboost

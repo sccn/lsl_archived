@@ -4,19 +4,19 @@
 // (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// http://www.lslboost.org/LICENSE_1_0.txt)
 
-//  See http://www.boost.org for updates, documentation, and revision history.
+//  See http://www.lslboost.org for updates, documentation, and revision history.
 
-#include <boost/config.hpp> // msvc 6.0 needs this for warning suppression
+#include <lslboost/config.hpp> // msvc 6.0 needs this for warning suppression
 
-#include <boost/assert.hpp>
+#include <lslboost/assert.hpp>
 #include <set>
 #include <cstddef> // NULL
 
-#include <boost/limits.hpp>
-#include <boost/serialization/state_saver.hpp>
-#include <boost/serialization/throw_exception.hpp>
+#include <lslboost/limits.hpp>
+#include <lslboost/serialization/state_saver.hpp>
+#include <lslboost/serialization/throw_exception.hpp>
 
 // including this here to work around an ICC in intel 7.0
 // normally this would be part of basic_oarchive.hpp below.
@@ -25,22 +25,22 @@
 // same modules are marked export and import.
 #define BOOST_SERIALIZATION_SOURCE
 
-#include <boost/archive/detail/decl.hpp>
-#include <boost/archive/basic_archive.hpp>
-#include <boost/archive/detail/basic_oserializer.hpp>
-#include <boost/archive/detail/basic_pointer_oserializer.hpp>
-#include <boost/archive/detail/basic_oarchive.hpp>
-#include <boost/archive/archive_exception.hpp>
-#include <boost/serialization/extended_type_info.hpp>
+#include <lslboost/archive/detail/decl.hpp>
+#include <lslboost/archive/basic_archive.hpp>
+#include <lslboost/archive/detail/basic_oserializer.hpp>
+#include <lslboost/archive/detail/basic_pointer_oserializer.hpp>
+#include <lslboost/archive/detail/basic_oarchive.hpp>
+#include <lslboost/archive/archive_exception.hpp>
+#include <lslboost/serialization/extended_type_info.hpp>
 
 #ifdef BOOST_MSVC
 #  pragma warning(push)
 #  pragma warning(disable : 4251 4231 4660 4275)
 #endif
 
-using namespace boost::serialization;
+using namespace lslboost::serialization;
 
-namespace boost {
+namespace lslboost {
 namespace archive {
 namespace detail {
 
@@ -203,7 +203,7 @@ basic_oarchive_impl::find(const serialization::extended_type_info & ti) const {
         }
     public:
         bosarg(const serialization::extended_type_info & eti) :
-          boost::archive::detail::basic_oserializer(eti)
+          lslboost::archive::detail::basic_oserializer(eti)
         {}
     };
     #ifdef BOOST_MSVC
@@ -297,7 +297,7 @@ basic_oarchive_impl::save_object(
     if(stored_pointers.end() != stored_pointers.find(oid)){
         // this has to be a user error.  loading such an archive
         // would create duplicate objects
-        boost::serialization::throw_exception(
+        lslboost::serialization::throw_exception(
             archive_exception(archive_exception::pointer_conflict)
         );
     }
@@ -337,7 +337,7 @@ basic_oarchive_impl::save_pointer(
                 else
                     // without an external class name
                     // we won't be able to de-serialize it so bail now
-                    boost::serialization::throw_exception(
+                    lslboost::serialization::throw_exception(
                         archive_exception(archive_exception::unregistered_class)
                     );
             }
@@ -395,12 +395,12 @@ basic_oarchive_impl::save_pointer(
 
 } // namespace detail
 } // namespace archive
-} // namespace boost
+} // namespace lslboost
 
 //////////////////////////////////////////////////////////////////////
 // implementation of basic_oarchive functions
 
-namespace boost {
+namespace lslboost {
 namespace archive {
 namespace detail {
 
@@ -452,7 +452,7 @@ basic_oarchive::end_preamble(){
 
 } // namespace detail
 } // namespace archive
-} // namespace boost
+} // namespace lslboost
 
 #ifdef BOOST_MSVC
 #pragma warning(pop)

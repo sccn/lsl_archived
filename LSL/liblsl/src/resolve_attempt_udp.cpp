@@ -1,10 +1,11 @@
 #include "api_config.h"
 #include "resolve_attempt_udp.h"
 #include "resolver_impl.h"
-#include <boost/bind.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/functional/hash.hpp>
+#include "socket_utils.h"
+#include <lslboost/bind.hpp>
+#include <lslboost/algorithm/string.hpp>
+#include <lslboost/lexical_cast.hpp>
+#include <lslboost/functional/hash.hpp>
 #include <iostream>
 #include <istream>
 
@@ -12,6 +13,7 @@
 // === implementation of the resolver_burst_udp class ===
 //
 
+namespace boost = lslboost;
 using namespace lsl;
 using namespace boost::asio;
 using boost::posix_time::millisec;
@@ -37,7 +39,11 @@ resolve_attempt_udp::resolve_attempt_udp(io_service &io, const udp &protocol, co
 {
 	// open the sockets that we might need
 	recv_socket_.open(protocol);
-	recv_socket_.bind(udp::endpoint(protocol, 0));
+	try {
+		bind_port_in_range(recv_socket_,protocol);
+	} catch(std::exception &e) {
+		std::cerr << "Could not bind to a port in the configured port range; using a randomly assigned one: " << e.what() << std::endl;
+	}
 	unicast_socket_.open(protocol);
 	try {
 		broadcast_socket_.open(protocol);
@@ -132,9 +138,7 @@ void resolve_attempt_udp::handle_receive_outcome(error_code err, std::size_t len
 								results_[uid].first.v6address(remote_endpoint_.address().to_string());
 						}
 					}
-				} else
-					// query id mismatch
-					std::cerr << "Got a query result with the wrong query id." << std::endl;
+				}
 			} catch(std::exception &e) {
 				std::cerr << "resolve_attempt_udp: hiccup while processing the received data: " << e.what() << std::endl;
 			}

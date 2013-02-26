@@ -4,22 +4,22 @@
 // (C) Copyright 2009 Robert Ramey - http://www.rrsd.com . 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// http://www.lslboost.org/LICENSE_1_0.txt)
 
-//  See http://www.boost.org for updates, documentation, and revision history.
+//  See http://www.lslboost.org for updates, documentation, and revision history.
 
 #if (defined _MSC_VER) && (_MSC_VER == 1200)
 #  pragma warning (disable : 4786) // too long name, harmless warning
 #endif
 
 #include <exception>
-#include <boost/assert.hpp>
+#include <lslboost/assert.hpp>
 #include <string>
 
 #define BOOST_ARCHIVE_SOURCE
-#include <boost/archive/archive_exception.hpp>
+#include <lslboost/archive/archive_exception.hpp>
 
-namespace boost {
+namespace lslboost {
 namespace archive {
 
 BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY())
@@ -111,4 +111,4 @@ archive_exception::archive_exception() :
 {}
 
 } // archive
-} // boost
+} // lslboost

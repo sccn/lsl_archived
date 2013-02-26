@@ -4,16 +4,16 @@
 // (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// http://www.lslboost.org/LICENSE_1_0.txt)
 // <gennadiy.rozental@tfn.com>
 
-//  See http://www.boost.org for updates, documentation, and revision history.
+//  See http://www.lslboost.org for updates, documentation, and revision history.
 
 #if (defined _MSC_VER) && (_MSC_VER == 1200)
 # pragma warning (disable : 4786) // too long name, harmless warning
 #endif
 
-#include <boost/assert.hpp>
+#include <lslboost/assert.hpp>
 #include <cstddef> // NULL
 #ifdef BOOST_SERIALIZATION_LOG
 #include <iostream>
@@ -23,15 +23,15 @@
 #include <set>
 #include <functional>
 #include <algorithm>
-#include <boost/assert.hpp>
+#include <lslboost/assert.hpp>
 
 // BOOST
 #define BOOST_SERIALIZATION_SOURCE
-#include <boost/serialization/singleton.hpp>
-#include <boost/serialization/extended_type_info.hpp>
-#include <boost/serialization/void_cast.hpp>
+#include <lslboost/serialization/singleton.hpp>
+#include <lslboost/serialization/extended_type_info.hpp>
+#include <lslboost/serialization/void_cast.hpp>
 
-namespace boost { 
+namespace lslboost { 
 namespace serialization {
 namespace void_cast_detail {
 
@@ -63,7 +63,7 @@ struct void_caster_compare {
 };
 
 typedef std::set<const void_caster *, void_caster_compare> set_type;
-typedef boost::serialization::singleton<set_type> void_caster_registry;
+typedef lslboost::serialization::singleton<set_type> void_caster_registry;
 
 #ifdef BOOST_MSVC
 #  pragma warning(push)
@@ -357,4 +357,4 @@ void_downcast(
 }
 
 } // namespace serialization
-} // namespace boost
+} // namespace lslboost

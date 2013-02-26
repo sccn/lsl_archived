@@ -1,18 +1,18 @@
 // (C) Copyright 2012 Vicente J. Botet Escriba
 // Use, modification and distribution are subject to the
 // Boost Software License, Version 1.0. (See accompanying file
-// LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
 
-#include <boost/thread/future.hpp>
+#include <lslboost/thread/future.hpp>
 
-namespace boost
+namespace lslboost
 {
 
   namespace thread_detail
   {
 
     class  future_error_category :
-      public boost::system::error_category
+      public lslboost::system::error_category
     {
     public:
         virtual const char* name() const; //BOOST_NOEXCEPT;

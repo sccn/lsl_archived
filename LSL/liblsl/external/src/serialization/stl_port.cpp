@@ -4,9 +4,9 @@
 // (C) Copyright 2005 Robert Ramey - http://www.rrsd.com . 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// http://www.lslboost.org/LICENSE_1_0.txt)
 
-//  See http://www.boost.org for updates, documentation, and revision history.
+//  See http://www.lslboost.org for updates, documentation, and revision history.
 
 #if (defined _MSC_VER) && (_MSC_VER == 1200)
 # pragma warning (disable : 4786) // too long name, harmless warning
@@ -16,11 +16,11 @@
 #if ! ((defined _MSC_VER) && (_MSC_VER <= 1300)) \
 &&  ! defined(__BORLANDC__)
 
-#include <boost/config.hpp>
+#include <lslboost/config.hpp>
 
 #if defined(__SGI_STL_PORT) && (__SGI_STL_PORT < 0x500)
 
-#include <boost/archive/codecvt_null.hpp>
+#include <lslboost/archive/codecvt_null.hpp>
 
 // explicit instantiation
 
@@ -28,12 +28,12 @@ namespace std {
 
 template
 locale::locale(
-    const locale& __loc, boost::archive::codecvt_null<char> * __f
+    const locale& __loc, lslboost::archive::codecvt_null<char> * __f
 );
 
 template
 locale::locale(
-    const locale& __loc, boost::archive::codecvt_null<wchar_t> * __f
+    const locale& __loc, lslboost::archive::codecvt_null<wchar_t> * __f
 );
 
 } // namespace std

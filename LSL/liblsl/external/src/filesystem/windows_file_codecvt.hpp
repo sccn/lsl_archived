@@ -3,14 +3,14 @@
 //  Copyright Beman Dawes 2009
 
 //  Distributed under the Boost Software License, Version 1.0.
-//  See http://www.boost.org/LICENSE_1_0.txt
+//  See http://www.lslboost.org/LICENSE_1_0.txt
 
-//  Library home page: http://www.boost.org/libs/filesystem
+//  Library home page: http://www.lslboost.org/libs/filesystem
 
 #ifndef BOOST_FILESYSTEM3_WIN_FILE_CODECVT_HPP
 #define BOOST_FILESYSTEM3_WIN_FILE_CODECVT_HPP
 
-#include <boost/filesystem/config.hpp>
+#include <lslboost/filesystem/config.hpp>
 #include <locale>  
 
   //------------------------------------------------------------------------------------//

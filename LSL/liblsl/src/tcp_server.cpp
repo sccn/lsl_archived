@@ -1,16 +1,17 @@
 #include "tcp_server.h"
 #include "socket_utils.h"
-#include <boost/algorithm/string.hpp>
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
-#include <boost/serialization/split_member.hpp>
+#include <lslboost/algorithm/string.hpp>
+#include <lslboost/uuid/uuid.hpp>
+#include <lslboost/uuid/uuid_generators.hpp>
+#include <lslboost/uuid/uuid_io.hpp>
+#include <lslboost/serialization/split_member.hpp>
 #include <iostream>
 
 //
 // === implementation of the tcp_server class ===
 //
 
+namespace boost = lslboost;
 using namespace lsl;
 using namespace boost::asio;
 
@@ -125,23 +126,9 @@ void tcp_server::unregister_inflight_socket(const tcp_socket_p &sock) {
 void tcp_server::close_inflight_sockets() {
 	boost::lock_guard<boost::recursive_mutex> lock(inflight_mut_);
 	for (std::set<tcp_socket_p>::iterator i=inflight_.begin(); i!=inflight_.end(); i++)
-		io_->post(boost::bind(&tcp_server::shutdown_and_close,*i));
+		io_->post(boost::bind(&shutdown_and_close<tcp_socket_p,tcp>,*i));
 }
 
-/// Gracefully shut down a socket.
-void tcp_server::shutdown_and_close(tcp_socket_p sock) {
-	try {
-		if (sock->is_open()) {
-			try {
-			    // (in some cases shutdown may fail)
-                sock->shutdown(tcp::socket::shutdown_both);
-			} catch(...) {}
-			sock->close();
-		}
-	}  catch(std::exception &e) {
-		std::cerr << "Error during tcp_server::shutdown_and_close (id: " << boost::this_thread::get_id() << "): " << e.what() << std::endl;
-	}
-}
 
 
 
