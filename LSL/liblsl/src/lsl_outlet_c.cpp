@@ -5,6 +5,7 @@
 // === implementation of the lsl_outlet functions of the C API ===
 //
 
+namespace boost = lslboost;
 using namespace lsl;
 
 // boilerplate wrapper code
@@ -478,6 +479,75 @@ LIBLSL_C_API int lsl_push_sample_strtp(lsl_outlet out, char **data, double times
 		std::vector<std::string> tmp;
 		for (unsigned k=0;k<(unsigned)outimpl->info().channel_count();k++)
 			tmp.push_back(std::string(data[k]));
+		outimpl->push_sample(&tmp[0],timestamp,pushthrough!=0);
+		return lsl_no_error;
+	} 
+	catch(std::range_error &e) {
+		std::cerr << "Error during push_sample: " << e.what() << std::endl;
+		return lsl_argument_error;
+	}
+	catch(std::invalid_argument &e) {
+		std::cerr << "Error during push_sample: " << e.what() << std::endl;
+		return lsl_argument_error;
+	}
+	catch(std::exception &e) {
+		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
+		return lsl_internal_error;
+	}
+}
+
+LIBLSL_C_API int lsl_push_sample_buf(lsl_outlet out, char **data, unsigned *lengths) {
+	try {
+		stream_outlet_impl* outimpl = (stream_outlet_impl*)out;
+		std::vector<std::string> tmp;
+		for (unsigned k=0;k<(unsigned)outimpl->info().channel_count();k++)
+			tmp.push_back(std::string(data[k],lengths[k]));
+		outimpl->push_sample(&tmp[0]);
+		return lsl_no_error;
+	} 
+	catch(std::range_error &e) {
+		std::cerr << "Error during push_sample: " << e.what() << std::endl;
+		return lsl_argument_error;
+	}
+	catch(std::invalid_argument &e) {
+		std::cerr << "Error during push_sample: " << e.what() << std::endl;
+		return lsl_argument_error;
+	}
+	catch(std::exception &e) {
+		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
+		return lsl_internal_error;
+	}
+}
+
+LIBLSL_C_API int lsl_push_sample_buft(lsl_outlet out, char **data, unsigned *lengths, double timestamp) {
+	try {
+		stream_outlet_impl* outimpl = (stream_outlet_impl*)out;
+		std::vector<std::string> tmp;
+		for (unsigned k=0;k<(unsigned)outimpl->info().channel_count();k++)
+			tmp.push_back(std::string(data[k],lengths[k]));
+		outimpl->push_sample(&tmp[0],timestamp);
+		return lsl_no_error;
+	} 
+	catch(std::range_error &e) {
+		std::cerr << "Error during push_sample: " << e.what() << std::endl;
+		return lsl_argument_error;
+	}
+	catch(std::invalid_argument &e) {
+		std::cerr << "Error during push_sample: " << e.what() << std::endl;
+		return lsl_argument_error;
+	}
+	catch(std::exception &e) {
+		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
+		return lsl_internal_error;
+	}
+}
+
+LIBLSL_C_API int lsl_push_sample_buftp(lsl_outlet out, char **data, unsigned *lengths, double timestamp, int pushthrough) {
+	try {
+		stream_outlet_impl* outimpl = (stream_outlet_impl*)out;
+		std::vector<std::string> tmp;
+		for (unsigned k=0;k<(unsigned)outimpl->info().channel_count();k++)
+			tmp.push_back(std::string(data[k],lengths[k]));
 		outimpl->push_sample(&tmp[0],timestamp,pushthrough!=0);
 		return lsl_no_error;
 	} 

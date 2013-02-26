@@ -3,18 +3,18 @@
 //  Copyright Beman Dawes 2008
 
 //  Distributed under the Boost Software License, Version 1.0.
-//  See http://www.boost.org/LICENSE_1_0.txt
+//  See http://www.lslboost.org/LICENSE_1_0.txt
 
-//  Library home page: http://www.boost.org/libs/filesystem
+//  Library home page: http://www.lslboost.org/libs/filesystem
 
 //  Old standard library configurations, particularly MingGW, don't support wide strings.
 //  Report this with an explicit error message.
-#include <boost/config.hpp>
+#include <lslboost/config.hpp>
 # if defined( BOOST_NO_STD_WSTRING )
 #   error Configuration not supported: Boost.Filesystem V3 and later requires std::wstring support
 # endif
 
-// define BOOST_FILESYSTEM_SOURCE so that <boost/system/config.hpp> knows
+// define BOOST_FILESYSTEM_SOURCE so that <lslboost/system/config.hpp> knows
 // the library is being built (possibly exporting rather than importing code)
 #define BOOST_FILESYSTEM_SOURCE 
 
@@ -22,11 +22,11 @@
 # define BOOST_SYSTEM_NO_DEPRECATED
 #endif
 
-#include <boost/filesystem/config.hpp>
-#include <boost/filesystem/path.hpp>
-#include <boost/scoped_array.hpp>
-#include <boost/system/error_code.hpp>
-#include <boost/assert.hpp>
+#include <lslboost/filesystem/config.hpp>
+#include <lslboost/filesystem/path.hpp>
+#include <lslboost/scoped_array.hpp>
+#include <lslboost/system/error_code.hpp>
+#include <lslboost/assert.hpp>
 #include <algorithm>
 #include <cstddef>
 #include <cstring>
@@ -36,7 +36,7 @@
 # include "windows_file_codecvt.hpp"
 # include <windows.h>
 #elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
-# include <boost/filesystem/detail/utf8_codecvt_facet.hpp>
+# include <lslboost/filesystem/detail/utf8_codecvt_facet.hpp>
 #endif
 
 #ifdef BOOST_FILESYSTEM_DEBUG
@@ -44,14 +44,14 @@
 # include <iomanip>
 #endif
 
-namespace fs = boost::filesystem;
+namespace fs = lslboost::filesystem;
 
-using boost::filesystem::path;
+using lslboost::filesystem::path;
 
 using std::string;
 using std::wstring;
 
-using boost::system::error_code;
+using lslboost::system::error_code;
 
 #ifndef BOOST_FILESYSTEM_CODECVT_BUF_SIZE
 # define BOOST_FILESYSTEM_CODECVT_BUF_SIZE 256
@@ -143,7 +143,7 @@ namespace
 //                                                                                      //
 //--------------------------------------------------------------------------------------//
 
-namespace boost
+namespace lslboost
 {
 namespace filesystem
 {
@@ -451,7 +451,7 @@ namespace filesystem
   }
 
 }  // namespace filesystem
-}  // namespace boost
+}  // namespace lslboost
   
 //--------------------------------------------------------------------------------------//
 //                                                                                      //
@@ -636,7 +636,7 @@ namespace
 }  // unnamed namespace
 
 
-namespace boost
+namespace lslboost
 {
 namespace filesystem
 {
@@ -781,7 +781,7 @@ namespace filesystem
   }
 
 }  // namespace filesystem
-}  // namespace boost
+}  // namespace lslboost
 
 //--------------------------------------------------------------------------------------//
 //                                                                                      //
@@ -850,7 +850,7 @@ namespace
   // Many thanks to Peter Dimov for digging out the above references!
 
   std::locale path_locale(std::locale(),
-                          new boost::filesystem::detail::utf8_codecvt_facet);
+                          new lslboost::filesystem::detail::utf8_codecvt_facet);
 
   const std::codecvt<wchar_t, char, std::mbstate_t>*
     codecvt_facet_ptr(&std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t> >
@@ -876,7 +876,7 @@ namespace
 //                           path::imbue implementation                                 //
 //--------------------------------------------------------------------------------------//
 
-namespace boost
+namespace lslboost
 {
 namespace filesystem
 {
@@ -926,4 +926,4 @@ namespace filesystem
 #endif
 
 }  // namespace filesystem
-}  // namespace boost
+}  // namespace lslboost

@@ -211,7 +211,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\$(ProjectName).dll"
+				OutputFile="$(SolutionDir)\liblslJNI32.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)/../liblsl/bin/&quot;"
 				GenerateDebugInformation="true"
@@ -289,7 +289,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\$(ProjectName).dll"
+				OutputFile="$(SolutionDir)\liblslJNI64.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)/../liblsl/bin/&quot;"
 				GenerateDebugInformation="true"
@@ -350,7 +350,7 @@
 				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="swig -c++ -java ../liblsl.i&#x0D;&#x0A;"
+					CommandLine="swig -c++ -java ../liblsl.i&#x0D;&#x0A;javac $(SolutionDir)/*.java"
 					Outputs="liblsl_wrap.cxx"
 				/>
 			</FileConfiguration>
@@ -359,7 +359,7 @@
 				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="swig -c++ -java ../liblsl.i&#x0D;&#x0A;"
+					CommandLine="swig -c++ -java ../liblsl.i&#x0D;&#x0A;javac $(SolutionDir)/*.java"
 					Outputs="liblsl_wrap.cxx"
 				/>
 			</FileConfiguration>

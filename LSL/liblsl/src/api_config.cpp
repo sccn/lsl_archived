@@ -1,14 +1,15 @@
 #include "api_config.h"
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/ini_parser.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
+#include <lslboost/property_tree/ptree.hpp>
+#include <lslboost/property_tree/ini_parser.hpp>
+#include <lslboost/algorithm/string.hpp>
+#include <lslboost/filesystem.hpp>
 #include <iostream>
 
 //
 // === implementation of the api_config class ===
 //
 
+namespace boost = lslboost;
 using namespace lsl;
 using namespace boost::filesystem;
 using namespace boost::algorithm;

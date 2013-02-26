@@ -1,12 +1,13 @@
 #include "info_receiver.h"
 #include "cancellable_streambuf.h"
-#include <boost/bind.hpp>
+#include <lslboost/bind.hpp>
 #include <iostream>
 
 //
 // === implementation of the info_receiver class ===
 //
 
+namespace boost = lslboost;
 using namespace lsl;
 
 /// Construct a new info receiver.
@@ -76,7 +77,7 @@ void info_receiver::info_thread() {
 					fullinfo_ = stream_info_impl_p(new stream_info_impl(info));
 				}
 				fullinfo_upd_.notify_all();
-				return;
+				break;
 			}
 			catch(error_code &) {
 				// connection-level error: closed, reset, refused, etc.

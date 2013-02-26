@@ -3,15 +3,15 @@
 //  Copyright Beman Dawes 2009
 
 //  Distributed under the Boost Software License, Version 1.0.
-//  See http://www.boost.org/LICENSE_1_0.txt)
+//  See http://www.lslboost.org/LICENSE_1_0.txt)
 
-//  Library home page at http://www.boost.org/libs/filesystem
+//  Library home page at http://www.lslboost.org/libs/filesystem
 
 //--------------------------------------------------------------------------------------//
 
-#include <boost/config/warning_disable.hpp>
+#include <lslboost/config/warning_disable.hpp>
 
-// define BOOST_FILESYSTEM_SOURCE so that <boost/filesystem/config.hpp> knows
+// define BOOST_FILESYSTEM_SOURCE so that <lslboost/filesystem/config.hpp> knows
 // the library is being built (possibly exporting rather than importing code)
 #define BOOST_FILESYSTEM_SOURCE
 
@@ -19,9 +19,9 @@
 #  define BOOST_SYSTEM_NO_DEPRECATED
 #endif
 
-#include <boost/filesystem/config.hpp>
-#include <boost/filesystem/path_traits.hpp>
-#include <boost/system/error_code.hpp>
+#include <lslboost/filesystem/config.hpp>
+#include <lslboost/filesystem/path_traits.hpp>
+#include <lslboost/system/error_code.hpp>
 #include <locale>
 #include <vector>
 #include <cstdlib>
@@ -31,7 +31,7 @@
 
 namespace
 {
-  class codecvt_error_cat : public boost::system::error_category
+  class codecvt_error_cat : public lslboost::system::error_category
   {
   public:
     codecvt_error_cat(){}
@@ -69,16 +69,16 @@ namespace
 
 } // unnamed namespace
 
-namespace boost
+namespace lslboost
 {
   namespace filesystem
   {
 
-    BOOST_FILESYSTEM_DECL const boost::system::error_category& codecvt_error_category()
+    BOOST_FILESYSTEM_DECL const lslboost::system::error_category& codecvt_error_category()
     {
       static const codecvt_error_cat  codecvt_error_cat_const;
       return codecvt_error_cat_const;
     }
 
   } // namespace filesystem
-} // namespace boost
+} // namespace lslboost

@@ -1,7 +1,7 @@
 #include "stream_info_impl.h"
 #include "api_config.h"
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
+#include <lslboost/algorithm/string.hpp>
+#include <lslboost/lexical_cast.hpp>
 #include <sstream>
 #include <iostream>
 
@@ -9,6 +9,7 @@
 // === implementation of the stream_info_impl class ===
 //
 
+namespace boost = lslboost;
 using namespace lsl;
 using namespace pugi;
 using std::string;

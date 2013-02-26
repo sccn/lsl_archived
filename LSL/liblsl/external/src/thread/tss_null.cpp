@@ -2,13 +2,13 @@
 // (C) Copyright 2007 Anthony Williams
 // Use, modification and distribution are subject to the
 // Boost Software License, Version 1.0. (See accompanying file
-// LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
 
-#include <boost/thread/detail/config.hpp>
+#include <lslboost/thread/detail/config.hpp>
 
 #if defined(BOOST_HAS_WINTHREADS) && (defined(BOOST_THREAD_BUILD_LIB) || defined(BOOST_THREAD_TEST) || defined(UNDER_CE)) && (!defined(_MSC_VER) || defined(UNDER_CE))
 
-namespace boost 
+namespace lslboost 
 {
     /*
     This file is a "null" implementation of tss cleanup; it's

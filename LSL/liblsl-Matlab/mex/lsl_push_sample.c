@@ -11,13 +11,14 @@ void mexFunction( int nlhs, mxArray *plhs[],
     uintptr_t *pTmp;
     /* function handle */
     lsl_push_sample_dtp_t func_num;   /* numeric data */
-    lsl_push_sample_strtp_t func_str; /* string data */
+    lsl_push_sample_buftp_t func_buf; /* string data */
     /* input/output variables */
     double timestamp=0.0;
     int pushthrough=1;
     int numcells,k,len;
     int returncode=0;
     char **buffer;
+    unsigned *lengths;
     outlet out;
     
     if (nrhs < 3)
@@ -58,23 +59,34 @@ void mexFunction( int nlhs, mxArray *plhs[],
     } else  {
         if (mxGetClassID(prhs[2]) == mxCELL_CLASS) {
             /* string data; get function handle */
-            field = mxGetField(prhs[0], 0, "lsl_push_sample_strtp");
+            field = mxGetField(prhs[0], 0, "lsl_push_sample_buftp");
             if (!field)
                 mexErrMsgTxt("The field does not seem to exist.");
             pTmp = (uintptr_t*)mxGetData(field);
             if (!pTmp)
                 mexErrMsgTxt("The field seems to be empty.");
-            func_str = (lsl_push_sample_strtp_t*)*pTmp;            
+            func_buf = (lsl_push_sample_buftp_t*)*pTmp;            
             
             /* allocate temporary buffer space */
             numcells = mxGetNumberOfElements(prhs[2]);
             buffer = malloc(numcells * sizeof(char*));
+            lengths = malloc(numcells * sizeof(unsigned));
+            
             for (k=0;k<numcells;k++) {
                 cell = mxGetCell(prhs[2],k);
                 if (cell) {
-                    len = mxGetNumberOfElements(cell);
-                    buffer[k] = malloc(len+1);
-                    mxGetNChars_700(cell, buffer[k], len+1);
+                    if (mxGetClassID(cell) == mxCHAR_CLASS) {
+                        len = mxGetNumberOfElements(cell);
+                        buffer[k] = malloc(len+1);
+                        lengths[k] = len;
+                        mxGetString(cell, buffer[k], len+1);
+                    }
+                    if (mxGetClassID(cell) == mxINT8_CLASS || mxGetClassID(cell) == mxUINT8_CLASS) {
+                        len = mxGetNumberOfElements(cell);
+                        buffer[k] = malloc(len);
+                        lengths[k] = len;
+                        memcpy(buffer[k],mxGetData(cell),len);
+                    }
                 } else {
                     buffer[k] = malloc(1);
                     buffer[k][0] = 0;
@@ -82,11 +94,12 @@ void mexFunction( int nlhs, mxArray *plhs[],
             }
             
             /* invoke */
-            returncode = func_str(out,buffer,timestamp,pushthrough);
+            returncode = func_buf(out,buffer,lengths,timestamp,pushthrough);
             
             /* free buffer space */
             for (k=0;k<numcells;k++)
                 free(buffer[k]);
+            free(lengths);
             free(buffer);
         } else {
             mexErrMsgTxt("Please call this function only with double or string data (it will be converted into the appropriate sample format).");

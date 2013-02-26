@@ -113,6 +113,9 @@ typedef int (LINKAGE *lsl_push_sample_ctp_t)(outlet out, char *data, double time
 typedef int (LINKAGE *lsl_push_sample_str_t)(outlet out, char **data);
 typedef int (LINKAGE *lsl_push_sample_strt_t)(outlet out, char **data, double timestamp);
 typedef int (LINKAGE *lsl_push_sample_strtp_t)(outlet out, char **data, double timestamp, int pushthrough);
+typedef int (LINKAGE *lsl_push_sample_buf_t)(outlet out, char **data, unsigned *lengths);
+typedef int (LINKAGE *lsl_push_sample_buft_t)(outlet out, char **data, unsigned *lengths, double timestamp);
+typedef int (LINKAGE *lsl_push_sample_buftp_t)(outlet out, char **data, unsigned *lengths, double timestamp, int pushthrough);
 typedef int (LINKAGE *lsl_push_sample_v_t)(outlet out, void *data);
 typedef int (LINKAGE *lsl_push_sample_vt_t)(outlet out, void *data, double timestamp);
 typedef int (LINKAGE *lsl_push_sample_vtp_t)(outlet out, void *data, double timestamp, int pushthrough);
@@ -134,6 +137,7 @@ typedef double (LINKAGE *lsl_pull_sample_i_t)(inlet in, int *buffer, int buffer_
 typedef double (LINKAGE *lsl_pull_sample_s_t)(inlet in, short *buffer, int buffer_elements, double timeout, int *ec);
 typedef double (LINKAGE *lsl_pull_sample_c_t)(inlet in, char *buffer, int buffer_elements, double timeout, int *ec);
 typedef double (LINKAGE *lsl_pull_sample_str_t)(inlet in, char **buffer, int buffer_elements, double timeout, int *ec);
+typedef double (LINKAGE *lsl_pull_sample_buf_t)(inlet in, char **buffer, unsigned *buffer_lengths, int buffer_elements, double timeout, int *ec);
 typedef double (LINKAGE *lsl_pull_sample_v_t)(inlet in, void *buffer, int buffer_bytes, double timeout, int *ec);
 typedef unsigned (LINKAGE *lsl_samples_available_t)(inlet in);
 

@@ -1,10 +1,11 @@
 #include "stream_outlet_impl.h"
-#include <boost/bind.hpp>
+#include <lslboost/bind.hpp>
 
 //
 // === implementation of the stream_outlet_impl class ===
 //
 
+namespace boost = lslboost;
 using namespace lsl;
 using namespace boost::asio;
 
@@ -77,7 +78,7 @@ void stream_outlet_impl::instantiate_stack(tcp tcp_protocol, udp udp_protocol) {
 			if (udp_protocol == udp::v4() ? address.is_v4() : address.is_v6())
 				responders_.push_back(udp_server_p(new udp_server(info_, *ios_.back(), *i, multicast_port, multicast_ttl)));
 		} catch(std::exception &e) {
-			std::cerr << "Note: could not create multicast responder for address " << *i << " (failed with: " << e.what() << ")" << std::endl;
+			std::clog << "Note: could not create multicast responder for address " << *i << " (failed with: " << e.what() << ")" << std::endl;
 		}
 	}
 }

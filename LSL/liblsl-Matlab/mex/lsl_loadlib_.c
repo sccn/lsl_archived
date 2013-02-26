@@ -65,6 +65,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[]) {
 	lsl_push_sample_str_t lsl_push_sample_str;
 	lsl_push_sample_strt_t lsl_push_sample_strt;
 	lsl_push_sample_strtp_t lsl_push_sample_strtp;
+	lsl_push_sample_buf_t lsl_push_sample_buf;
+	lsl_push_sample_buft_t lsl_push_sample_buft;
+	lsl_push_sample_buftp_t lsl_push_sample_buftp;
 	lsl_push_sample_v_t lsl_push_sample_v;
 	lsl_push_sample_vt_t lsl_push_sample_vt;
 	lsl_push_sample_vtp_t lsl_push_sample_vtp;
@@ -84,6 +87,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[]) {
 	lsl_pull_sample_s_t lsl_pull_sample_s;
 	lsl_pull_sample_c_t lsl_pull_sample_c;
 	lsl_pull_sample_str_t lsl_pull_sample_str;
+	lsl_pull_sample_buf_t lsl_pull_sample_buf;
 	lsl_pull_sample_v_t lsl_pull_sample_v;
     lsl_samples_available_t lsl_samples_available;
 	lsl_first_child_t lsl_first_child;
@@ -118,9 +122,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[]) {
 		"lsl_get_uid", "lsl_get_session_id", "lsl_get_hostname", "lsl_get_desc", "lsl_get_xml", "lsl_create_outlet", "lsl_destroy_outlet", "lsl_push_sample_f", "lsl_push_sample_ft", "lsl_push_sample_ftp", 
         "lsl_push_sample_d", "lsl_push_sample_dt" , "lsl_push_sample_dtp", "lsl_push_sample_l", "lsl_push_sample_lt", "lsl_push_sample_ltp",  "lsl_push_sample_i", "lsl_push_sample_it", 
         "lsl_push_sample_itp", "lsl_push_sample_s", "lsl_push_sample_st", "lsl_push_sample_stp", "lsl_push_sample_c", "lsl_push_sample_ct", "lsl_push_sample_ctp", "lsl_push_sample_str", 
-		"lsl_push_sample_strt", "lsl_push_sample_strtp", "lsl_push_sample_v", "lsl_push_sample_vt", "lsl_push_sample_vtp", "lsl_have_consumers", "lsl_wait_for_consumers", "lsl_get_info", 
+		"lsl_push_sample_strt", "lsl_push_sample_strtp", "lsl_push_sample_buf", "lsl_push_sample_buft", "lsl_push_sample_buftp","lsl_push_sample_v", "lsl_push_sample_vt", "lsl_push_sample_vtp", "lsl_have_consumers", "lsl_wait_for_consumers", "lsl_get_info", 
 		"lsl_create_inlet", "lsl_destroy_inlet", "lsl_get_fullinfo", "lsl_open_stream", "lsl_close_stream", "lsl_time_correction", "lsl_pull_sample_f", "lsl_pull_sample_d", "lsl_pull_sample_l", 
-		"lsl_pull_sample_i", "lsl_pull_sample_s", "lsl_pull_sample_c", "lsl_pull_sample_str", "lsl_pull_sample_v", "lsl_samples_available", "lsl_first_child", "lsl_last_child", "lsl_next_sibling", "lsl_previous_sibling", 
+		"lsl_pull_sample_i", "lsl_pull_sample_s", "lsl_pull_sample_c", "lsl_pull_sample_str", "lsl_pull_sample_buf", "lsl_pull_sample_v", "lsl_samples_available", "lsl_first_child", "lsl_last_child", "lsl_next_sibling", "lsl_previous_sibling", 
 		"lsl_parent", "lsl_child", "lsl_next_sibling_n", "lsl_previous_sibling_n", "lsl_empty", "lsl_is_text", "lsl_name", "lsl_value", "lsl_child_value", "lsl_child_value_n", "lsl_append_child_value", 
 		"lsl_prepend_child_value", "lsl_set_child_value", "lsl_set_name", "lsl_set_value", "lsl_append_child", "lsl_prepend_child", "lsl_append_copy", "lsl_prepend_copy", "lsl_remove_child_n", 
 		"lsl_remove_child"};
@@ -192,6 +196,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[]) {
 	lsl_push_sample_str = (lsl_push_sample_str_t)LOAD_FUNCTION(hlib,"lsl_push_sample_str");
 	lsl_push_sample_strt = (lsl_push_sample_strt_t)LOAD_FUNCTION(hlib,"lsl_push_sample_strt");
 	lsl_push_sample_strtp = (lsl_push_sample_strtp_t)LOAD_FUNCTION(hlib,"lsl_push_sample_strtp");
+	lsl_push_sample_buf = (lsl_push_sample_buf_t)LOAD_FUNCTION(hlib,"lsl_push_sample_buf");
+	lsl_push_sample_buft = (lsl_push_sample_buft_t)LOAD_FUNCTION(hlib,"lsl_push_sample_buft");
+	lsl_push_sample_buftp = (lsl_push_sample_buftp_t)LOAD_FUNCTION(hlib,"lsl_push_sample_buftp");
 	lsl_push_sample_v = (lsl_push_sample_v_t)LOAD_FUNCTION(hlib,"lsl_push_sample_v");
 	lsl_push_sample_vt = (lsl_push_sample_vt_t)LOAD_FUNCTION(hlib,"lsl_push_sample_vt");
 	lsl_push_sample_vtp = (lsl_push_sample_vtp_t)LOAD_FUNCTION(hlib,"lsl_push_sample_vtp");
@@ -211,6 +218,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[]) {
 	lsl_pull_sample_s = (lsl_pull_sample_s_t)LOAD_FUNCTION(hlib,"lsl_pull_sample_s");
 	lsl_pull_sample_c = (lsl_pull_sample_c_t)LOAD_FUNCTION(hlib,"lsl_pull_sample_c");
 	lsl_pull_sample_str = (lsl_pull_sample_str_t)LOAD_FUNCTION(hlib,"lsl_pull_sample_str");
+	lsl_pull_sample_buf = (lsl_pull_sample_buf_t)LOAD_FUNCTION(hlib,"lsl_pull_sample_buf");
 	lsl_pull_sample_v = (lsl_pull_sample_v_t)LOAD_FUNCTION(hlib,"lsl_pull_sample_v");
 	lsl_samples_available = (lsl_samples_available_t)LOAD_FUNCTION(hlib,"lsl_samples_available");
 	lsl_first_child = (lsl_first_child_t)LOAD_FUNCTION(hlib,"lsl_first_child");
@@ -287,6 +295,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[]) {
 	tmp = mxCreateNumericMatrix(1,1,PTR_CLASS,mxREAL); *(uintptr_t*)mxGetData(tmp) = (uintptr_t)lsl_push_sample_str; mxSetField(plhs[0],0,"lsl_push_sample_str",tmp);
 	tmp = mxCreateNumericMatrix(1,1,PTR_CLASS,mxREAL); *(uintptr_t*)mxGetData(tmp) = (uintptr_t)lsl_push_sample_strt; mxSetField(plhs[0],0,"lsl_push_sample_strt",tmp);
 	tmp = mxCreateNumericMatrix(1,1,PTR_CLASS,mxREAL); *(uintptr_t*)mxGetData(tmp) = (uintptr_t)lsl_push_sample_strtp; mxSetField(plhs[0],0,"lsl_push_sample_strtp",tmp);
+	tmp = mxCreateNumericMatrix(1,1,PTR_CLASS,mxREAL); *(uintptr_t*)mxGetData(tmp) = (uintptr_t)lsl_push_sample_buf; mxSetField(plhs[0],0,"lsl_push_sample_buf",tmp);
+	tmp = mxCreateNumericMatrix(1,1,PTR_CLASS,mxREAL); *(uintptr_t*)mxGetData(tmp) = (uintptr_t)lsl_push_sample_buft; mxSetField(plhs[0],0,"lsl_push_sample_buft",tmp);
+	tmp = mxCreateNumericMatrix(1,1,PTR_CLASS,mxREAL); *(uintptr_t*)mxGetData(tmp) = (uintptr_t)lsl_push_sample_buftp; mxSetField(plhs[0],0,"lsl_push_sample_buftp",tmp);
 	tmp = mxCreateNumericMatrix(1,1,PTR_CLASS,mxREAL); *(uintptr_t*)mxGetData(tmp) = (uintptr_t)lsl_push_sample_v; mxSetField(plhs[0],0,"lsl_push_sample_v",tmp);
 	tmp = mxCreateNumericMatrix(1,1,PTR_CLASS,mxREAL); *(uintptr_t*)mxGetData(tmp) = (uintptr_t)lsl_push_sample_vt; mxSetField(plhs[0],0,"lsl_push_sample_vt",tmp);
 	tmp = mxCreateNumericMatrix(1,1,PTR_CLASS,mxREAL); *(uintptr_t*)mxGetData(tmp) = (uintptr_t)lsl_push_sample_vtp; mxSetField(plhs[0],0,"lsl_push_sample_vtp",tmp);
@@ -305,6 +316,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[]) {
 	tmp = mxCreateNumericMatrix(1,1,PTR_CLASS,mxREAL); *(uintptr_t*)mxGetData(tmp) = (uintptr_t)lsl_pull_sample_s; mxSetField(plhs[0],0,"lsl_pull_sample_s",tmp);
 	tmp = mxCreateNumericMatrix(1,1,PTR_CLASS,mxREAL); *(uintptr_t*)mxGetData(tmp) = (uintptr_t)lsl_pull_sample_c; mxSetField(plhs[0],0,"lsl_pull_sample_c",tmp);
 	tmp = mxCreateNumericMatrix(1,1,PTR_CLASS,mxREAL); *(uintptr_t*)mxGetData(tmp) = (uintptr_t)lsl_pull_sample_str; mxSetField(plhs[0],0,"lsl_pull_sample_str",tmp);
+	tmp = mxCreateNumericMatrix(1,1,PTR_CLASS,mxREAL); *(uintptr_t*)mxGetData(tmp) = (uintptr_t)lsl_pull_sample_buf; mxSetField(plhs[0],0,"lsl_pull_sample_buf",tmp);
 	tmp = mxCreateNumericMatrix(1,1,PTR_CLASS,mxREAL); *(uintptr_t*)mxGetData(tmp) = (uintptr_t)lsl_pull_sample_v; mxSetField(plhs[0],0,"lsl_pull_sample_v",tmp);
 	tmp = mxCreateNumericMatrix(1,1,PTR_CLASS,mxREAL); *(uintptr_t*)mxGetData(tmp) = (uintptr_t)lsl_samples_available; mxSetField(plhs[0],0,"lsl_samples_available",tmp);
 	tmp = mxCreateNumericMatrix(1,1,PTR_CLASS,mxREAL); *(uintptr_t*)mxGetData(tmp) = (uintptr_t)lsl_first_child; mxSetField(plhs[0],0,"lsl_first_child",tmp);

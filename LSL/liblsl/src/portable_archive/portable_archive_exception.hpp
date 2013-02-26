@@ -4,7 +4,7 @@
  * \brief Provides error handling and constants.
  * \author christian.pfligersdorffer@gmx.at
  *
- * Portable archive exceptions derive from the boost archive exceptions
+ * Portable archive exceptions derive from the lslboost archive exceptions
  * and add failure causes specific to the portable binary usecase.
  *
  * Additionally this header serves as common include for important
@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include <boost/lexical_cast.hpp>
-#include <boost/archive/basic_archive.hpp>
-#include <boost/archive/archive_exception.hpp>
+#include <lslboost/lexical_cast.hpp>
+#include <lslboost/archive/basic_archive.hpp>
+#include <lslboost/archive/archive_exception.hpp>
 
 namespace eos {
 
@@ -28,17 +28,17 @@ namespace eos {
 
 	// integral type for the archive version
 	#if BOOST_VERSION < 104400
-		typedef boost::archive::version_type archive_version_type;
+		typedef lslboost::archive::version_type archive_version_type;
 	#else
-		typedef boost::archive::library_version_type archive_version_type;
+		typedef lslboost::archive::library_version_type archive_version_type;
 	#endif
 
-	// version of the linked boost archive library
+	// version of the linked lslboost archive library
 	const archive_version_type archive_version(
 	#if BOOST_VERSION < 103700
-		boost::archive::ARCHIVE_VERSION()
+		lslboost::archive::ARCHIVE_VERSION()
 	#else
-		boost::archive::BOOST_ARCHIVE_VERSION()
+		lslboost::archive::BOOST_ARCHIVE_VERSION()
 	#endif
 	);
 
@@ -56,22 +56,22 @@ namespace eos {
 	 * position and accidentially interpret some value for size data (in this case
 	 * the reported size will be totally amiss most of the time).
 	 */
-	class portable_archive_exception : public boost::archive::archive_exception
+	class portable_archive_exception : public lslboost::archive::archive_exception
 	{
 		std::string msg;
 
 	public:
 		//! type size is not large enough for deserialized number
 		portable_archive_exception(signed char invalid_size) 
-			: boost::archive::archive_exception(other_exception) 
+			: lslboost::archive::archive_exception(other_exception) 
 			, msg("requested integer size exceeds type size: ")
 		{
-			msg += boost::lexical_cast<std::string, int>(invalid_size);
+			msg += lslboost::lexical_cast<std::string, int>(invalid_size);
 		}
 
 		//! negative number in unsigned type
 		portable_archive_exception()
-			: boost::archive::archive_exception(other_exception)
+			: lslboost::archive::archive_exception(other_exception)
 			, msg("cannot read a negative number into an unsigned type")
 		{
 		}
@@ -79,10 +79,10 @@ namespace eos {
 		//! serialization of inf, nan and denormals
 		template <typename T> 
 		portable_archive_exception(const T& abnormal) 
-			: boost::archive::archive_exception(other_exception) 
+			: lslboost::archive::archive_exception(other_exception) 
 			, msg("serialization of illegal floating point value: ")
 		{
-			msg += boost::lexical_cast<std::string>(abnormal);
+			msg += lslboost::lexical_cast<std::string>(abnormal);
 		}
 
 		//! override the base class function with our message

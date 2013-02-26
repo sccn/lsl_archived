@@ -32,6 +32,7 @@ add_library (lsl SHARED
 
 if (WIN32)
   set_property (TARGET lsl PROPERTY COMPILE_DEFINITIONS BOOST_ALL_NO_LIB BOOST_THREAD_BUILD_LIB LIBLSL_EXPORTS)
-endif (WIN32)
-
-target_link_libraries (lsl ${Boost_LIBRARIES})
+  target_link_libraries (lsl ${Boost_LIBRARIES})
+elseif (UNIX)
+  target_link_libraries (lsl ${Boost_LIBRARIES} rt pthread)
+endif ()

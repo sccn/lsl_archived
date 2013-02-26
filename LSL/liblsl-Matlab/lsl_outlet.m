@@ -1,6 +1,6 @@
 classdef lsl_outlet < handle
-	% A stream outlet.
-	% Outlets are used to make streaming data (and the meta-data) available on the lab network.
+    % A stream outlet.
+    % Outlets are used to make streaming data (and the meta-data) available on the lab network.
     
     properties (Hidden)
         LibHandle = 0;       % this is a handle to the liblsl library (to call its functions)
@@ -50,14 +50,15 @@ classdef lsl_outlet < handle
             %
             % In:
             %   SampleData : either a numeric vector (as double, converted implicitly) with as many 
-            %                elements as the stream has channels, or a cell array of strings of the 
-            %                same size (if the stream is string-formatted).
+            %                elements as the stream has channels, or a cell array of strings (if the 
+            %                 stream is string-formatted), or a cell array of uint8 vectors to submit
+            %                 variable-length binary data.
             %
             %   Timestamp : Optionally the capture time of the most recent sample, in agreement with lsl_local_clock(); 
             %               if 0, the current time is used. 
             %
             %   Pushthrough : Whether to push the chunk through to the receivers instead of buffering it with subsequent samples.
-			%	 			  Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
+            %                   Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
             %                 (default: 1)
 
             if ~exist('timestamp','var') || isempty(timestamp) timestamp = 0; end
@@ -80,7 +81,7 @@ classdef lsl_outlet < handle
             %                If this is a vector, it is assumed that it contains one time stamp for each sample. (default: 0)
             %
             %   Pushthrough : Whether to push the chunk through to the receivers instead of buffering it with subsequent samples.
-			%	 			  Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
+            %                   Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
             %                 (default: 1)
 
             if ~exist('timestamps','var') || isempty(timestamps) timestamps = 0; end
@@ -135,5 +136,9 @@ classdef lsl_outlet < handle
             result = lsl_streaminfo(self.LibHandle,lsl_get_info(self.LibHandle,self.OutletHandle));
         end
         
+        function h = get_libhandle(self)
+            % get the library handle (e.g., to query the clock)
+            h = self.LibHandle;
+        end        
     end
 end

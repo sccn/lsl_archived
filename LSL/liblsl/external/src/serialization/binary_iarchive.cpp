@@ -4,21 +4,21 @@
 // (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// http://www.lslboost.org/LICENSE_1_0.txt)
 
-//  See http://www.boost.org for updates, documentation, and revision history.
+//  See http://www.lslboost.org for updates, documentation, and revision history.
 
 #include <istream>
 
 #define BOOST_ARCHIVE_SOURCE
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/detail/archive_serializer_map.hpp>
+#include <lslboost/archive/binary_iarchive.hpp>
+#include <lslboost/archive/detail/archive_serializer_map.hpp>
 
-#include <boost/archive/impl/archive_serializer_map.ipp>
-#include <boost/archive/impl/basic_binary_iprimitive.ipp>
-#include <boost/archive/impl/basic_binary_iarchive.ipp>
+#include <lslboost/archive/impl/archive_serializer_map.ipp>
+#include <lslboost/archive/impl/basic_binary_iprimitive.ipp>
+#include <lslboost/archive/impl/basic_binary_iarchive.ipp>
 
-namespace boost {
+namespace lslboost {
 namespace archive {
 
 // explicitly instantiate for this type of stream
@@ -50,4 +50,4 @@ template class binary_iarchive_impl<
 >;
 
 } // namespace archive
-} // namespace boost
+} // namespace lslboost

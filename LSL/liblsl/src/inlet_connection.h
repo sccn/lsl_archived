@@ -5,10 +5,11 @@
 #include "../include/lsl_cpp.h"
 #include "resolver_impl.h"
 #include "cancellation.h"
-#include <boost/asio.hpp>
-#include <boost/thread.hpp>
+#include <lslboost/asio.hpp>
+#include <lslboost/thread.hpp>
 #include <map>
 
+namespace boost = lslboost;
 using boost::asio::ip::tcp;
 using boost::asio::ip::udp;
 

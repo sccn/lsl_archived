@@ -3,13 +3,13 @@
 //  Copyright Beman Dawes 2010
 
 //  Distributed under the Boost Software License, Version 1.0.
-//  See http://www.boost.org/LICENSE_1_0.txt
+//  See http://www.lslboost.org/LICENSE_1_0.txt
 
-//  Library home page: http://www.boost.org/libs/filesystem
+//  Library home page: http://www.lslboost.org/libs/filesystem
 
 //--------------------------------------------------------------------------------------// 
 
-// define BOOST_FILESYSTEM_SOURCE so that <boost/filesystem/config.hpp> knows
+// define BOOST_FILESYSTEM_SOURCE so that <lslboost/filesystem/config.hpp> knows
 // the library is being built (possibly exporting rather than importing code)
 #define BOOST_FILESYSTEM_SOURCE 
 
@@ -17,7 +17,7 @@
 # define BOOST_SYSTEM_NO_DEPRECATED
 #endif
 
-#include <boost/filesystem/operations.hpp>
+#include <lslboost/filesystem/operations.hpp>
 
 # ifdef BOOST_POSIX_API
 #   include <fcntl.h>
@@ -29,18 +29,18 @@
 
 namespace {
 
-void fail(int err, boost::system::error_code* ec)
+void fail(int err, lslboost::system::error_code* ec)
 {
   if (ec == 0)
-    BOOST_FILESYSTEM_THROW( boost::system::system_error(err,
-      boost::system::system_category(),
-      "boost::filesystem::unique_path"));
+    BOOST_FILESYSTEM_THROW( lslboost::system::system_error(err,
+      lslboost::system::system_category(),
+      "lslboost::filesystem::unique_path"));
 
-  ec->assign(err, boost::system::system_category());
+  ec->assign(err, lslboost::system::system_category());
   return;
 }
 
-void system_crypt_random(void* buf, std::size_t len, boost::system::error_code* ec)
+void system_crypt_random(void* buf, std::size_t len, lslboost::system::error_code* ec)
 {
 # ifdef BOOST_POSIX_API
 
@@ -105,7 +105,7 @@ void system_crypt_random(void* buf, std::size_t len, boost::system::error_code* 
 
 }  // unnamed namespace
 
-namespace boost { namespace filesystem { namespace detail {
+namespace lslboost { namespace filesystem { namespace detail {
 
 BOOST_FILESYSTEM_DECL
 path unique_path(const path& model, system::error_code* ec)

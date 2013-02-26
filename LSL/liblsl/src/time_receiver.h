@@ -2,11 +2,12 @@
 #define TIME_RECEIVER_H
 
 #include "inlet_connection.h"
-#include <boost/asio.hpp>
-#include <boost/thread.hpp>
-#include <boost/random.hpp>
+#include <lslboost/asio.hpp>
+#include <lslboost/thread.hpp>
+#include <lslboost/random.hpp>
 #include <limits>
 
+namespace boost = lslboost;
 using boost::asio::ip::udp;
 using boost::asio::deadline_timer;
 

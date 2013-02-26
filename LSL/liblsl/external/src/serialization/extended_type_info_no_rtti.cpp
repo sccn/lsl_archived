@@ -5,25 +5,25 @@
 // (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// http://www.lslboost.org/LICENSE_1_0.txt)
 
-//  See http://www.boost.org for updates, documentation, and revision history.
+//  See http://www.lslboost.org for updates, documentation, and revision history.
 
 #include <cstring>
 #include <cstddef> // NULL
-#include <boost/assert.hpp>
+#include <lslboost/assert.hpp>
 
-#include <boost/config.hpp>
+#include <lslboost/config.hpp>
 #if defined(BOOST_NO_STDC_NAMESPACE)
 namespace std{ using ::strcmp; }
 #endif
 
 #define BOOST_SERIALIZATION_SOURCE
-#include <boost/serialization/extended_type_info_no_rtti.hpp>
+#include <lslboost/serialization/extended_type_info_no_rtti.hpp>
 
 #define EXTENDED_TYPE_INFO_NO_RTTI_KEY 2
 
-namespace boost { 
+namespace lslboost { 
 namespace serialization { 
 namespace no_rtti_system { 
 
@@ -36,7 +36,7 @@ extended_type_info_no_rtti_0::extended_type_info_no_rtti_0(
 
 BOOST_SERIALIZATION_DECL(bool)
 extended_type_info_no_rtti_0::is_less_than(
-    const boost::serialization::extended_type_info &rhs) const 
+    const lslboost::serialization::extended_type_info &rhs) const 
 {
     // shortcut for common case
     if(this == & rhs)
@@ -59,7 +59,7 @@ extended_type_info_no_rtti_0::is_less_than(
 
 BOOST_SERIALIZATION_DECL(bool)
 extended_type_info_no_rtti_0::is_equal(
-    const boost::serialization::extended_type_info &rhs) const 
+    const lslboost::serialization::extended_type_info &rhs) const 
 {
     // shortcut for common case
     if(this == & rhs)
@@ -82,4 +82,4 @@ extended_type_info_no_rtti_0::~extended_type_info_no_rtti_0()
 
 } // namespece detail
 } // namespace serialization
-} // namespace boost
+} // namespace lslboost

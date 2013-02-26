@@ -4,48 +4,48 @@
 // (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// http://www.lslboost.org/LICENSE_1_0.txt)
 
-//  See http://www.boost.org for updates, documentation, and revision history.
+//  See http://www.lslboost.org for updates, documentation, and revision history.
 
-#include <boost/config.hpp> // msvc 6.0 needs this to suppress warnings
+#include <lslboost/config.hpp> // msvc 6.0 needs this to suppress warnings
 
-#include <boost/assert.hpp>
+#include <lslboost/assert.hpp>
 #include <set>
 #include <list>
 #include <vector>
 #include <cstddef> // size_t, NULL
 
-#include <boost/config.hpp>
+#include <lslboost/config.hpp>
 #if defined(BOOST_NO_STDC_NAMESPACE)
 namespace std{ 
     using ::size_t; 
 } // namespace std
 #endif
 
-#include <boost/integer_traits.hpp>
-#include <boost/serialization/state_saver.hpp>
-#include <boost/serialization/throw_exception.hpp>
-#include <boost/serialization/tracking.hpp>
+#include <lslboost/integer_traits.hpp>
+#include <lslboost/serialization/state_saver.hpp>
+#include <lslboost/serialization/throw_exception.hpp>
+#include <lslboost/serialization/tracking.hpp>
 
 #define BOOST_ARCHIVE_SOURCE
 // include this to prevent linker errors when the
 // same modules are marked export and import.
 #define BOOST_SERIALIZATION_SOURCE
 
-#include <boost/archive/archive_exception.hpp>
+#include <lslboost/archive/archive_exception.hpp>
 
-#include <boost/archive/detail/decl.hpp>
-#include <boost/archive/basic_archive.hpp>
-#include <boost/archive/detail/basic_iserializer.hpp>
-#include <boost/archive/detail/basic_pointer_iserializer.hpp>
-#include <boost/archive/detail/basic_iarchive.hpp>
+#include <lslboost/archive/detail/decl.hpp>
+#include <lslboost/archive/basic_archive.hpp>
+#include <lslboost/archive/detail/basic_iserializer.hpp>
+#include <lslboost/archive/detail/basic_pointer_iserializer.hpp>
+#include <lslboost/archive/detail/basic_iarchive.hpp>
 
-#include <boost/archive/detail/auto_link_archive.hpp>
+#include <lslboost/archive/detail/auto_link_archive.hpp>
 
-using namespace boost::serialization;
+using namespace lslboost::serialization;
 
-namespace boost {
+namespace lslboost {
 namespace archive {
 namespace detail {
 
@@ -216,7 +216,7 @@ class basic_iarchive_impl {
         void * & t, 
         const basic_pointer_iserializer * bpis,
         const basic_pointer_iserializer * (*finder)(
-            const boost::serialization::extended_type_info & type
+            const lslboost::serialization::extended_type_info & type
         )
 
     );
@@ -370,7 +370,7 @@ basic_iarchive_impl::load_object(
     load_preamble(ar, co);
 
     // save the current move stack position in case we want to truncate it
-    boost::serialization::state_saver<object_id_type> w(moveable_objects_start);
+    lslboost::serialization::state_saver<object_id_type> w(moveable_objects_start);
 
     // note: extra line used to evade borland issue
     const bool tracking = co.tracking_level;
@@ -401,7 +401,7 @@ basic_iarchive_impl::load_pointer(
     void * & t,
     const basic_pointer_iserializer * bpis_ptr,
     const basic_pointer_iserializer * (*finder)(
-        const boost::serialization::extended_type_info & type_
+        const lslboost::serialization::extended_type_info & type_
     )
 
 ){
@@ -428,7 +428,7 @@ basic_iarchive_impl::load_pointer(
             if(0 != key[0])
                 eti = serialization::extended_type_info::find(key);
             if(NULL == eti)
-                boost::serialization::throw_exception(
+                lslboost::serialization::throw_exception(
                     archive_exception(archive_exception::unregistered_class)
                 );
             bpis_ptr = (*finder)(*eti);
@@ -492,11 +492,11 @@ basic_iarchive_impl::load_pointer(
 
 } // namespace detail
 } // namespace archive
-} // namespace boost
+} // namespace lslboost
 
 //////////////////////////////////////////////////////////////////////
 // implementation of basic_iarchive functions
-namespace boost {
+namespace lslboost {
 namespace archive {
 namespace detail {
 
@@ -543,7 +543,7 @@ basic_iarchive::load_pointer(
     void * &t, 
     const basic_pointer_iserializer * bpis_ptr,
     const basic_pointer_iserializer * (*finder)(
-        const boost::serialization::extended_type_info & type_
+        const lslboost::serialization::extended_type_info & type_
     )
 
 ){
@@ -561,7 +561,7 @@ basic_iarchive::delete_created_pointers()
     pimpl->delete_created_pointers();
 }
 
-BOOST_ARCHIVE_DECL(boost::archive::library_version_type) 
+BOOST_ARCHIVE_DECL(lslboost::archive::library_version_type) 
 basic_iarchive::get_library_version() const{
     return pimpl->m_archive_library_version;
 }
@@ -573,4 +573,4 @@ basic_iarchive::get_flags() const{
 
 } // namespace detail
 } // namespace archive
-} // namespace boost
+} // namespace lslboost

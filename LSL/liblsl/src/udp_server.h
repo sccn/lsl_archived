@@ -3,10 +3,11 @@
 
 #include "version.h"
 #include "stream_info_impl.h"
-#include <boost/asio.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
+#include <lslboost/asio.hpp>
+#include <lslboost/shared_ptr.hpp>
+#include <lslboost/enable_shared_from_this.hpp>
 
+namespace boost = lslboost;
 using boost::asio::ip::udp;
 using boost::system::error_code;
 
@@ -37,7 +38,7 @@ namespace lsl {
 
 		/**
 		* Create a new UDP server in multicast mode.
-		* This server will listen on a multicast address and responds only to LSL:shortinfo requests. This is for multicast/broadcast local service discovery.
+		* This server will listen on a multicast address and responds only to LSL:shortinfo requests. This is for multicast/broadcast (and optionally unicast) local service discovery.
 		*/
 		udp_server(const stream_info_impl_p &info, boost::asio::io_service &io, const std::string &address, int port, int ttl);
 
@@ -60,9 +61,6 @@ namespace lsl {
 		/// Handler that gets called after a response packet has been sent off.
 		void handle_send_outcome(string_p replymsg, error_code err);
 
-		/// Gracefully shut down a socket.
-		static void close_if_open(udp_socket_p sock);
-
 		stream_info_impl_p info_;			// stream_info reference
 		boost::asio::io_service &io_;		// IO service reference
 		udp_socket_p socket_;				// our socket
@@ -75,4 +73,3 @@ namespace lsl {
 }
 
 #endif
-

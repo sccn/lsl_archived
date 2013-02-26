@@ -429,6 +429,7 @@ extern LIBLSL_C_API void lsl_destroy_outlet(lsl_outlet out);
 * Handles type checking & conversion.
 * @param out The lsl_outlet object through which to push the data.
 * @param data A pointer to values to push. The number of values pointed to must be no less than the number of channels in the sample.
+* @param lengths For lsl_push_sample_buf*, a pointer the number of elements to push for each sample (string lengths). 
 * @param timestamp Optionally the capture time of the sample, in agreement with lsl_local_clock(); if omitted, the current time is used.
 * @param pushthrough Whether to push the sample through to the receivers instead of buffering it with subsequent samples.
 *					 Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
@@ -455,6 +456,9 @@ extern LIBLSL_C_API int lsl_push_sample_ctp(lsl_outlet out, char *data, double t
 extern LIBLSL_C_API int lsl_push_sample_str(lsl_outlet out, char **data);
 extern LIBLSL_C_API int lsl_push_sample_strt(lsl_outlet out, char **data, double timestamp);
 extern LIBLSL_C_API int lsl_push_sample_strtp(lsl_outlet out, char **data, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_sample_buf(lsl_outlet out, char **data, unsigned *lengths);
+extern LIBLSL_C_API int lsl_push_sample_buft(lsl_outlet out, char **data, unsigned *lengths, double timestamp);
+extern LIBLSL_C_API int lsl_push_sample_buftp(lsl_outlet out, char **data, unsigned *lengths, double timestamp, int pushthrough);
 extern LIBLSL_C_API int lsl_push_sample_v(lsl_outlet out, void *data);
 extern LIBLSL_C_API int lsl_push_sample_vt(lsl_outlet out, void *data, double timestamp);
 extern LIBLSL_C_API int lsl_push_sample_vtp(lsl_outlet out, void *data, double timestamp, int pushthrough);
@@ -567,6 +571,7 @@ extern LIBLSL_C_API double lsl_time_correction(lsl_inlet in, double timeout, int
 * Handles type checking & conversion.
 * @param in The lsl_inlet object to act on.
 * @param buffer A pointer to hold the resulting values. 
+* @param buffer_lengths A pointer to an array that holds the resulting lengths for each returned buffer (string lengths).
 * @param buffer_elements The number of samples allocated in the buffer. Note: it is the responsibility of the user to allocate enough memory.
 * @param timeout The timeout for this operation, if any. Use LSL_FOREVER to effectively disable it. It is also permitted to use
 *				 0.0 here; in this case a sample is only returned if one is currently buffered.
@@ -583,6 +588,7 @@ extern LIBLSL_C_API double lsl_pull_sample_i(lsl_inlet in, int *buffer, int buff
 extern LIBLSL_C_API double lsl_pull_sample_s(lsl_inlet in, short *buffer, int buffer_elements, double timeout, int *ec);
 extern LIBLSL_C_API double lsl_pull_sample_c(lsl_inlet in, char *buffer, int buffer_elements, double timeout, int *ec);
 extern LIBLSL_C_API double lsl_pull_sample_str(lsl_inlet in, char **buffer, int buffer_elements, double timeout, int *ec);
+extern LIBLSL_C_API double lsl_pull_sample_buf(lsl_inlet in, char **buffer, unsigned *buffer_lengths, int buffer_elements, double timeout, int *ec);
 
 /**
 * Pull a sample from the inlet and read it into a custom struct or buffer. 

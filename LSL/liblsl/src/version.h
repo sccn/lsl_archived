@@ -1,7 +1,7 @@
 #ifndef TARGETVER_H
 #define TARGETVER_H
 
-#include <boost/version.hpp>
+#include <lslboost/version.hpp>
 #if BOOST_VERSION < 104500
 	#error "Please do not compile this with a boost version older than 1.45 because the library would otherwise not be protocol-compatible with builds using other versions."
 #endif
@@ -10,7 +10,7 @@
 const int LSL_PROTOCOL_VERSION = 100;
 
 // the library version
-const int LSL_LIBRARY_VERSION = 103;
+const int LSL_LIBRARY_VERSION = 104;
 
 
 // === Auto-generated target platform version defines (for Microsoft and asio) ===

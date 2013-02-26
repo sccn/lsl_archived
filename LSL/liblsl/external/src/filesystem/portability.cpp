@@ -3,13 +3,13 @@
 //  Copyright 2002-2005 Beman Dawes
 //  Use, modification, and distribution is subject to the Boost Software
 //  License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy
-//  at http://www.boost.org/LICENSE_1_0.txt)
+//  at http://www.lslboost.org/LICENSE_1_0.txt)
 
-//  See library home page at http://www.boost.org/libs/filesystem
+//  See library home page at http://www.lslboost.org/libs/filesystem
 
 //--------------------------------------------------------------------------------------// 
 
-// define BOOST_FILESYSTEM_SOURCE so that <boost/filesystem/config.hpp> knows
+// define BOOST_FILESYSTEM_SOURCE so that <lslboost/filesystem/config.hpp> knows
 // the library is being built (possibly exporting rather than importing code)
 #define BOOST_FILESYSTEM_SOURCE 
 
@@ -17,10 +17,10 @@
 # define BOOST_SYSTEM_NO_DEPRECATED
 #endif
 
-#include <boost/filesystem/config.hpp>
-#include <boost/filesystem/path.hpp>
+#include <lslboost/filesystem/config.hpp>
+#include <lslboost/filesystem/path.hpp>
 
-namespace fs = boost::filesystem;
+namespace fs = lslboost::filesystem;
 
 #include <cstring> // SGI MIPSpro compilers need this
 
@@ -45,7 +45,7 @@ namespace
 
 } // unnamed namespace
 
-namespace boost
+namespace lslboost
 {
   namespace filesystem
   {
@@ -116,4 +116,4 @@ namespace boost
     }
 
   } // namespace filesystem
-} // namespace boost
+} // namespace lslboost

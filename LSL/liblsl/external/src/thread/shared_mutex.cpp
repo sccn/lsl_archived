@@ -2,12 +2,12 @@
 // Copyright Vicente J. Botet Escriba 2012.
 // Use, modification and distribution are subject to the
 // Boost Software License, Version 1.0. (See accompanying file
-// LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
 
-#include <boost/thread/v2/shared_mutex.hpp>
-#include <boost/thread/locks.hpp>
+#include <lslboost/thread/v2/shared_mutex.hpp>
+#include <lslboost/thread/locks.hpp>
 
-namespace boost
+namespace lslboost
 {
 
   namespace thread_v2
@@ -22,7 +22,7 @@ namespace boost
 
     shared_mutex::~shared_mutex()
     {
-      boost::lock_guard<mutex_t> _(mut_);
+      lslboost::lock_guard<mutex_t> _(mut_);
     }
 
     // Exclusive ownership
@@ -30,7 +30,7 @@ namespace boost
     void
     shared_mutex::lock()
     {
-      boost::unique_lock<mutex_t> lk(mut_);
+      lslboost::unique_lock<mutex_t> lk(mut_);
       while (state_ & write_entered_)
         gate1_.wait(lk);
       state_ |= write_entered_;
@@ -41,7 +41,7 @@ namespace boost
     bool
     shared_mutex::try_lock()
     {
-      boost::unique_lock<mutex_t> lk(mut_);
+      lslboost::unique_lock<mutex_t> lk(mut_);
       if (state_ == 0)
       {
         state_ = write_entered_;
@@ -53,7 +53,7 @@ namespace boost
     void
     shared_mutex::unlock()
     {
-      boost::lock_guard<mutex_t> _(mut_);
+      lslboost::lock_guard<mutex_t> _(mut_);
       state_ = 0;
       gate1_.notify_all();
     }
@@ -63,7 +63,7 @@ namespace boost
     void
     shared_mutex::lock_shared()
     {
-      boost::unique_lock<mutex_t> lk(mut_);
+      lslboost::unique_lock<mutex_t> lk(mut_);
       while ((state_ & write_entered_) || (state_ & n_readers_) == n_readers_)
         gate1_.wait(lk);
       count_t num_readers = (state_ & n_readers_) + 1;
@@ -74,7 +74,7 @@ namespace boost
     bool
     shared_mutex::try_lock_shared()
     {
-      boost::unique_lock<mutex_t> lk(mut_);
+      lslboost::unique_lock<mutex_t> lk(mut_);
       count_t num_readers = state_ & n_readers_;
       if (!(state_ & write_entered_) && num_readers != n_readers_)
       {
@@ -89,7 +89,7 @@ namespace boost
     void
     shared_mutex::unlock_shared()
     {
-      boost::lock_guard<mutex_t> _(mut_);
+      lslboost::lock_guard<mutex_t> _(mut_);
       count_t num_readers = (state_ & n_readers_) - 1;
       state_ &= ~n_readers_;
       state_ |= num_readers;
@@ -116,7 +116,7 @@ namespace boost
 
     upgrade_mutex::~upgrade_mutex()
     {
-      boost::lock_guard<mutex_t> _(mut_);
+      lslboost::lock_guard<mutex_t> _(mut_);
     }
 
     // Exclusive ownership
@@ -124,7 +124,7 @@ namespace boost
     void
     upgrade_mutex::lock()
     {
-      boost::unique_lock<mutex_t> lk(mut_);
+      lslboost::unique_lock<mutex_t> lk(mut_);
       while (state_ & (write_entered_ | upgradable_entered_))
         gate1_.wait(lk);
       state_ |= write_entered_;
@@ -135,7 +135,7 @@ namespace boost
     bool
     upgrade_mutex::try_lock()
     {
-      boost::unique_lock<mutex_t> lk(mut_);
+      lslboost::unique_lock<mutex_t> lk(mut_);
       if (state_ == 0)
       {
         state_ = write_entered_;
@@ -147,7 +147,7 @@ namespace boost
     void
     upgrade_mutex::unlock()
     {
-      boost::lock_guard<mutex_t> _(mut_);
+      lslboost::lock_guard<mutex_t> _(mut_);
       state_ = 0;
       gate1_.notify_all();
     }
@@ -157,7 +157,7 @@ namespace boost
     void
     upgrade_mutex::lock_shared()
     {
-      boost::unique_lock<mutex_t> lk(mut_);
+      lslboost::unique_lock<mutex_t> lk(mut_);
       while ((state_ & write_entered_) || (state_ & n_readers_) == n_readers_)
         gate1_.wait(lk);
       count_t num_readers = (state_ & n_readers_) + 1;
@@ -168,7 +168,7 @@ namespace boost
     bool
     upgrade_mutex::try_lock_shared()
     {
-      boost::unique_lock<mutex_t> lk(mut_);
+      lslboost::unique_lock<mutex_t> lk(mut_);
       count_t num_readers = state_ & n_readers_;
       if (!(state_ & write_entered_) && num_readers != n_readers_)
       {
@@ -183,7 +183,7 @@ namespace boost
     void
     upgrade_mutex::unlock_shared()
     {
-      boost::lock_guard<mutex_t> _(mut_);
+      lslboost::lock_guard<mutex_t> _(mut_);
       count_t num_readers = (state_ & n_readers_) - 1;
       state_ &= ~n_readers_;
       state_ |= num_readers;
@@ -204,7 +204,7 @@ namespace boost
     void
     upgrade_mutex::lock_upgrade()
     {
-      boost::unique_lock<mutex_t> lk(mut_);
+      lslboost::unique_lock<mutex_t> lk(mut_);
       while ((state_ & (write_entered_ | upgradable_entered_)) ||
           (state_ & n_readers_) == n_readers_)
         gate1_.wait(lk);
@@ -216,7 +216,7 @@ namespace boost
     bool
     upgrade_mutex::try_lock_upgrade()
     {
-      boost::unique_lock<mutex_t> lk(mut_);
+      lslboost::unique_lock<mutex_t> lk(mut_);
       count_t num_readers = state_ & n_readers_;
       if (!(state_ & (write_entered_ | upgradable_entered_))
           && num_readers != n_readers_)
@@ -233,7 +233,7 @@ namespace boost
     upgrade_mutex::unlock_upgrade()
     {
       {
-        boost::lock_guard<mutex_t> _(mut_);
+        lslboost::lock_guard<mutex_t> _(mut_);
         count_t num_readers = (state_ & n_readers_) - 1;
         state_ &= ~(upgradable_entered_ | n_readers_);
         state_ |= num_readers;
@@ -246,7 +246,7 @@ namespace boost
     bool
     upgrade_mutex::try_unlock_shared_and_lock()
     {
-      boost::unique_lock<mutex_t> lk(mut_);
+      lslboost::unique_lock<mutex_t> lk(mut_);
       if (state_ == 1)
       {
         state_ = write_entered_;
@@ -259,7 +259,7 @@ namespace boost
     upgrade_mutex::unlock_and_lock_shared()
     {
       {
-        boost::lock_guard<mutex_t> _(mut_);
+        lslboost::lock_guard<mutex_t> _(mut_);
         state_ = 1;
       }
       gate1_.notify_all();
@@ -270,7 +270,7 @@ namespace boost
     bool
     upgrade_mutex::try_unlock_shared_and_lock_upgrade()
     {
-      boost::unique_lock<mutex_t> lk(mut_);
+      lslboost::unique_lock<mutex_t> lk(mut_);
       if (!(state_ & (write_entered_ | upgradable_entered_)))
       {
         state_ |= upgradable_entered_;
@@ -283,7 +283,7 @@ namespace boost
     upgrade_mutex::unlock_upgrade_and_lock_shared()
     {
       {
-        boost::lock_guard<mutex_t> _(mut_);
+        lslboost::lock_guard<mutex_t> _(mut_);
         state_ &= ~upgradable_entered_;
       }
       gate1_.notify_all();
@@ -294,7 +294,7 @@ namespace boost
     void
     upgrade_mutex::unlock_upgrade_and_lock()
     {
-      boost::unique_lock<mutex_t> lk(mut_);
+      lslboost::unique_lock<mutex_t> lk(mut_);
       count_t num_readers = (state_ & n_readers_) - 1;
       state_ &= ~(upgradable_entered_ | n_readers_);
       state_ |= write_entered_ | num_readers;
@@ -305,7 +305,7 @@ namespace boost
     bool
     upgrade_mutex::try_unlock_upgrade_and_lock()
     {
-      boost::unique_lock<mutex_t> lk(mut_);
+      lslboost::unique_lock<mutex_t> lk(mut_);
       if (state_ == (upgradable_entered_ | 1))
       {
         state_ = write_entered_;
@@ -318,11 +318,11 @@ namespace boost
     upgrade_mutex::unlock_and_lock_upgrade()
     {
       {
-        boost::lock_guard<mutex_t> _(mut_);
+        lslboost::lock_guard<mutex_t> _(mut_);
         state_ = upgradable_entered_ | 1;
       }
       gate1_.notify_all();
     }
 
   } // thread_v2
-} // boost
+} // lslboost

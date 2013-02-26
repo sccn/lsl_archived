@@ -1,13 +1,13 @@
 // (C) Copyright Michael Glassford 2004.
 // Use, modification and distribution are subject to the
 // Boost Software License, Version 1.0. (See accompanying file
-// LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
 
-#include <boost/thread/detail/config.hpp>
+#include <lslboost/thread/detail/config.hpp>
 
 #if defined(BOOST_HAS_WINTHREADS) && defined(BOOST_THREAD_BUILD_DLL)
 
-    #include <boost/thread/detail/tss_hooks.hpp>
+    #include <lslboost/thread/detail/tss_hooks.hpp>
 
     #define WIN32_LEAN_AND_MEAN
     #include <windows.h>
@@ -24,27 +24,27 @@
         {
             case DLL_PROCESS_ATTACH:
             {
-                boost::on_process_enter();
-                boost::on_thread_enter();
+                lslboost::on_process_enter();
+                lslboost::on_thread_enter();
                 break;
             }
 
             case DLL_THREAD_ATTACH:
             {
-                boost::on_thread_enter();
+                lslboost::on_thread_enter();
                 break;
             }
 
             case DLL_THREAD_DETACH:
             {
-                boost::on_thread_exit();
+                lslboost::on_thread_exit();
                 break;
             }
 
             case DLL_PROCESS_DETACH:
             {
-                boost::on_thread_exit();
-                boost::on_process_exit();
+                lslboost::on_thread_exit();
+                lslboost::on_process_exit();
                 break;
             }
         }
@@ -52,7 +52,7 @@
         return TRUE;
     }
 
-namespace boost
+namespace lslboost
 {
     void tss_cleanup_implemented()
     {

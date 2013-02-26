@@ -66,3 +66,9 @@ Library version 1.03.1
 Library version 1.03.2
 * Moved a definition inside the C++ header file to make SWIG happy (which is needed for certain features in the Python wrapper to be enabled)
 * pylsl should now work out of the box on all Windows platforms and all recent Python versions
+
+Library Version 1.03.3
+* renamed internal use of boost namespace into lslboost to avoid link-time symbol conflicts
+* Added the ability to push/pull length-delimeted string values in the C API (lsl_push_sample_buf / lsl_pull_sample_buf)
+  in addition to 0-terminated
+* Added an experimental Java wrapper

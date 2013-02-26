@@ -2,7 +2,9 @@
 General
 =======
 
-This manual describes the process of building liblsl from source for Windows, Mac OS X, and Linux. Since liblsl is cross-platform (it is written in standard C++ and uses some boost libraries), this process should be pretty straightforward. The following paragraphs provide a step-by-step instruction of the build process on all three platforms.
+This manual describes the process of building liblsl from source for Windows, Mac OS X, and Linux. Since liblsl is cross-platform (it is written in standard C++ and uses some boost libraries), this process should be pretty straightforward. The following paragraphs provide a step-by-step instruction of the build process on all three platforms. 
+
+Note: We are currently rolling out unified cross-platform build scripts using CMake; while the basics are working already, most of them are not yet completely tested. Therefore, if you are using LSL for mission-critical work or are running into trouble with the resulting binaries, please consider falling back to the included project files for Visual Studio, XCode or Code::Blocks.
 
 To get an overview of the project structure, the following tree lists the directory hierarchy of the source after you've unpacked the compressed source archive:
 
@@ -80,6 +82,12 @@ Build process:
 * Hit F7 (or click "Build Solution")
 * The resulting library (lsl.dll) will be located in $LIBLSL_ROOT/build/src/Release or $LIBLSL_ROOT/build/src/Debug
 
+Alternative using hand-made project files:
+* Tested with Visual Studio 2008 Professional on Win32/64.
+* Note that use of these project files will be deprecated in the future in favor of a unified cross-platform CMake build.
+* Open the solution $LIBLSL_ROOT/project/vs2008/vs2008.sln and go to Build/Batch Build...
+* Ensure that everything is checked that you like to rebuild, and then start the build.
+* Binaries in the bin/ folder will be overwritten
 
 ========
 Mac OS X
@@ -95,6 +103,12 @@ Prerequisites:
 Build process:
 * See the Linux section below
 
+Alternative using hand-made project files:
+* Tested with XCode 4.2 on Mac OS X 10.7.
+* Note that use of these project files will be deprecated in the future in favor of a unified cross-platform CMake build.
+* Open the XCode workspace $LIBLSL_ROOT/project/Xcode/Xcode.xcodeproj
+* Click Run (which will trigger the build process)
+* Binaries in the bin/ folder will be overwritten
 
 =====
 Linux
@@ -123,3 +137,10 @@ Build process:
 * Build the library
   $ make
 * Once the build finishes, the library (liblsl.so) can be found in $LIBLSL_ROOT/build/src
+
+Alternative using hand-made project files:
+* Tested with Code::Blocks 10.05 on Ubuntu (64bit)
+* Note that use of these project files will be deprecated in the future in favor of a unified cross-platform CMake build.
+* Open the Code::Blocks workspace $LIBLSL_ROOT/project/code.blocks
+* Click Build
+* Binaries in the bin/ folder will be overwritten

@@ -4,6 +4,7 @@
 // === implementation of the stream_outlet class ===
 //
 
+namespace boost = lslboost;
 using namespace lsl;
 
 // boilerplate code calling the private implementation

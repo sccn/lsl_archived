@@ -1,6 +1,6 @@
 classdef lsl_inlet < handle
-	% A stream inlet.
-	% Inlets are used to receive streaming data (and meta-data) from the lab network.
+    % A stream inlet.
+    % Inlets are used to receive streaming data (and meta-data) from the lab network.
     %
     % Note:
     %   Most functions of the inlet can throw an error of type 'lsl:lost_error' if the stream
@@ -24,19 +24,19 @@ classdef lsl_inlet < handle
             %   Streaminfo : A resolved stream info object (as coming from one of the lsl_resolve_* functions).
             %
             %   MaxBuffered : Optionally the maximum amount of data to buffer (in seconds if there is a nominal
-            %				  sampling rate, otherwise x100 in samples). Recording applications want to use a fairly
-            %				  large buffer size here, while real-time applications would only buffer as much as
-            %				  they need to perform their next calculation. (default: 360)
+            %                  sampling rate, otherwise x100 in samples). Recording applications want to use a fairly
+            %                  large buffer size here, while real-time applications would only buffer as much as
+            %                  they need to perform their next calculation. (default: 360)
             %   
             %   ChunkSize : Optionally the maximum size, in samples, at which chunks are transmitted
-            %				(0 corresponds to the chunk sizes used by the sender).
-            %				Recording applications can use a generous size here (leaving it to the network how
-            %				to pack things), while real-time applications may want a finer (perhaps 1-sample) granularity.
+            %                (0 corresponds to the chunk sizes used by the sender).
+            %                Recording applications can use a generous size here (leaving it to the network how
+            %                to pack things), while real-time applications may want a finer (perhaps 1-sample) granularity.
             %               (default 0)
             %
             %   Recover : Try to silently recover lost streams that are recoverable (=those that that have a source_id set).
-            %			  In all other cases (recover is false or the stream is not recoverable) functions may throw a
-            %			  lost_error if the stream's source is lost (e.g., due to an app or computer crash).
+            %              In all other cases (recover is false or the stream is not recoverable) functions may throw a
+            %              lost_error if the stream's source is lost (e.g., due to an app or computer crash).
             %             (default: 1)
             
             if ~exist('maxbuffered','var') || isempty(maxbuffered) maxbuffered = 360; end
@@ -72,15 +72,15 @@ classdef lsl_inlet < handle
             if ~exist('timeout','var') || isempty(timeout) timeout = 60; end            
             result = lsl_streaminfo(self.LibHandle,lsl_get_fullinfo(self.LibHandle, self.InletHandle, timeout));
         end
-		
+        
         
         function open_stream(self, timeout)
             % Subscribe to the data stream from this moment onwards.
             % open_stream(Timeout)
             %
             % All samples pushed in at the other end from this moment onwards will be queued and 
-		    % eventually be delivered in response to pull_sample() or pull_chunk() calls. 
-		    % Pulling a sample without some preceding open_stream is permitted (the stream will then 
+            % eventually be delivered in response to pull_sample() or pull_chunk() calls. 
+            % Pulling a sample without some preceding open_stream is permitted (the stream will then 
             % be opened implicitly).
             %
             % In:
@@ -125,7 +125,7 @@ classdef lsl_inlet < handle
         end
         
         
-        function [data,timestamp] = pull_sample(self,timeout)
+        function [data,timestamp] = pull_sample(self,timeout,binary_blobs)
             % Pull a sample from the inlet and read it into an array of values.
             % [SampleData,Timestamp] = pull_sample(Timeout)
             %
@@ -135,11 +135,17 @@ classdef lsl_inlet < handle
             % Out:
             %   SampleData : The sample's contents. This is either a numeric vector (type: double) if
             %                the stream holds numeric contents, or a cell array of strings if the stream
-            %                is string-formatted.
+            %                is string-formatted, or a cell array of uint8 vectors if BinaryBlobs is set 
+            %                 to true.
             %
             %                Note: this is empty if the operation times out.
             %
             %   Timeout : Timeout for the operation. (default: 60)
+            %
+            %   BinaryBlobs : If true, strings will be received as uint8
+            %                 arrays that may contain the \0 character.
+            %                 Otherwise strings will be received as char,
+            %                 which cannot contain \0's. (default: false)
             %
             % Notes:
             %   It is not a good idea to set the timeout to a very large value since MATLAB would 
@@ -147,7 +153,12 @@ classdef lsl_inlet < handle
             
             if ~exist('timeout','var') || isempty(timeout) timeout = 60; end
             if self.IsString
-                [data,timestamp] = lsl_pull_sample_str(self.LibHandle,self.InletHandle,self.ChannelCount,timeout);
+                if ~exist('binary_blobs','var') || isempty(binary_blobs) binary_blobs = false; end
+                if binary_blobs
+                    [data,timestamp] = lsl_pull_sample_buf(self.LibHandle,self.InletHandle,self.ChannelCount,timeout);
+                else
+                    [data,timestamp] = lsl_pull_sample_str(self.LibHandle,self.InletHandle,self.ChannelCount,timeout);
+                end
             else
                 [data,timestamp] = lsl_pull_sample_d(self.LibHandle,self.InletHandle,self.ChannelCount,timeout);
             end
@@ -171,5 +182,10 @@ classdef lsl_inlet < handle
             
             [chunk,timestamps] = lsl_pull_chunk_d(self.LibHandle,self.InletHandle,self.ChannelCount);
         end
+        
+        function h = get_libhandle(self)
+            % get the library handle (e.g., to query the clock)
+            h = self.LibHandle;
+        end        
     end
 end
