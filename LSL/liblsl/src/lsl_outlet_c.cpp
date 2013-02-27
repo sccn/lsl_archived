@@ -1,10 +1,9 @@
 #include "../include/lsl_c.h"
-#define NO_EXPLICIT_TEMPLATE_INSTANTIATION
+#define NO_EXPLICIT_TEMPLATE_INSTANTIATION // a convention that applies when including portable_oarchive.h in multiple .cpp files.
 #include "stream_outlet_impl.h"
 
-//
+
 // === implementation of the lsl_outlet functions of the C API ===
-//
 
 using namespace lsl;
 

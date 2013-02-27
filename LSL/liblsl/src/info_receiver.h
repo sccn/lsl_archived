@@ -2,13 +2,7 @@
 #define INFO_RECEIVER_H
 
 #include "inlet_connection.h"
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/thread.hpp>
-#else
-#include <lslboost/thread.hpp>
-namespace boost = lslboost;
-#endif 
 
 
 namespace lsl {

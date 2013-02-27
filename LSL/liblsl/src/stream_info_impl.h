@@ -3,17 +3,10 @@
 
 #include "../include/lsl_cpp.h"
 #include "pugixml/pugixml.hpp"
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/shared_ptr.hpp>
 #include <boost/bimap.hpp>
 #include <boost/thread.hpp>
-#else
-#include <lslboost/shared_ptr.hpp>
-#include <lslboost/bimap.hpp>
-#include <lslboost/thread.hpp>
-namespace boost = lslboost;
-#endif 
+
 
 namespace lsl {
 

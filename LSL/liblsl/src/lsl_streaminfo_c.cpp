@@ -3,9 +3,8 @@
 #include <string.h>
 #include <iostream>
 
-//
+
 // === Implementation of the streaminfo-related functions of the C API ===
-//
 
 using namespace lsl;
 

@@ -1,8 +1,7 @@
 #include "stream_info_impl.h"
 
-//
+
 // === Implementation of the stream_info class ===
-//
 
 using namespace lsl;
 

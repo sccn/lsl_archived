@@ -3,15 +3,9 @@
 
 #include "version.h"
 #include "stream_info_impl.h"
+#include <lslboost/asio.hpp>
+#include <lslboost/enable_shared_from_this.hpp>
 
-#ifdef USE_OFFICIAL_BOOST
-#include <lslboost/asio.hpp>
-#include <lslboost/enable_shared_from_this.hpp>
-#else
-#include <lslboost/asio.hpp>
-#include <lslboost/enable_shared_from_this.hpp>
-namespace boost = lslboost;
-#endif 
 
 using boost::asio::ip::udp;
 using boost::system::error_code;

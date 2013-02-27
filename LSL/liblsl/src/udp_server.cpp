@@ -2,20 +2,11 @@
 #include "api_config.h"
 #include "socket_utils.h"
 #include <iostream>
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/bind.hpp>
 #include <boost/algorithm/string.hpp>
-#else
-#include <lslboost/bind.hpp>
-#include <lslboost/algorithm/string.hpp>
-namespace boost = lslboost;
-#endif 
 
 
-//
 // === implementation of the udp_server class ===
-//
 
 using namespace lsl;
 using namespace boost::asio;

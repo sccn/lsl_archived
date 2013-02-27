@@ -5,21 +5,12 @@
 #include "stream_info_impl.h"
 #include <vector>
 #include <string>
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/variant.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <boost/cstdint.hpp>
-#else
-#include <lslboost/variant.hpp>
-#include <lslboost/shared_ptr.hpp>
-#include <lslboost/lexical_cast.hpp>
-#include <lslboost/serialization/split_member.hpp>
-#include <lslboost/cstdint.hpp>
-namespace boost = lslboost;
-#endif 
+
 
 namespace lsl {
 	// used in the protocol

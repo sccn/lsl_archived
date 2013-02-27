@@ -18,6 +18,10 @@
  * to your boost directory before you're able to use the archives provided. 
  * Our archives have been tested successfully for boost versions 1.33 to 1.49!
  *
+ * \note This version adds the definition and use of the BOOST_NAMESPACE
+ *       macro, which allows to toggle between a vanilla boost distribution and
+ *		 one with mangled names.
+ *
  * \note Correct behaviour has so far been confirmed using PowerPC-32, x86-32
  *       and x86-64 platforms featuring different byte order. So there is a good
  *       chance it will instantly work for your specific setup. If you encounter
@@ -84,90 +88,39 @@
 #include <istream>
 
 // basic headers
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/version.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/archive/basic_binary_iprimitive.hpp>
 #include <boost/archive/basic_binary_iarchive.hpp>
-#define BOOST_NAMESPACE boost
-#else
-#include <lslboost/version.hpp>
-#include <lslboost/utility/enable_if.hpp>
-#include <lslboost/archive/basic_binary_iprimitive.hpp>
-#include <lslboost/archive/basic_binary_iarchive.hpp>
-namespace boost = lslboost;
-#define BOOST_NAMESPACE lslboost
-#endif
 
 #if BOOST_VERSION >= 103500
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/archive/shared_ptr_helper.hpp>
-#else
-#include <lslboost/archive/shared_ptr_helper.hpp>
-#endif 
 #endif
 
 // funny polymorphics
 #if BOOST_VERSION < 103500
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/archive/detail/polymorphic_iarchive_impl.hpp>
-#else
-#include <lslboost/archive/detail/polymorphic_iarchive_impl.hpp>
-#endif 
 #define POLYMORPHIC(T) boost::archive::detail::polymorphic_iarchive_impl<T>
 
 #elif BOOST_VERSION < 103600
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/archive/detail/polymorphic_iarchive_dispatch.hpp>
-#else
-#include <lslboost/archive/detail/polymorphic_iarchive_dispatch.hpp>
-#endif 
 #define POLYMORPHIC(T) boost::archive::detail::polymorphic_iarchive_dispatch<T>
 
 #else
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/archive/detail/polymorphic_iarchive_route.hpp>
-#else
-#include <lslboost/archive/detail/polymorphic_iarchive_route.hpp>
-#endif 
 #define POLYMORPHIC(T) boost::archive::detail::polymorphic_iarchive_route<T>
-
 #endif
 
 // endian and fpclassify
 #if BOOST_VERSION < 103600
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/integer/endian.hpp>
 #include <boost/math/fpclassify.hpp>
-#else
-#include <lslboost/integer/endian.hpp>
-#include <lslboost/math/fpclassify.hpp>
-#endif 
-
 #elif BOOST_VERSION < 104800
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/spirit/home/support/detail/integer/endian.hpp>
 #include <boost/spirit/home/support/detail/math/fpclassify.hpp>
 #else
-#include <lslboost/spirit/home/support/detail/integer/endian.hpp>
-#include <lslboost/spirit/home/support/detail/math/fpclassify.hpp>
-#endif 
-
-#else
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/spirit/home/support/detail/endian/endian.hpp>
 #include <boost/spirit/home/support/detail/math/fpclassify.hpp>
-#else
-#include <lslboost/spirit/home/support/detail/endian/endian.hpp>
-#include <lslboost/spirit/home/support/detail/math/fpclassify.hpp>
-#endif 
-
 #endif
 
 // namespace alias
@@ -185,30 +138,16 @@ namespace endian = boost::spirit::detail;
 #endif
 
 #ifndef BOOST_NO_STD_WSTRING
-
 // used for wstring to utf8 conversion
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/program_options/config.hpp>
 #include <boost/program_options/detail/convert.hpp>
-#else
-#include <lslboost/program_options/config.hpp>
-#include <lslboost/program_options/detail/convert.hpp>
-#endif 
-
 #endif
 
 // generic type traits for numeric types
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/type_traits/is_integral.hpp>
 #include <boost/type_traits/is_unsigned.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
-#else
-#include <lslboost/type_traits/is_integral.hpp>
-#include <lslboost/type_traits/is_unsigned.hpp>
-#include <lslboost/type_traits/is_arithmetic.hpp>
-#include <lslboost/type_traits/is_floating_point.hpp>
-#endif 
 
 #include "portable_archive_exception.hpp"
 
@@ -512,31 +451,20 @@ BOOST_SERIALIZATION_REGISTER_ARCHIVE(eos::polymorphic_portable_iarchive)
 // or you move the instantiation section into an implementation file
 #ifndef NO_EXPLICIT_TEMPLATE_INSTANTIATION
 
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/archive/impl/basic_binary_iarchive.ipp>
 #include <boost/archive/impl/basic_binary_iprimitive.ipp>
-#else
-#include <lslboost/archive/impl/basic_binary_iarchive.ipp>
-#include <lslboost/archive/impl/basic_binary_iprimitive.ipp>
-#endif 
 
 #if BOOST_VERSION < 104000
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/archive/impl/archive_pointer_iserializer.ipp>
-#else
-#include <lslboost/archive/impl/archive_pointer_iserializer.ipp>
-#endif 
-
 #elif !defined BOOST_ARCHIVE_SERIALIZER_INCLUDED
+#include <boost/archive/impl/archive_serializer_map.ipp>
+#define BOOST_ARCHIVE_SERIALIZER_INCLUDED
+#endif
 
 #ifdef USE_OFFICIAL_BOOST
-#include <boost/archive/impl/archive_serializer_map.ipp>
+#define BOOST_NAMESPACE boost
 #else
-#include <lslboost/archive/impl/archive_serializer_map.ipp>
-#endif 
-
-#define BOOST_ARCHIVE_SERIALIZER_INCLUDED
+#define BOOST_NAMESPACE lslboost
 #endif
 
 namespace BOOST_NAMESPACE { namespace archive {

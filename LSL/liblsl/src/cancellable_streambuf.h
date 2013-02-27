@@ -23,8 +23,6 @@
 #include <streambuf>
 #include <exception>
 #include <set>
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/asio/detail/config.hpp>
 #include <boost/utility/base_from_member.hpp>
 #include <boost/asio/basic_socket.hpp>
@@ -33,19 +31,13 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/stream_socket_service.hpp>
 #include <boost/thread.hpp>
+
+#ifdef USE_OFFICIAL_BOOST
 #define BOOST_NAMESPACE boost
 #else
-#include <lslboost/asio/detail/config.hpp>
-#include <lslboost/utility/base_from_member.hpp>
-#include <lslboost/asio/basic_socket.hpp>
-#include <lslboost/asio/detail/array.hpp>
-#include <lslboost/asio/detail/throw_error.hpp>
-#include <lslboost/asio/io_service.hpp>
-#include <lslboost/asio/stream_socket_service.hpp>
-#include <lslboost/thread.hpp>
-namespace boost = lslboost;
 #define BOOST_NAMESPACE lslboost
 #endif
+
 
 namespace BOOST_NAMESPACE {
 	namespace asio {
