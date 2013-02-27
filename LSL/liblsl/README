@@ -3,10 +3,13 @@ Lab streaming layer API.
 The lab streaming layer is a simple all-in-one approach to streaming experiment data between 
 applications in a lab, e.g. instrument time series, event markers, audio, and so on.
 
+For the most up-to-date documentation, please have a look at the official site:
+http://code.google.com/p/labstreaminglayer
+
 The design goals of the library are:
 a) The interface shall be as simple as possible, allowing programs or drivers to send 
    or receive data in just 3-5 lines of code.
-b) The library should be available for a variety of languages (currently C, C++, Matlab; Python) 
+b) The library should be available for a variety of languages (currently C, C++, Matlab, Python, Java) 
    and platforms (Windows, Mac OS X, Linux, 32/64 bit) and be fully interoperable between them.
 c) Data transmission should work "out of the box", even across networks with no need to configure 
    IP addresses / hostnames and such (thanks to on-the-fly service discovery), also time synchronization 
