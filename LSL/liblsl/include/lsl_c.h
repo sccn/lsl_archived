@@ -571,7 +571,6 @@ extern LIBLSL_C_API double lsl_time_correction(lsl_inlet in, double timeout, int
 * Handles type checking & conversion.
 * @param in The lsl_inlet object to act on.
 * @param buffer A pointer to hold the resulting values. 
-* @param buffer_lengths A pointer to an array that holds the resulting lengths for each returned buffer (string lengths).
 * @param buffer_elements The number of samples allocated in the buffer. Note: it is the responsibility of the user to allocate enough memory.
 * @param timeout The timeout for this operation, if any. Use LSL_FOREVER to effectively disable it. It is also permitted to use
 *				 0.0 here; in this case a sample is only returned if one is currently buffered.
@@ -588,6 +587,23 @@ extern LIBLSL_C_API double lsl_pull_sample_i(lsl_inlet in, int *buffer, int buff
 extern LIBLSL_C_API double lsl_pull_sample_s(lsl_inlet in, short *buffer, int buffer_elements, double timeout, int *ec);
 extern LIBLSL_C_API double lsl_pull_sample_c(lsl_inlet in, char *buffer, int buffer_elements, double timeout, int *ec);
 extern LIBLSL_C_API double lsl_pull_sample_str(lsl_inlet in, char **buffer, int buffer_elements, double timeout, int *ec);
+
+/**
+* Pull a sample from the inlet and read it into an array of binary strings. These strings may contains 0's, therefore the lengths are read into
+* the buffer_lengths array. Handles type checking & conversion.
+* @param in The lsl_inlet object to act on.
+* @param buffer A pointer to hold the resulting data. 
+* @param buffer_lengths A pointer to an array that holds the resulting lengths for each returned binary string.
+* @param buffer_elements The number of samples allocated in the buffer and buffer_lengths variables. 
+*                        Note: it is the responsibility of the user to allocate enough memory.
+* @param timeout The timeout for this operation, if any. Use LSL_FOREVER to effectively disable it. It is also permitted to use
+*				 0.0 here; in this case a sample is only returned if one is currently buffered.
+* @param ec Error code: can be either no error or lsl_lost_error (if the stream source has been lost).
+*			Note: if the timeout expires before a new sample was received the function returns 0.0; 
+*				  ec is *not* set to lsl_timeout_error (because this case is not considered an error condition).
+* @return The capture time of the sample on the remote machine, or 0.0 if no new sample was available. 
+*		  To remap this time stamp to the local clock, add the value returned by lsl_time_correction() to it. 
+*/
 extern LIBLSL_C_API double lsl_pull_sample_buf(lsl_inlet in, char **buffer, unsigned *buffer_lengths, int buffer_elements, double timeout, int *ec);
 
 /**
