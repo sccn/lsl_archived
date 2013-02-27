@@ -1,0 +1,1 @@
+Please make sure that you have the most recent binaries from liblsl/bin/ in here.

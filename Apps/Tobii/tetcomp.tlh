@@ -1,0 +1,915 @@
+// Created by Microsoft (R) C/C++ Compiler Version 13.10.3077 (4791040d).
+//
+// c:\ssroot\sdk\tobii eyetracker sdk\samples\eye tracker component c++ atl\debug\tetcomp.tlh
+//
+// C++ source equivalent of Win32 type library 67EB5C8C-DAA1-4D87-BF8B-63ADF7CBF31C
+// compiler-generated file created 05/10/05 at 13:10:55 - DO NOT EDIT!
+
+#pragma once
+#pragma pack(push, 8)
+
+#include <comdef.h>
+
+//
+// Forward references and typedefs
+//
+
+struct __declspec(uuid("67eb5c8c-daa1-4d87-bf8b-63adf7cbf31c"))
+/* LIBID */ __TetComp;
+enum TetConstants;
+enum TetEye;
+enum TetCalibPointSpeed;
+enum TetCalibPointSize;
+enum TetGazeDataDelivery;
+enum TetNumCalibPoints;
+enum TetCalibType;
+enum TetSynchronizationMode;
+struct /* coclass */ TetCalibAnalyzeDataArray;
+struct __declspec(uuid("700297df-2fd4-4e19-adad-92237e38f871"))
+/* interface */ ITetCalibAnalyzeDataArray;
+struct TetCalibAnalyzeData;
+enum TetHResults;
+struct /* coclass */ TetGazeDataHolder;
+struct __declspec(uuid("cf978175-5f6a-4c5e-8516-0afabc3b8b33"))
+/* dual interface */ ITetGazeDataHolder;
+struct TetGazeData;
+struct __declspec(uuid("e15c8492-d737-47bd-8ede-9b6f5bac13a5"))
+/* dispinterface */ DTetClientEvents;
+struct /* coclass */ TetClient;
+struct __declspec(uuid("5f4d9fff-982c-408f-8977-81b3017d446d"))
+/* interface */ ITetClient;
+struct TetTimeStamp;
+struct __declspec(uuid("fe823d7c-f714-4e8d-8986-c68cd51a684c"))
+/* interface */ _ITetClientEvents;
+struct __declspec(uuid("338d0658-8464-4a0d-9b52-b821db00ded1"))
+/* dispinterface */ DTetTrackStatusEvents;
+struct /* coclass */ TetTrackStatus;
+struct __declspec(uuid("d1ed36bf-7655-4f1d-9fb9-d20c9b0bab98"))
+/* dual interface */ IDispTetTrackStatus;
+struct __declspec(uuid("3cd18cd2-2286-4ce5-8bbf-289db0098c20"))
+/* interface */ ITetTrackStatus;
+struct __declspec(uuid("e37e908b-7043-4fff-b9ae-c766b6afd16d"))
+/* interface */ _ITetTrackStatusEvents;
+struct /* coclass */ TetPointDArray;
+struct __declspec(uuid("76e46672-172b-464e-8edf-ab37b2f67885"))
+/* interface */ ITetPointDArray;
+struct TetPointD;
+struct __declspec(uuid("6a4293cb-a45d-403c-a217-589f2e89874f"))
+/* dispinterface */ DTetCalibManagerEvents;
+struct /* coclass */ TetCalibManager;
+struct __declspec(uuid("ffc4d1d1-3478-4b30-ae5c-54e7368ab0ba"))
+/* interface */ ITetCalibManager;
+struct TetRectF;
+struct __declspec(uuid("f5a7b3b4-e6f9-4b42-91da-e8bcfb0d7395"))
+/* interface */ _ITetCalibManagerEvents;
+struct __declspec(uuid("7bd2537e-5f03-4538-95a5-7bd56f3111c7"))
+/* dispinterface */ DTetCalibProcEvents;
+struct /* coclass */ TetCalibProc;
+struct __declspec(uuid("0c034afe-5c3f-435d-a096-5d44e2811e45"))
+/* interface */ ITetCalibProc;
+struct __declspec(uuid("f36c6983-90aa-4a5e-9212-0c00b509b7fd"))
+/* interface */ _ITetCalibProcEvents;
+struct __declspec(uuid("00de6908-581a-4a4e-92b6-626aeeb5c922"))
+/* dispinterface */ DTetCalibPlotEvents;
+struct /* coclass */ TetCalibPlot;
+struct __declspec(uuid("698631ee-0b35-4721-a5e6-a8aee4949657"))
+/* dual interface */ IDispTetCalibPlot;
+struct __declspec(uuid("69d96794-98ff-4c0d-af41-4a082ad809b8"))
+/* interface */ ITetCalibPlot;
+struct __declspec(uuid("147ecf08-75be-49eb-8df1-d6ec620e35cc"))
+/* interface */ _ITetCalibPlotEvents;
+struct /* coclass */ TetTimeUtilities;
+struct __declspec(uuid("900171d9-f615-41f3-a37b-d599985f375f"))
+/* interface */ ITetTimeUtilities;
+struct TetTime;
+
+//
+// Smart pointer typedef declarations
+//
+
+_COM_SMARTPTR_TYPEDEF(ITetCalibAnalyzeDataArray, __uuidof(ITetCalibAnalyzeDataArray));
+_COM_SMARTPTR_TYPEDEF(ITetGazeDataHolder, __uuidof(ITetGazeDataHolder));
+_COM_SMARTPTR_TYPEDEF(DTetClientEvents, __uuidof(DTetClientEvents));
+_COM_SMARTPTR_TYPEDEF(ITetClient, __uuidof(ITetClient));
+_COM_SMARTPTR_TYPEDEF(_ITetClientEvents, __uuidof(_ITetClientEvents));
+_COM_SMARTPTR_TYPEDEF(DTetTrackStatusEvents, __uuidof(DTetTrackStatusEvents));
+_COM_SMARTPTR_TYPEDEF(IDispTetTrackStatus, __uuidof(IDispTetTrackStatus));
+_COM_SMARTPTR_TYPEDEF(ITetTrackStatus, __uuidof(ITetTrackStatus));
+_COM_SMARTPTR_TYPEDEF(_ITetTrackStatusEvents, __uuidof(_ITetTrackStatusEvents));
+_COM_SMARTPTR_TYPEDEF(ITetPointDArray, __uuidof(ITetPointDArray));
+_COM_SMARTPTR_TYPEDEF(DTetCalibManagerEvents, __uuidof(DTetCalibManagerEvents));
+_COM_SMARTPTR_TYPEDEF(ITetCalibManager, __uuidof(ITetCalibManager));
+_COM_SMARTPTR_TYPEDEF(_ITetCalibManagerEvents, __uuidof(_ITetCalibManagerEvents));
+_COM_SMARTPTR_TYPEDEF(DTetCalibProcEvents, __uuidof(DTetCalibProcEvents));
+_COM_SMARTPTR_TYPEDEF(ITetCalibProc, __uuidof(ITetCalibProc));
+_COM_SMARTPTR_TYPEDEF(_ITetCalibProcEvents, __uuidof(_ITetCalibProcEvents));
+_COM_SMARTPTR_TYPEDEF(DTetCalibPlotEvents, __uuidof(DTetCalibPlotEvents));
+_COM_SMARTPTR_TYPEDEF(IDispTetCalibPlot, __uuidof(IDispTetCalibPlot));
+_COM_SMARTPTR_TYPEDEF(ITetCalibPlot, __uuidof(ITetCalibPlot));
+_COM_SMARTPTR_TYPEDEF(_ITetCalibPlotEvents, __uuidof(_ITetCalibPlotEvents));
+_COM_SMARTPTR_TYPEDEF(ITetTimeUtilities, __uuidof(ITetTimeUtilities));
+
+//
+// Type library items
+//
+
+enum TetConstants
+{
+    TetConstants_DefaultServerPort = 4455
+};
+
+enum TetEye
+{
+    TetEye_Left = 1,
+    TetEye_Right = 2,
+    TetEye_Both = 3
+};
+
+enum TetCalibPointSpeed
+{
+    TetCalibPointSpeed_Fast = 1,
+    TetCalibPointSpeed_MediumFast = 2,
+    TetCalibPointSpeed_Medium = 3,
+    TetCalibPointSpeed_MediumSlow = 4,
+    TetCalibPointSpeed_Slow = 5
+};
+
+enum TetCalibPointSize
+{
+    TetCalibPointSize_Large = 1,
+    TetCalibPointSize_Medium = 2,
+    TetCalibPointSize_Small = 3
+};
+
+enum TetGazeDataDelivery
+{
+    TetGazeDataDelivery_RealTime = 2,
+    TetGazeDataDelivery_Post = 4
+};
+
+enum TetNumCalibPoints
+{
+    TetNumCalibPoints_2 = 1,
+    TetNumCalibPoints_5 = 2,
+    TetNumCalibPoints_9 = 3
+};
+
+enum TetCalibType
+{
+    TetCalibType_Calib = 1,
+    TetCalibType_Recalib = 2
+};
+
+enum TetSynchronizationMode
+{
+    TetSynchronizationMode_None = 1,
+    TetSynchronizationMode_Server = 2,
+    TetSynchronizationMode_Local = 3
+};
+
+struct __declspec(uuid("b16ce1a4-6e0d-415c-84eb-e5d08c0bd649"))
+TetCalibAnalyzeDataArray;
+    // [ default ] interface ITetCalibAnalyzeDataArray
+
+struct TetCalibAnalyzeData
+{
+    float truePointX;
+    float truePointY;
+    float leftMapX;
+    float leftMapY;
+    long leftValidity;
+    float leftQuality;
+    float rightMapX;
+    float rightMapY;
+    long rightValidity;
+    float rightQuality;
+};
+
+struct __declspec(uuid("700297df-2fd4-4e19-adad-92237e38f871"))
+ITetCalibAnalyzeDataArray : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall Set (
+        /*[in]*/ struct TetCalibAnalyzeData * pData,
+        /*[in]*/ long len ) = 0;
+      virtual HRESULT __stdcall get_Size (
+        /*[out,retval]*/ long * pVal ) = 0;
+      virtual HRESULT __stdcall GetAt (
+        /*[in]*/ long index,
+        /*[out,retval]*/ struct TetCalibAnalyzeData * pCalibData ) = 0;
+};
+
+enum TetHResults
+{
+    ITF_S_OK = 0,
+    ITF_E_FAIL = -2147467259,
+    ITF_E_TET_SERVERISNOTCONNECTED = -2147220991,
+    ITF_E_TET_SERVERCOMMUNICATION = -2147220990,
+    ITF_E_TET_FILEOPEN = -2147220989,
+    ITF_E_TET_FILEREAD = -2147220988,
+    ITF_E_TET_INTERNAL = -2147220987,
+    ITF_E_TET_MEMORY = -2147220986,
+    ITF_E_TET_CAMERA = -2147220985,
+    ITF_E_TET_DIODE = -2147220984,
+    ITF_E_TET_LOCKEDSYSTEM = -2147220983,
+    ITF_E_TET_CALIBINCOMPATIBLEDATAFORMAT = -2147220982,
+    ITF_E_TET_CALIBINSUFFICIENTDATA = -2147220981,
+    ITF_E_TET_CALIBNODATASET = -2147220980,
+    ITF_E_TET_INVALIDSTATE = -2147220979,
+    ITF_E_TET_INCOMPATIBLESERVERVERSION = -2147220978,
+    ITF_E_TET_UNKNOWNORINVALIDPARAMETER = -2147220977,
+    ITF_E_CLIENT_CONNECTED = -2147220864,
+    ITF_E_CLIENT_NOTCONNECTED = -2147220863,
+    ITF_E_CLIENT_STOPTRACKING = -2147220862,
+    ITF_E_CLIENT_FATALINTERNALERROR = -2147220861,
+    ITF_E_CLIENT_INTERNALTIMEOUT = -2147220860,
+    ITF_E_CLIENT_ASYNCSTATE = -2147220859,
+    ITF_E_CLIENT_TTIMENOTSUPPORTED = -2147220858,
+    ITF_E_CLIENT_TRACKING = -2147220859,
+    ITF_E_CLIENT_NOTTRACKING = -2147220856,
+    ITF_E_TRACKSTATUS_INVALIDPARAMETER = -2147220608,
+    ITF_E_TRACKSTATUS_FATALINTERNALERROR = -2147220607,
+    ITF_E_CALIBPROC_ISCALIBRATING = -2147220480,
+    ITF_E_CALIBPROC_ISNOTCALIBRATING = -2147220479,
+    ITF_E_CALIBPROC_MONITORNOTFOUND = -2147220478,
+    ITF_E_CALIBPROC_WINDOWVISIBLE = -2147220477,
+    ITF_E_CALIBPROC_WINDOWNOTVISIBLE = -2147220476,
+    ITF_E_CALIBPROC_INVALIDPARAMETER = -2147220475,
+    ITF_E_CALIBPROC_INVALIDOPERATION = -2147220474,
+    ITF_E_CALIBPROC_FATALINTERNALERROR = -2147220473,
+    ITF_E_CALIBPROC_CALIBRES_FAILED = -2147220472,
+    ITF_E_CALIBPROC_CALIBRES_INTERRUPTED = -2147220471,
+    ITF_E_CALIBPLOT_MANAGERNOTSET = -2147220352,
+    ITF_E_CALIBPLOT_INVALIDPARAMETER = -2147220351,
+    ITF_E_CALIBPLOT_FATALINTERNALERROR = -2147220350,
+    ITF_E_CALIBMANAGER_CALIBNOTINIT = -2147220224,
+    ITF_E_CALIBMANAGER_INVALIDPARAMETER = -2147220223,
+    ITF_E_CALIBMANAGER_FATALINTERNALERROR = -2147220222
+};
+
+struct __declspec(uuid("39891258-8428-47e9-a02a-b93a1f52f02a"))
+TetGazeDataHolder;
+    // [ default ] interface ITetGazeDataHolder
+
+struct __declspec(uuid("9ff3e213-19e2-45aa-9212-61cee5215620"))
+TetGazeData
+{
+    long timestamp_sec;
+    long timestamp_microsec;
+    float x_gazepos_lefteye;
+    float y_gazepos_lefteye;
+    float x_camerapos_lefteye;
+    float y_camerapos_lefteye;
+    float diameter_pupil_lefteye;
+    float distance_lefteye;
+    long validity_lefteye;
+    float x_gazepos_righteye;
+    float y_gazepos_righteye;
+    float x_camerapos_righteye;
+    float y_camerapos_righteye;
+    float diameter_pupil_righteye;
+    float distance_righteye;
+    long validity_righteye;
+};
+
+struct __declspec(uuid("cf978175-5f6a-4c5e-8516-0afabc3b8b33"))
+ITetGazeDataHolder : IDispatch
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall SetGazeData (
+        /*[in]*/ struct TetGazeData * pGazeData ) = 0;
+      virtual HRESULT __stdcall GetGazeData (
+        /*[out,retval]*/ struct TetGazeData * pGazeData ) = 0;
+      virtual HRESULT __stdcall get_TimeStampSec (
+        /*[out,retval]*/ long * pVal ) = 0;
+      virtual HRESULT __stdcall get_TimeStampMicroSec (
+        /*[out,retval]*/ long * pVal ) = 0;
+      virtual HRESULT __stdcall get_GazePosXLeftEye (
+        /*[out,retval]*/ float * pVal ) = 0;
+      virtual HRESULT __stdcall get_GazePosYLeftEye (
+        /*[out,retval]*/ float * pVal ) = 0;
+      virtual HRESULT __stdcall get_CameraPosXLeftEye (
+        /*[out,retval]*/ float * pVal ) = 0;
+      virtual HRESULT __stdcall get_CameraPosYLeftEye (
+        /*[out,retval]*/ float * pVal ) = 0;
+      virtual HRESULT __stdcall get_PupilDiameterLeftEye (
+        /*[out,retval]*/ float * pVal ) = 0;
+      virtual HRESULT __stdcall get_DistanceLeftEye (
+        /*[out,retval]*/ float * pVal ) = 0;
+      virtual HRESULT __stdcall get_ValidityLeftEye (
+        /*[out,retval]*/ long * pVal ) = 0;
+      virtual HRESULT __stdcall get_GazePosXRightEye (
+        /*[out,retval]*/ float * pVal ) = 0;
+      virtual HRESULT __stdcall get_GazePosYRightEye (
+        /*[out,retval]*/ float * pVal ) = 0;
+      virtual HRESULT __stdcall get_CameraPosXRightEye (
+        /*[out,retval]*/ float * pVal ) = 0;
+      virtual HRESULT __stdcall get_CameraPosYRightEye (
+        /*[out,retval]*/ float * pVal ) = 0;
+      virtual HRESULT __stdcall get_PupilDiameterRightEye (
+        /*[out,retval]*/ float * pVal ) = 0;
+      virtual HRESULT __stdcall get_DistanceRightEye (
+        /*[out,retval]*/ float * pVal ) = 0;
+      virtual HRESULT __stdcall get_ValidityRightEye (
+        /*[out,retval]*/ long * pVal ) = 0;
+};
+
+struct __declspec(uuid("e15c8492-d737-47bd-8ede-9b6f5bac13a5"))
+DTetClientEvents : IDispatch
+{};
+
+struct __declspec(uuid("70ecae0e-5e78-430d-9ed5-b3c047b339f6"))
+TetClient;
+    // [ default ] interface ITetClient
+    // [ default, source ] dispinterface DTetClientEvents
+    // [ source ] interface _ITetClientEvents
+
+struct TetTimeStamp
+{
+    long second;
+    long microsecond;
+};
+
+struct __declspec(uuid("5f4d9fff-982c-408f-8977-81b3017d446d"))
+ITetClient : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall Connect (
+        /*[in]*/ BSTR bstrServerAddress,
+        /*[in]*/ long portNumber,
+        /*[in]*/ enum TetSynchronizationMode syncMode ) = 0;
+      virtual HRESULT __stdcall Disconnect ( ) = 0;
+      virtual HRESULT __stdcall StartTracking ( ) = 0;
+      virtual HRESULT __stdcall StopTracking ( ) = 0;
+      virtual HRESULT __stdcall get_IsConnected (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall get_IsTracking (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall get_ServerAddress (
+        /*[out,retval]*/ BSTR * pVal ) = 0;
+      virtual HRESULT __stdcall get_portNumber (
+        /*[out,retval]*/ long * pVal ) = 0;
+      virtual HRESULT __stdcall get_SynchronizationMode (
+        /*[out,retval]*/ enum TetSynchronizationMode * pVal ) = 0;
+      virtual HRESULT __stdcall LoadCalibrationFromFile (
+        /*[in]*/ BSTR bstrFile ) = 0;
+      virtual HRESULT __stdcall SaveCalibrationToFile (
+        /*[in]*/ BSTR bstrFile ) = 0;
+      virtual HRESULT __stdcall GetCalibrationResult (
+        /*[in]*/ BSTR bstrFile,
+        /*[out,retval]*/ struct ITetCalibAnalyzeDataArray * * ppDataArray ) = 0;
+      virtual HRESULT __stdcall AddCalibrationPoint (
+        /*[in]*/ float x,
+        /*[in]*/ float y,
+        /*[in]*/ long numGoodSamples,
+        /*[in]*/ VARIANT_BOOL block ) = 0;
+      virtual HRESULT __stdcall CalculateAndSetCalibration ( ) = 0;
+      virtual HRESULT __stdcall ClearCalibration ( ) = 0;
+      virtual HRESULT __stdcall RemoveCalibrationPoints (
+        /*[in]*/ enum TetEye eye,
+        /*[in]*/ float x,
+        /*[in]*/ float y,
+        /*[in]*/ float radius ) = 0;
+      virtual HRESULT __stdcall InterruptAddCalibrationPoint ( ) = 0;
+      virtual HRESULT __stdcall get_IsAddingCalibrationPoint (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall get_GazeDataDelivery (
+        /*[out,retval]*/ enum TetGazeDataDelivery * pVal ) = 0;
+      virtual HRESULT __stdcall put_GazeDataDelivery (
+        /*[in]*/ enum TetGazeDataDelivery pVal ) = 0;
+      virtual HRESULT __stdcall GetNumPendingPostGazeData (
+        /*[out,retval]*/ long * plNumGazeData ) = 0;
+      virtual HRESULT __stdcall GetSerialNumber (
+        /*[out]*/ BSTR * pSerialDiodeController,
+        /*[out]*/ BSTR * pSerialCamera ) = 0;
+      virtual HRESULT __stdcall PerformSystemCheck ( ) = 0;
+      virtual HRESULT __stdcall GetTimeStamp (
+        /*[out,retval]*/ struct TetTimeStamp * pTimeStamp ) = 0;
+};
+
+struct __declspec(uuid("fe823d7c-f714-4e8d-8986-c68cd51a684c"))
+_ITetClientEvents : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall OnGazeData (
+        /*[in]*/ struct TetGazeData * gazeData ) = 0;
+      virtual HRESULT __stdcall OnCalibrationGazeData (
+        /*[in]*/ struct TetGazeData * gazeData ) = 0;
+      virtual HRESULT __stdcall OnPostGazeData (
+        /*[in]*/ struct TetGazeData * gazeData ) = 0;
+      virtual HRESULT __stdcall OnPostCalibrationGazeData (
+        /*[in]*/ struct TetGazeData * gazeData ) = 0;
+      virtual HRESULT __stdcall OnTrackingStarted ( ) = 0;
+      virtual HRESULT __stdcall OnTrackingStopped (
+        /*[in]*/ HRESULT hr ) = 0;
+      virtual HRESULT __stdcall OnAddCalibrationPointStarted ( ) = 0;
+      virtual HRESULT __stdcall OnAddCalibrationPointEnded (
+        /*[in]*/ HRESULT hr ) = 0;
+};
+
+struct __declspec(uuid("338d0658-8464-4a0d-9b52-b821db00ded1"))
+DTetTrackStatusEvents : IDispatch
+{};
+
+struct __declspec(uuid("8b3e9d89-36a1-4621-8945-4d4a9d0fe705"))
+TetTrackStatus;
+    // [ default ] interface IDispTetTrackStatus
+    // interface ITetTrackStatus
+    // interface _ITetClientEvents
+    // [ default, source ] dispinterface DTetTrackStatusEvents
+    // [ source ] interface _ITetTrackStatusEvents
+
+struct __declspec(uuid("d1ed36bf-7655-4f1d-9fb9-d20c9b0bab98"))
+IDispTetTrackStatus : IDispatch
+{};
+
+struct __declspec(uuid("3cd18cd2-2286-4ce5-8bbf-289db0098c20"))
+ITetTrackStatus : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall Connect (
+        /*[in]*/ BSTR bstrServerAddress,
+        /*[in]*/ long portNumber ) = 0;
+      virtual HRESULT __stdcall Disconnect ( ) = 0;
+      virtual HRESULT __stdcall Start ( ) = 0;
+      virtual HRESULT __stdcall Stop ( ) = 0;
+      virtual HRESULT __stdcall get_IsConnected (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall get_IsTracking (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall get_ServerAddress (
+        /*[out,retval]*/ BSTR * pVal ) = 0;
+      virtual HRESULT __stdcall get_portNumber (
+        /*[out,retval]*/ long * pVal ) = 0;
+      virtual HRESULT __stdcall get_TextColor (
+        /*[out,retval]*/ OLE_COLOR * pVal ) = 0;
+      virtual HRESULT __stdcall put_TextColor (
+        /*[in]*/ OLE_COLOR pVal ) = 0;
+      virtual HRESULT __stdcall get_BackgroundColor (
+        /*[out,retval]*/ OLE_COLOR * pVal ) = 0;
+      virtual HRESULT __stdcall put_BackgroundColor (
+        /*[in]*/ OLE_COLOR pVal ) = 0;
+      virtual HRESULT __stdcall get_EyeColor (
+        /*[out,retval]*/ OLE_COLOR * pVal ) = 0;
+      virtual HRESULT __stdcall put_EyeColor (
+        /*[in]*/ OLE_COLOR pVal ) = 0;
+      virtual HRESULT __stdcall get_TextFont (
+        /*[out,retval]*/ struct IFont * * ppVal ) = 0;
+      virtual HRESULT __stdcall put_TextFont (
+        /*[in]*/ struct IFont * ppVal ) = 0;
+};
+
+struct __declspec(uuid("e37e908b-7043-4fff-b9ae-c766b6afd16d"))
+_ITetTrackStatusEvents : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall OnStopped (
+        /*[in]*/ HRESULT hr ) = 0;
+};
+
+struct __declspec(uuid("b8eac471-da53-49b5-930c-55476f4f17ec"))
+TetPointDArray;
+    // [ default ] interface ITetPointDArray
+
+struct TetPointD
+{
+    double x;
+    double y;
+};
+
+struct __declspec(uuid("76e46672-172b-464e-8edf-ab37b2f67885"))
+ITetPointDArray : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall Add (
+        /*[in]*/ struct TetPointD point ) = 0;
+      virtual HRESULT __stdcall Remove (
+        /*[in]*/ struct TetPointD point ) = 0;
+      virtual HRESULT __stdcall Clear ( ) = 0;
+      virtual HRESULT __stdcall GetAt (
+        /*[in]*/ long index,
+        /*[out,retval]*/ struct TetPointD * pPoint ) = 0;
+      virtual HRESULT __stdcall get_Size (
+        /*[out,retval]*/ long * pVal ) = 0;
+      virtual HRESULT __stdcall AddArray (
+        /*[in]*/ struct ITetPointDArray * pArray ) = 0;
+};
+
+struct __declspec(uuid("6a4293cb-a45d-403c-a217-589f2e89874f"))
+DTetCalibManagerEvents : IDispatch
+{};
+
+struct __declspec(uuid("800ccdc9-7688-4d95-b27f-3bd27fe8cbc6"))
+TetCalibManager;
+    // [ default ] interface ITetCalibManager
+    // interface _ITetClientEvents
+    // [ default, source ] dispinterface DTetCalibManagerEvents
+    // [ source ] interface _ITetCalibManagerEvents
+
+struct TetRectF
+{
+    float left;
+    float top;
+    float right;
+    float bottom;
+};
+
+struct __declspec(uuid("ffc4d1d1-3478-4b30-ae5c-54e7368ab0ba"))
+ITetCalibManager : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_NumPoints (
+        /*[out,retval]*/ enum TetNumCalibPoints * pVal ) = 0;
+      virtual HRESULT __stdcall put_NumPoints (
+        /*[in]*/ enum TetNumCalibPoints pVal ) = 0;
+      virtual HRESULT __stdcall get_CalibArea (
+        /*[out,retval]*/ struct TetRectF * pVal ) = 0;
+      virtual HRESULT __stdcall put_CalibArea (
+        /*[in]*/ struct TetRectF pVal ) = 0;
+      virtual HRESULT __stdcall get_UseIdealCalibGrid (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall put_UseIdealCalibGrid (
+        /*[in]*/ VARIANT_BOOL pVal ) = 0;
+      virtual HRESULT __stdcall GetCalibPoints (
+        /*[out,retval]*/ struct ITetPointDArray * * ppPoints ) = 0;
+      virtual HRESULT __stdcall GetIdealCalibPoints (
+        /*[out,retval]*/ struct ITetPointDArray * * ppPoints ) = 0;
+      virtual HRESULT __stdcall GetRecalibPoints (
+        /*[out,retval]*/ struct ITetPointDArray * * ppPoints ) = 0;
+      virtual HRESULT __stdcall SetRecalibPoints (
+        /*[in]*/ struct ITetPointDArray * pPoints ) = 0;
+      virtual HRESULT __stdcall SetNumRecalibPoints (
+        /*[in]*/ long NumPoints ) = 0;
+      virtual HRESULT __stdcall SetDefaultRecalibPoints ( ) = 0;
+      virtual HRESULT __stdcall GetRemovePoints (
+        /*[out,retval]*/ struct ITetPointDArray * * ppPoints ) = 0;
+      virtual HRESULT __stdcall SetRemovePoints (
+        /*[in]*/ struct ITetPointDArray * pPoints ) = 0;
+      virtual HRESULT __stdcall SetDefaultRemovePoints ( ) = 0;
+      virtual HRESULT __stdcall GetAnimationPoints (
+        /*[in]*/ struct TetPointD * pPoint0,
+        /*[in]*/ struct TetPointD * pPoint1,
+        /*[in]*/ double meanNumPixelsPerStep,
+        /*[out,retval]*/ struct ITetPointDArray * * ppPoints ) = 0;
+      virtual HRESULT __stdcall Connect (
+        /*[in]*/ BSTR bstrServerAddress,
+        /*[in]*/ long portNumber ) = 0;
+      virtual HRESULT __stdcall Disconnect ( ) = 0;
+      virtual HRESULT __stdcall get_IsConnected (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall get_ServerAddress (
+        /*[out,retval]*/ BSTR * pVal ) = 0;
+      virtual HRESULT __stdcall get_portNumber (
+        /*[out,retval]*/ long * pVal ) = 0;
+      virtual HRESULT __stdcall RemoveCalibrationPoints ( ) = 0;
+      virtual HRESULT __stdcall BeginCalibrationProcess (
+        /*[in]*/ enum TetCalibType type,
+        /*[in]*/ VARIANT_BOOL randomizePointOrder,
+        /*[in]*/ VARIANT_BOOL recomputeForEachPoint ) = 0;
+      virtual HRESULT __stdcall ProcessPoint ( ) = 0;
+      virtual HRESULT __stdcall GetCalibrationProcessPoint (
+        /*[out,retval]*/ struct TetPointD * pPoint ) = 0;
+      virtual HRESULT __stdcall InterruptCalibrationProcess ( ) = 0;
+      virtual HRESULT __stdcall get_IsProcessing (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall LoadCalibrationFromFile (
+        /*[in]*/ BSTR bstrFilePath ) = 0;
+      virtual HRESULT __stdcall SaveCalibrationToFile (
+        /*[in]*/ BSTR bstrFilePath,
+        /*[in]*/ VARIANT_BOOL saveManagerFile ) = 0;
+      virtual HRESULT __stdcall GetManagerFilePath (
+        /*[in]*/ BSTR bstrCalibrationFilePath,
+        /*[out,retval]*/ BSTR * pBstrManagerFilePath ) = 0;
+};
+
+struct __declspec(uuid("f5a7b3b4-e6f9-4b42-91da-e8bcfb0d7395"))
+_ITetCalibManagerEvents : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall OnPointProcessed (
+        /*[in]*/ HRESULT hr ) = 0;
+      virtual HRESULT __stdcall OnCalibrationProcessEnded (
+        /*[in]*/ HRESULT hr ) = 0;
+      virtual HRESULT __stdcall OnCalibrationSet ( ) = 0;
+      virtual HRESULT __stdcall OnCalibPointsChanged ( ) = 0;
+      virtual HRESULT __stdcall OnRecalibPointsChanged ( ) = 0;
+      virtual HRESULT __stdcall OnRemovePointsChanged ( ) = 0;
+};
+
+struct __declspec(uuid("7bd2537e-5f03-4538-95a5-7bd56f3111c7"))
+DTetCalibProcEvents : IDispatch
+{};
+
+struct __declspec(uuid("c4ee4778-f8e4-45c5-85cd-6a1e8a0d14c9"))
+TetCalibProc;
+    // [ default ] interface ITetCalibProc
+    // interface _ITetCalibManagerEvents
+    // [ default, source ] dispinterface DTetCalibProcEvents
+    // [ source ] interface _ITetCalibProcEvents
+
+struct __declspec(uuid("0c034afe-5c3f-435d-a096-5d44e2811e45"))
+ITetCalibProc : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall Connect (
+        /*[in]*/ BSTR bstrServerAddress,
+        /*[in]*/ long portNumber ) = 0;
+      virtual HRESULT __stdcall Disconnect ( ) = 0;
+      virtual HRESULT __stdcall StartCalibration (
+        /*[in]*/ enum TetCalibType calibType,
+        /*[in]*/ VARIANT_BOOL randomizePointOrder ) = 0;
+      virtual HRESULT __stdcall ContinueCalibration ( ) = 0;
+      virtual HRESULT __stdcall InterruptCalibration ( ) = 0;
+      virtual HRESULT __stdcall get_IsConnected (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall get_ServerAddress (
+        /*[out,retval]*/ BSTR * pVal ) = 0;
+      virtual HRESULT __stdcall get_portNumber (
+        /*[out,retval]*/ long * pVal ) = 0;
+      virtual HRESULT __stdcall get_IsCalibrating (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall get_NumPoints (
+        /*[out,retval]*/ enum TetNumCalibPoints * pVal ) = 0;
+      virtual HRESULT __stdcall put_NumPoints (
+        /*[in]*/ enum TetNumCalibPoints pVal ) = 0;
+      virtual HRESULT __stdcall get_CalibArea (
+        /*[out,retval]*/ struct TetRectF * pVal ) = 0;
+      virtual HRESULT __stdcall put_CalibArea (
+        /*[in]*/ struct TetRectF pVal ) = 0;
+      virtual HRESULT __stdcall get_CalibManager (
+        /*[out,retval]*/ struct ITetCalibManager * * ppVal ) = 0;
+      virtual HRESULT __stdcall get_ContinueCalibrationAutomatically (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall put_ContinueCalibrationAutomatically (
+        /*[in]*/ VARIANT_BOOL pVal ) = 0;
+      virtual HRESULT __stdcall get_DisplayMonitor (
+        /*[out,retval]*/ BSTR * pVal ) = 0;
+      virtual HRESULT __stdcall put_DisplayMonitor (
+        /*[in]*/ BSTR pVal ) = 0;
+      virtual HRESULT __stdcall get_WindowTopmost (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall put_WindowTopmost (
+        /*[in]*/ VARIANT_BOOL pVal ) = 0;
+      virtual HRESULT __stdcall get_WindowVisible (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall put_WindowVisible (
+        /*[in]*/ VARIANT_BOOL pVal ) = 0;
+      virtual HRESULT __stdcall get_PointSpeed (
+        /*[out,retval]*/ enum TetCalibPointSpeed * pVal ) = 0;
+      virtual HRESULT __stdcall put_PointSpeed (
+        /*[in]*/ enum TetCalibPointSpeed pVal ) = 0;
+      virtual HRESULT __stdcall get_PointSize (
+        /*[out,retval]*/ enum TetCalibPointSize * pVal ) = 0;
+      virtual HRESULT __stdcall put_PointSize (
+        /*[in]*/ enum TetCalibPointSize pVal ) = 0;
+      virtual HRESULT __stdcall get_PointColor (
+        /*[out,retval]*/ OLE_COLOR * pVal ) = 0;
+      virtual HRESULT __stdcall put_PointColor (
+        /*[in]*/ OLE_COLOR pVal ) = 0;
+      virtual HRESULT __stdcall get_BackgroundColor (
+        /*[out,retval]*/ OLE_COLOR * pVal ) = 0;
+      virtual HRESULT __stdcall put_BackgroundColor (
+        /*[in]*/ OLE_COLOR pVal ) = 0;
+};
+
+struct __declspec(uuid("f36c6983-90aa-4a5e-9212-0c00b509b7fd"))
+_ITetCalibProcEvents : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall OnCalibrationEnd (
+        /*[in]*/ HRESULT hr ) = 0;
+      virtual HRESULT __stdcall OnKeyDown (
+        /*[in]*/ long virtualKeyCode ) = 0;
+};
+
+struct __declspec(uuid("00de6908-581a-4a4e-92b6-626aeeb5c922"))
+DTetCalibPlotEvents : IDispatch
+{};
+
+struct __declspec(uuid("953357fc-a101-4dee-b345-e352b698c114"))
+TetCalibPlot;
+    // [ default ] interface IDispTetCalibPlot
+    // interface ITetCalibPlot
+    // [ default, source ] dispinterface DTetCalibPlotEvents
+    // [ source ] interface _ITetCalibPlotEvents
+
+struct __declspec(uuid("698631ee-0b35-4721-a5e6-a8aee4949657"))
+IDispTetCalibPlot : IDispatch
+{};
+
+struct __declspec(uuid("69d96794-98ff-4c0d-af41-4a082ad809b8"))
+ITetCalibPlot : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall Connect (
+        /*[in]*/ BSTR bstrServerAddress,
+        /*[in]*/ long portNumber ) = 0;
+      virtual HRESULT __stdcall Disconnect ( ) = 0;
+      virtual HRESULT __stdcall SetData (
+        /*[in]*/ BSTR bstrFilePath ) = 0;
+      virtual HRESULT __stdcall UpdateData ( ) = 0;
+      virtual HRESULT __stdcall ClearData ( ) = 0;
+      virtual HRESULT __stdcall get_IsConnected (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall get_ServerAddress (
+        /*[out,retval]*/ BSTR * pVal ) = 0;
+      virtual HRESULT __stdcall get_portNumber (
+        /*[out,retval]*/ long * pVal ) = 0;
+      virtual HRESULT __stdcall get_eye (
+        /*[out,retval]*/ enum TetEye * pVal ) = 0;
+      virtual HRESULT __stdcall put_eye (
+        /*[in]*/ enum TetEye pVal ) = 0;
+      virtual HRESULT __stdcall get_CalibManager (
+        /*[out,retval]*/ struct ITetCalibManager * * ppCalibManager ) = 0;
+      virtual HRESULT __stdcall put_CalibManager (
+        /*[in]*/ struct ITetCalibManager * ppCalibManager ) = 0;
+      virtual HRESULT __stdcall get_SelectedPoints (
+        /*[out,retval]*/ struct ITetPointDArray * * ppPoints ) = 0;
+      virtual HRESULT __stdcall put_SelectedPoints (
+        /*[in]*/ struct ITetPointDArray * ppPoints ) = 0;
+      virtual HRESULT __stdcall get_AllowMouseInteraction (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall put_AllowMouseInteraction (
+        /*[in]*/ VARIANT_BOOL pVal ) = 0;
+      virtual HRESULT __stdcall get_PointColor (
+        /*[out,retval]*/ OLE_COLOR * pVal ) = 0;
+      virtual HRESULT __stdcall put_PointColor (
+        /*[in]*/ OLE_COLOR pVal ) = 0;
+      virtual HRESULT __stdcall get_SelectedColor (
+        /*[out,retval]*/ OLE_COLOR * pVal ) = 0;
+      virtual HRESULT __stdcall put_SelectedColor (
+        /*[in]*/ OLE_COLOR pVal ) = 0;
+      virtual HRESULT __stdcall get_EyeLeftColor (
+        /*[out,retval]*/ OLE_COLOR * pVal ) = 0;
+      virtual HRESULT __stdcall put_EyeLeftColor (
+        /*[in]*/ OLE_COLOR pVal ) = 0;
+      virtual HRESULT __stdcall get_EyeRightColor (
+        /*[out,retval]*/ OLE_COLOR * pVal ) = 0;
+      virtual HRESULT __stdcall put_EyeRightColor (
+        /*[in]*/ OLE_COLOR pVal ) = 0;
+      virtual HRESULT __stdcall get_BackgroundColor (
+        /*[out,retval]*/ OLE_COLOR * pVal ) = 0;
+      virtual HRESULT __stdcall put_BackgroundColor (
+        /*[in]*/ OLE_COLOR pVal ) = 0;
+};
+
+struct __declspec(uuid("147ecf08-75be-49eb-8df1-d6ec620e35cc"))
+_ITetCalibPlotEvents : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall OnSelectedPointsChanged (
+        /*[in]*/ struct ITetCalibPlot * pTetCalibPlot ) = 0;
+};
+
+struct __declspec(uuid("2611a9f7-cc04-410d-bd4a-396d3054cd21"))
+TetTimeUtilities;
+    // [ default ] interface ITetTimeUtilities
+
+struct TetTime
+{
+    short year;
+    short month;
+    short dayofweek;
+    short day;
+    short hour;
+    short minute;
+    short second;
+    short milliseconds;
+};
+
+struct __declspec(uuid("900171d9-f615-41f3-a37b-d599985f375f"))
+ITetTimeUtilities : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_IsTetTimeSupported (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall ElapsedTime (
+        /*[in]*/ struct TetTimeStamp * pStart,
+        /*[in]*/ struct TetTimeStamp * pStop,
+        /*[out,retval]*/ struct TetTimeStamp * pRes ) = 0;
+      virtual HRESULT __stdcall AddTime (
+        /*[in]*/ struct TetTimeStamp * pTime1,
+        /*[in]*/ struct TetTimeStamp * pTime2,
+        /*[out,retval]*/ struct TetTimeStamp * pRes ) = 0;
+      virtual HRESULT __stdcall AverageTime (
+        /*[in]*/ struct TetTimeStamp * pTime1,
+        /*[in]*/ struct TetTimeStamp * pTime2,
+        /*[out,retval]*/ struct TetTimeStamp * pRes ) = 0;
+      virtual HRESULT __stdcall Compare (
+        /*[in]*/ struct TetTimeStamp * pTime1,
+        /*[in]*/ struct TetTimeStamp * pTime2,
+        /*[out,retval]*/ long * pRes ) = 0;
+      virtual HRESULT __stdcall GetCurrentTime (
+        /*[out,retval]*/ struct TetTime * pTime ) = 0;
+};
+
+//
+// Named GUID constants initializations
+//
+
+extern "C" const GUID __declspec(selectany) LIBID_TetComp =
+    {0x67eb5c8c,0xdaa1,0x4d87,{0xbf,0x8b,0x63,0xad,0xf7,0xcb,0xf3,0x1c}};
+extern "C" const GUID __declspec(selectany) CLSID_TetCalibAnalyzeDataArray =
+    {0xb16ce1a4,0x6e0d,0x415c,{0x84,0xeb,0xe5,0xd0,0x8c,0x0b,0xd6,0x49}};
+extern "C" const GUID __declspec(selectany) IID_ITetCalibAnalyzeDataArray =
+    {0x700297df,0x2fd4,0x4e19,{0xad,0xad,0x92,0x23,0x7e,0x38,0xf8,0x71}};
+extern "C" const GUID __declspec(selectany) CLSID_TetGazeDataHolder =
+    {0x39891258,0x8428,0x47e9,{0xa0,0x2a,0xb9,0x3a,0x1f,0x52,0xf0,0x2a}};
+extern "C" const GUID __declspec(selectany) IID_ITetGazeDataHolder =
+    {0xcf978175,0x5f6a,0x4c5e,{0x85,0x16,0x0a,0xfa,0xbc,0x3b,0x8b,0x33}};
+extern "C" const GUID __declspec(selectany) DIID_DTetClientEvents =
+    {0xe15c8492,0xd737,0x47bd,{0x8e,0xde,0x9b,0x6f,0x5b,0xac,0x13,0xa5}};
+extern "C" const GUID __declspec(selectany) CLSID_TetClient =
+    {0x70ecae0e,0x5e78,0x430d,{0x9e,0xd5,0xb3,0xc0,0x47,0xb3,0x39,0xf6}};
+extern "C" const GUID __declspec(selectany) IID_ITetClient =
+    {0x5f4d9fff,0x982c,0x408f,{0x89,0x77,0x81,0xb3,0x01,0x7d,0x44,0x6d}};
+extern "C" const GUID __declspec(selectany) IID__ITetClientEvents =
+    {0xfe823d7c,0xf714,0x4e8d,{0x89,0x86,0xc6,0x8c,0xd5,0x1a,0x68,0x4c}};
+extern "C" const GUID __declspec(selectany) DIID_DTetTrackStatusEvents =
+    {0x338d0658,0x8464,0x4a0d,{0x9b,0x52,0xb8,0x21,0xdb,0x00,0xde,0xd1}};
+extern "C" const GUID __declspec(selectany) CLSID_TetTrackStatus =
+    {0x8b3e9d89,0x36a1,0x4621,{0x89,0x45,0x4d,0x4a,0x9d,0x0f,0xe7,0x05}};
+extern "C" const GUID __declspec(selectany) IID_IDispTetTrackStatus =
+    {0xd1ed36bf,0x7655,0x4f1d,{0x9f,0xb9,0xd2,0x0c,0x9b,0x0b,0xab,0x98}};
+extern "C" const GUID __declspec(selectany) IID_ITetTrackStatus =
+    {0x3cd18cd2,0x2286,0x4ce5,{0x8b,0xbf,0x28,0x9d,0xb0,0x09,0x8c,0x20}};
+extern "C" const GUID __declspec(selectany) IID__ITetTrackStatusEvents =
+    {0xe37e908b,0x7043,0x4fff,{0xb9,0xae,0xc7,0x66,0xb6,0xaf,0xd1,0x6d}};
+extern "C" const GUID __declspec(selectany) CLSID_TetPointDArray =
+    {0xb8eac471,0xda53,0x49b5,{0x93,0x0c,0x55,0x47,0x6f,0x4f,0x17,0xec}};
+extern "C" const GUID __declspec(selectany) IID_ITetPointDArray =
+    {0x76e46672,0x172b,0x464e,{0x8e,0xdf,0xab,0x37,0xb2,0xf6,0x78,0x85}};
+extern "C" const GUID __declspec(selectany) DIID_DTetCalibManagerEvents =
+    {0x6a4293cb,0xa45d,0x403c,{0xa2,0x17,0x58,0x9f,0x2e,0x89,0x87,0x4f}};
+extern "C" const GUID __declspec(selectany) CLSID_TetCalibManager =
+    {0x800ccdc9,0x7688,0x4d95,{0xb2,0x7f,0x3b,0xd2,0x7f,0xe8,0xcb,0xc6}};
+extern "C" const GUID __declspec(selectany) IID_ITetCalibManager =
+    {0xffc4d1d1,0x3478,0x4b30,{0xae,0x5c,0x54,0xe7,0x36,0x8a,0xb0,0xba}};
+extern "C" const GUID __declspec(selectany) IID__ITetCalibManagerEvents =
+    {0xf5a7b3b4,0xe6f9,0x4b42,{0x91,0xda,0xe8,0xbc,0xfb,0x0d,0x73,0x95}};
+extern "C" const GUID __declspec(selectany) DIID_DTetCalibProcEvents =
+    {0x7bd2537e,0x5f03,0x4538,{0x95,0xa5,0x7b,0xd5,0x6f,0x31,0x11,0xc7}};
+extern "C" const GUID __declspec(selectany) CLSID_TetCalibProc =
+    {0xc4ee4778,0xf8e4,0x45c5,{0x85,0xcd,0x6a,0x1e,0x8a,0x0d,0x14,0xc9}};
+extern "C" const GUID __declspec(selectany) IID_ITetCalibProc =
+    {0x0c034afe,0x5c3f,0x435d,{0xa0,0x96,0x5d,0x44,0xe2,0x81,0x1e,0x45}};
+extern "C" const GUID __declspec(selectany) IID__ITetCalibProcEvents =
+    {0xf36c6983,0x90aa,0x4a5e,{0x92,0x12,0x0c,0x00,0xb5,0x09,0xb7,0xfd}};
+extern "C" const GUID __declspec(selectany) DIID_DTetCalibPlotEvents =
+    {0x00de6908,0x581a,0x4a4e,{0x92,0xb6,0x62,0x6a,0xee,0xb5,0xc9,0x22}};
+extern "C" const GUID __declspec(selectany) CLSID_TetCalibPlot =
+    {0x953357fc,0xa101,0x4dee,{0xb3,0x45,0xe3,0x52,0xb6,0x98,0xc1,0x14}};
+extern "C" const GUID __declspec(selectany) IID_IDispTetCalibPlot =
+    {0x698631ee,0x0b35,0x4721,{0xa5,0xe6,0xa8,0xae,0xe4,0x94,0x96,0x57}};
+extern "C" const GUID __declspec(selectany) IID_ITetCalibPlot =
+    {0x69d96794,0x98ff,0x4c0d,{0xaf,0x41,0x4a,0x08,0x2a,0xd8,0x09,0xb8}};
+extern "C" const GUID __declspec(selectany) IID__ITetCalibPlotEvents =
+    {0x147ecf08,0x75be,0x49eb,{0x8d,0xf1,0xd6,0xec,0x62,0x0e,0x35,0xcc}};
+extern "C" const GUID __declspec(selectany) CLSID_TetTimeUtilities =
+    {0x2611a9f7,0xcc04,0x410d,{0xbd,0x4a,0x39,0x6d,0x30,0x54,0xcd,0x21}};
+extern "C" const GUID __declspec(selectany) IID_ITetTimeUtilities =
+    {0x900171d9,0xf615,0x41f3,{0xa3,0x7b,0xd5,0x99,0x98,0x5f,0x37,0x5f}};
+
+#pragma pack(pop)

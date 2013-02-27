@@ -1,0 +1,10 @@
+LIBRARY NSDEVICE
+EXPORTS
+NSDConnect@8=NSDConnect @1
+NSDCreateConfiguration@8=NSDCreateConfiguration @2
+NSDDisconnect@0=NSDDisconnect @3
+NSDGetBlocksPerSecond@0=NSDGetBlocksPerSecond @4
+NSDGetCapabilities@4=NSDGetCapabilities @5
+NSDGetConfiguration@4=NSDGetConfiguration @6
+NSDGetData@4=NSDGetData @7
+NSDSetConfiguration@4=NSDSetConfiguration @8
