@@ -1,5 +1,5 @@
 LSL (short for lab streaming layer) is a simple modular data recording system.
-It consists of the recording program (the LabRecorder) and a collection of device modules (currently BioSemi, PhaseSpace, AudioCapture, SNAP).
+It consists of the recording program (the LabRecorder) and a collection of device modules.
 
 An extensive wiki that discusses the various programs and usage considerations is found at https://code.google.com/p/labstreaminglayer/w/list
 

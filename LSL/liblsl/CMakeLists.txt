@@ -3,8 +3,8 @@ project (liblsl)
 
 # Version number
 set (liblsl_VERSION_MAJOR 1)
-set (liblsl_VERSION_MINOR 3)
-set (liblsl_VERSION_PATCH 2)
+set (liblsl_VERSION_MINOR 4)
+set (liblsl_VERSION_PATCH 0)
 
 option (USE_SYSTEM_BOOST "Use system Boost libraries instead of the version shipped with LSL." OFF)
 
