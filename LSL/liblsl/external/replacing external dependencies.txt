@@ -1,0 +1,10 @@
+The only external dependency is boost 1.50 or newer. 
+
+To update the boost distribution shipped with LSL to a newer version, first copy the folders boost and libs (not lib!) from boost_1_xx_0 to liblsl/external and then run the Python script rename_boost.py from the command line in the external folder. This will rename the folder boost to lslboost, rename the folder libs to src, and then recursively rename all occurrences of the string boost to lslboost in the liblsl/external directory tree. This serves to rule out symbol conflicts when linking liblsl into applications that ship with their own version of boost, which tends to produce hard-to-identify segmentation faults or app crashes.
+
+Notes: 
+* If you don't intend to build liblsl for linking with 3rd party applications and but still want to use an unmodified version of boost you can edit liblsl/src/boost_rename.h and add the compiler definition USE_OFFICIAL_BOOST (either in the CMakeLists.txt in liblsl/src or the respective project file). You will still have to rename the libs folder to src, but skip all other steps.
+
+* It is possible that in a future boost version some of the source files will be named differently than in 1.50, or that extra libraries are required. In this case you will have to update the CMakeLists.txt in this folder or the corresponding project files in order to accomodate the changes.
+
+* liblsl needs only a subset of boost libraries, so if you plan to redistribute the updated source code you might want to strip out some unused header and library files to save space.

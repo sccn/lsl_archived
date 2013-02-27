@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/eegsolutions/sccn_xml/svn/!svn/ver/1/shared/4.4.0-msvc/include/allegrogl/GLext
+END
+wgl_ext_defs.h
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/eegsolutions/sccn_xml/svn/!svn/ver/1/shared/4.4.0-msvc/include/allegrogl/GLext/wgl_ext_defs.h
+END
+gl_ext_alias.h
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/eegsolutions/sccn_xml/svn/!svn/ver/1/shared/4.4.0-msvc/include/allegrogl/GLext/gl_ext_alias.h
+END
+gl_ext_api.h
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/eegsolutions/sccn_xml/svn/!svn/ver/1/shared/4.4.0-msvc/include/allegrogl/GLext/gl_ext_api.h
+END
+glx_ext_defs.h
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/eegsolutions/sccn_xml/svn/!svn/ver/1/shared/4.4.0-msvc/include/allegrogl/GLext/glx_ext_defs.h
+END
+gl_ext_list.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/eegsolutions/sccn_xml/svn/!svn/ver/1/shared/4.4.0-msvc/include/allegrogl/GLext/gl_ext_list.h
+END
+wgl_ext_alias.h
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/eegsolutions/sccn_xml/svn/!svn/ver/1/shared/4.4.0-msvc/include/allegrogl/GLext/wgl_ext_alias.h
+END
+wgl_ext_api.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/eegsolutions/sccn_xml/svn/!svn/ver/1/shared/4.4.0-msvc/include/allegrogl/GLext/wgl_ext_api.h
+END
+gl_ext_defs.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/eegsolutions/sccn_xml/svn/!svn/ver/1/shared/4.4.0-msvc/include/allegrogl/GLext/gl_ext_defs.h
+END
+glx_ext_alias.h
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/eegsolutions/sccn_xml/svn/!svn/ver/1/shared/4.4.0-msvc/include/allegrogl/GLext/glx_ext_alias.h
+END
+glx_ext_api.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/eegsolutions/sccn_xml/svn/!svn/ver/1/shared/4.4.0-msvc/include/allegrogl/GLext/glx_ext_api.h
+END
+wgl_ext_list.h
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/eegsolutions/sccn_xml/svn/!svn/ver/1/shared/4.4.0-msvc/include/allegrogl/GLext/wgl_ext_list.h
+END
+glx_ext_list.h
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/eegsolutions/sccn_xml/svn/!svn/ver/1/shared/4.4.0-msvc/include/allegrogl/GLext/glx_ext_list.h
+END
