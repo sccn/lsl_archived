@@ -8,10 +8,17 @@
 #include "send_buffer.h"
 #include "api_config.h"
 #include "portable_archive/portable_oarchive.hpp"
-#include BOOST_PATH(/asio.hpp)
-#include BOOST_PATH(/thread.hpp)
-#include BOOST_PATH(/enable_shared_from_this.hpp)
 #include <set>
+
+#ifdef USE_OFFICIAL_BOOST
+#include <lslboost/asio.hpp>
+#include <lslboost/enable_shared_from_this.hpp>
+#else
+#include <lslboost/asio.hpp>
+#include <lslboost/enable_shared_from_this.hpp>
+namespace boost = lslboost;
+#endif 
+
 
 using boost::asio::ip::tcp;
 using boost::system::error_code;

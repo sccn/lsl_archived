@@ -3,8 +3,13 @@
 
 #include <string>
 #include <vector>
-#include "boost_rename.h"
-#include BOOST_PATH(/thread/once.hpp)
+
+#ifdef USE_OFFICIAL_BOOST
+#include <boost/thread/once.hpp>
+#else
+#include <lslboost/thread/once.hpp>
+namespace boost = lslboost;
+#endif 
 
 namespace lsl {
 

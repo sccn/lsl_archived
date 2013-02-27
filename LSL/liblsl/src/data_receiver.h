@@ -4,7 +4,13 @@
 #include "inlet_connection.h"
 #include "consumer_queue.h"
 #include "cancellable_streambuf.h"
-#include BOOST_PATH(/thread.hpp)
+
+#ifdef USE_OFFICIAL_BOOST
+#include <boost/thread.hpp>
+#else
+#include <lslboost/thread.hpp>
+namespace boost = lslboost;
+#endif 
 
 using boost::asio::ip::tcp;
 

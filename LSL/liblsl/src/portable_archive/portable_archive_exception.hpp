@@ -14,9 +14,16 @@
 
 #pragma once
 
-#include "../boost_rename.h"
-#include BOOST_PATH(/archive/basic_archive.hpp)
-#include BOOST_PATH(/archive/archive_exception.hpp)
+#ifdef USE_OFFICIAL_BOOST
+#include <boost/archive/basic_archive.hpp>
+#include <boost/archive/archive_exception.hpp>
+#define BOOST_NAMESPACE boost
+#else
+#include <lslboost/archive/basic_archive.hpp>
+#include <lslboost/archive/archive_exception.hpp>
+namespace boost = lslboost;
+#define BOOST_NAMESPACE lslboost
+#endif
 
 namespace eos {
 

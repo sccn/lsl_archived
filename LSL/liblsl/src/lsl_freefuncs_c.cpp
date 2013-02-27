@@ -1,7 +1,14 @@
 #include "../include/lsl_c.h"
 #include "version.h"
 #include "resolver_impl.h"
-#include BOOST_PATH(/chrono/system_clocks.hpp)
+
+#ifdef USE_OFFICIAL_BOOST
+#include <boost/chrono/system_clocks.hpp>
+#else
+#include <lslboost/chrono/system_clocks.hpp>
+namespace boost = lslboost;
+#endif 
+
 
 // === Implementation of the free-standing functions in lsl_c.h ===
 

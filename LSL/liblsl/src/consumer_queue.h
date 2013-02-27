@@ -2,8 +2,15 @@
 #define CONSUMER_QUEUE_H
 
 #include "sample.h"
-#include BOOST_PATH(/circular_buffer.hpp)
-#include BOOST_PATH(/thread.hpp)
+
+#ifdef USE_OFFICIAL_BOOST
+#include <boost/circular_buffer.hpp>
+#include <boost/thread.hpp>
+#else
+#include <lslboost/circular_buffer.hpp>
+#include <lslboost/thread.hpp>
+namespace boost = lslboost;
+#endif 
 
 namespace lsl {
 	/// shared pointer to a consumer queue

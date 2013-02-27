@@ -416,10 +416,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\boost_rename.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\cancellable_streambuf.h"
 				>
 			</File>

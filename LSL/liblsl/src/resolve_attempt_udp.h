@@ -4,10 +4,18 @@
 #include "version.h"
 #include "stream_info_impl.h"
 #include "cancellation.h"
-#include BOOST_PATH(/asio.hpp)
-#include BOOST_PATH(/enable_shared_from_this.hpp)
-#include BOOST_PATH(/thread.hpp)
 #include <map>
+
+#ifdef USE_OFFICIAL_BOOST
+#include <boost/asio.hpp>
+#include <boost/enable_shared_from_this.hpp>
+#include <boost/thread.hpp>
+#else
+#include <lslboost/asio.hpp>
+#include <lslboost/enable_shared_from_this.hpp>
+#include <lslboost/thread.hpp>
+namespace boost = lslboost;
+#endif 
 
 using boost::asio::ip::udp;
 using boost::asio::ip::tcp;

@@ -1,5 +1,12 @@
 #include "send_buffer.h"
-#include BOOST_PATH(/bind.hpp)
+
+#ifdef USE_OFFICIAL_BOOST
+#include <boost/bind.hpp>
+#else
+#include <lslboost/bind.hpp>
+namespace boost = lslboost;
+#endif
+
 
 //
 // === implementation of the send_buffer class ===
