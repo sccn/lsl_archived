@@ -3,9 +3,8 @@
 #include "version.h"
 #include <iostream>
 
-//
+
 // === implementation of the continuous_resolver class ===
-//
 
 using namespace lsl;
 

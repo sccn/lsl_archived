@@ -1,8 +1,7 @@
 #include "stream_inlet_impl.h"
 
-//
+
 // === implementation of the stream_inlet class ===
-//
 
 using namespace lsl;
 

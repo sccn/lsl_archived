@@ -6,15 +6,8 @@
 #include "resolver_impl.h"
 #include "cancellation.h"
 #include <map>
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
-#else
-#include <lslboost/asio.hpp>
-#include <lslboost/thread.hpp>
-namespace boost = lslboost;
-#endif 
 
 
 using boost::asio::ip::tcp;

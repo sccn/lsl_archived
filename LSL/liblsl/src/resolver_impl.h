@@ -7,21 +7,12 @@
 #include "stream_info_impl.h"
 #include "resolve_attempt_udp.h"
 #include <set>
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/asio.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/thread.hpp>
-#else
-#include <lslboost/asio.hpp>
-#include <lslboost/shared_ptr.hpp>
-#include <lslboost/enable_shared_from_this.hpp>
-#include <lslboost/noncopyable.hpp>
-#include <lslboost/thread.hpp>
-namespace boost = lslboost;
-#endif 
+
 
 using boost::asio::ip::udp;
 using boost::asio::ip::tcp;

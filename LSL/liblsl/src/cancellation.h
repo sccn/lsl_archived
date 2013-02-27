@@ -3,13 +3,8 @@
 
 #include <iostream>
 #include <set>
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/thread.hpp>
-#else
-#include <lslboost/thread.hpp>
-namespace boost = lslboost;
-#endif 
+
 
 namespace lsl { 
 

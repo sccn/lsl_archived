@@ -1,9 +1,8 @@
 #include "resolver_impl.h"
 #include "version.h"
 
-//
+
 // === Implementation of the continuous_resolver class ===
-//
 
 using namespace lsl;
 

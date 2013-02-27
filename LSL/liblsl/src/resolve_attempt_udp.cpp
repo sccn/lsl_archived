@@ -4,23 +4,13 @@
 #include "socket_utils.h"
 #include <iostream>
 #include <istream>
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/bind.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/functional/hash.hpp>
-#else
-#include <lslboost/bind.hpp>
-#include <lslboost/algorithm/string.hpp>
-#include <lslboost/lexical_cast.hpp>
-#include <lslboost/functional/hash.hpp>
-namespace boost = lslboost;
-#endif 
 
-//
+
 // === implementation of the resolver_burst_udp class ===
-//
 
 using namespace lsl;
 using namespace boost::asio;

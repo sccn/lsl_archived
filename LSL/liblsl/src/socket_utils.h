@@ -3,15 +3,9 @@
 
 #include "version.h"
 #include "api_config.h"
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
-#else
-#include <lslboost/asio.hpp>
-#include <lslboost/thread.hpp>
-namespace boost = lslboost;
-#endif 
+
 
 namespace lsl {
     

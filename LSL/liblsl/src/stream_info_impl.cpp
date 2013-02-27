@@ -2,19 +2,11 @@
 #include "api_config.h"
 #include <sstream>
 #include <iostream>
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
-#else
-#include <lslboost/algorithm/string.hpp>
-#include <lslboost/lexical_cast.hpp>
-namespace boost = lslboost;
-#endif 
 
-//
+
 // === implementation of the stream_info_impl class ===
-//
 
 using namespace lsl;
 using namespace pugi;

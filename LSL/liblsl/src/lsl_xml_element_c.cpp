@@ -2,9 +2,8 @@
 #include "../include/lsl_c.h"
 #include "pugixml/pugixml.hpp"
 
-//
+
 // === implementation of the lsl_xml_ptr functions of lsl_c.h ===
-//
 
 using namespace lsl;
 using namespace pugi;

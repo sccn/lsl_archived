@@ -1,9 +1,8 @@
 #include "../include/lsl_cpp.h"
 #include "pugixml/pugixml.hpp"
 
-//
+
 // === implementation of the xml_element class ===
-//
 
 using namespace lsl;
 using namespace pugi;

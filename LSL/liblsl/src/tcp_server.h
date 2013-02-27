@@ -9,15 +9,8 @@
 #include "api_config.h"
 #include "portable_archive/portable_oarchive.hpp"
 #include <set>
-
-#ifdef USE_OFFICIAL_BOOST
 #include <lslboost/asio.hpp>
 #include <lslboost/enable_shared_from_this.hpp>
-#else
-#include <lslboost/asio.hpp>
-#include <lslboost/enable_shared_from_this.hpp>
-namespace boost = lslboost;
-#endif 
 
 
 using boost::asio::ip::tcp;

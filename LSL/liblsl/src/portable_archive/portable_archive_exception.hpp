@@ -14,16 +14,9 @@
 
 #pragma once
 
-#ifdef USE_OFFICIAL_BOOST
+#include <boost/lexical_cast.hpp>
 #include <boost/archive/basic_archive.hpp>
 #include <boost/archive/archive_exception.hpp>
-#define BOOST_NAMESPACE boost
-#else
-#include <lslboost/archive/basic_archive.hpp>
-#include <lslboost/archive/archive_exception.hpp>
-namespace boost = lslboost;
-#define BOOST_NAMESPACE lslboost
-#endif
 
 namespace eos {
 

@@ -9,6 +9,7 @@
 #include "sample.h"
 #include "send_buffer.h"
 
+
 namespace lsl { 
 
 	/// pointer to a thread

@@ -3,17 +3,9 @@
 
 #include "inlet_connection.h"
 #include <limits>
-
-#ifdef USE_OFFICIAL_BOOST
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include <boost/random.hpp>
-#else
-#include <lslboost/asio.hpp>
-#include <lslboost/thread.hpp>
-#include <lslboost/random.hpp>
-namespace boost = lslboost;
-#endif 
 
 
 using boost::asio::ip::udp;

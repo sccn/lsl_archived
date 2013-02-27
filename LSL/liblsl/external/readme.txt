@@ -1,0 +1,10 @@
+The only external dependency is boost 1.50 or newer. This folder is only used if you build liblsl as a standalone library (i.e., not dependent on the system-provided boost libraries).
+
+To update the boost distribution shipped with LSL to a newer version, delete the boost, lslboost and src folders and copy the folders boost and libs (not lib!) from boost_1_xx_0 to liblsl/external. Then run the Python script premangle_boost.py from the command line in the external folder. This will rename the folder libs to src and the folder boost to lslboost, and then recursively prefix all occurrences of the string boost with lsl in the liblsl/external directory tree. Finally it generates a minimal set of redirect headers in the directory boost (that redirect to lslboost headers). This processing allows you to use liblsl with applications that ship with their own incompatible version of boost without the need to care about compiler and linker flags that strip out conflicting symbols (these can cause hard-to-reproduce runtime crashes).
+
+Notes: 
+* If you don't intend to build liblsl for linking with 3rd party applications but still want to use an unmodified version of boost compiled into the library you can add the preprocessor definition USE_OFFICIAL_BOOST (either in the CMakeLists.txt in liblsl/src or the respective project file). You still have to rename the libs folder to src manually (but nothing else).
+
+* It is possible that in a future version of boost some of the source files will be named differently than in 1.50 or that extra libraries are required. In this case you will have to update the CMakeLists.txt in this folder or the corresponding project files in order to accomodate the changes.
+
+* liblsl needs only a subset of boost libraries, so if you plan to redistribute the updated source code you might want to delete some unused header and library files to save space.

@@ -1,9 +1,8 @@
 #define NO_EXPLICIT_TEMPLATE_INSTANTIATION
 #include "stream_outlet_impl.h"
 
-//
+
 // === implementation of the stream_outlet class ===
-//
 
 using namespace lsl;
 
