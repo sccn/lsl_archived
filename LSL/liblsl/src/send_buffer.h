@@ -3,12 +3,11 @@
 
 #include "sample.h"
 #include "consumer_queue.h"
-#include <lslboost/thread.hpp>
-#include <lslboost/container/flat_set.hpp>
-#include <lslboost/enable_shared_from_this.hpp>
+#include BOOST_PATH(/thread.hpp)
+#include BOOST_PATH(/container/flat_set.hpp)
+#include BOOST_PATH(/enable_shared_from_this.hpp)
 #include <set>
 
-namespace boost = lslboost;
 namespace lsl {
 
 	/**

@@ -1,11 +1,10 @@
 #include "../include/lsl_c.h"
 #include "version.h"
 #include "resolver_impl.h"
-#include <lslboost/chrono/system_clocks.hpp>
+#include BOOST_PATH(/chrono/system_clocks.hpp)
 
 // === Implementation of the free-standing functions in lsl_c.h ===
 
-namespace boost = lslboost;
 using namespace lsl;
 using std::string;
 using std::vector;

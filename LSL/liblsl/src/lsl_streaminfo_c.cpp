@@ -7,7 +7,6 @@
 // === Implementation of the streaminfo-related functions of the C API ===
 //
 
-namespace boost = lslboost;
 using namespace lsl;
 
 // boilerplate wrapper code

@@ -6,7 +6,7 @@
  * \version 5.0
  *
  * This pair of archives brings the advantages of binary streams to the cross
- * platform lslboost::serialization user. While being almost as fast as the native
+ * platform boost::serialization user. While being almost as fast as the native
  * binary archive it allows its files to be exchanged between cpu architectures
  * using different byte order (endianness). Speaking of speed: in serializing
  * numbers the (portable) binary approach is approximately ten times faster than
@@ -14,16 +14,16 @@
  *
  * Based on the portable archive example by Robert Ramey this implementation
  * uses Beman Dawes endian library and fp_utilities from Johan Rade, both being
- * in lslboost since 1.36. Prior to that you need to add them both (header only)
- * to your lslboost directory before you're able to use the archives provided. 
- * Our archives have been tested successfully for lslboost versions 1.33 to 1.49!
+ * in boost since 1.36. Prior to that you need to add them both (header only)
+ * to your boost directory before you're able to use the archives provided. 
+ * Our archives have been tested successfully for boost versions 1.33 to 1.49!
  *
  * \note Correct behaviour has so far been confirmed using PowerPC-32, x86-32
  *       and x86-64 platforms featuring different byte order. So there is a good
  *       chance it will instantly work for your specific setup. If you encounter
  *       problems or have suggestions please contact the author.
  *
- * \note Version 5.0 is now compatible with lslboost up to version 1.49 and enables
+ * \note Version 5.0 is now compatible with boost up to version 1.49 and enables
  *       serialization of std::wstring by converting it to/from utf8 (thanks to
  *       Arash Abghari for this suggestion). With that all unit tests from the
  *       serialization library pass again with the notable exception of user
@@ -34,11 +34,11 @@
  * \note Oliver Putz pointed out that -0.0 was not serialized correctly, so
  *       version 4.3 provides a fix for that. Thanks Ollie!
  *
- * \note Version 4.2 maintains compatibility with the latest lslboost 1.45 and adds
+ * \note Version 4.2 maintains compatibility with the latest boost 1.45 and adds
  *       serialization of special floating point values inf and NaN as proposed
  *       by Francois Mauger.
  *
- * \note Version 4.1 makes the archives work together with lslboost 1.40 and 1.41.
+ * \note Version 4.1 makes the archives work together with boost 1.40 and 1.41.
  *       Thanks to Francois Mauger for his suggestions.
  *
  * \note Version 4 removes one level of the inheritance hierarchy and directly
@@ -49,13 +49,13 @@
  * \note A few fixes introduced in version 3.1 let the archives pass all of the
  *       serialization tests. Thanks to Sergey Morozov for running the tests.
  *       Wouter Bijlsma pointed out where to find the fp_utilities and endian
- *       libraries headers inside the lslboost distribution. I would never have
- *       found them so thank him it works out of the box since lslboost 1.36.
+ *       libraries headers inside the boost distribution. I would never have
+ *       found them so thank him it works out of the box since boost 1.36.
  *
  * \note With Version 3.0 the archives have been made portable across different
- *       lslboost versions. For that purpose a header is added to the data that
+ *       boost versions. For that purpose a header is added to the data that
  *       supplies the underlying serialization library version. Backwards
- *       compatibility is maintained by assuming library version lslboost 1.33 if
+ *       compatibility is maintained by assuming library version boost 1.33 if
  *       the iarchive is created using the no_header flag. Whether a header is
  *       present or not can be guessed by peeking into the stream: the header's
  *       first byte is the magic number 127 coinciding with 'e'|'o'|'s' :-)
@@ -63,7 +63,7 @@
  * \note Version 2.1 removes several compiler warnings and enhances floating
  *       point diagnostics to inform the user if some preconditions are violated
  *		 on his platform. We do not strive for the universally portable solution
- *       in binary floating point serialization as desired by some lslboost users.
+ *       in binary floating point serialization as desired by some boost users.
  *       Instead we support only the most widely used IEEE 754 format and try to
  *       detect when requirements are not met and hence our approach must fail.
  *       Contributions we made by Johan Rade and Ákos Maróy.
@@ -78,80 +78,81 @@
  *       integer type size exception when reading it with version 1.0. Thanks
  *       to Markus Frohnmaier for testing the archives and finding the bug.
  *
- * \copyright The lslboost software license applies.
+ * \copyright The boost software license applies.
  */
 /*****************************************************************************/
 
 #pragma once
 
+#include "../boost_rename.h"
 #include <ostream>
 
 // basic headers
-#include <lslboost/version.hpp>
-#include <lslboost/utility/enable_if.hpp>
-#include <lslboost/archive/basic_binary_oprimitive.hpp>
-#include <lslboost/archive/basic_binary_oarchive.hpp>
+#include BOOST_PATH(/version.hpp)
+#include BOOST_PATH(/utility/enable_if.hpp)
+#include BOOST_PATH(/archive/basic_binary_oprimitive.hpp)
+#include BOOST_PATH(/archive/basic_binary_oarchive.hpp)
 
 #if BOOST_VERSION >= 103500
-#include <lslboost/archive/shared_ptr_helper.hpp>
+#include BOOST_PATH(/archive/shared_ptr_helper.hpp)
 #endif
 
 #if BOOST_VERSION >= 104500
-#include <lslboost/program_options/config.hpp>
-#include <lslboost/program_options/detail/convert.hpp>
+#include BOOST_PATH(/program_options/config.hpp)
+#include BOOST_PATH(/program_options/detail/convert.hpp)
 #endif
 
 // funny polymorphics
 #if BOOST_VERSION < 103500
-#include <lslboost/archive/detail/polymorphic_oarchive_impl.hpp>
-#define POLYMORPHIC(T) lslboost::archive::detail::polymorphic_oarchive_impl<T>
+#include BOOST_PATH(/archive/detail/polymorphic_oarchive_impl.hpp)
+#define POLYMORPHIC(T) boost::archive::detail::polymorphic_oarchive_impl<T>
 
 #elif BOOST_VERSION < 103600
-#include <lslboost/archive/detail/polymorphic_oarchive_dispatch.hpp>
-#define POLYMORPHIC(T) lslboost::archive::detail::polymorphic_oarchive_dispatch<T>
+#include BOOST_PATH(/archive/detail/polymorphic_oarchive_dispatch.hpp)
+#define POLYMORPHIC(T) boost::archive::detail::polymorphic_oarchive_dispatch<T>
 
 #else
-#include <lslboost/archive/detail/polymorphic_oarchive_route.hpp>
-#define POLYMORPHIC(T) lslboost::archive::detail::polymorphic_oarchive_route<T>
+#include BOOST_PATH(/archive/detail/polymorphic_oarchive_route.hpp)
+#define POLYMORPHIC(T) boost::archive::detail::polymorphic_oarchive_route<T>
 #endif
 
 // endian and fpclassify
 #if BOOST_VERSION < 103600
-#include <lslboost/integer/endian.hpp>
-#include <lslboost/math/fpclassify.hpp>
+#include BOOST_PATH(/integer/endian.hpp)
+#include BOOST_PATH(/math/fpclassify.hpp)
 #elif BOOST_VERSION < 104800
-#include <lslboost/spirit/home/support/detail/integer/endian.hpp>
-#include <lslboost/spirit/home/support/detail/math/fpclassify.hpp>
+#include BOOST_PATH(/spirit/home/support/detail/integer/endian.hpp)
+#include BOOST_PATH(/spirit/home/support/detail/math/fpclassify.hpp)
 #else
-#include <lslboost/spirit/home/support/detail/endian/endian.hpp>
-#include <lslboost/spirit/home/support/detail/math/fpclassify.hpp>
+#include BOOST_PATH(/spirit/home/support/detail/endian/endian.hpp)
+#include BOOST_PATH(/spirit/home/support/detail/math/fpclassify.hpp)
 #endif
 
 // namespace alias fp_classify
 #if BOOST_VERSION < 103800
-namespace fp = lslboost::math;
+namespace fp = boost::math;
 #else
-namespace fp = lslboost::spirit::math;
+namespace fp = boost::spirit::math;
 #endif
 
 // namespace alias endian
 #if BOOST_VERSION < 104800
-namespace endian = lslboost::detail;
+namespace endian = boost::detail;
 #else
-namespace endian = lslboost::spirit::detail;
+namespace endian = boost::spirit::detail;
 #endif
 
 #ifndef BOOST_NO_STD_WSTRING
 // used for wstring to utf8 conversion
-#include <lslboost/program_options/config.hpp>
-#include <lslboost/program_options/detail/convert.hpp>
+#include BOOST_PATH(/program_options/config.hpp)
+#include BOOST_PATH(/program_options/detail/convert.hpp)
 #endif
 
 // generic type traits for numeric types
-#include <lslboost/type_traits/is_integral.hpp>
-#include <lslboost/type_traits/is_signed.hpp>
-#include <lslboost/type_traits/is_arithmetic.hpp>
-#include <lslboost/type_traits/is_floating_point.hpp>
+#include BOOST_PATH(/type_traits/is_integral.hpp)
+#include BOOST_PATH(/type_traits/is_signed.hpp)
+#include BOOST_PATH(/type_traits/is_arithmetic.hpp)
+#include BOOST_PATH(/type_traits/is_floating_point.hpp)
 
 #include "portable_archive_exception.hpp"
 
@@ -166,7 +167,7 @@ namespace eos {
 	// forward declaration
 	class portable_oarchive;
 
-	typedef lslboost::archive::basic_binary_oprimitive<
+	typedef boost::archive::basic_binary_oprimitive<
 		portable_oarchive
 	#if BOOST_VERSION < 103400
 		, std::ostream
@@ -192,11 +193,11 @@ namespace eos {
 
 		// the example derives from common_oarchive but that lacks the
 		// save_override functions so we chose to stay one level higher
-		, public lslboost::archive::basic_binary_oarchive<portable_oarchive>
+		, public boost::archive::basic_binary_oarchive<portable_oarchive>
 
 	#if BOOST_VERSION >= 103500
 		// mix-in helper class for serializing shared_ptr
-		, public lslboost::archive::detail::shared_ptr_helper
+		, public boost::archive::detail::shared_ptr_helper
 	#endif
 	{
 		// workaround for gcc: use a dummy struct
@@ -213,15 +214,15 @@ namespace eos {
 		void init(unsigned flags)
 		{
 			// it is vital to have version information if the archive is
-			// to be parsed with a newer version of lslboost::serialization
-			// therefor we create a header, no header means lslboost 1.33
-			if (flags & lslboost::archive::no_header)
+			// to be parsed with a newer version of boost::serialization
+			// therefor we create a header, no header means boost 1.33
+			if (flags & boost::archive::no_header)
 				BOOST_ASSERT(archive_version == 3);
 			else
 			{
 				// write our minimalistic header (magic byte plus version)
-				// the lslboost archives write a string instead - by calling
-				// lslboost::archive::basic_binary_oarchive<derived_t>::init()
+				// the boost archives write a string instead - by calling
+				// boost::archive::basic_binary_oarchive<derived_t>::init()
 				save_signed_char(magic_byte);
 
 				// write current version
@@ -239,24 +240,24 @@ namespace eos {
 		 * platforms.
 		 *
 		 * We could have called basic_binary_oarchive::init which would create
-		 * the lslboost::serialization standard archive header containing also the
+		 * the boost::serialization standard archive header containing also the
 		 * library version. Due to efficiency we stick with our own.
 		 */
 		portable_oarchive(std::ostream& os, unsigned flags = 0)
 		#if BOOST_VERSION < 103400
-			: portable_oprimitive(os, flags & lslboost::archive::no_codecvt)
+			: portable_oprimitive(os, flags & boost::archive::no_codecvt)
 		#else
-			: portable_oprimitive(*os.rdbuf(), flags & lslboost::archive::no_codecvt)
+			: portable_oprimitive(*os.rdbuf(), flags & boost::archive::no_codecvt)
 		#endif
-			, lslboost::archive::basic_binary_oarchive<portable_oarchive>(flags)
+			, boost::archive::basic_binary_oarchive<portable_oarchive>(flags)
 		{
 			init(flags);
 		}
 
 	#if BOOST_VERSION >= 103400
 		portable_oarchive(std::streambuf& sb, unsigned flags = 0)
-			: portable_oprimitive(sb, flags & lslboost::archive::no_codecvt)
-			, lslboost::archive::basic_binary_oarchive<portable_oarchive>(flags)
+			: portable_oprimitive(sb, flags & boost::archive::no_codecvt)
+			, boost::archive::basic_binary_oarchive<portable_oarchive>(flags)
 		{
 			init(flags);
 		}
@@ -283,7 +284,7 @@ namespace eos {
 		 */
 		void save(const std::wstring& s)
 		{
-			save(lslboost::to_utf8(s));
+			save(boost::to_utf8(s));
 		}
 	#endif
 
@@ -313,7 +314,7 @@ namespace eos {
 		 * and store non-zero bytes to the stream.
 		 */
 		template <typename T>
-		typename lslboost::enable_if<lslboost::is_integral<T> >::type
+		typename boost::enable_if<boost::is_integral<T> >::type
 		save(const T & t, dummy<2> = 0)
 		{
 			if (T temp = t)
@@ -326,7 +327,7 @@ namespace eos {
 
 				// encode the sign bit into the size
 				save_signed_char(t > 0 ? size : -size);
-				BOOST_ASSERT(t > 0 || lslboost::is_signed<T>::value);
+				BOOST_ASSERT(t > 0 || boost::is_signed<T>::value);
 
 				// we choose to use little endian because this way we just
 				// save the first size bytes to the stream and skip the rest
@@ -365,7 +366,7 @@ namespace eos {
 		 * small rounding off errors. 
 		 */
 		template <typename T>
-		typename lslboost::enable_if<lslboost::is_floating_point<T> >::type
+		typename boost::enable_if<boost::is_floating_point<T> >::type
 		save(const T & t, dummy<3> = 0)
 		{
 			typedef typename fp::detail::fp_traits<T>::type traits;
@@ -399,10 +400,10 @@ namespace eos {
 			save(bits);
 		}
 
-		// in lslboost 1.44 version_type was splitted into library_version_type and
+		// in boost 1.44 version_type was splitted into library_version_type and
 		// item_version_type, plus a whole bunch of additional strong typedefs.
 		template <typename T>
-		typename lslboost::disable_if<lslboost::is_arithmetic<T> >::type
+		typename boost::disable_if<boost::is_arithmetic<T> >::type
 		save(const T& t, dummy<4> = 0)
 		{
 			// we provide a generic save routine for all types that feature
@@ -410,7 +411,7 @@ namespace eos {
 			// created through BOOST_STRONG_TYPEDEF(X, some unsigned int) like
 			// library_version_type, collection_size_type, item_version_type,
 			// class_id_type, object_id_type, version_type and tracking_type
-			save((typename lslboost::uint_t<sizeof(T)*CHAR_BIT>::least)(t));
+			save((typename boost::uint_t<sizeof(T)*CHAR_BIT>::least)(t));
 		}
 	};
 
@@ -434,17 +435,17 @@ BOOST_SERIALIZATION_REGISTER_ARCHIVE(eos::polymorphic_portable_oarchive)
 // or you move the instantiation section into an implementation file
 #ifndef NO_EXPLICIT_TEMPLATE_INSTANTIATION
 
-#include <lslboost/archive/impl/basic_binary_oarchive.ipp>
-#include <lslboost/archive/impl/basic_binary_oprimitive.ipp>
+#include BOOST_PATH(/archive/impl/basic_binary_oarchive.ipp)
+#include BOOST_PATH(/archive/impl/basic_binary_oprimitive.ipp)
 
 #if BOOST_VERSION < 104000
-#include <lslboost/archive/impl/archive_pointer_oserializer.ipp>
+#include BOOST_PATH(/archive/impl/archive_pointer_oserializer.ipp)
 #elif !defined BOOST_ARCHIVE_SERIALIZER_INCLUDED
-#include <lslboost/archive/impl/archive_serializer_map.ipp>
+#include BOOST_PATH(/archive/impl/archive_serializer_map.ipp)
 #define BOOST_ARCHIVE_SERIALIZER_INCLUDED
 #endif
 
-namespace lslboost { namespace archive {
+namespace BOOST_NAMESPACE { namespace archive {
 
 	// explicitly instantiate for this type of binary stream
 	template class basic_binary_oarchive<eos::portable_oarchive>;
@@ -466,6 +467,6 @@ namespace lslboost { namespace archive {
 	//template class detail::archive_serializer_map<eos::polymorphic_portable_oarchive>;
 #endif
 
-} } // namespace lslboost::archive
+} } // namespace boost::archive
 
 #endif

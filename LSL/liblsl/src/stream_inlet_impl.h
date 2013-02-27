@@ -8,7 +8,6 @@
 #include "time_receiver.h"
 #include "data_receiver.h"
 
-namespace boost = lslboost;
 namespace lsl {
 
 	/**

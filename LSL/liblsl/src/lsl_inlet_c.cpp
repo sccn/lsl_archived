@@ -6,7 +6,6 @@
 // === implementation of the stream_inlet class ===
 //
 
-namespace boost = lslboost;
 using namespace lsl;
 
 /**

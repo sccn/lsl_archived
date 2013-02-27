@@ -1,11 +1,10 @@
 #include "stream_outlet_impl.h"
-#include <lslboost/bind.hpp>
+#include BOOST_PATH(/bind.hpp)
 
 //
 // === implementation of the stream_outlet_impl class ===
 //
 
-namespace boost = lslboost;
 using namespace lsl;
 using namespace boost::asio;
 

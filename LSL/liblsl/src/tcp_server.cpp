@@ -1,17 +1,16 @@
 #include "tcp_server.h"
 #include "socket_utils.h"
-#include <lslboost/algorithm/string.hpp>
-#include <lslboost/uuid/uuid.hpp>
-#include <lslboost/uuid/uuid_generators.hpp>
-#include <lslboost/uuid/uuid_io.hpp>
-#include <lslboost/serialization/split_member.hpp>
+#include BOOST_PATH(/algorithm/string.hpp)
+#include BOOST_PATH(/uuid/uuid.hpp)
+#include BOOST_PATH(/uuid/uuid_generators.hpp)
+#include BOOST_PATH(/uuid/uuid_io.hpp)
+#include BOOST_PATH(/serialization/split_member.hpp)
 #include <iostream>
 
 //
 // === implementation of the tcp_server class ===
 //
 
-namespace boost = lslboost;
 using namespace lsl;
 using namespace boost::asio;
 

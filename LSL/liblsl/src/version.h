@@ -1,7 +1,8 @@
 #ifndef TARGETVER_H
 #define TARGETVER_H
+#include "boost_rename.h"
 
-#include <lslboost/version.hpp>
+#include BOOST_PATH(/version.hpp)
 #if BOOST_VERSION < 104500
 	#error "Please do not compile this with a boost version older than 1.45 because the library would otherwise not be protocol-compatible with builds using other versions."
 #endif

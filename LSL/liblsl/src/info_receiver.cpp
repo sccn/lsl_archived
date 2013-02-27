@@ -1,13 +1,12 @@
 #include "info_receiver.h"
 #include "cancellable_streambuf.h"
-#include <lslboost/bind.hpp>
+#include BOOST_PATH(/bind.hpp)
 #include <iostream>
 
 //
 // === implementation of the info_receiver class ===
 //
 
-namespace boost = lslboost;
 using namespace lsl;
 
 /// Construct a new info receiver.

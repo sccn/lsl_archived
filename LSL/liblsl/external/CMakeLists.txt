@@ -5,56 +5,56 @@ set (Boost_LIBRARIES boost PARENT_SCOPE)
 include_directories (${Boost_INCLUDE_DIRS})
 
 set (Boost_FILES  # Platform-independent sources
-  src/chrono/chrono.cpp
-  src/filesystem/codecvt_error_category.cpp
-  src/filesystem/operations.cpp
-  src/filesystem/path.cpp
-  src/filesystem/path_traits.cpp
-  src/filesystem/portability.cpp
-  src/filesystem/unique_path.cpp
-  src/filesystem/utf8_codecvt_facet.cpp
-  src/filesystem/windows_file_codecvt.cpp
-  src/filesystem/windows_file_codecvt.hpp
-  src/serialization/archive_exception.cpp
-  src/serialization/basic_archive.cpp
-  src/serialization/basic_iarchive.cpp
-  src/serialization/basic_iserializer.cpp
-  src/serialization/basic_oarchive.cpp
-  src/serialization/basic_oserializer.cpp
-  src/serialization/basic_pointer_iserializer.cpp
-  src/serialization/basic_pointer_oserializer.cpp
-  src/serialization/basic_serializer_map.cpp
-  src/serialization/binary_iarchive.cpp
-  src/serialization/binary_oarchive.cpp
-  src/serialization/binary_wiarchive.cpp
-  src/serialization/binary_woarchive.cpp
-  src/serialization/codecvt_null.cpp
-  src/serialization/extended_type_info.cpp
-  src/serialization/extended_type_info_no_rtti.cpp
-  src/serialization/extended_type_info_typeid.cpp
-  src/serialization/polymorphic_iarchive.cpp
-  src/serialization/polymorphic_oarchive.cpp
-  src/serialization/shared_ptr_helper.cpp
-  src/serialization/stl_port.cpp
-  src/serialization/utf8_codecvt_facet.cpp
-  src/serialization/void_cast.cpp
-  src/system/error_code.cpp
-  src/system/local_free_on_destruction.hpp
-  src/thread/tss_null.cpp
+  src/chrono/src/chrono.cpp
+  src/filesystem/src/codecvt_error_category.cpp
+  src/filesystem/src/operations.cpp
+  src/filesystem/src/path.cpp
+  src/filesystem/src/path_traits.cpp
+  src/filesystem/src/portability.cpp
+  src/filesystem/src/unique_path.cpp
+  src/filesystem/src/utf8_codecvt_facet.cpp
+  src/filesystem/src/windows_file_codecvt.cpp
+  src/filesystem/src/windows_file_codecvt.hpp
+  src/serialization/src/archive_exception.cpp
+  src/serialization/src/basic_archive.cpp
+  src/serialization/src/basic_iarchive.cpp
+  src/serialization/src/basic_iserializer.cpp
+  src/serialization/src/basic_oarchive.cpp
+  src/serialization/src/basic_oserializer.cpp
+  src/serialization/src/basic_pointer_iserializer.cpp
+  src/serialization/src/basic_pointer_oserializer.cpp
+  src/serialization/src/basic_serializer_map.cpp
+  src/serialization/src/binary_iarchive.cpp
+  src/serialization/src/binary_oarchive.cpp
+  src/serialization/src/binary_wiarchive.cpp
+  src/serialization/src/binary_woarchive.cpp
+  src/serialization/src/codecvt_null.cpp
+  src/serialization/src/extended_type_info.cpp
+  src/serialization/src/extended_type_info_no_rtti.cpp
+  src/serialization/src/extended_type_info_typeid.cpp
+  src/serialization/src/polymorphic_iarchive.cpp
+  src/serialization/src/polymorphic_oarchive.cpp
+  src/serialization/src/shared_ptr_helper.cpp
+  src/serialization/src/stl_port.cpp
+  src/serialization/src/utf8_codecvt_facet.cpp
+  src/serialization/src/void_cast.cpp
+  src/system/src/error_code.cpp
+  src/system/src/local_free_on_destruction.hpp
+  src/thread/src/tss_null.cpp
 )
 if (UNIX)
   add_library (boost
     ${Boost_FILES}
-    src/thread/pthread/once.cpp
-    src/thread/pthread/thread.cpp
+    src/thread/src/pthread/once.cpp
+    src/thread/src/pthread/thread.cpp
   )
   set_property (TARGET boost PROPERTY COMPILE_FLAGS "-fPIC")
 else ()  # WIN32
   add_library (boost
     ${Boost_FILES}
-    src/thread/win32/thread.cpp
-    src/thread/win32/tss_dll.cpp
-    src/thread/win32/tss_pe.cpp
+    src/thread/src/win32/thread.cpp
+    src/thread/src/win32/tss_dll.cpp
+    src/thread/src/win32/tss_pe.cpp
   )
   set_property (TARGET boost PROPERTY COMPILE_DEFINITIONS BOOST_ALL_NO_LIB BOOST_THREAD_BUILD_LIB)
 endif (UNIX)

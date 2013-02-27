@@ -6,14 +6,13 @@
 #include "api_config.h"
 #include "stream_info_impl.h"
 #include "resolve_attempt_udp.h"
-#include <lslboost/asio.hpp>
-#include <lslboost/shared_ptr.hpp>
-#include <lslboost/enable_shared_from_this.hpp>
-#include <lslboost/noncopyable.hpp>
-#include <lslboost/thread.hpp>
+#include BOOST_PATH(/asio.hpp)
+#include BOOST_PATH(/shared_ptr.hpp)
+#include BOOST_PATH(/enable_shared_from_this.hpp)
+#include BOOST_PATH(/noncopyable.hpp)
+#include BOOST_PATH(/thread.hpp)
 #include <set>
 
-namespace boost = lslboost;
 using boost::asio::ip::udp;
 using boost::asio::ip::tcp;
 using boost::system::error_code;

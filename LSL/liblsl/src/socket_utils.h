@@ -3,10 +3,9 @@
 
 #include "version.h"
 #include "api_config.h"
-#include <lslboost/asio.hpp>
-#include <lslboost/thread.hpp>
+#include BOOST_PATH(/asio.hpp)
+#include BOOST_PATH(/thread.hpp)
 
-namespace boost = lslboost;
 namespace lsl {
     
     /// Bind a socket (or acceptor) to a free port in the configured port range or throw an error otherwise.

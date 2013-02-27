@@ -72,3 +72,7 @@ Library Version 1.03.3
 * Added the ability to push/pull length-delimeted string values in the C API (lsl_push_sample_buf / lsl_pull_sample_buf)
   in addition to 0-terminated
 * Added an experimental Java wrapper
+
+Library Version 1.04
+* Added a preprocessor switch to toggle between using the system-supplied boost or the shrink-wrapped version (in external/lslboost)
+* Added documentation on how to get an updated boost distribution included with liblsl (and added a script to automate that)
