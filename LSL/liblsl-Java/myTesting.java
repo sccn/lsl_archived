@@ -12,7 +12,7 @@ public class myTesting{
 
 		// load the right wrapper library...
 	    if (System.getProperty("os.name").startsWith("Windows")) {
-			if (System.getProperty("sun.arch.data.model")=="32") {
+			if (System.getProperty("sun.arch.data.model").equals("32")) {
 				System.load(System.getProperty("user.dir") + "/liblslJNI32.dll");
 			} else {
 				System.load(System.getProperty("user.dir") + "/liblslJNI64.dll");
