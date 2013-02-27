@@ -4,8 +4,6 @@ General
 
 This manual describes the process of building liblsl from source for Windows, Mac OS X, and Linux. Since liblsl is cross-platform (it is written in standard C++ and uses some boost libraries), this process should be pretty straightforward. The following paragraphs provide a step-by-step instruction of the build process on all three platforms. 
 
-Note: We are currently rolling out unified cross-platform build scripts using CMake; while the basics are working already, most of them are not yet completely tested. Therefore, if you are using LSL for mission-critical work or are running into trouble with the resulting binaries, please consider falling back to the included project files for Visual Studio, XCode or Code::Blocks.
-
 To get an overview of the project structure, the following tree lists the directory hierarchy of the source after you've unpacked the compressed source archive:
 
   labstreaminglayer
@@ -39,21 +37,18 @@ To get an overview of the project structure, the following tree lists the direct
       │   ├── docs
       │   ├── examples
       │   ├── external
-      │   │   ├── boost
+      │   │   ├── lslboost
       │   │   └── src
       │   ├── include
-      │   ├── output
       │   ├── project
       │   ├── src
       │   │   ├── portable_archive
       │   │   └── pugixml
       │   └── testing
       ├── liblsl-Matlab
-      │   ├── bin
-      │   ├── examples
-      │   └── mex
-      └── liblsl-Python
-
+      ├── liblsl-Python
+	  └── liblsl-Java
+	  
 To build liblsl, we are primarily interested in the directory labstreaminglayer/LSL/liblsl (marked with [*] in the tree above). Therefore, we will denote this directory as $LIBLSL_ROOT in this manual.
 
 
@@ -62,10 +57,10 @@ Windows
 =======
 
 Tested platforms:
-* Windows 7 (32bit)
+* Windows 7 (32bit,64bit)
 
 Prerequisites:
-* Visual Studio Express 2012
+* Visual Studio Express 2008, 2010, or 2012
 * cmake
 
 Build process:
@@ -81,6 +76,7 @@ Build process:
 * In the "Solution Configuration" drop-down list, select either "Release" or "Debug", depending on what you want to build
 * Hit F7 (or click "Build Solution")
 * The resulting library (lsl.dll) will be located in $LIBLSL_ROOT/build/src/Release or $LIBLSL_ROOT/build/src/Debug
+  Note that some older applications might expect this library to be called liblsl32.dll or liblsl64.dll.
 
 Alternative using hand-made project files:
 * Tested with Visual Studio 2008 Professional on Win32/64.

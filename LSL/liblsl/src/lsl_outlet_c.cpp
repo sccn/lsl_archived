@@ -5,7 +5,6 @@
 // === implementation of the lsl_outlet functions of the C API ===
 //
 
-namespace boost = lslboost;
 using namespace lsl;
 
 // boilerplate wrapper code

@@ -3,11 +3,11 @@
 
 #include "../include/lsl_cpp.h"
 #include "pugixml/pugixml.hpp"
-#include <lslboost/shared_ptr.hpp>
-#include <lslboost/bimap.hpp>
-#include <lslboost/thread.hpp>
+#include "boost_rename.h"
+#include BOOST_PATH(/shared_ptr.hpp)
+#include BOOST_PATH(/bimap.hpp)
+#include BOOST_PATH(/thread.hpp)
 
-namespace boost = lslboost;
 namespace lsl {
 
 	/// shared pointer to a stream_info

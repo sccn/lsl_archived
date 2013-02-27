@@ -9,7 +9,6 @@
 #include "sample.h"
 #include "send_buffer.h"
 
-namespace boost = lslboost;
 namespace lsl { 
 
 	/// pointer to a thread

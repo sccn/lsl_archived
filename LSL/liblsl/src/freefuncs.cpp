@@ -1,14 +1,13 @@
 #include "../include/lsl_cpp.h"
 #include "version.h"
 #include "resolver_impl.h"
-#include <lslboost/chrono/system_clocks.hpp>
+#include BOOST_PATH(/chrono/system_clocks.hpp)
 
 //
 // === Implementation of the free-standing functions in lsl_cpp.h ===
 // covers: protocol_version(), local_clock(), resolve_streams() and resolve_stream()
 //
 
-namespace boost = lslboost;
 using namespace lsl;
 using std::string;
 using std::vector;

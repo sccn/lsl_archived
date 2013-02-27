@@ -4,11 +4,10 @@
 #include "inlet_connection.h"
 #include "consumer_queue.h"
 #include "cancellable_streambuf.h"
-#include <lslboost/thread.hpp>
+#include BOOST_PATH(/thread.hpp)
 
 using boost::asio::ip::tcp;
 
-namespace boost = lslboost;
 namespace lsl {
 
 	/// Internal class of an inlet that is responsible for retrieving the data (the samples) of the inlet.

@@ -3,9 +3,9 @@
 
 #include <string>
 #include <vector>
-#include <lslboost/thread/once.hpp>
+#include "boost_rename.h"
+#include BOOST_PATH(/thread/once.hpp)
 
-namespace boost = lslboost;
 namespace lsl {
 
 	/**

@@ -416,6 +416,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\boost_rename.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\cancellable_streambuf.h"
 				>
 			</File>
@@ -578,7 +582,7 @@
 					Name="chrono"
 					>
 					<File
-						RelativePath="..\..\..\external\src\chrono\chrono.cpp"
+						RelativePath="..\..\..\external\src\chrono\src\chrono.cpp"
 						>
 					</File>
 				</Filter>
@@ -586,39 +590,39 @@
 					Name="filesystem"
 					>
 					<File
-						RelativePath="..\..\..\external\src\filesystem\codecvt_error_category.cpp"
+						RelativePath="..\..\..\external\src\filesystem\src\codecvt_error_category.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\filesystem\operations.cpp"
+						RelativePath="..\..\..\external\src\filesystem\src\operations.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\filesystem\path.cpp"
+						RelativePath="..\..\..\external\src\filesystem\src\path.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\filesystem\path_traits.cpp"
+						RelativePath="..\..\..\external\src\filesystem\src\path_traits.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\filesystem\portability.cpp"
+						RelativePath="..\..\..\external\src\filesystem\src\portability.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\filesystem\unique_path.cpp"
+						RelativePath="..\..\..\external\src\filesystem\src\unique_path.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\filesystem\utf8_codecvt_facet.cpp"
+						RelativePath="..\..\..\external\src\filesystem\src\utf8_codecvt_facet.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\filesystem\windows_file_codecvt.cpp"
+						RelativePath="..\..\..\external\src\filesystem\src\windows_file_codecvt.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\filesystem\windows_file_codecvt.hpp"
+						RelativePath="..\..\..\external\src\filesystem\src\windows_file_codecvt.hpp"
 						>
 					</File>
 				</Filter>
@@ -626,95 +630,95 @@
 					Name="serialization"
 					>
 					<File
-						RelativePath="..\..\..\external\src\serialization\archive_exception.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\archive_exception.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\basic_archive.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\basic_archive.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\basic_iarchive.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\basic_iarchive.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\basic_iserializer.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\basic_iserializer.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\basic_oarchive.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\basic_oarchive.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\basic_oserializer.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\basic_oserializer.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\basic_pointer_iserializer.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\basic_pointer_iserializer.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\basic_pointer_oserializer.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\basic_pointer_oserializer.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\basic_serializer_map.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\basic_serializer_map.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\binary_iarchive.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\binary_iarchive.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\binary_oarchive.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\binary_oarchive.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\binary_wiarchive.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\binary_wiarchive.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\binary_woarchive.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\binary_woarchive.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\codecvt_null.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\codecvt_null.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\extended_type_info.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\extended_type_info.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\extended_type_info_no_rtti.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\extended_type_info_no_rtti.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\extended_type_info_typeid.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\extended_type_info_typeid.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\polymorphic_iarchive.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\polymorphic_iarchive.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\polymorphic_oarchive.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\polymorphic_oarchive.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\shared_ptr_helper.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\shared_ptr_helper.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\stl_port.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\stl_port.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\utf8_codecvt_facet.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\utf8_codecvt_facet.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\serialization\void_cast.cpp"
+						RelativePath="..\..\..\external\src\serialization\src\void_cast.cpp"
 						>
 					</File>
 				</Filter>
@@ -722,11 +726,11 @@
 					Name="system"
 					>
 					<File
-						RelativePath="..\..\..\external\src\system\error_code.cpp"
+						RelativePath="..\..\..\external\src\system\src\error_code.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\external\src\system\local_free_on_destruction.hpp"
+						RelativePath="..\..\..\external\src\system\src\local_free_on_destruction.hpp"
 						>
 					</File>
 				</Filter>
@@ -734,22 +738,22 @@
 					Name="thread"
 					>
 					<File
-						RelativePath="..\..\..\external\src\thread\tss_null.cpp"
+						RelativePath="..\..\..\external\src\thread\src\tss_null.cpp"
 						>
 					</File>
 					<Filter
 						Name="win32"
 						>
 						<File
-							RelativePath="..\..\..\external\src\thread\win32\thread.cpp"
+							RelativePath="..\..\..\external\src\thread\src\win32\thread.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\external\src\thread\win32\tss_dll.cpp"
+							RelativePath="..\..\..\external\src\thread\src\win32\tss_dll.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\external\src\thread\win32\tss_pe.cpp"
+							RelativePath="..\..\..\external\src\thread\src\win32\tss_pe.cpp"
 							>
 						</File>
 					</Filter>

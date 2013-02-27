@@ -2,9 +2,8 @@
 #define INFO_RECEIVER_H
 
 #include "inlet_connection.h"
-#include <lslboost/thread.hpp>
+#include BOOST_PATH(/thread.hpp)
 
-namespace boost = lslboost;
 namespace lsl {
 
 	/// Internal class of an inlet that is responsible for retrieving the info of the inlet.

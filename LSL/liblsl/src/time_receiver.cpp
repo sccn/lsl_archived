@@ -1,13 +1,12 @@
 #include "time_receiver.h"
 #include "api_config.h"
-#include <lslboost/bind.hpp>
+#include BOOST_PATH(/bind.hpp)
 #include <iostream>
 
 //
 // === implementation of the time_receiver class ===
 //
 
-namespace boost = lslboost;
 using namespace lsl;
 using namespace boost::asio;
 using boost::posix_time::millisec;

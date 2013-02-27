@@ -1,11 +1,11 @@
 #ifndef CANCELLATION_H
 #define CANCELLATION_H
 
-#include <lslboost/thread.hpp>
+#include "boost_rename.h"
+#include BOOST_PATH(/thread.hpp)
 #include <iostream>
 #include <set>
 
-namespace boost = lslboost;
 namespace lsl { 
 
 	/// A registry for objects that can be cancelled.

@@ -1,14 +1,13 @@
 #include "inlet_connection.h"
 #include "api_config.h"
-#include <lslboost/bind.hpp>
-#include <lslboost/lexical_cast.hpp>
+#include BOOST_PATH(/bind.hpp)
+#include BOOST_PATH(/lexical_cast.hpp)
 #include <iostream>
 
 //
 // === implementation of the inlet_connection class ===
 //
 
-namespace boost = lslboost;
 using namespace lsl;
 using namespace boost::asio;
 

@@ -4,7 +4,6 @@
 // === implementation of the stream_inlet class ===
 //
 
-namespace boost = lslboost;
 using namespace lsl;
 
 // boilerplate code calling the private implementation

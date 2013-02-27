@@ -1,9 +1,9 @@
 #include "resolver_impl.h"
 #include <sstream>
-#include <lslboost/bind.hpp>
-#include <lslboost/algorithm/string.hpp>
-#include <lslboost/lexical_cast.hpp>
-#include <lslboost/functional/hash.hpp>
+#include BOOST_PATH(/bind.hpp)
+#include BOOST_PATH(/algorithm/string.hpp)
+#include BOOST_PATH(/lexical_cast.hpp)
+#include BOOST_PATH(/functional/hash.hpp)
 #include <iostream>
 #include <istream>
 
@@ -11,7 +11,6 @@
 // === implementation of the resolver_impl class ===
 //
 
-namespace boost = lslboost;
 using namespace lsl;
 using namespace boost::asio;
 using boost::posix_time::millisec;
