@@ -1,3 +1,4 @@
+#define NO_EXPLICIT_TEMPLATE_INSTANTIATION
 #include "stream_outlet_impl.h"
 
 //
