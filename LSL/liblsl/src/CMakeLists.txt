@@ -33,8 +33,12 @@ add_library (lsl SHARED
 if (WIN32)
   set_property (TARGET lsl PROPERTY COMPILE_DEFINITIONS BOOST_ALL_NO_LIB BOOST_THREAD_BUILD_LIB LIBLSL_EXPORTS _SCL_SECURE_NO_WARNINGS _CRT_SECURE_NO_WARNINGS)
   target_link_libraries (lsl ${Boost_LIBRARIES})
+elseif (APPLE)
+  target_link_libraries (lsl ${Boost_LIBRARIES} pthread)
 elseif (UNIX)
   target_link_libraries (lsl ${Boost_LIBRARIES} rt pthread)
+else ()
+  target_link_libraries (lsl ${Boost_LIBRARIES})
 endif ()
 
 if (USE_SYSTEM_BOOST)
