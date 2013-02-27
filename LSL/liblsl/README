@@ -1,7 +1,8 @@
 Lab streaming layer API.
 
-The lab streaming layer is a simple all-in-one approach to streaming experiment data between 
-applications in a lab, e.g. instrument time series, event markers, audio, and so on.
+The lab streaming layer is a simple all-in-one approach to streaming experiment data between applications in a lab, e.g. instrument time series, event markers, audio, and so on.
+
+To compile the library yourself from source please follow the instructions in the file INSTALL.
 
 For the most up-to-date documentation, please have a look at the official site:
 http://code.google.com/p/labstreaminglayer
