@@ -1,10 +1,17 @@
 #include "data_receiver.h"
 #include "portable_archive/portable_iarchive.hpp"
-#include BOOST_PATH(/serialization/string.hpp)
-#include BOOST_PATH(/serialization/split_member.hpp)
-#include BOOST_PATH(/bind.hpp)
 #include <iostream>
 
+#ifdef USE_OFFICIAL_BOOST
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/bind.hpp>
+#else
+#include <lslboost/serialization/string.hpp>
+#include <lslboost/serialization/split_member.hpp>
+#include <lslboost/bind.hpp>
+namespace boost = lslboost;
+#endif 
 //
 // === implementation of the data_receiver class ===
 //

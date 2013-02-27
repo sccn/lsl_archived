@@ -1,9 +1,17 @@
 #include "udp_server.h"
 #include "api_config.h"
 #include "socket_utils.h"
-#include BOOST_PATH(/bind.hpp)
-#include BOOST_PATH(/algorithm/string.hpp)
 #include <iostream>
+
+#ifdef USE_OFFICIAL_BOOST
+#include <boost/bind.hpp>
+#include <boost/algorithm/string.hpp>
+#else
+#include <lslboost/bind.hpp>
+#include <lslboost/algorithm/string.hpp>
+namespace boost = lslboost;
+#endif 
+
 
 //
 // === implementation of the udp_server class ===

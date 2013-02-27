@@ -1,9 +1,16 @@
 #include "stream_info_impl.h"
 #include "api_config.h"
-#include BOOST_PATH(/algorithm/string.hpp)
-#include BOOST_PATH(/lexical_cast.hpp)
 #include <sstream>
 #include <iostream>
+
+#ifdef USE_OFFICIAL_BOOST
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
+#else
+#include <lslboost/algorithm/string.hpp>
+#include <lslboost/lexical_cast.hpp>
+namespace boost = lslboost;
+#endif 
 
 //
 // === implementation of the stream_info_impl class ===

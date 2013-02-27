@@ -1,7 +1,14 @@
 #include "time_receiver.h"
 #include "api_config.h"
-#include BOOST_PATH(/bind.hpp)
 #include <iostream>
+
+#ifdef USE_OFFICIAL_BOOST
+#include <boost/bind.hpp>
+#else
+#include <lslboost/bind.hpp>
+namespace boost = lslboost;
+#endif 
+
 
 //
 // === implementation of the time_receiver class ===

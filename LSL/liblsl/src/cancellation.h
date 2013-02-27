@@ -1,10 +1,15 @@
 #ifndef CANCELLATION_H
 #define CANCELLATION_H
 
-#include "boost_rename.h"
-#include BOOST_PATH(/thread.hpp)
 #include <iostream>
 #include <set>
+
+#ifdef USE_OFFICIAL_BOOST
+#include <boost/thread.hpp>
+#else
+#include <lslboost/thread.hpp>
+namespace boost = lslboost;
+#endif 
 
 namespace lsl { 
 
