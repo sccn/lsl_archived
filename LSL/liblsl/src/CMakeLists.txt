@@ -40,9 +40,3 @@ elseif (UNIX)
 else ()
   target_link_libraries (lsl ${Boost_LIBRARIES})
 endif ()
-
-if (NOT USE_SYSTEM_BOOST)
-	# if this preprocessor definition is set liblsl will assume that the boost namespace is called lslboost; 
-	# this is only relevant in 3 code lines where this namespace is extended.
-	set_property (TARGET lsl APPEND PROPERTY COMPILE_DEFINITIONS USE_SHRINKWRAPPED_BOOST)
-endif ()

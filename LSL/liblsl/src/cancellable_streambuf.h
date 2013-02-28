@@ -32,7 +32,7 @@
 #include <boost/asio/stream_socket_service.hpp>
 #include <boost/thread.hpp>
 
-#ifdef USE_SHRINKWRAPPED_BOOST
+#ifdef LSLBOOST_NAMESPACE_DECLARED
 namespace lslboost {
 #else
 namespace boost {
