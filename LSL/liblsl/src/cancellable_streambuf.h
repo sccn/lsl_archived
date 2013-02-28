@@ -32,14 +32,11 @@
 #include <boost/asio/stream_socket_service.hpp>
 #include <boost/thread.hpp>
 
-#ifdef USE_OFFICIAL_BOOST
-#define BOOST_NAMESPACE boost
+#ifdef USE_SHRINKWRAPPED_BOOST
+namespace lslboost {
 #else
-#define BOOST_NAMESPACE lslboost
+namespace boost {
 #endif
-
-
-namespace BOOST_NAMESPACE {
 	namespace asio {
 
 		/// Iostream streambuf for a socket.
