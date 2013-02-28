@@ -18,9 +18,9 @@
  * to your boost directory before you're able to use the archives provided. 
  * Our archives have been tested successfully for boost versions 1.33 to 1.49!
  *
- * \note This version adds the definition and use of the BOOST_NAMESPACE
- *       macro, which allows to toggle between a vanilla boost distribution and
- *		 one with mangled names.
+ * \note This version adds support for the USE_SHRINKWRAPPED_BOOST define, 
+ *       which allows to toggle between a vanilla boost distribution and one with 
+ *       mangled names (custom to LSL).
  *
  * \note Correct behaviour has so far been confirmed using PowerPC-32, x86-32
  *       and x86-64 platforms featuring different byte order. So there is a good
@@ -448,13 +448,11 @@ BOOST_SERIALIZATION_REGISTER_ARCHIVE(eos::polymorphic_portable_oarchive)
 #define BOOST_ARCHIVE_SERIALIZER_INCLUDED
 #endif
 
-#ifdef USE_OFFICIAL_BOOST
-#define BOOST_NAMESPACE boost
+#ifdef USE_SHRINKWRAPPED_BOOST
+namespace lslboost { namespace archive {
 #else
-#define BOOST_NAMESPACE lslboost
+namespace boost { namespace archive {
 #endif
-
-namespace BOOST_NAMESPACE { namespace archive {
 
 	// explicitly instantiate for this type of binary stream
 	template class basic_binary_oarchive<eos::portable_oarchive>;
