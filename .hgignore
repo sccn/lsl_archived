@@ -19,6 +19,9 @@ syntax: glob
 *-debug*
 *.xcactivitylog
 *.exp
+*.dSYM
+*.build*
+*.hmap
 
 #Embarcadero build products
 *.ilc
