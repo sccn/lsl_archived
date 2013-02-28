@@ -9,8 +9,8 @@
 #include "api_config.h"
 #include "portable_archive/portable_oarchive.hpp"
 #include <set>
-#include <lslboost/asio.hpp>
-#include <lslboost/enable_shared_from_this.hpp>
+#include <boost/asio.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 
 using boost::asio::ip::tcp;
