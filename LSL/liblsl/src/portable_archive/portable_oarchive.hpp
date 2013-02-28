@@ -448,7 +448,7 @@ BOOST_SERIALIZATION_REGISTER_ARCHIVE(eos::polymorphic_portable_oarchive)
 #define BOOST_ARCHIVE_SERIALIZER_INCLUDED
 #endif
 
-#ifdef USE_SHRINKWRAPPED_BOOST
+#ifdef LSLBOOST_NAMESPACE_DECLARED
 namespace lslboost { namespace archive {
 #else
 namespace boost { namespace archive {
