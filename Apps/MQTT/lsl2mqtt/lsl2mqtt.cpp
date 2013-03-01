@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
 		cout << endl;
 		cout << "  === LSL parameters ===" << endl;
 		cout << "  Query = quoted query string to find a stream" << endl; 
-		cout << "          (e.g., \"name=BioSemi\")" << endl;
+		cout << "          (e.g., \"name='BioSemi'\")" << endl;
 		cout << "  === MQTT parameters ===" << endl;
 		cout << "  Topic = MQTT topic under which to publish the data" << endl;
 		cout << "  QoS = quality of service level" << endl;
