@@ -13,14 +13,16 @@ using boost::posix_time::millisec;
 /**
 * Construct a new time provider from an inlet connection
 */
-time_receiver::time_receiver(inlet_connection &conn): conn_(conn), timeoffset_(std::numeric_limits<double>::max()), cfg_(api_config::get_instance()), time_sock_(time_io_), next_estimate_(time_io_), aggregate_results_(time_io_), next_packet_(time_io_) {
+time_receiver::time_receiver(inlet_connection &conn): conn_(conn), timeoffset_(std::numeric_limits<double>::max()), was_reset_(false), cfg_(api_config::get_instance()), time_sock_(time_io_), next_estimate_(time_io_), aggregate_results_(time_io_), next_packet_(time_io_) {
 	conn_.register_onlost(this,&timeoffset_upd_);
+	conn_.register_onrecover(this,boost::bind(&time_receiver::reset_timeoffset_on_recovery,this));
 	time_sock_.open(conn_.udp_protocol());
 }
 
 /// Destructor. Stops the background activities.
 time_receiver::~time_receiver() {
 	try {
+		conn_.unregister_onrecover(this);
 		conn_.unregister_onlost(this);
 		time_io_.stop();
 		if (time_thread_.joinable())
@@ -63,6 +65,14 @@ double time_receiver::time_correction(double timeout) {
 	return timeoffset_;
 }
 
+/// Determine whether the clock was (potentially) reset since the last call to was_reset()
+/// This can happen if the stream got lost (e.g., app crash) and the computer got restarted or swapped out
+bool time_receiver::was_reset() {
+	boost::unique_lock<boost::mutex> lock(timeoffset_mut_);
+	bool result = was_reset_;
+	was_reset_ = false;
+	return result;
+}
 
 // === internal processing ===
 
@@ -189,3 +199,11 @@ void time_receiver::result_aggregation_scheduled(error_code err) {
 	}
 }
 
+/// Ensures that the time-offset is reset when the underlying connection is recovered (e.g., switches to another host)
+void time_receiver::reset_timeoffset_on_recovery() {
+	boost::lock_guard<boost::mutex> lock(timeoffset_mut_);
+	if (timeoffset_ != NOT_ASSIGNED)
+		// this will only be set to true if the reset may have caused a possible interruption in the obtained time offsets
+		was_reset_ = true;
+	timeoffset_ = NOT_ASSIGNED;
+}

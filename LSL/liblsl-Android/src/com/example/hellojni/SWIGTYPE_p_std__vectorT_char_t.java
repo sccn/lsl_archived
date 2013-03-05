@@ -6,6 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
+package com.example.hellojni;
 
 public class SWIGTYPE_p_std__vectorT_char_t {
   private long swigCPtr;

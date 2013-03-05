@@ -36,7 +36,10 @@ namespace lsl {
 		* depending on how many streams are being served on one machine.
 		* If an outlet shall be reachable from outside a firewall, all TCP/UDP 
 		* ports starting from base_port up to base_port+port_range-1, as well as 
-		* the multicast_port should be open.
+		* the multicast_port should be open. If an inlet is behind a firewall,
+		* the UDP ports starting from base_port up to base_port+port_range-1 should
+		* be opened in order to allow for return packets in response to stream 
+		* discovery queries.
 		*/
 		int base_port() const { return base_port_; }
 

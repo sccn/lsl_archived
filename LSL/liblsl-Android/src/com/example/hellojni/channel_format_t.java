@@ -6,6 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
+package com.example.hellojni;
 
 public final class channel_format_t {
   public final static channel_format_t cf_float32 = new channel_format_t("cf_float32", lslAndroidJNI.cf_float32_get());

@@ -8,6 +8,7 @@
 #include <map>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
+#include <boost/function.hpp>
 
 
 using boost::asio::ip::tcp;
@@ -20,10 +21,10 @@ namespace lsl {
 	* and provides a recovery mechanism in case it breaks down (e.g., due to a computer crash).
 	*
 	* When a client of the connection (one of the other inlet components) experiences a connection loss it invokes the 
-	* function try_recover_on_error() which attempts to update the endpoint to a valid state (when the stream is back online). 
+	* function try_recover_from_error() which attempts to update the endpoint to a valid state (possible once the stream is back online). 
 	* Since in some cases a client might not be able to detect a connection loss and so would stall forever, the inlet_connection 
 	* maintains a watchdog thread that periodically checks and recovers the connection state. Internally the recovery works by 
-	* using the resolver to find the desired stream on the network again and updating the endpoint information.
+	* using the resolver to find the desired stream on the network again and updating the endpoint information if it has changed.
 	*/
 	class inlet_connection: public cancellable_registry {
 	public:
@@ -80,16 +81,16 @@ namespace lsl {
 		// === client status info ===
 
 		/// Indicate that a transmission is now active and requesting the watchdog.
-		/// The recovery watchdog will be dormant while no transmission is in progress.
+		/// The recovery watchdog will be inactive while no transmission is requested.
 		void acquire_watchdog();
 
 		/// Indicate that a transmission has just completed.
-		/// The recovery watchdog will be dormant while no transmission is in progress.
+		/// The recovery watchdog will be inactive while no transmission is requested.
 		void release_watchdog();
 
 		/// Inform the connection that content was received from the source (using lsl::local_clock()).
-		/// If sufficient time has passed since the last call the watchdog thread will try to 
-		/// recover the connection.
+		/// If a sufficient amount of time has passed since the last call the watchdog thread will 
+		/// try to recover the connection.
 		void update_receive_time(double t);
 
 		/// Register a condition variable that should be notified when a connection is lost
@@ -97,6 +98,12 @@ namespace lsl {
 
 		/// Unregister a condition variable from the set that is notified on connection loss
 		void unregister_onlost(void *id);
+
+		/// Register a callback function that shall be called when a recovery has been performed
+		void register_onrecover(void *id, const boost::function<void()> &func);
+
+		/// Unregister a recovery callback function
+		void unregister_onrecover(void *id);
 
 
 		// === misc properties of the connected stream ===
@@ -142,10 +149,12 @@ namespace lsl {
 		boost::mutex recovery_mut_;					// we allow only one recovery operation at a time
         
 		// client status info for recovery & notification purposes
-		std::map<void*,boost::condition_variable*> onlost_;	// a group of condition variables that should be notified when the connection is lost 
+		std::map<void*,boost::condition_variable*> onlost_;		// a group of condition variables that should be notified when the connection is lost 
+		std::map<void*,boost::function<void()> > onrecover_;	// a group of callback functions that should be invoked once the connection has been recovered
 		double last_receive_time_;					// the last time when we received data from the server
 		int active_transmissions_;					// the number of currently active transmissions (data or info)
 		boost::mutex client_status_mut_;			// protects the client status info
+		boost::mutex onrecover_mut_;				// protects the onrecover callback map
 	};
 
 }
