@@ -624,9 +624,19 @@ extern LIBLSL_C_API double lsl_pull_sample_v(lsl_inlet in, void *buffer, int buf
 /**
 * Query the number of samples that are currently available for immediate pickup.
 * The maximum capacity of the buffer is specified at construction of the inlet.
+* Note that it is not a good idea to rely on samples_available() to determine whether 
+* a pull_*() call would block: to be sure, set the pull timeout to 0.0 or an acceptably
+* low value.
 */
 extern LIBLSL_C_API unsigned lsl_samples_available(lsl_inlet in);
 
+/**
+* Query whether the clock was potentially reset since the last call to was_clock_reset().
+* This is rarely-used function is only needed for applications that combine multiple time_correction 
+* values to estimate precise clock drift if they should tolerate cases where the source machine was 
+* hot-swapped or restarted.
+*/
+extern LIBLSL_C_API unsigned lsl_was_clock_reset(lsl_inlet in);
 
 
 

@@ -59,8 +59,9 @@ namespace lsl {
 		*			   definition of a query.
 		* @param minimum The minimum number of unique streams that should be resolved before this function may to return.
 		* @param timeout The timeout after which this function is forced to return (even if it did not produce the desired number of results).
+		* @param minimum_time Search for matching streams for at least this much time (e.g., if multiple streams may be present).
 		*/
-		std::vector<stream_info_impl> resolve_oneshot(const std::string &query, int minimum=0, double timeout=FOREVER);
+		std::vector<stream_info_impl> resolve_oneshot(const std::string &query, int minimum=0, double timeout=FOREVER, double minimum_time=0.0);
 
 		/**
 		* Starts a background thread that resolves a query string and periodically updates the list of present streams.
@@ -115,6 +116,7 @@ namespace lsl {
 		std::string query_;								// our current query string
 		int minimum_;									// the minimum number of results that we want
 		double forget_after_;							// forget results that are older than this (continuous operation only)
+		double wait_until_;								// wait until this point in time before returning results (optional to allow for returning potentially more than a minimum number of results)
 		bool fast_mode_;								// whether this is a fast resolve: determines the rate at which the query is repeated
 		result_container results_;						// results are stored here
 		boost::mutex results_mut_;						// a mutex that protects the results map

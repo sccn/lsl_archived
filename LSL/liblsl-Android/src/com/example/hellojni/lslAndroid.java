@@ -6,6 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
+package com.example.hellojni;
 
 public class lslAndroid {
   public static double getIRREGULAR_RATE() {

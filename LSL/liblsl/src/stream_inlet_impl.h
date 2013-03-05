@@ -139,6 +139,10 @@ namespace lsl {
 		/// Query the current size of the buffer, i.e. the number of samples that are buffered.
 		std::size_t samples_available() { return data_receiver_.buffer_size(); };
 
+		/// Query whether the clock was potentially reset since the last call to was_clock_reset().
+		/// This is only interesting for applications that combine multiple time_correction values to estimate clock drift
+		/// and which should tolerate (rare) cases where the source machine was hot-swapped or restarted.
+		bool was_clock_reset() { return time_receiver_.was_reset(); }
 	private:
 		// the inlet connection
 		inlet_connection conn_;

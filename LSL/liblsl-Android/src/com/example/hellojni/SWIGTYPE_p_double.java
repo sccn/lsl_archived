@@ -6,6 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
+package com.example.hellojni;
 
 public class SWIGTYPE_p_double {
   private long swigCPtr;

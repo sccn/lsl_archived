@@ -454,6 +454,9 @@ LIBLSL_C_API double lsl_pull_sample_v(lsl_inlet in, void *buffer, int buffer_byt
 	return 0.0;
 }
 
+/**
+* Query the number of samples that are currently available for immediate pickup.
+*/
 LIBLSL_C_API unsigned lsl_samples_available(lsl_inlet in) {
 	try {
 		return (unsigned)((stream_inlet_impl*)in)->samples_available();
@@ -463,3 +466,14 @@ LIBLSL_C_API unsigned lsl_samples_available(lsl_inlet in) {
 	}
 }
 
+/**
+* Query whether the clock was potentially reset since the last call to was_clock_reset().
+*/
+LIBLSL_C_API unsigned lsl_was_clock_reset(lsl_inlet in) {
+	try {
+		return (unsigned)((stream_inlet_impl*)in)->was_clock_reset();
+	}
+	catch(std::exception &) {
+		return 0;
+	}
+}

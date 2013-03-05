@@ -28,4 +28,5 @@ double stream_inlet::pull_sample(char *buffer, int buffer_elements, double timeo
 double stream_inlet::pull_sample(std::string *buffer, int buffer_elements, double timeout) { return impl_->pull_sample(buffer,buffer_elements,timeout); }
 double stream_inlet::pull_numeric_raw(void *sample, int buffer_bytes, double timeout) { return impl_->pull_numeric_raw(sample,buffer_bytes,timeout); }
 std::size_t stream_inlet::samples_available() { return impl_->samples_available(); };
+bool stream_inlet::was_clock_reset() { return impl_->was_clock_reset(); };
 

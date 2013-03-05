@@ -1,6 +1,6 @@
 1) To regenerate the wrapper files for Python and Java after an interface change, you need to run the following two lines. Note that if all you want to do is recompile the wrapper for your particular Android version, you can skip these two lines.
 
-swig -java -c++ -o liblsl_wrap_java.cxx liblsl.i
+swig -c++ -java -package com.example.hellojni -outdir ../src/com/example/hellojni -o liblsl_wrap_java.cxx liblsl.i
 swig -python -c++ -o liblsl_wrap_python.cxx liblsl.i
 
 2) After you are done with this, run ndk_build.cmd in this folder to rebuild liblslAndroid.so.

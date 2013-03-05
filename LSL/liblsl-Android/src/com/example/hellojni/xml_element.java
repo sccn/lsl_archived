@@ -6,6 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
+package com.example.hellojni;
 
 public class xml_element {
   private long swigCPtr;

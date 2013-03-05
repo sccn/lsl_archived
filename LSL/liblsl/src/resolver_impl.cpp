@@ -68,11 +68,12 @@ resolver_impl::resolver_impl(): cfg_(api_config::get_instance()), cancelled_(fal
 * Resolve a query string into a list of matching stream_info's on the network.
 * Blocks until at least the minimum number of streams has been resolved, or the timeout fires, or the resolve has been cancelled.
 */
-std::vector<stream_info_impl> resolver_impl::resolve_oneshot(const std::string &query, int minimum, double timeout) {
+std::vector<stream_info_impl> resolver_impl::resolve_oneshot(const std::string &query, int minimum, double timeout, double minimum_time) {
 	// reset the IO service & set up the query parameters
 	io_->reset();
 	query_ = query;
 	minimum_ = minimum;
+	wait_until_ = local_clock() + minimum_time;
 	results_.clear();
 	forget_after_ = FOREVER;
 	fast_mode_ = true;
@@ -103,6 +104,7 @@ void resolver_impl::resolve_continuous(const std::string &query, double forget_a
 	io_->reset();
 	query_ = query;
 	minimum_ = 0;
+	wait_until_ = 0;
 	results_.clear();
 	forget_after_ = forget_after;
 	fast_mode_ = false;
@@ -138,8 +140,8 @@ void resolver_impl::next_resolve_wave() {
 		boost::lock_guard<boost::mutex> lock(results_mut_);
 		num_results = results_.size();
 	}
-	if (cancelled_ || (minimum_ && (num_results >= (std::size_t)minimum_))) {
-		// stopping criterion satisfied: cancel the ongoing operations
+	if (cancelled_ || (minimum_ && (num_results >= (std::size_t)minimum_) && local_clock() >= wait_until_)) {
+		// stopping criteria satisfied: cancel the ongoing operations
 		cancel_resolve();
 	} else {
 		// start a new multicast wave

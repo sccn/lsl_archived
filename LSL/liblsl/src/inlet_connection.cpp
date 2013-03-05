@@ -136,46 +136,65 @@ double inlet_connection::current_srate() {
 
 /// Performs the actual work of attempting a recovery.
 void inlet_connection::try_recover() {
-    if (recovery_enabled_) {
+	if (recovery_enabled_) {
 		try {
 			boost::lock_guard<boost::mutex> lock(recovery_mut_);
 			// first create the query string based on the known stream information
 			std::ostringstream query; 
 			{
 				boost::shared_lock<boost::shared_mutex> lock(host_info_mut_);
-				if (!host_info_.source_id().empty()) {
-					// source_id is known: no need for any other query parts
-					query << "source_id='" << host_info_.source_id() << "'";
-				} else {
-					// no source_id given: construct query according to the fields that are present in the stream_info
-					// (this can technically only happen when the inlet was constructed without a previously resolved stream_info)
-					const char *channel_format_strings[] = {"undefined","float32","double64","string","int32","int16","int8","int64"};
-					query << "channel_count='" << boost::lexical_cast<std::string>(host_info_.channel_count()) << "'";
-					if (!host_info_.name().empty())
-						query << " and name='" << host_info_.name() << "'";
-					if (!host_info_.type().empty())
-						query << " and type='" << host_info_.type() << "'";
-					if (host_info_.nominal_srate() > 0)
-						query << " and nominal_srate='" << boost::lexical_cast<std::string>(host_info_.nominal_srate()) << "'";
-					query << " and channel_format='" << channel_format_strings[host_info_.channel_format()] << "'";
-				}
+				// construct query according to the fields that are present in the stream_info
+				const char *channel_format_strings[] = {"undefined","float32","double64","string","int32","int16","int8","int64"};
+				query << "channel_count='" << boost::lexical_cast<std::string>(host_info_.channel_count()) << "'";
+				if (!host_info_.name().empty())
+					query << " and name='" << host_info_.name() << "'";
+				if (!host_info_.type().empty())
+					query << " and type='" << host_info_.type() << "'";
+				if (host_info_.nominal_srate() > 0)
+					query << " and nominal_srate='" << boost::lexical_cast<std::string>(host_info_.nominal_srate()) << "'";
+				if (!host_info_.source_id().empty())
+					query << " and source_id='" << host_info_.source_id() << "'";					
+				query << " and channel_format='" << channel_format_strings[host_info_.channel_format()] << "'";
 			}
-			// issue the resolve (blocks until it is either cancelled or got at least one matching streaminfo)
-			std::vector<stream_info_impl> infos = resolver_.resolve_oneshot(query.str(),1);
-			if (!infos.empty()) {
-				boost::unique_lock<boost::shared_mutex> lock(host_info_mut_);
-				// did we get a different stream instance than what we already have?
-				if (infos[0].uid() != host_info_.uid()) {
-					// update the endpoint
-					host_info_ = infos[0];
-					// cancel all cancellable operations registered with this connection
-					cancel_all_registered();
+			// attempt a recovery
+			for (int attempt=0;;attempt++) {
+				// issue the resolve (blocks until it is either cancelled or got at least one matching streaminfo and has waited for a certain timeout)
+				std::vector<stream_info_impl> infos = resolver_.resolve_oneshot(query.str(),1,FOREVER,attempt==0 ? 1.0 : 5.0);
+				if (!infos.empty()) {
+					// got a result
+					boost::unique_lock<boost::shared_mutex> lock(host_info_mut_);
+					// check if any of the returned streams is the one that we're currently connected to
+					for (unsigned k=0;k<infos.size();k++)
+						if (infos[k].uid() == host_info_.uid())
+							return; // in this case there is no need to recover (we're still fine)
+					// otherwise our stream is gone and we indeed need to recover:
+					// ensure that the query result is unique (since someone might have used a non-unique stream ID)
+					if (infos.size() == 1) {
+						// update the endpoint
+						host_info_ = infos[0];
+						// cancel all cancellable operations registered with this connection
+						cancel_all_registered();
+						// invoke any callbacks associated with a connection recovery
+						boost::lock_guard<boost::mutex> lock(onrecover_mut_);
+						for(std::map<void*,boost::function<void()> >::iterator i=onrecover_.begin(),e=onrecover_.end();i!=e;i++)
+							(i->second)();
+					} else {
+						// there are multiple possible streams to connect to in a recovery attempt: we warn and re-try
+						// this is because we don't want to randomly connect to the wrong source without the user knowing about it;
+						// the correct action (if this stream shall indeed have multiple instances) is to change the user code and 
+						// make its source_id unique, or remove the source_id altogether if that's not possible (therefore disabling the ability to recover)
+						std::cerr << "Found multiple streams with name='" << host_info_.name() << "' and source_id='" << host_info_.source_id() << "'. Cannot recover unless all but one are closed." << std::endl;
+						continue;
+					}
+				} else {
+					// cancelled
 				}
+				break;
 			}
 		} catch(std::exception &e) {
 			std::cerr << "A recovery attempt encountered an unexpected error: " << e.what() << std::endl;
 		}
-    }
+	}
 }
 
 /// A thread that periodically re-resolves the stream and checks if it has changed its location
@@ -255,3 +274,14 @@ void inlet_connection::unregister_onlost(void *id) {
 	onlost_.erase(id);
 }
 
+/// Register a callback function that shall be called when a recovery has been performed
+void inlet_connection::register_onrecover(void *id, const boost::function<void()> &func) {
+	boost::lock_guard<boost::mutex> lock(onrecover_mut_);
+	onrecover_[id] = func;
+}
+
+/// Unregister a recovery callback function
+void inlet_connection::unregister_onrecover(void *id) {
+	boost::lock_guard<boost::mutex> lock(onrecover_mut_);
+	onrecover_.erase(id);
+}
