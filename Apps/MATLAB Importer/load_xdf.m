@@ -172,7 +172,7 @@ if ~exist(filename,'file')
     error(['The file "' filename '" does not exist.']); end
 
 if opts.Verbose
-    fprintf(['Importing XDF file ' filename '...\n']); end
+    disp(['Importing XDF file ' filename '...']); end
 
 % uncompress if necessary (note: "bonus" feature, not part of the XDF 1.0 spec)
 [p,n,x] = fileparts(filename);
@@ -315,7 +315,7 @@ while 1
             fread(f,len-2,'*uint8');
     end
 end
-
+    
 % concatenate the signal across chunks
 for k=1:length(temp)
     temp(k).time_series = [temp(k).time_series{:}];
@@ -334,94 +334,95 @@ if opts.HandleClockSynchronization
             try
                 clock_times = temp(k).clock_times;
                 clock_values = temp(k).clock_values;
-                
-                % handle clock resets (e.g., computer restarts during recording) if requested
-                if opts.HandleClockResets
-                    % first detect potential breaks in the synchronization data; this is only necessary when the
-                    % importer should be able to deal with recordings where the computer that served a stream
-                    % was restarted or hot-swapped during an ongoing recording, or the clock was reset otherwise
-                    time_diff = diff(clock_times);
-                    value_diff = abs(diff(clock_values));
-                    % points where a glitch in the timing of successive clock measurements happened
-                    time_glitch = (time_diff < 0 | (((time_diff - median(time_diff)) ./ mad(time_diff)) > opts.ClockResetThresholdStds & ...
-                        ((time_diff - median(time_diff)) > opts.ClockResetThresholdSeconds)));
-                    % points where a glitch in successive clock value estimates happened
-                    value_glitch = (value_diff - median(value_diff)) ./ mad(value_diff) > opts.ClockResetThresholdOffsetStds & ...
-                        (value_diff - median(value_diff)) > opts.ClockResetThresholdOffsetSeconds;
-                    % points where both a time glitch and a value glitch co-occur are treated as resets
-                    resets_at = time_glitch & value_glitch;
-                    % determine the [begin,end] index ranges between resets
-                    if any(resets_at)
-                        tmp = find(resets_at)';
-                        tmp = [tmp tmp+1]';
-                        tmp = [1 tmp(:)' length(resets_at)];
-                        ranges = num2cell(reshape(tmp,2,[])',2);
-                        if opts.Verbose
-                            disp(['  found ' length(resets_at) ' possible clock resets in stream ' temp(k).info.name]); end
-                    else
-                        ranges = {[1,length(clock_times)]};
-                    end
-                else
-                    % otherwise assume that there are no clock resets
-                    ranges = {[1,length(clock_times)]};
-                end
-                
-                % calculate clock offset mappings for each data range
-                for r=1:length(ranges)
-                    idx = ranges{r};
-                    if idx(1) ~= idx(2)
-                        % to accomodate the Winsorizing threshold (in seconds) we rescale the data (robust_fit sets it to 1 unit)
-                        mappings{r} = robust_fit([ones(idx(2)-idx(1)+1,1) clock_times(idx(1):idx(2))']/opts.WinsorThreshold, clock_values(idx(1):idx(2))'/opts.WinsorThreshold);
-                    else
-                        mappings{r} = [clock_values(idx(1)) 0]; % just one measurement
-                    end
-                end
-                
-                if length(mappings) == 1
-                    % apply the correction to all time stamps
-                    temp(k).time_stamps = temp(k).time_stamps + (mappings{1}(1) + mappings{1}(2)*temp(k).time_stamps);
-                else
-                    % if there are data segments measured with different clocks we need to
-                    % determine, for any time stamp lying between two segments, to which of the segments it belongs
-                    clock_segments = zeros(size(temp(k).time_stamps));  % the segment index to which each stamp belongs
-                    first_unprocessed = 1;                              % first index into time stamps that is not yet processed
-                    for r=1:length(ranges)-1
-                        cur_end_time = clock_times(ranges{r}(2));       % time at which the current segment ends
-                        next_begin_time = clock_times(ranges{r+1}(1));  % time at which the next segment begins
-                        % find the index range of the current segment
-                        remaining_data = temp(k).time_stamps(first_unprocessed:end);
-                        index_range = first_unprocessed : (first_unprocessed - 1 + find(~(remaining_data <= cur_end_time),1) - 1);
-                        % assign all contained time stamps to this segment
-                        clock_segments(index_range) = r;
-                        first_unprocessed = index_range(end)+1;
-                        % determine the index range of time stamps between the two clock domains
-                        remaining_data = temp(k).time_stamps(first_unprocessed:end);
-                        index_range = first_unprocessed : (first_unprocessed -1 + find(~(remaining_data >= cur_end_time & remaining_data <= next_begin_time),1) - 1);
-                        if temp(k).info.nominal_srate > 0                            
-                            % regularly sampled stream: all time stamps before the largest jump in
-                            % the intermittent time stamps are counted towards the first segment all
-                            % others towards the second segment
-                            [dummy,jumpidx] = max(abs(diff(temp(k).time_stamps(index_range)))); jumpidx = index_range(jumpidx); %#ok<ASGLU>
-                            clock_segments(index_range(1):jumpidx) = r;
-                            clock_segments(jumpidx+1:index_range(end)) = r+1;
-                        else
-                            % irregularly sampled stream: all time stamps that are closer to the
-                            % first clock time than the second clock time are counted towards the first stream,
-                            % the others are counted towards the second
-                            closer_to_first = abs(temp(k).time_stamps(index_range) - cur_end_time) < abs(temp(k).time_stamps(index_range) - next_begin_time);
-                            clock_segments(index_range(closer_to_first)) = r;
-                            clock_segments(index_range(~closer_to_first)) = r+1;
-                        end
-                        first_unprocessed = index_range(end)+1;
-                    end
-                    % assign all remaining time stamps to the last segment
-                    clock_segments(first_unprocessed:end) = length(ranges);
-                    % apply corrections on a per-segment basis
-                    for r=1:length(ranges)
-                        temp(k).time_stamps(clock_segments==r) = temp(k).time_stamps(clock_segments==r) + (mappings{r}(1) + mappings{r}(2)*temp(k).time_stamps(clock_segments==r)); end
-                end
             catch
                 disp(['No clock offsets were available for stream "' streams{k}.info.name '"']);
+                continue;
+            end
+                
+            % handle clock resets (e.g., computer restarts during recording) if requested
+            if opts.HandleClockResets
+                % first detect potential breaks in the synchronization data; this is only necessary when the
+                % importer should be able to deal with recordings where the computer that served a stream
+                % was restarted or hot-swapped during an ongoing recording, or the clock was reset otherwise
+                time_diff = diff(clock_times);
+                value_diff = abs(diff(clock_values));
+                % points where a glitch in the timing of successive clock measurements happened
+                time_glitch = (time_diff < 0 | (((time_diff - median(time_diff)) ./ mad(time_diff)) > opts.ClockResetThresholdStds & ...
+                    ((time_diff - median(time_diff)) > opts.ClockResetThresholdSeconds)));
+                % points where a glitch in successive clock value estimates happened
+                value_glitch = (value_diff - median(value_diff)) ./ mad(value_diff) > opts.ClockResetThresholdOffsetStds & ...
+                    (value_diff - median(value_diff)) > opts.ClockResetThresholdOffsetSeconds;
+                % points where both a time glitch and a value glitch co-occur are treated as resets
+                resets_at = time_glitch & value_glitch;
+                % determine the [begin,end] index ranges between resets
+                if any(resets_at)
+                    tmp = find(resets_at)';
+                    tmp = [tmp tmp+1]';
+                    tmp = [1 tmp(:)' length(resets_at)];
+                    ranges = num2cell(reshape(tmp,2,[])',2);
+                    if opts.Verbose
+                        disp(['  found ' num2str(nnz(resets_at)) ' possible clock resets in stream ' streams{k}.info.name]); end
+                else
+                    ranges = {[1,length(clock_times)]};
+                end
+            else
+                % otherwise assume that there are no clock resets
+                ranges = {[1,length(clock_times)]};
+            end
+            
+            % calculate clock offset mappings for each data range
+            for r=1:length(ranges)
+                idx = ranges{r};
+                if idx(1) ~= idx(2)
+                    % to accomodate the Winsorizing threshold (in seconds) we rescale the data (robust_fit sets it to 1 unit)
+                    mappings{r} = robust_fit([ones(idx(2)-idx(1)+1,1) clock_times(idx(1):idx(2))']/opts.WinsorThreshold, clock_values(idx(1):idx(2))'/opts.WinsorThreshold);
+                else
+                    mappings{r} = [clock_values(idx(1)) 0]; % just one measurement
+                end
+            end
+            
+            if length(mappings) == 1
+                % apply the correction to all time stamps
+                temp(k).time_stamps = temp(k).time_stamps + (mappings{1}(1) + mappings{1}(2)*temp(k).time_stamps);
+            else
+                % if there are data segments measured with different clocks we need to
+                % determine, for any time stamp lying between two segments, to which of the segments it belongs
+                clock_segments = zeros(size(temp(k).time_stamps));  % the segment index to which each stamp belongs                
+                first_unprocessed = 1;                              % first index into time stamps that is not yet processed
+                for r=1:length(ranges)-1
+                    cur_end_time = clock_times(ranges{r}(2));       % time at which the current segment ends
+                    next_begin_time = clock_times(ranges{r+1}(1));  % time at which the next segment begins
+                    % find the index range of the current segment
+                    remaining_data = temp(k).time_stamps(first_unprocessed:end);
+                    index_range = first_unprocessed : (first_unprocessed - 1 + find(~(remaining_data <= cur_end_time),1) - 1);
+                    % assign all contained time stamps to this segment
+                    clock_segments(index_range) = r;
+                    first_unprocessed = index_range(end)+1;
+                    % determine the index range of time stamps between the two clock domains
+                    remaining_data = temp(k).time_stamps(first_unprocessed:end);
+                    index_range = first_unprocessed : (first_unprocessed -1 + find(~(remaining_data >= cur_end_time & remaining_data <= next_begin_time),1) - 1);
+                    if str2num(streams{k}.info.nominal_srate) > 0
+                        % regularly sampled stream: all time stamps before the largest jump in
+                        % the intermittent time stamps are counted towards the first segment all
+                        % others towards the second segment
+                        [dummy,jumpidx] = max(abs(diff(temp(k).time_stamps(index_range)))); jumpidx = index_range(jumpidx); %#ok<ASGLU>
+                        clock_segments(index_range(1):jumpidx) = r;
+                        clock_segments(jumpidx+1:index_range(end)) = r+1;
+                    else
+                        % irregularly sampled stream: all time stamps that are closer to the
+                        % first clock time than the second clock time are counted towards the first stream,
+                        % the others are counted towards the second
+                        closer_to_first = abs(temp(k).time_stamps(index_range) - cur_end_time) < abs(temp(k).time_stamps(index_range) - next_begin_time);
+                        clock_segments(index_range(closer_to_first)) = r;
+                        clock_segments(index_range(~closer_to_first)) = r+1;
+                    end
+                    first_unprocessed = index_range(end)+1;
+                end
+                % assign all remaining time stamps to the last segment
+                clock_segments(first_unprocessed:end) = length(ranges);
+                % apply corrections on a per-segment basis
+                for r=1:length(ranges)
+                    temp(k).time_stamps(clock_segments==r) = temp(k).time_stamps(clock_segments==r) + (mappings{r}(1) + mappings{r}(2)*temp(k).time_stamps(clock_segments==r)); end
             end
         end
     end
@@ -443,7 +444,7 @@ if opts.HandleJitterRemoval
                 tmp = [1 tmp(:)' length(breaks_at)];
                 ranges = num2cell(reshape(tmp,2,[])',2);
                 if opts.Verbose
-                    disp(['  found ' length(breaks_at) ' data breaks in stream ' temp(k).info.name]); end
+                    disp(['  found ' num2str(nnz(breaks_at)) ' data breaks in stream ' streams{k}.info.name]); end
             else
                 ranges = {[1,length(temp(k).time_stamps)]};
             end
