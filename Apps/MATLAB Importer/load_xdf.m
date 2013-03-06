@@ -166,6 +166,8 @@ if ~isfield(opts,'ClockResetThresholdOffsetSeconds')
     opts.ClockResetThresholdOffsetSeconds = 1; end
 if ~isfield(opts,'ClockResetThresholdOffsetStds')
     opts.ClockResetThresholdOffsetStds = 10; end
+if ~isfield(opts,'WinsorThreshold')
+    opts.WinsorThreshold = 0.0001; end
 if ~exist(filename,'file')
     error(['The file "' filename '" does not exist.']); end
 
@@ -368,7 +370,8 @@ if opts.HandleClockSynchronization
                 for r=1:length(ranges)
                     idx = ranges{r};
                     if idx(1) ~= idx(2)
-                        mappings{r} = robust_fit([ones(idx(2)-idx(1)+1,1) clock_times(idx(1):idx(2))'], clock_values(idx(1):idx(2))');
+                        % to accomodate the Winsorizing threshold (in seconds) we rescale the data (robust_fit sets it to 1 unit)
+                        mappings{r} = robust_fit([ones(idx(2)-idx(1)+1,1) clock_times(idx(1):idx(2))']/opts.WinsorThreshold, clock_values(idx(1):idx(2))'/opts.WinsorThreshold);
                     else
                         mappings{r} = [clock_values(idx(1)) 0]; % just one measurement
                     end
