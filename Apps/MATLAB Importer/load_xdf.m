@@ -2,15 +2,17 @@ function [streams,fileheader] = load_xdf(filename,varargin)
 % Import an XDF file.
 % [Streams,FileHeader] = load_xdf(Filename, Options...)
 %
-% This is a simple MATLAB importer for mult-stream XDF (Extensible Data Format) recordings. All
+% This is a MATLAB importer for mult-stream XDF (Extensible Data Format) recordings. All
 % information covered by the XDF 1.0 specification is imported, plus any additional meta-data
 % associated with streams or with the container file itself.
 %
 % See http://code.google.com/p/xdf/ for more information on XDF.
 %
+% The function supports several further features, such as compressed XDF archives, robust
+% time synchronization, support for breaks in the data, as well as some other defects.
+%
 % In:
 %   Filename : name of the file to import (*.xdf or *.xdfz)
-%
 %
 %   Options... : A list of optional name-value arguments for special use cases. The allowed names 
 %                are listed in the following:
@@ -43,21 +45,24 @@ function [streams,fileheader] = load_xdf(filename,varargin)
 %                                      hot-swap). Only useful if the recording system supports
 %                                      recording under such circumstances. (default: true)
 %
-%                'ClockResetThresholdStds' : a clock reset must be accompanied by a ClockOffset
+%                'ClockResetThresholdStds' : A clock reset must be accompanied by a ClockOffset
 %                                            chunk being delayed by at least this many standard
 %                                            deviations from the distribution. (default: 5)
 %
-%                'ClockResetThresholdSeconds' : a clock reset must be accompanied by a ClockOffset
+%                'ClockResetThresholdSeconds' : A clock reset must be accompanied by a ClockOffset
 %                                               chunk being delayed by at least this many seconds.
 %                                               (default: 5)
 %
-%                'ClockResetThresholdOffsetStds' : a clock reset must be accompanied by a
+%                'ClockResetThresholdOffsetStds' : A clock reset must be accompanied by a
 %                                                  ClockOffset difference that lies at least this many
 %                                                  standard deviations from the distribution. (default: 10)
 %
-%                'ClockResetThresholdOffsetSeconds' : a clock reset must be accompanied by a
+%                'ClockResetThresholdOffsetSeconds' : A clock reset must be accompanied by a
 %                                                     ClockOffset difference that is at least this
 %                                                     many seconds away from the median. (default: 1)
+%
+%                'ClockResetMaxJitter' : Maximum tolerable jitter (in seconds of error) for clock
+%                                        reset handling. (default: 5)
 %
 %                Parameters for jitter removal in the presence of data breaks:
 %
@@ -168,6 +173,8 @@ if ~isfield(opts,'ClockResetThresholdOffsetStds')
     opts.ClockResetThresholdOffsetStds = 10; end
 if ~isfield(opts,'WinsorThreshold')
     opts.WinsorThreshold = 0.0001; end
+if ~isfield(opts,'ClockResetMaxJitter')
+    opts.ClockResetMaxJitter = 5; end
 if ~exist(filename,'file')
     error(['The file "' filename '" does not exist.']); end
 
@@ -204,7 +211,9 @@ if ~have_mex
     disp('NOTE: apparently you are missing a compiled binary version of the inner loop code. Using the slow MATLAB code instead.'); end
 
 
-% === read the file ===
+% ======================
+% === parse the file ===
+% ======================
 
 % read [MagicCode]
 if ~strcmp(fread(f,4,'*char')','XDF:')
@@ -323,12 +332,13 @@ for k=1:length(temp)
 end
 
 
-% === do some post-processing on the result ===
+% ===================================================================
+% === perform (fault-tolerant) clock synchronization if requested ===
+% ===================================================================
 
-% perform clock synchronization if requested
 if opts.HandleClockSynchronization
     if opts.Verbose
-        fprintf('  performing clock synchronization...'); end
+        disp('  performing clock synchronization...'); end
     for k=1:length(temp)
         if ~isempty(temp(k).time_stamps)
             try
@@ -340,6 +350,7 @@ if opts.HandleClockSynchronization
             end
                 
             % handle clock resets (e.g., computer restarts during recording) if requested
+            % this is only for cases where "everything goes wrong" during recording
             if opts.HandleClockResets
                 % first detect potential breaks in the synchronization data; this is only necessary when the
                 % importer should be able to deal with recordings where the computer that served a stream
@@ -347,10 +358,10 @@ if opts.HandleClockSynchronization
                 time_diff = diff(clock_times);
                 value_diff = abs(diff(clock_values));
                 % points where a glitch in the timing of successive clock measurements happened
-                time_glitch = (time_diff < 0 | (((time_diff - median(time_diff)) ./ mad(time_diff)) > opts.ClockResetThresholdStds & ...
+                time_glitch = (time_diff < 0 | (((time_diff - median(time_diff)) ./ mad(time_diff,1)) > opts.ClockResetThresholdStds & ...
                     ((time_diff - median(time_diff)) > opts.ClockResetThresholdSeconds)));
                 % points where a glitch in successive clock value estimates happened
-                value_glitch = (value_diff - median(value_diff)) ./ mad(value_diff) > opts.ClockResetThresholdOffsetStds & ...
+                value_glitch = (value_diff - median(value_diff)) ./ mad(value_diff,1) > opts.ClockResetThresholdOffsetStds & ...
                     (value_diff - median(value_diff)) > opts.ClockResetThresholdOffsetSeconds;
                 % points where both a time glitch and a value glitch co-occur are treated as resets
                 resets_at = time_glitch & value_glitch;
@@ -361,7 +372,7 @@ if opts.HandleClockSynchronization
                     tmp = [1 tmp(:)' length(resets_at)];
                     ranges = num2cell(reshape(tmp,2,[])',2);
                     if opts.Verbose
-                        disp(['  found ' num2str(nnz(resets_at)) ' possible clock resets in stream ' streams{k}.info.name]); end
+                        disp(['  found ' num2str(nnz(resets_at)) ' clock resets in stream ' streams{k}.info.name '.']); end
                 else
                     ranges = {[1,length(clock_times)]};
                 end
@@ -371,6 +382,7 @@ if opts.HandleClockSynchronization
             end
             
             % calculate clock offset mappings for each data range
+            mappings = {};
             for r=1:length(ranges)
                 idx = ranges{r};
                 if idx(1) ~= idx(2)
@@ -381,45 +393,37 @@ if opts.HandleClockSynchronization
                 end
             end
             
-            if length(mappings) == 1
+            if length(ranges) == 1
                 % apply the correction to all time stamps
                 temp(k).time_stamps = temp(k).time_stamps + (mappings{1}(1) + mappings{1}(2)*temp(k).time_stamps);
             else
                 % if there are data segments measured with different clocks we need to
                 % determine, for any time stamp lying between two segments, to which of the segments it belongs
                 clock_segments = zeros(size(temp(k).time_stamps));  % the segment index to which each stamp belongs                
-                first_unprocessed = 1;                              % first index into time stamps that is not yet processed
+                begin_of_segment = 1;                               % first index into time stamps that belongs to the current segment
+                end_of_segment = NaN; %#ok<NASGU>                   % last index into time stamps that belongs to the current segment
                 for r=1:length(ranges)-1
                     cur_end_time = clock_times(ranges{r}(2));       % time at which the current segment ends
                     next_begin_time = clock_times(ranges{r+1}(1));  % time at which the next segment begins
-                    % find the index range of the current segment
-                    remaining_data = temp(k).time_stamps(first_unprocessed:end);
-                    index_range = first_unprocessed : (first_unprocessed - 1 + find(~(remaining_data <= cur_end_time),1) - 1);
-                    % assign all contained time stamps to this segment
-                    clock_segments(index_range) = r;
-                    first_unprocessed = index_range(end)+1;
-                    % determine the index range of time stamps between the two clock domains
-                    remaining_data = temp(k).time_stamps(first_unprocessed:end);
-                    index_range = first_unprocessed : (first_unprocessed -1 + find(~(remaining_data >= cur_end_time & remaining_data <= next_begin_time),1) - 1);
-                    if str2num(streams{k}.info.nominal_srate) > 0
-                        % regularly sampled stream: all time stamps before the largest jump in
-                        % the intermittent time stamps are counted towards the first segment all
-                        % others towards the second segment
-                        [dummy,jumpidx] = max(abs(diff(temp(k).time_stamps(index_range)))); jumpidx = index_range(jumpidx); %#ok<ASGLU>
-                        clock_segments(index_range(1):jumpidx) = r;
-                        clock_segments(jumpidx+1:index_range(end)) = r+1;
+                    % get the data that is not yet processed
+                    remaining_indices = begin_of_segment:length(temp(k).time_stamps);
+                    remaining_data = temp(k).time_stamps(remaining_indices);
+                    if next_begin_time > cur_end_time
+                        % clock jumps forward: the end of the segment is where the data time stamps
+                        % lie closer to the next segment than the current in time
+                        end_of_segment = remaining_indices(min(find([abs(remaining_data-cur_end_time) > abs(remaining_data-next_begin_time),true],1)-1,length(remaining_indices)));
                     else
-                        % irregularly sampled stream: all time stamps that are closer to the
-                        % first clock time than the second clock time are counted towards the first stream,
-                        % the others are counted towards the second
-                        closer_to_first = abs(temp(k).time_stamps(index_range) - cur_end_time) < abs(temp(k).time_stamps(index_range) - next_begin_time);
-                        clock_segments(index_range(closer_to_first)) = r;
-                        clock_segments(index_range(~closer_to_first)) = r+1;
+                        % clock jumps backward: the end of the segment is where the data time stamps
+                        % jump back by more than the max conceivable jitter (as any negative delta is jitter)
+                        end_of_segment = remaining_indices(min(find([diff(remaining_data) < -opts.ClockResetMaxJitter,true],1),length(remaining_indices)));
                     end
-                    first_unprocessed = index_range(end)+1;
+                    % assign the segment of data points to the current range
+                    % go to next segment
+                    clock_segments(begin_of_segment:end_of_segment) = r;
+                    begin_of_segment = end_of_segment+1;
                 end
                 % assign all remaining time stamps to the last segment
-                clock_segments(first_unprocessed:end) = length(ranges);
+                clock_segments(begin_of_segment:end) = length(ranges);                
                 % apply corrections on a per-segment basis
                 for r=1:length(ranges)
                     temp(k).time_stamps(clock_segments==r) = temp(k).time_stamps(clock_segments==r) + (mappings{r}(1) + mappings{r}(2)*temp(k).time_stamps(clock_segments==r)); end
@@ -428,10 +432,13 @@ if opts.HandleClockSynchronization
     end
 end
 
-% perform jitter removal if requested
+% ===========================================
+% === perform jitter removal if requested ===
+% ===========================================
+
 if opts.HandleJitterRemoval
     if opts.Verbose
-        fprintf('  performing jitter removal...'); end
+        disp('  performing jitter removal...'); end
     for k=1:length(temp)
         if ~isempty(temp(k).time_stamps) && temp(k).srate
             % identify breaks in the data
@@ -444,7 +451,7 @@ if opts.HandleJitterRemoval
                 tmp = [1 tmp(:)' length(breaks_at)];
                 ranges = num2cell(reshape(tmp,2,[])',2);
                 if opts.Verbose
-                    disp(['  found ' num2str(nnz(breaks_at)) ' data breaks in stream ' streams{k}.info.name]); end
+                    disp(['  found ' num2str(nnz(breaks_at)) ' data breaks in stream ' streams{k}.info.name '.']); end
             else
                 ranges = {[1,length(temp(k).time_stamps)]};
             end
