@@ -3169,6 +3169,21 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
+SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1was_1clock_1reset(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jboolean jresult = 0 ;
+  lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
+  bool result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(lsl::stream_inlet **)&jarg1; 
+  result = (bool)(arg1)->was_clock_reset();
+  jresult = (jboolean)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1xml_1element_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
   jlong jresult = 0 ;
   lsl::xml_element *result = 0 ;

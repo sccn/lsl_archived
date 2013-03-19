@@ -159,6 +159,7 @@ public class lslAndroidJNI {
   public final static native double stream_inlet_pull_numeric_raw__SWIG_0(long jarg1, stream_inlet jarg1_, long jarg2, int jarg3, double jarg4);
   public final static native double stream_inlet_pull_numeric_raw__SWIG_1(long jarg1, stream_inlet jarg1_, long jarg2, int jarg3);
   public final static native long stream_inlet_samples_available(long jarg1, stream_inlet jarg1_);
+  public final static native boolean stream_inlet_was_clock_reset(long jarg1, stream_inlet jarg1_);
   public final static native long new_xml_element__SWIG_0();
   public final static native long new_xml_element__SWIG_1(long jarg1);
   public final static native long xml_element_first_child(long jarg1, xml_element jarg1_);

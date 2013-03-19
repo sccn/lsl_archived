@@ -327,8 +327,15 @@ end
     
 % concatenate the signal across chunks
 for k=1:length(temp)
-    temp(k).time_series = [temp(k).time_series{:}];
-    temp(k).time_stamps = [temp(k).time_stamps{:}];
+    try
+        temp(k).time_series = [temp(k).time_series{:}];
+        temp(k).time_stamps = [temp(k).time_stamps{:}];
+    catch e
+        disp(['Could not concatenate time series for stream ' streams{k}.info.name '; skipping.']);
+        disp(['Reason: ' e.message]);
+        temp(k).time_series = [];
+        temp(k).time_stamps = [];
+    end
 end
 
 
@@ -348,9 +355,10 @@ if opts.HandleClockSynchronization
                 disp(['No clock offsets were available for stream "' streams{k}.info.name '"']);
                 continue;
             end
-                
-            % handle clock resets (e.g., computer restarts during recording) if requested
+            
+            % detect clock resets (e.g., computer restarts during recording) if requested
             % this is only for cases where "everything goes wrong" during recording
+            % note that this is a fancy feature that is not needed for normal XDF compliance
             if opts.HandleClockResets
                 % first detect potential breaks in the synchronization data; this is only necessary when the
                 % importer should be able to deal with recordings where the computer that served a stream
@@ -377,7 +385,7 @@ if opts.HandleClockSynchronization
                     ranges = {[1,length(clock_times)]};
                 end
             else
-                % otherwise assume that there are no clock resets
+                % otherwise we just assume that there are no clock resets
                 ranges = {[1,length(clock_times)]};
             end
             
@@ -407,6 +415,8 @@ if opts.HandleClockSynchronization
                     next_begin_time = clock_times(ranges{r+1}(1));  % time at which the next segment begins
                     % get the data that is not yet processed
                     remaining_indices = begin_of_segment:length(temp(k).time_stamps);
+                    if isempty(remaining_indices)
+                        break; end
                     remaining_data = temp(k).time_stamps(remaining_indices);
                     if next_begin_time > cur_end_time
                         % clock jumps forward: the end of the segment is where the data time stamps
@@ -432,11 +442,15 @@ if opts.HandleClockSynchronization
     end
 end
 
+
 % ===========================================
 % === perform jitter removal if requested ===
 % ===========================================
 
 if opts.HandleJitterRemoval
+    % jitter removal is a bonus feature that yields linearly increasing timestamps from data 
+    % where samples had been time stamped with some jitter (e.g., due to operating system
+    % delays)
     if opts.Verbose
         disp('  performing jitter removal...'); end
     for k=1:length(temp)
@@ -464,9 +478,8 @@ if opts.HandleJitterRemoval
                 segments(r).index_range = range;
                 if segments(r).num_samples > 0
                     indices = segments(r).index_range(1):segments(r).index_range(2);
-                    stamps = temp(k).time_stamps(indices);
                     % regress out the jitter
-                    mapping = stamps / [ones(1,length(indices)); indices];
+                    mapping = temp(k).time_stamps(indices) / [ones(1,length(indices)); indices];
                     temp(k).time_stamps(indices) = mapping(1) + mapping(2) * indices;
                 end
                 % calculate some other meta-data about the segments
@@ -498,8 +511,9 @@ end
 end
 
 
+% ========================
 % === helper functions ===
-
+% ========================
 
 % read a variable-length integer
 function num = read_varlen_int(f)
