@@ -11,7 +11,7 @@
 
 const int samples_per_chunk = 4;				// the chunk granularity at which we transmit data into LSL
 const double value_scale = 1000000.0/8388607.0;	// rescaling from 24-bit signed integers to microvolts
- 
+
 MainWindow::MainWindow(QWidget *parent, const std::string &config_file) :
 QMainWindow(parent),
 ui(new Ui::MainWindow)
@@ -172,143 +172,153 @@ unsigned log2(unsigned x) { return (int)(std::log10((double)x) / std::log10(2.0)
 
 // background data reader thread
 void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int channelCount, int protocolVersion, int bitDepth, int ampGain, std::vector<std::string> channelLabels) {
+	try {
 
-	// create streaminfo
-	lsl::stream_info info("MINDO","EEG",channelCount,samplingRate,lsl::cf_float32,"MINDO_C" + boost::lexical_cast<std::string>(channelCount));
-	// append some meta-data
-	lsl::xml_element channels = info.desc().append_child("channels");
-	for (int k=0;k<channelLabels.size();k++) {
-		channels.append_child("channel")
-			.append_child_value("label",channelLabels[k].c_str())
-			.append_child_value("type","EEG")
-			.append_child_value("unit","microvolts");
-	}
-	info.desc().append_child("acquisition")
-		.append_child_value("manufacturer","MINDO");
-
-	// make a new outlet
-	lsl::stream_outlet outlet(info,samples_per_chunk);
-
-	// reserve memory
-	std::vector<float> sample(channelCount);
-
-	int leadOffBytes = max(2,std::ceil(channelCount/8.0)); // the number of lead-off bytes depends on the #channels
-
-	DWORD dwBytesWritten = 0;
-	if (protocolVersion >= 1) {
-		// send startup command sequence
-		unsigned char cmd_beginseq = 0xFE;
-		unsigned char cmd_start = 0x07;
-		unsigned char cmd_resolution_srate = (bitDepth << 4) | log2(samplingRate);
-		unsigned char cmd_gain_chns = (ampGain << 4) | log2(channelCount);
-		unsigned char cmd_endseq = 0xFF;
-		WriteFile(hPort,(LPSTR)&cmd_beginseq,1,&dwBytesWritten,NULL);
-		WriteFile(hPort,(LPSTR)&cmd_start,1,&dwBytesWritten,NULL);
-		WriteFile(hPort,(LPSTR)&cmd_resolution_srate,1,&dwBytesWritten,NULL);
-		WriteFile(hPort,(LPSTR)&cmd_gain_chns,1,&dwBytesWritten,NULL);
-		WriteFile(hPort,(LPSTR)&cmd_endseq,1,&dwBytesWritten,NULL);
-	}
-
-	// enter transmission loop
-	unsigned char temp;
-	signed char stemp;
-	int msb, lsb2, lsb1;
-	unsigned long bytes_read;
-
-	int curCounter = -1;
-	while (!stop_) {
-		temp = 0;
-		if (protocolVersion < 2) {
-			// scan for the sync byte
-			while (!stop_ && (temp != 0xFF))
-				ReadFile(hPort,&temp,1,&bytes_read,NULL);
-			if (stop_)
-				break;
-			// skip the counter
-			ReadFile(hPort,&temp,1,&bytes_read,NULL);
+		// create streaminfo
+		lsl::stream_info info("MINDO","EEG",channelCount,samplingRate,lsl::cf_float32,"MINDO_C" + boost::lexical_cast<std::string>(channelCount));
+		// append some meta-data
+		lsl::xml_element channels = info.desc().append_child("channels");
+		for (int k=0;k<channelLabels.size();k++) {
+			channels.append_child("channel")
+				.append_child_value("label",channelLabels[k].c_str())
+				.append_child_value("type","EEG")
+				.append_child_value("unit","microvolts");
 		}
-		if (protocolVersion >= 2) {
-			// new header handling code
-			unsigned char bytesPerChannel = (bitDepth == 0) ? 3 : 2;
-			unsigned char bytesPerSample = 2 + leadOffBytes + bytesPerChannel * channelCount;
-			if (curCounter < 0) {
-				// no synchronization, need to find header again
-				std::vector<unsigned char> shift_buffer(bytesPerSample*16);	// this is a circular buffer that holds the last data words that make up a measurement
-				// shift in bytes at the end until we get a complete measurement
-				while (!stop_) {
-					for (unsigned k=0;k<shift_buffer.size()-1;k++)
-						shift_buffer[k] = shift_buffer[k+1];
-					if (!ReadFile(hPort,&shift_buffer.back(),1,&bytes_read,NULL)) {
-						QMessageBox::critical(this,"Error","Connection broke off.",QMessageBox::Ok);
-						return;
-					}
-					// check if this is matching
-					bool match = true;
-					for (unsigned k=0;k<16;k++) {
-						if (shift_buffer[k*bytesPerSample] != 240+k) {
-							match = false;
-							break;
-						}
-					}
-					if (match)
-						break;
-				}
-				curCounter = 0;
-			}
+		info.desc().append_child("acquisition")
+			.append_child_value("manufacturer","MINDO");
 
-			// read header & confirm that we're still synchronized
-			ReadFile(hPort,&temp,1,&bytes_read,NULL);
-			if (temp != curCounter+240) {
-				// synch loss
-				curCounter = -1;
-				continue;
-			} else
-				curCounter = (curCounter+1) % 16;
-			// skip the magic byte
-			ReadFile(hPort,&temp,1,&bytes_read,NULL);
-		}
+		// make a new outlet
+		lsl::stream_outlet outlet(info,samples_per_chunk);
 
-		// get next sample
-		if (protocolVersion == 0) {
-			for(int c=0; c < channelCount; c++) {
-				ReadFile(hPort,&temp,1,&bytes_read,NULL);
-				lsb2 = temp;
-				ReadFile(hPort,&temp,1,&bytes_read,NULL);
-				lsb1 = temp;
-				sample[c] = (double)((lsb2-64)*64 + (lsb1-64));
-			}
-		}
+		// reserve memory
+		std::vector<float> sample(channelCount);
+
+		int leadOffBytes = max(2,std::ceil(channelCount/8.0)); // the number of lead-off bytes depends on the #channels
+
+		DWORD dwBytesWritten = 0;
 		if (protocolVersion >= 1) {
-			if (bitDepth == 0) {
-				// 24 bit
+			// send startup command sequence
+			unsigned char cmd_beginseq = 0xFE;
+			unsigned char cmd_start = 0x07;
+			unsigned char cmd_resolution_srate = (bitDepth << 4) | log2(samplingRate);
+			unsigned char cmd_gain_chns = (ampGain << 4) | log2(channelCount);
+			unsigned char cmd_endseq = 0xFF;
+			WriteFile(hPort,(LPSTR)&cmd_beginseq,1,&dwBytesWritten,NULL);
+			WriteFile(hPort,(LPSTR)&cmd_start,1,&dwBytesWritten,NULL);
+			WriteFile(hPort,(LPSTR)&cmd_resolution_srate,1,&dwBytesWritten,NULL);
+			WriteFile(hPort,(LPSTR)&cmd_gain_chns,1,&dwBytesWritten,NULL);
+			WriteFile(hPort,(LPSTR)&cmd_endseq,1,&dwBytesWritten,NULL);
+		}
+
+		// enter transmission loop
+		unsigned char temp;
+		signed char stemp;
+		int msb, lsb2, lsb1;
+		unsigned long bytes_read;
+		int k = 0;
+
+		int curCounter = -1;
+		while (!stop_) {
+			temp = 0;
+			if (protocolVersion < 2) {
+				// scan for the sync byte
+				while (!stop_ && (temp != 0xFF))
+					ReadFile(hPort,&temp,1,&bytes_read,NULL);
+				if (stop_)
+					break;
+				// skip the counter
+				ReadFile(hPort,&temp,1,&bytes_read,NULL);
+			}
+			if (protocolVersion >= 2) {
+				// new header handling code
+				unsigned char bytesPerChannel = (bitDepth == 0) ? 3 : 2;
+				unsigned char bytesPerSample = 2 + leadOffBytes + bytesPerChannel * channelCount;
+				if (curCounter < 0) {
+					// no synchronization, need to find header again
+					std::vector<unsigned char> shift_buffer(bytesPerSample*16);	// this is a circular buffer that holds the last data words that make up a measurement
+					// shift in bytes at the end until we get a complete measurement
+					while (!stop_) {
+						for (unsigned k=0;k<shift_buffer.size()-1;k++)
+							shift_buffer[k] = shift_buffer[k+1];
+						if (!ReadFile(hPort,&shift_buffer.back(),1,&bytes_read,NULL)) {
+							QMessageBox::critical(this,"Error","Connection broke off.",QMessageBox::Ok);
+							return;
+						}
+						// check if this is matching
+						bool match = true;
+						for (unsigned k=0;k<16;k++) {
+							if (shift_buffer[k*bytesPerSample] != 240+k) {
+								match = false;
+								break;
+							}
+						}
+						if (match)
+							break;
+					}
+					curCounter = 0;
+				}
+
+				// read header & confirm that we're still synchronized
+				ReadFile(hPort,&temp,1,&bytes_read,NULL);
+				if (temp != curCounter+240) {
+					// synch loss
+					curCounter = -1;
+					continue;
+				} else
+					curCounter = (curCounter+1) % 16;
+				// skip the magic byte
+				ReadFile(hPort,&temp,1,&bytes_read,NULL);
+			}
+
+			// get next sample
+			if (protocolVersion == 0) {
 				for(int c=0; c < channelCount; c++) {
-					ReadFile(hPort,&stemp,1,&bytes_read,NULL);
-					msb = stemp;
 					ReadFile(hPort,&temp,1,&bytes_read,NULL);
 					lsb2 = temp;
 					ReadFile(hPort,&temp,1,&bytes_read,NULL);
 					lsb1 = temp;
-					sample[c] = (2.4 * (double)(msb*65536 + lsb2*256 + lsb1)) * value_scale;
+					sample[c] = (double)((lsb2-64)*64 + (lsb1-64));
 				}
 			}
-			if (bitDepth == 1) {
-				// 16 bit
-				for(int c=0; c < channelCount; c++) {
-					ReadFile(hPort,&stemp,1,&bytes_read,NULL);
-					msb = stemp;
+			if (protocolVersion >= 1) {
+				if (bitDepth == 0) {
+					// 24 bit
+					for(int c=0; c < channelCount; c++) {
+						ReadFile(hPort,&stemp,1,&bytes_read,NULL);
+						msb = stemp;
+						ReadFile(hPort,&temp,1,&bytes_read,NULL);
+						lsb2 = temp;
+						ReadFile(hPort,&temp,1,&bytes_read,NULL);
+						lsb1 = temp;
+						sample[c] = (2.4 * (double)(msb*65536 + lsb2*256 + lsb1)) * value_scale;
+					}
+				}
+				if (bitDepth == 1) {
+					// 16 bit
+					for(int c=0; c < channelCount; c++) {
+						ReadFile(hPort,&stemp,1,&bytes_read,NULL);
+						msb = stemp;
+						ReadFile(hPort,&temp,1,&bytes_read,NULL);
+						lsb2 = temp;
+						sample[c] = (2.4 * (double)(msb*65536 + lsb2*256)) * value_scale;
+					}
+				}
+
+				// read the "lead-off" bytes
+				for (int k=0;k<leadOffBytes;k++)
 					ReadFile(hPort,&temp,1,&bytes_read,NULL);
-					lsb2 = temp;
-					sample[c] = (2.4 * (double)(msb*65536 + lsb2*256)) * value_scale;
-				}
 			}
 
-			// read the "lead-off" bytes
-			for (int k=0;k<leadOffBytes;k++)
-				ReadFile(hPort,&temp,1,&bytes_read,NULL);
+			// push into the outlet
+			outlet.push_sample(sample);
 		}
-
-		// push into the outlet
-		outlet.push_sample(sample);
+	} 
+	catch(boost::thread_interrupted &e) {
+		// thread was interrupted: no error
+	}
+	catch(std::exception &e) {
+		// any other error
+		QMessageBox::critical(this,"Error",(std::string("Error during processing: ")+=e.what()).c_str(),QMessageBox::Ok);
 	}
 	CloseHandle(hPort);
 }

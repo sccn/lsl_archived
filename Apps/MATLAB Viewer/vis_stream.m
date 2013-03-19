@@ -56,7 +56,7 @@ else
 end
 
 % handle input arguments
-streamnames = find_streams;
+streamnames = unique(find_streams);
 opts = arg_define(varargin, ...
     arg({'streamname','StreamName'},streamnames{1},streamnames,'LSL stream that should be displayed. The name of the stream that you would like to display.'), ...
     arg({'bufferrange','BufferRange'},10,[],'Maximum time range to buffer. Imposes an upper limit on what can be displayed.'), ...
@@ -66,6 +66,8 @@ opts = arg_define(varargin, ...
     arg({'samplingrate','SamplingRate'},100,[],'Sampling rate for display. This is the sampling rate that is used for plotting; for faster drawing.'), ...
     arg({'refreshrate','RefreshRate'},10,[],'Refresh rate for display. This is the rate at which the graphics are updated.'), ...
     arg({'reref','Rereference'},false,[],'Common average reference. Enable this to view the data with a common average reference filter applied.'), ...
+    arg({'standardize','Standardize'},false,[],'Standardize data.'), ...
+    arg_nogui({'subplot','Subplot'},0,[],'Subplot #, if any.'), ...
     arg_nogui({'pageoffset','PageOffset'},0,[],'Channel page offset. Allows to flip forward or backward pagewise through the displayed channels.'), ...
     arg_nogui({'position','Position'},[],[],'Figure position. Allows to script the position at which the figures should appear.'));
 
@@ -104,11 +106,16 @@ end
 
     % create a new figure and axes
     function create_figure(opts)
-        fig = figure('Tag',['Fig' buffername],'Name',['LSL:Stream''' opts.streamname ''''],'CloseRequestFcn','delete(gcbf)', ...
-            'KeyPressFcn',@(varargin)on_key(varargin{2}.Key));
-        if ~isempty(opts.position)
-            set(fig,'Position',opts.position); end
-        ax = axes('Parent',fig, 'Tag','LSLViewer', 'YDir','reverse');
+        if opts.subplot
+            fig = gcf;
+            ax = subplot(2,1,opts.subplot);
+        else
+            fig = figure('Tag',['Fig' buffername],'Name',['LSL:Stream''' opts.streamname ''''],'CloseRequestFcn','delete(gcbf)', ...
+                'KeyPressFcn',@(varargin)on_key(varargin{2}.Key));
+            if ~isempty(opts.position)
+                set(fig,'Position',opts.position); end
+            ax = axes('Parent',fig, 'Tag','LSLViewer', 'YDir','reverse');
+        end
     end
 
     function on_timer(varargin)
@@ -120,7 +127,8 @@ end
                 % === update buffer contents (happens in the base workspace) ===
                 
                 % pull a new chunk from LSL
-                assignin('base',chunkname,inlet.pull_chunk());
+                [chunkdata,timestamps] = inlet.pull_chunk();
+                assignin('base',chunkname,chunkdata);
                 
                 % append it to the stream buffer
                 evalin('base',['[' buffername '.smax,' buffername '.data(:,1+mod(' buffername '.smax:' buffername '.smax+size(' chunkname ',2)-1,' buffername '.pnts))] = deal(' buffername '.smax + size(' chunkname ',2),' chunkname ');']);
@@ -132,7 +140,11 @@ end
                 samples_to_get = min(stream.pnts, round(stream.srate*stream.opts.timerange));
                 stream.data = stream.data(:, 1+mod(stream.smax-samples_to_get:stream.smax-1,stream.pnts));
                 [stream.nbchan,stream.pnts,stream.trials] = size(stream.data);
-                stream.xmax = stream.smax/stream.srate;
+                if ~isempty(timestamps)
+                    stream.xmax = max(timestamps)-lsl_local_clock(lib);
+                elseif ~isfield(stream,'xmax')
+                    stream.xmax = 0;
+                end
                 stream.xmin = stream.xmax - (stream.pnts-1)/stream.srate;
                 
                 
@@ -151,6 +163,8 @@ end
                 % re-reference
                 if stream.opts.reref
                     plotdata = bsxfun(@minus,plotdata,mean(plotdata)); end
+                if stream.opts.standardize
+                    plotdata = bsxfun(@times,plotdata,1./std(plotdata')'); end
                 
                 % zero-mean
                 plotdata = bsxfun(@minus, plotdata, mean(plotdata,2));
@@ -197,7 +211,11 @@ end
                 disp('Figure was closed.');
             else
                 disp('An error occurred during the stream viewer update: ');
-                hlp_handleerror(e);
+                try
+                    hlp_handleerror(e);
+                catch
+                    disp(e.message);
+                end
             end
             warning off MATLAB:timer:deleterunning
             delete(th);

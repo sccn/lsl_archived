@@ -153,7 +153,7 @@ void MainWindow::link_cognionics() {
 			timeouts.ReadTotalTimeoutMultiplier = 10;
 			timeouts.WriteTotalTimeoutConstant = 50;
 			timeouts.WriteTotalTimeoutMultiplier = 10;
-		
+
 			if (!SetCommTimeouts(hPort,&timeouts))
 				QMessageBox::critical(this,"Error","Could not set COM port timeouts.",QMessageBox::Ok);
 
@@ -176,52 +176,61 @@ void MainWindow::link_cognionics() {
 
 // background data reader thread
 void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int channelCount, std::vector<std::string> channelLabels) {
+	try {
 
-	// create streaminfo
-	lsl::stream_info info("Cognionics","EEG",channelCount,samplingRate,lsl::cf_float32,"Cognionics_C" + boost::lexical_cast<std::string>(channelCount));
-	// append some meta-data
-	lsl::xml_element channels = info.desc().append_child("channels");
-	for (int k=0;k<channelLabels.size();k++) {
-		channels.append_child("channel")
-			.append_child_value("label",channelLabels[k].c_str())
-			.append_child_value("type","EEG")
-			.append_child_value("unit","microvolts");
-	}
-	info.desc().append_child("acquisition")
-		.append_child_value("manufacturer","Cognionics");
-
-	// make a new outlet
-	lsl::stream_outlet outlet(info,samples_per_chunk);
-
-	// reserve memory
-	std::vector<float> sample(channelCount);
-
-	// enter transmission loop
-	unsigned char temp;
-	int msb, lsb2, lsb1;
-	unsigned long bytes_read;
-	while (!stop_) {
-		temp = 0;
-		// scan for the sync byte
-		while (temp != 0xFF)
-			ReadFile(hPort,&temp,1,&bytes_read,NULL);
-
-		// skip the counter
-		ReadFile(hPort,&temp,1,&bytes_read,NULL);
-		
-		// get next sample
-		for(int c=0; c < channelCount; c++) {
-			ReadFile(hPort,&temp,1,&bytes_read,NULL);
-			msb = temp;
-			ReadFile(hPort,&temp,1,&bytes_read,NULL);
-			lsb2 = temp;
-			ReadFile(hPort,&temp,1,&bytes_read,NULL);
-			lsb1 = temp;
-			sample[c] = (double)((msb<<24) | (lsb2<<17) | (lsb1<<10)) * value_scale;
+		// create streaminfo
+		lsl::stream_info info("Cognionics","EEG",channelCount,samplingRate,lsl::cf_float32,"Cognionics_C" + boost::lexical_cast<std::string>(channelCount));
+		// append some meta-data
+		lsl::xml_element channels = info.desc().append_child("channels");
+		for (int k=0;k<channelLabels.size();k++) {
+			channels.append_child("channel")
+				.append_child_value("label",channelLabels[k].c_str())
+				.append_child_value("type","EEG")
+				.append_child_value("unit","microvolts");
 		}
+		info.desc().append_child("acquisition")
+			.append_child_value("manufacturer","Cognionics");
 
-		// push into the outlet
-		outlet.push_sample(sample);
+		// make a new outlet
+		lsl::stream_outlet outlet(info,samples_per_chunk);
+
+		// reserve memory
+		std::vector<float> sample(channelCount);
+
+		// enter transmission loop
+		unsigned char temp;
+		int msb, lsb2, lsb1;
+		unsigned long bytes_read;
+		while (!stop_) {
+			temp = 0;
+			// scan for the sync byte
+			while (temp != 0xFF)
+				ReadFile(hPort,&temp,1,&bytes_read,NULL);
+
+			// skip the counter
+			ReadFile(hPort,&temp,1,&bytes_read,NULL);
+
+			// get next sample
+			for(int c=0; c < channelCount; c++) {
+				ReadFile(hPort,&temp,1,&bytes_read,NULL);
+				msb = temp;
+				ReadFile(hPort,&temp,1,&bytes_read,NULL);
+				lsb2 = temp;
+				ReadFile(hPort,&temp,1,&bytes_read,NULL);
+				lsb1 = temp;
+				sample[c] = (double)((msb<<24) | (lsb2<<17) | (lsb1<<10)) * value_scale;
+			}
+
+			// push into the outlet
+			outlet.push_sample(sample);
+		}
+	}
+	catch(boost::thread_interrupted &e) {
+		// thread was interrupted: no error
+	}
+	catch(std::exception &e) {
+		// any other error
+		QMessageBox::critical(this,"Error",(std::string("Error during processing: ")+=e.what()).c_str(),QMessageBox::Ok);
 	}
 	CloseHandle(hPort);
 }

@@ -203,4 +203,8 @@ public class stream_inlet {
     return lslAndroidJNI.stream_inlet_samples_available(swigCPtr, this);
   }
 
+  public boolean was_clock_reset() {
+    return lslAndroidJNI.stream_inlet_was_clock_reset(swigCPtr, this);
+  }
+
 }
