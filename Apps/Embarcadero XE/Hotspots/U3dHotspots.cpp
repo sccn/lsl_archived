@@ -54,7 +54,7 @@ std::map<int, TPoint3D*> p3Ds;
 
 std::vector<MonitorDrawer*> monitorDrawers;
 
-double dist, xOffset, yOffset;
+double xOffset, yOffset;
 
 int nId=1;
 
@@ -379,9 +379,13 @@ void TForm11::UpdateInfo()
 		lsl_destroy_outlet(dataOutlet);
 		dataOutlet = NULL;
 	}
-
-	lsl_streaminfo eventInfo = lsl_create_streaminfo("HotspotEvents", "HotspotEvents", 1,0, cft_string,"");
-
+	lsl_streaminfo eventInfo;
+	if(streamIdentifier == NULL) {
+		eventInfo = lsl_create_streaminfo("HotspotEvents", "HotspotEvents", 1,0, cft_string,"");
+	} else {
+		char * fullStreamName = (AnsiString("HotspotEvents_") + streamIdentifier).c_str();
+		eventInfo = lsl_create_streaminfo(fullStreamName, fullStreamName, 1,0, cft_string,"");
+	}
 	//see liblsl/C API/lsl_xml_element_c.cpp,  http://pugixml.googlecode.com/svn/tags/release-0.9/docs/manual/modify.html
 	//lsl_xml_ptr is binary equivalent to pugi::xml_node_struct*
 	pugi::xml_node_struct* desc = (pugi::xml_node_struct*) lsl_get_desc(eventInfo);
@@ -404,8 +408,13 @@ void TForm11::UpdateInfo()
 		dataChannels += 2;
 	}
 
-	lsl_streaminfo dataInfo = lsl_create_streaminfo("HotspotData", "HotspotData", dataChannels, (phasespaceThread) ? phasespaceThread->GetResamplingRate() : 0.0, cft_float32, "");
-
+	lsl_streaminfo dataInfo;
+	if(streamIdentifier == NULL) {
+		dataInfo = lsl_create_streaminfo("HotspotData", "HotspotData", dataChannels, (phasespaceThread) ? phasespaceThread->GetResamplingRate() : 0.0, cft_float32, "");
+	} else {
+		char * fullStreamName = (AnsiString("HotspotData_") + streamIdentifier).c_str();
+ 		dataInfo = lsl_create_streaminfo(fullStreamName, fullStreamName, dataChannels, (phasespaceThread) ? phasespaceThread->GetResamplingRate() : 0.0, cft_float32, "");
+	}
 	dataOutlet = lsl_create_outlet(dataInfo,0,360);
 
 
@@ -439,7 +448,7 @@ void ProcessGazeData(float *data, int size, double samplingRate) {
 	__try {
 		if(gu->rEye != 0.0 && x0 != 0.0 ) {
 
-			gu->inverseEyeMap(dist, &xMonitor,&yMonitor);
+			gu->inverseEyeMap(&xMonitor,&yMonitor);
 
 //			if(pr) printf("xMonitor: %g\n", xMonitor);
 //			if(pr) printf("yMonitor: %g\n", yMonitor);
@@ -447,7 +456,7 @@ void ProcessGazeData(float *data, int size, double samplingRate) {
 			yMonitor+=yOffset;
 			if(pr) print("headCur", gu->headCur);
 			if(pr) print("headRef", gu->headRef);
-			if(!_isnan(xMonitor) && !_isnan(yMonitor) && !hasNan(gu->headCur)) {
+			if(!_isnan(xMonitor) && !_isnan(yMonitor)/* && !hasNan(gu->headCur)*/) {
 				//determine the motion of the head
 				ublas::vector<double> priorTranslation(3);
 				ublas::vector<double> postTranslation(3);
@@ -469,7 +478,7 @@ void ProcessGazeData(float *data, int size, double samplingRate) {
 					gazePoint =
 						(-ublas::column(sceneCameraCur,0) + sceneCameraPoint)*xMonitor +//scene camera xhat * magnitude
 						(ublas::column(sceneCameraCur,1) - sceneCameraPoint)*yMonitor +//scene camera yhat * magnitude
-						(ublas::column(sceneCameraCur,2) - sceneCameraPoint)*dist +//scene camera zhat * magnitude
+						(ublas::column(sceneCameraCur,2) - sceneCameraPoint)*gu->distToTarget +//scene camera zhat * magnitude
 						sceneCameraPoint; //scene camera origin
 					if(pr) print("sceneCameraPoint", sceneCameraPoint);
 					if(pr) print("gazePoint", gazePoint);
@@ -495,7 +504,7 @@ void ProcessGazeData(float *data, int size, double samplingRate) {
 		sample[12] = gazePoint(0)/1000.0; //m
 		sample[13] = gazePoint(1)/1000.0; //m
 		sample[14] = gazePoint(2)/1000.0; //m
-		sample[15] = dist;   //mm, assumed distance to target, from scene camera
+		sample[15] = gu->distToTarget;   //mm, assumed distance to target, from scene camera
 
 
 		lsl_push_sample_ftp(hotGazeOutlet, sample, lsl_local_clock(), 1);
@@ -889,7 +898,9 @@ LRESULT CALLBACK WindowPrc(HWND hWnd, UINT Msg,
 
 	return DefWindowProc(hWnd, Msg, wParam, lParam);
 }
-
+//Uses a different numbering than control panel
+//http://social.msdn.microsoft.com/Forums/en-US/windowsgeneraldevelopmentissues/thread/668e3cf9-4e00-4b40-a6f8-c7d2fc1afd39
+//Does not appear to be correctable, in general.
 BOOL CALLBACK MonitorEnumProc(
   __in  HMONITOR hMonitor,
   __in  HDC hDC,
@@ -968,6 +979,7 @@ BOOL CALLBACK MonitorEnumProc(
 //#include "drlib.h"
 void __fastcall TForm11::FormCreate(TObject *Sender)
 {
+	streamIdentifier = NULL;
   	Form11->Caption = UnicodeString("Hotspots, version ") + getVersion();
 	allegro_init();
 	set_gdi_color_format();
@@ -1051,7 +1063,6 @@ void __fastcall TForm11::FormCreate(TObject *Sender)
    hGazeMutex = CreateMutex(0,false,0);
    xOffsetEditChange(this);
    yOffsetEditChange(this);
-   distanceEditChange(this);
 
 }
 
@@ -2104,28 +2115,16 @@ void __fastcall TForm11::GazeComboBoxChange(TObject *Sender)
 
 
 
-	/*if(hotGazeHandleWr) ds_Close(hotGazeHandleWr);
-	hotGazeHandleWr = ds_Open("/tmp/HotGazeStream");
-	ds_XMLSetDatasize(hotGazeHandleWr, 15, 4);
-	ds_XMLSetSamplerate(hotGazeHandleWr,30);
-	WriteXMLtoFile(hotGazeHandleWr,"/tmp/HotGazeStream.xml");
-
-	AnsiString s = GazeComboBox->Text;
-	s[strlen(s.c_str())-1] = 0;
-	AnsiString fn = "/tmp/" + s;
-
-	if(gazeHandleRd) ds_Close(gazeHandleRd);
-	gazeHandleRd = ds_Open(fn.c_str());
-	*/
-
 	if(hotGazeOutlet) {
 		lsl_destroy_outlet(hotGazeOutlet);
 		hotGazeOutlet = NULL;
 	}
 
+	std::vector<UnicodeString> strings =  splitString(GazeComboBox->Text, L'_');
+	streamIdentifier = AnsiString(strings[1]);
+	char * streamName = (AnsiString("HotGazeStream_") + streamIdentifier).c_str();
 
-
-	lsl_streaminfo gazeInfo = lsl_create_streaminfo("HotGazeStream","HotGazeStream", GAZE_CHANNELS, 30, cft_float32,"");
+	lsl_streaminfo gazeInfo = lsl_create_streaminfo(streamName, streamName, GAZE_CHANNELS, 30, cft_float32,"");
 	lsl_xml_ptr desc = lsl_get_desc(gazeInfo);
 	lsl_xml_ptr chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","pupil position x");
@@ -2200,14 +2199,14 @@ void __fastcall TForm11::GazeComboBoxChange(TObject *Sender)
 		delete gazeListenThread; //will not delete till terminated, by VCL design.
 		gazeListenThread = NULL;
 	}
-   //	char temp[512]; //Why does this not work? Embarcadero bug?
+
 	char * temp = (char *) malloc(512);
 	sprintf(temp, "name='%s'", ((AnsiString) GazeComboBox->Text).c_str());
 	gazeListenThread = new TStreamThread(temp,ProcessGazeData);
 	gazeListenThread->Resume();
     free(temp);
 
-
+	UpdateInfo(); //restart the hotspots streams with the new name.
 
 }
 //---------------------------------------------------------------------------
@@ -2303,21 +2302,6 @@ void __fastcall TForm11::CloseDisplaysButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
-
-
-void __fastcall TForm11::distanceEditChange(TObject *Sender)
-{
- 	bool ex = false;
-	try {
-		distanceEdit->Text.ToDouble();
-	} catch (...) {
-		ex = true;
-	}
-
-	if(!ex) dist = distanceEdit->Text.ToDouble();
-}
-//---------------------------------------------------------------------------
 
 void __fastcall TForm11::xOffsetEditChange(TObject *Sender)
 {

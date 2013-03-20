@@ -27,10 +27,6 @@ object MainCaptureForm: TMainCaptureForm
     object TabSheet2: TTabSheet
       Caption = 'Video in'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 11
         Top = 0
@@ -51,6 +47,13 @@ object MainCaptureForm: TMainCaptureForm
         Width = 53
         Height = 12
         Caption = 'Video Input'
+      end
+      object Label8: TLabel
+        Left = 10
+        Top = 117
+        Width = 63
+        Height = 12
+        Caption = 'Audio  Device'
       end
       object cbVideoInputDevice: TComboBox
         Left = 11
@@ -84,8 +87,8 @@ object MainCaptureForm: TMainCaptureForm
         OnClick = RadioGroup1Click
       end
       object edtFrameRate: TLabeledEdit
-        Left = 11
-        Top = 130
+        Left = 259
+        Top = 127
         Width = 78
         Height = 20
         EditLabel.Width = 50
@@ -107,14 +110,27 @@ object MainCaptureForm: TMainCaptureForm
         TabOrder = 4
         OnChange = cbVideoInputChange
       end
+      object cbRecordAudio: TCheckBox
+        Left = 204
+        Top = 131
+        Width = 49
+        Height = 12
+        Alignment = taLeftJustify
+        Caption = 'Audio'
+        TabOrder = 5
+      end
+      object cbAudioInputDevice: TComboBox
+        Left = 16
+        Top = 133
+        Width = 182
+        Height = 20
+        TabOrder = 6
+        OnChange = cbAudioInputDeviceChange
+      end
     end
     object TabSheet1: TTabSheet
       Caption = 'Video out'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label2: TLabel
         Left = 14
         Top = -2
@@ -185,18 +201,6 @@ object MainCaptureForm: TMainCaptureForm
         TabOrder = 4
         Text = '0'
       end
-      object cbRecordAudio: TCheckBox
-        Left = 206
-        Top = 78
-        Width = 49
-        Height = 12
-        Alignment = taLeftJustify
-        Caption = 'Audio'
-        Checked = True
-        State = cbChecked
-        TabOrder = 5
-        OnClick = cbRecordClick
-      end
       object cbCompress: TCheckBox
         Left = 278
         Top = 60
@@ -206,7 +210,7 @@ object MainCaptureForm: TMainCaptureForm
         Caption = 'Compress'
         Checked = True
         State = cbChecked
-        TabOrder = 6
+        TabOrder = 5
         OnClick = cbRecordClick
       end
       object flipVertCheckbox: TCheckBox
@@ -216,7 +220,7 @@ object MainCaptureForm: TMainCaptureForm
         Height = 12
         Alignment = taLeftJustify
         Caption = 'Flip verrtical'
-        TabOrder = 7
+        TabOrder = 6
         OnClick = cbRecordClick
       end
     end
@@ -226,15 +230,11 @@ object MainCaptureForm: TMainCaptureForm
     Top = 193
     Width = 910
     Height = 584
-    ActivePage = tsScene
+    ActivePage = tsEyeTracker
     TabOrder = 1
     object tsScene: TTabSheet
       Caption = 'Scene'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object xParallaxCorrectionEdit: TLabeledEdit
         Left = 14
         Top = 160
@@ -272,17 +272,9 @@ object MainCaptureForm: TMainCaptureForm
     object tsVideo: TTabSheet
       Caption = 'Video'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
     end
     object tsEyeTracker: TTabSheet
       Caption = 'Eyetracker'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label5: TLabel
         Left = 3
         Top = 425
@@ -365,8 +357,6 @@ object MainCaptureForm: TMainCaptureForm
         Width = 97
         Height = 17
         Caption = 'Auto Threshold'
-        Checked = True
-        State = cbChecked
         TabOrder = 6
       end
       object crRadiusMultiplierEdit: TLabeledEdit
@@ -493,7 +483,7 @@ object MainCaptureForm: TMainCaptureForm
         EditLabel.Height = 12
         EditLabel.Caption = 'Eye Radius Max'
         TabOrder = 17
-        Text = '40'
+        Text = '80'
         OnChange = eyeRadiusMaxEditChange
       end
       object cbReferenceCalibColor: TComboBox
@@ -514,8 +504,8 @@ object MainCaptureForm: TMainCaptureForm
     end
   end
   object BitBtnPlay: TBitBtn
-    Left = 392
-    Top = 8
+    Left = 527
+    Top = 25
     Width = 64
     Height = 20
     DoubleBuffered = True
@@ -559,8 +549,8 @@ object MainCaptureForm: TMainCaptureForm
     OnClick = BitBtnPlayClick
   end
   object BitBtnStop: TBitBtn
-    Left = 476
-    Top = 8
+    Left = 605
+    Top = 25
     Width = 59
     Height = 20
     DoubleBuffered = True
@@ -606,7 +596,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object BacklogEdit: TLabeledEdit
     Left = 392
-    Top = 88
+    Top = 105
     Width = 101
     Height = 20
     EditLabel.Width = 67
@@ -616,7 +606,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object FrameDivisorEdit: TLabeledEdit
     Left = 392
-    Top = 135
+    Top = 152
     Width = 101
     Height = 20
     EditLabel.Width = 97
@@ -638,7 +628,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object droppedFramesEdit: TLabeledEdit
     Left = 392
-    Top = 48
+    Top = 65
     Width = 101
     Height = 20
     EditLabel.Width = 120
@@ -648,7 +638,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object SpatialDivisorEdit: TLabeledEdit
     Left = 512
-    Top = 135
+    Top = 152
     Width = 101
     Height = 20
     EditLabel.Width = 98
@@ -658,19 +648,30 @@ object MainCaptureForm: TMainCaptureForm
     Text = '1'
     OnChange = SpatialDivisorEditChange
   end
+  object IdentifierEdit: TLabeledEdit
+    Left = 392
+    Top = 25
+    Width = 121
+    Height = 20
+    EditLabel.Width = 74
+    EditLabel.Height = 12
+    EditLabel.Caption = 'Stream Identifier'
+    TabOrder = 9
+    OnChange = IdentifierEditChange
+  end
   object Timer1: TTimer
     Interval = 50
     OnTimer = Timer1Timer
-    Left = 760
-    Top = 48
+    Left = 840
+    Top = 96
   end
   object OpenDialog1: TOpenDialog
-    Left = 640
-    Top = 48
+    Left = 720
+    Top = 96
   end
   object xdoc_in: TXMLDocument
-    Left = 704
-    Top = 48
+    Left = 784
+    Top = 96
     DOMVendorDesc = 'MSXML'
   end
 end

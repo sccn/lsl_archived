@@ -180,7 +180,7 @@ void __fastcall TStreamThread::Execute()
 			}
 		}
 
-		if(ProcessDataF32) {
+		else if(ProcessDataF32) {
 
 			double timestamp = lsl_pull_sample_f(inlet,f32buf, nChannels, 1.0, &errcode);
 			if(timestamp) {
@@ -205,7 +205,7 @@ void __fastcall TStreamThread::Execute()
 			}
 		}
 
-		if(ProcessDataF64) {
+		else if(ProcessDataF64) {
 
 			double timestamp = lsl_pull_sample_d(inlet,f64buf, nChannels, 1.0, &errcode);
 			if(timestamp) {
@@ -230,7 +230,7 @@ void __fastcall TStreamThread::Execute()
 			}
 		}
 
-		if(ProcessDataString) {
+		else if(ProcessDataString) {
 
 			double timestamp = lsl_pull_sample_str(inlet, &sbuf, 1, 1.0, &errcode);
 			if(timestamp) {
@@ -240,6 +240,12 @@ void __fastcall TStreamThread::Execute()
 				Sleep(5);
 				continue;
 			}
+		//data is not processed by call back. Must use
+		//	while(lsl_pull_sample_f(streamThread->inlet,data, 6, 0.0, &errcode));
+		// in caller
+		} else {
+			Sleep(100);
+			continue;
 		}
 	}
 }

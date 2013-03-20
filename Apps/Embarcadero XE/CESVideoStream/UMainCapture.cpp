@@ -1,7 +1,7 @@
 /*
 Main form for GazeStream.
 
-Written by Matthew Grivich and Andre Vankov, Swartz Center for Computational Neuroscience, UCSD, 2011
+Written by Matthew Grivich and Andre Vankov, Swartz Center for Computational Neuroscience, UCSD, 2011-2013
 */
 //---------------------------------------------------------------------------
 #include "LinearAlgebra.h"
@@ -363,15 +363,15 @@ void __fastcall TMainCaptureForm::Start()
 			UnicodeString outputFileName3;
 			while(true) {
 				if(cbCompress->Checked) {
-					outputFileName =  edOutput->Text+ IntToStr(n)+"_0.asf";
-					outputFileName1 =  edOutput->Text+ IntToStr(n)+"_1.asf";
-					outputFileName2 =  edOutput->Text+ IntToStr(n)+"_2.asf";
-					outputFileName3 =  edOutput->Text+ IntToStr(n)+"_3.asf";
+					outputFileName =  edOutput->Text+ IntToStr(n)+"_EchoBack.asf";
+					outputFileName1 =  edOutput->Text+ IntToStr(n)+"_DeltaBack.asf";
+					outputFileName2 =  edOutput->Text+ IntToStr(n)+"_EchoFront.asf";
+					outputFileName3 =  edOutput->Text+ IntToStr(n)+"_DeltaFront.asf";
 				} else {
-					outputFileName =  edOutput->Text+ IntToStr(n)+"_0.avi";
-					outputFileName1 =  edOutput->Text+ IntToStr(n)+"_1.avi";
-					outputFileName2 =  edOutput->Text+ IntToStr(n)+"_2.avi";
-					outputFileName3 =  edOutput->Text+ IntToStr(n)+"_3.avi";
+					outputFileName =  edOutput->Text+ IntToStr(n)+"_EchoBack.avi";
+					outputFileName1 =  edOutput->Text+ IntToStr(n)+"_DeltaBack.avi";
+					outputFileName2 =  edOutput->Text+ IntToStr(n)+"_EchoFront.avi";
+					outputFileName3 =  edOutput->Text+ IntToStr(n)+"_DeltaFront.avi";
 				}
 
 				if(!FileExists(outputFileName)) break;
@@ -598,7 +598,7 @@ void __fastcall TMainCaptureForm::BitBtnPlayClick(TObject *Sender)
 		outlet3 = NULL;
 	}
 
-	lsl_streaminfo info = lsl_create_streaminfo("VideoStream_0","VideoStream_0",1,30,cft_int32,"");
+	lsl_streaminfo info = lsl_create_streaminfo("VideoStream_EchoBack","VideoStream_EchoBack",1,15,cft_int32,"");
 	lsl_xml_ptr desc = lsl_get_desc(info);
 	lsl_xml_ptr chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","frame");
@@ -606,7 +606,7 @@ void __fastcall TMainCaptureForm::BitBtnPlayClick(TObject *Sender)
 
 	outlet = lsl_create_outlet(info,0,360);
 
-	info = lsl_create_streaminfo("VideoStream_1","VideoStream_1",1,30,cft_int32,"");
+	info = lsl_create_streaminfo("VideoStream_DeltaBack","VideoStream_DeltaBack",1,15,cft_int32,"");
 	desc = lsl_get_desc(info);
 	chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","frame");
@@ -614,7 +614,7 @@ void __fastcall TMainCaptureForm::BitBtnPlayClick(TObject *Sender)
 
 	outlet1 = lsl_create_outlet(info,0,360);
 
-	info = lsl_create_streaminfo("VideoStream_2","VideoStream_2",1,30,cft_int32,"");
+	info = lsl_create_streaminfo("VideoStream_EchoFront","VideoStream_EchoFront",1,15,cft_int32,"");
 	desc = lsl_get_desc(info);
 	chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","frame");
@@ -622,7 +622,7 @@ void __fastcall TMainCaptureForm::BitBtnPlayClick(TObject *Sender)
 
 	outlet2 = lsl_create_outlet(info,0,360);
 
-	info = lsl_create_streaminfo("VideoStream_3","VideoStream_3",1,30,cft_int32,"");
+	info = lsl_create_streaminfo("VideoStream_DeltaFront","VideoStream_DeltaFront",1,15,cft_int32,"");
 	desc = lsl_get_desc(info);
 	chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","frame");

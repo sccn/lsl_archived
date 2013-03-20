@@ -740,7 +740,7 @@ void __fastcall TForm1::Timer1Timer(TObject *Sender)
 	lsl_streaminfo infos[MAX_STREAMS];
 	int streamsFound = lsl_resolver_results(resolver, infos, MAX_STREAMS);
   //	int streamsFound = lsl_resolve_all(infos, MAX_STREAMS, .1);
-	if (streamsFound !=ComboBox1->Items->Count) {
+   	if (streamsFound !=ComboBox1->Items->Count) {
 		ComboBox1->Items->Clear();
 		for (int i = 0; i < streamsFound; i++) {
 			char temp[256];

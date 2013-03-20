@@ -105,6 +105,9 @@ __published:	// IDE-managed Components
 	TCheckBox *flipVertCheckbox;
 	TComboBox *cbReferenceCalibColor;
 	TLabel *Label7;
+	TLabeledEdit *IdentifierEdit;
+	TComboBox *cbAudioInputDevice;
+	TLabel *Label8;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall cbVideoInputDeviceChange(TObject *Sender);
 	void __fastcall cbVideoInputFormatChange(TObject *Sender);
@@ -141,6 +144,8 @@ __published:	// IDE-managed Components
 	void __fastcall cbVideoInputChange(TObject *Sender);
 	void __fastcall crRadiusMaxEditChange(TObject *Sender);
 	void __fastcall cbReferenceCalibColorChange(TObject *Sender);
+	void __fastcall IdentifierEditChange(TObject *Sender);
+	void __fastcall cbAudioInputDeviceChange(TObject *Sender);
 
 private:	// User declarations
 	void __fastcall TMainCaptureForm::Start();
