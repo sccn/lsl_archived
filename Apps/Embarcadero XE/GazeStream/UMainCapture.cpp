@@ -160,6 +160,7 @@ int acqWidth=0, acqHeight=0;
 
 void __fastcall TMainCaptureForm::cbVideoInputDeviceChange(TObject *Sender)
 {
+	if(BitBtnStop->Enabled) btStopClick(this);
 	if(cbVideoInputDevice->ItemIndex != -1) {
 		CaptureWorkerForm->VideoGrabber->VideoDevice = cbVideoInputDevice->ItemIndex;
 		AssignListToComboBox (cbVideoInputFormat, CaptureWorkerForm->VideoGrabber->VideoSizes, CaptureWorkerForm->VideoGrabber->VideoSize);
@@ -169,6 +170,14 @@ void __fastcall TMainCaptureForm::cbVideoInputDeviceChange(TObject *Sender)
 	}
 }
 
+void __fastcall TMainCaptureForm::cbAudioInputDeviceChange(TObject *Sender)
+{
+	if(BitBtnStop->Enabled) btStopClick(this);
+	if(cbAudioInputDevice->ItemIndex != -1) {
+		CaptureWorkerForm->VideoGrabber->AudioDevice = cbAudioInputDevice->ItemIndex;
+	}
+}
+//---------------------------------------------------------------------------
 
 void __fastcall TMainCaptureForm::cbVideoInputChange(TObject *Sender)
 {
@@ -180,6 +189,7 @@ void __fastcall TMainCaptureForm::cbVideoInputChange(TObject *Sender)
 
 void __fastcall TMainCaptureForm::cbVideoInputFormatChange(TObject *Sender)
 {
+	if(BitBtnStop->Enabled) btStopClick(this);
 	if (cbVideoInputFormat->ItemIndex != -1) {
 		CaptureWorkerForm->VideoGrabber->VideoSize = cbVideoInputFormat->ItemIndex;
 		acqWidth = CaptureWorkerForm->VideoGrabber->Display_Width;
@@ -243,12 +253,14 @@ void __fastcall TMainCaptureForm::btStopClick(TObject *Sender)
 	delete frameThread; //will not delete till terminated, by VCL design.
 	frameThread = NULL;
 
+
 	nFrames = 0;
 
 	cbVideoInputDevice->Enabled = true;
 	cbVideoInput->Enabled = true;
 	cbVideoInputFormat->Enabled = true;
 	SpatialDivisorEdit->Enabled = true;
+	cbAudioInputDevice->Enabled = true;
 
 }
 
@@ -260,6 +272,8 @@ void __fastcall TMainCaptureForm::Start()
 		CaptureWorkerForm->VideoGrabber->AnalogVideoStandard = CaptureWorkerForm->VideoGrabber->AnalogVideoStandardIndex ("NTSC M");
 		cbRecord->Enabled =false;
 		CaptureWorkerForm->VideoGrabber->RecordingInNativeFormat = false;
+		CaptureWorkerForm->VideoGrabber->AudioDeviceRendering = cbRecordAudio->Checked;
+
 		if(cbRecord->Checked == true) {
 			CaptureWorkerForm->SetQueue(bmpQueue, hMutex);
 
@@ -329,16 +343,6 @@ void __fastcall TMainCaptureForm::FormDestroy(TObject *Sender)
 		delete gazestreamThread;
 		gazestreamThread = NULL;
 	}
-	/*
-	if(handleWr1)
-		ds_Close(handleWr1);
-	if (handleWrScene)
-		ds_Close(handleWrScene);
-	if (handleWrVideo)
-		ds_Close(handleWrVideo);
-	if(handleRd)
-		ds_Close(handleRd);
-    */
 
 	if(gu)
 		delete gu;
@@ -529,16 +533,16 @@ TOutline* TMainCaptureForm::findLargestOutline(BITMAP *aBmp, boolean above,
 					bool isGood;
 					switch(sceneCalibColor) {
 						case RED:
-							isGood = 255*red/(blue+green+red+.01) >= crThreshold->Position && red >= crThreshold->Position;
+							isGood = 255*red/(blue+green+red+.01) >= tbThreshold->Position && red >= tbThreshold->Position;
 							break;
 						case GREEN:
-							isGood = 255*green/(blue+green+red+.01) >= crThreshold->Position && green >= crThreshold->Position;
+							isGood = 255*green/(blue+green+red+.01) >= tbThreshold->Position && green >= tbThreshold->Position;
 							break;
 						case BLUE:
-							isGood = 255*blue/(blue+green+red+.01) >= crThreshold->Position && blue >= crThreshold->Position;
+							isGood = 255*blue/(blue+green+red+.01) >= tbThreshold->Position && blue >= tbThreshold->Position;
 							break;
 						case WHITE:
-							isGood = (blue+green+red) / 3.0 >= crThreshold->Position;
+							isGood = (blue+green+red) / 3.0 >= tbThreshold->Position;
 							break;
 
 					}
@@ -903,6 +907,10 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		nFrames++;
 
 		if(paint) {
+			if(false) {
+				hline(bmpCanvas, 0,240,640,makecol(255,0,0));
+				vline(bmpCanvas,320,0,480, makecol(255,0,0));
+			}
 			hline(bmpCanvas, crRoiLeftPosition/spatialDivisor, crRoiTopPosition/spatialDivisor, crRoiRightPosition/spatialDivisor, makecol(255,0,0));
 			hline(bmpCanvas, crRoiLeftPosition/spatialDivisor, crRoiBottomPosition/spatialDivisor, crRoiRightPosition/spatialDivisor, makecol(255,0,0));
 			vline(bmpCanvas, crRoiLeftPosition/spatialDivisor,crRoiTopPosition/spatialDivisor, crRoiBottomPosition/spatialDivisor, makecol(255,0,0));
@@ -971,17 +979,19 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		double yMonitor = y0scene;
 		double xScene = 0.0;
 		double yScene = 0.0;
-		double distance = 500;
+
 		if(gu->rEye != 0.0 && radiusAscene !=0 && radiusBscene != 0) {
-				gu->inverseEyeMap(distance, &xMonitor,&yMonitor);
+				gu->inverseEyeMap(&xMonitor,&yMonitor);
+
 
 
 				xScene = xMonitor;
 				yScene = yMonitor;
 
-				gu->sceneMap(distance, &xScene, &yScene);
+				gu->sceneMap(&xScene, &yScene);
+			  //	static v=0;
 
-			  //	 printf("xMonitor: %g yMonitor: %g xScene: %g yScene: %g\n", xMonitor, yMonitor, xScene, yScene);
+			   //	if(v++ % 30 == 0) printf("x0: %g y0: %g xMonitor: %g yMonitor: %g xScene: %g yScene: %g\n", x0scene, y0scene, xMonitor, yMonitor, xScene, yScene);
 
 		}
 
@@ -1008,7 +1018,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 
 		sample[10] = xParallaxCorrection; //pixels
 		sample[11] = yParallaxCorrection; //pixels
-		sample[12] = distance; //mm, assumed distance to target, from scene camera
+		sample[12] = gu->distToTarget; //mm, assumed distance to target, from scene camera
 
 		float timestamp = lsl_local_clock();
 		lsl_push_sample_ftp(outlet, sample, timestamp, 1);
@@ -1017,6 +1027,10 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		nFrames++;
 
 		if(paint) {
+			if(false){
+				hline(bmpCanvas, 0,240,640,makecol(255,0,0));
+				vline(bmpCanvas,320,0,480, makecol(255,0,0));
+			}
 			circlefill(bmpCanvas, xScene/spatialDivisor, yScene/spatialDivisor, 5, makecol(0,0,0));
 			circlefill(bmpCanvas, xScene/spatialDivisor, yScene/spatialDivisor, 3, makecol(255,255,0));
 			HWND hWnd = tPanel->Handle;
@@ -1172,34 +1186,12 @@ void __fastcall TMainCaptureForm::cbRecordClick(TObject *Sender)
 void __fastcall TMainCaptureForm::BitBtnPlayClick(TObject *Sender)
 {
 
-  if(isKind == isVideo) {
-		if(outlet) {
-			lsl_destroy_outlet(outlet);
-			outlet = NULL;
-		}
 
-
-		lsl_streaminfo info = lsl_create_streaminfo("VideoStream","VideoStream",1,30,cft_int32,"");
-		lsl_xml_ptr desc = lsl_get_desc(info);
-		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","frame");
-		lsl_append_child_value(chn,"unit","number");
-
-		outlet = lsl_create_outlet(info,0,360);
-	 /*	if(handleWrVideo) ds_Close(handleWrVideo);
-		char tmpString[256];
-		sprintf(tmpString, "/tmp/VideoStream%d",CaptureWorkerForm->VideoGrabber->VideoDevice);
-		handleWrVideo = ds_Open(tmpString);
-		ds_XMLSetSamplerate(handleWrVideo,30);
-		ds_XMLSetDatasize(handleWrVideo, 0, 4);
-		sprintf(tmpString, "/tmp/VideoStream%d.xml",CaptureWorkerForm->VideoGrabber->VideoDevice);
-		WriteXMLtoFile(handleWrVideo,tmpString);
-		*/
-	}
 	cbVideoInputDevice->Enabled = false;
 	cbVideoInput->Enabled = false;
 	cbVideoInputFormat->Enabled = false;
 	SpatialDivisorEdit->Enabled = false;
+	cbAudioInputDevice->Enabled = false;
 
 	Start();
 	frameThread = new TFrameThread(this, bmpQueue, hMutex, false);
@@ -1238,6 +1230,17 @@ void __fastcall TMainCaptureForm::Timer1Timer(TObject *Sender)
 
 void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 {
+	if(BitBtnStop->Enabled) btStopClick(this);
+	if(outlet) {
+		lsl_destroy_outlet(outlet);
+		outlet = NULL;
+	}
+
+	if(gazestreamThread) {
+		gazestreamThread->Terminate();
+		delete gazestreamThread;
+		gazestreamThread = NULL;
+	}
 	//eye camera
 	if (RadioGroup1->ItemIndex==0)
 	{
@@ -1245,20 +1248,9 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 		PageControl2->ActivePage = tsEyeTracker;
 		Caption = "Video stream: eye camera";
 
-		/*
-		TXMLDocument * xml =CreateXML(MainCaptureForm);
 
-		handleWr1 = ds_Open("/tmp/GazeStream");
-		ds_XMLSetDatasize(handleWr1, 10, 4);
-		ds_XMLSetSamplerate(handleWr1,30);
-		WriteXMLtoFile(handleWr1,"/tmp/GazeStream.xml");
-		*/
-
-		if(outlet) {
-			lsl_destroy_outlet(outlet);
-			outlet = NULL;
-		}
-		lsl_streaminfo info = lsl_create_streaminfo("GazeStream","GazeStream",6,30,cft_float32,generateGUID());
+		char * streamName = (AnsiString("GazeStream_") + AnsiString(IdentifierEdit->Text)).c_str();
+		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,6,30,cft_float32,generateGUID());
 
 		lsl_xml_ptr desc = lsl_get_desc(info);
 		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
@@ -1291,7 +1283,7 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 
 	else
 	//scene camera multi-spot calibrate
-	if (RadioGroup1->ItemIndex==1)//-1)
+	if (RadioGroup1->ItemIndex==1)
 	{
 
 
@@ -1302,14 +1294,11 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 		crRoiBottom->Position = 440;
 		isKind = isSceneMultiCalib;
 		PageControl2->ActivePage = tsEyeTracker;
-		Caption = "Video stream: scene camera";
+		Caption = "Video stream: scene camera calibrate";
 
 
-		if(outlet) {
-			lsl_destroy_outlet(outlet);
-			outlet = NULL;
-		}
-		lsl_streaminfo info = lsl_create_streaminfo("SceneMultiCalibrateStream","SceneMultiCalibrateStream",2 + REFERENCE_MARKER_COUNT*2,30,cft_float32,generateGUID());
+		char * streamName = (AnsiString("SceneCalibrateStream_") + AnsiString(IdentifierEdit->Text)).c_str();
+		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,2 + REFERENCE_MARKER_COUNT*2,30,cft_float32,generateGUID());
 		lsl_xml_ptr desc = lsl_get_desc(info);
 		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","frame");
@@ -1342,58 +1331,17 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 
 	}
 	else
-	//scene camera calibrate
-	if (RadioGroup1->ItemIndex==1)
-	{
 
-		crRoiLeft->Position = 40;
-		crRoiRight->Position = 600;
-		crRoiTop->Position = 40;
-		crRoiBottom->Position = 440;
-		isKind = isSceneCalib;
-		PageControl2->ActivePage = tsEyeTracker;
-		Caption = "Video stream: scene camera";
-
-
-		if(outlet) {
-			lsl_destroy_outlet(outlet);
-			outlet = NULL;
-		}
-		lsl_streaminfo info = lsl_create_streaminfo("SceneCalibrateStream","SceneCalibrateStream",4,30,cft_float32,generateGUID());
-		lsl_xml_ptr desc = lsl_get_desc(info);
-		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","frame");
-		lsl_append_child_value(chn,"unit","number");
-
-		lsl_append_child_value(chn, "name","scene position x");
-		lsl_append_child_value(chn,"unit","pixels");
-
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","scene position y");
-		lsl_append_child_value(chn,"unit","pixels");
-
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","radius");
-		lsl_append_child_value(chn,"unit","pixels");
-
-		outlet = lsl_create_outlet(info,0,360);
-
-
-	}
-	else
 	//scene display
 	if (RadioGroup1->ItemIndex==2)
 	{
-
 		isKind = isScene;
 		PageControl2->ActivePage = tsScene;
 		Caption = "Video stream: scene camera";
 
-		if(outlet) {
-			lsl_destroy_outlet(outlet);
-			outlet = NULL;
-		}
-		lsl_streaminfo info = lsl_create_streaminfo("SceneStream","SceneStream",13,30,cft_float32,generateGUID());
+
+		char * streamName = (AnsiString("SceneStream_") + AnsiString(IdentifierEdit->Text)).c_str();
+		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,13,30,cft_float32,generateGUID());
 		lsl_xml_ptr desc = lsl_get_desc(info);
 		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","frame");
@@ -1445,43 +1393,36 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 		lsl_append_child_value(chn,"unit","pixels");
 
 		outlet = lsl_create_outlet(info,0,360);
+		streamName = (AnsiString("type='GazeStream_") + AnsiString(IdentifierEdit->Text) + AnsiString("'")).c_str();
 
-		gazestreamThread = new TStreamThread("type='GazeStream'");
+			gazestreamThread = new TStreamThread(streamName);
+	   //	gazestreamThread = new TStreamThread("type='GazeStream'");
 
 
-	/*
-		handleRd = ds_Open("/tmp/GazeStream");
-
-		handleWrScene = ds_Open("/tmp/SceneStream");
-		ds_XMLSetSamplerate(handleWrScene,30);
-		ds_XMLSetDatasize(handleWrScene, 10, 4);
-		WriteXMLtoFile(handleWrScene,"/tmp/SceneStream.xml");
-
-		*/
 	}
-	RadioGroup1->Enabled=false;
+//	RadioGroup1->Enabled=false;
 
 
 }
 
 
 void TMainCaptureForm::SetToVideoMode() {
+		if(outlet) {
+			lsl_destroy_outlet(outlet);
+			outlet = NULL;
+		}
+
+		if(gazestreamThread) {
+			gazestreamThread->Terminate();
+			delete gazestreamThread;
+			gazestreamThread = NULL;
+		}
+
 		isKind = isVideo;
 		PageControl2->ActivePage = tsVideo;
 		Caption = "Video stream: video camera";
 		MainCaptureForm->Caption = UnicodeString("Video Stream, version ") + getVersion();
-  /*		if(outlet) {
-			lsl_destroy_outlet(outlet);
-			outlet = NULL;
-		}
-		lsl_streaminfo info = lsl_create_streaminfo("VideoStream","VideoStream",1,30,cft_int32,"");
 
-		lsl_xml_ptr desc = lsl_get_desc(info);
-		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","frame");
-		lsl_append_child_value(chn,"unit","number");
-		outlet = lsl_create_outlet(info,0,360);
-	   */
 		RadioGroup1->Visible = false;
 
 		allegro_init();
@@ -1489,6 +1430,17 @@ void TMainCaptureForm::SetToVideoMode() {
 		set_color_depth(CDEPTH);
 		bmpCanvas = create_bitmap_ex(CDEPTH,tPanel->Width,tPanel->Height);
 		clear_bitmap(bmpCanvas);
+
+		char * streamName = (AnsiString("VideoStream_") + AnsiString(IdentifierEdit->Text)).c_str();
+		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,1,30,cft_int32,"");
+		lsl_xml_ptr desc = lsl_get_desc(info);
+		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
+		lsl_append_child_value(chn, "name","frame");
+		lsl_append_child_value(chn,"unit","number");
+
+		outlet = lsl_create_outlet(info,0,360);
+
+
 }
 //---------------------------------------------------------------------------
 
@@ -1522,6 +1474,20 @@ void __fastcall TMainCaptureForm::LoadCalibrationClick(TObject *Sender)
 {
 	if(OpenDialog1->Execute()) {
 		gu->LoadGazeCalibration(OpenDialog1->FileName, xdoc_in);
+	 /*	gu->eyeMap(-2.94026, -7.25053);
+		double x = 72.6125+320;
+		double y =   93.5124+240;
+
+		gu->inverseEyeMap(&x, &y);
+		printf("sceneX: %g sceneY: %g, distance: %g\n",x,y,gu->distToTarget);
+
+		gu->sceneMap(distance, &x, &y);
+		printf("scenecamX: %g scenecamY: %g\n",x,y);  */
+	  //	remember to
+	  //	double x = 0;
+	  //	double y = *yIn;// - (cameraWidth-1)/2; //from raw pixel coordinates to centered
+	  //	double z = /*(cameraHeight-1)/2 - */*zIn; //from raw pixel coordinates to centered inverted
+	  //in inverse eye map
 
 	}
 }
@@ -1680,6 +1646,16 @@ void __fastcall TMainCaptureForm::cbReferenceCalibColorChange(TObject *Sender)
 	if(cbReferenceCalibColor->ItemIndex != -1) {
 		referenceCalibColor = cbReferenceCalibColor->ItemIndex;
 	}
+}
+//---------------------------------------------------------------------------
+
+
+
+
+void __fastcall TMainCaptureForm::IdentifierEditChange(TObject *Sender)
+{
+	if(BitBtnStop->Enabled) btStopClick(this);
+      RadioGroup1Click(this);
 }
 //---------------------------------------------------------------------------
 

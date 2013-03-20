@@ -1280,7 +1280,7 @@ object Form11: TForm11
       OnChange = PhaseComboBoxChange
     end
     object xOffsetEdit: TLabeledEdit
-      Left = 551
+      Left = 479
       Top = 15
       Width = 66
       Height = 20
@@ -1291,27 +1291,15 @@ object Form11: TForm11
       Text = '0'
       OnChange = xOffsetEditChange
     end
-    object distanceEdit: TLabeledEdit
-      Left = 466
-      Top = 15
-      Width = 71
-      Height = 20
-      EditLabel.Width = 64
-      EditLabel.Height = 12
-      EditLabel.Caption = 'Distance (mm)'
-      TabOrder = 4
-      Text = '500'
-      OnChange = distanceEditChange
-    end
     object yOffsetEdit: TLabeledEdit
-      Left = 640
+      Left = 568
       Top = 15
       Width = 74
       Height = 20
       EditLabel.Width = 62
       EditLabel.Height = 12
       EditLabel.Caption = 'Z Offset (mm)'
-      TabOrder = 5
+      TabOrder = 4
       Text = '0'
       OnChange = yOffsetEditChange
     end

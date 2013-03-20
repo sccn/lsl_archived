@@ -3780,7 +3780,7 @@ object Form1: TForm1
     Top = 160
   end
   object Timer1: TTimer
-    Interval = 500
+    Interval = 2000
     OnTimer = Timer1Timer
     Left = 480
     Top = 272

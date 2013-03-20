@@ -2,8 +2,8 @@ object Form4: TForm4
   Left = 0
   Top = 0
   Caption = 'Form4'
-  ClientHeight = 913
-  ClientWidth = 886
+  ClientHeight = 894
+  ClientWidth = 796
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -117,26 +117,32 @@ object Form4: TForm4
     Caption = 'focal length (camera pixels)'
   end
   object CalculateCalibrationBtn: TButton
-    Left = 8
-    Top = 140
-    Width = 131
+    Left = 16
+    Top = 469
+    Width = 137
     Height = 25
     Caption = 'Calculate Calibration'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 0
     OnClick = CalculateCalibrationBtnClick
   end
   object SaveCalibrationPointsBtn: TButton
-    Left = 8
-    Top = 77
-    Width = 129
+    Left = 15
+    Top = 818
+    Width = 132
     Height = 26
     Caption = 'Save Calibration Points'
     TabOrder = 1
     OnClick = SaveCalibrationPointsBtnClick
   end
   object LoadCalibrationPointsBtn: TButton
-    Left = 8
-    Top = 109
+    Left = 16
+    Top = 850
     Width = 131
     Height = 25
     Caption = 'Load Calibration Points'
@@ -144,17 +150,17 @@ object Form4: TForm4
     OnClick = LoadCalibrationPointsBtnClick
   end
   object SaveCalibrationBtn: TButton
-    Left = 8
-    Top = 171
-    Width = 131
+    Left = 16
+    Top = 500
+    Width = 137
     Height = 25
     Caption = 'Save Calibration'
     TabOrder = 3
     OnClick = SaveCalibrationBtnClick
   end
   object CameraWidthEdit: TLabeledEdit
-    Left = 8
-    Top = 350
+    Left = 320
+    Top = 789
     Width = 121
     Height = 21
     EditLabel.Width = 127
@@ -165,8 +171,8 @@ object Form4: TForm4
     OnChange = CameraWidthEditChange
   end
   object CameraHeightEdit: TLabeledEdit
-    Left = 8
-    Top = 391
+    Left = 320
+    Top = 830
     Width = 121
     Height = 21
     EditLabel.Width = 130
@@ -177,8 +183,8 @@ object Form4: TForm4
     OnChange = CameraHeightEditChange
   end
   object MonitorWidthEdit: TLabeledEdit
-    Left = 8
-    Top = 220
+    Left = 186
+    Top = 789
     Width = 121
     Height = 21
     EditLabel.Width = 94
@@ -189,8 +195,8 @@ object Form4: TForm4
     OnChange = MonitorWidthEditChange
   end
   object MonitorHeightEdit: TLabeledEdit
-    Left = 8
-    Top = 263
+    Left = 186
+    Top = 830
     Width = 121
     Height = 21
     EditLabel.Width = 97
@@ -201,7 +207,7 @@ object Form4: TForm4
     OnChange = MonitorHeightEditChange
   end
   object eyeCalibPanel: TPanel
-    Left = 282
+    Left = 186
     Top = 53
     Width = 481
     Height = 327
@@ -756,8 +762,8 @@ object Form4: TForm4
     end
   end
   object ClearCalibrationPointsBtn: TButton
-    Left = 8
-    Top = 46
+    Left = 16
+    Top = 787
     Width = 131
     Height = 25
     Caption = 'Clear Calibration Points'
@@ -765,114 +771,90 @@ object Form4: TForm4
     OnClick = ClearCalibrationPointsBtnClick
   end
   object sceneCalibPanel: TPanel
-    Left = 282
+    Left = 186
     Top = 411
     Width = 481
     Height = 327
     TabOrder = 11
   end
-  object SceneCameraWidthEdit: TLabeledEdit
-    Left = 8
-    Top = 443
-    Width = 121
-    Height = 21
-    EditLabel.Width = 138
-    EditLabel.Height = 13
-    EditLabel.Caption = 'Scene Camera Width (pixels)'
-    TabOrder = 12
-    Text = '640'
-    OnChange = SceneCameraWidthEditChange
-  end
-  object SceneCameraHeightEdit: TLabeledEdit
-    Left = 8
-    Top = 493
-    Width = 121
-    Height = 21
-    EditLabel.Width = 141
-    EditLabel.Height = 13
-    EditLabel.Caption = 'Scene Camera Height (pixels)'
-    TabOrder = 13
-    Text = '480'
-    OnChange = SceneCameraHeightEditChange
-  end
   object GazeProgressBar: TProgressBar
-    Left = 8
-    Top = 552
+    Left = 16
+    Top = 76
     Width = 145
     Height = 17
     DoubleBuffered = False
     ParentDoubleBuffered = False
-    TabOrder = 14
+    TabOrder = 12
   end
   object SceneProgressBar: TProgressBar
-    Left = 8
-    Top = 610
+    Left = 16
+    Top = 136
     Width = 145
     Height = 21
-    TabOrder = 15
+    TabOrder = 13
   end
   object PhasespaceProgressBar: TProgressBar
-    Left = 8
-    Top = 675
+    Left = 16
+    Top = 193
     Width = 145
     Height = 17
-    TabOrder = 16
+    TabOrder = 14
   end
   object HeadMarker0Edit: TLabeledEdit
-    Left = 32
-    Top = 804
+    Left = 16
+    Top = 248
     Width = 59
     Height = 21
     EditLabel.Width = 70
     EditLabel.Height = 13
     EditLabel.Caption = 'Head Marker 0'
-    TabOrder = 17
+    TabOrder = 15
     Text = '0'
     OnChange = HeadMarker0EditChange
   end
   object HeadMarker1Edit: TLabeledEdit
-    Left = 123
-    Top = 804
+    Left = 99
+    Top = 248
     Width = 54
     Height = 21
     EditLabel.Width = 70
     EditLabel.Height = 13
     EditLabel.Caption = 'Head Marker 1'
-    TabOrder = 18
+    TabOrder = 16
     Text = '1'
     OnChange = HeadMarker1EditChange
   end
   object HeadMarker2Edit: TLabeledEdit
-    Left = 216
-    Top = 804
+    Left = 16
+    Top = 284
     Width = 59
     Height = 21
     EditLabel.Width = 70
     EditLabel.Height = 13
     EditLabel.Caption = 'Head Marker 2'
-    TabOrder = 19
+    TabOrder = 17
     Text = '2'
     OnChange = HeadMarker2EditChange
   end
   object HeadMarker3Edit: TLabeledEdit
-    Left = 297
-    Top = 804
+    Left = 99
+    Top = 284
     Width = 58
     Height = 21
     EditLabel.Width = 70
     EditLabel.Height = 13
     EditLabel.Caption = 'Head Marker 3'
-    TabOrder = 20
+    TabOrder = 18
     Text = '29'
     OnChange = HeadMarker3EditChange
   end
   object ReferenceHeadButton: TButton
-    Left = 399
-    Top = 843
+    Left = 16
+    Top = 407
     Width = 137
     Height = 25
     Caption = 'Reference Head Position'
-    TabOrder = 21
+    TabOrder = 19
     OnClick = ReferenceHeadButtonClick
   end
   object testEye: TButton
@@ -881,7 +863,7 @@ object Form4: TForm4
     Width = 137
     Height = 25
     Caption = 'testEye'
-    TabOrder = 22
+    TabOrder = 20
     OnClick = testEyeClick
   end
   object eyeTestDone: TButton
@@ -890,128 +872,125 @@ object Form4: TForm4
     Width = 137
     Height = 25
     Caption = 'eyeTestDone'
-    TabOrder = 23
+    TabOrder = 21
     OnClick = eyeTestDoneClick
   end
   object GazeComboBox: TComboBox
     AlignWithMargins = True
-    Left = 8
-    Top = 525
+    Left = 16
+    Top = 49
     Width = 137
     Height = 21
-    TabOrder = 24
+    TabOrder = 22
     Text = '<Select gaze stream>'
     OnChange = GazeComboBoxChange
   end
   object SceneComboBox: TComboBox
     AlignWithMargins = True
-    Left = 8
-    Top = 583
+    Left = 20
+    Top = 108
     Width = 137
     Height = 21
-    TabOrder = 25
+    TabOrder = 23
     Text = '<Select scene stream>'
     OnChange = SceneComboBoxChange
   end
   object PhaseComboBox: TComboBox
     AlignWithMargins = True
-    Left = 8
-    Top = 648
+    Left = 16
+    Top = 166
     Width = 137
     Height = 21
-    TabOrder = 26
+    TabOrder = 24
     Text = '<Select phase stream>'
     OnChange = PhaseComboBoxChange
   end
   object StatusMemo: TMemo
-    Left = 711
-    Top = 773
+    Left = 8
+    Top = 549
     Width = 162
-    Height = 116
+    Height = 220
     Lines.Strings = (
       '')
-    TabOrder = 27
+    TabOrder = 25
   end
   object CalibrationWindowButton: TButton
-    Left = 399
-    Top = 808
+    Left = 16
+    Top = 376
     Width = 137
     Height = 25
     Caption = 'Calibration Window'
-    TabOrder = 28
+    TabOrder = 26
     OnClick = CalibrationWindowButtonClick
   end
   object phasespaceTestStart: TButton
-    Left = 551
-    Top = 771
-    Width = 135
+    Left = 931
+    Top = 837
+    Width = 136
     Height = 25
     Caption = 'Phasespace Test Start'
-    TabOrder = 29
+    TabOrder = 27
     OnClick = phasespaceTestStartClick
   end
   object phasespaceTestStop: TButton
-    Left = 551
-    Top = 808
-    Width = 135
+    Left = 931
+    Top = 870
+    Width = 136
     Height = 25
     Caption = 'Phasespace Test Stop'
-    TabOrder = 30
+    TabOrder = 28
     OnClick = phasespaceTestStopClick
   end
   object phasespaceMarker0Edit: TLabeledEdit
-    Left = 32
-    Top = 846
+    Left = 624
+    Top = 789
     Width = 65
     Height = 21
     EditLabel.Width = 102
     EditLabel.Height = 13
     EditLabel.Caption = 'Phasespace Marker 0'
-    TabOrder = 31
+    TabOrder = 29
     Text = '0'
     OnChange = phasespaceMarker0EditChange
   end
   object phasespaceMarker1Edit: TLabeledEdit
-    Left = 141
-    Top = 846
+    Left = 624
+    Top = 839
     Width = 65
     Height = 21
     EditLabel.Width = 102
     EditLabel.Height = 13
     EditLabel.Caption = 'Phasespace Marker 1'
-    TabOrder = 32
+    TabOrder = 30
     Text = '1'
     OnChange = phasespaceMarker1EditChange
   end
-  object monitorDepthEdit: TLabeledEdit
-    Left = 8
-    Top = 305
-    Width = 121
-    Height = 21
-    EditLabel.Width = 95
-    EditLabel.Height = 13
-    EditLabel.Caption = 'Monitor Depth (mm)'
-    TabOrder = 33
-    Text = '16'
-    OnChange = monitorDepthEditChange
-  end
   object MonitorPositionButton: TButton
-    Left = 399
-    Top = 771
+    Left = 16
+    Top = 345
     Width = 137
     Height = 25
     Caption = 'Load Monitor Position'
-    TabOrder = 34
+    TabOrder = 31
     OnClick = MonitorPositionButtonClick
   end
   object AbortCalibrationButton: TButton
-    Left = 399
-    Top = 876
+    Left = 16
+    Top = 438
     Width = 137
     Height = 25
     Caption = 'Abort Calibration'
-    TabOrder = 35
+    TabOrder = 32
     OnClick = AbortCalibrationButtonClick
+  end
+  object LoadIntrinsicButton: TButton
+    Left = 16
+    Top = 314
+    Width = 137
+    Height = 25
+    Caption = 'Load Intrinsic Parameters'
+    TabOrder = 33
+    OnClick = LoadIntrinsicButtonClick
   end
   object xd: TXMLDocument
     Left = 1322
@@ -1053,11 +1032,16 @@ object Form4: TForm4
     Enabled = False
     Interval = 10
     OnTimer = Timer3Timer
-    Left = 808
-    Top = 560
+    Left = 112
+    Top = 728
   end
   object OpenDialog2: TOpenDialog
-    Left = 832
-    Top = 664
+    Left = 120
+    Top = 675
+  end
+  object xdoc_in: TXMLDocument
+    Left = 48
+    Top = 672
+    DOMVendorDesc = 'MSXML'
   end
 end

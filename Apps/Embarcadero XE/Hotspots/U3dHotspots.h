@@ -129,7 +129,6 @@ __published:	// IDE-managed Components
 	TComboBox *PhaseComboBox;
 	TLabel *Label36;
 	TLabeledEdit *xOffsetEdit;
-	TLabeledEdit *distanceEdit;
 	TLabeledEdit *yOffsetEdit;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -191,12 +190,12 @@ __published:	// IDE-managed Components
 	void __fastcall OpenDisplaysButtonClick(TObject *Sender);
 	void __fastcall CloseDisplaysButtonClick(TObject *Sender);
 	void __fastcall PhaseComboBoxChange(TObject *Sender);
-	void __fastcall distanceEditChange(TObject *Sender);
 	void __fastcall xOffsetEditChange(TObject *Sender);
 	void __fastcall yOffsetEditChange(TObject *Sender);
 private:	// User declarations
 	int FindMmfBuffer();
 	pugi::xml_document doc;
+	AnsiString streamIdentifier;
 
 public:		// User declarations
 

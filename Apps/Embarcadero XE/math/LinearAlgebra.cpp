@@ -349,13 +349,13 @@ void svdcmp(ublas::matrix<double> a, ublas::matrix<double> &u, ublas::vector<dou
 	unsigned int nColumns = inMatrix.size2();
 	ublas::matrix<double> outMatrix(nRows, nColumns-1);
 
-	unsigned int outCol = 0;
-	for(unsigned int inCol=0; inCol<nColumns; inCol++) {
-		if(column==inCol) inCol++;
+	unsigned int inCol = 0;
+	for(unsigned int outCol=0; outCol<nColumns-1; outCol++) {
+		if(column==outCol) inCol++;
 		for(int row=0; row<nRows; row++) {
 			outMatrix(row,outCol) = inMatrix(row,inCol);
 		}
-		outCol++;
+		inCol++;
 	}
 	return outMatrix;
 }
@@ -366,23 +366,24 @@ void svdcmp(ublas::matrix<double> a, ublas::matrix<double> &u, ublas::vector<dou
 	int nDimensions = dataOrig.size1();
 	if(nDimensions != 3) throw IllegalArgumentException("findRigidBody: nDimensions should be 3.\n");
 	if(hasNan(dataOrig)) throw IllegalArgumentException("findRigidBody: dataOrig has NANs.\n");
-    if(hasNan(dataCurrent)) throw IllegalArgumentException("findRigidBody: dataCurrent has NANs.\n");
+ //   if(hasNan(dataCurrent)) throw IllegalArgumentException("findRigidBody: dataCurrent has NANs.\n");
 
-	/*
 	while(hasNan(dataCurrent)) {
 		for(unsigned int dim=0; dim<nDimensions; dim++) {
 			for(unsigned int point=0; point<nPoints; point++) {
 				if(_isnan(dataCurrent(dim,point))) {
+
 					dataCurrent = removeColumn(dataCurrent, point);
-					dataOrig = removeColumn(dataCurrent, point);
+					dataOrig = removeColumn(dataOrig, point);
 					nPoints--;
-					point--;
 					goto end;
 				}
 			}
 		}
 		end:
+
 	}
+
 	if(nPoints < 3) {
 		for(int dim=0; dim<nDimensions; dim++) {
 			translationOrig(dim) = NAN;
@@ -394,7 +395,7 @@ void svdcmp(ublas::matrix<double> a, ublas::matrix<double> &u, ublas::vector<dou
 
 		return;
 	}
-	*/
+
 	translationOrig(0) = 0;
 	translationOrig(1) = 0;
 	translationOrig(2) = 0;
