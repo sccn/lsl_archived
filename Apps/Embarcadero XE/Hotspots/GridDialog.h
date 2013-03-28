@@ -27,8 +27,8 @@ __published:	// IDE-managed Components
 	void __fastcall DoneButtonClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
-	int location1, location2, location3, nColumns, nRows, columnThickness;
-	int rowThickness, heightThickness, sensor, device;
+	int location1, location2, location3, nColumns, nRows, sensor, device;
+	double columnThickness, rowThickness, heightThickness;
 	__fastcall TGridForm(TComponent* Owner);
 };
 //---------------------------------------------------------------------------

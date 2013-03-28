@@ -121,6 +121,10 @@ __published:	// IDE-managed Components
 	TButton *AbortCalibrationButton;
 	TButton *LoadIntrinsicButton;
 	TXMLDocument *xdoc_in;
+	TButton *RefreshStreamsButton;
+	TLabeledEdit *BackgroundRedEdit;
+	TLabeledEdit *BackgroundGreenEdit;
+	TLabeledEdit *BackgroundBlueEdit;
 
 	/**
 	 * Main loop. Pulls all available data from input streams. Stores data
@@ -173,12 +177,6 @@ __published:	// IDE-managed Components
 	void __fastcall eyeTestDoneClick(TObject *Sender);
 
 	/**
-	 * Listen for changes in the available data streams, and update the combo boxes
-	 * as necessary.
-	 */
-	void __fastcall Timer2Timer(TObject *Sender);
-
-	/**
 	 * If Gaze combo box changes, load new stream.
 	 */
 	void __fastcall GazeComboBoxChange(TObject *Sender);
@@ -207,6 +205,10 @@ __published:	// IDE-managed Components
 	void __fastcall phasespaceMarker1EditChange(TObject *Sender);
 	void __fastcall AbortCalibrationButtonClick(TObject *Sender);
 	void __fastcall LoadIntrinsicButtonClick(TObject *Sender);
+	void __fastcall RefreshStreamsButtonClick(TObject *Sender);
+	void __fastcall BackgroundRedEditChange(TObject *Sender);
+	void __fastcall BackgroundGreenEditChange(TObject *Sender);
+	void __fastcall BackgroundBlueEditChange(TObject *Sender);
 
 
 private:	// User declarations

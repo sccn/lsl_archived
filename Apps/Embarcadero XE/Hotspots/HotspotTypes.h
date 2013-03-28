@@ -159,10 +159,10 @@ class THotspotGrid {
 
 public:
 	int location1, location2, location3, Xdiv, Zdiv, nSquares;
-	float Xthickness, Ythickness, Zthickness;
+	double Xthickness, Ythickness, Zthickness;
 	std::list<TRectHotspot*> rectHotspots;
 
-	THotspotGrid(int location1, int location2, int location3, int Xdiv, int Zdiv, float Xthickness, float Ythickness, float Zthickness) {
+	THotspotGrid(int location1, int location2, int location3, int Xdiv, int Zdiv, double Xthickness, double Ythickness, double Zthickness) {
 		this->location1 = location1;
 		this->location2 = location2;
 		this->location3 = location3;

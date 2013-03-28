@@ -111,7 +111,6 @@ __published:	// IDE-managed Components
 	TCheckBox *CheckBox1;
 	TComboBox *ComboBox1;
 	TLabel *Label6;
-	TTimer *Timer1;
 	TMemo *Memo2;
 	TXMLDocument *xd;
 	TCheckBox *cbPlay;
@@ -136,6 +135,7 @@ __published:	// IDE-managed Components
 	TLabel *Label7;
 	TLabel *Label8;
 	TLabel *Label9;
+	TButton *RefreshStreamsButton;
 		void __fastcall UpDown1MouseUp(TObject *Sender,
 		  TMouseButton Button, TShiftState Shift, int X, int Y);
 	void __fastcall FormCreate(TObject *Sender);
@@ -154,7 +154,6 @@ __published:	// IDE-managed Components
 		  int Y);
 	void __fastcall ListBox2Click(TObject *Sender);
 	void __fastcall ComboBox1Select(TObject *Sender);
-	void __fastcall Timer1Timer(TObject *Sender);
 	void __fastcall udMoChChangingEx(TObject *Sender, bool &AllowChange, short NewValue,
           TUpDownDirection Direction);
 	void __fastcall cbPlayClick(TObject *Sender);
@@ -162,6 +161,7 @@ __published:	// IDE-managed Components
 	void __fastcall sensor1EditChange(TObject *Sender);
 	void __fastcall sensor2EditChange(TObject *Sender);
 	void __fastcall sensor3EditChange(TObject *Sender);
+	void __fastcall RefreshStreamsButtonClick(TObject *Sender);
 private:	// User declarations
 
 public:		// User declarations

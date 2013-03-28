@@ -26,7 +26,7 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 #define CDEPTH 24
-#define MAX_STREAMS 16
+#define MAX_STREAMS 50
 
 TForm4 *Form4;
 
@@ -41,6 +41,7 @@ double distToTarget=0.0;
 int channelsPerMarker = 4;
 
 int head0, head1, head2, head3, phase0, phase1;
+int backgroundRed, backgroundGreen,backgroundBlue;
 
 BITMAP * bmpCanvas;
 BITMAP * sceneCanvas;
@@ -1384,12 +1385,16 @@ void __fastcall TForm4::FormCreate(TObject *Sender)
 	HeadMarker3EditChange(this);
     phasespaceMarker0EditChange(this);
 	phasespaceMarker1EditChange(this);
+	BackgroundRedEditChange(this);
+	BackgroundGreenEditChange(this);
+	BackgroundBlueEditChange(this);
 
 
 
 	Form4->Caption = UnicodeString("Eye Calibrator, version ") + getVersion();
 
 	setCameraParams();
+	RefreshStreamsButtonClick(this);
 
 }
 //---------------------------------------------------------------------------
@@ -1468,6 +1473,11 @@ void __fastcall TForm4::FormClose(TObject *Sender, TCloseAction &Action)
 	if(sceneInlet) lsl_destroy_inlet(sceneInlet);
 	if(phasespaceInlet) lsl_destroy_inlet(phasespaceInlet);
 
+	 while(!monitorDrawers.empty()) {
+		delete monitorDrawers.back();
+		monitorDrawers.pop_back();
+	}
+
 }
 //---------------------------------------------------------------------------
 
@@ -1521,36 +1531,6 @@ void __fastcall TForm4::eyeTestDoneClick(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
-void __fastcall TForm4::Timer2Timer(TObject *Sender) {
-
-	/*
-	AnsiString DirMMF[100];
-	AnsiString s ="/tmp/*.#";
-	int Count =0;
-	TSearchRec Info;
-	if (FindFirst (s,faAnyFile,Info) ==0) {
-		do
-			DirMMF[Count++]=Info.Name;
-		while (FindNext(Info)==0);
-		FindClose(Info);
-	}
-	 */
-	lsl_streaminfo infos[MAX_STREAMS];
-	int streamsFound = lsl_resolve_all(infos, MAX_STREAMS, 0.1);
-	if (streamsFound !=GazeComboBox->Items->Count) {
-		GazeComboBox->Items->Clear();
-		SceneComboBox->Items->Clear();
-		PhaseComboBox->Items->Clear();
-		for (int i = 0; i < streamsFound; i++) {
-			GazeComboBox->Items->Append(lsl_get_name(infos[i]));
-			SceneComboBox->Items->Append(lsl_get_name(infos[i]));
-			PhaseComboBox->Items->Append(lsl_get_name(infos[i]));
-		}
-
-	}
-	Timer2->Enabled = false;
-}
-//---------------------------------------------------------------------------
 
 
 void __fastcall TForm4::GazeComboBoxChange(TObject *Sender)
@@ -1730,15 +1710,6 @@ void __fastcall TForm4::FormKeyPress(TObject *Sender, wchar_t &Key)
 				markerX = -1.0;
 				markerY = -1.0;
 				break;
-			case VK_ESCAPE:
-				currentSpot = -1;
-				Timer3->Enabled = false;
-				markerX = -1.0;
-				markerY = -1.0;
-				for(int monitor=1; monitor<=monitors.size(); monitor++) {
-					if(monitorDrawers[monitor-1]->visible)  monitorDrawers[monitor-1]->setVisible(SW_HIDE);
-				}
-				break;
 			}
 		}
 		Key = 0;
@@ -1855,7 +1826,7 @@ BOOL CALLBACK MonitorEnumProc(
 				  int err= GetLastError();
 				  //printf("lerr: %d\n", err);
 
-	monitorDrawers.push_back(new MonitorDrawer(hWnd,1));
+	monitorDrawers.push_back(new MonitorDrawer(hWnd,makecol(backgroundRed,backgroundGreen,backgroundBlue), 1));
 
 
    return TRUE;
@@ -1868,6 +1839,7 @@ void __fastcall TForm4::CalibrationWindowButtonClick(TObject *Sender)
 	currentSpot = 0;
 	markerX = -1;
 	markerY = -1;
+
 
 	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
 	int nPoints=0;
@@ -1988,6 +1960,11 @@ void __fastcall TForm4::Timer3Timer(TObject *Sender)
 			if(monitorDrawers[monitor-1]->visible)  monitorDrawers[monitor-1]->setVisible(SW_HIDE);
 		}
 		currentSpot = -1;
+
+		 while(!monitorDrawers.empty()) {
+			delete monitorDrawers.back();
+			monitorDrawers.pop_back();
+		}
 	}
 }
 
@@ -2110,10 +2087,14 @@ void __fastcall TForm4::phasespaceMarker1EditChange(TObject *Sender)
 
 void __fastcall TForm4::AbortCalibrationButtonClick(TObject *Sender)
 {
-		for(unsigned int monitor=1; monitor<=monitorDrawers.size(); monitor++) {
-			if(monitorDrawers[monitor-1]->visible)  monitorDrawers[monitor-1]->setVisible(SW_HIDE);
-		}
-		currentSpot = -1;
+	for(unsigned int monitor=1; monitor<=monitorDrawers.size(); monitor++) {
+		if(monitorDrawers[monitor-1]->visible)  monitorDrawers[monitor-1]->setVisible(SW_HIDE);
+	}
+	currentSpot = -1;
+	 while(!monitorDrawers.empty()) {
+		delete monitorDrawers.back();
+		monitorDrawers.pop_back();
+	}
 }
 //---------------------------------------------------------------------------
 
@@ -2145,6 +2126,65 @@ void __fastcall TForm4::LoadIntrinsicButtonClick(TObject *Sender)
 
 	}
 
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm4::RefreshStreamsButtonClick(TObject *Sender)
+{
+
+	lsl_streaminfo infos[MAX_STREAMS];
+	int streamsFound = lsl_resolve_all(infos, MAX_STREAMS, 0.1);
+
+	GazeComboBox->Items->Clear();
+	SceneComboBox->Items->Clear();
+	PhaseComboBox->Items->Clear();
+	for (int i = 0; i < streamsFound; i++) {
+		GazeComboBox->Items->Append(lsl_get_name(infos[i]));
+		SceneComboBox->Items->Append(lsl_get_name(infos[i]));
+		PhaseComboBox->Items->Append(lsl_get_name(infos[i]));
+	}
+
+
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm4::BackgroundRedEditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		BackgroundRedEdit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex)  backgroundRed = BackgroundRedEdit->Text.ToInt();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm4::BackgroundGreenEditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		BackgroundGreenEdit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex)  backgroundGreen = BackgroundGreenEdit->Text.ToInt();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm4::BackgroundBlueEditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		BackgroundBlueEdit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex)  backgroundBlue = BackgroundBlueEdit->Text.ToInt();
 }
 //---------------------------------------------------------------------------
 
