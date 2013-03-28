@@ -160,7 +160,7 @@ object Form4: TForm4
   end
   object CameraWidthEdit: TLabeledEdit
     Left = 320
-    Top = 789
+    Top = 773
     Width = 121
     Height = 21
     EditLabel.Width = 127
@@ -172,7 +172,7 @@ object Form4: TForm4
   end
   object CameraHeightEdit: TLabeledEdit
     Left = 320
-    Top = 830
+    Top = 814
     Width = 121
     Height = 21
     EditLabel.Width = 130
@@ -184,7 +184,7 @@ object Form4: TForm4
   end
   object MonitorWidthEdit: TLabeledEdit
     Left = 186
-    Top = 789
+    Top = 773
     Width = 121
     Height = 21
     EditLabel.Width = 94
@@ -196,7 +196,7 @@ object Form4: TForm4
   end
   object MonitorHeightEdit: TLabeledEdit
     Left = 186
-    Top = 830
+    Top = 814
     Width = 121
     Height = 21
     EditLabel.Width = 97
@@ -943,7 +943,7 @@ object Form4: TForm4
   end
   object phasespaceMarker0Edit: TLabeledEdit
     Left = 624
-    Top = 789
+    Top = 773
     Width = 65
     Height = 21
     EditLabel.Width = 102
@@ -955,7 +955,7 @@ object Form4: TForm4
   end
   object phasespaceMarker1Edit: TLabeledEdit
     Left = 624
-    Top = 839
+    Top = 823
     Width = 65
     Height = 21
     EditLabel.Width = 102
@@ -992,6 +992,51 @@ object Form4: TForm4
     TabOrder = 33
     OnClick = LoadIntrinsicButtonClick
   end
+  object RefreshStreamsButton: TButton
+    Left = 20
+    Top = 16
+    Width = 137
+    Height = 25
+    Caption = 'Refresh Streams'
+    TabOrder = 34
+    OnClick = RefreshStreamsButtonClick
+  end
+  object BackgroundRedEdit: TLabeledEdit
+    Left = 480
+    Top = 773
+    Width = 65
+    Height = 21
+    EditLabel.Width = 112
+    EditLabel.Height = 13
+    EditLabel.Caption = 'Calib Background (Red)'
+    TabOrder = 35
+    Text = '100'
+    OnChange = BackgroundRedEditChange
+  end
+  object BackgroundGreenEdit: TLabeledEdit
+    Left = 480
+    Top = 814
+    Width = 65
+    Height = 21
+    EditLabel.Width = 122
+    EditLabel.Height = 13
+    EditLabel.Caption = 'Calib Background (Green)'
+    TabOrder = 36
+    Text = '100'
+    OnChange = BackgroundGreenEditChange
+  end
+  object BackgroundBlueEdit: TLabeledEdit
+    Left = 480
+    Top = 860
+    Width = 65
+    Height = 21
+    EditLabel.Width = 113
+    EditLabel.Height = 13
+    EditLabel.Caption = 'Calib Background (Blue)'
+    TabOrder = 37
+    Text = '100'
+    OnChange = BackgroundBlueEditChange
+  end
   object xd: TXMLDocument
     Left = 1322
     Top = 723
@@ -1014,7 +1059,6 @@ object Form4: TForm4
     Top = 715
   end
   object Timer2: TTimer
-    OnTimer = Timer2Timer
     Left = 1368
     Top = 771
   end

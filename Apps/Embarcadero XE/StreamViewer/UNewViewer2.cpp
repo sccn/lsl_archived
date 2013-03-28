@@ -56,7 +56,6 @@ TStreamThread *listenThread;
 //void * hInStream = 0;
 int CurrChNmb=0;
 
-lsl_continuous_resolver resolver = NULL;
 
 int GetAttribute(_di_IXMLNode Node, AnsiString attr)
 {
@@ -435,12 +434,13 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 	TabSheet [19] =TabSheet22;
 
 	TimerDisp->Enabled=true;
-	resolver = lsl_create_continuous_resolver(1.0);
 
 	sensor0EditChange(this);
 	sensor1EditChange(this);
 	sensor2EditChange(this);
 	sensor3EditChange(this);
+
+	RefreshStreamsButtonClick(this);
 
 }
 //---------------------------------------------------------------------------
@@ -452,13 +452,7 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 		delete listenThread; //will not delete till terminated, by VCL design.
 		listenThread = NULL;
 	}
-  /*	if (hInStream)
-		ds_Close(hInStream);
-	DWORD dwPID = getpid();
-	TerminateApp( dwPID, 500) ;
-	*/
 
-	if(resolver) lsl_destroy_continuous_resolver(resolver);
 
 	delete Display;
 	delete Display3D;
@@ -734,25 +728,6 @@ void __fastcall TForm1::ComboBox1Select(TObject *Sender)
 
 
 #define MAX_STREAMS 256
-void __fastcall TForm1::Timer1Timer(TObject *Sender)
-{
-
-	lsl_streaminfo infos[MAX_STREAMS];
-	int streamsFound = lsl_resolver_results(resolver, infos, MAX_STREAMS);
-  //	int streamsFound = lsl_resolve_all(infos, MAX_STREAMS, .1);
-   	if (streamsFound !=ComboBox1->Items->Count) {
-		ComboBox1->Items->Clear();
-		for (int i = 0; i < streamsFound; i++) {
-			char temp[256];
-			sprintf(temp,"%s;%s", lsl_get_name(infos[i]), lsl_get_uid(infos[i]));
-			ComboBox1->Items->Append(temp);
-			lsl_destroy_streaminfo(infos[i]);
-		}
-
-	}
-
-}
-//---------------------------------------------------------------------------
 
 
 
@@ -836,5 +811,25 @@ void __fastcall TForm1::sensor3EditChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
+
+
+void __fastcall TForm1::RefreshStreamsButtonClick(TObject *Sender)
+{
+
+	lsl_streaminfo infos[MAX_STREAMS];
+	int streamsFound = lsl_resolve_all(infos, MAX_STREAMS, 0.1);
+	ComboBox1->Items->Clear();
+	for (int i = 0; i < streamsFound; i++) {
+		char temp[256];
+		sprintf(temp,"%s;%s", lsl_get_name(infos[i]), lsl_get_uid(infos[i]));
+		ComboBox1->Items->Append(temp);
+		lsl_destroy_streaminfo(infos[i]);
+	}
+
+
+
+}
+//---------------------------------------------------------------------------
 
 

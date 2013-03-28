@@ -85,7 +85,7 @@ class MonitorDrawer {
 
 
 	//windowed mode
-	MonitorDrawer(HWND hWnd, int forCalibDummy) {
+	MonitorDrawer(HWND hWnd, int backgroundColor, int dummyForCalib) {
 		InitializeParameters();
 		hwnd = hWnd;
 		hdc = GetDC(hwnd);
@@ -98,19 +98,22 @@ class MonitorDrawer {
 		markerSize = 100;//50;
 		bmpSprite = create_bitmap_ex(CDEPTH,markerSize,markerSize);
 		clear_bitmap(bmpSprite);
-		rectfill(bmpSprite, 0,0,markerSize,markerSize,makecol(100,100,100));
+		rectfill(bmpSprite, 0,0,markerSize,markerSize,backgroundColor);
+	  //		rectfill(bmpSprite, 0,0,markerSize,markerSize,makecol(0,0,0));
 		circlefill(bmpSprite, markerSize/2, markerSize/2, markerSize/2-1, makecol(255,0,0));
 		circlefill(bmpSprite, markerSize/2, markerSize/2, markerSize/20, makecol(0,0,0));
 
 		bmpBackground = create_bitmap_ex(CDEPTH,markerSize,markerSize);
 		clear_bitmap(bmpBackground);
-		rectfill(bmpBackground, 0,0,markerSize,markerSize,makecol(100,100,100));
+		rectfill(bmpBackground, 0,0,markerSize,markerSize,backgroundColor);
+	  //		rectfill(bmpBackground, 0,0,markerSize,markerSize,makecol(0,0,0));
 		circlefill(bmpBackground, markerSize/2, markerSize/2, markerSize/2-1, makecol(0,0,255));
 		circlefill(bmpBackground, markerSize/2, markerSize/2, markerSize/20, makecol(0,0,0));
 
 		bmpBlackFullBackground = create_bitmap_ex(CDEPTH,xRes,yRes);
 		clear_bitmap(bmpBlackFullBackground);
-		rectfill(bmpBlackFullBackground,0,0,xRes,yRes,makecol(100,100,100));
+		rectfill(bmpBlackFullBackground,0,0,xRes,yRes,backgroundColor);
+		//	rectfill(bmpBlackFullBackground,0,0,xRes,yRes,makecol(0,0,0));
 
 		visible = false;
 

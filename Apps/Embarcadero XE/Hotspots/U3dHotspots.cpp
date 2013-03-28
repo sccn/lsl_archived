@@ -23,9 +23,6 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 
-
-
-
 #define CDEPTH 24
 
 
@@ -71,11 +68,9 @@ lsl_outlet eventOutlet = NULL;
 lsl_outlet hotGazeOutlet = NULL;
 lsl_outlet dataOutlet = NULL;
 #define GAZE_CHANNELS 16
-#define MAX_STREAMS 16
+#define MAX_STREAMS 50
 
 TGazeUtil *gu;
-
-lsl_continuous_resolver resolver = NULL;
 
 void  TForm11::GenerateXMLHeader()
 {
@@ -413,7 +408,7 @@ void TForm11::UpdateInfo()
 		dataInfo = lsl_create_streaminfo("HotspotData", "HotspotData", dataChannels, (phasespaceThread) ? phasespaceThread->GetResamplingRate() : 0.0, cft_float32, "");
 	} else {
 		char * fullStreamName = (AnsiString("HotspotData_") + streamIdentifier).c_str();
- 		dataInfo = lsl_create_streaminfo(fullStreamName, fullStreamName, dataChannels, (phasespaceThread) ? phasespaceThread->GetResamplingRate() : 0.0, cft_float32, "");
+		dataInfo = lsl_create_streaminfo(fullStreamName, fullStreamName, dataChannels, (phasespaceThread) ? phasespaceThread->GetResamplingRate() : 0.0, cft_float32, "");
 	}
 	dataOutlet = lsl_create_outlet(dataInfo,0,360);
 
@@ -991,11 +986,6 @@ void __fastcall TForm11::FormCreate(TObject *Sender)
  //	InitDRlib();
 
    //	hMutex = CreateMutex(0,false,0);
-   resolver = lsl_create_continuous_resolver(1.0);
-	Timer1->Enabled = true;
-
-
-
 
 	DISPLAY_DEVICE dd;
 	dd.cb = sizeof(dd);
@@ -1063,6 +1053,7 @@ void __fastcall TForm11::FormCreate(TObject *Sender)
    hGazeMutex = CreateMutex(0,false,0);
    xOffsetEditChange(this);
    yOffsetEditChange(this);
+   RefreshStreamsButtonClick(this);
 
 }
 
@@ -1359,8 +1350,8 @@ void TForm11::addDirection(TPoint3D * p3D,  int r, int device, int sensor1, int 
 }
 
 
-void TForm11::addRectangular(THotspotGrid *hotspotGrid, int x, int y, int z, int Xthickness,
-			int Ythickness, int Zthickness, int sensor, int device) {
+void TForm11::addRectangular(THotspotGrid *hotspotGrid, double x, double y, double z, double Xthickness,
+			double Ythickness, double Zthickness, int sensor, int device) {
 
 		TRectHotspot * pHs = new TRectHotspot(
 				x,
@@ -1588,9 +1579,9 @@ void __fastcall TForm11::GridPanel1Click(TObject *Sender)
 			int device = GridForm->device;
 			int nColumns = GridForm->nColumns;
 			int nRows = GridForm->nRows;
-			int Ythickness= GridForm->heightThickness;
-			int maxColumnThickness = GridForm->columnThickness;
-			int maxRowThickness = GridForm->rowThickness;
+			double Ythickness= GridForm->heightThickness;
+			double maxColumnThickness = GridForm->columnThickness;
+			double maxRowThickness = GridForm->rowThickness;
 
 			if(p3Ds.find(location1) == p3Ds.end())  {
 				Application->MessageBoxA(L"Location 1 is not valid.", L"Error", MB_OK);
@@ -1619,8 +1610,9 @@ void __fastcall TForm11::GridPanel1Click(TObject *Sender)
 
 
 			double columnStepX, columnStepZ, rowStepX, rowStepZ;
-			int Xdiv, Zdiv, Xthickness, Zthickness;
-			double y = ((double) p3D3->y +(double) p3D2->y + (double) p3D1->y) / 3;
+			int Xdiv, Zdiv;
+			double Xthickness, Zthickness;
+			double y = ((double) p3D3->y +(double) p3D2->y + (double) p3D1->y) / 3.0;
 			double x,z;
 			//if step through x first.  square 2 is at different x, same z as 1.
 			if(abs(p3D2->x - p3D1->x) > abs(p3D2->z - p3D1->z)) {
@@ -1630,10 +1622,10 @@ void __fastcall TForm11::GridPanel1Click(TObject *Sender)
 				rowStepZ = (double) (p3D3->z - (p3D1->z+p3D2->z)/2.0)/(double)nRows;
 				Xdiv = nColumns;
 				Zdiv = nRows;
-				Xthickness = std::min((int) fabs(columnStepX), maxColumnThickness);
-				Zthickness = std::min((int) fabs(rowStepZ), maxRowThickness);
-				x = columnStepX/2 + p3D1->x;
-				z = rowStepZ/2 + p3D1->z;
+				Xthickness = std::min( fabs(columnStepX), maxColumnThickness);
+				Zthickness = std::min( fabs(rowStepZ), maxRowThickness);
+				x = columnStepX/2.0 + p3D1->x;
+				z = rowStepZ/2.0 + p3D1->z;
 			//else if step through z first
 			} else {
 				columnStepX = 0.0;
@@ -1642,10 +1634,10 @@ void __fastcall TForm11::GridPanel1Click(TObject *Sender)
 				rowStepZ = 0.0;
 				Xdiv = nRows;
 				Zdiv = nColumns;
-				Xthickness = std::min((int)fabs(rowStepX), maxRowThickness);
-				Zthickness = std::min((int)fabs(columnStepZ), maxColumnThickness);
-				x = rowStepX/2 + p3D1->x;
-				z = columnStepZ/2 + p3D1->z;
+				Xthickness = std::min(fabs(rowStepX), maxRowThickness);
+				Zthickness = std::min(fabs(columnStepZ), maxColumnThickness);
+				x = rowStepX/2.0 + p3D1->x;
+				z = columnStepZ/2.0 + p3D1->z;
 			}
 
 
@@ -1661,8 +1653,8 @@ void __fastcall TForm11::GridPanel1Click(TObject *Sender)
 						hotspotGrids.push_back(hotspotGrid);
 				for(int i=0; i<nRows; i++) {
 					for(int j=0; j<nColumns; j++) {
-						addRectangular(hotspotGrid, (int) x, (int) y,
-						 (int) z,Xthickness, Ythickness, Zthickness, sensor, device++);
+						addRectangular(hotspotGrid, x, y,
+						  z,Xthickness, Ythickness, Zthickness, sensor, device++);
 						x+= columnStepX;
 						z+= columnStepZ;
 					}
@@ -2040,43 +2032,6 @@ void __fastcall TForm11::Button4Click(TObject *Sender)
 
 
 
-void __fastcall TForm11::Timer1Timer(TObject *Sender)
-{
-	lsl_streaminfo infos[MAX_STREAMS];
-	int streamsFound = lsl_resolver_results(resolver, infos, MAX_STREAMS);
-	if (streamsFound !=PhaseComboBox->Items->Count) {
-		PhaseComboBox->Items->Clear();
-		for (int i = 0; i < streamsFound; i++) {
-			PhaseComboBox->Items->Append(lsl_get_name(infos[i]));
-		}
-
-		GazeComboBox->Items->Clear();
-		for (int i = 0; i < streamsFound; i++) {
-			GazeComboBox->Items->Append(lsl_get_name(infos[i]));
-			lsl_destroy_streaminfo(infos[i]);
-		}
-	}
-	/*
-	lsl_streaminfo infos[MAX_STREAMS];
-	int streamsFound = lsl_resolve_all(infos, MAX_STREAMS, .1);
-  //	printf("streamsFound: %d\n", streamsFound);
-	if(streamsFound != PhaseComboBox->Items->Count) {
-
-		PhaseComboBox->Items->Clear();
-		for(int i=0; i<streamsFound; i++) {
-			PhaseComboBox->Items->Append(lsl_get_name(infos[i]));
-		}
-
-		GazeComboBox->Items->Clear();
-		for(int i=0; i<streamsFound; i++) {
-			GazeComboBox->Items->Append(lsl_get_name(infos[i]));
-		}
-
-
-	}
-	Timer1->Enabled = false;*/
-}
-//---------------------------------------------------------------------------
 
 
 void __fastcall TForm11::PhaseComboBoxChange(TObject *Sender)
@@ -2121,8 +2076,14 @@ void __fastcall TForm11::GazeComboBoxChange(TObject *Sender)
 	}
 
 	std::vector<UnicodeString> strings =  splitString(GazeComboBox->Text, L'_');
-	streamIdentifier = AnsiString(strings[1]);
-	char * streamName = (AnsiString("HotGazeStream_") + streamIdentifier).c_str();
+
+	char * streamName;
+	if(strings.size() < 2)
+		streamName = AnsiString("HotGazeStream_").c_str();
+	else  {
+		streamIdentifier = AnsiString(strings[1]);
+		streamName = (AnsiString("HotGazeStream_") + streamIdentifier).c_str();
+	}
 
 	lsl_streaminfo gazeInfo = lsl_create_streaminfo(streamName, streamName, GAZE_CHANNELS, 30, cft_float32,"");
 	lsl_xml_ptr desc = lsl_get_desc(gazeInfo);
@@ -2277,7 +2238,6 @@ void __fastcall TForm11::FormDestroy(TObject *Sender)
 		delete1D(phaseData);
     	phaseData = NULL;
 	}
-	if(resolver) lsl_destroy_continuous_resolver(resolver);
 
 	while(!monitorDrawers.empty()) {
 		delete monitorDrawers.back();
@@ -2329,4 +2289,23 @@ void __fastcall TForm11::yOffsetEditChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
+void __fastcall TForm11::RefreshStreamsButtonClick(TObject *Sender)
+{
+	lsl_streaminfo infos[MAX_STREAMS];
+	int streamsFound = lsl_resolve_all(infos, MAX_STREAMS, 0.1);
+
+	PhaseComboBox->Items->Clear();
+	for (int i = 0; i < streamsFound; i++) {
+		PhaseComboBox->Items->Append(lsl_get_name(infos[i]));
+	}
+
+	GazeComboBox->Items->Clear();
+	for (int i = 0; i < streamsFound; i++) {
+		GazeComboBox->Items->Append(lsl_get_name(infos[i]));
+		lsl_destroy_streaminfo(infos[i]);
+	}
+
+}
+//---------------------------------------------------------------------------
 
