@@ -175,7 +175,7 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int ch
 	try {
 
 		// create streaminfo
-		lsl::stream_info info("MINDO","EEG",channelCount,samplingRate,lsl::cf_float32,"MINDO_C" + boost::lexical_cast<std::string>(channelCount));
+		lsl::stream_info info("MINDO:COM" + boost::lexical_cast<std::string>(comPort),"EEG",channelCount,samplingRate,lsl::cf_float32,"MINDO_C" + boost::lexical_cast<std::string>(channelCount) + boost::lexical_cast<std::string>(comPort));
 		// append some meta-data
 		lsl::xml_element channels = info.desc().append_child("channels");
 		for (int k=0;k<channelLabels.size();k++) {
