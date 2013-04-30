@@ -93,8 +93,6 @@ __published:	// IDE-managed Components
 	TSaveDialog *SaveDialog1;
 	TButton *ClearCalibrationPointsBtn;
 	TPanel *sceneCalibPanel;
-	TLabeledEdit *SceneCameraWidthEdit;
-	TLabeledEdit *SceneCameraHeightEdit;
 	TProgressBar *GazeProgressBar;
 	TProgressBar *SceneProgressBar;
 	TProgressBar *PhasespaceProgressBar;
@@ -119,9 +117,14 @@ __published:	// IDE-managed Components
 	TButton *phasespaceTestStop;
 	TLabeledEdit *phasespaceMarker0Edit;
 	TLabeledEdit *phasespaceMarker1Edit;
-	TLabeledEdit *monitorDepthEdit;
 	TButton *MonitorPositionButton;
 	TButton *AbortCalibrationButton;
+	TButton *LoadIntrinsicButton;
+	TXMLDocument *xdoc_in;
+	TButton *RefreshStreamsButton;
+	TLabeledEdit *BackgroundRedEdit;
+	TLabeledEdit *BackgroundGreenEdit;
+	TLabeledEdit *BackgroundBlueEdit;
 
 	/**
 	 * Main loop. Pulls all available data from input streams. Stores data
@@ -156,10 +159,6 @@ __published:	// IDE-managed Components
 	 *
 	 */
 	void __fastcall eyeCalibration();
-
-
-	void __fastcall SceneCameraWidthEditChange(TObject *Sender);
-	void __fastcall SceneCameraHeightEditChange(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	/**
 	 * Click when head is in head-fixed position.
@@ -176,12 +175,6 @@ __published:	// IDE-managed Components
 	 * Ends the eye test.
 	 */
 	void __fastcall eyeTestDoneClick(TObject *Sender);
-
-	/**
-	 * Listen for changes in the available data streams, and update the combo boxes
-	 * as necessary.
-	 */
-	void __fastcall Timer2Timer(TObject *Sender);
 
 	/**
 	 * If Gaze combo box changes, load new stream.
@@ -203,7 +196,6 @@ __published:	// IDE-managed Components
 	void __fastcall FormKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
 	void __fastcall phasespaceTestStartClick(TObject *Sender);
 	void __fastcall phasespaceTestStopClick(TObject *Sender);
-	void __fastcall monitorDepthEditChange(TObject *Sender);
 	void __fastcall MonitorPositionButtonClick(TObject *Sender);
 	void __fastcall HeadMarker0EditChange(TObject *Sender);
 	void __fastcall HeadMarker1EditChange(TObject *Sender);
@@ -212,6 +204,11 @@ __published:	// IDE-managed Components
 	void __fastcall phasespaceMarker0EditChange(TObject *Sender);
 	void __fastcall phasespaceMarker1EditChange(TObject *Sender);
 	void __fastcall AbortCalibrationButtonClick(TObject *Sender);
+	void __fastcall LoadIntrinsicButtonClick(TObject *Sender);
+	void __fastcall RefreshStreamsButtonClick(TObject *Sender);
+	void __fastcall BackgroundRedEditChange(TObject *Sender);
+	void __fastcall BackgroundGreenEditChange(TObject *Sender);
+	void __fastcall BackgroundBlueEditChange(TObject *Sender);
 
 
 private:	// User declarations

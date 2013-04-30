@@ -159,10 +159,10 @@ class THotspotGrid {
 
 public:
 	int location1, location2, location3, Xdiv, Zdiv, nSquares;
-	float Xthickness, Ythickness, Zthickness;
+	double Xthickness, Ythickness, Zthickness;
 	std::list<TRectHotspot*> rectHotspots;
 
-	THotspotGrid(int location1, int location2, int location3, int Xdiv, int Zdiv, float Xthickness, float Ythickness, float Zthickness) {
+	THotspotGrid(int location1, int location2, int location3, int Xdiv, int Zdiv, double Xthickness, double Ythickness, double Zthickness) {
 		this->location1 = location1;
 		this->location2 = location2;
 		this->location3 = location3;
@@ -248,6 +248,9 @@ class THotspotScreen {
 		double positionX;
 		double positionY;
 
+		double monitorWidth;
+		double monitorHeight;
+
 	THotspotScreen(std::map<int, TPoint3D*> p3Ds, int topLft, int topRght, int bottomLft, int bottomRght,
 		int sensr0, int sensr1, int devce, int monitrNumber, double monitrDepth):
 		topLeftID(topLft),
@@ -280,6 +283,9 @@ class THotspotScreen {
 			unchangedCount = 0;
 			positionX = -1.0;
 			positionY = -1.0;
+
+			monitorWidth = (length(monitorBR - monitorBL) + length(monitorTR - monitorTL))/2;
+			monitorHeight = (length(monitorBL - monitorTL) + 	length(monitorBR - monitorTR))/2;
 
 	};
 

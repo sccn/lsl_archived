@@ -25,6 +25,7 @@ class TGazeUtil {
 		double rEye, x0Eye, y0Eye, z0Eye, a, b, g, bx, by, bz, fc;
 		double monitorWidth, monitorHeight, cameraWidth, cameraHeight;
 		double r00, r10, r20, r01, r11, r21, r02, r12, r22;
+		double distToTarget;
 
 		double sceneCameraWidth, sceneCameraHeight;
 
@@ -40,7 +41,7 @@ class TGazeUtil {
 		bool initialized;
 
 		TGazeUtil() {
-   			rEye = 0.0; x0Eye = 0.0; y0Eye = 0.0; z0Eye = 0.0; a = 0.0; b = 0.0; g= 0.0; bx = 0.0; by = 0.0; bz = 0.0; fc = 0.0;
+			rEye = 0.0; x0Eye = 0.0; y0Eye = 0.0; z0Eye = 0.0; a = 0.0; b = 0.0; g= 0.0; bx = 0.0; by = 0.0; bz = 0.0; fc = 0.0; distToTarget = 0.0;
 			monitorWidth = 1.0; monitorHeight = 1.0; cameraWidth = 1.0; cameraHeight = 1.0;
 			r00 = 0.0; r10 = 0.0; r20 = 0.0; r01 = 0.0; r11 = 0.0; r21 = 0.0; r02 = 0.0; r12 = 0.0; r22 = 0.0;
 
@@ -65,12 +66,14 @@ class TGazeUtil {
 		/**
 		 * Map from eye coordinates to calibration monitor coordinates.
 		 */
-		void inverseEyeMap(double distanceFromSceneCamToTarget, double *yIn, double *zIn);
+		void inverseEyeMap(double *yIn, double *zIn);
+
+		void eyeMap(double sceneX, double sceneY, double sceneZ);
 
 		/**
 		 * Map from eye coordinates to scene coordinates.
 		 */
-		void sceneMap(double distanceFromSceneCamToTarget, double *yIn, double *zIn);
+		void sceneMap(double *yIn, double *zIn);
 
 		/**
 		 * Map from eye coordinates to monitor coordinates, when the head is free to move.
