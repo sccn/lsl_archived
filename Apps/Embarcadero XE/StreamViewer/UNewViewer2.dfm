@@ -3739,7 +3739,7 @@ object Form1: TForm1
     end
   end
   object ComboBox1: TComboBox
-    Left = 97
+    Left = 125
     Top = 0
     Width = 344
     Height = 20
@@ -3773,17 +3773,20 @@ object Form1: TForm1
     Caption = 'Parse Data?'
     TabOrder = 7
   end
+  object RefreshStreamsButton: TButton
+    Left = 33
+    Top = -1
+    Width = 86
+    Height = 25
+    Caption = 'Refresh Streams'
+    TabOrder = 8
+    OnClick = RefreshStreamsButtonClick
+  end
   object TimerDisp: TTimer
     Enabled = False
     Interval = 100
     Left = 328
     Top = 160
-  end
-  object Timer1: TTimer
-    Interval = 500
-    OnTimer = Timer1Timer
-    Left = 480
-    Top = 272
   end
   object xd: TXMLDocument
     Left = 664

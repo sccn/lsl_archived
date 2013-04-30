@@ -26,10 +26,6 @@ object Form11: TForm11
     Visible = False
     object TabSheet1: TTabSheet
       Caption = 'Locations'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Button5: TButton
         Left = 611
         Top = 3
@@ -267,10 +263,6 @@ object Form11: TForm11
     object TabSheet2: TTabSheet
       Caption = 'Touch'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ScrollBox2: TScrollBox
         Left = 0
         Top = 0
@@ -396,10 +388,6 @@ object Form11: TForm11
     object TabSheet3: TTabSheet
       Caption = 'Point to'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ScrollBox3: TScrollBox
         Left = 0
         Top = 0
@@ -552,10 +540,6 @@ object Form11: TForm11
     object TabSheet4: TTabSheet
       Caption = 'Direction'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ScrollBox4: TScrollBox
         Left = 0
         Top = 0
@@ -708,10 +692,6 @@ object Form11: TForm11
     object TabSheet5: TTabSheet
       Caption = 'Grid'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ScrollBox5: TScrollBox
         Left = 0
         Top = 0
@@ -930,10 +910,6 @@ object Form11: TForm11
     object Screen: TTabSheet
       Caption = 'Screen'
       ImageIndex = 5
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ScrollBox6: TScrollBox
         Left = 0
         Top = 0
@@ -1239,31 +1215,31 @@ object Form11: TForm11
     Alignment = taLeftJustify
     TabOrder = 2
     object Label37: TLabel
-      Left = 208
-      Top = 0
+      Left = 304
+      Top = 1
       Width = 105
       Height = 12
       Caption = 'Reading eye data from:'
     end
     object Label36: TLabel
-      Left = 42
-      Top = 0
+      Left = 138
+      Top = 1
       Width = 140
       Height = 12
       Caption = 'Reading phasespace data from:'
     end
     object GazeComboBox: TComboBox
-      Left = 208
-      Top = 15
-      Width = 145
+      Left = 304
+      Top = 19
+      Width = 144
       Height = 20
       TabOrder = 0
       Text = '<Select gaze stream>'
       OnChange = GazeComboBoxChange
     end
     object LoadCalibration: TButton
-      Left = 367
-      Top = 13
+      Left = 478
+      Top = 10
       Width = 84
       Height = 25
       Caption = 'Load Calibration'
@@ -1271,17 +1247,17 @@ object Form11: TForm11
       OnClick = LoadCalibrationClick
     end
     object PhaseComboBox: TComboBox
-      Left = 42
-      Top = 15
-      Width = 145
+      Left = 138
+      Top = 19
+      Width = 144
       Height = 20
       TabOrder = 2
       Text = '<Select phasespace stream>'
       OnChange = PhaseComboBoxChange
     end
     object xOffsetEdit: TLabeledEdit
-      Left = 551
-      Top = 15
+      Left = 590
+      Top = 12
       Width = 66
       Height = 20
       EditLabel.Width = 62
@@ -1291,35 +1267,27 @@ object Form11: TForm11
       Text = '0'
       OnChange = xOffsetEditChange
     end
-    object distanceEdit: TLabeledEdit
-      Left = 466
-      Top = 15
-      Width = 71
-      Height = 20
-      EditLabel.Width = 64
-      EditLabel.Height = 12
-      EditLabel.Caption = 'Distance (mm)'
-      TabOrder = 4
-      Text = '500'
-      OnChange = distanceEditChange
-    end
     object yOffsetEdit: TLabeledEdit
-      Left = 640
-      Top = 15
+      Left = 679
+      Top = 12
       Width = 74
       Height = 20
       EditLabel.Width = 62
       EditLabel.Height = 12
       EditLabel.Caption = 'Z Offset (mm)'
-      TabOrder = 5
+      TabOrder = 4
       Text = '0'
       OnChange = yOffsetEditChange
     end
   end
-  object Timer1: TTimer
-    OnTimer = Timer1Timer
-    Left = 608
-    Top = 272
+  object RefreshStreamsButton: TButton
+    Left = 34
+    Top = 13
+    Width = 87
+    Height = 25
+    Caption = 'Refresh Streams'
+    TabOrder = 3
+    OnClick = RefreshStreamsButtonClick
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = 'hs'

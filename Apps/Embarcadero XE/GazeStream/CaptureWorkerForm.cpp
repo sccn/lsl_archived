@@ -1301,6 +1301,8 @@ void __fastcall TCaptureWorkerForm::RefreshDisplayOptions(void)
 
    // let's refresh the controls according to the TVideoGrabber's states
    AssignListToComboBox (MainCaptureForm->cbVideoInputDevice, VideoGrabber->VideoDevices, VideoGrabber->VideoDevice);//to MainCaptureForm
+   AssignListToComboBox (MainCaptureForm->cbAudioInputDevice, VideoGrabber->AudioDevices, VideoGrabber->AudioDevice);
+
    AssignListToComboBox (cboVideoDevices, VideoGrabber->VideoDevices, VideoGrabber->VideoDevice);
    AssignListToComboBox (cboAudioDevices, VideoGrabber->AudioDevices, VideoGrabber->AudioDevice);
    AssignListToComboBox (cboAudioRenderers, VideoGrabber->AudioRenderers, VideoGrabber->AudioRenderer);

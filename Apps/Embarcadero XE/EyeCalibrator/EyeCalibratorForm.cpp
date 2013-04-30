@@ -26,21 +26,22 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 #define CDEPTH 24
-#define MAX_STREAMS 16
+#define MAX_STREAMS 50
 
 TForm4 *Form4;
 
 
 
-double monitorWidth=0.0 ,monitorHeight=0.0, cameraWidth=0.0,cameraHeight=0.0, monitorDepth = 0.0;
-double sceneCameraWidth=0.0, sceneCameraHeight=0.0;
+double monitorWidth=0.0 ,monitorHeight=0.0, cameraWidth=0.0,cameraHeight=0.0;
 
 double r=0.0, x0=0.0, y0=0.0, z0=0.0;
 double a=0.0, b=0.0, g=0.0, bx=0.0, by=0.0, bz=0.0, fc=0.0;
+double distToTarget=0.0;
 
 int channelsPerMarker = 4;
 
 int head0, head1, head2, head3, phase0, phase1;
+int backgroundRed, backgroundGreen,backgroundBlue;
 
 BITMAP * bmpCanvas;
 BITMAP * sceneCanvas;
@@ -75,8 +76,10 @@ ublas::matrix<double> sceneCamRef(3,nSceneCamPoints);
 ublas::vector<double> phasespace0(3);
 ublas::vector<double> phasespace1(3);
 
-ublas::matrix<double> cameraMatrix(3,3);
-ublas::vector<double> distortionCoeffs(5);
+ublas::matrix<double> sceneCameraMatrix(3,3);
+ublas::vector<double> sceneDistortionCoeffs(5);
+
+std::map<int, THotspotScreen*> hotspotScreens;
 
 
 
@@ -191,7 +194,7 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 
 			for(int i=2; i<sceneChannels;) {
 				refMarkerXs.push_back(buf[i++]);
-				refMarkerYs.push_back(sceneCameraHeight - buf[i++]);
+				refMarkerYs.push_back( sceneCameraMatrix(1,2)*2+1/*sceneCameraHeight*/ - buf[i++]);
 			}
 
 			if(refMarkerXs.size() != markerXsTodo.size()) {
@@ -292,8 +295,19 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 		   //	static q = 0;
 		   //	if((q++)%30 == 0)
 
-			//sets sceneX, sceneY, sceneZ, sceneCamCur
+			//sets sceneX, sceneY, sceneZ
 			poseFinder(sortedRefMarkerXs, sortedRefMarkerYs);
+			static int v = 0;
+			if(v++%30 == 0) {
+			printf("%g %g %g ",sceneX, sceneY, sceneZ);
+			if(CONSOLE && !_isnan(sceneX)) {
+				printf("distance: %g\n",
+				sqrt(
+				(sceneX)*(sceneX)+
+				(sceneY)*(sceneY)+
+				(sceneZ)*(sceneZ)));
+			}
+		}
 
  // printf("\n\n");
 
@@ -376,7 +390,7 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 			}
 
 			if(timerMode == isHead) {
-				//if tracking head or wand, store one second (480 samples) of data
+				//if tracking head, store one second (480 samples) of data
 				if(headCount < 480) {
 					for(int i=0; i<nHeadPoints; i++) {
 						//don't add if phasespace could not see the point
@@ -493,10 +507,28 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 						if(_isnan(headRef(0,3))) StatusMemo->Lines->Add("Head marker D is not visible.");
 						if(hasNan(sceneCamRef)) StatusMemo->Lines->Add("Scene Camera location not found.");
 						StatusMemo->Color = clRed;
-					}
-					else {
-						StatusMemo->Lines->Add("Head position measurement succeeded.");
-						StatusMemo->Color = clWindow;
+					} else {
+						if(_isnan(sceneX) || _isnan(sceneY) || _isnan(sceneZ))
+							StatusMemo->Lines->Add(AnsiString("Distance from scene camera to active spot is NAN."));
+						else
+							StatusMemo->Lines->Add(AnsiString("Distance from scene camera to active spot is: ") + FormatFloat("0", sqrt(sceneX*sceneX + sceneY*sceneY + sceneZ*sceneZ)) + AnsiString(" mm."));
+						double averageHeadX = (headRef(0,0) + headRef(0,1) + headRef(0,2) + headRef(0,3))/4.0;
+						double averageHeadY = (headRef(1,0) + headRef(1,1) + headRef(1,2) + headRef(1,3))/4.0;
+						double averageHeadZ = (headRef(2,0) + headRef(2,1) + headRef(2,2) + headRef(2,3))/4.0;
+						double dist =  sqrt((sceneCamRef(0,3) - averageHeadX) * (sceneCamRef(0,3) - averageHeadX) +
+									   (sceneCamRef(1,3) - averageHeadY) * (sceneCamRef(1,3) - averageHeadY) +
+									   (sceneCamRef(2,3) - averageHeadZ) * (sceneCamRef(2,3) - averageHeadZ));
+							StatusMemo->Lines->Add(AnsiString("Distance between scene camera and center of head markers: ") + FormatFloat ("0", dist) + AnsiString(" mm"));
+
+					   if (dist > 40.0 && dist < 300.0) {
+							StatusMemo->Lines->Add("Head position measurement succeeded.");
+							StatusMemo->Color = clWindow;
+
+						} else {
+							StatusMemo->Lines->Add("Scene camera has not been properly located.");
+							StatusMemo->Color = clRed;
+						}
+
 					}
 					if(CONSOLE) print("headRef", headRef);
 					if(CONSOLE) print("sceneCamRef", sceneCamRef);
@@ -700,6 +732,7 @@ void __fastcall TForm4::eyeCalibration() {
 		error[i][0] = scaledStddevEyeXs[i];
 		error[i][1] = scaledStddevEyeYs[i];
 	}
+	distToTarget = scaledMarkerXs[0]; //distance from scene camera to center target along center axis
 
 	double *params = new1D<double>(11, 0.0);
 	params[0] = rInEdit->Text.ToDouble();
@@ -785,6 +818,7 @@ void __fastcall TForm4::eyeCalibration() {
 	bz = pOut[9];
 	fc = pOut[10];
 
+
 	rOutEdit->Text = FormatFloat ("0.00", pOut[0]);
 	x0OutEdit->Text = FormatFloat("0.00", pOut[1]);
 	y0OutEdit->Text = FormatFloat("0.00", pOut[2]);
@@ -838,6 +872,8 @@ void TForm4::poseFinder(std::vector<double> xs, std::vector<double> ys) {
 	double producerWidth = 1.0;
 	double producerHeight = 1.0;
 
+
+
 	for(unsigned int i=0; i<xs.size(); i++) {
 		if(timerMode == isHead) {
 			//centered at zero
@@ -862,21 +898,21 @@ void TForm4::poseFinder(std::vector<double> xs, std::vector<double> ys) {
 	double * distanceC = new1D<double>(5,0.0);
 	double ** rMat = new2D<double>(3,3,0.0);
 	double * tVec = new1D<double>(3,0.0);
-	cameraM[0][0] = 557;//654.8611202347574;fcInSceneEdit->Text.ToDouble();
-	cameraM[0][1] = 0;
-	cameraM[0][2] = (sceneCameraWidth - 1)/2;//319.5;
-	cameraM[1][0] = 0;
-	cameraM[1][1] = 557;//654.8611202347574;fcInSceneEdit->Text.ToDouble();
-	cameraM[1][2] = (sceneCameraHeight -1)/2;//239.5;
-	cameraM[2][0] = 0;
-	cameraM[2][1] = 0;
-	cameraM[2][2] = 1;
+	cameraM[0][0] = sceneCameraMatrix(0,0);//557;//654.8611202347574;fcInSceneEdit->Text.ToDouble();
+	cameraM[0][1] = sceneCameraMatrix(0,1);//0;
+	cameraM[0][2] = sceneCameraMatrix(0,2);//(sceneCameraWidth - 1)/2.0;//319.5;
+	cameraM[1][0] = sceneCameraMatrix(1,0);//0;
+	cameraM[1][1] = sceneCameraMatrix(1,1);//557;//654.8611202347574;fcInSceneEdit->Text.ToDouble();
+	cameraM[1][2] = sceneCameraMatrix(1,2);//(sceneCameraHeight -1)/2.0;//239.5;
+	cameraM[2][0] = sceneCameraMatrix(2,0);//0;
+	cameraM[2][1] = sceneCameraMatrix(2,1);//0;
+	cameraM[2][2] = sceneCameraMatrix(2,2);//1;
 
-	distanceC[0] = -0.3669624087278113;
-	distanceC[1] = -0.07638290902180184;
-	distanceC[2] = 0;
-	distanceC[3] = 0;
-	distanceC[4] = 0.5764668364450144;
+	distanceC[0] = sceneDistortionCoeffs(0);//-0.3669624087278113;
+	distanceC[1] = sceneDistortionCoeffs(1);//-0.07638290902180184;
+	distanceC[2] = sceneDistortionCoeffs(2);//0;
+	distanceC[3] = sceneDistortionCoeffs(3);//0;
+	distanceC[4] = sceneDistortionCoeffs(4);//0.5764668364450144;
 
 	openCV_findPose(coords, data, xs.size(), cameraM, distanceC, rMat, tVec);
 	//millimiters (determined by calibration screen size and camera calibration matrix)
@@ -966,23 +1002,23 @@ void TForm4::poseFinder(std::vector<double> xs, std::vector<double> ys) {
 		ublas::matrix<double> displayAtOrigin(3,4); //phasespace coordinates
 		//Top left
 		displayAtOrigin(0,0) = 0;
-		displayAtOrigin(1,0) = (monitorHeight-1)/2;
-		displayAtOrigin(2,0) = -(monitorWidth-1)/2;
+		displayAtOrigin(1,0) = (monitorHeight)/2;
+		displayAtOrigin(2,0) = -(monitorWidth)/2;
 
 		//top right
 		displayAtOrigin(0,1) = 0;
-		displayAtOrigin(1,1) = (monitorHeight-1)/2;
-		displayAtOrigin(2,1) = (monitorWidth-1)/2;
+		displayAtOrigin(1,1) = (monitorHeight)/2;
+		displayAtOrigin(2,1) = (monitorWidth)/2;
 
 		//bottom left
 		displayAtOrigin(0,2) = 0;
-		displayAtOrigin(1,2) = -(monitorHeight-1)/2;
-		displayAtOrigin(2,2) = -(monitorWidth-1)/2;
+		displayAtOrigin(1,2) = -(monitorHeight)/2;
+		displayAtOrigin(2,2) = -(monitorWidth)/2;
 
 		//bottom right
 		displayAtOrigin(0,3) = 0;
-		displayAtOrigin(1,3) = -(monitorHeight-1)/2;
-		displayAtOrigin(2,3) = (monitorWidth-1)/2;
+		displayAtOrigin(1,3) = -(monitorHeight)/2;
+		displayAtOrigin(2,3) = (monitorWidth)/2;
 
 		double tot = 0.0;
 		for(int i=0; i<3; i++) {
@@ -1073,18 +1109,17 @@ void __fastcall TForm4::SaveCalibrationBtnClick(TObject *Sender)
 		nodeElement->Attributes["by"] = UnicodeString(by);
 		nodeElement->Attributes["bz"] = UnicodeString(bz);
 		nodeElement->Attributes["fc"] = UnicodeString(fc);
+		nodeElement->Attributes["distToTarget"] = UnicodeString(distToTarget);
 
 		nodeElement = Form4->xdoc_out->DocumentElement->AddChild("SceneCalibration", -1);
-		nodeElement->Attributes["cameraMatrix"] = matrixToUnicodeString(cameraMatrix);
-		nodeElement->Attributes["distortionCoeffs"] = vectorToUnicodeString(distortionCoeffs);
+		nodeElement->Attributes["cameraMatrix"] = matrixToUnicodeString(sceneCameraMatrix);
+		nodeElement->Attributes["distortionCoeffs"] = vectorToUnicodeString(sceneDistortionCoeffs);
 
 		nodeElement = Form4->xdoc_out->DocumentElement->AddChild("Scaling", -1);
 		nodeElement->Attributes["monitorWidth"] = UnicodeString(monitorWidth);
 		nodeElement->Attributes["monitorHeight"] = UnicodeString(monitorHeight);
 		nodeElement->Attributes["eyeCameraWidth"] = UnicodeString(cameraWidth);
 		nodeElement->Attributes["eyeCameraHeight"] = UnicodeString(cameraHeight);
-		nodeElement->Attributes["sceneCameraWidth"] = UnicodeString(sceneCameraWidth);
-		nodeElement->Attributes["sceneCameraHeight"] = UnicodeString(sceneCameraHeight);
 
 		nodeElement = Form4->xdoc_out->DocumentElement->AddChild("ReferencePositions", -1);
 		nodeElement->Attributes["head"] = matrixToUnicodeString(headRef);
@@ -1310,22 +1345,23 @@ void __fastcall TForm4::drawCalibration() {
 
 }
 
+//sets defaults only
 void setCameraParams() {
-	cameraMatrix(0,0) = 557;//654.8611202347574;
-	cameraMatrix(0,1) = 0;
-	cameraMatrix(0,2) = (sceneCameraWidth - 1)/2;//319.5;
-	cameraMatrix(1,0) = 0;
-	cameraMatrix(1,1) = 557;//654.8611202347574;
-	cameraMatrix(1,2) = (sceneCameraHeight -1)/2;//239.5;
-	cameraMatrix(2,0) = 0;
-	cameraMatrix(2,1) = 0;
-	cameraMatrix(2,2) = 1;
+	sceneCameraMatrix(0,0) = 557;//654.8611202347574;
+	sceneCameraMatrix(0,1) = 0;
+	sceneCameraMatrix(0,2) = (640.0 - 1.0)/2.0;//319.5;
+	sceneCameraMatrix(1,0) = 0;
+	sceneCameraMatrix(1,1) = 557;//654.8611202347574;
+	sceneCameraMatrix(1,2) = (480.0 -1.0)/2.0;//239.5;
+	sceneCameraMatrix(2,0) = 0;
+	sceneCameraMatrix(2,1) = 0;
+	sceneCameraMatrix(2,2) = 1;
 
-	distortionCoeffs[0] = -0.3669624087278113;
-	distortionCoeffs[1] = -0.07638290902180184;
-	distortionCoeffs[2] = 0;
-	distortionCoeffs[3] = 0;
-	distortionCoeffs[4] = 0.5764668364450144;
+	sceneDistortionCoeffs[0] = -0.3669624087278113;
+	sceneDistortionCoeffs[1] = -0.07638290902180184;
+	sceneDistortionCoeffs[2] = 0;
+	sceneDistortionCoeffs[3] = 0;
+	sceneDistortionCoeffs[4] = 0.5764668364450144;
 
 
 }
@@ -1341,23 +1377,24 @@ void __fastcall TForm4::FormCreate(TObject *Sender)
 	clear_bitmap(sceneCanvas);
 	MonitorWidthEditChange(this);
 	MonitorHeightEditChange(this);
-	monitorDepthEditChange(this);
 	CameraWidthEditChange(this);
 	CameraHeightEditChange(this);
-	SceneCameraWidthEditChange(this);
-	SceneCameraHeightEditChange(this);
 	HeadMarker0EditChange(this);
 	HeadMarker1EditChange(this);
 	HeadMarker2EditChange(this);
 	HeadMarker3EditChange(this);
     phasespaceMarker0EditChange(this);
 	phasespaceMarker1EditChange(this);
+	BackgroundRedEditChange(this);
+	BackgroundGreenEditChange(this);
+	BackgroundBlueEditChange(this);
 
 
 
 	Form4->Caption = UnicodeString("Eye Calibrator, version ") + getVersion();
 
-    setCameraParams();
+	setCameraParams();
+	RefreshStreamsButtonClick(this);
 
 }
 //---------------------------------------------------------------------------
@@ -1387,19 +1424,7 @@ void __fastcall TForm4::CameraHeightEditChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm4::SceneCameraWidthEditChange(TObject *Sender)
-{
-	sceneCameraWidth = SceneCameraWidthEdit->Text.ToDouble();
-	setCameraParams();
-}
-//---------------------------------------------------------------------------
 
-void __fastcall TForm4::SceneCameraHeightEditChange(TObject *Sender)
-{
-	sceneCameraHeight = SceneCameraHeightEdit->Text.ToDouble();
-	setCameraParams();
-}
-//---------------------------------------------------------------------------
 
 
 void __fastcall TForm4::SaveCalibrationPointsBtnClick(TObject *Sender)
@@ -1447,6 +1472,11 @@ void __fastcall TForm4::FormClose(TObject *Sender, TCloseAction &Action)
 	if(gazeInlet) lsl_destroy_inlet(gazeInlet);
 	if(sceneInlet) lsl_destroy_inlet(sceneInlet);
 	if(phasespaceInlet) lsl_destroy_inlet(phasespaceInlet);
+
+	 while(!monitorDrawers.empty()) {
+		delete monitorDrawers.back();
+		monitorDrawers.pop_back();
+	}
 
 }
 //---------------------------------------------------------------------------
@@ -1501,36 +1531,6 @@ void __fastcall TForm4::eyeTestDoneClick(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
-void __fastcall TForm4::Timer2Timer(TObject *Sender) {
-
-	/*
-	AnsiString DirMMF[100];
-	AnsiString s ="/tmp/*.#";
-	int Count =0;
-	TSearchRec Info;
-	if (FindFirst (s,faAnyFile,Info) ==0) {
-		do
-			DirMMF[Count++]=Info.Name;
-		while (FindNext(Info)==0);
-		FindClose(Info);
-	}
-	 */
-	lsl_streaminfo infos[MAX_STREAMS];
-	int streamsFound = lsl_resolve_all(infos, MAX_STREAMS, 0.1);
-	if (streamsFound !=GazeComboBox->Items->Count) {
-		GazeComboBox->Items->Clear();
-		SceneComboBox->Items->Clear();
-		PhaseComboBox->Items->Clear();
-		for (int i = 0; i < streamsFound; i++) {
-			GazeComboBox->Items->Append(lsl_get_name(infos[i]));
-			SceneComboBox->Items->Append(lsl_get_name(infos[i]));
-			PhaseComboBox->Items->Append(lsl_get_name(infos[i]));
-		}
-
-	}
-	Timer2->Enabled = false;
-}
-//---------------------------------------------------------------------------
 
 
 void __fastcall TForm4::GazeComboBoxChange(TObject *Sender)
@@ -1624,6 +1624,11 @@ void __fastcall TForm4::PhaseComboBoxChange(TObject *Sender)
 
 void TForm4::LoadHotspotsConfig(const System::UnicodeString FileName)
 {
+	for(std::map<int, THotspotScreen*>::iterator itr=hotspotScreens.begin();itr !=hotspotScreens.end();)
+	{
+		delete itr->second;
+		hotspotScreens.erase(itr++); //itr, post erase is not defined in old C++.  It is defined in C++0X.
+	}
 
 	std::map<int, TPoint3D*> p3Ds;
 	Form4->xdoc_out->LoadFromFile(FileName);
@@ -1641,56 +1646,33 @@ void TForm4::LoadHotspotsConfig(const System::UnicodeString FileName)
 
 		}
 	} else {
-				Application->MessageBoxA(L"Unable to find Locations group.", L"Error", MB_OK);
+		Application->MessageBoxA(L"Unable to find Locations group.", L"Error", MB_OK);
 	}
 
 	nodeElement = Form4->xdoc_out->ChildNodes->FindNode("Configuration")->ChildNodes->FindNode("Hotspots");
 
 	if (nodeElement != NULL) {
-		int desiredMonitor = 3;
+
 		for (int i = 0; i < nodeElement->ChildNodes->Count; i++) {
 			const _di_IXMLNode node = nodeElement->ChildNodes->Get(i);
 
 			 if (node->NodeName == UnicodeString("Screen")) {
-				int monitor = node->Attributes["monitor"];
-				if(monitor == desiredMonitor) {
 
-					int topLeftID = node->Attributes["topLeft"];
-					int topRightID = node->Attributes["topRight"];
-					int bottomLeftID = node->Attributes["bottomLeft"];
-					int bottomRightID = node->Attributes["bottomRight"];
+				int topLeft = node->Attributes["topLeft"];
+				int topRight = node->Attributes["topRight"];
+				int bottomLeft = node->Attributes["bottomLeft"];
+				int bottomRight = node->Attributes["bottomRight"];
+				int sensor0 = node->Attributes["sensor0"];
+				int sensor1 = node->Attributes["sensor1"];
+				int device = node->Attributes["device"];
+				int monitorNumber = node->Attributes["monitor"];
+				double monitorDepth = node->Attributes["monitorDepth"];
 
-					ublas::vector<double> TL = p3Ds[topLeftID]->toDoubleVector();
-					ublas::vector<double> TR = p3Ds[topRightID]->toDoubleVector();
-					ublas::vector<double> BL = p3Ds[bottomLeftID]->toDoubleVector();
-					ublas::vector<double> BR = p3Ds[bottomRightID]->toDoubleVector();
+				hotspotScreens[monitorNumber] = new THotspotScreen(
+					p3Ds, topLeft, topRight, bottomLeft, bottomRight,
+					sensor0, sensor1, device, monitorNumber, monitorDepth);
 
-					double monitorDepth = node->Attributes["monitorDepth"];
-
-					//measure the actual width and height.
-					monitorWidth = (length(BR - BL) + length(TR - TL))/2;
-					MonitorWidthEdit->Text = monitorWidth;
-					monitorHeight = (length(BL - TL) + 	length(BR - TR))/2;
-					MonitorHeightEdit->Text = monitorHeight;
-
-					//given the depth, push the monitor back by the requested amount.
-					ublas::vector<double> tot = cross(TR-TL, BL-TL) + cross(BR-TR, TL-TR) + cross(BL-BR, TR-BR) + cross(TL-BL, BR-BL);
-					tot = monitorDepth*tot/length(tot);
-					StatusMemo->Lines->Add("Monitor measurement updated.");
-					print("TL", TL);
-					print("TR", TR);
-					print("BL", BL);
-					print("BR", BR);
-					for(int i=0; i<3; i++) {
-							displayRef(i,0) = TL(i) + tot(i);
-							displayRef(i,1) = TR(i) + tot(i);
-							displayRef(i,2) = BL(i) + tot(i);
-							displayRef(i,3) = BR(i) + tot(i);
-					}
-					print("tot", tot);
-					print("displayRef", displayRef);
-
-				}
+				StatusMemo->Lines->Add(UnicodeString("Monitor ") + UnicodeString(monitorNumber) + UnicodeString(" measurements loaded."));
 			}
 
 		}
@@ -1727,15 +1709,6 @@ void __fastcall TForm4::FormKeyPress(TObject *Sender, wchar_t &Key)
 					monitorDrawers[monitorsTodo[currentSpot]-1]->drawMarkers(markerXsTodo[currentSpot],markerYsTodo[currentSpot],true);
 				markerX = -1.0;
 				markerY = -1.0;
-				break;
-			case VK_ESCAPE:
-				currentSpot = -1;
-				Timer3->Enabled = false;
-				markerX = -1.0;
-				markerY = -1.0;
-				for(int monitor=1; monitor<=monitors.size(); monitor++) {
-					if(monitorDrawers[monitor-1]->visible)  monitorDrawers[monitor-1]->setVisible(SW_HIDE);
-				}
 				break;
 			}
 		}
@@ -1853,7 +1826,7 @@ BOOL CALLBACK MonitorEnumProc(
 				  int err= GetLastError();
 				  //printf("lerr: %d\n", err);
 
-	monitorDrawers.push_back(new MonitorDrawer(hWnd,1));
+	monitorDrawers.push_back(new MonitorDrawer(hWnd,makecol(backgroundRed,backgroundGreen,backgroundBlue), 1));
 
 
    return TRUE;
@@ -1866,6 +1839,7 @@ void __fastcall TForm4::CalibrationWindowButtonClick(TObject *Sender)
 	currentSpot = 0;
 	markerX = -1;
 	markerY = -1;
+
 
 	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
 	int nPoints=0;
@@ -1914,6 +1888,25 @@ void __fastcall TForm4::CalibrationWindowButtonClick(TObject *Sender)
 		}
 
 		currentSpot = 0;
+
+		for(std::map<int, THotspotScreen*>::iterator itr=hotspotScreens.begin();itr !=hotspotScreens.end();++itr)
+		{
+			if(itr->first == monitorsTodo[currentSpot]) {
+				monitorWidth = itr->second->monitorWidth;
+				MonitorWidthEdit->Text = monitorWidth;
+				monitorHeight = itr->second->monitorHeight;
+				MonitorHeightEdit->Text = monitorHeight;
+
+						for(int i=0; i<3; i++) {
+							displayRef(i,0) = itr->second->monitorTL(i);
+							displayRef(i,1) = itr->second->monitorTR(i);
+							displayRef(i,2) = itr->second->monitorBL(i);
+							displayRef(i,3) = itr->second->monitorBR(i);
+						}
+						StatusMemo->Lines->Add("Monitor measurement updated.");
+			}
+		}
+
 		ifs.close();
 
 	}
@@ -1926,6 +1919,7 @@ int timerCount = 0;
 void __fastcall TForm4::Timer3Timer(TObject *Sender)
 {
 	if(timerCount == 0 && currentSpot >= 0 && currentSpot < markerXsTodo.size()) {
+
 		monitor = monitorsTodo[currentSpot]-1;
 		markerX = markerXsTodo[currentSpot];
 		markerY = markerYsTodo[currentSpot];
@@ -1941,6 +1935,23 @@ void __fastcall TForm4::Timer3Timer(TObject *Sender)
 		if(currentSpot >= 0 && currentSpot < markerXsTodo.size())
 			monitorDrawers[monitorsTodo[currentSpot]-1]->drawMarkers(markerXsTodo[currentSpot],markerYsTodo[currentSpot],true);
 		timerCount = 0;
+		for(std::map<int, THotspotScreen*>::iterator itr=hotspotScreens.begin();itr !=hotspotScreens.end();++itr)
+		{
+			if(itr->first == monitorsTodo[currentSpot]) {
+				monitorWidth = itr->second->monitorWidth;
+				MonitorWidthEdit->Text = monitorWidth;
+				monitorHeight = itr->second->monitorHeight;
+				MonitorHeightEdit->Text = monitorHeight;
+
+						for(int i=0; i<3; i++) {
+							displayRef(i,0) = itr->second->monitorTL(i);
+							displayRef(i,1) = itr->second->monitorTR(i);
+							displayRef(i,2) = itr->second->monitorBL(i);
+							displayRef(i,3) = itr->second->monitorBR(i);
+						}
+				   //		StatusMemo->Lines->Add("Monitor measurement updated.");
+			}
+		}
 
 	}
 
@@ -1949,6 +1960,11 @@ void __fastcall TForm4::Timer3Timer(TObject *Sender)
 			if(monitorDrawers[monitor-1]->visible)  monitorDrawers[monitor-1]->setVisible(SW_HIDE);
 		}
 		currentSpot = -1;
+
+		 while(!monitorDrawers.empty()) {
+			delete monitorDrawers.back();
+			monitorDrawers.pop_back();
+		}
 	}
 }
 
@@ -1978,11 +1994,6 @@ void __fastcall TForm4::phasespaceTestStopClick(TObject *Sender)
 
 
 
-void __fastcall TForm4::monitorDepthEditChange(TObject *Sender)
-{
-	monitorDepth = monitorDepthEdit->Text.ToDouble();
-}
-//---------------------------------------------------------------------------
 
 
 void __fastcall TForm4::MonitorPositionButtonClick(TObject *Sender)
@@ -2076,10 +2087,104 @@ void __fastcall TForm4::phasespaceMarker1EditChange(TObject *Sender)
 
 void __fastcall TForm4::AbortCalibrationButtonClick(TObject *Sender)
 {
-		for(unsigned int monitor=1; monitor<=monitorDrawers.size(); monitor++) {
-			if(monitorDrawers[monitor-1]->visible)  monitorDrawers[monitor-1]->setVisible(SW_HIDE);
-		}
-		currentSpot = -1;
+	for(unsigned int monitor=1; monitor<=monitorDrawers.size(); monitor++) {
+		if(monitorDrawers[monitor-1]->visible)  monitorDrawers[monitor-1]->setVisible(SW_HIDE);
+	}
+	currentSpot = -1;
+	 while(!monitorDrawers.empty()) {
+		delete monitorDrawers.back();
+		monitorDrawers.pop_back();
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm4::LoadIntrinsicButtonClick(TObject *Sender)
+{
+	if(OpenDialog1->Execute()) {
+
+		Form4->xdoc_in->LoadFromFile(OpenDialog1->FileName);
+
+			_di_IXMLNode node =
+				Form4->xdoc_in->ChildNodes->FindNode("Configuration")->ChildNodes->FindNode("SceneCalibration");
+			sceneCameraMatrix = unicodeStringToMatrix<double>(node->Attributes["cameraMatrix"]);
+			sceneDistortionCoeffs = unicodeStringToVector<double>(node->Attributes["distortionCoeffs"]);
+
+			node =
+				Form4->xdoc_in->ChildNodes->FindNode("Configuration")->ChildNodes->FindNode("Scaling");
+
+			monitorWidth = node->Attributes["monitorWidth"];
+			MonitorWidthEdit->Text = monitorWidth;
+
+			monitorHeight = node->Attributes["monitorHeight"];
+			MonitorHeightEdit->Text = monitorHeight;
+
+			cameraWidth = node->Attributes["eyeCameraWidth"];
+			CameraWidthEdit->Text = cameraWidth;
+
+			cameraHeight = node->Attributes["eyeCameraHeight"];
+			CameraHeightEdit->Text = cameraHeight;
+
+	}
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm4::RefreshStreamsButtonClick(TObject *Sender)
+{
+
+	lsl_streaminfo infos[MAX_STREAMS];
+	int streamsFound = lsl_resolve_all(infos, MAX_STREAMS, 0.1);
+
+	GazeComboBox->Items->Clear();
+	SceneComboBox->Items->Clear();
+	PhaseComboBox->Items->Clear();
+	for (int i = 0; i < streamsFound; i++) {
+		GazeComboBox->Items->Append(lsl_get_name(infos[i]));
+		SceneComboBox->Items->Append(lsl_get_name(infos[i]));
+		PhaseComboBox->Items->Append(lsl_get_name(infos[i]));
+	}
+
+
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm4::BackgroundRedEditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		BackgroundRedEdit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex)  backgroundRed = BackgroundRedEdit->Text.ToInt();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm4::BackgroundGreenEditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		BackgroundGreenEdit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex)  backgroundGreen = BackgroundGreenEdit->Text.ToInt();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm4::BackgroundBlueEditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		BackgroundBlueEdit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex)  backgroundBlue = BackgroundBlueEdit->Text.ToInt();
 }
 //---------------------------------------------------------------------------
 

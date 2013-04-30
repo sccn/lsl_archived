@@ -37,7 +37,6 @@
 class TForm11 : public TForm
 {
 __published:	// IDE-managed Components
-	TTimer *Timer1;
 	TPageControl *PageControl1;
 	TTabSheet *TabSheet1;
 	TTabSheet *TabSheet2;
@@ -129,8 +128,8 @@ __published:	// IDE-managed Components
 	TComboBox *PhaseComboBox;
 	TLabel *Label36;
 	TLabeledEdit *xOffsetEdit;
-	TLabeledEdit *distanceEdit;
 	TLabeledEdit *yOffsetEdit;
+	TButton *RefreshStreamsButton;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 
@@ -165,11 +164,6 @@ __published:	// IDE-managed Components
 	 */
 	void __fastcall Button4Click(TObject *Sender);
 
-	/**
-	 * Poll datariver streams to see if they have changed.
-	 */
-	void __fastcall Timer1Timer(TObject *Sender);
-
 
 	/**
 	 * Save hotspots configuration to to xml file.
@@ -191,12 +185,13 @@ __published:	// IDE-managed Components
 	void __fastcall OpenDisplaysButtonClick(TObject *Sender);
 	void __fastcall CloseDisplaysButtonClick(TObject *Sender);
 	void __fastcall PhaseComboBoxChange(TObject *Sender);
-	void __fastcall distanceEditChange(TObject *Sender);
 	void __fastcall xOffsetEditChange(TObject *Sender);
 	void __fastcall yOffsetEditChange(TObject *Sender);
+	void __fastcall RefreshStreamsButtonClick(TObject *Sender);
 private:	// User declarations
 	int FindMmfBuffer();
 	pugi::xml_document doc;
+	AnsiString streamIdentifier;
 
 public:		// User declarations
 
@@ -239,7 +234,7 @@ public:		// User declarations
 	/**
 	 * Add rectangular hotspot. This is done when a hotgrid is made.
 	 */
-	void addRectangular(THotspotGrid *hotspotGrid, int x, int y, int z, int Xthickness, int Ythickness, int Zthickness, int sensor, int device);
+	void addRectangular(THotspotGrid *hotspotGrid, double x, double y, double z, double Xthickness, double Ythickness, double Zthickness, int sensor, int device);
 
 	void addScreen(int topLeft, int topRight, int bottomLeft, int bottomRight,
 				int sensor0, int sensor1, int device, int monitorNumber, double monitorDepth);

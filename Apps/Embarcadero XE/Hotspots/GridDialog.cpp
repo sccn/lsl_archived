@@ -33,9 +33,9 @@ void __fastcall TGridForm::DoneButtonClick(TObject *Sender)
 	location3 = Location3Edit->Text.ToInt();
 	nRows = RowsEdit->Text.ToInt();
 	nColumns = ColumnsEdit->Text.ToInt();
-	columnThickness = ColumnThicknessEdit->Text.ToInt();
-	rowThickness = RowThicknessEdit->Text.ToInt();
-	heightThickness = HeightThicknessEdit->Text.ToInt();
+	columnThickness = ColumnThicknessEdit->Text.ToDouble();
+	rowThickness = RowThicknessEdit->Text.ToDouble();
+	heightThickness = HeightThicknessEdit->Text.ToDouble();
 	sensor = SensorEdit->Text.ToInt();
 	device = DeviceEdit->Text.ToInt();
 	ModalResult = mrOk;
