@@ -177,6 +177,9 @@ void MainWindow::link_phasespace() {
 			// enable streaming
 			owlSetInteger(OWL_STREAMING, OWL_ENABLE);
 
+			// enable transmission of comm data
+			owlSetInteger(OWL_COMMDATA, OWL_ENABLE);
+
 			// get the camera setup
 			std::vector<OWLCamera> cameras(64);
 			boost::posix_time::ptime start = boost::posix_time::second_clock::universal_time();
@@ -267,7 +270,7 @@ void MainWindow::link_phasespace() {
 void MainWindow::read_thread(float srate, int interpolation, std::vector<OWLCamera> cameras, std::vector<OWLMarker> markers, std::vector<OWLRigid> rigids) {
 
 	// create main Mocap stream
-	lsl::stream_info info("PhaseSpace","Mocap",markers.size()*4 + rigids.size()*8,srate,lsl::cf_float32,server_name);
+	lsl::stream_info info("PhaseSpace","Mocap",markers.size()*4 + rigids.size()*8 + 1,srate,lsl::cf_float32,server_name);
 
 	// physical setup
 	lsl::xml_element setup = info.desc().append_child("setup");
@@ -368,6 +371,10 @@ void MainWindow::read_thread(float srate, int interpolation, std::vector<OWLCame
 			.append_child_value("object",rigid_names[k].c_str())
 			.append_child_value("type","Confidence");
 	}
+	channels.append_child("channel")
+		.append_child_value("label","TriggerTTL")
+		.append_child_value("type","Trigger")
+		.append_child_value("unit","boolean");
 
 	// misc information
 	info.desc().append_child("acquisition")
@@ -379,7 +386,6 @@ void MainWindow::read_thread(float srate, int interpolation, std::vector<OWLCame
 
 	// make a new outlet
 	lsl::stream_outlet outlet(info);
-
 
 	// also make outlets per rigid body, if enabled
 	std::vector<boost::shared_ptr<lsl::stream_outlet> > rigid_outlets;
@@ -446,6 +452,7 @@ void MainWindow::read_thread(float srate, int interpolation, std::vector<OWLCame
 	std::vector<OWLRigid> tmp_rigids(rigids.size());
 	std::vector<float> big_sample(info.channel_count());
 	std::vector<float> rigid_sample(8);
+	unsigned char buffer[1024]; // for comm data
 
 	while (true) {
 		// spin until we get the number of markers that we're looking for...
@@ -478,6 +485,10 @@ void MainWindow::read_thread(float srate, int interpolation, std::vector<OWLCame
 			// confidence
 			big_sample[markers.size()*4 + k*8 + 7] = tmp_rigids[k].cond;
 		}
+
+		// append trigger channel
+		int n = owlGetString(OWL_COMMDATA, (char*)buffer);
+		big_sample[markers.size()*4 + tmp_rigids.size()*8] = (n>0) ? buffer[24] : 0;
 
 		// according to the PhaseSpace spec, the obtained samples are up to 10ms old
 		double acquisition_time = lsl::local_clock() - compensated_lag;
