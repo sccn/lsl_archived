@@ -1,0 +1,3 @@
+The only files from here that you want to bundle with your deployed applications are the .dll files on Windows, the .so files on Linux, and the .dylib files on Mac OS X. The 32 bit versions run on both 32 and 64 bit operating systems, however if you are building a 64-bit application, you should link to the 64bit version of the library.
+
+You can also ignore the -debug files provided that you are shipping a release build of your app. The remaining binaries are just the example applications.

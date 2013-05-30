@@ -1,0 +1,43 @@
+# use glob syntax.
+syntax: glob
+
+*.ncb
+*.suo
+*.pdb
+*.idb
+*.ilk
+*.intermediate.manifest
+*.obj
+*.dep
+*BuildLog.htm
+*.DS_Store
+*~
+*.user
+*.xcindexdb
+*.o
+*.obj
+*-debug*
+*.xcactivitylog
+*.exp
+*.dSYM
+*.build*
+*.hmap
+
+#Embarcadero build products
+*.ilc
+*.ild
+*.ilf
+*.map
+*.tds
+*.cgl
+*.ils
+
+#Embarcadero temp folders
+Debug/**
+Debug_Build/**
+_history/**
+
+#Embarcadero local project file
+*.cbproj.local
+
+#End Embarcadero
