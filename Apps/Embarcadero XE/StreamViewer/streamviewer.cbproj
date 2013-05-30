@@ -224,6 +224,7 @@
 				<Platforms>
 					<Platform value="Win32">True</Platform>
 				</Platforms>
+				<ModelSupport>False</ModelSupport>
 			</BorlandProject>
 			<ProjectFileVersion>12</ProjectFileVersion>
 		</ProjectExtensions>

@@ -2,7 +2,7 @@
 #define GeneralUtilH
 
 
-#define VERSION 1001002
+#define VERSION 1001003
 #define CONSOLE 0
 #include <ios>
 #include <vector>

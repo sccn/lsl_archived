@@ -3112,6 +3112,7 @@ object Form1: TForm1
     MultiLine = True
     TabOrder = 3
     TabPosition = tpLeft
+    OnChange = PageControl2Change
     object TabSheet1: TTabSheet
       Caption = 'Time'
       object Bevel1: TBevel
@@ -3537,8 +3538,8 @@ object Form1: TForm1
         end
       end
       object UpDown3: TUpDown
-        Left = 563
-        Top = 555
+        Left = 568
+        Top = 347
         Width = 15
         Height = 20
         Associate = LabeledEdit4
@@ -3549,8 +3550,8 @@ object Form1: TForm1
         Visible = False
       end
       object LabeledEdit4: TLabeledEdit
-        Left = 533
-        Top = 555
+        Left = 538
+        Top = 347
         Width = 30
         Height = 20
         EditLabel.Width = 44
@@ -3562,8 +3563,8 @@ object Form1: TForm1
         Visible = False
       end
       object Button3: TButton
-        Left = 512
-        Top = 485
+        Left = 494
+        Top = 556
         Width = 57
         Height = 18
         Caption = 'Reset pos.'

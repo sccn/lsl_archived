@@ -58,6 +58,8 @@ int nId=1;
 HANDLE hMutex = 0, hGazeMutex = 0;
 
 int dataChannels = 0;
+int channelsPerMarker = 4;
+double distanceScaleFactor = 1.0;
 
 enum HS_TYPE {IS_UNDEF,IS_TOUCH,IS_DIR,IS_POINTTO};
 
@@ -526,7 +528,6 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 {
 
 
-	int channelsPerMarker = 4;
 	int progress = -1;
 	std::list<int> changedNames;
 	static int count =0;
@@ -544,7 +545,7 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 		if(phaseData) delete1D(phaseData);
 		phaseData = new1D<float>(nChannels, 0.0);
 		for(int i=0; i<nChannels; i++) {
-			data[i]*=1000.0; //to mm
+			data[i]*=distanceScaleFactor; //to mm
 
 			phaseData[i] = data[i];
 		}
@@ -2050,7 +2051,17 @@ void __fastcall TForm11::PhaseComboBoxChange(TObject *Sender)
 
 	char temp[512];
 	sprintf(temp, "name='%s'", ((AnsiString) PhaseComboBox->Text).c_str());
-
+	if(strcmp( ((AnsiString) PhaseComboBox->Text).c_str(), "PhaseSpace") == 0) {
+		channelsPerMarker = 4;
+		distanceScaleFactor = 1000.0;
+	} else if (strcmp( ((AnsiString) PhaseComboBox->Text).c_str(), "OptiTrack") == 0) {
+		channelsPerMarker = 3;
+		distanceScaleFactor = 1.0;
+	} else {
+		Application->MessageBoxA(L"Motion data type not recognized. Assuming three channels per marker and distances measured in millimeters.", L"Warning", MB_OK);
+		channelsPerMarker = 3;
+		distanceScaleFactor = 1.0;
+	}
 	phasespaceThread = new TStreamThread(temp,ProcessData);
 	phasespaceThread->Resume();
 }
@@ -2308,4 +2319,5 @@ void __fastcall TForm11::RefreshStreamsButtonClick(TObject *Sender)
 
 }
 //---------------------------------------------------------------------------
+
 

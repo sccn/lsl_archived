@@ -57,6 +57,7 @@ private:
 	float f32buf[MAX_CHANNELS];
 	double f64buf[MAX_CHANNELS];
 	char *sbuf;
+	char *multi_sbuf[MAX_CHANNELS];
 	double samplingRate;
 	double resamplingRate;
 };

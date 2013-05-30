@@ -485,16 +485,16 @@ double x0=0,y0=0,z0=0;
 bool zero=false;
 
 
-int TDisplay3D::DisplaySample(float *fsample, int nChannels, float samplingRate) {
+int TDisplay3D::DisplaySample(float *fsample, int nChannels, int channelsPerMarker, float samplingRate) {
 	double *sample = (double *) malloc(nChannels*sizeof(double));
 	for(int i=0; i<nChannels; i++) {
 		sample[i] = (double) fsample[i];
 	}
-	DisplaySample(sample, nChannels, samplingRate);
+	DisplaySample(sample, nChannels, channelsPerMarker, samplingRate);
 	free(sample);
 }
 
-int TDisplay3D::DisplaySample(/*TDataRiver *sample*/double *sample, int nChannels, float samplingRate)
+int TDisplay3D::DisplaySample(/*TDataRiver *sample*/double *sample, int nChannels, int channelsPerMarker, float samplingRate)
 {
   //	TMaxArray * pMS = (TMaxArray * )sample;
 	DCTYPE dc;
@@ -518,15 +518,15 @@ int TDisplay3D::DisplaySample(/*TDataRiver *sample*/double *sample, int nChannel
 		zero=false;
 	}
 
-	int chCount = nChannels/4;
+	int chCount = nChannels/channelsPerMarker;
 	if (chCount > Form1->UpDown2->Position)
 		chCount = Form1->UpDown2->Position;
 	for (int ch = 0; ch < chCount; ch++)
 		if (FormLEDs->CheckBoxLED[ch]->Checked)
 		{
-			x =(sample[ch*4]-x0)* Form1->TrackBarGain->Position/100;
-			y =(sample[1+ch*4]-y0)* Form1->TrackBarGain->Position/100;
-			z =(sample[2+ch*4]-z0)* Form1->TrackBarGain->Position/100;;
+			x =(sample[ch*channelsPerMarker]-x0)* Form1->TrackBarGain->Position/100;
+			y =(sample[1+ch*channelsPerMarker]-y0)* Form1->TrackBarGain->Position/100;
+			z =(sample[2+ch*channelsPerMarker]-z0)* Form1->TrackBarGain->Position/100;;
 
 			Display3DBuffer[ch].AddSample(x,y,z);
 			pos1 = Display3DBuffer[ch].pos;

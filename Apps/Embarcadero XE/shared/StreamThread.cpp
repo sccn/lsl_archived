@@ -231,14 +231,27 @@ void __fastcall TStreamThread::Execute()
 		}
 
 		else if(ProcessDataString) {
+			double timestamp;
+			if(nChannels == 1) {
+					timestamp = lsl_pull_sample_str(inlet, &sbuf, 1, 1.0, &errcode);
+				if(timestamp) {
+					ProcessDataString(sbuf, 1, samplingRate);
+					count++;
+				} else {
+					Sleep(5);
+					continue;
+				}
+			}  else {
 
-			double timestamp = lsl_pull_sample_str(inlet, &sbuf, 1, 1.0, &errcode);
-			if(timestamp) {
-				ProcessDataString(sbuf, nChannels, samplingRate);
-				count++;
-			} else {
-				Sleep(5);
-				continue;
+				timestamp = lsl_pull_sample_str(inlet, multi_sbuf, nChannels, 1.0, &errcode);
+				if(timestamp) {
+
+					ProcessDataString(multi_sbuf[0], 1, samplingRate);
+					count++;
+				} else {
+					Sleep(5);
+					continue;
+				}
 			}
 		//data is not processed by call back. Must use
 		//	while(lsl_pull_sample_f(streamThread->inlet,data, 6, 0.0, &errcode));

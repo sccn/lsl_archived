@@ -1215,8 +1215,8 @@ object Form11: TForm11
     Alignment = taLeftJustify
     TabOrder = 2
     object Label37: TLabel
-      Left = 304
-      Top = 1
+      Left = 492
+      Top = -3
       Width = 105
       Height = 12
       Caption = 'Reading eye data from:'
@@ -1229,8 +1229,8 @@ object Form11: TForm11
       Caption = 'Reading phasespace data from:'
     end
     object GazeComboBox: TComboBox
-      Left = 304
-      Top = 19
+      Left = 486
+      Top = 15
       Width = 144
       Height = 20
       TabOrder = 0
@@ -1238,8 +1238,8 @@ object Form11: TForm11
       OnChange = GazeComboBoxChange
     end
     object LoadCalibration: TButton
-      Left = 478
-      Top = 10
+      Left = 654
+      Top = 13
       Width = 84
       Height = 25
       Caption = 'Load Calibration'
@@ -1256,8 +1256,8 @@ object Form11: TForm11
       OnChange = PhaseComboBoxChange
     end
     object xOffsetEdit: TLabeledEdit
-      Left = 590
-      Top = 12
+      Left = 766
+      Top = 15
       Width = 66
       Height = 20
       EditLabel.Width = 62
@@ -1268,8 +1268,8 @@ object Form11: TForm11
       OnChange = xOffsetEditChange
     end
     object yOffsetEdit: TLabeledEdit
-      Left = 679
-      Top = 12
+      Left = 855
+      Top = 15
       Width = 74
       Height = 20
       EditLabel.Width = 62

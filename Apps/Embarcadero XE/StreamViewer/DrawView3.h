@@ -82,7 +82,7 @@ public:
 	POINT 	m_sSize;				//h x v, in physical units
 
 	DisplaySample(float *sample, int nChannels, float sampingRate);
-	DisplaySample(/*TDataRiver *sample*/double *sample, int nChannels, float sampingRate);
+	DisplaySample(/*TDataRiver *sample*/double *sample, int nChannels,  float sampingRate);
 
 	CChannelN (TImage * pImg,TImage * pCodeImg,int nChan); //CRect viewport,
 	__fastcall ~CChannelN();
@@ -139,8 +139,8 @@ public:
 	TPos3D Display3DBuffer[72];	// vis.buffer
 	TDisplay3D(TImage * pImg,int nChan); //CRect viewport,
 	void PaintBkgr();		// paints the background in the color of the active brush
-	DisplaySample(float *sample, int nChannels, float sampingRate);
-	DisplaySample(/*TDataRiver *sample*/double *sample, int nChannels, float sampingRate);
+	DisplaySample(float *sample, int nChannels, int channelsPerMarker, float sampingRate);
+	DisplaySample(/*TDataRiver *sample*/double *sample, int nChannels, int channelsPerMarker, float sampingRate);
 };
 
 

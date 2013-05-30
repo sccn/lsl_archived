@@ -126,22 +126,40 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	int t,c,m;					/* time point and channel index */
 	lsl_streaminfo info;		/* out stream declaration object */
-	lsl_xml_ptr desc, chn;		/* some xml element pointers */
+	lsl_xml_ptr desc, chn, chns;		/* some xml element pointers */
 	lsl_outlet outlet;			/* stream outlet */
 	double starttime;			/* used for send timing */
 	float cursample[40];			/* the current sample */
-
+	char chanName[256];
 	/* declare a new streaminfo (8 channels, 100 Hz, float-formatted, some pseudo device id */
 	info = lsl_create_streaminfo("PhaseSpace","Mocap",nChannels,samplesPerSec,cft_float32,"76sfsfdsdfa67");
 
 	/* add some meta-data fields to it */
 	desc = lsl_get_desc(info);
-	lsl_append_child_value(desc,"manufacturer","BioSemi");
-	for (c=0;c<nChannels;c++) {
-		chn = lsl_append_child(desc,"channels");
-//		lsl_append_child_value(chn,"name",channels[c]);
-//		lsl_append_child_value(chn,"unit","microvolts");
-//		lsl_append_child_value(chn,"type","EEG");
+	lsl_append_child_value(desc,"manufacturer","Phasespace");
+	chns = lsl_append_child(desc,"channels");
+	for (c=0;c<nMarkers;c++) {
+
+		chn = lsl_append_child(chns,"channel");
+		sprintf(chanName, "Marker%d_X", c);
+		lsl_append_child_value(chn, "label", chanName);
+		lsl_append_child_value(chn,"type","PositionX");
+		lsl_append_child_value(chn,"unit","meters");
+
+
+		chn = lsl_append_child(chns,"channel");
+		sprintf(chanName, "Marker%d_Y", c);
+		lsl_append_child_value(chn, "label", chanName);
+		lsl_append_child_value(chn,"type","PositionY");
+		lsl_append_child_value(chn,"unit","meters");
+
+
+		chn = lsl_append_child(chns,"channel");
+		sprintf(chanName, "Marker%d_Z", c);
+		lsl_append_child_value(chn, "label", chanName);
+		lsl_append_child_value(chn,"type","PositionY");
+		lsl_append_child_value(chn,"unit","meters");
+
 	}
 
 	/* make a new outlet */

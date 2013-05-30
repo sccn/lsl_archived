@@ -162,6 +162,7 @@ __published:	// IDE-managed Components
 	void __fastcall sensor2EditChange(TObject *Sender);
 	void __fastcall sensor3EditChange(TObject *Sender);
 	void __fastcall RefreshStreamsButtonClick(TObject *Sender);
+	void __fastcall PageControl2Change(TObject *Sender);
 private:	// User declarations
 
 public:		// User declarations

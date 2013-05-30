@@ -68,6 +68,9 @@ int GetAttribute(_di_IXMLNode Node, AnsiString attr)
 
 TStringList * labellist = 0;
 int nEegChans = 0;
+int channelsPerMarker = 4;
+double distanceScaleFactor = 1000.0;
+bool motionTypeRecognized = false;
 
 int sensor0, sensor1, sensor2, sensor3;
 
@@ -292,7 +295,7 @@ void ProcessData(float *data, int nChannels, double samplingRate) {
 	{
 		bool ok;
 
-		  Form1->Display3D->DisplaySample(data,nChannels,samplingRate);
+		  Form1->Display3D->DisplaySample(data,nChannels,channelsPerMarker, samplingRate);
 
 		if(((int)((processDataCount++) * 100.0/samplingRate)) % 5 == 0) {
 			hWnd =Form1->PageControl2->ActivePage->Handle;
@@ -303,29 +306,29 @@ void ProcessData(float *data, int nChannels, double samplingRate) {
 
 			ReleaseDC(hWnd,hDC);
 
-			if(sensor0 >= 0 && sensor0*4 < nChannels) {
-				Form1->x0Edit->Text = FormatFloat("0.00",data[sensor0*4]*1000);
-				Form1->y0Edit->Text = FormatFloat("0.00",data[sensor0*4+1]*1000);
-				Form1->z0Edit->Text = FormatFloat("0.00",data[sensor0*4+2]*1000);
+			if(sensor0 >= 0 && sensor0*channelsPerMarker < nChannels) {
+				Form1->x0Edit->Text = FormatFloat("0.00",data[sensor0*channelsPerMarker]*distanceScaleFactor);
+				Form1->y0Edit->Text = FormatFloat("0.00",data[sensor0*channelsPerMarker+1]*distanceScaleFactor);
+				Form1->z0Edit->Text = FormatFloat("0.00",data[sensor0*channelsPerMarker+2]*distanceScaleFactor);
 			}
 
-			if(sensor1 >= 0 && sensor1*4 < nChannels) {
-				Form1->x1Edit->Text = FormatFloat("0.00",data[sensor1*4]*1000);
-				Form1->y1Edit->Text = FormatFloat("0.00",data[sensor1*4+1]*1000);
-				Form1->z1Edit->Text = FormatFloat("0.00",data[sensor1*4+2]*1000);
+			if(sensor1 >= 0 && sensor1*channelsPerMarker < nChannels) {
+				Form1->x1Edit->Text = FormatFloat("0.00",data[sensor1*channelsPerMarker]*distanceScaleFactor);
+				Form1->y1Edit->Text = FormatFloat("0.00",data[sensor1*channelsPerMarker+1]*distanceScaleFactor);
+				Form1->z1Edit->Text = FormatFloat("0.00",data[sensor1*channelsPerMarker+2]*distanceScaleFactor);
 
 			}
-			if(sensor1 >= 0 && sensor2*4 < nChannels) {
-				Form1->x2Edit->Text = FormatFloat("0.00",data[sensor2*4]*1000);
-				Form1->y2Edit->Text = FormatFloat("0.00",data[sensor2*4+1]*1000);
-				Form1->z2Edit->Text = FormatFloat("0.00",data[sensor2*4+2]*1000);
+			if(sensor1 >= 0 && sensor2*channelsPerMarker < nChannels) {
+				Form1->x2Edit->Text = FormatFloat("0.00",data[sensor2*channelsPerMarker]*distanceScaleFactor);
+				Form1->y2Edit->Text = FormatFloat("0.00",data[sensor2*channelsPerMarker+1]*distanceScaleFactor);
+				Form1->z2Edit->Text = FormatFloat("0.00",data[sensor2*channelsPerMarker+2]*distanceScaleFactor);
 
 			}
 
-			if(sensor1 >= 0 && sensor3*4 < nChannels) {
-				Form1->x3Edit->Text = FormatFloat("0.00",data[sensor3*4]*1000);
-				Form1->y3Edit->Text = FormatFloat("0.00",data[sensor3*4+1]*1000);
-				Form1->z3Edit->Text = FormatFloat("0.00",data[sensor3*4+2]*1000);
+			if(sensor1 >= 0 && sensor3*channelsPerMarker < nChannels) {
+				Form1->x3Edit->Text = FormatFloat("0.00",data[sensor3*channelsPerMarker]*distanceScaleFactor);
+				Form1->y3Edit->Text = FormatFloat("0.00",data[sensor3*channelsPerMarker+1]*distanceScaleFactor);
+				Form1->z3Edit->Text = FormatFloat("0.00",data[sensor3*channelsPerMarker+2]*distanceScaleFactor);
 
 			}
 
@@ -689,6 +692,21 @@ void __fastcall TForm1::ComboBox1Select(TObject *Sender)
    }
 
    std::vector<UnicodeString> strs = splitString(ComboBox1->Text, L';');
+
+	if(strcmp( ((AnsiString) strs[0]).c_str(), "PhaseSpace") == 0) {
+		channelsPerMarker = 4;
+		distanceScaleFactor = 1000.0;
+		motionTypeRecognized = true;
+	} else if (strcmp( ((AnsiString) strs[0]).c_str(), "OptiTrack") == 0) {
+		channelsPerMarker = 3;
+		distanceScaleFactor = 1.0;
+		motionTypeRecognized = true;
+	} else {
+		channelsPerMarker = 3;
+		distanceScaleFactor = 1.0;
+		motionTypeRecognized = false;
+	}
+
    char temp[512];
    sprintf(temp, "uid='%s'", AnsiString(strs[1]).c_str());
    processDataCount = 0;
@@ -832,4 +850,15 @@ void __fastcall TForm1::RefreshStreamsButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
+
+
+void __fastcall TForm1::PageControl2Change(TObject *Sender)
+{
+	if(PageControl2->ActivePage==TabSheet32 && !motionTypeRecognized) {
+		Application->MessageBoxA(L"Motion data type not recognized. Assuming three channels per marker and distances measured in millimeters.", L"Warning", MB_OK);
+
+	}
+}
+//---------------------------------------------------------------------------
 
