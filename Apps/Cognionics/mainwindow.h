@@ -40,7 +40,7 @@ private slots:
     void closeEvent(QCloseEvent *ev);
 private:
     // background data reader thread
-	void read_thread(HANDLE hPort, int comPort, int samplingRate, int channelCount, std::vector<std::string> channelLabels);
+	void read_thread(HANDLE hPort, int comPort, int samplingRate, int channelCount, std::vector<std::string> channelLabels, bool stripImpedance);
 
     // raw config file IO
     void load_config(const std::string &filename);
