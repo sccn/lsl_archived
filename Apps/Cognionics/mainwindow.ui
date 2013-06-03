@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>313</width>
+    <width>348</width>
     <height>265</height>
    </rect>
   </property>
@@ -119,6 +119,13 @@ C2</string>
            </property>
           </widget>
          </item>
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="stripImpedance">
+           <property name="text">
+            <string>Strip impedance signal</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -168,7 +175,7 @@ C2</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>313</width>
+     <width>348</width>
      <height>18</height>
     </rect>
    </property>
