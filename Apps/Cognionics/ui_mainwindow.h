@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Wed Feb 13 12:54:43 2013
+** Created: Sun Jun 2 18:14:31 2013
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -14,6 +14,7 @@
 #include <QtGui/QAction>
 #include <QtGui/QApplication>
 #include <QtGui/QButtonGroup>
+#include <QtGui/QCheckBox>
 #include <QtGui/QFormLayout>
 #include <QtGui/QGridLayout>
 #include <QtGui/QGroupBox>
@@ -54,6 +55,7 @@ public:
     QSpinBox *samplingRate;
     QLabel *label_2;
     QSpinBox *channelCount;
+    QCheckBox *stripImpedance;
     QSpacerItem *verticalSpacer;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
@@ -66,7 +68,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(313, 265);
+        MainWindow->resize(348, 265);
         actionLoad_Configuration = new QAction(MainWindow);
         actionLoad_Configuration->setObjectName(QString::fromUtf8("actionLoad_Configuration"));
         actionSave_Configuration = new QAction(MainWindow);
@@ -142,6 +144,11 @@ public:
 
         formLayout->setWidget(2, QFormLayout::FieldRole, channelCount);
 
+        stripImpedance = new QCheckBox(groupBox);
+        stripImpedance->setObjectName(QString::fromUtf8("stripImpedance"));
+
+        formLayout->setWidget(3, QFormLayout::LabelRole, stripImpedance);
+
 
         verticalLayout->addWidget(groupBox);
 
@@ -170,7 +177,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 313, 18));
+        menuBar->setGeometry(QRect(0, 0, 348, 18));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QString::fromUtf8("menuFile"));
         MainWindow->setMenuBar(menuBar);
@@ -225,6 +232,7 @@ public:
         label_4->setText(QApplication::translate("MainWindow", "COM Port", 0, QApplication::UnicodeUTF8));
         label->setText(QApplication::translate("MainWindow", "Sampling Rate", 0, QApplication::UnicodeUTF8));
         label_2->setText(QApplication::translate("MainWindow", "Number of Channels", 0, QApplication::UnicodeUTF8));
+        stripImpedance->setText(QApplication::translate("MainWindow", "Strip impedance signal", 0, QApplication::UnicodeUTF8));
         linkButton->setText(QApplication::translate("MainWindow", "Link", 0, QApplication::UnicodeUTF8));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
