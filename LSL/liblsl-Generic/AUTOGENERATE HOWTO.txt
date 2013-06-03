@@ -1,0 +1,22 @@
+You can use this file to generate wrappers for any major scripting language, including:
+* C#, D, Go, Lua, OCaml, Octave, Perl, PHP, R, Ruby and a few lesser-known ones
+
+To accomplish this, you need to:
+1) download and install SWIG (http://www.swig.org/download.html), which is a simple command-line tool
+2) open a command line prompt and change into this directory
+3) Run the command:
+   swig -c++ -<yourlanguage> liblsl.i  (where <yourlanguage> is one of csharp, d, go, ocaml, octave, perl, php, r, ruby)
+   ... this generates a few wrapper files in your language (e.g., .cs for C#), and a file named liblsl_wrap.cxx
+4) You need to compile the file liblsl_wrap.cxx with your system compiler (e.g., g++ or Visual Studio) 
+   as a .so/.dll/.dylib (depending on your OS) and make sure that:
+   * you include the path ../liblsl/bin/ to the library search directories
+   * you link against the library file liblsl32 or liblsl64 in that bin directory (on MSVC under Windows that's   
+     automatic)
+   * you include the path to SDK headers and libraries for making extension modules to your scripting language
+     (this is specific to your language, so you might have to read the relevant documentation; if you cannot seem
+	  to see how this works at all, you might briefly skim the tutorials on making extension modules from scratch
+	  for your language and compare this to the layout of the auto-generated files -- it should make sense)
+5) Now you can use the library in much the same way as the python code samples do it
+   (see LSL/liblsl-Python/examples -- these use a wrapper that was generated using the process explained here)
+   
+Happy coding!
