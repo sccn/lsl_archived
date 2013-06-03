@@ -63,6 +63,7 @@ void MainWindow::load_config(const std::string &filename) {
 		ui->comPort->setValue(pt.get<int>("settings.comport",1));
 		ui->samplingRate->setValue(pt.get<int>("settings.samplingrate",250));
 		ui->channelCount->setValue(pt.get<int>("settings.channelcount",24));
+		ui->stripImpedance->setChecked(pt.get<bool>("settings.stripimpedance",false));
 		ui->channelLabels->clear();
 		BOOST_FOREACH(ptree::value_type &v, pt.get_child("channels.labels"))
 			ui->channelLabels->appendPlainText(v.second.data().c_str());
@@ -81,6 +82,7 @@ void MainWindow::save_config(const std::string &filename) {
 		pt.put("settings.comport",ui->comPort->value());
 		pt.put("settings.samplingrate",ui->samplingRate->value());
 		pt.put("settings.channelcount",ui->channelCount->value());
+		pt.put("settings.stripimpedance",ui->stripImpedance->checkState() == Qt::Checked);
 		std::vector<std::string> channelLabels;
 		boost::algorithm::split(channelLabels,ui->channelLabels->toPlainText().toStdString(),boost::algorithm::is_any_of("\n"));
 		BOOST_FOREACH(std::string &v, channelLabels)
@@ -123,6 +125,7 @@ void MainWindow::link_cognionics() {
 			int comPort = ui->comPort->value();
 			int samplingRate = ui->samplingRate->value();
 			int channelCount = ui->channelCount->value();
+			bool stripImpedance = ui->stripImpedance->checkState() == Qt::Checked;
 			std::vector<std::string> channelLabels;
 			boost::algorithm::split(channelLabels,ui->channelLabels->toPlainText().toStdString(),boost::algorithm::is_any_of("\n"));
 			if (channelLabels.size() != channelCount)
@@ -159,7 +162,7 @@ void MainWindow::link_cognionics() {
 
 			// start reading
 			stop_ = false;
-			reader_thread_.reset(new boost::thread(&MainWindow::read_thread,this,hPort,comPort,samplingRate,channelCount,channelLabels));
+			reader_thread_.reset(new boost::thread(&MainWindow::read_thread,this,hPort,comPort,samplingRate,channelCount,channelLabels,stripImpedance));
 		}
 		catch(std::exception &e) {
 			if (hPort != INVALID_HANDLE_VALUE)
@@ -175,7 +178,7 @@ void MainWindow::link_cognionics() {
 
 
 // background data reader thread
-void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int channelCount, std::vector<std::string> channelLabels) {
+void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int channelCount, std::vector<std::string> channelLabels, bool stripImpedance) {
 	try {
 
 		// create streaminfo
@@ -196,6 +199,12 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int ch
 
 		// reserve memory
 		std::vector<float> sample(channelCount);
+
+		if (stripImpedance) {
+			DWORD dwBytesWritten = 0;
+			unsigned char cmd_stripimp = 0x12;
+			WriteFile(hPort,(LPSTR)&cmd_stripimp,1,&dwBytesWritten,NULL);
+		}
 
 		// enter transmission loop
 		unsigned char temp;

@@ -240,17 +240,17 @@ void MainWindow::link_optitrack() {
 					.append_child_value("label",(mrk_labels[k] + "_X").c_str())
 					.append_child_value("marker",mrk_labels[k].c_str())
 					.append_child_value("type","PositionX")
-					.append_child_value("unit","meters");
+					.append_child_value("unit","millimeters");
 				channels.append_child("channel")
 					.append_child_value("label",(mrk_labels[k] + "_Y").c_str())
 					.append_child_value("marker",mrk_labels[k].c_str())
 					.append_child_value("type","PositionY")
-					.append_child_value("unit","meters");
+					.append_child_value("unit","millimeters");
 				channels.append_child("channel")
 					.append_child_value("label",(mrk_labels[k] + "_Z").c_str())
 					.append_child_value("marker",mrk_labels[k].c_str())
 					.append_child_value("type","PositionZ")
-					.append_child_value("unit","meters");
+					.append_child_value("unit","millimeters");
 			}
 
 			// for each known rigid body we transmit 7 values (x,y,z, a,b,c,d)
@@ -260,17 +260,17 @@ void MainWindow::link_optitrack() {
 					.append_child_value("label",(label + "_X").c_str())
 					.append_child_value("object",label.c_str())
 					.append_child_value("type","PositionX")
-					.append_child_value("unit","meters");
+					.append_child_value("unit","millimeters");
 				channels.append_child("channel")
 					.append_child_value("label",(label + "_Y").c_str())
 					.append_child_value("object",label.c_str())
 					.append_child_value("type","PositionY")
-					.append_child_value("unit","meters");
+					.append_child_value("unit","millimeters");
 				channels.append_child("channel")
 					.append_child_value("label",(label + "_Z").c_str())
 					.append_child_value("object",label.c_str())
 					.append_child_value("type","PositionZ")
-					.append_child_value("unit","meters");
+					.append_child_value("unit","millimeters");
 
 				channels.append_child("channel")
 					.append_child_value("label",(label + "_A").c_str())
