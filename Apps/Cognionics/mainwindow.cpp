@@ -200,11 +200,15 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int ch
 		// reserve memory
 		std::vector<float> sample(channelCount);
 
-		if (stripImpedance) {
-			DWORD dwBytesWritten = 0;
-			unsigned char cmd_stripimp = 0x12;
+		// send impedance command
+		DWORD dwBytesWritten = 0;
+		unsigned char cmd_stripimp = 0x12;
+		unsigned char cmd_keepimp = 0x11;
+		if (stripImpedance)
 			WriteFile(hPort,(LPSTR)&cmd_stripimp,1,&dwBytesWritten,NULL);
-		}
+		else
+			WriteFile(hPort,(LPSTR)&cmd_keepimp,1,&dwBytesWritten,NULL);
+
 
 		// enter transmission loop
 		unsigned char temp;
