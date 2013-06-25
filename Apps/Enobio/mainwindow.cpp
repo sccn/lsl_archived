@@ -137,9 +137,24 @@ void MainWindow::link_enobio() {
 			reader_thread_.reset(new boost::thread(&MainWindow::read_thread,this,channelCount,samplingRate));		
 		}
 		catch(std::exception &e) {
-			if (initialized)
-				CEnobioClose(amp);
-			QMessageBox::critical(this,"Error",(std::string("Could not initialize the Enobio interface: ")+=e.what()).c_str(),QMessageBox::Ok);
+			// try to get more detailed error info
+			string errstr("no error info");
+			if (amp) {
+				try {
+					int errcode = CEnobioGetLastError(amp);
+					errstr = errcode ? CEnobioStrError(errcode,amp) : "no error";
+				} catch(...) { 
+					errstr = "could not query error";
+				}
+			}
+			// try to shut down again
+			if (initialized) {
+				try {
+					CEnobioClose(amp);
+				} catch(...) { }
+			}
+			// show error
+			QMessageBox::critical(this,"Error",(std::string("Error initializing the Enobio interface: ") + e.what() + std::string("  Enobio: ") + errstr).c_str(),QMessageBox::Ok);
 			return;
 		}
 
