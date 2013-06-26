@@ -7,6 +7,9 @@ To accomplish this, you need to:
 3) Run the command:
    swig -c++ -<yourlanguage> liblsl.i  (where <yourlanguage> is one of csharp, d, go, ocaml, octave, perl, php, r, ruby)
    ... this generates a few wrapper files in your language (e.g., .cs for C#), and a file named liblsl_wrap.cxx
+   * at your convenience you can have the wrapper library generated in the context of a "package" (or namespace) or
+     whatever it is called in your language. This is done by passing -package <packagename> to the swig command;
+	 note that for a first test it is probably best to skip this feature.
 4) You need to compile the file liblsl_wrap.cxx with your system compiler (e.g., g++ or Visual Studio) 
    as a .so/.dll/.dylib (depending on your OS) and make sure that:
    * you include the path ../liblsl/bin/ to the library search directories
@@ -16,6 +19,13 @@ To accomplish this, you need to:
      (this is specific to your language, so you might have to read the relevant documentation; if you cannot seem
 	  to see how this works at all, you might briefly skim the tutorials on making extension modules from scratch
 	  for your language and compare this to the layout of the auto-generated files -- it should make sense)
+   * the output filename (usually a .dll, .so, or .dylib) may be specific to the conventions of your scripting language; 
+     usually it contains "liblsl" in the filename (the name of the module). This is documented as part of SWIG in the
+     section that is specific to your language (as of this writing under "Language Module Documentation" at
+	 http://www.swig.org/Doc2.0/Sections.html#Sections).
+	 For example, in Python it starts with an underscore and would be _liblsl.so on Linux. 
+	 In Java (and likely some other environments), it's the job of the program to "pull in" the
+	 library using a call like System.load(yourpathtothelib), so the file name is up to you.
 5) Now you can use the library in much the same way as the python code samples do it
    (see LSL/liblsl-Python/examples -- these use a wrapper that was generated using the process explained here)
    
