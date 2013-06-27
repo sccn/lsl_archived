@@ -7,9 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA0888E2177BBD7B00B04BAB /* error_code.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0888E1177BBD7B00B04BAB /* error_code.cpp */; };
+		AA0888E4177BBDAA00B04BAB /* tss_null.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0888E3177BBDAA00B04BAB /* tss_null.cpp */; };
+		AA0888E7177BBDB700B04BAB /* once.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0888E5177BBDB700B04BAB /* once.cpp */; };
+		AA0888E8177BBDB700B04BAB /* thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0888E6177BBDB700B04BAB /* thread.cpp */; };
 		AA6FC01315B9EB5C0048161D /* StressTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = AA6FC01215B9EB5C0048161D /* StressTest.1 */; };
 		AA6FC02015B9EC180048161D /* StressTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6FC01F15B9EC180048161D /* StressTest.cpp */; };
-		AA6FC02415B9EE340048161D /* error_code.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6FC02315B9EE340048161D /* error_code.cpp */; };
 		AA6FC02815BA16DC0048161D /* liblsl64-debug.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AA6FC02715BA16DC0048161D /* liblsl64-debug.dylib */; };
 /* End PBXBuildFile section */
 
@@ -27,10 +30,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AA0888E1177BBD7B00B04BAB /* error_code.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = error_code.cpp; path = ../../../../../../Users/christian/Desktop/labstreaminglayer/LSL/liblsl/external/src/system/src/error_code.cpp; sourceTree = "<group>"; };
+		AA0888E3177BBDAA00B04BAB /* tss_null.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tss_null.cpp; path = ../../../../../../Users/christian/Desktop/labstreaminglayer/LSL/liblsl/external/src/thread/src/tss_null.cpp; sourceTree = "<group>"; };
+		AA0888E5177BBDB700B04BAB /* once.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = once.cpp; path = ../../../../../../Users/christian/Desktop/labstreaminglayer/LSL/liblsl/external/src/thread/src/pthread/once.cpp; sourceTree = "<group>"; };
+		AA0888E6177BBDB700B04BAB /* thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = thread.cpp; path = ../../../../../../Users/christian/Desktop/labstreaminglayer/LSL/liblsl/external/src/thread/src/pthread/thread.cpp; sourceTree = "<group>"; };
 		AA6FC00C15B9EB5C0048161D /* StressTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = StressTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA6FC01215B9EB5C0048161D /* StressTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = StressTest.1; sourceTree = "<group>"; };
 		AA6FC01F15B9EC180048161D /* StressTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StressTest.cpp; sourceTree = SOURCE_ROOT; };
-		AA6FC02315B9EE340048161D /* error_code.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = error_code.cpp; path = ../../external/src/system/error_code.cpp; sourceTree = "<group>"; };
 		AA6FC02715BA16DC0048161D /* liblsl64-debug.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "liblsl64-debug.dylib"; path = "../../bin/liblsl64-debug.dylib"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -49,8 +55,11 @@
 		AA6FC00115B9EB5B0048161D = {
 			isa = PBXGroup;
 			children = (
+				AA0888E5177BBDB700B04BAB /* once.cpp */,
+				AA0888E6177BBDB700B04BAB /* thread.cpp */,
+				AA0888E3177BBDAA00B04BAB /* tss_null.cpp */,
+				AA0888E1177BBD7B00B04BAB /* error_code.cpp */,
 				AA6FC02715BA16DC0048161D /* liblsl64-debug.dylib */,
-				AA6FC02315B9EE340048161D /* error_code.cpp */,
 				AA6FC00F15B9EB5C0048161D /* StressTest */,
 				AA6FC00D15B9EB5C0048161D /* Products */,
 			);
@@ -124,7 +133,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA6FC02015B9EC180048161D /* StressTest.cpp in Sources */,
-				AA6FC02415B9EE340048161D /* error_code.cpp in Sources */,
+				AA0888E2177BBD7B00B04BAB /* error_code.cpp in Sources */,
+				AA0888E4177BBDAA00B04BAB /* tss_null.cpp in Sources */,
+				AA0888E7177BBDB700B04BAB /* once.cpp in Sources */,
+				AA0888E8177BBDB700B04BAB /* thread.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,6 +253,7 @@
 				AA6FC01815B9EB5C0048161D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

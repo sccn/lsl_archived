@@ -155,6 +155,12 @@ void random_inlets(double spawn_every=2.0, double duration=0.0, string name=stri
 }
 
 int main(int argc, char* argv[]) {
+    //lsl::stream_info info1("test1","EEG",8,236,lsl::cf_float32);
+    //lsl::stream_info info2("test2","EEG",8,236,lsl::cf_float32);
+    //lsl::stream_outlet outlet1(info1);
+    //lsl::stream_outlet outlet2(info2);
+    
+    
 	boost::thread outlets(boost::bind(&random_outlets,3.0,0.0,"test","",5,lsl::cf_float32,0.0,0.0,0));
 	boost::thread inlets(boost::bind(&random_inlets,3.0,0.0,"test2","",-1,-1,-1,0.0));
 	cout << "Press any key to exit. " << endl; cin.get();
