@@ -30,11 +30,8 @@ tcp_server::tcp_server(const stream_info_impl_p &info, const io_service_p &io, c
 	// open the server connection
 	acceptor_->open(protocol);
 
-	// bind to a free port
-	int port = bind_port_in_range(*acceptor_,protocol);
-
-	// start listening for connections
-	acceptor_->listen(10);
+	// bind to and listen on a free port
+	int port = bind_and_listen_to_port_in_range(*acceptor_,protocol,10);
 
 	// and assign connection-dependent fields
 	// (note: this may be assigned multiple times by multiple TCPs during setup but does not matter)
