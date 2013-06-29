@@ -26,7 +26,12 @@ To accomplish this, you need to:
 	 For example, in Python it starts with an underscore and would be _liblsl.so on Linux. 
 	 In Java (and likely some other environments), it's the job of the program to "pull in" the
 	 library using a call like System.load(yourpathtothelib), so the file name is up to you.
+   * this generates a wrapper library which can be loaded by your scipting language, and which itself depends on
+     the liblsl(32/64) core library (the one that implements the actual functionality, not just wrapper code); loading
+	 the dependent library is the business of your operating system's usual way of finding shared libraries (e.g.,
+	 in the same path as you wrapper library and/or the working directory of the app, or in a standard system path,
+	 or in a path that you have manually "baked into" one of the libraries using custom build options (particularly rpath).
 5) Now you can use the library in much the same way as the python code samples do it
    (see LSL/liblsl-Python/examples -- these use a wrapper that was generated using the process explained here)
    
-Happy coding!
+Happy scripting!

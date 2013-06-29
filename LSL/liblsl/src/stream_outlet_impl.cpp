@@ -77,7 +77,7 @@ void stream_outlet_impl::instantiate_stack(tcp tcp_protocol, udp udp_protocol) {
 			if (udp_protocol == udp::v4() ? address.is_v4() : address.is_v6())
 				responders_.push_back(udp_server_p(new udp_server(info_, *ios_.back(), *i, multicast_port, multicast_ttl)));
 		} catch(std::exception &e) {
-			std::clog << "Note: could not create multicast responder for address " << *i << " (failed with: " << e.what() << ")" << std::endl;
+			std::clog << "Note (minor): could not create multicast responder for address " << *i << " (failed with: " << e.what() << ")" << std::endl;
 		}
 	}
 }

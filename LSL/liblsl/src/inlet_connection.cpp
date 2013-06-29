@@ -47,7 +47,7 @@ inlet_connection::inlet_connection(const stream_info_impl &info, bool recover): 
 
 		if (recovery_enabled_ && type_info_.source_id().empty()) {
 			// we cannot correctly recover streams which don't have a unique source id
-			std::cerr << "Warning: The stream named '" << host_info_.name() << "' could not be recovered automatically if its provider crashed because it does not specify a unique data source ID." << std::endl;
+			std::clog << "Note: The stream named '" << host_info_.name() << "' could not be recovered automatically if its provider crashed because it does not specify a unique data source ID." << std::endl;
 			recovery_enabled_ = false;
 		}
 
@@ -183,7 +183,7 @@ void inlet_connection::try_recover() {
 						// this is because we don't want to randomly connect to the wrong source without the user knowing about it;
 						// the correct action (if this stream shall indeed have multiple instances) is to change the user code and 
 						// make its source_id unique, or remove the source_id altogether if that's not possible (therefore disabling the ability to recover)
-						std::cerr << "Found multiple streams with name='" << host_info_.name() << "' and source_id='" << host_info_.source_id() << "'. Cannot recover unless all but one are closed." << std::endl;
+						std::clog << "Found multiple streams with name='" << host_info_.name() << "' and source_id='" << host_info_.source_id() << "'. Cannot recover unless all but one are closed." << std::endl;
 						continue;
 					}
 				} else {

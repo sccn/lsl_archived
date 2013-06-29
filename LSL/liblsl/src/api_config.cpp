@@ -80,7 +80,11 @@ void api_config::load_from_file(const std::string &filename) {
 		multicast_port_ = pt.get("ports.MulticastPort",16571);
 		base_port_ = pt.get("ports.BasePort",16572);
 		port_range_ = pt.get("ports.PortRange",32);
+#ifdef __APPLE__
+		ipv6_ = pt.get("ports.IPv6","disable"); // on Mac OS (10.7) there's a bug in the IPv6 implementation that breaks LSL when it tries to use both v4 and v6
+#else
 		ipv6_ = pt.get("ports.IPv6","allow");
+#endif
 		// fix some common mis-spellings
 		if (ipv6_ == "disabled")
 			ipv6_ = "disable";
@@ -93,7 +97,7 @@ void api_config::load_from_file(const std::string &filename) {
 
 		// read the [multicast] parameters
 		resolve_scope_ = pt.get("multicast.ResolveScope","site");
-		std::vector<std::string> machine_group = parse_set(pt.get("multicast.MachineAddresses","{FF31:113D:6FDD:2C17:A643:FFE2:1BD1:3CD2}"));
+		std::vector<std::string> machine_group = parse_set(pt.get("multicast.MachineAddresses","{127.0.0.1, FF31:113D:6FDD:2C17:A643:FFE2:1BD1:3CD2}"));
 		std::vector<std::string> link_group = parse_set(pt.get("multicast.LinkAddresses","{255.255.255.255, 224.0.0.183, FF02:113D:6FDD:2C17:A643:FFE2:1BD1:3CD2}"));
 		std::vector<std::string> site_group = parse_set(pt.get("multicast.SiteAddresses","{239.255.172.215, FF05:113D:6FDD:2C17:A643:FFE2:1BD1:3CD2}"));
 		std::vector<std::string> organization_group = parse_set(pt.get("multicast.OrganizationAddresses","{239.192.172.215, FF08:113D:6FDD:2C17:A643:FFE2:1BD1:3CD2}"));
