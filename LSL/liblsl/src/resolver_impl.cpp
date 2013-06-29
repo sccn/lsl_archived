@@ -36,19 +36,20 @@ resolver_impl::resolver_impl(): cfg_(api_config::get_instance()), cancelled_(fal
 	// parse the per-host addresses into endpoints, and store them, too
 	std::vector<std::string> peers = cfg_->known_peers();
 	udp::resolver udp_resolver(*io_);
-	// for each port in the range...
-	for (int p=cfg_->base_port(); p<cfg_->base_port()+cfg_->port_range(); p++)  {
-		std::string port_str = boost::lexical_cast<std::string>(p);
-		// for each known peer...
-		for (unsigned k=0;k<peers.size();k++) {
-			// resolve into endpoints and add to list
-			try {
-				udp::resolver::query q(peers[k],port_str);
-				for (udp::resolver::iterator i=udp_resolver.resolve(q); i != udp::resolver::iterator(); i++)
-					ucast_endpoints_.push_back(*i);
-			} catch(std::exception &) { }
-		}
-	}
+	// for each known peer...
+    for (unsigned k=0;k<peers.size();k++) {
+        try {
+            // resolve the name
+            udp::resolver::query q(peers[k],boost::lexical_cast<std::string>(cfg_->base_port()));
+            // for each endpoint...
+            for (udp::resolver::iterator i=udp_resolver.resolve(q); i != udp::resolver::iterator(); i++) {
+                // for each port in the range...
+                for (int p=cfg_->base_port(); p<cfg_->base_port()+cfg_->port_range(); p++)
+                    // add a record
+                    ucast_endpoints_.push_back(udp::endpoint(i->endpoint().address(),p));
+            }
+        } catch(std::exception &) { }
+    }
 
 	// generate the list of protocols to use
 	if (cfg_->ipv6() == "force" || cfg_->ipv6() == "allow") {

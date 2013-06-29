@@ -387,7 +387,7 @@ LIBLSL_C_API double lsl_pull_sample_buf(lsl_inlet in, char **buffer, unsigned *b
 		// allocate memory and copy over into buffer
 		for (unsigned k=0;k<tmp.size();k++) {
 			buffer[k] = (char*)malloc(tmp[k].size());
-			buffer_lengths[k] = tmp[k].size();
+			buffer_lengths[k] = (unsigned)tmp[k].size();
 			memcpy(buffer[k],&tmp[k][0],tmp[k].size());
 		}
 		return result;
