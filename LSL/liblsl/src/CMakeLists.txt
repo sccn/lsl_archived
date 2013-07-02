@@ -1,6 +1,6 @@
 include_directories (${Boost_INCLUDE_DIRS})
 
-add_library (lsl SHARED
+set (sources
   api_config.cpp
   consumer_queue.cpp
   continuous_resolver.cpp
@@ -30,13 +30,35 @@ add_library (lsl SHARED
   pugixml/pugixml.cpp
 )
 
-if (WIN32)
-  set_property (TARGET lsl PROPERTY COMPILE_DEFINITIONS BOOST_ALL_NO_LIB BOOST_THREAD_BUILD_LIB LIBLSL_EXPORTS _SCL_SECURE_NO_WARNINGS _CRT_SECURE_NO_WARNINGS)
-  target_link_libraries (lsl ${Boost_LIBRARIES})
-elseif (APPLE)
-  target_link_libraries (lsl ${Boost_LIBRARIES} pthread)
-elseif (UNIX)
-  target_link_libraries (lsl ${Boost_LIBRARIES} rt pthread)
-else ()
-  target_link_libraries (lsl ${Boost_LIBRARIES})
-endif ()
+message (${Boost_LIBRARIES})
+
+if (BUILD_SHARED)
+  add_library (lsl SHARED ${sources})
+  
+  # TODO: Need to check if all flags are necessary or if some flags are missing
+  if (WIN32)
+    set_property (TARGET lsl PROPERTY COMPILE_DEFINITIONS BOOST_ALL_NO_LIB BOOST_THREAD_BUILD_LIB LIBLSL_EXPORTS _SCL_SECURE_NO_WARNINGS _CRT_SECURE_NO_WARNINGS)
+    target_link_libraries (lsl ${Boost_LIBRARIES})
+  elseif (APPLE)
+    target_link_libraries (lsl ${Boost_LIBRARIES} pthread)
+  elseif (UNIX)
+    set_property (TARGET lsl PROPERTY COMPILE_FLAGS "-fPIC -Wl,--exclude-libs,ALL")
+    target_link_libraries (lsl ${Boost_LIBRARIES} rt pthread)
+  else ()
+    target_link_libraries (lsl ${Boost_LIBRARIES})
+  endif ()
+endif (BUILD_SHARED)
+
+if (BUILD_STATIC)
+  add_library (lsl-static STATIC ${sources})
+  
+  # TODO: Need to check if all flags are necessary or if some flags are missing
+  # TODO: Add support for other platforms
+  if (UNIX)
+    set_property (TARGET lsl-static PROPERTY COMPILE_FLAGS "-fPIC")
+    set_target_properties (lsl-static PROPERTIES OUTPUT_NAME lsl)
+    target_link_libraries (lsl-static ${Boost_LIBRARIES} rt pthread)
+  endif ()
+endif (BUILD_STATIC)
+
+
