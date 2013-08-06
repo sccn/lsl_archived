@@ -16,7 +16,13 @@ namespace std {
    %template(vectori) vector<int>;
    %template(vectors) vector<short>;
    %template(vectorstr) vector<string>;
-   %template(vectorinfo) vector<lsl::stream_info>;
+   %template(vectorinfo) vector<lsl::stream_info>;   
+   %template(chunkf) vector<vector<float> >;
+   %template(chunkd) vector<vector<double> >;
+   %template(chunkl) vector<vector<long> >;
+   %template(chunki) vector<vector<int> >;
+   %template(chunks) vector<vector<short> >;
+   %template(chunkstr) vector<vector<string> >;
 };
 
 
