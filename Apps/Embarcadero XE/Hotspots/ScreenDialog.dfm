@@ -2,8 +2,8 @@ object ScreenForm: TScreenForm
   Left = 0
   Top = 0
   Caption = 'Form5'
-  ClientHeight = 176
-  ClientWidth = 472
+  ClientHeight = 186
+  ClientWidth = 547
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -54,7 +54,7 @@ object ScreenForm: TScreenForm
     TabOrder = 3
   end
   object DoneButton: TButton
-    Left = 305
+    Left = 446
     Top = 143
     Width = 75
     Height = 25
@@ -92,24 +92,54 @@ object ScreenForm: TScreenForm
     EditLabel.Caption = 'Device'
     TabOrder = 7
   end
-  object MonitorNumberEdit: TLabeledEdit
-    Left = 296
+  object XEdit: TLabeledEdit
+    Left = 305
     Top = 24
     Width = 121
     Height = 21
-    EditLabel.Width = 76
+    EditLabel.Width = 44
     EditLabel.Height = 13
-    EditLabel.Caption = 'Monitor Number'
+    EditLabel.Caption = 'X (pixels)'
     TabOrder = 8
   end
+  object WidthEdit: TLabeledEdit
+    Left = 305
+    Top = 105
+    Width = 121
+    Height = 21
+    EditLabel.Width = 66
+    EditLabel.Height = 13
+    EditLabel.Caption = 'Width (pixels)'
+    TabOrder = 9
+  end
+  object YEdit: TLabeledEdit
+    Left = 305
+    Top = 65
+    Width = 121
+    Height = 21
+    EditLabel.Width = 44
+    EditLabel.Height = 13
+    EditLabel.Caption = 'Y (pixels)'
+    TabOrder = 10
+  end
+  object HeightEdit: TLabeledEdit
+    Left = 305
+    Top = 145
+    Width = 121
+    Height = 21
+    EditLabel.Width = 69
+    EditLabel.Height = 13
+    EditLabel.Caption = 'Height (pixels)'
+    TabOrder = 11
+  end
   object MonitorDepthEdit: TLabeledEdit
-    Left = 296
-    Top = 64
+    Left = 160
+    Top = 147
     Width = 121
     Height = 21
     EditLabel.Width = 95
     EditLabel.Height = 13
     EditLabel.Caption = 'Monitor Depth (mm)'
-    TabOrder = 9
+    TabOrder = 12
   end
 end

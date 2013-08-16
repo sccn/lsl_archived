@@ -235,8 +235,8 @@ class THotspotScreen {
 
 	public:
 		int topLeftID, bottomLeftID, topRightID, bottomRightID, sensor0, sensor1, device;
-		int monitorNumber;
 		double monitorDepth;
+		int x, y, width, height;
 		ublas::vector<double> monitorTL, monitorTR, monitorBL, monitorBR;
 
 		TEdit *nameEdit,  *topLeftEdit, *topRightEdit, *bottomLeftEdit, *bottomRightEdit;
@@ -252,7 +252,7 @@ class THotspotScreen {
 		double monitorHeight;
 
 	THotspotScreen(std::map<int, TPoint3D*> p3Ds, int topLft, int topRght, int bottomLft, int bottomRght,
-		int sensr0, int sensr1, int devce, int monitrNumber, double monitrDepth):
+		int sensr0, int sensr1, int devce, double monitrDepth, int x0, int y0, int wdth, int hght):
 		topLeftID(topLft),
 		topRightID(topRght),
 		bottomLeftID(bottomLft),
@@ -260,8 +260,11 @@ class THotspotScreen {
 		sensor0(sensr0),
 		sensor1(sensr1),
 		device(devce),
-		monitorNumber(monitrNumber),
-		monitorDepth(monitrDepth) {
+		monitorDepth(monitrDepth),
+		x(x0),
+		y(y0),
+		width(wdth),
+		height(hght) {
 
 			monitorTL = p3Ds[topLeftID]->toDoubleVector();
 			monitorTR = p3Ds[topRightID]->toDoubleVector();
