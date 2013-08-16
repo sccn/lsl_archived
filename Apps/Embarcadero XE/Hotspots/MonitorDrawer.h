@@ -70,14 +70,16 @@ class MonitorDrawer {
 		bmpSprite = create_bitmap_ex(CDEPTH,markerSize*3,markerSize*3);
 		tempBackground = create_bitmap_ex(CDEPTH,markerSize,markerSize);
 		clear_bitmap(bmpSprite);
-		floodfill(bmpSprite, 1,1,makecol(0,0,0)); //fill background transparent.
+		rectfill(bmpSprite, 0,0,markerSize*3,markerSize*3,makecol(100,100,100));
 		circlefill(bmpSprite, markerSize*3/2, markerSize*3/2, markerSize/2-1, makecol(0,255,0));
-		circlefill(bmpSprite, markerSize*3/2, markerSize*3/2, markerSize/10, makecol(0,0,0));
+		circlefill(bmpSprite, markerSize*3/2, markerSize*3/2, markerSize/10, makecol(100,100,100));
 		count=0;
 
 		bmpFullBackground = create_bitmap_ex(CDEPTH,xRes,yRes);
+		rectfill(bmpFullBackground,0,0,xRes,yRes,makecol(100,100,100));
 		bmpBlackFullBackground = create_bitmap_ex(CDEPTH,xRes,yRes);
 		clear_bitmap(bmpBlackFullBackground);
+		rectfill(bmpBlackFullBackground,0,0,xRes,yRes,makecol(100,100,100));
 
 		visible = false;
 
@@ -120,6 +122,8 @@ class MonitorDrawer {
 	}
 
 	void drawMarkers(double xc, double yc, bool active) {
+
+		if(_isnan(xc) || _isnan(yc)) return;
 		int x = xc*xRes;
 		int y = yRes - yc*yRes;
 
@@ -157,6 +161,7 @@ class MonitorDrawer {
 		} else {
 			x = xc*xRes;
 			y = yRes - yc*yRes;
+
 		}
 	  //	if(count %100 != 0) { x=oldX;y=oldY;} else {
 	  //	 printf("x: %d  y: %d\n", x, y);
@@ -181,8 +186,8 @@ class MonitorDrawer {
 
    //		blit_from_hdc(hdc, bmpMarker, x-markerSize,y-markerSize,0,0, 2*markerSize,2*markerSize);
 
-		if((x < -markerSize*3/2 || x > xRes + markerSize*3/2 || y < -markerSize*3/2 || y > yRes + markerSize*3/2) &&
-			(oldX < -markerSize*3/2 || oldX > xRes + markerSize*3/2 || oldY < -markerSize*3/2 || oldY > yRes + markerSize*3/2)) {
+		if((x <  -markerSize*3/2 || x > xRes + markerSize*3/2 || y < -markerSize*3/2 || y > yRes + markerSize*3/2) &&
+			(oldX <  -markerSize*3/2 || oldX > xRes + markerSize*3/2 || oldY <  -markerSize*3/2 || oldY > yRes + markerSize*3/2)) {
 		  //	 blit_from_hdc(hdc, bmpBackground, x-markerSize*3/2,y-markerSize*3/2,0,0, 3*markerSize,3*markerSize);
 
 			oldX = x;

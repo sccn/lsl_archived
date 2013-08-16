@@ -23,8 +23,11 @@ __fastcall TScreenForm::TScreenForm(TComponent* Owner)
 	Sensor0Edit->Text = "e";
 	Sensor1Edit->Text = "g";
 	DeviceEdit->Text = "1";
-	MonitorNumberEdit->Text = "1";
 	MonitorDepthEdit->Text = "16";
+	XEdit->Text="0";
+	YEdit->Text="0";
+	WidthEdit->Text="1600";
+	HeightEdit->Text="1200";
 
 }
 //---------------------------------------------------------------------------
@@ -53,9 +56,12 @@ void __fastcall TScreenForm::DoneButtonClick(TObject *Sender)
 
 	device = DeviceEdit->Text.ToInt();
 
-	monitorNumber = MonitorNumberEdit->Text.ToInt();
-
 	monitorDepth = MonitorDepthEdit->Text.ToDouble();
+
+	x = XEdit->Text.ToInt();
+	y = YEdit->Text.ToInt();
+	width = WidthEdit->Text.ToInt();
+	height = HeightEdit->Text.ToInt();
 
 	ModalResult = mrOk;
 }

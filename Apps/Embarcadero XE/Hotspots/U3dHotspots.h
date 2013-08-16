@@ -237,7 +237,7 @@ public:		// User declarations
 	void addRectangular(THotspotGrid *hotspotGrid, double x, double y, double z, double Xthickness, double Ythickness, double Zthickness, int sensor, int device);
 
 	void addScreen(int topLeft, int topRight, int bottomLeft, int bottomRight,
-				int sensor0, int sensor1, int device, int monitorNumber, double monitorDepth);
+			int sensor0, int sensor1, int device, double monitorDepth, int x, int y, int width, int height);
 
 	void UpdateInfo();
 

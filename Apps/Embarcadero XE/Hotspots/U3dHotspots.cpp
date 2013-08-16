@@ -49,7 +49,7 @@ std::list<THotspotGrid*> hotspotGrids;
 std::list<THotspotScreen*> hotspotScreens;
 std::map<int, TPoint3D*> p3Ds;
 
-std::vector<MonitorDrawer*> monitorDrawers;
+std::map<int, MonitorDrawer*> monitorDrawers;
 
 double xOffset, yOffset;
 
@@ -235,10 +235,16 @@ void  TForm11::GenerateXMLHeader()
 		gridElement.append_attribute("sensor1") = s;
 		sprintf(s,"%d", hotspotScreen->device);
 		gridElement.append_attribute("device") = s;
-		sprintf(s,"%d", hotspotScreen->monitorNumber);
-		gridElement.append_attribute("monitor") = s;
 		sprintf(s,"%g", hotspotScreen->monitorDepth);
 		gridElement.append_attribute("monitorDepth") = s;
+		sprintf(s,"%d", hotspotScreen->x);
+		gridElement.append_attribute("x") = s;
+		sprintf(s,"%d", hotspotScreen->y);
+		gridElement.append_attribute("y") = s;
+		sprintf(s,"%d", hotspotScreen->width);
+		gridElement.append_attribute("width") = s;
+		sprintf(s,"%d", hotspotScreen->height);
+		gridElement.append_attribute("height") = s;
 
 	}
 
@@ -338,8 +344,12 @@ void TForm11::LoadConfig(const System::UnicodeString FileName)
 				node->Attributes["sensor0"],
 				node->Attributes["sensor1"],
 				node->Attributes["device"],
-				node->Attributes["monitor"],
-				node->Attributes["monitorDepth"]);
+				node->Attributes["monitorDepth"],
+				node->Attributes["x"],
+				node->Attributes["y"],
+				node->Attributes["width"],
+				node->Attributes["height"]);
+
 
 			} else {
 				Application->MessageBoxA((UnicodeString(L"Node: ") + node->NodeName + UnicodeString(" not recognized.")).w_str(), L"Error", MB_OK);
@@ -805,7 +815,7 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 			double monitorPosX = 0, monitorPosY = 0;
 			hotspotScreen->pointToScreen(ch1vect, ch2vect, &monitorPosX, &monitorPosY);
 
-			monitorDrawers[hotspotScreen->monitorNumber-1]->drawMarkerSmooth( monitorPosX, monitorPosY);
+			monitorDrawers[hotspotScreen->device]->drawMarkerSmooth( monitorPosX, monitorPosY);
 
 			buffer[i++] = monitorPosX;
 			buffer[i++] = monitorPosY;
@@ -868,7 +878,7 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 }
 
 
-
+static bool justFocused = false;
 LRESULT CALLBACK WindowPrc(HWND hWnd, UINT Msg,
 							WPARAM wParam, LPARAM lParam)
 {
@@ -879,9 +889,31 @@ LRESULT CALLBACK WindowPrc(HWND hWnd, UINT Msg,
 	 //   PostQuitMessage(0); Exit app on window close.
 		return 0;
 	case WM_ERASEBKGND:
-		for(int i=0; i<monitorDrawers.size(); i++) {
-			//if(monitorDrawers[i]->hwnd == hWnd)
-			 //	repaintCalibWindow(i);
+		for(std::map<int, MonitorDrawer*>::iterator iterator = monitorDrawers.begin(); iterator != monitorDrawers.end(); ++ iterator) {
+			MonitorDrawer *monitorDrawer = iterator->second;
+			monitorDrawer->blackenWindow();
+		}
+
+
+
+		return 0;
+	case WM_KILLFOCUS:
+		for(std::map<int, MonitorDrawer*>::iterator iterator = monitorDrawers.begin(); iterator != monitorDrawers.end(); ++ iterator) {
+			//if window is a different monitordrawer, do not restore task bar
+			if(iterator->second->hwnd == GetForegroundWindow()) {
+				return 0;
+			}
+		}
+		//otherwise restore task bar
+		for(std::map<int, MonitorDrawer*>::iterator iterator = monitorDrawers.begin(); iterator != monitorDrawers.end(); ++ iterator) {
+			SetWindowPos(iterator->second->hwnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+		}
+		return 0;
+
+	case WM_SETFOCUS:
+		//remove task bar
+		for(std::map<int, MonitorDrawer*>::iterator iterator = monitorDrawers.begin(); iterator != monitorDrawers.end(); ++ iterator) {
+			SetWindowPos(iterator->second->hwnd,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE | SWP_NOSIZE);
 		}
 
 		return 0;
@@ -960,11 +992,58 @@ BOOL CALLBACK MonitorEnumProc(
 				  int err= GetLastError();
 				  //printf("lerr: %d\n", err);
 
-	monitorDrawers.push_back(new MonitorDrawer(hWnd));
+ //	monitorDrawers.push_back(new MonitorDrawer(hWnd));
 
 
    return TRUE;
 }
+
+
+	MonitorDrawer *createMonitorDrawer(  long x, long y, long width, long height)  {
+			HMODULE hInstance = GetModuleHandle(NULL);
+		 if(!hInstance) printf("no hInstance\n");
+
+			 // The variable that will define the window
+		WNDCLASSEX  WndClsEx;
+		// The window's name
+		static char szAppName[] = "FirstClass";
+
+		// Filling out the structure that builds the window
+		WndClsEx.cbSize = sizeof(WndClsEx);
+		WndClsEx.style = CS_OWNDC | CS_VREDRAW | CS_HREDRAW;
+		WndClsEx.lpfnWndProc = &WindowPrc;
+		WndClsEx.cbClsExtra = 0;
+		WndClsEx.cbWndExtra = 0;
+		WndClsEx.hInstance = hInstance;
+		WndClsEx.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+		WndClsEx.hCursor = LoadCursor(NULL, IDC_ARROW);
+		WndClsEx.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+		WndClsEx.lpszMenuName = NULL;
+		WndClsEx.lpszClassName = szAppName;
+		WndClsEx.hIconSm = LoadIcon(hInstance, IDI_APPLICATION);
+
+		RegisterClassEx(&WndClsEx);
+
+	   HWND hWnd = CreateWindowEx(
+						WS_EX_OVERLAPPEDWINDOW,
+						szAppName,
+						"Basic Win32 Application",
+						WS_POPUP /* | WS_VISIBLE */ ,
+						x-2,
+						y-2,
+						width+4,
+						height+4,
+					   //	x,y,width-1,height-1,
+						NULL,
+						NULL,
+						hInstance,
+						NULL
+					  );
+					  int err= GetLastError();
+					  //printf("lerr: %d\n", err);
+
+		return new MonitorDrawer(hWnd);
+	}
 
 
 
@@ -1071,6 +1150,11 @@ void TForm11::clear() {
 		p3Ds.erase(itr++); //itr, post erase is not defined in old C++.  It is defined in C++0X.
 	}
 
+	for(std::map<int, MonitorDrawer*>::iterator itr=monitorDrawers.begin();itr !=monitorDrawers.end();)
+	{
+		delete itr->second;
+		monitorDrawers.erase(itr++); //itr, post erase is not defined in old C++.  It is defined in C++0X.
+	}
 	while(!hotspots.empty()) {
 		delete hotspots.back();
 		hotspots.pop_back();
@@ -1440,12 +1524,13 @@ void TForm11::addRectangular(THotspotGrid *hotspotGrid, double x, double y, doub
 
 
 void TForm11::addScreen(int topLeft, int topRight, int bottomLeft, int bottomRight,
-			int sensor0, int sensor1, int device, int monitorNumber, double monitorDepth) {
+			int sensor0, int sensor1, int device, double monitorDepth, int x, int y, int width, int height) {
 
 		THotspotScreen * pHs = new THotspotScreen(
 			p3Ds, topLeft, topRight, bottomLeft, bottomRight,
-			sensor0, sensor1, device, monitorNumber, monitorDepth);
+			sensor0, sensor1, device, monitorDepth, x, y, width, height);
 
+		monitorDrawers[device] =  createMonitorDrawer(x,y,width,height);
 
 		TShape * pSh = new TShape(GridPanel6);
 		pSh->Shape = stCircle;
@@ -1688,8 +1773,11 @@ void __fastcall TForm11::GridPanel1Click(TObject *Sender)
 			int sensor0 = ScreenForm->sensor0;
 			int sensor1 = ScreenForm->sensor1;
 			int device = ScreenForm->device;
-			int monitorNumber = ScreenForm->monitorNumber;
 			double monitorDepth = ScreenForm->monitorDepth;
+			int xMin = ScreenForm->x;
+			int yMin = ScreenForm->y;
+			int width = ScreenForm->width;
+			int height = ScreenForm->height;
 
 			if(p3Ds.find(topLeftID) == p3Ds.end())  {
 				Application->MessageBoxA(L"Top Left ID is not valid.", L"Error", MB_OK);
@@ -1714,11 +1802,8 @@ void __fastcall TForm11::GridPanel1Click(TObject *Sender)
 				Application->MessageBoxA(L"IDs must be different.", L"Error", MB_OK);
 				return;
 			}
-			if(monitorNumber < 1 || monitorNumber > monitorDrawers.size())  {
-				Application->MessageBoxA(L"Monitor number does not exist.", L"Error", MB_OK);
-				return;
-			}
-			addScreen(topLeftID, topRightID, bottomLeftID, bottomRightID, sensor0, sensor1, device, monitorNumber, monitorDepth);
+
+			addScreen(topLeftID, topRightID, bottomLeftID, bottomRightID, sensor0, sensor1, device, monitorDepth, xMin, yMin, width, height);
 		}
 
 	}
@@ -2250,16 +2335,13 @@ void __fastcall TForm11::FormDestroy(TObject *Sender)
     	phaseData = NULL;
 	}
 
-	while(!monitorDrawers.empty()) {
-		delete monitorDrawers.back();
-		monitorDrawers.pop_back();
-	}
+
 }
 void __fastcall TForm11::OpenDisplaysButtonClick(TObject *Sender)
 {
 	for(std::list<THotspotScreen*>::iterator hss = hotspotScreens.begin(); hss != hotspotScreens.end(); ++ hss) {
 		THotspotScreen *hotspotScreen = *hss;
-		if(!monitorDrawers[hotspotScreen->monitorNumber-1]->visible) monitorDrawers[hotspotScreen->monitorNumber-1]->setVisible(SW_SHOW);
+		if(!monitorDrawers[hotspotScreen->device]->visible) monitorDrawers[hotspotScreen->device]->setVisible(SW_SHOW);
 
 	}
 }
@@ -2267,8 +2349,9 @@ void __fastcall TForm11::OpenDisplaysButtonClick(TObject *Sender)
 
 void __fastcall TForm11::CloseDisplaysButtonClick(TObject *Sender)
 {
-	for(int i=0; i<monitorDrawers.size(); i++) {
-		if(monitorDrawers[i]->visible) monitorDrawers[i]->setVisible(SW_HIDE);
+	for(std::map<int, MonitorDrawer*>::iterator iterator = monitorDrawers.begin(); iterator != monitorDrawers.end(); ++ iterator) {
+		MonitorDrawer *monitorDrawer = iterator->second;
+		if(monitorDrawer->visible) monitorDrawer->setVisible(SW_HIDE);
 	}
 }
 //---------------------------------------------------------------------------

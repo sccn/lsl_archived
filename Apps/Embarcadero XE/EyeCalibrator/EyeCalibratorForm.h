@@ -15,6 +15,7 @@
 #include <Dialogs.hpp>
 #include <ComCtrls.hpp>
 #include "vector.h"
+#include "HotspotTypes.h"
 
 #ifdef _DEBUG
 	#undef _DEBUG  //prevent loading of debug version of library.
@@ -216,6 +217,7 @@ private:	// User declarations
 	void poseFinder(std::vector<double> xs, std::vector<double> ys);
 public:		// User declarations
 	__fastcall TForm4(TComponent* Owner);
+	THotspotScreen * getHotspotScreen(int deviceNumber);
 
 
 	/**
