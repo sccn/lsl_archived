@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Thu Aug 22 14:58:05 2013
+** Created: Thu Aug 22 15:28:08 2013
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -106,9 +106,9 @@ public:
 
         samplingRate = new QSpinBox(groupBox);
         samplingRate->setObjectName(QString::fromUtf8("samplingRate"));
-        samplingRate->setMinimum(1);
+        samplingRate->setMinimum(0);
         samplingRate->setMaximum(1000);
-        samplingRate->setValue(50);
+        samplingRate->setValue(0);
 
         formLayout->setWidget(1, QFormLayout::FieldRole, samplingRate);
 
@@ -179,6 +179,9 @@ public:
         groupBox->setTitle(QApplication::translate("MainWindow", "Device Settings", 0, QApplication::UnicodeUTF8));
         label_4->setText(QApplication::translate("MainWindow", "COM Port", 0, QApplication::UnicodeUTF8));
         label->setText(QApplication::translate("MainWindow", "Sampling Rate", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        samplingRate->setToolTip(QApplication::translate("MainWindow", "Set this to a non-zero value if you know the sampling rate.", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
         label_2->setText(QApplication::translate("MainWindow", "Stream Name", 0, QApplication::UnicodeUTF8));
         streamName->setText(QApplication::translate("MainWindow", "SerialPort", 0, QApplication::UnicodeUTF8));
         linkButton->setText(QApplication::translate("MainWindow", "Link", 0, QApplication::UnicodeUTF8));
