@@ -52,14 +52,17 @@
          </item>
          <item row="1" column="1">
           <widget class="QSpinBox" name="samplingRate">
+           <property name="toolTip">
+            <string>Set this to a non-zero value if you know the sampling rate.</string>
+           </property>
            <property name="minimum">
-            <number>1</number>
+            <number>0</number>
            </property>
            <property name="maximum">
             <number>1000</number>
            </property>
            <property name="value">
-            <number>50</number>
+            <number>0</number>
            </property>
           </widget>
          </item>
