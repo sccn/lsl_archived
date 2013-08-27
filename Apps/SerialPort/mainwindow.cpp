@@ -8,9 +8,6 @@
 #include <boost/foreach.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-
-const int samples_per_chunk = 32;					// the chunk granularity at which we transmit data into LSL
-
 MainWindow::MainWindow(QWidget *parent, const std::string &config_file) :
 QMainWindow(parent),
 ui(new Ui::MainWindow)
@@ -59,9 +56,17 @@ void MainWindow::load_config(const std::string &filename) {
 
 	// get config values
 	try {
-		ui->comPort->setValue(pt.get<int>("settings.comport",1));
-		ui->samplingRate->setValue(pt.get<int>("settings.samplingrate",250));
-		ui->streamName->setText(pt.get<std::string>("settings.streamname","SerialPort").c_str());
+		ui->comPort->setValue(pt.get<int>("coresettings.comport",1));
+		ui->baudRate->setValue(pt.get<int>("coresettings.baudrate",57600));
+		ui->samplingRate->setValue(pt.get<int>("streamsettings.samplingrate",0));
+		ui->chunkSize->setValue(pt.get<int>("streamsettings.chunksize",32));
+		ui->streamName->setText(pt.get<std::string>("streamsettings.streamname","SerialPort").c_str());
+		ui->dataBits->setCurrentIndex(pt.get<int>("miscsettings.databits",4));
+		ui->parity->setCurrentIndex(pt.get<int>("miscsettings.parity",0));
+		ui->stopBits->setCurrentIndex(pt.get<int>("miscsettings.stopbits",0));
+		ui->readIntervalTimeout->setValue(pt.get<int>("timeoutsettings.readintervaltimeout",500));
+		ui->readTotalTimeoutConstant->setValue(pt.get<int>("timeoutsettings.readtotaltimeoutconstant",50));
+		ui->readTotalTimeoutMultiplier->setValue(pt.get<int>("timeoutsettings.readtotaltimeoutmultiplier",10));
 	} catch(std::exception &) {
 		QMessageBox::information(this,"Error in Config File","Could not read out config parameters.",QMessageBox::Ok);
 		return;
@@ -74,9 +79,17 @@ void MainWindow::save_config(const std::string &filename) {
 
 	// transfer UI content into property tree
 	try {
-		pt.put("settings.comport",ui->comPort->value());
-		pt.put("settings.samplingrate",ui->samplingRate->value());
-		pt.put("settings.streamname",ui->streamName->text().toStdString());
+		pt.put("coresettings.comport",ui->comPort->value());
+		pt.put("coresettings.baudrate",ui->baudRate->value());
+		pt.put("streamsettings.samplingrate",ui->samplingRate->value());
+		pt.put("streamsettings.chunksize",ui->chunkSize->value());
+		pt.put("streamsettings.streamname",ui->streamName->text().toStdString());
+		pt.put("miscsettings.databits",ui->dataBits->currentIndex());
+		pt.put("miscsettings.parity",ui->parity->currentIndex());
+		pt.put("miscsettings.stopbits",ui->stopBits->currentIndex());
+		pt.put("timeoutsettings.readintervaltimeout",ui->readIntervalTimeout->value());
+		pt.put("timeoutsettings.readtotaltimeoutconstant",ui->readTotalTimeoutConstant->value());
+		pt.put("timeoutsettings.readtotaltimeoutmultiplier",ui->readTotalTimeoutMultiplier->value());
 	} catch(std::exception &e) {
 		QMessageBox::critical(this,"Error",(std::string("Could not prepare settings for saving: ")+=e.what()).c_str(),QMessageBox::Ok);
 	}
@@ -113,8 +126,16 @@ void MainWindow::on_link() {
 		try {
 			// get the UI parameters...
 			int comPort = ui->comPort->value();
+			int baudRate = ui->baudRate->value();
 			int samplingRate = ui->samplingRate->value();
+			int chunkSize = ui->chunkSize->value();
 			std::string streamName = ui->streamName->text().toStdString();
+			int dataBits = ui->dataBits->currentIndex()+4;
+			int parity = ui->parity->currentIndex();
+			int stopBits = ui->stopBits->currentIndex();
+			int readIntervalTimeout = ui->readIntervalTimeout->value();
+			int readTotalTimeoutConstant = ui->readTotalTimeoutConstant->value();
+			int readTotalTimeoutMultiplier = ui->readTotalTimeoutMultiplier->value();
 
 			// try to open the serial port
 			std::string fname = "\\\\.\\COM" + boost::lexical_cast<std::string>(comPort);
@@ -122,32 +143,30 @@ void MainWindow::on_link() {
 			if (hPort == INVALID_HANDLE_VALUE)
 				throw std::runtime_error("Could not open serial port. Please make sure that you are using the right COM port and that the device is ready.");
 
-			//setup serial port parameters
+			// try to set up serial port parameters
 			DCB dcbSerialParams = {0};
 			if (!GetCommState(hPort, &dcbSerialParams))
 				QMessageBox::critical(this,"Error","Could not get COM port state.",QMessageBox::Ok);
-			dcbSerialParams.BaudRate=1500000;
-			dcbSerialParams.ByteSize=8;
-			dcbSerialParams.StopBits=ONESTOPBIT;
-			dcbSerialParams.Parity=NOPARITY;
-
+			dcbSerialParams.BaudRate=baudRate;
+			dcbSerialParams.ByteSize=dataBits;
+			dcbSerialParams.StopBits=stopBits;
+			dcbSerialParams.Parity=parity;
 			if(!SetCommState(hPort, &dcbSerialParams))
 				QMessageBox::critical(this,"Error","Could not set baud rate.",QMessageBox::Ok);
 
 			// try to set timeouts
 			COMMTIMEOUTS timeouts = {0};
-			timeouts.ReadIntervalTimeout = 500;
-			timeouts.ReadTotalTimeoutConstant = 50;
-			timeouts.ReadTotalTimeoutMultiplier = 10;
-			timeouts.WriteTotalTimeoutConstant = 50;
-			timeouts.WriteTotalTimeoutMultiplier = 10;
-
+			if (!GetCommTimeouts(hPort,&timeouts))
+				QMessageBox::critical(this,"Error","Could not get COM port timeouts.",QMessageBox::Ok);
+			timeouts.ReadIntervalTimeout = readIntervalTimeout;
+			timeouts.ReadTotalTimeoutConstant = readTotalTimeoutConstant;
+			timeouts.ReadTotalTimeoutMultiplier = readTotalTimeoutMultiplier;
 			if (!SetCommTimeouts(hPort,&timeouts))
 				QMessageBox::critical(this,"Error","Could not set COM port timeouts.",QMessageBox::Ok);
 
 			// start reading
 			stop_ = false;
-			reader_thread_.reset(new boost::thread(&MainWindow::read_thread,this,hPort,comPort,samplingRate,streamName));
+			reader_thread_.reset(new boost::thread(&MainWindow::read_thread,this,hPort,comPort,baudRate,samplingRate,chunkSize,streamName));
 		}
 		catch(std::exception &e) {
 			if (hPort != INVALID_HANDLE_VALUE)
@@ -163,11 +182,11 @@ void MainWindow::on_link() {
 
 
 // background data reader thread
-void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, const std::string &streamName) {
+void MainWindow::read_thread(HANDLE hPort, int comPort, int baudRate, int samplingRate, int chunkSize, const std::string &streamName) {
 	try {
 
 		// create streaminfo
-		lsl::stream_info info(streamName,"Raw",1,samplingRate,lsl::cf_int16,"SerialPort_sd3e");
+		lsl::stream_info info(streamName,"Raw",1,samplingRate,lsl::cf_int16,std::string("SerialPort_") + streamName);
 		// append some meta-data
 		lsl::xml_element channels = info.desc().append_child("channels");
 		channels.append_child("channel")
@@ -176,10 +195,11 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, const 
 			.append_child_value("unit","integer");
 		info.desc().append_child("acquisition")
 			.append_child("hardware")
-			.append_child_value("com_port",boost::lexical_cast<std::string>(comPort).c_str());
+				.append_child_value("com_port",boost::lexical_cast<std::string>(comPort).c_str())
+				.append_child_value("baud_rate",boost::lexical_cast<std::string>(baudRate).c_str());
 
 		// make a new outlet
-		lsl::stream_outlet outlet(info,samples_per_chunk);
+		lsl::stream_outlet outlet(info,chunkSize);
 
 		// enter transmission loop
 		unsigned char byte;
@@ -189,7 +209,8 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, const 
 			// get a sample
 			ReadFile(hPort,&byte,1,&bytes_read,NULL); sample = byte;
 			// transmit it
-			outlet.push_sample(&sample);
+			if (bytes_read)
+				outlet.push_sample(&sample);
 		}
 	}
 	catch(boost::thread_interrupted &) {
