@@ -1640,18 +1640,7 @@ void __fastcall TForm4::PhaseComboBoxChange(TObject *Sender)
 	 //   PostQuitMessage(0); Exit app on window close.
 		return 0;
 	case WM_ERASEBKGND:
-		for(std::map<int, MonitorDrawer*>::iterator iterator = monitorDrawers.begin(); iterator != monitorDrawers.end(); ++ iterator) {
-			MonitorDrawer *monitorDrawer = iterator->second;
-			monitorDrawer->blackenWindow();
-		}
-        //TODO
-		for(int i=0; i<markerXsTodo.size(); i++) {
-			if(i==currentSpot)
-				monitorDrawers[devicesTodo[i]]->drawMarkers(markerXsTodo[i],markerYsTodo[i],true);
-			else
-				monitorDrawers[devicesTodo[i]]->drawMarkers(markerXsTodo[i],markerYsTodo[i],false);
-		}
-
+		Form4->UpdateMarkers();
 
 		return 0;
 

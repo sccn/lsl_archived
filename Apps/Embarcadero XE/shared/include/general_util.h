@@ -3,7 +3,7 @@
 
 
 #define VERSION 1001005
-#define CONSOLE 1
+#define CONSOLE 0
 #include <ios>
 #include <vector>
 #include "stdio.h"
