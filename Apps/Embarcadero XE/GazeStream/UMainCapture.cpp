@@ -33,7 +33,6 @@ __fastcall TMainCaptureForm::TMainCaptureForm(TComponent* Owner)
 
 #include "CircleFunction.h"
 #include "Fitter.h"
-#define REFERENCE_MARKER_COUNT 13
 
 bool storeFit = false;
 
@@ -83,6 +82,7 @@ int spatialDivisor = 1;
 double maxEccentricity = 1.0;
 double xParallaxCorrection = 0.0;
 double yParallaxCorrection = 0.0;
+int numberOfMarkers = -1;
 
 
 #define CDEPTH 24
@@ -144,6 +144,7 @@ void __fastcall TMainCaptureForm::FormCreate(TObject *Sender)
 	yParallaxCorrectionEditChange(this);
 	cbSceneCalibColorChange(this);
 	cbReferenceCalibColorChange(this);
+	numberOfMarkersEditChange(this);
 	gu = new TGazeUtil();
 
 
@@ -870,10 +871,10 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 	{
 
 		float sample [100];
-		int nOutlinesToFind = REFERENCE_MARKER_COUNT-1;
+		int nOutlinesToFind = numberOfMarkers-1;
 		int sampleIndex = 0;
 		sample[sampleIndex++] = nFrames;
-		sample[sampleIndex++] = REFERENCE_MARKER_COUNT;
+		sample[sampleIndex++] = numberOfMarkers;
 		double x0, y0, radius;
 		TOutline* largestOutline =  findLargestOutline(aBmp, true,
 			crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint);
@@ -1126,8 +1127,8 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		float sample [6];
 
 		sample[0] = nFrames;
-		sample[1] = x0; //mm
-		sample[2] = y0; //mm
+		sample[1] = x0; //pixels
+		sample[2] = y0; //pixels
 		sample[3] = radiusA;//pixels
 		sample[4] = radiusB;//pixels
 		sample[5] = angle;//radians
@@ -1298,7 +1299,7 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 
 
 		char * streamName = (AnsiString("SceneCalibrateStream_") + AnsiString(IdentifierEdit->Text)).c_str();
-		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,2 + REFERENCE_MARKER_COUNT*2,30,cft_float32,generateGUID());
+		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,2 + numberOfMarkers*2,30,cft_float32,generateGUID());
 		lsl_xml_ptr desc = lsl_get_desc(info);
 		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","frame");
@@ -1316,7 +1317,7 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 		lsl_append_child_value(chn, "name","scene position y");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		for(int i=0; i<REFERENCE_MARKER_COUNT; i++) {
+		for(int i=0; i<numberOfMarkers; i++) {
 			chn = lsl_append_child(desc, "channels");
 			lsl_append_child_value(chn, "name","reference position x");
 			lsl_append_child_value(chn,"unit","pixels");
@@ -1659,4 +1660,20 @@ void __fastcall TMainCaptureForm::IdentifierEditChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
+void __fastcall TMainCaptureForm::numberOfMarkersEditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		numberOfMarkersEdit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex) {
+		numberOfMarkers = numberOfMarkersEdit->Text.ToInt();
+		RadioGroup1Click(this);
+	}
+}
+//---------------------------------------------------------------------------
 

@@ -2,8 +2,8 @@
 #define GeneralUtilH
 
 
-#define VERSION 1001004
-#define CONSOLE 0
+#define VERSION 1001005
+#define CONSOLE 1
 #include <ios>
 #include <vector>
 #include "stdio.h"

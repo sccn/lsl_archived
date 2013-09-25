@@ -501,6 +501,18 @@ object MainCaptureForm: TMainCaptureForm
           'Blue'
           'White')
       end
+      object numberOfMarkersEdit: TLabeledEdit
+        Left = 3
+        Top = 529
+        Width = 110
+        Height = 20
+        EditLabel.Width = 87
+        EditLabel.Height = 12
+        EditLabel.Caption = 'Number of Markers'
+        TabOrder = 19
+        Text = '5'
+        OnChange = numberOfMarkersEditChange
+      end
     end
   end
   object BitBtnPlay: TBitBtn
