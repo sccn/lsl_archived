@@ -27,6 +27,10 @@ object MainCaptureForm: TMainCaptureForm
     object TabSheet2: TTabSheet
       Caption = 'Video in'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 11
         Top = 0
@@ -131,6 +135,10 @@ object MainCaptureForm: TMainCaptureForm
     object TabSheet1: TTabSheet
       Caption = 'Video out'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label2: TLabel
         Left = 14
         Top = -2
@@ -235,6 +243,10 @@ object MainCaptureForm: TMainCaptureForm
     object tsScene: TTabSheet
       Caption = 'Scene'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object xParallaxCorrectionEdit: TLabeledEdit
         Left = 14
         Top = 160
@@ -272,9 +284,17 @@ object MainCaptureForm: TMainCaptureForm
     object tsVideo: TTabSheet
       Caption = 'Video'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
     object tsEyeTracker: TTabSheet
       Caption = 'Eyetracker'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label5: TLabel
         Left = 3
         Top = 425
