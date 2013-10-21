@@ -73,7 +73,7 @@ class MonitorDrawer {
 		tempBackground = create_bitmap_ex(CDEPTH,markerSize,markerSize);
 		clear_bitmap(bmpSprite);
 		rectfill(bmpSprite, 0,0,markerSize*3,markerSize*3,makecol(100,100,100));
-		circlefill(bmpSprite, markerSize*3/2, markerSize*3/2, markerSize/2-1, makecol(0,255,0));
+		circlefill(bmpSprite, markerSize*3/2, markerSize*3/2, markerSize/2-1, makecol(0,0,255));
 		circlefill(bmpSprite, markerSize*3/2, markerSize*3/2, markerSize/10, makecol(100,100,100));
 		count=0;
 

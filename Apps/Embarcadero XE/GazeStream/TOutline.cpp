@@ -76,7 +76,7 @@
 		nPointsMinusCR = 0;
 		for (int i=0; i < nPoints; ++i) {
 			//drop points from near cornea reflection
-			if(crRadius <= 0.0 || ((xValues[i] - crX0)*(xValues[i] - crX0) + (yValues[i] - crY0)*(yValues[i] - crY0)
+			if(_isnan(crRadius) || ((xValues[i] - crX0)*(xValues[i] - crX0) + (yValues[i] - crY0)*(yValues[i] - crY0)
 				> crRadius*crRadius)) {
 
 				data[0][nPointsMinusCR] = (double) xValues[i];

@@ -676,6 +676,7 @@ void TMainCaptureForm::fitCircle(BITMAP *aBmp, TOutline *largestOutline, double 
 		fit->maxIterations = 50;
 		CircleFunction *f = NULL;
 
+		*x0 = *y0 = *radius = NAN; // will be returned if fit fails
 		try {
 			if(largestOutline->nPointsMinusCR > 5) {
 
@@ -701,7 +702,7 @@ void TMainCaptureForm::fitCircle(BITMAP *aBmp, TOutline *largestOutline, double 
 		} catch (exception& ex) {
  //			printf("caught umaincapture\n");
  //			printf("exception: %s\n", ex.what());
-			*x0 = *y0 = *radius = 0.0;
+
 		}
 		delete2D(x, 2);
 		delete1D(y);
@@ -723,6 +724,7 @@ void TMainCaptureForm::fitCircle(BITMAP *aBmp, TOutline *largestOutline, double 
 
  //		largestOutline->drawOutline(bmpCanvas->line,x,largestOutline->getNumberOfPoints()); for testing purposes
 
+		*x0 = *y0 = *radiusA = *radiusB = *angle = NAN; //will be returned if fit fails
 		try {
 			if(largestOutline->nPointsMinusCR > 5) {
 				double xc,yc,rA,rB,ang;
@@ -803,7 +805,7 @@ void TMainCaptureForm::fitCircle(BITMAP *aBmp, TOutline *largestOutline, double 
 		} catch (exception& ex) {
  //			printf("caught umaincapture\n");
  //			printf("exception: %s\n", ex.what());
-			*x0 = *y0 = *radiusA = *radiusB = *angle = 0.0;
+
 		}
 		delete2D(x, 2);
 
@@ -978,10 +980,10 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 
 		double xMonitor = x0scene;
 		double yMonitor = y0scene;
-		double xScene = 0.0;
-		double yScene = 0.0;
+		double xScene = NAN;
+		double yScene = NAN;
 
-		if(gu->rEye != 0.0 && radiusAscene !=0 && radiusBscene != 0) {
+		if(gu->rEye != 0.0 && !_isnan(radiusAscene) && !_isnan(radiusBscene) ) {
 				gu->inverseEyeMap(&xMonitor,&yMonitor);
 
 
@@ -1048,7 +1050,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 
 		int sample [1];
 		sample[0] = nFrames;
-  		double timestamp = lsl_local_clock();
+		double timestamp = lsl_local_clock();
 		lsl_push_sample_itp(outlet, sample, timestamp,1);
 		nFrames++;
 
@@ -1073,7 +1075,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		TOutline* largestOutline =  findLargestOutline(aBmp, true,
 			crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint);
 
-		fitCircle(aBmp, largestOutline, &crX0, &crY0, &crRadius, 0.0, 0.0, 0.0, true,
+		fitCircle(aBmp, largestOutline, &crX0, &crY0, &crRadius, NAN, NAN, NAN, true,
 			crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint);
 
 		//find pupil, don't fit near cornea reflection
@@ -1086,7 +1088,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 
 					//If autothreshold is checked, try to keep the number of spots constant.
 		//This is fairly robust to contrast and gain changes.
-		if(autoThresholdBox->Checked == true && sqrt(radiusA*radiusB) > eyeRadiusMax) {
+		if(autoThresholdBox->Checked == true && !_isnan(radiusA) && sqrt(radiusA*radiusB) > eyeRadiusMax) {
 			tbThreshold->Position = tbThreshold->Position - 2;
 			eyeRadiusMaxEdit->Color = clRed;
 		} else {
@@ -1104,22 +1106,6 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 			storeFit = false;
 		}
 
-
-        /* NOT USED, TO DELETE
-		double xMonitor = x0;
-		double yMonitor = y0;
-		double xScene = 0.0;
-		double yScene = 0.0;
-		double xRotatedMonitor = 0.0;
-		double yRotatedMonitor = 0.0;
-		double distance = 500;
-		if(gu->rEye != 0.0 && radius !=0 ) {
-				gu->inverseEyeMap(distance, &xMonitor,&yMonitor);
-				xScene = xMonitor;
-				yScene = yMonitor;
-				gu->sceneMap(distance, &xScene, &yScene);
-
-		}   */
 
 		if(pr && CONSOLE) printf("x0: %g\n", x0);
 		if(pr && CONSOLE) printf("y0: %g\n", y0);

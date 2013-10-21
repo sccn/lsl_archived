@@ -1010,7 +1010,7 @@ object Form4: TForm4
     EditLabel.Height = 13
     EditLabel.Caption = 'Calib Background (Red)'
     TabOrder = 35
-    Text = '100'
+    Text = '200'
     OnChange = BackgroundRedEditChange
   end
   object BackgroundGreenEdit: TLabeledEdit
@@ -1022,7 +1022,7 @@ object Form4: TForm4
     EditLabel.Height = 13
     EditLabel.Caption = 'Calib Background (Green)'
     TabOrder = 36
-    Text = '100'
+    Text = '200'
     OnChange = BackgroundGreenEditChange
   end
   object BackgroundBlueEdit: TLabeledEdit
@@ -1034,7 +1034,7 @@ object Form4: TForm4
     EditLabel.Height = 13
     EditLabel.Caption = 'Calib Background (Blue)'
     TabOrder = 37
-    Text = '100'
+    Text = '200'
     OnChange = BackgroundBlueEditChange
   end
   object xd: TXMLDocument
