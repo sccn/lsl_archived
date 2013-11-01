@@ -33,7 +33,6 @@ __fastcall TMainCaptureForm::TMainCaptureForm(TComponent* Owner)
 
 #include "CircleFunction.h"
 #include "Fitter.h"
-#define REFERENCE_MARKER_COUNT 13
 
 bool storeFit = false;
 
@@ -83,6 +82,7 @@ int spatialDivisor = 1;
 double maxEccentricity = 1.0;
 double xParallaxCorrection = 0.0;
 double yParallaxCorrection = 0.0;
+int numberOfMarkers = -1;
 
 
 #define CDEPTH 24
@@ -144,6 +144,7 @@ void __fastcall TMainCaptureForm::FormCreate(TObject *Sender)
 	yParallaxCorrectionEditChange(this);
 	cbSceneCalibColorChange(this);
 	cbReferenceCalibColorChange(this);
+	numberOfMarkersEditChange(this);
 	gu = new TGazeUtil();
 
 
@@ -675,6 +676,7 @@ void TMainCaptureForm::fitCircle(BITMAP *aBmp, TOutline *largestOutline, double 
 		fit->maxIterations = 50;
 		CircleFunction *f = NULL;
 
+		*x0 = *y0 = *radius = NAN; // will be returned if fit fails
 		try {
 			if(largestOutline->nPointsMinusCR > 5) {
 
@@ -700,7 +702,7 @@ void TMainCaptureForm::fitCircle(BITMAP *aBmp, TOutline *largestOutline, double 
 		} catch (exception& ex) {
  //			printf("caught umaincapture\n");
  //			printf("exception: %s\n", ex.what());
-			*x0 = *y0 = *radius = 0.0;
+
 		}
 		delete2D(x, 2);
 		delete1D(y);
@@ -722,6 +724,7 @@ void TMainCaptureForm::fitCircle(BITMAP *aBmp, TOutline *largestOutline, double 
 
  //		largestOutline->drawOutline(bmpCanvas->line,x,largestOutline->getNumberOfPoints()); for testing purposes
 
+		*x0 = *y0 = *radiusA = *radiusB = *angle = NAN; //will be returned if fit fails
 		try {
 			if(largestOutline->nPointsMinusCR > 5) {
 				double xc,yc,rA,rB,ang;
@@ -802,7 +805,7 @@ void TMainCaptureForm::fitCircle(BITMAP *aBmp, TOutline *largestOutline, double 
 		} catch (exception& ex) {
  //			printf("caught umaincapture\n");
  //			printf("exception: %s\n", ex.what());
-			*x0 = *y0 = *radiusA = *radiusB = *angle = 0.0;
+
 		}
 		delete2D(x, 2);
 
@@ -870,10 +873,10 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 	{
 
 		float sample [100];
-		int nOutlinesToFind = REFERENCE_MARKER_COUNT-1;
+		int nOutlinesToFind = numberOfMarkers-1;
 		int sampleIndex = 0;
 		sample[sampleIndex++] = nFrames;
-		sample[sampleIndex++] = REFERENCE_MARKER_COUNT;
+		sample[sampleIndex++] = numberOfMarkers;
 		double x0, y0, radius;
 		TOutline* largestOutline =  findLargestOutline(aBmp, true,
 			crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint);
@@ -977,10 +980,10 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 
 		double xMonitor = x0scene;
 		double yMonitor = y0scene;
-		double xScene = 0.0;
-		double yScene = 0.0;
+		double xScene = NAN;
+		double yScene = NAN;
 
-		if(gu->rEye != 0.0 && radiusAscene !=0 && radiusBscene != 0) {
+		if(gu->rEye != 0.0 && !_isnan(radiusAscene) && !_isnan(radiusBscene) ) {
 				gu->inverseEyeMap(&xMonitor,&yMonitor);
 
 
@@ -1047,7 +1050,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 
 		int sample [1];
 		sample[0] = nFrames;
-  		double timestamp = lsl_local_clock();
+		double timestamp = lsl_local_clock();
 		lsl_push_sample_itp(outlet, sample, timestamp,1);
 		nFrames++;
 
@@ -1072,7 +1075,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		TOutline* largestOutline =  findLargestOutline(aBmp, true,
 			crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint);
 
-		fitCircle(aBmp, largestOutline, &crX0, &crY0, &crRadius, 0.0, 0.0, 0.0, true,
+		fitCircle(aBmp, largestOutline, &crX0, &crY0, &crRadius, NAN, NAN, NAN, true,
 			crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint);
 
 		//find pupil, don't fit near cornea reflection
@@ -1085,7 +1088,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 
 					//If autothreshold is checked, try to keep the number of spots constant.
 		//This is fairly robust to contrast and gain changes.
-		if(autoThresholdBox->Checked == true && sqrt(radiusA*radiusB) > eyeRadiusMax) {
+		if(autoThresholdBox->Checked == true && !_isnan(radiusA) && sqrt(radiusA*radiusB) > eyeRadiusMax) {
 			tbThreshold->Position = tbThreshold->Position - 2;
 			eyeRadiusMaxEdit->Color = clRed;
 		} else {
@@ -1104,30 +1107,14 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		}
 
 
-        /* NOT USED, TO DELETE
-		double xMonitor = x0;
-		double yMonitor = y0;
-		double xScene = 0.0;
-		double yScene = 0.0;
-		double xRotatedMonitor = 0.0;
-		double yRotatedMonitor = 0.0;
-		double distance = 500;
-		if(gu->rEye != 0.0 && radius !=0 ) {
-				gu->inverseEyeMap(distance, &xMonitor,&yMonitor);
-				xScene = xMonitor;
-				yScene = yMonitor;
-				gu->sceneMap(distance, &xScene, &yScene);
-
-		}   */
-
 		if(pr && CONSOLE) printf("x0: %g\n", x0);
 		if(pr && CONSOLE) printf("y0: %g\n", y0);
 
 		float sample [6];
 
 		sample[0] = nFrames;
-		sample[1] = x0; //mm
-		sample[2] = y0; //mm
+		sample[1] = x0; //pixels
+		sample[2] = y0; //pixels
 		sample[3] = radiusA;//pixels
 		sample[4] = radiusB;//pixels
 		sample[5] = angle;//radians
@@ -1298,7 +1285,7 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 
 
 		char * streamName = (AnsiString("SceneCalibrateStream_") + AnsiString(IdentifierEdit->Text)).c_str();
-		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,2 + REFERENCE_MARKER_COUNT*2,30,cft_float32,generateGUID());
+		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,2 + numberOfMarkers*2,30,cft_float32,generateGUID());
 		lsl_xml_ptr desc = lsl_get_desc(info);
 		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
 		lsl_append_child_value(chn, "name","frame");
@@ -1316,7 +1303,7 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 		lsl_append_child_value(chn, "name","scene position y");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		for(int i=0; i<REFERENCE_MARKER_COUNT; i++) {
+		for(int i=0; i<numberOfMarkers; i++) {
 			chn = lsl_append_child(desc, "channels");
 			lsl_append_child_value(chn, "name","reference position x");
 			lsl_append_child_value(chn,"unit","pixels");
@@ -1659,4 +1646,20 @@ void __fastcall TMainCaptureForm::IdentifierEditChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
+void __fastcall TMainCaptureForm::numberOfMarkersEditChange(TObject *Sender)
+{
+	bool ex = false;
+	try {
+		numberOfMarkersEdit->Text.ToInt();
+	} catch (...) {
+		ex = true;
+	}
+
+	if(!ex) {
+		numberOfMarkers = numberOfMarkersEdit->Text.ToInt();
+		RadioGroup1Click(this);
+	}
+}
+//---------------------------------------------------------------------------
 

@@ -48,7 +48,7 @@ BITMAP * sceneCanvas;
 
 std::vector<int> monitors;
 std::vector<double> markerXs, markerYs; //true marker position
-std::vector<double> meanEyeXs, meanEyeYs, stddevEyeXs, stddevEyeYs;//pupil position in camera
+std::vector<double> markerIndices, meanEyeXs, meanEyeYs, stddevEyeXs, stddevEyeYs;//pupil position in camera
 std::vector<double> meanSceneXs, meanSceneYs, meanSceneZs, stddevSceneXs,stddevSceneYs,stddevSceneZs;//marker position in scene camera
 
 std::vector<double> scaledMarkerXs, scaledMarkerYs, scaledMarkerZs;
@@ -92,10 +92,13 @@ HWND mainHwnd;
 std::map<int, MonitorDrawer*> monitorDrawers;
 
 std::vector<int> devicesTodo;
-std::vector<double> markerXsTodo;
-std::vector<double> markerYsTodo;
+std::vector<double> markerXsTodoComplete; //includes all devices
+std::vector<double> markerYsTodoComplete; //includes all devices
+std::vector<double> markerXsTodo; //current device only
+std::vector<double> markerYsTodo; //current device only
 
 int currentSpot = -1;
+int currentSpotComplete = -1;
 
 /**************************************************************************
 
@@ -640,7 +643,7 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 			bool replaced = false;
 			//replace the position if it has already been measured.
 			for(unsigned int i=0; i<markerXs.size();i++) {
-				if(markerXs[i] == oldMarkerX && markerYs[i] == oldMarkerY) {
+				if(markerIndices[i] == currentSpotComplete) {
 					markerXs[i] = oldMarkerX;
 					meanEyeXs[i] = meanX;
 					stddevEyeXs[i] = stddevX;
@@ -665,6 +668,8 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 			}
 			//otherwise, add it to the end
 			if(!replaced) {
+			printf("oldMarkerX: %g   oldMarkerY: %g\n\n\n", oldMarkerX, oldMarkerY);
+				markerIndices.push_back(currentSpotComplete);
 				markerXs.push_back(oldMarkerX);
 				meanEyeXs.push_back(meanX);
 				stddevEyeXs.push_back(stddevX);
@@ -680,6 +685,7 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 				meanSceneZs.push_back(meanSceneZ);
 				stddevSceneZs.push_back(stddevSceneZ);
 			}
+
 			drawCalibration();
 
 			}
@@ -1145,6 +1151,7 @@ void __fastcall TForm4::LoadCalibrationPointsBtnClick(TObject *Sender)
 
 		int nPoints = 0;
 
+		markerIndices.clear();
 		markerXs.clear();
 		markerYs.clear();
 		meanEyeXs.clear();
@@ -1174,6 +1181,9 @@ void __fastcall TForm4::LoadCalibrationPointsBtnClick(TObject *Sender)
 		ifs.seekg(0);
 		getline(ifs,value);  //skip header line.
 		for(int i=0; i<nPoints; i++) {
+			getline(ifs, value, ',');
+			markerIndices.push_back(atof(value.c_str()));
+
 			getline(ifs, value, ',');
 			markerXs.push_back(atof(value.c_str()));
 
@@ -1211,7 +1221,7 @@ void __fastcall TForm4::LoadCalibrationPointsBtnClick(TObject *Sender)
 
 			getline(ifs, value);
 			stddevSceneZs.push_back(atof(value.c_str()));
-			printf("%g %g %g %g %g %g %g %g %g %g %g %g\n\n", markerXs[i], markerYs[i], meanEyeXs[i], meanEyeYs[i], stddevEyeXs[i], stddevEyeYs[i], meanSceneXs[i], meanSceneYs[i], meanSceneZs[i], stddevSceneXs[i], stddevSceneYs[i], stddevSceneZs[i]);
+			printf("%g %g %g %g %g %g %g %g %g %g %g %g %g\n\n", markerIndices[i], markerXs[i], markerYs[i], meanEyeXs[i], meanEyeYs[i], stddevEyeXs[i], stddevEyeYs[i], meanSceneXs[i], meanSceneYs[i], meanSceneZs[i], stddevSceneXs[i], stddevSceneYs[i], stddevSceneZs[i]);
 		}
 
 		ifs.close();
@@ -1433,9 +1443,9 @@ void __fastcall TForm4::SaveCalibrationPointsBtnClick(TObject *Sender)
 	if(SaveDialog2->Execute()) {
 		FILE *fp = fopen(AnsiString(SaveDialog2->FileName).c_str(), "w");
 		if(fp) {
-			fprintf(fp, "markerXs,markerYs,meanEyeXs,meanEyeYs,stddevEyeXs,stddevEyeYs,meanSceneXs,meanSceneYs,meanSceneZs,stddevSceneXs,stddevSceneYs,stddevSceneZs\n");
+			fprintf(fp, "markerIndices,markerXs,markerYs,meanEyeXs,meanEyeYs,stddevEyeXs,stddevEyeYs,meanSceneXs,meanSceneYs,meanSceneZs,stddevSceneXs,stddevSceneYs,stddevSceneZs\n");
 			for(unsigned int i=0; i < markerXs.size(); ++i) {
-				fprintf(fp, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n", markerXs[i], markerYs[i],
+				fprintf(fp, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n", markerIndices[i],markerXs[i], markerYs[i],
 					meanEyeXs[i], meanEyeYs[i], stddevEyeXs[i], stddevEyeYs[i],
 					meanSceneXs[i], meanSceneYs[i], meanSceneZs[i],stddevSceneXs[i], stddevSceneYs[i],stddevSceneZs[i]);
 			}
@@ -1447,6 +1457,7 @@ void __fastcall TForm4::SaveCalibrationPointsBtnClick(TObject *Sender)
 
 void __fastcall TForm4::ClearCalibrationPointsBtnClick(TObject *Sender)
 {
+	markerIndices.clear();
 	markerXs.clear();
 	markerYs.clear();
 	meanEyeXs.clear();
@@ -1629,18 +1640,7 @@ void __fastcall TForm4::PhaseComboBoxChange(TObject *Sender)
 	 //   PostQuitMessage(0); Exit app on window close.
 		return 0;
 	case WM_ERASEBKGND:
-		for(std::map<int, MonitorDrawer*>::iterator iterator = monitorDrawers.begin(); iterator != monitorDrawers.end(); ++ iterator) {
-			MonitorDrawer *monitorDrawer = iterator->second;
-			monitorDrawer->blackenWindow();
-		}
-
-		for(int i=0; i<markerXsTodo.size(); i++) {
-			if(i==currentSpot)
-				monitorDrawers[devicesTodo[i]]->drawMarkers(markerXsTodo[i],markerYsTodo[i],true);
-			else
-				monitorDrawers[devicesTodo[i]]->drawMarkers(markerXsTodo[i],markerYsTodo[i],false);
-		}
-
+		Form4->UpdateMarkers();
 
 		return 0;
 
@@ -1723,7 +1723,7 @@ BOOL CALLBACK MonitorEnumProc(
    return TRUE;
 }
 
-	MonitorDrawer *createMonitorDrawer(  long x, long y, long width, long height)  {
+	MonitorDrawer *createMonitorDrawer(  long x, long y, long width, long height, double monitorWidthMM, double monitorHeightMM)  {
 			HMODULE hInstance = GetModuleHandle(NULL);
 		 if(!hInstance) printf("no hInstance\n");
 
@@ -1766,7 +1766,7 @@ BOOL CALLBACK MonitorEnumProc(
 					  int err= GetLastError();
 					  //printf("lerr: %d\n", err);
 
-		return new MonitorDrawer(hWnd,makecol(backgroundRed,backgroundGreen,backgroundBlue), 1);
+		return new MonitorDrawer(hWnd,makecol(backgroundRed,backgroundGreen,backgroundBlue), monitorWidthMM, monitorHeightMM);
 	}
 
 
@@ -1841,8 +1841,10 @@ void TForm4::LoadHotspotsConfig(const System::UnicodeString FileName)
 					hotspotScreens[device] = new THotspotScreen(
 						p3Ds, topLeft, topRight, bottomLeft, bottomRight,
 						sensor0, sensor1, device, monitorDepth, x,y,width,height);
+					monitorWidth = hotspotScreens[device]->monitorWidth;
+					monitorHeight = hotspotScreens[device]->monitorHeight;
 				}
-				monitorDrawers[device] = createMonitorDrawer(x,y,width,height);
+				monitorDrawers[device] = createMonitorDrawer(x,y,width,height,monitorWidth,monitorHeight);
 				StatusMemo->Lines->Add(UnicodeString("Device ") + UnicodeString(device) + UnicodeString(" measurements loaded."));
 			}
 
@@ -1874,16 +1876,17 @@ void __fastcall TForm4::FormKeyPress(TObject *Sender, wchar_t &Key)
 				break;
 			case 'b':
 
-				if(currentSpot >= 0 && currentSpot < markerXsTodo.size())
-					monitorDrawers[devicesTodo[currentSpot]]->drawMarkers(markerXsTodo[currentSpot],markerYsTodo[currentSpot],false);
-				currentSpot--;
-				if(currentSpot < 0) currentSpot = 0;
-				if(currentSpot >= 0 && currentSpot < markerXsTodo.size())
-					monitorDrawers[devicesTodo[currentSpot]]->drawMarkers(markerXsTodo[currentSpot],markerYsTodo[currentSpot],true);
+				currentSpotComplete--;
+				if(currentSpotComplete < 0) currentSpotComplete = 0;
 				markerX = -1.0;
 				markerY = -1.0;
+				UpdateMarkers();
+				break;
+			case VK_ESCAPE:
+				AbortCalibrationButtonClick(this);
 				break;
 			}
+
 		}
 		Key = 0;
 	}
@@ -1912,9 +1915,57 @@ THotspotScreen * TForm4::getHotspotScreen(int deviceNumber) {
 	return NULL;
 }
 
+void __fastcall TForm4::UpdateMarkers() {
+   		markerXsTodo.clear();
+		markerYsTodo.clear();
+		currentSpot = 0;
+		bool currentSpotFound = false;
+		for(int i=0; i<markerXsTodoComplete.size(); i++) {
+			double x = markerXsTodoComplete[i];
+			double y = markerYsTodoComplete[i];
+			int device = devicesTodo[i];
+			if(i==currentSpotComplete) {
+				monitorDrawers[device]->drawMarkers(x,y,1); //active
+				markerXsTodo.push_back(x);
+				markerYsTodo.push_back(y);
+				currentSpotFound = true;
+			} else if(device == devicesTodo[currentSpotComplete]){
+				monitorDrawers[device]->drawMarkers(x,y,0); //inactive
+				markerXsTodo.push_back(x);
+				markerYsTodo.push_back(y);
+				if(!currentSpotFound) currentSpot++;
+			} else {
+				monitorDrawers[device]->drawMarkers(x,y,-1); //invisible, different screen
+			}
+		}
+
+		monitorWidth = monitorDrawers[devicesTodo[currentSpot]]->monitorWidthMM;
+		MonitorWidthEdit->Text = monitorWidth;
+		monitorHeight = monitorDrawers[devicesTodo[currentSpot]]->monitorHeightMM;
+		MonitorHeightEdit->Text = monitorHeight;
+
+		if(phasespaceInlet) {
+			THotspotScreen * hs = getHotspotScreen(devicesTodo[currentSpot]);
+		
+			for(int i=0; i<3; i++) {
+				displayRef(i,0) = hs->monitorTL(i);
+				displayRef(i,1) = hs->monitorTR(i);
+				displayRef(i,2) = hs->monitorBL(i);
+				displayRef(i,3) = hs->monitorBR(i);
+			}
+		//	StatusMemo->Lines->Add("Monitor measurement updated.");
+		} else {
+
+
+		}
+		 //	printf("%d %g %g\n\n", devicesTodo[i], markerXsTodo[i], markerYsTodo[i]);
+
+
+}
 void __fastcall TForm4::CalibrationWindowButtonClick(TObject *Sender)
 {
 	currentSpot = 0;
+	currentSpotComplete = 0;
 	markerX = -1;
 	markerY = -1;
 
@@ -1937,6 +1988,8 @@ void __fastcall TForm4::CalibrationWindowButtonClick(TObject *Sender)
 		nPoints-=2;
 
 		devicesTodo.clear();
+		markerXsTodoComplete.clear();
+		markerYsTodoComplete.clear();
 		markerXsTodo.clear();
 		markerYsTodo.clear();
 		ifs.clear();
@@ -1950,40 +2003,19 @@ void __fastcall TForm4::CalibrationWindowButtonClick(TObject *Sender)
 
 			getline(ifs, value, ',');
 			double x = atof(value.c_str());
-			markerXsTodo.push_back(x);
+			markerXsTodoComplete.push_back(x);
 
 			getline(ifs, value);
 			double y = atof(value.c_str());
-			markerYsTodo.push_back(y);
-
-			if(i==0)
-
-				monitorDrawers[device]->drawMarkers(x,y,true);
-			else
-				monitorDrawers[device]->drawMarkers(x,y,false);
+			markerYsTodoComplete.push_back(y);
 
 
 		 //	printf("%d %g %g\n\n", devicesTodo[i], markerXsTodo[i], markerYsTodo[i]);
 		}
 
-		currentSpot = 0;
-		if(phasespaceInlet) {
-			THotspotScreen * hs = getHotspotScreen(devicesTodo[currentSpot]);
-			monitorWidth = hs->monitorWidth;
-			MonitorWidthEdit->Text = monitorWidth;
-			monitorHeight = hs->monitorHeight;
-			MonitorHeightEdit->Text = monitorHeight;
-
-			for(int i=0; i<3; i++) {
-				displayRef(i,0) = hs->monitorTL(i);
-				displayRef(i,1) = hs->monitorTR(i);
-				displayRef(i,2) = hs->monitorBL(i);
-				displayRef(i,3) = hs->monitorBR(i);
-			}
-			StatusMemo->Lines->Add("Monitor measurement updated.");
-		}
-
 		ifs.close();
+
+		UpdateMarkers();
 
 	}
 	Form4->SetFocus();
@@ -1994,11 +2026,11 @@ void __fastcall TForm4::CalibrationWindowButtonClick(TObject *Sender)
 
 void __fastcall TForm4::Timer3Timer(TObject *Sender)
 {
-	if(timerCount == 0 && currentSpot >= 0 && currentSpot < markerXsTodo.size()) {
-
+	if(timerCount == 0 && currentSpotComplete >= 0 && currentSpotComplete < markerXsTodoComplete.size()) {
 
 		markerX = markerXsTodo[currentSpot];
 		markerY = markerYsTodo[currentSpot];
+
 	}
 	timerCount++;
 	if(timerCount == 150) {
@@ -2007,43 +2039,28 @@ void __fastcall TForm4::Timer3Timer(TObject *Sender)
 		markerX = -1.0;
 		markerY = -1.0;
 
-		if(currentSpot >= 0 && currentSpot < markerXsTodo.size())
-			monitorDrawers[devicesTodo[currentSpot]]->drawMarkers(markerXsTodo[currentSpot],markerYsTodo[currentSpot],false);
-
-		currentSpot++;
-
-
-		if(currentSpot >= 0 && currentSpot < markerXsTodo.size()) {
-			monitorDrawers[devicesTodo[currentSpot]]->drawMarkers(markerXsTodo[currentSpot],markerYsTodo[currentSpot],true);
-
-			if(phasespaceInlet) {
-				THotspotScreen *hs = getHotspotScreen(devicesTodo[currentSpot]);
-				monitorWidth = hs->monitorWidth;
-				MonitorWidthEdit->Text = monitorWidth;
-				monitorHeight = hs->monitorHeight;
-				MonitorHeightEdit->Text = monitorHeight;
-
-				for(int i=0; i<3; i++) {
-					displayRef(i,0) = hs->monitorTL(i);
-					displayRef(i,1) = hs->monitorTR(i);
-					displayRef(i,2) = hs->monitorBL(i);
-					displayRef(i,3) = hs->monitorBR(i);
-				}
+	   //	if(currentSpot >= 0 && currentSpot < markerXsTodo.size())
+	   //		monitorDrawers[devicesTodo[currentSpot]]->drawMarkers(markerXsTodo[currentSpot],markerYsTodo[currentSpot],false);
+		currentSpotComplete++;
+		if(currentSpotComplete == (int) markerXsTodoComplete.size()) {
+			for(std::map<int, MonitorDrawer*>::iterator iterator = monitorDrawers.begin(); iterator != monitorDrawers.end();++iterator) {
+				MonitorDrawer *monitorDrawer = iterator->second;
+				if(monitorDrawer->visible) monitorDrawer->setVisible(SW_HIDE);
+			 //	delete iterator->second;
+			 //	monitorDrawers.erase(iterator++);
 			}
+			currentSpot = -1;
+			currentSpotComplete = -1;
+		} else {
+			UpdateMarkers();
+
 		}
+
 
 
 	}
 
-	if(currentSpot == (int) markerXsTodo.size()) {
-		for(std::map<int, MonitorDrawer*>::iterator iterator = monitorDrawers.begin(); iterator != monitorDrawers.end();++iterator) {
-			MonitorDrawer *monitorDrawer = iterator->second;
-			if(monitorDrawer->visible) monitorDrawer->setVisible(SW_HIDE);
-		 //	delete iterator->second;
-		 //	monitorDrawers.erase(iterator++);
-		}
-		currentSpot = -1;
-	}
+
 }
 
 /**************************************************************************
@@ -2173,6 +2190,7 @@ void __fastcall TForm4::AbortCalibrationButtonClick(TObject *Sender)
 
 	}
 	currentSpot = -1;
+	currentSpotComplete = -1;
 	Timer3->Enabled == false;
 
 
