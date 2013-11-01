@@ -22,7 +22,21 @@ namespace std {
    %template(chunkl) vector<vector<long> >;
    %template(chunki) vector<vector<int> >;
    %template(chunks) vector<vector<short> >;
-   %template(chunkstr) vector<vector<string> >;
+   %template(chunkstr) vector<vector<string> >;   
 };
+
+%template(push_chunk) lsl::stream_outlet::push_chunk<std::vectorf>;
+%template(push_chunk) lsl::stream_outlet::push_chunk<std::vectord>;
+%template(push_chunk) lsl::stream_outlet::push_chunk<std::vectorl>;
+%template(push_chunk) lsl::stream_outlet::push_chunk<std::vectori>;
+%template(push_chunk) lsl::stream_outlet::push_chunk<std::vectors>;
+%template(push_chunk) lsl::stream_outlet::push_chunk<std::vectorstr>;
+
+%template(pull_chunk) lsl::stream_inlet::pull_chunk<float>;
+%template(pull_chunk) lsl::stream_inlet::pull_chunk<double>;
+%template(pull_chunk) lsl::stream_inlet::pull_chunk<long>;
+%template(pull_chunk) lsl::stream_inlet::pull_chunk<int>;
+%template(pull_chunk) lsl::stream_inlet::pull_chunk<short>;
+%template(pull_chunk) lsl::stream_inlet::pull_chunk<string>;
 
 
