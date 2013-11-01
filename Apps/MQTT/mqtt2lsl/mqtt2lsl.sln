@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mqtt2lsl", "mqtt2lsl.vcproj", "{7D54FF51-4D1D-47A0-8360-C2D981BC6C8C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7D54FF51-4D1D-47A0-8360-C2D981BC6C8C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7D54FF51-4D1D-47A0-8360-C2D981BC6C8C}.Debug|Win32.Build.0 = Debug|Win32
+		{7D54FF51-4D1D-47A0-8360-C2D981BC6C8C}.Release|Win32.ActiveCfg = Release|Win32
+		{7D54FF51-4D1D-47A0-8360-C2D981BC6C8C}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

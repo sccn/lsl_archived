@@ -1,0 +1,132 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{3BBB62C4-FC87-45A0-8A2B-BE45CB956EF3}</ProjectGuid>
+		</PropertyGroup>
+		<ItemGroup>
+			<Projects Include="SendData\SendData.cbproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="ReceiveData\ReceiveData.cbproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="math\math.cbproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Hotspots\hotspots.cbproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="VideoStream\VideoStream.cbproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="GazeStream\GazeStream.cbproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="EyeCalibrator\EyeCalibrator.cbproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="StreamViewer\streamviewer.cbproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="CESVideoStream\CESVideoStream.cbproj">
+				<Dependencies/>
+			</Projects>
+		</ItemGroup>
+		<ProjectExtensions>
+			<Borland.Personality>Default.Personality.12</Borland.Personality>
+			<Borland.ProjectType/>
+			<BorlandProject>
+				<Default.Personality/>
+			</BorlandProject>
+		</ProjectExtensions>
+		<Target Name="SendData">
+			<MSBuild Projects="SendData\SendData.cbproj"/>
+		</Target>
+		<Target Name="SendData:Clean">
+			<MSBuild Projects="SendData\SendData.cbproj" Targets="Clean"/>
+		</Target>
+		<Target Name="SendData:Make">
+			<MSBuild Projects="SendData\SendData.cbproj" Targets="Make"/>
+		</Target>
+		<Target Name="ReceiveData">
+			<MSBuild Projects="ReceiveData\ReceiveData.cbproj"/>
+		</Target>
+		<Target Name="ReceiveData:Clean">
+			<MSBuild Projects="ReceiveData\ReceiveData.cbproj" Targets="Clean"/>
+		</Target>
+		<Target Name="ReceiveData:Make">
+			<MSBuild Projects="ReceiveData\ReceiveData.cbproj" Targets="Make"/>
+		</Target>
+		<Target Name="math">
+			<MSBuild Projects="math\math.cbproj"/>
+		</Target>
+		<Target Name="math:Clean">
+			<MSBuild Projects="math\math.cbproj" Targets="Clean"/>
+		</Target>
+		<Target Name="math:Make">
+			<MSBuild Projects="math\math.cbproj" Targets="Make"/>
+		</Target>
+		<Target Name="hotspots">
+			<MSBuild Projects="Hotspots\hotspots.cbproj"/>
+		</Target>
+		<Target Name="hotspots:Clean">
+			<MSBuild Projects="Hotspots\hotspots.cbproj" Targets="Clean"/>
+		</Target>
+		<Target Name="hotspots:Make">
+			<MSBuild Projects="Hotspots\hotspots.cbproj" Targets="Make"/>
+		</Target>
+		<Target Name="VideoStream">
+			<MSBuild Projects="VideoStream\VideoStream.cbproj"/>
+		</Target>
+		<Target Name="VideoStream:Clean">
+			<MSBuild Projects="VideoStream\VideoStream.cbproj" Targets="Clean"/>
+		</Target>
+		<Target Name="VideoStream:Make">
+			<MSBuild Projects="VideoStream\VideoStream.cbproj" Targets="Make"/>
+		</Target>
+		<Target Name="GazeStream">
+			<MSBuild Projects="GazeStream\GazeStream.cbproj"/>
+		</Target>
+		<Target Name="GazeStream:Clean">
+			<MSBuild Projects="GazeStream\GazeStream.cbproj" Targets="Clean"/>
+		</Target>
+		<Target Name="GazeStream:Make">
+			<MSBuild Projects="GazeStream\GazeStream.cbproj" Targets="Make"/>
+		</Target>
+		<Target Name="EyeCalibrator">
+			<MSBuild Projects="EyeCalibrator\EyeCalibrator.cbproj"/>
+		</Target>
+		<Target Name="EyeCalibrator:Clean">
+			<MSBuild Projects="EyeCalibrator\EyeCalibrator.cbproj" Targets="Clean"/>
+		</Target>
+		<Target Name="EyeCalibrator:Make">
+			<MSBuild Projects="EyeCalibrator\EyeCalibrator.cbproj" Targets="Make"/>
+		</Target>
+		<Target Name="streamviewer">
+			<MSBuild Projects="StreamViewer\streamviewer.cbproj"/>
+		</Target>
+		<Target Name="streamviewer:Clean">
+			<MSBuild Projects="StreamViewer\streamviewer.cbproj" Targets="Clean"/>
+		</Target>
+		<Target Name="streamviewer:Make">
+			<MSBuild Projects="StreamViewer\streamviewer.cbproj" Targets="Make"/>
+		</Target>
+		<Target Name="CESVideoStream">
+			<MSBuild Projects="CESVideoStream\CESVideoStream.cbproj"/>
+		</Target>
+		<Target Name="CESVideoStream:Clean">
+			<MSBuild Projects="CESVideoStream\CESVideoStream.cbproj" Targets="Clean"/>
+		</Target>
+		<Target Name="CESVideoStream:Make">
+			<MSBuild Projects="CESVideoStream\CESVideoStream.cbproj" Targets="Make"/>
+		</Target>
+		<Target Name="Build">
+			<CallTarget Targets="SendData;ReceiveData;math;hotspots;VideoStream;GazeStream;EyeCalibrator;streamviewer;CESVideoStream"/>
+		</Target>
+		<Target Name="Clean">
+			<CallTarget Targets="SendData:Clean;ReceiveData:Clean;math:Clean;hotspots:Clean;VideoStream:Clean;GazeStream:Clean;EyeCalibrator:Clean;streamviewer:Clean;CESVideoStream:Clean"/>
+		</Target>
+		<Target Name="Make">
+			<CallTarget Targets="SendData:Make;ReceiveData:Make;math:Make;hotspots:Make;VideoStream:Make;GazeStream:Make;EyeCalibrator:Make;streamviewer:Make;CESVideoStream:Make"/>
+		</Target>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')" Project="$(BDS)\Bin\CodeGear.Group.Targets"/>
+	</Project>

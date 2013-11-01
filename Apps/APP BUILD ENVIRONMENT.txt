@@ -1,0 +1,12 @@
+=== For Developers ===
+
+This information is only relevant if your are trying to build apps that are consistent with those that are already included in the distribution.
+Essentially, you will need:
+1) For all programs Microsoft Visual Studio (2008 Professional with Service Pack 1 preferred)
+2) A version of boost (www.boost.org); most programs were built with boost 1.47.0 or newer (some may require 1.50.0 or newer, and all expect the environment variable BOOST_ROOT to be set up to point to the install directory for your boost version).
+3) A compatible version of the Qt SDK for programs with GUIs(most have been built with Qt 4.8.1 for MSVC 2008 for 32 bit; make sure that you set the environment variable QTSDK to point to your Qt SDK directory). 
+
+4) A small fraction of programs is written in Python (especially the LabRecorder). To use these you need Python 2.6 or 2.7 for win32 (2.7 recommended) and the PySide GUI package for those that use GUIs (a particular version of that -- see install instructions in the LabRecorder directory). We use the PyCharm IDE for most of our Python development.
+
+If you need further help there are some older step-by-step installation instructions for these tools hosted for SCCN users, but note that these instructions are likely referring to obsolete versions of these tools, so
+take them with a grain of salt: ftp://sccn.ucsd.edu/pub/software/third_party/build_environment/
