@@ -446,14 +446,14 @@ void ProcessGazeData(float *data, int size, double samplingRate) {
    //	if(pr) printf("y0: %g\n", y0);
 	double xMonitor = x0;
 	double yMonitor = y0;
-	double xScene = 0.0;
-	double yScene = 0.0;
+	double xScene = NAN;
+	double yScene = NAN;
 
 	unsigned int res = WaitForSingleObject(hGazeMutex,INFINITE);
 	if (res!=WAIT_OBJECT_0) return;
 
 	__try {
-		if(gu->rEye != 0.0 && x0 != 0.0 ) {
+		if(gu->rEye != 0.0 && !_isnan(x0)) {
 
 			gu->inverseEyeMap(&xMonitor,&yMonitor);
 

@@ -210,6 +210,7 @@ __published:	// IDE-managed Components
 	void __fastcall BackgroundRedEditChange(TObject *Sender);
 	void __fastcall BackgroundGreenEditChange(TObject *Sender);
 	void __fastcall BackgroundBlueEditChange(TObject *Sender);
+	void __fastcall UpdateMarkers();
 
 
 private:	// User declarations

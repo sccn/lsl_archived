@@ -708,6 +708,10 @@ object Form11: TForm11
     object TabSheet5: TTabSheet
       Caption = 'Grid'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ScrollBox5: TScrollBox
         Left = 0
         Top = 0

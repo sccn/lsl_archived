@@ -11,7 +11,7 @@
 class MonitorDrawer {
 	private:
 		HDC hdc;
-		BITMAP * bmpMarker, * bmpBackground, *bmpCurrent, *bmpSprite, *tempBackground, *newBackground;
+		BITMAP * bmpMarker, *bmpInactive, * bmpBackground, *bmpCurrent, *bmpSprite, *tempBackground, *newBackground;
 		BITMAP * bmpFullBackground, *bmpBlackFullBackground;
 		int markerSize;
 		int oldX, oldY;
@@ -21,6 +21,8 @@ class MonitorDrawer {
 		int yRes;
 		int  count;
 		bool visible;
+		double monitorWidthMM;
+		double monitorHeightMM;
 
 	InitializeParameters() {
 		bmpMarker = bmpBackground = bmpCurrent = bmpSprite = tempBackground = newBackground = NULL;
@@ -71,7 +73,7 @@ class MonitorDrawer {
 		tempBackground = create_bitmap_ex(CDEPTH,markerSize,markerSize);
 		clear_bitmap(bmpSprite);
 		rectfill(bmpSprite, 0,0,markerSize*3,markerSize*3,makecol(100,100,100));
-		circlefill(bmpSprite, markerSize*3/2, markerSize*3/2, markerSize/2-1, makecol(0,255,0));
+		circlefill(bmpSprite, markerSize*3/2, markerSize*3/2, markerSize/2-1, makecol(0,0,255));
 		circlefill(bmpSprite, markerSize*3/2, markerSize*3/2, markerSize/10, makecol(100,100,100));
 		count=0;
 
@@ -86,9 +88,11 @@ class MonitorDrawer {
 	}
 
 
-	//windowed mode
-	MonitorDrawer(HWND hWnd, int backgroundColor, int dummyForCalib) {
+	//windowed mode, for calibration
+	MonitorDrawer(HWND hWnd, int backgroundColor, double monitorWidthmm, double monitorHeightmm) {
 		InitializeParameters();
+		monitorWidthMM = monitorWidthmm; //storing this for public access
+		monitorHeightMM = monitorHeightmm; //storing this for public access
 		hwnd = hWnd;
 		hdc = GetDC(hwnd);
 		RECT rect;
@@ -108,9 +112,13 @@ class MonitorDrawer {
 		bmpBackground = create_bitmap_ex(CDEPTH,markerSize,markerSize);
 		clear_bitmap(bmpBackground);
 		rectfill(bmpBackground, 0,0,markerSize,markerSize,backgroundColor);
+
+		bmpInactive = create_bitmap_ex(CDEPTH,markerSize,markerSize);
+		clear_bitmap(bmpInactive);
+		rectfill(bmpInactive, 0,0,markerSize,markerSize,backgroundColor);
 	  //		rectfill(bmpBackground, 0,0,markerSize,markerSize,makecol(0,0,0));
-		circlefill(bmpBackground, markerSize/2, markerSize/2, markerSize/2-1, makecol(0,0,255));
-		circlefill(bmpBackground, markerSize/2, markerSize/2, markerSize/20, makecol(0,0,0));
+		circlefill(bmpInactive, markerSize/2, markerSize/2, markerSize/2-1, makecol(0,0,255));
+		circlefill(bmpInactive, markerSize/2, markerSize/2, markerSize/20, makecol(0,0,0));
 
 		bmpBlackFullBackground = create_bitmap_ex(CDEPTH,xRes,yRes);
 		clear_bitmap(bmpBlackFullBackground);
@@ -121,14 +129,15 @@ class MonitorDrawer {
 
 	}
 
-	void drawMarkers(double xc, double yc, bool active) {
+	void drawMarkers(double xc, double yc, int active) {
 
 		if(_isnan(xc) || _isnan(yc)) return;
 		int x = xc*xRes;
 		int y = yRes - yc*yRes;
 
-		if(active) draw_to_hdc (hdc,bmpSprite,x-markerSize/2,y-markerSize/2);
-		else draw_to_hdc(hdc,bmpBackground,x-markerSize/2,y-markerSize/2);
+		if(active == 1) draw_to_hdc (hdc,bmpSprite,x-markerSize/2,y-markerSize/2);
+		else if(active == 0) draw_to_hdc(hdc,bmpInactive,x-markerSize/2,y-markerSize/2);
+		else  draw_to_hdc(hdc,bmpBackground,x-markerSize/2,y-markerSize/2);
 	}
 
 	void setVisible(int nCmdShw) {
