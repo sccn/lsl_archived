@@ -164,11 +164,12 @@ private:
 
 	/// record from results of a query (spawn a recording thread for every result produced by the query)
 	/// @param query The query string
-	void record_from_query_results(const std::string &query) {
+	void record_from_query_results(std::string query) {
 		try {
 			std::set<std::string> known_uids;		// set of previously seen stream uid's
 			std::set<std::string> known_source_ids;	// set of previously seen source id's
 			std::vector<thread_p> threads;		    // our spawned threads
+			std::cout << "Watching for a stream with properties " << query << std::endl;
 			while (!shutdown_) {
 				// periodically re-resolve the query
 				std::vector<lsl::stream_info> results = lsl::resolve_stream(query,0,resolve_interval);

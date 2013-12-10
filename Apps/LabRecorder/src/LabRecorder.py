@@ -1,4 +1,4 @@
-import sys, os, socket, time
+import sys, os, socket, time, ctypes
 from optparse import OptionParser
 
 if sys.version_info[0] == 2:
@@ -270,13 +270,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 RecorderLib.info_setitem(streams,i,into_streams[i].impl())
         
             # watchfor
-            num_watchfor = len(into_watchfor)
-            watchfor = RecorderLib.new_str(num_watchfor)
-            for i in range(num_watchfor):
-                RecorderLib.str_setitem(watchfor,i,into_watchfor[i].encode("utf-8"))
-            
+            watchfor = ''
+            for i in range(len(into_watchfor)):
+                if len(watchfor):
+                    watchfor += '|'
+                watchfor = watchfor + into_watchfor[i].encode("utf-8")
+
             # start recording
-            self.CurrentRecording = RecorderLib.rl_start_recording(filename.encode("utf-8"),streams,num_streams,watchfor,num_watchfor,1)
+            self.CurrentRecording = RecorderLib.rl_start_recording(filename.encode("utf-8"),streams,num_streams,watchfor,1)
             self.StartTime = time.time()            
             self.CurrentlyRecording = True
             self.stopButton.setEnabled(True)
