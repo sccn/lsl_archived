@@ -52,15 +52,14 @@ typedef struct rl_recording_* rl_recording;
 *					Note: the recording process does not acquire ownership of these objects but instead makes copies, so the user needs to destroy them 
 *					to reclaim their memory.
 * @param num_recordfrom Number of entries in the recordfrom array.
-* @param watchfor This is an array of strings, each of which is a query predicate in the same format as expected by lsl_resolve_bypred.
-*			      These are XPath 1.0 predicates that determine which streams shall be recorded from; the most common examples would be:
+* @param watchfor An optional string that holds a list of query predicates in the same format as expected by lsl_resolve_bypred; the individual queries are separated 
+*			      by the | character. These are XPath 1.0 predicates that determine which streams shall be recorded from; the most common examples would be:
 *                 "name='BioSemi'" (record from any stream whose name is BioSemi) or "type='EEG' and count(info/desc/channel)=32" (record from any stream whose
 *				  content-type is EEG and which has 32 channels.
-* @param num_watchfor The number of elements in the watchfor array.
 * @param collect_offsets Whether to collect clock offset information (keep this set to 1 unless you record from LSL drivers that use custom mutually synchronized clocks, e.g. GPS clocks)
 * @return A handle to the recording that can be used to stop once finished.
 */
-extern RECORDERLIB_API rl_recording rl_start_recording(char *filename, void **recordfrom, unsigned num_recordfrom, char **watchfor, int num_watchfor, int collect_offsets);
+extern RECORDERLIB_API rl_recording rl_start_recording(char *filename, void **recordfrom, unsigned num_recordfrom, char *watchfor, int collect_offsets);
 
 
 /**

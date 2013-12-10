@@ -5,18 +5,20 @@
 #include "RecorderLib.h"
 #include "lsl_c.h"
 #include "recording.h"
+#include <boost/algorithm/string.hpp>
 
 
-RECORDERLIB_API rl_recording rl_start_recording(char *filename, void **recordfrom, unsigned num_recordfrom, char **watchforc, int num_watchfor, int collect_offsets) {
+RECORDERLIB_API rl_recording rl_start_recording(char *filename, void **recordfrom, unsigned num_recordfrom, char *watchforc, int collect_offsets) {
 	// first remap the C API streaminfo array to a vector<lsl::streaminfo>
 	std::vector<lsl::stream_info> streams;
 	for (std::size_t k=0; k<num_recordfrom; k++)
 		streams.push_back(lsl::stream_info((lsl::stream_info_impl*)recordfrom[k]));
 
-	// then the same for the strings
+	// then parse split the watchfor string
 	std::vector<std::string> watchfor;
-	for (std::size_t k=0; k<(unsigned)num_watchfor; k++)
-		watchfor.push_back(watchforc[k]);
+	boost::algorithm::split(watchfor,watchforc,boost::algorithm::is_any_of("|"));
+	for (std::size_t k=0; k<watchfor.size(); k++)
+		boost::algorithm::trim(watchfor[k]);
 
 	// lastly instantiate a new recording
 	recording *result = new recording(filename,streams,watchfor,collect_offsets != 0);
