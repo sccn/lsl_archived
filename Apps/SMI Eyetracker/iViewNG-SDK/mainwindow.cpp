@@ -552,11 +552,15 @@ void MainWindow::link() {
 
 				// create LSL streaminfo & outlet
 				lsl::stream_info info("iViewNG-SceneVideo-RAW","VideoRaw",res_x*res_y*scene_color_chans,samplingRate,lsl::cf_int8,"iViewNG-SceneVideo-RAW_" + serverAddress + serverPort + "_" + serialNumber);
-				info.desc().append_child("format")
-					.append_child_value("x_resolution",scene_res[0].c_str())
-					.append_child_value("y_resolution",scene_res[1].c_str())
+				info.desc().append_child("encoding")
+					.append_child_value("width",scene_res[0].c_str())
+					.append_child_value("height",scene_res[1].c_str())
 					.append_child_value("color_channels",boost::lexical_cast<std::string>(scene_color_chans).c_str())
-					.append_child_value("color_format",grayscale?"GRAY":"RGB");
+					.append_child_value("color_format",grayscale?"GRAY":"RGB")
+					.append_child_value("codec","raw");
+				info.desc().append_child("display")
+					.append_child_value("pixel_aspect","1.0")
+					.append_child_value("origin","top-left");
 				info.desc().append_child("acquisition")
 					.append_child_value("view","scene_camera");
 				outletSceneImage_.reset(new lsl::stream_outlet(info));
@@ -587,11 +591,15 @@ void MainWindow::link() {
 
 					// create LSL streaminfo & outlet
 					lsl::stream_info info("iViewNG-LeftEyeVideo-RAW","VideoRaw",eyeres_x*eyeres_y,eyeSamplingRate,lsl::cf_int8,"iViewNG-LeftEyeVideo-RAW_" + serverAddress + serverPort + "_" + serialNumber);
-					info.desc().append_child("format")
-						.append_child_value("x_resolution",eye_res[0].c_str())
-						.append_child_value("y_resolution",eye_res[1].c_str())
+					info.desc().append_child("encoding")
+						.append_child_value("width",eye_res[0].c_str())
+						.append_child_value("height",eye_res[1].c_str())
 						.append_child_value("color_channels","1")
-						.append_child_value("color_format","GRAY");
+						.append_child_value("color_format","GRAY")
+						.append_child_value("codec","raw");
+					info.desc().append_child("display")
+						.append_child_value("pixel_aspect","1.0")
+						.append_child_value("origin","top-left");
 					info.desc().append_child("acquisition")
 						.append_child_value("view","left_eye");
 					outletLeftImage_.reset(new lsl::stream_outlet(info));
@@ -609,11 +617,15 @@ void MainWindow::link() {
 
 					// create LSL streaminfo & outlet
 					lsl::stream_info info("iViewNG-RightEyeVideo-RAW","VideoRaw",res_x*res_y,eyeSamplingRate,lsl::cf_int8,"iViewNG-RightEyeVideo-RAW_" + serverAddress + serverPort + "_" + serialNumber);
-					info.desc().append_child("format")
-						.append_child_value("x_resolution",eye_res[0].c_str())
-						.append_child_value("y_resolution",eye_res[1].c_str())
+					info.desc().append_child("encoding")
+						.append_child_value("width",eye_res[0].c_str())
+						.append_child_value("height",eye_res[1].c_str())
 						.append_child_value("color_channels","1")
-						.append_child_value("color_format","GRAY");
+						.append_child_value("color_format","GRAY")
+						.append_child_value("codec","RAW");
+					info.desc().append_child("display")
+						.append_child_value("pixel_aspect","1.0")
+						.append_child_value("origin","top-left");
 					info.desc().append_child("acquisition")
 						.append_child_value("view","right_eye");
 					outletRightImage_.reset(new lsl::stream_outlet(info));
@@ -636,7 +648,7 @@ void MainWindow::link() {
 					throw std::exception("Failed to subscribe to scene camera stream.");
 				// create LSL streaminfo & outlet
 				lsl::stream_info info("iViewNG-SceneVideo","Video",1,0,lsl::cf_string,"iViewNG-SceneVideo_" + serverAddress + serverPort + "_" + serialNumber);
-				info.desc().append_child("format").append_child_value("codec","H.264");
+				info.desc().append_child("encoding").append_child_value("codec","DAVC");
 				info.desc().append_child("acquisition")
 					.append_child_value("view","scene_camera");
 				outletCompressedScene_.reset(new lsl::stream_outlet(info));
@@ -665,8 +677,8 @@ void MainWindow::link() {
 			channels.append_child("channel").append_child_value("label","Screen_X_right").append_child_value("eye","right").append_child_value("type","ScreenX").append_child_value("unit","pixels");
 			channels.append_child("channel").append_child_value("label","Screen_Y_right").append_child_value("eye","right").append_child_value("type","ScreenY").append_child_value("unit","pixels");
 			// pupil radii
-			channels.append_child("channel").append_child_value("label","Radius_left").append_child_value("eye","left").append_child_value("type","Radius").append_child_value("unit","millimeters");
-			channels.append_child("channel").append_child_value("label","Radius_right").append_child_value("eye","right").append_child_value("type","Radius").append_child_value("unit","millimeters");
+			channels.append_child("channel").append_child_value("label","PupilRadius_left").append_child_value("eye","left").append_child_value("type","Radius").append_child_value("unit","millimeters");
+			channels.append_child("channel").append_child_value("label","PupilRadius_right").append_child_value("eye","right").append_child_value("type","Radius").append_child_value("unit","millimeters");
 			// 3d positions
 			channels.append_child("channel").append_child_value("label","EyePosition_X_left").append_child_value("eye","left").append_child_value("type","PositionX").append_child_value("unit","millimeters");
 			channels.append_child("channel").append_child_value("label","EyePosition_Y_left").append_child_value("eye","left").append_child_value("type","PositionY").append_child_value("unit","millimeters");
