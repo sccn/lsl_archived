@@ -78,7 +78,7 @@
 				IgnoreImportLibrary="true"
 				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
 				AdditionalDependencies="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\qtmaind.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtGuid4.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtCored4.lib libiViewNG-LibCore.lib opencv_core220.lib opencv_imgproc220.lib"
-				OutputFile="$(OutDir)\iViewNG.exe"
+				OutputFile="$(OutDir)\iViewNG-debug.exe"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\LSL\liblsl\bin;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib&quot;;&quot;$(BOOST_ROOT)\lib&quot;"
 				GenerateDebugInformation="true"
