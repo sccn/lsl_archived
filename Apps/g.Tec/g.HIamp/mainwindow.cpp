@@ -8,6 +8,8 @@
 #include <boost/foreach.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+const int usb_packet_size = 1024;
+
 MainWindow::MainWindow(QWidget *parent, const std::string &config_file): QMainWindow(parent),ui(new Ui::MainWindow),hDevice(NULL),hEvent(NULL),pOverlapped(NULL)
 {
 	ui->setupUi(this);
@@ -58,8 +60,6 @@ void MainWindow::load_config(const std::string &filename) {
 		ui->channelCount->setValue(pt.get<int>("settings.channelcount",16));
 		ui->chunkSize->setValue(pt.get<int>("settings.chunksize",16));
 		ui->samplingRate->setCurrentIndex(pt.get<int>("settings.samplingrate",3));
-		ui->commonGround->setCheckState(pt.get<bool>("settings.commongng",true) ? Qt::Checked : Qt::Unchecked);
-		ui->commonReference->setCheckState(pt.get<bool>("settings.commonref",true) ? Qt::Checked : Qt::Unchecked);
 		ui->isSlave->setCheckState(pt.get<bool>("settings.isslave",false) ? Qt::Checked : Qt::Unchecked);
 		ui->channelLabels->clear();
 		BOOST_FOREACH(ptree::value_type &v, pt.get_child("channels.labels"))
@@ -80,8 +80,6 @@ void MainWindow::save_config(const std::string &filename) {
 		pt.put("settings.channelcount",ui->channelCount->value());
 		pt.put("settings.chunksize",ui->chunkSize->value());
 		pt.put("settings.samplingrate",ui->samplingRate->currentIndex());
-		pt.put("settings.commongnd",ui->commonGround->checkState()==Qt::Checked);
-		pt.put("settings.commonref",ui->commonReference->checkState()==Qt::Checked);
 		pt.put("settings.isslave",ui->isSlave->checkState()==Qt::Checked);
 		std::vector<std::string> channelLabels;
 		boost::algorithm::split(channelLabels,ui->channelLabels->toPlainText().toStdString(),boost::algorithm::is_any_of("\n"));
@@ -100,9 +98,8 @@ void MainWindow::save_config(const std::string &filename) {
 }
 
 
-// start/stop the gUSBamp connection
+// start/stop the gHIamp connection
 void MainWindow::link() {
-	DWORD bytes_returned;
 	if (reader_thread_) {
 		// === perform unlink action ===
 		try {
@@ -139,8 +136,6 @@ void MainWindow::link() {
 			int channelCount = ui->channelCount->value();
 			int chunkSize = ui->chunkSize->value();
 			int samplingRate = boost::lexical_cast<int>(ui->samplingRate->currentText().toStdString());
-			bool commonGnd = ui->commonGround->checkState()==Qt::Checked;
-			bool commonRef = ui->commonReference->checkState()==Qt::Checked;
 			bool isSlave = ui->isSlave->checkState()==Qt::Checked;
 			std::vector<std::string> channelLabels;
 			boost::algorithm::split(channelLabels,ui->channelLabels->toPlainText().toStdString(),boost::algorithm::is_any_of("\n"));
@@ -160,21 +155,16 @@ void MainWindow::link() {
 							break;
 					deviceNumber = boost::lexical_cast<std::string>(deviceNum);
 					if (!hDevice)
-						throw std::runtime_error("Found no device that could be opened. Please make sure that the device is plugged in, turned on, the driver is installed correctly, and that the version of your driver DLL (gUSBamp.dll) (currently " + driver_version_str + ") matches that of your amplifier.");
+						throw std::runtime_error("Found no device that could be opened. Please make sure that the device is plugged in, turned on, the driver is installed correctly, and that the version of your driver DLL (gHIamp.dll) (currently " + driver_version_str + ") matches that of your amplifier.");
 				} else {
 					hDevice = GT_OpenDevice(deviceNum);
 					if (!hDevice)
-						throw std::runtime_error("A device with that number could not be opened. Please make sure that the device is plugged in, and turned on. Also, consider trying to pass in the serial number of your amplifier (usually of the form UX-XXXX.XX.XX) instead of a device number.");
+						throw std::runtime_error("A device with that number could not be opened. Please make sure that the device is plugged in, turned on, and the driver is installed correctly, and that the version of your driver DLL (gHIamp.dll) (currently " + driver_version_str + ") matches that of your amplifier. You can also pass in the serial number of your amplifier instead of a device number.");
 				}
 			} else {
 				hDevice = GT_OpenDeviceEx((LPSTR)deviceNumber.c_str());
-				if (!hDevice) {
-					if (deviceNumber[0] == 'U' && deviceNumber[1] == 'A' && driver_version >= 3.0)
-						throw std::runtime_error("Could not open device. Your amplifier has a version 2.x serial number while the driver (gUSBamp.dll) is version " + driver_version_str + "; please use a version 2.x driver DLL.");
-					if (deviceNumber[0] == 'U' && deviceNumber[1] == 'B' && driver_version < 3.0)
-						throw std::runtime_error("Could not open device. Your amplifier has a version 3.x serial number while the driver (gUSBamp.dll) is version " + driver_version_str + "; please use a version 3.x driver DLL.");
-					throw std::runtime_error("Could not open device. Please make sure that the device is plugged in, turned on, the driver is installed correctly, and the device number (port or serial) is correct. You can also try to pass in 0 to search over all ports.");
-				}
+				if (!hDevice)
+					throw std::runtime_error("Could not open device. Please make sure that the device is plugged in, turned on, the driver is installed correctly, and that the version of your driver DLL (gHIamp.dll) (currently " + driver_version_str + ") matches that of your amplifier. Also check that the serial number is correct. You can also try to pass in 0 to search over all ports.");
 			}
 
 			// initialize structures for async IO
@@ -183,26 +173,23 @@ void MainWindow::link() {
 			memset(pOverlapped, 0, sizeof(OVERLAPPED));
 			pOverlapped->hEvent = hEvent;
 
-			// set amplifier parameters
-			if (!GT_SetMode(hDevice,M_NORMAL)) 
-				throw std::runtime_error("Could not set data acquisition mode.");
-			if (!GT_SetBufferSize(hDevice,chunkSize))
-				throw std::runtime_error("Could not set chunk size.");
-			UCHAR channels[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
-			if (!GT_SetChannels(hDevice, channels, channelCount))
-				throw std::runtime_error("Could not set channel mask.");
-			if (!GT_SetSlave(hDevice,isSlave))
-				throw std::runtime_error("Could not set master/slave mode.");
-			if (!GT_EnableTriggerLine(hDevice,true)) 
-				throw std::runtime_error("Could not enable trigger line.");
-			if  (!GT_SetSampleRate(hDevice, samplingRate)) 
-				throw std::runtime_error("Could not set sampling rate.");
-			REF refMask = {commonRef,commonRef,commonRef,commonRef};
-			if (!GT_SetReference(hDevice,refMask)) 
-				throw std::runtime_error("Could not set reference mask.");
-			GND gndMask = {commonGnd,commonGnd,commonGnd,commonGnd};
-			if (!GT_SetGround(hDevice,gndMask)) 
-				throw std::runtime_error("Could not set ground mask.");
+			// set amplifier configuration
+			GT_HIAMP_CONFIGURATION conf = {0};
+			conf.SampleRate = samplingRate;
+			conf.BufferSize = chunkSize;
+			conf.TriggerLineEnabled = true;
+			conf.HoldEnabled = false;
+			conf.IsSlave = isSlave;
+			conf.CounterEnabled = false;
+			conf.InternalSignalGenerator.Enabled = false;
+			for (int k=0;k<channelCount;k++) {
+				conf.Channels[k].Acquire = true;
+				conf.Channels[k].ChannelNumber = k+1;
+				conf.Channels[k].BandpassFilterIndex = -1;
+				conf.Channels[k].NotchFilterIndex = -1;
+			}
+			if (!GT_SetConfiguration(hDevice,conf))
+				throw std::runtime_error("Could not set amplifier configuration.");
 
 			// try to get the serial number
 			char buffer[1024]; 
@@ -235,7 +222,7 @@ void MainWindow::link() {
 				delete pOverlapped;
 				pOverlapped = NULL;
 			}
-			QMessageBox::critical(this,"Error",("Could not initialize the gUSBamp interface: "+(e.what()+(" (driver message: "+msg+")"))).c_str(),QMessageBox::Ok);
+			QMessageBox::critical(this,"Error",("Could not initialize the gHIamp interface: "+(e.what()+(" (driver message: "+msg+")"))).c_str(),QMessageBox::Ok);
 			return;
 		}
 
@@ -247,13 +234,13 @@ void MainWindow::link() {
 // background data reader thread
 void MainWindow::read_thread(std::string deviceNumber, int chunkSize, int samplingRate, bool isSlave, std::string serialNumber, int channelCount, std::vector<std::string> channelLabels) {
 	// reserve buffers to receive and send data
-	int chunk_bytes = chunkSize*(channelCount+1)*sizeof(float)+HEADER_SIZE;
+	int chunk_bytes = ceil((chunkSize*(channelCount+1)*sizeof(float))/(double)MAX_USB_PACKET_SIZE)*MAX_USB_PACKET_SIZE;
 	char *recv_buffer = new char[chunk_bytes];
-	float *src_buffer = reinterpret_cast<float*>(recv_buffer + HEADER_SIZE);
+	float *src_buffer = reinterpret_cast<float*>(recv_buffer);
 	std::vector<std::vector<float> > send_buffer(chunkSize,std::vector<float>(channelCount));
 	try {
 		// create data streaminfo and append some meta-data
-		lsl::stream_info data_info("g.USBamp-"+deviceNumber,"EEG",channelCount,samplingRate,lsl::cf_float32,"gUSBamp_" + deviceNumber + "_" + boost::lexical_cast<std::string>(serialNumber));
+		lsl::stream_info data_info("g.USBamp-"+deviceNumber,"EEG",channelCount,samplingRate,lsl::cf_float32,"gHIamp_" + deviceNumber + "_" + boost::lexical_cast<std::string>(serialNumber));
 		lsl::xml_element channels = data_info.desc().append_child("channels");
 		for (int k=0;k<channelLabels.size();k++)
 			channels.append_child("channel")
@@ -269,7 +256,7 @@ void MainWindow::read_thread(std::string deviceNumber, int chunkSize, int sampli
 		lsl::stream_outlet data_outlet(data_info);
 
 		// create marker streaminfo and outlet
-		lsl::stream_info marker_info("gUSBamp-"+deviceNumber+"Markers","Markers",1,0,lsl::cf_string,"gUSBamp_" + boost::lexical_cast<std::string>(deviceNumber) + "_" + boost::lexical_cast<std::string>(serialNumber) + "_markers");
+		lsl::stream_info marker_info("gHIamp-"+deviceNumber+"Markers","Markers",1,0,lsl::cf_string,"gHIamp_" + boost::lexical_cast<std::string>(deviceNumber) + "_" + boost::lexical_cast<std::string>(serialNumber) + "_markers");
 		lsl::stream_outlet marker_outlet(marker_info);
 			
 		// enter transmission loop
@@ -278,7 +265,7 @@ void MainWindow::read_thread(std::string deviceNumber, int chunkSize, int sampli
 			// read chunk into recv_buffer
 			if (GT_GetData(hDevice,(BYTE*)recv_buffer,chunk_bytes,pOverlapped)) {
 				if (WaitForSingleObject(pOverlapped->hEvent,1000)==WAIT_OBJECT_0) {
-					if (GetOverlappedResult(hDevice, pOverlapped, &bytes_read, FALSE) && bytes_read == chunk_bytes) {
+					if (GT_GetOverlappedResult(hDevice, pOverlapped, &bytes_read, FALSE) && bytes_read) {
 						// reformat into send_buffer
 						for (int s=0;s<chunkSize;s++)
 							for (int c=0;c<channelCount;c++)

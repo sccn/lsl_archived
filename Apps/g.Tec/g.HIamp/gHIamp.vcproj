@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="gUSBamp"
+	Name="gHIamp"
 	ProjectGUID="{F63650CA-477B-3725-8C9E-DF4E4A710E9C}"
 	Keyword="Qt4VSv1.0"
 	TargetFrameworkVersion="0"
@@ -77,8 +77,8 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
 				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
-				AdditionalDependencies="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\qtmaind.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtGuid4.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtCored4.lib gUSBamp.lib"
-				OutputFile="$(OutDir)\gUSBamp.exe"
+				AdditionalDependencies="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\qtmaind.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtGuid4.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtCored4.lib gHIamp.lib"
+				OutputFile="$(OutDir)\gHIamp.exe"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\LSL\liblsl\bin;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib&quot;;&quot;$(BOOST_ROOT)\lib&quot;"
 				GenerateDebugInformation="true"
@@ -259,8 +259,8 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
 				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
-				AdditionalDependencies="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\qtmain.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtGui4.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtCore4.lib gUSBamp.lib"
-				OutputFile="$(OutDir)\gUSBamp.exe"
+				AdditionalDependencies="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\qtmain.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtGui4.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtCore4.lib gHIamp.lib"
+				OutputFile="$(OutDir)\gHIamp.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\LSL\liblsl\bin;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib&quot;;&quot;$(BOOST_ROOT)\lib&quot;"
@@ -410,7 +410,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\gUSBamp.h"
+				RelativePath=".\gHIamp.h"
 				>
 			</File>
 			<File

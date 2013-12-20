@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>317</width>
-    <height>304</height>
+    <width>303</width>
+    <height>388</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>gUSBamp Connector</string>
+   <string>gHIamp Connector</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -39,7 +39,247 @@ Ch12
 Ch13
 Ch14
 Ch15
-Ch16</string>
+Ch16
+Ch17
+Ch18
+Ch19
+Ch20
+Ch21
+Ch22
+Ch23
+Ch24
+Ch25
+Ch26
+Ch27
+Ch28
+Ch29
+Ch30
+Ch31
+Ch32
+Ch33
+Ch34
+Ch35
+Ch36
+Ch37
+Ch38
+Ch39
+Ch40
+Ch41
+Ch42
+Ch43
+Ch44
+Ch45
+Ch46
+Ch47
+Ch48
+Ch49
+Ch50
+Ch51
+Ch52
+Ch53
+Ch54
+Ch55
+Ch56
+Ch57
+Ch58
+Ch59
+Ch60
+Ch61
+Ch62
+Ch63
+Ch64
+Ch65
+Ch66
+Ch67
+Ch68
+Ch69
+Ch70
+Ch71
+Ch72
+Ch73
+Ch74
+Ch75
+Ch76
+Ch77
+Ch78
+Ch79
+Ch80
+Ch81
+Ch82
+Ch83
+Ch84
+Ch85
+Ch86
+Ch87
+Ch88
+Ch89
+Ch90
+Ch91
+Ch92
+Ch93
+Ch94
+Ch95
+Ch96
+Ch97
+Ch98
+Ch99
+Ch100
+Ch101
+Ch102
+Ch103
+Ch104
+Ch105
+Ch106
+Ch107
+Ch108
+Ch109
+Ch110
+Ch111
+Ch112
+Ch113
+Ch114
+Ch115
+Ch116
+Ch117
+Ch118
+Ch119
+Ch120
+Ch121
+Ch122
+Ch123
+Ch124
+Ch125
+Ch126
+Ch127
+Ch128
+Ch129
+Ch130
+Ch131
+Ch132
+Ch133
+Ch134
+Ch135
+Ch136
+Ch137
+Ch138
+Ch139
+Ch140
+Ch141
+Ch142
+Ch143
+Ch144
+Ch145
+Ch146
+Ch147
+Ch148
+Ch149
+Ch150
+Ch151
+Ch152
+Ch153
+Ch154
+Ch155
+Ch156
+Ch157
+Ch158
+Ch159
+Ch160
+Ch161
+Ch162
+Ch163
+Ch164
+Ch165
+Ch166
+Ch167
+Ch168
+Ch169
+Ch170
+Ch171
+Ch172
+Ch173
+Ch174
+Ch175
+Ch176
+Ch177
+Ch178
+Ch179
+Ch180
+Ch181
+Ch182
+Ch183
+Ch184
+Ch185
+Ch186
+Ch187
+Ch188
+Ch189
+Ch190
+Ch191
+Ch192
+Ch193
+Ch194
+Ch195
+Ch196
+Ch197
+Ch198
+Ch199
+Ch200
+Ch201
+Ch202
+Ch203
+Ch204
+Ch205
+Ch206
+Ch207
+Ch208
+Ch209
+Ch210
+Ch211
+Ch212
+Ch213
+Ch214
+Ch215
+Ch216
+Ch217
+Ch218
+Ch219
+Ch220
+Ch221
+Ch222
+Ch223
+Ch224
+Ch225
+Ch226
+Ch227
+Ch228
+Ch229
+Ch230
+Ch231
+Ch232
+Ch233
+Ch234
+Ch235
+Ch236
+Ch237
+Ch238
+Ch239
+Ch240
+Ch241
+Ch242
+Ch243
+Ch244
+Ch245
+Ch246
+Ch247
+Ch248
+Ch249
+Ch250
+Ch251
+Ch252
+Ch253
+Ch254
+Ch255
+Ch256</string>
          </property>
         </widget>
        </item>
@@ -64,6 +304,16 @@ Ch16</string>
            </property>
           </widget>
          </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="deviceNumber">
+           <property name="toolTip">
+            <string>This is either the USB port number of the device, or the serial number of the device (a string of the form UX-XXXX.XX.XX). If left as 0, all USB ports will be searched.</string>
+           </property>
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_2">
            <property name="text">
@@ -80,10 +330,10 @@ Ch16</string>
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>16</number>
+            <number>256</number>
            </property>
            <property name="value">
-            <number>16</number>
+            <number>256</number>
            </property>
           </widget>
          </item>
@@ -103,10 +353,10 @@ Ch16</string>
             <number>1</number>
            </property>
            <property name="maximum">
-            <number>512</number>
+            <number>256</number>
            </property>
            <property name="value">
-            <number>16</number>
+            <number>32</number>
            </property>
           </widget>
          </item>
@@ -123,23 +373,8 @@ Ch16</string>
             <string>Sampling rate to use.</string>
            </property>
            <property name="currentIndex">
-            <number>3</number>
+            <number>0</number>
            </property>
-           <item>
-            <property name="text">
-             <string>32</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>64</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>128</string>
-            </property>
-           </item>
            <item>
             <property name="text">
              <string>256</string>
@@ -187,54 +422,7 @@ Ch16</string>
            </item>
           </widget>
          </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_5">
-           <property name="text">
-            <string>Common Ground</string>
-           </property>
-          </widget>
-         </item>
          <item row="5" column="1">
-          <widget class="QCheckBox" name="commonGround">
-           <property name="toolTip">
-            <string>Connect all blocks to a common ground.</string>
-           </property>
-           <property name="text">
-            <string>(check)</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="label_6">
-           <property name="text">
-            <string>Common Reference</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="QCheckBox" name="commonReference">
-           <property name="toolTip">
-            <string>Connect all blocks to a common reference.</string>
-           </property>
-           <property name="text">
-            <string>(check)</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="label_7">
-           <property name="text">
-            <string>Act as Slave</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1">
           <widget class="QCheckBox" name="isSlave">
            <property name="toolTip">
             <string>Note: this is highly experimental -- can be used to sync multiple amps with a trigger cable. This needs to be checked for all slave devices, and unchecked for the 'master' device. The master must be linked/unlinked last (i.e., after all the slaves).</string>
@@ -244,13 +432,10 @@ Ch16</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="deviceNumber">
-           <property name="toolTip">
-            <string>This is either the USB port number of the device, or the serial number of the device (a string of the form UX-XXXX.XX.XX). If left as 0, all USB ports will be searched.</string>
-           </property>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_7">
            <property name="text">
-            <string>0</string>
+            <string>Act as Slave</string>
            </property>
           </widget>
          </item>
@@ -303,7 +488,7 @@ Ch16</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>317</width>
+     <width>303</width>
      <height>18</height>
     </rect>
    </property>
