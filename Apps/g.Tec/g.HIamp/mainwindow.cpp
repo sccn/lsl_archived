@@ -56,7 +56,7 @@ void MainWindow::load_config(const std::string &filename) {
 
 	// get config values
 	try {
-		ui->deviceNumber->setText(pt.get<std::string>("settings.devicenumber","0").c_str());
+		ui->deviceNumber->setText(pt.get<std::string>("settings.devicenumber","(search)").c_str());
 		ui->channelCount->setValue(pt.get<int>("settings.channelcount",16));
 		ui->chunkSize->setValue(pt.get<int>("settings.chunksize",16));
 		ui->samplingRate->setCurrentIndex(pt.get<int>("settings.samplingrate",3));
@@ -147,24 +147,24 @@ void MainWindow::link() {
 			std::string driver_version_str = boost::lexical_cast<std::string>(driver_version);
 
 			// try to open the device
-			if (deviceNumber.size()<=2) {
-				int deviceNum = boost::lexical_cast<int>(deviceNumber);
-				if (!deviceNum) {
-					for (deviceNum=0;deviceNum<128;deviceNum++)
-						if (hDevice = GT_OpenDevice(deviceNum))
-							break;
-					deviceNumber = boost::lexical_cast<std::string>(deviceNum);
-					if (!hDevice)
-						throw std::runtime_error("Found no device that could be opened. Please make sure that the device is plugged in, turned on, the driver is installed correctly, and that the version of your driver DLL (gHIamp.dll) (currently " + driver_version_str + ") matches that of your amplifier.");
-				} else {
-					hDevice = GT_OpenDevice(deviceNum);
+			if (deviceNumber == "(search)") {
+				for (int k=0;k<128;k++)
+					if (hDevice = GT_OpenDevice(k)) {
+						deviceNumber = boost::lexical_cast<std::string>(k);
+						break;
+					}
+				if (!hDevice)
+					throw std::runtime_error("Found no device that could be opened. Please make sure that the device is plugged in, turned on, the driver is installed correctly, and that the version of your driver DLL (gHIamp.dll) (currently " + driver_version_str + ") matches that of your amplifier.");
+			} else {
+				if (deviceNumber.size()<=2) {
+					hDevice = GT_OpenDevice(boost::lexical_cast<int>(deviceNumber));
 					if (!hDevice)
 						throw std::runtime_error("A device with that number could not be opened. Please make sure that the device is plugged in, turned on, and the driver is installed correctly, and that the version of your driver DLL (gHIamp.dll) (currently " + driver_version_str + ") matches that of your amplifier. You can also pass in the serial number of your amplifier instead of a device number.");
-				}
-			} else {
-				hDevice = GT_OpenDeviceEx((LPSTR)deviceNumber.c_str());
-				if (!hDevice)
+				} else {
+					hDevice = GT_OpenDeviceEx((LPSTR)deviceNumber.c_str());
+					if (!hDevice)
 					throw std::runtime_error("Could not open device. Please make sure that the device is plugged in, turned on, the driver is installed correctly, and that the version of your driver DLL (gHIamp.dll) (currently " + driver_version_str + ") matches that of your amplifier. Also check that the serial number is correct. You can also try to pass in 0 to search over all ports.");
+				}
 			}
 
 			// initialize structures for async IO
@@ -269,7 +269,7 @@ void MainWindow::read_thread(std::string deviceNumber, int chunkSize, int sampli
 						// reformat into send_buffer
 						for (int s=0;s<chunkSize;s++)
 							for (int c=0;c<channelCount;c++)
-								send_buffer[s][c] = src_buffer[s + c*(channelCount+1)];
+								send_buffer[s][c] = src_buffer[c + s*(channelCount+1)];
 						double now = lsl::local_clock();
 						// push data chunk into the outlet
 						data_outlet.push_chunk(send_buffer,now);

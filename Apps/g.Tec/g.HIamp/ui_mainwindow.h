@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Thu Dec 19 17:45:59 2013
+** Created: Fri Dec 20 01:29:14 2013
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -73,7 +73,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(303, 388);
+        MainWindow->resize(303, 271);
         actionLoad_Configuration = new QAction(MainWindow);
         actionLoad_Configuration->setObjectName(QString::fromUtf8("actionLoad_Configuration"));
         actionSave_Configuration = new QAction(MainWindow);
@@ -487,9 +487,9 @@ public:
         groupBox->setTitle(QApplication::translate("MainWindow", "Device Settings", 0, QApplication::UnicodeUTF8));
         label_4->setText(QApplication::translate("MainWindow", "Device Port or Serial", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
-        deviceNumber->setToolTip(QApplication::translate("MainWindow", "This is either the USB port number of the device, or the serial number of the device (a string of the form UX-XXXX.XX.XX). If left as 0, all USB ports will be searched.", 0, QApplication::UnicodeUTF8));
+        deviceNumber->setToolTip(QApplication::translate("MainWindow", "This is either the USB port number of the device, or the serial number of the device. If left as (search), all USB ports will be searched.", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
-        deviceNumber->setText(QApplication::translate("MainWindow", "0", 0, QApplication::UnicodeUTF8));
+        deviceNumber->setText(QApplication::translate("MainWindow", "(search)", 0, QApplication::UnicodeUTF8));
         label_2->setText(QApplication::translate("MainWindow", "Number of Channels", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
         channelCount->setToolTip(QApplication::translate("MainWindow", "This must match the number of entries in the channel list", 0, QApplication::UnicodeUTF8));

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Thu Dec 19 14:38:49 2013
+** Created: Fri Dec 20 01:04:43 2013
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -313,9 +313,9 @@ public:
 #endif // QT_NO_TOOLTIP
         isSlave->setText(QApplication::translate("MainWindow", "(check)", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
-        deviceNumber->setToolTip(QApplication::translate("MainWindow", "This is either the USB port number of the device, or the serial number of the device (a string of the form UX-XXXX.XX.XX). If left as 0, all USB ports will be searched.", 0, QApplication::UnicodeUTF8));
+        deviceNumber->setToolTip(QApplication::translate("MainWindow", "This is either the USB port number of the device, or the serial number of the device (a string of the form UX-XXXX.XX.XX). If left as (search), all USB ports will be searched.", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
-        deviceNumber->setText(QApplication::translate("MainWindow", "0", 0, QApplication::UnicodeUTF8));
+        deviceNumber->setText(QApplication::translate("MainWindow", "(search)", 0, QApplication::UnicodeUTF8));
         linkButton->setText(QApplication::translate("MainWindow", "Link", 0, QApplication::UnicodeUTF8));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
