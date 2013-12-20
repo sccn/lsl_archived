@@ -274,10 +274,14 @@ void MainWindow::read_thread(std::string deviceNumber, int chunkSize, int sampli
 						// push data chunk into the outlet
 						data_outlet.push_chunk(send_buffer,now);
 						// push markers into outlet
+						int last_mrk = 0;
 						for (int s=0;s<chunkSize;s++)
 							if (int mrk=src_buffer[channelCount + s*(channelCount+1)]) {
-								std::string mrk_string = boost::lexical_cast<std::string>(mrk);
-								marker_outlet.push_sample(&mrk_string,now + (s + 1 - chunkSize)/samplingRate);
+								if (mrk != last_mrk) {
+									std::string mrk_string = boost::lexical_cast<std::string>(mrk);
+									marker_outlet.push_sample(&mrk_string,now + (s + 1 - chunkSize)/samplingRate);
+									last_mrk = mrk;
+								}
 							}
 					}
 				}
