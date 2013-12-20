@@ -16,7 +16,7 @@
 // g.USBamp API
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include "gUSBamp.h"
+#include "gHIamp.h"
 
 
 namespace Ui {
@@ -36,7 +36,7 @@ private slots:
     void load_config_dialog();
     void save_config_dialog();
 
-    // start the gUSBamp connection
+    // start the gHIamp connection
     void link();
 
     // close event (potentially disabled)

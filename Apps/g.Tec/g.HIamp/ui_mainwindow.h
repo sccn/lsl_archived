@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Thu Dec 19 14:38:49 2013
+** Created: Thu Dec 19 17:45:59 2013
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -52,19 +52,15 @@ public:
     QGroupBox *groupBox;
     QFormLayout *formLayout;
     QLabel *label_4;
+    QLineEdit *deviceNumber;
     QLabel *label_2;
     QSpinBox *channelCount;
     QLabel *label;
     QSpinBox *chunkSize;
     QLabel *label_3;
     QComboBox *samplingRate;
-    QLabel *label_5;
-    QCheckBox *commonGround;
-    QLabel *label_6;
-    QCheckBox *commonReference;
-    QLabel *label_7;
     QCheckBox *isSlave;
-    QLineEdit *deviceNumber;
+    QLabel *label_7;
     QSpacerItem *verticalSpacer;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
@@ -77,7 +73,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(317, 304);
+        MainWindow->resize(303, 388);
         actionLoad_Configuration = new QAction(MainWindow);
         actionLoad_Configuration->setObjectName(QString::fromUtf8("actionLoad_Configuration"));
         actionSave_Configuration = new QAction(MainWindow);
@@ -121,6 +117,11 @@ public:
 
         formLayout->setWidget(0, QFormLayout::LabelRole, label_4);
 
+        deviceNumber = new QLineEdit(groupBox);
+        deviceNumber->setObjectName(QString::fromUtf8("deviceNumber"));
+
+        formLayout->setWidget(0, QFormLayout::FieldRole, deviceNumber);
+
         label_2 = new QLabel(groupBox);
         label_2->setObjectName(QString::fromUtf8("label_2"));
 
@@ -129,8 +130,8 @@ public:
         channelCount = new QSpinBox(groupBox);
         channelCount->setObjectName(QString::fromUtf8("channelCount"));
         channelCount->setMinimum(1);
-        channelCount->setMaximum(16);
-        channelCount->setValue(16);
+        channelCount->setMaximum(256);
+        channelCount->setValue(256);
 
         formLayout->setWidget(1, QFormLayout::FieldRole, channelCount);
 
@@ -142,8 +143,8 @@ public:
         chunkSize = new QSpinBox(groupBox);
         chunkSize->setObjectName(QString::fromUtf8("chunkSize"));
         chunkSize->setMinimum(1);
-        chunkSize->setMaximum(512);
-        chunkSize->setValue(16);
+        chunkSize->setMaximum(256);
+        chunkSize->setValue(32);
 
         formLayout->setWidget(2, QFormLayout::FieldRole, chunkSize);
 
@@ -157,42 +158,15 @@ public:
 
         formLayout->setWidget(3, QFormLayout::FieldRole, samplingRate);
 
-        label_5 = new QLabel(groupBox);
-        label_5->setObjectName(QString::fromUtf8("label_5"));
+        isSlave = new QCheckBox(groupBox);
+        isSlave->setObjectName(QString::fromUtf8("isSlave"));
 
-        formLayout->setWidget(5, QFormLayout::LabelRole, label_5);
-
-        commonGround = new QCheckBox(groupBox);
-        commonGround->setObjectName(QString::fromUtf8("commonGround"));
-        commonGround->setChecked(true);
-
-        formLayout->setWidget(5, QFormLayout::FieldRole, commonGround);
-
-        label_6 = new QLabel(groupBox);
-        label_6->setObjectName(QString::fromUtf8("label_6"));
-
-        formLayout->setWidget(6, QFormLayout::LabelRole, label_6);
-
-        commonReference = new QCheckBox(groupBox);
-        commonReference->setObjectName(QString::fromUtf8("commonReference"));
-        commonReference->setChecked(true);
-
-        formLayout->setWidget(6, QFormLayout::FieldRole, commonReference);
+        formLayout->setWidget(5, QFormLayout::FieldRole, isSlave);
 
         label_7 = new QLabel(groupBox);
         label_7->setObjectName(QString::fromUtf8("label_7"));
 
-        formLayout->setWidget(7, QFormLayout::LabelRole, label_7);
-
-        isSlave = new QCheckBox(groupBox);
-        isSlave->setObjectName(QString::fromUtf8("isSlave"));
-
-        formLayout->setWidget(7, QFormLayout::FieldRole, isSlave);
-
-        deviceNumber = new QLineEdit(groupBox);
-        deviceNumber->setObjectName(QString::fromUtf8("deviceNumber"));
-
-        formLayout->setWidget(0, QFormLayout::FieldRole, deviceNumber);
+        formLayout->setWidget(5, QFormLayout::LabelRole, label_7);
 
 
         verticalLayout->addWidget(groupBox);
@@ -222,7 +196,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 317, 18));
+        menuBar->setGeometry(QRect(0, 0, 303, 18));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QString::fromUtf8("menuFile"));
         MainWindow->setMenuBar(menuBar);
@@ -238,7 +212,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        samplingRate->setCurrentIndex(3);
+        samplingRate->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -246,7 +220,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "gUSBamp Connector", 0, QApplication::UnicodeUTF8));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "gHIamp Connector", 0, QApplication::UnicodeUTF8));
         actionLoad_Configuration->setText(QApplication::translate("MainWindow", "Load Configuration", 0, QApplication::UnicodeUTF8));
         actionSave_Configuration->setText(QApplication::translate("MainWindow", "Save Configuration", 0, QApplication::UnicodeUTF8));
         actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
@@ -267,9 +241,255 @@ public:
 "Ch13\n"
 "Ch14\n"
 "Ch15\n"
-"Ch16", 0, QApplication::UnicodeUTF8));
+"Ch16\n"
+"Ch17\n"
+"Ch18\n"
+"Ch19\n"
+"Ch20\n"
+"Ch21\n"
+"Ch22\n"
+"Ch23\n"
+"Ch24\n"
+"Ch25\n"
+"Ch26\n"
+"Ch27\n"
+"Ch28\n"
+"Ch29\n"
+"Ch30\n"
+"Ch31\n"
+"Ch32\n"
+"Ch33\n"
+"Ch34\n"
+"Ch35\n"
+"Ch36\n"
+"Ch37\n"
+"Ch38\n"
+"Ch39\n"
+"Ch40\n"
+"Ch41\n"
+"Ch42\n"
+"Ch43\n"
+"Ch44\n"
+"Ch45\n"
+"Ch46\n"
+"Ch47\n"
+"Ch48\n"
+"Ch49\n"
+"Ch50\n"
+"Ch51\n"
+"Ch52\n"
+"Ch53\n"
+"Ch54\n"
+"Ch55\n"
+"Ch56\n"
+"Ch57\n"
+"Ch58\n"
+"Ch59\n"
+"Ch60\n"
+"Ch61\n"
+"Ch62\n"
+"Ch63\n"
+"Ch64\n"
+"Ch65\n"
+"Ch66\n"
+"Ch67\n"
+"Ch68\n"
+"Ch69\n"
+"Ch70\n"
+"Ch71\n"
+"Ch72\n"
+"Ch73\n"
+"Ch74\n"
+"Ch75\n"
+"Ch76\n"
+"Ch77\n"
+"Ch78\n"
+"Ch79\n"
+"Ch80\n"
+"Ch81\n"
+"Ch82\n"
+"Ch83\n"
+"Ch84\n"
+"Ch85\n"
+"Ch86\n"
+"Ch87\n"
+"Ch88\n"
+"Ch89\n"
+"Ch90\n"
+"Ch91\n"
+"Ch92\n"
+"Ch93\n"
+"Ch94\n"
+"Ch95\n"
+"Ch96\n"
+"Ch97\n"
+"Ch98\n"
+"Ch99\n"
+"Ch100\n"
+"Ch101\n"
+"Ch102\n"
+"Ch103\n"
+"Ch104\n"
+"Ch105\n"
+"Ch106\n"
+"Ch107\n"
+"Ch108\n"
+"Ch109\n"
+"Ch110\n"
+"Ch111\n"
+"Ch112\n"
+"Ch113\n"
+"Ch1"
+                        "14\n"
+"Ch115\n"
+"Ch116\n"
+"Ch117\n"
+"Ch118\n"
+"Ch119\n"
+"Ch120\n"
+"Ch121\n"
+"Ch122\n"
+"Ch123\n"
+"Ch124\n"
+"Ch125\n"
+"Ch126\n"
+"Ch127\n"
+"Ch128\n"
+"Ch129\n"
+"Ch130\n"
+"Ch131\n"
+"Ch132\n"
+"Ch133\n"
+"Ch134\n"
+"Ch135\n"
+"Ch136\n"
+"Ch137\n"
+"Ch138\n"
+"Ch139\n"
+"Ch140\n"
+"Ch141\n"
+"Ch142\n"
+"Ch143\n"
+"Ch144\n"
+"Ch145\n"
+"Ch146\n"
+"Ch147\n"
+"Ch148\n"
+"Ch149\n"
+"Ch150\n"
+"Ch151\n"
+"Ch152\n"
+"Ch153\n"
+"Ch154\n"
+"Ch155\n"
+"Ch156\n"
+"Ch157\n"
+"Ch158\n"
+"Ch159\n"
+"Ch160\n"
+"Ch161\n"
+"Ch162\n"
+"Ch163\n"
+"Ch164\n"
+"Ch165\n"
+"Ch166\n"
+"Ch167\n"
+"Ch168\n"
+"Ch169\n"
+"Ch170\n"
+"Ch171\n"
+"Ch172\n"
+"Ch173\n"
+"Ch174\n"
+"Ch175\n"
+"Ch176\n"
+"Ch177\n"
+"Ch178\n"
+"Ch179\n"
+"Ch180\n"
+"Ch181\n"
+"Ch182\n"
+"Ch183\n"
+"Ch184\n"
+"Ch185\n"
+"Ch186\n"
+"Ch187\n"
+"Ch188\n"
+"Ch189\n"
+"Ch190\n"
+"Ch191\n"
+"Ch192\n"
+"Ch193\n"
+"Ch194\n"
+"Ch195\n"
+"Ch196\n"
+"Ch197\n"
+"Ch198\n"
+"Ch199\n"
+"Ch200\n"
+"Ch201\n"
+"Ch202\n"
+"Ch203\n"
+"Ch204\n"
+"Ch205\n"
+"Ch206\n"
+"Ch207\n"
+"Ch208\n"
+"Ch209\n"
+"Ch210\n"
+"Ch211\n"
+"Ch212\n"
+"Ch213\n"
+"Ch214\n"
+"Ch215\n"
+"Ch216\n"
+""
+                        "Ch217\n"
+"Ch218\n"
+"Ch219\n"
+"Ch220\n"
+"Ch221\n"
+"Ch222\n"
+"Ch223\n"
+"Ch224\n"
+"Ch225\n"
+"Ch226\n"
+"Ch227\n"
+"Ch228\n"
+"Ch229\n"
+"Ch230\n"
+"Ch231\n"
+"Ch232\n"
+"Ch233\n"
+"Ch234\n"
+"Ch235\n"
+"Ch236\n"
+"Ch237\n"
+"Ch238\n"
+"Ch239\n"
+"Ch240\n"
+"Ch241\n"
+"Ch242\n"
+"Ch243\n"
+"Ch244\n"
+"Ch245\n"
+"Ch246\n"
+"Ch247\n"
+"Ch248\n"
+"Ch249\n"
+"Ch250\n"
+"Ch251\n"
+"Ch252\n"
+"Ch253\n"
+"Ch254\n"
+"Ch255\n"
+"Ch256", 0, QApplication::UnicodeUTF8));
         groupBox->setTitle(QApplication::translate("MainWindow", "Device Settings", 0, QApplication::UnicodeUTF8));
         label_4->setText(QApplication::translate("MainWindow", "Device Port or Serial", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        deviceNumber->setToolTip(QApplication::translate("MainWindow", "This is either the USB port number of the device, or the serial number of the device (a string of the form UX-XXXX.XX.XX). If left as 0, all USB ports will be searched.", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
+        deviceNumber->setText(QApplication::translate("MainWindow", "0", 0, QApplication::UnicodeUTF8));
         label_2->setText(QApplication::translate("MainWindow", "Number of Channels", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
         channelCount->setToolTip(QApplication::translate("MainWindow", "This must match the number of entries in the channel list", 0, QApplication::UnicodeUTF8));
@@ -281,9 +501,6 @@ public:
         label_3->setText(QApplication::translate("MainWindow", "Sampling Rate", 0, QApplication::UnicodeUTF8));
         samplingRate->clear();
         samplingRate->insertItems(0, QStringList()
-         << QApplication::translate("MainWindow", "32", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "64", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "128", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "256", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "512", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "600", 0, QApplication::UnicodeUTF8)
@@ -297,25 +514,11 @@ public:
 #ifndef QT_NO_TOOLTIP
         samplingRate->setToolTip(QApplication::translate("MainWindow", "Sampling rate to use.", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
-        label_5->setText(QApplication::translate("MainWindow", "Common Ground", 0, QApplication::UnicodeUTF8));
-#ifndef QT_NO_TOOLTIP
-        commonGround->setToolTip(QApplication::translate("MainWindow", "Connect all blocks to a common ground.", 0, QApplication::UnicodeUTF8));
-#endif // QT_NO_TOOLTIP
-        commonGround->setText(QApplication::translate("MainWindow", "(check)", 0, QApplication::UnicodeUTF8));
-        label_6->setText(QApplication::translate("MainWindow", "Common Reference", 0, QApplication::UnicodeUTF8));
-#ifndef QT_NO_TOOLTIP
-        commonReference->setToolTip(QApplication::translate("MainWindow", "Connect all blocks to a common reference.", 0, QApplication::UnicodeUTF8));
-#endif // QT_NO_TOOLTIP
-        commonReference->setText(QApplication::translate("MainWindow", "(check)", 0, QApplication::UnicodeUTF8));
-        label_7->setText(QApplication::translate("MainWindow", "Act as Slave", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
         isSlave->setToolTip(QApplication::translate("MainWindow", "Note: this is highly experimental -- can be used to sync multiple amps with a trigger cable. This needs to be checked for all slave devices, and unchecked for the 'master' device. The master must be linked/unlinked last (i.e., after all the slaves).", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
         isSlave->setText(QApplication::translate("MainWindow", "(check)", 0, QApplication::UnicodeUTF8));
-#ifndef QT_NO_TOOLTIP
-        deviceNumber->setToolTip(QApplication::translate("MainWindow", "This is either the USB port number of the device, or the serial number of the device (a string of the form UX-XXXX.XX.XX). If left as 0, all USB ports will be searched.", 0, QApplication::UnicodeUTF8));
-#endif // QT_NO_TOOLTIP
-        deviceNumber->setText(QApplication::translate("MainWindow", "0", 0, QApplication::UnicodeUTF8));
+        label_7->setText(QApplication::translate("MainWindow", "Act as Slave", 0, QApplication::UnicodeUTF8));
         linkButton->setText(QApplication::translate("MainWindow", "Link", 0, QApplication::UnicodeUTF8));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", 0, QApplication::UnicodeUTF8));
     } // retranslateUi

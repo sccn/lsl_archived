@@ -9,6 +9,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 const double sampling_rate = 1000.0;
+const char *error_messages[] = {"No error.","Loss lock.","Low power.","Can't establish communication at start.","Synchronisation error"};
 
 MainWindow::MainWindow(QWidget *parent, const std::string &config_file): QMainWindow(parent),ui(new Ui::MainWindow),hDevice(NULL)
 {
@@ -115,6 +116,7 @@ void MainWindow::link() {
 			if (hDevice>0) {
 				DeviceIoControl(hDevice, IOCTL_BA_STOP, NULL, 0, NULL, 0, &bytes_returned, NULL);
 				CloseHandle(hDevice);
+				hDevice = NULL;
 			}
 		} catch(std::exception &e) {
 			QMessageBox::critical(this,"Error",(std::string("Could not stop the background processing: ")+=e.what()).c_str(),QMessageBox::Ok);
@@ -180,13 +182,13 @@ void MainWindow::link() {
 			// try to decode the error message
 			std::string msg = "Could not open USB device.";
 			if (hDevice>0) {
-				long error_code = -1;
-				if (DeviceIoControl(hDevice, IOCTL_BA_ERROR_STATE, NULL, 0, &error_code, sizeof(error_code), &bytes_returned, NULL) && error_code>=0 && error_code<=4) {
-					std::string error_messages[] = {"No error.","Loss lock.","Low power.","Can't establish communication at start.","Synchronisation error"};
-					msg = error_messages[error_code];
-				} else
-					msg = error_code == -1 ? "Could not retrieve error message." : "Unknown error (your driver version might not yet be supported).";
+				long error_code = 0;
+				if (DeviceIoControl(hDevice, IOCTL_BA_ERROR_STATE, NULL, 0, &error_code, sizeof(error_code), &bytes_returned, NULL) && bytes_returned)
+					msg = ((error_code&0xFFFF)>=0 && (error_code&0xFFFF)<=4) ? error_messages[error_code&0xFFFF] : "Unknown error (your driver version might not yet be supported).";
+				else
+					msg = "Could not retrieve error message because the device is closed";
 				CloseHandle(hDevice);
+				hDevice = NULL;
 			}
 			QMessageBox::critical(this,"Error",("Could not initialize the BrainAmpSeries interface: "+(e.what()+(" (driver message: "+msg+")"))).c_str(),QMessageBox::Ok);
 			return;
@@ -227,7 +229,6 @@ void MainWindow::read_thread(int deviceNumber, ULONG serialNumber, int impedance
 		// create marker streaminfo and outlet
 		lsl::stream_info marker_info("BrainAmpSeries-Markers","Markers",1,0,lsl::cf_string,"BrainAmpSeries_" + boost::lexical_cast<std::string>(deviceNumber) + "_" + boost::lexical_cast<std::string>(serialNumber) + "_markers");
 		lsl::stream_outlet marker_outlet(marker_info);
-
 			
 		// enter transmission loop		
 		DWORD bytes_read;
@@ -236,21 +237,27 @@ void MainWindow::read_thread(int deviceNumber, ULONG serialNumber, int impedance
 			// read chunk into recv_buffer
 			if(!ReadFile(hDevice,recv_buffer,2*chunk_words,&bytes_read, NULL))
 				throw std::runtime_error(("Could not read data, error code " + boost::lexical_cast<std::string>(GetLastError())).c_str());
-			if (bytes_read<2*chunk_words)
-				throw std::runtime_error("Read operation ended prematurely.");
-			double now = lsl::local_clock();
-			// reformat into send_buffer
-			for (int s=0;s<chunkSize;s++)
-				for (int c=0;c<channelCount;c++)
-					send_buffer[s][c] = scale*recv_buffer[c + s*(channelCount+1)];
-			// push data chunk into the outlet
-			data_outlet.push_chunk(send_buffer,now);
-			// push markers into outlet
-			for (int s=0;s<chunkSize;s++)
-				if (int mrk=recv_buffer[channelCount + s*(channelCount+1)]) {
-					std::string mrk_string = boost::lexical_cast<std::string>(mrk);
-					marker_outlet.push_sample(&mrk_string,now + (s + 1 - chunkSize)/sampling_rate);
-				}
+			if (bytes_read == 2*chunk_words) {
+				double now = lsl::local_clock();
+				// reformat into send_buffer
+				for (int s=0;s<chunkSize;s++)
+					for (int c=0;c<channelCount;c++)
+						send_buffer[s][c] = scale*recv_buffer[c + s*(channelCount+1)];
+				// push data chunk into the outlet
+				data_outlet.push_chunk(send_buffer,now);
+				// push markers into outlet
+				for (int s=0;s<chunkSize;s++)
+					if (int mrk=recv_buffer[channelCount + s*(channelCount+1)]) {
+						std::string mrk_string = boost::lexical_cast<std::string>(mrk);
+						marker_outlet.push_sample(&mrk_string,now + (s + 1 - chunkSize)/sampling_rate);
+					}
+			} else {
+				// check for errors
+				long error_code=0;
+				if (DeviceIoControl(hDevice, IOCTL_BA_ERROR_STATE, NULL, 0, &error_code, sizeof(error_code), &bytes_read, NULL) && error_code)
+					throw std::runtime_error(((error_code&0xFFFF)>=0 && (error_code&0xFFFF)<=4) ? error_messages[error_code&0xFFFF] : "Unknown error (your driver version might not yet be supported).");
+				boost::thread::yield();
+			}
 		}
 	}
 	catch(boost::thread_interrupted &) {
