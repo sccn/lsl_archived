@@ -54,11 +54,11 @@ void MainWindow::load_config(const std::string &filename) {
 
 	// get config values
 	try {
-		ui->deviceNumber->setText(pt.get<std::string>("settings.devicenumber","0").c_str());
+		ui->deviceNumber->setText(pt.get<std::string>("settings.devicenumber","(search)").c_str());
 		ui->channelCount->setValue(pt.get<int>("settings.channelcount",16));
 		ui->chunkSize->setValue(pt.get<int>("settings.chunksize",16));
 		ui->samplingRate->setCurrentIndex(pt.get<int>("settings.samplingrate",3));
-		ui->commonGround->setCheckState(pt.get<bool>("settings.commongng",true) ? Qt::Checked : Qt::Unchecked);
+		ui->commonGround->setCheckState(pt.get<bool>("settings.commongnd",true) ? Qt::Checked : Qt::Unchecked);
 		ui->commonReference->setCheckState(pt.get<bool>("settings.commonref",true) ? Qt::Checked : Qt::Unchecked);
 		ui->isSlave->setCheckState(pt.get<bool>("settings.isslave",false) ? Qt::Checked : Qt::Unchecked);
 		ui->channelLabels->clear();
@@ -102,7 +102,6 @@ void MainWindow::save_config(const std::string &filename) {
 
 // start/stop the gUSBamp connection
 void MainWindow::link() {
-	DWORD bytes_returned;
 	if (reader_thread_) {
 		// === perform unlink action ===
 		try {
@@ -152,28 +151,28 @@ void MainWindow::link() {
 			std::string driver_version_str = boost::lexical_cast<std::string>(driver_version);
 
 			// try to open the device
-			if (deviceNumber.size()<=2) {
-				int deviceNum = boost::lexical_cast<int>(deviceNumber);
-				if (!deviceNum) {
-					for (deviceNum=0;deviceNum<128;deviceNum++)
-						if (hDevice = GT_OpenDevice(deviceNum))
-							break;
-					deviceNumber = boost::lexical_cast<std::string>(deviceNum);
-					if (!hDevice)
-						throw std::runtime_error("Found no device that could be opened. Please make sure that the device is plugged in, turned on, the driver is installed correctly, and that the version of your driver DLL (gUSBamp.dll) (currently " + driver_version_str + ") matches that of your amplifier.");
-				} else {
-					hDevice = GT_OpenDevice(deviceNum);
+			if (deviceNumber == "(search)") {
+				for (int k=0;k<128;k++)
+					if (hDevice = GT_OpenDevice(k)) {
+						deviceNumber = boost::lexical_cast<std::string>(k);
+						break;
+					}
+				if (!hDevice)
+					throw std::runtime_error("Found no device that could be opened. Please make sure that the device is plugged in, turned on, the driver is installed correctly, and that the version of your driver DLL (gUSBamp.dll) (currently " + driver_version_str + ") matches that of your amplifier.");
+			} else {
+				if (deviceNumber.size()<=2) {
+					hDevice = GT_OpenDevice(boost::lexical_cast<int>(deviceNumber));
 					if (!hDevice)
 						throw std::runtime_error("A device with that number could not be opened. Please make sure that the device is plugged in, and turned on. Also, consider trying to pass in the serial number of your amplifier (usually of the form UX-XXXX.XX.XX) instead of a device number.");
-				}
-			} else {
-				hDevice = GT_OpenDeviceEx((LPSTR)deviceNumber.c_str());
-				if (!hDevice) {
-					if (deviceNumber[0] == 'U' && deviceNumber[1] == 'A' && driver_version >= 3.0)
-						throw std::runtime_error("Could not open device. Your amplifier has a version 2.x serial number while the driver (gUSBamp.dll) is version " + driver_version_str + "; please use a version 2.x driver DLL.");
-					if (deviceNumber[0] == 'U' && deviceNumber[1] == 'B' && driver_version < 3.0)
-						throw std::runtime_error("Could not open device. Your amplifier has a version 3.x serial number while the driver (gUSBamp.dll) is version " + driver_version_str + "; please use a version 3.x driver DLL.");
-					throw std::runtime_error("Could not open device. Please make sure that the device is plugged in, turned on, the driver is installed correctly, and the device number (port or serial) is correct. You can also try to pass in 0 to search over all ports.");
+				} else {
+					hDevice = GT_OpenDeviceEx((LPSTR)deviceNumber.c_str());
+					if (!hDevice) {
+						if (deviceNumber[0] == 'U' && deviceNumber[1] == 'A' && driver_version >= 3.0)
+							throw std::runtime_error("Could not open device. Your amplifier has a version 2.x serial number while the driver (gUSBamp.dll) is version " + driver_version_str + "; please use a version 2.x driver DLL.");
+						if (deviceNumber[0] == 'U' && deviceNumber[1] == 'B' && driver_version < 3.0)
+							throw std::runtime_error("Could not open device. Your amplifier has a version 3.x serial number while the driver (gUSBamp.dll) is version " + driver_version_str + "; please use a version 3.x driver DLL.");
+						throw std::runtime_error("Could not open device. Please make sure that the device is plugged in, turned on, the driver is installed correctly, and the device number (port or serial) is correct. You can also try to pass in 0 to search over all ports.");
+					}
 				}
 			}
 
@@ -203,6 +202,13 @@ void MainWindow::link() {
 			GND gndMask = {commonGnd,commonGnd,commonGnd,commonGnd};
 			if (!GT_SetGround(hDevice,gndMask)) 
 				throw std::runtime_error("Could not set ground mask.");
+			// disable digital filters
+			for (int k=0;k<channelCount;k++) {
+				if (!GT_SetNotch(hDevice,k+1,-1))
+					throw std::runtime_error("Could not disable notch filter for channel " + boost::lexical_cast<std::string>(k+1));
+				if (!GT_SetBandPass(hDevice,k+1,-1))
+					throw std::runtime_error("Could not disable bandpass filter for channel " + boost::lexical_cast<std::string>(k+1));
+			}
 
 			// try to get the serial number
 			char buffer[1024]; 
@@ -282,7 +288,7 @@ void MainWindow::read_thread(std::string deviceNumber, int chunkSize, int sampli
 						// reformat into send_buffer
 						for (int s=0;s<chunkSize;s++)
 							for (int c=0;c<channelCount;c++)
-								send_buffer[s][c] = src_buffer[s + c*(channelCount+1)];
+								send_buffer[s][c] = src_buffer[c + s*(channelCount+1)];
 						double now = lsl::local_clock();
 						// push data chunk into the outlet
 						data_outlet.push_chunk(send_buffer,now);

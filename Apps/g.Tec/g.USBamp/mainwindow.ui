@@ -247,10 +247,10 @@ Ch16</string>
          <item row="0" column="1">
           <widget class="QLineEdit" name="deviceNumber">
            <property name="toolTip">
-            <string>This is either the USB port number of the device, or the serial number of the device (a string of the form UX-XXXX.XX.XX). If left as 0, all USB ports will be searched.</string>
+            <string>This is either the USB port number of the device, or the serial number of the device (a string of the form UX-XXXX.XX.XX). If left as (search), all USB ports will be searched.</string>
            </property>
            <property name="text">
-            <string>0</string>
+            <string>(search)</string>
            </property>
           </widget>
          </item>
