@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/algorithm/string.hpp>
@@ -7,13 +8,30 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/foreach.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-
+#include "eyecursor.h"
 const int num_channels = 13;					// hard-coded # of channels
+double x_pos = 0.0;
+double y_pos = 0.0;
 boost::shared_ptr<lsl::stream_outlet> outlet_;  // current stream outlet if linked (should be a member of MainWindow, but isn't due to the CBF)
-
+boost::mutex mtxx_;
 
 MainWindow::MainWindow(QWidget *parent, const std::string &config_file) :
 QMainWindow(parent), ui(new Ui::MainWindow) {
+	display_thread_ = NULL;
+	if(!al_init()) {
+      fprintf(stderr, "failed to initialize allegro!\n");
+   }
+
+   if(!al_init_primitives_addon()) {
+      fprintf(stderr, "failed to initialize allegro primitives addon!\n");
+   }
+	// create the console
+/*	if(AllocConsole()) {
+		freopen("CONOUT$", "w", stdout);
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
+	}
+	std::ios::sync_with_stdio();
+	*/
 	ui->setupUi(this);
 
 	// set logger 
@@ -25,6 +43,7 @@ QMainWindow(parent), ui(new Ui::MainWindow) {
 	// make GUI connections
 	QObject::connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 	QObject::connect(ui->linkButton, SIGNAL(clicked()), this, SLOT(link_iviewx()));
+	QObject::connect(ui->openDisplayButton, SIGNAL(clicked()), this, SLOT(open_display_action()));
 	QObject::connect(ui->actionLoad_Configuration, SIGNAL(triggered()), this, SLOT(load_config_dialog()));
 	QObject::connect(ui->actionSave_Configuration, SIGNAL(triggered()), this, SLOT(save_config_dialog()));
 }
@@ -43,8 +62,12 @@ void MainWindow::save_config_dialog() {
 }
 
 void MainWindow::closeEvent(QCloseEvent *ev) {
-	if (outlet_)
-		ev->ignore();
+	if(display_thread_) open_display_action();
+	if(outlet_)	link_iviewx();
+	al_shutdown_primitives_addon();
+	al_uninstall_system();
+	
+
 }
 
 void MainWindow::load_config(const std::string &filename) {
@@ -65,6 +88,10 @@ void MainWindow::load_config(const std::string &filename) {
 		ui->sendPort->setValue(pt.get<int>("local.sendport",4444));
 		ui->listenAddress->setText(pt.get<std::string>("local.address","127.0.0.1").c_str());
 		ui->receivePort->setValue(pt.get<int>("local.receiveport",5555));
+		ui->displayLeftEdit->setValue(pt.get<int>("display.left",0));
+		ui->displayTopEdit->setValue(pt.get<int>("display.top",0));
+		ui->displayWidthEdit->setValue(pt.get<int>("display.width",1600));
+		ui->displayHeightEdit->setValue(pt.get<int>("display.height",900));
 	} catch(std::exception &) {
 		QMessageBox::information(this,"Error in Config File","Could not read out config parameters.",QMessageBox::Ok);
 		return;
@@ -81,6 +108,10 @@ void MainWindow::save_config(const std::string &filename) {
 		pt.put("local.sendport",ui->sendPort->value());
 		pt.put("local.address",ui->listenAddress->text().toStdString());
 		pt.put("local.receiveport",ui->receivePort->value());
+		pt.put("display.left",ui->displayLeftEdit->value());
+		pt.put("display.top",ui->displayTopEdit->value());
+		pt.put("display.width",ui->displayWidthEdit->value());
+		pt.put("display.height",ui->displayHeightEdit->value());
 	} catch(std::exception &e) {
 		QMessageBox::critical(this,"Error",(std::string("Could not prepare settings for saving: ")+=e.what()).c_str(),QMessageBox::Ok);
 	}
@@ -92,6 +123,28 @@ void MainWindow::save_config(const std::string &filename) {
 		QMessageBox::critical(this,"Error",(std::string("Could not write to config file: ")+=e.what()).c_str(),QMessageBox::Ok);
 	}
 }
+
+
+void MainWindow::open_display_action() {
+
+	if(!display_thread_) {
+		int displayLeft = ui->displayLeftEdit->value();
+		int displayTop = ui->displayTopEdit->value();
+		int displayWidth = ui->displayWidthEdit->value();
+		int displayHeight = ui->displayHeightEdit->value();
+	
+		open_display(displayLeft, displayTop, displayWidth, displayHeight);
+		display_thread_ = new boost::thread(&MainWindow::display_thread,this);
+		ui->openDisplayButton->setText("Close Display");
+	} else {
+		display_thread_->interrupt();
+		display_thread_->join();
+		display_thread_ = NULL;
+		destroy_display();
+		ui->openDisplayButton->setText("Open Display");
+	}
+}
+
 
 // start/stop the iViewX connection
 void MainWindow::link_iviewx() {
@@ -116,6 +169,7 @@ void MainWindow::link_iviewx() {
 			int sendPort = ui->sendPort->value();
 			std::string listenAddress = ui->listenAddress->text().toStdString();
 			int receivePort = ui->receivePort->value();
+
 
 			// connect to iViewX 
 			int ret_connect = iV_Connect((char*)serverAddress.c_str(), sendPort, (char*)listenAddress.c_str(), receivePort);
@@ -250,7 +304,28 @@ int __stdcall on_sample(SampleStruct s) {
 	
 	// push into LSL
 	outlet_->push_sample(sample,lsl::local_clock()-age);
+	mtxx_.lock();
+	x_pos = (s.leftEye.gazeX+s.rightEye.gazeX)/2.0;
+	y_pos = (s.leftEye.gazeY+s.rightEye.gazeY)/2.0;
+	mtxx_.unlock();
 	return 1;
+}
+
+void MainWindow::display_thread() {
+	while(true) {
+		mtxx_.lock();
+		double xx = x_pos;
+		double yy = y_pos;
+		mtxx_.unlock();
+		try{
+			update_display(xx, yy);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(5));
+		} catch(boost::thread_interrupted&) {
+			return;
+		}
+		
+	}
+	//destroy_display();
 }
 
 MainWindow::~MainWindow() {

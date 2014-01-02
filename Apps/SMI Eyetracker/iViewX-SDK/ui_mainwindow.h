@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Sat Dec 14 17:32:26 2013
+** Created: Wed Jan 1 18:26:58 2014
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -49,10 +49,18 @@ public:
     QLineEdit *listenAddress;
     QLabel *label_3;
     QSpinBox *receivePort;
-    QSpacerItem *verticalSpacer;
+    QLabel *label;
+    QLabel *label_6;
+    QLabel *label_7;
+    QLabel *label_8;
+    QSpinBox *displayLeftEdit;
+    QSpinBox *displayTopEdit;
+    QSpinBox *displayWidthEdit;
+    QSpinBox *displayHeightEdit;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
     QPushButton *linkButton;
+    QPushButton *openDisplayButton;
     QMenuBar *menuBar;
     QMenu *menuFile;
     QStatusBar *statusBar;
@@ -61,7 +69,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(233, 191);
+        MainWindow->resize(233, 294);
         actionLoad_Configuration = new QAction(MainWindow);
         actionLoad_Configuration->setObjectName(QString::fromUtf8("actionLoad_Configuration"));
         actionSave_Configuration = new QAction(MainWindow);
@@ -125,12 +133,54 @@ public:
 
         formLayout->setWidget(3, QFormLayout::FieldRole, receivePort);
 
+        label = new QLabel(centralWidget);
+        label->setObjectName(QString::fromUtf8("label"));
+
+        formLayout->setWidget(4, QFormLayout::LabelRole, label);
+
+        label_6 = new QLabel(centralWidget);
+        label_6->setObjectName(QString::fromUtf8("label_6"));
+
+        formLayout->setWidget(5, QFormLayout::LabelRole, label_6);
+
+        label_7 = new QLabel(centralWidget);
+        label_7->setObjectName(QString::fromUtf8("label_7"));
+
+        formLayout->setWidget(6, QFormLayout::LabelRole, label_7);
+
+        label_8 = new QLabel(centralWidget);
+        label_8->setObjectName(QString::fromUtf8("label_8"));
+
+        formLayout->setWidget(7, QFormLayout::LabelRole, label_8);
+
+        displayLeftEdit = new QSpinBox(centralWidget);
+        displayLeftEdit->setObjectName(QString::fromUtf8("displayLeftEdit"));
+        displayLeftEdit->setMaximum(999999999);
+
+        formLayout->setWidget(4, QFormLayout::FieldRole, displayLeftEdit);
+
+        displayTopEdit = new QSpinBox(centralWidget);
+        displayTopEdit->setObjectName(QString::fromUtf8("displayTopEdit"));
+        displayTopEdit->setMaximum(999999999);
+
+        formLayout->setWidget(5, QFormLayout::FieldRole, displayTopEdit);
+
+        displayWidthEdit = new QSpinBox(centralWidget);
+        displayWidthEdit->setObjectName(QString::fromUtf8("displayWidthEdit"));
+        displayWidthEdit->setMaximum(999999999);
+        displayWidthEdit->setValue(1600);
+
+        formLayout->setWidget(6, QFormLayout::FieldRole, displayWidthEdit);
+
+        displayHeightEdit = new QSpinBox(centralWidget);
+        displayHeightEdit->setObjectName(QString::fromUtf8("displayHeightEdit"));
+        displayHeightEdit->setMaximum(999999999);
+        displayHeightEdit->setValue(900);
+
+        formLayout->setWidget(7, QFormLayout::FieldRole, displayHeightEdit);
+
 
         verticalLayout->addLayout(formLayout);
-
-        verticalSpacer = new QSpacerItem(20, 4, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        verticalLayout->addItem(verticalSpacer);
 
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
@@ -144,13 +194,18 @@ public:
 
         horizontalLayout->addWidget(linkButton);
 
+        openDisplayButton = new QPushButton(centralWidget);
+        openDisplayButton->setObjectName(QString::fromUtf8("openDisplayButton"));
+
+        horizontalLayout->addWidget(openDisplayButton);
+
 
         verticalLayout->addLayout(horizontalLayout);
 
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 233, 18));
+        menuBar->setGeometry(QRect(0, 0, 233, 21));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QString::fromUtf8("menuFile"));
         MainWindow->setMenuBar(menuBar);
@@ -194,7 +249,12 @@ public:
 #ifndef QT_NO_TOOLTIP
         receivePort->setToolTip(QApplication::translate("MainWindow", "Port being used by this program for receiving data from iView X", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
+        label->setText(QApplication::translate("MainWindow", "Display Left", 0, QApplication::UnicodeUTF8));
+        label_6->setText(QApplication::translate("MainWindow", "Display Top", 0, QApplication::UnicodeUTF8));
+        label_7->setText(QApplication::translate("MainWindow", "Display Width", 0, QApplication::UnicodeUTF8));
+        label_8->setText(QApplication::translate("MainWindow", "Display Height", 0, QApplication::UnicodeUTF8));
         linkButton->setText(QApplication::translate("MainWindow", "Link", 0, QApplication::UnicodeUTF8));
+        openDisplayButton->setText(QApplication::translate("MainWindow", "Open Display", 0, QApplication::UnicodeUTF8));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 

@@ -37,7 +37,7 @@ private slots:
 
     // start the iViewX connection
     void link_iviewx();
-
+	void open_display_action();
     // close event (potentially disabled)
     void closeEvent(QCloseEvent *ev);
 
@@ -45,6 +45,11 @@ private:
     // raw config file IO
     void load_config(const std::string &filename);
     void save_config(const std::string &filename);
+	void display_thread();
+	//boost::shared_ptr<boost::thread> display_thread_;
+	boost::thread *display_thread_;
+
+
 
     Ui::MainWindow *ui;
 };
