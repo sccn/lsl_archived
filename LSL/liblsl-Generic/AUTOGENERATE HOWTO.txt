@@ -1,0 +1,37 @@
+You can use this file to generate wrappers for any major scripting language, including:
+* C#, D, Go, Lua, OCaml, Octave, Perl, PHP, R, Ruby and a few lesser-known ones
+
+To accomplish this, you need to:
+1) download and install SWIG (http://www.swig.org/download.html), which is a simple command-line tool
+2) open a command line prompt and change into this directory
+3) Run the command:
+   swig -c++ -<yourlanguage> liblsl.i  (where <yourlanguage> is one of csharp, d, go, ocaml, octave, perl, php, r, ruby)
+   ... this generates a few wrapper files in your language (e.g., .cs for C#), and a file named liblsl_wrap.cxx
+   * at your convenience you can have the wrapper library generated in the context of a "package" (or namespace) or
+     whatever it is called in your language. This is done by passing -package <packagename> to the swig command;
+	 note that for a first test it is probably best to skip this feature.
+4) You need to compile the file liblsl_wrap.cxx with your system compiler (e.g., g++ or Visual Studio) 
+   as a .so/.dll/.dylib (depending on your OS) and make sure that:
+   * you include the path ../liblsl/bin/ to the library search directories
+   * you link against the library file liblsl32 or liblsl64 in that bin directory (on MSVC under Windows that's   
+     automatic)
+   * you include the path to SDK headers and libraries for making extension modules to your scripting language
+     (this is specific to your language, so you might have to read the relevant documentation; if you cannot seem
+	  to see how this works at all, you might briefly skim the tutorials on making extension modules from scratch
+	  for your language and compare this to the layout of the auto-generated files -- it should make sense)
+   * the output filename (usually a .dll, .so, or .dylib) may be specific to the conventions of your scripting language; 
+     usually it contains "liblsl" in the filename (the name of the module). This is documented as part of SWIG in the
+     section that is specific to your language (as of this writing under "Language Module Documentation" at
+	 http://www.swig.org/Doc2.0/Sections.html#Sections).
+	 For example, in Python it starts with an underscore and would be _liblsl.so on Linux. 
+	 In Java (and likely some other environments), it's the job of the program to "pull in" the
+	 library using a call like System.load(yourpathtothelib), so the file name is up to you.
+   * this generates a wrapper library which can be loaded by your scipting language, and which itself depends on
+     the liblsl(32/64) core library (the one that implements the actual functionality, not just wrapper code); loading
+	 the dependent library is the business of your operating system's usual way of finding shared libraries (e.g.,
+	 in the same path as you wrapper library and/or the working directory of the app, or in a standard system path,
+	 or in a path that you have manually "baked into" one of the libraries using custom build options (particularly rpath).
+5) Now you can use the library in much the same way as the python code samples do it
+   (see LSL/liblsl-Python/examples -- these use a wrapper that was generated using the process explained here)
+   
+Happy scripting!
