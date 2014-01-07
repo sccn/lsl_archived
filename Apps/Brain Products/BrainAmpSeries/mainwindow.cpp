@@ -8,7 +8,7 @@
 #include <boost/foreach.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-const double sampling_rate = 1000.0;
+const double sampling_rate = 5000.0;
 const char *error_messages[] = {"No error.","Loss lock.","Low power.","Can't establish communication at start.","Synchronisation error"};
 
 MainWindow::MainWindow(QWidget *parent, const std::string &config_file): QMainWindow(parent),ui(new Ui::MainWindow),hDevice(NULL)
