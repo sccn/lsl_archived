@@ -146,7 +146,7 @@ void MainWindow::link() {
 			std::string deviceName = "\\\\.\\BrainAmpUSB" + boost::lexical_cast<std::string>(deviceNumber);
 			hDevice = CreateFileA(deviceName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_WRITE_THROUGH, NULL);
 			if (hDevice == INVALID_HANDLE_VALUE)
-				throw std::runtime_error("Could not open USB device. Please make sure that the device is plugged in, turned on, and the driver is installed correctly.");
+				throw std::runtime_error("Could not open USB device. Please make sure that the device is plugged in, turned on, and that the driver is installed correctly.");
 
 			// get serial number
 			ULONG serialNumber=0;
