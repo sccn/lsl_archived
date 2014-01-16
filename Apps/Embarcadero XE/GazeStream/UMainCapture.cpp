@@ -39,6 +39,7 @@ bool storeFit = false;
 
 int nFrames = 0;
 float timestamp = 0;
+#define MAX_STREAMS 200
 
 
 /*
@@ -73,6 +74,7 @@ HANDLE hMutex = 0;
 //HANDLE handleWrVideo = 0;
 //HANDLE handleRd = 0;
 lsl_outlet outlet = 0;
+lsl_outlet videoFrameOutlet = 0;
 TStreamThread *gazestreamThread = 0;
 
 BITMAP * bmpCanvas = NULL;		// User declarations
@@ -83,6 +85,8 @@ double maxEccentricity = 1.0;
 double xParallaxCorrection = 0.0;
 double yParallaxCorrection = 0.0;
 int numberOfMarkers = -1;
+
+lsl_inlet frameInlet = NULL;
 
 
 #define CDEPTH 24
@@ -231,6 +235,28 @@ void __fastcall TMainCaptureForm::cbVideoInputFormatChange(TObject *Sender)
 		}
 		bmpCanvas = create_bitmap_ex(CDEPTH,acqWidth/spatialDivisor,acqHeight/spatialDivisor);
 		clear_bitmap(bmpCanvas);
+
+		if(videoFrameOutlet) {
+			lsl_destroy_outlet(videoFrameOutlet);
+			videoFrameOutlet = NULL;
+		}
+		char * streamName = (AnsiString("VideoFrames_") + AnsiString(IdentifierEdit->Text)).c_str();
+		lsl_streaminfo info = lsl_create_streaminfo(streamName,"VideoRaw",acqWidth*acqHeight*3,0,cft_int8,"1e5f8b95-68cf-418c-8538-45e05ad791df");
+		char s[20];
+		lsl_xml_ptr desc = lsl_get_desc(info);
+		lsl_xml_ptr chn = lsl_append_child(desc, "encoding");
+		sprintf(s, "%d", acqWidth);
+		lsl_append_child_value(chn,"width",s);
+		sprintf(s, "%d", acqHeight);
+		lsl_append_child_value(chn,"height",s);
+		lsl_append_child_value(chn,"color_channels","3");
+		lsl_append_child_value(chn,"color_format","RGB");
+		lsl_append_child_value(chn,"color_space","sRGB");
+		lsl_append_child_value(chn,"codec","RAW");
+
+
+
+		videoFrameOutlet = lsl_create_outlet(info,0,360);
 	}
 
 }
@@ -343,6 +369,11 @@ void __fastcall TMainCaptureForm::FormDestroy(TObject *Sender)
 		gazestreamThread->Terminate();
 		delete gazestreamThread;
 		gazestreamThread = NULL;
+	}
+
+	if(videoFrameOutlet) {
+		lsl_destroy_outlet(videoFrameOutlet);
+		videoFrameOutlet = NULL;
 	}
 
 	if(gu)
@@ -830,6 +861,7 @@ double angleScene = 0.0;
 void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 {
 
+
 	bool paint = false;
 	if(nFrames % frameDivisor == 0)	paint = true;
 
@@ -849,6 +881,25 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		oldTimestamp = currentTimestamp;
 		double dropped = (currentTimestamp - firstTimestamp)*frameRate  - nFrames;
 		droppedFramesEdit->Text =  FormatFloat ("0", dropped);
+	}
+
+	char *sbuf;
+	int errcode;
+
+   if(videoFrameOutlet && (sendFrameCheckbox->Checked == true || ((bool) frameInlet && (bool) lsl_pull_sample_str(frameInlet, &sbuf, 1, 0, &errcode)))) {
+		sendFrameCheckbox->Checked = false;
+		int height = aBmp->h;
+		int width = aBmp->w;
+		char *videoFrameBuffer= new1D<char>(height*width*3, (char) 0);
+		for(int y=0; y<height; y++) {
+			for(int x=0; x<width; x++) {
+				for(int c=0; c<3; c++) {
+					videoFrameBuffer[(y*width+x)*3+c]= aBmp->line[height-1-y][x*3+c];
+				}
+			}
+		}
+		lsl_push_sample_ctp(videoFrameOutlet, videoFrameBuffer, currentTimestamp, 1);
+		delete1D(videoFrameBuffer);
 	}
 
 	if(paint) {
@@ -1660,6 +1711,33 @@ void __fastcall TMainCaptureForm::numberOfMarkersEditChange(TObject *Sender)
 		numberOfMarkers = numberOfMarkersEdit->Text.ToInt();
 		RadioGroup1Click(this);
 	}
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TMainCaptureForm::FrameComboBoxChange(TObject *Sender)
+{
+	if(frameInlet) lsl_destroy_inlet(frameInlet);
+
+	lsl_streaminfo info;
+	lsl_resolve_byprop(&info,1, "name", ((AnsiString) FrameComboBox->Text).c_str(), 1,1.0);
+	frameInlet = lsl_create_inlet(info, 300, LSL_NO_PREFERENCE,1);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainCaptureForm::RefreshStreamsButtonClick(TObject *Sender)
+{
+	lsl_streaminfo infos[MAX_STREAMS];
+	int streamsFound = lsl_resolve_all(infos, MAX_STREAMS, 0.1);
+
+	FrameComboBox->Items->Clear();
+	for (int i = 0; i < streamsFound; i++) {
+		FrameComboBox->Items->Append(lsl_get_name(infos[i]));
+
+	}
+
+
+
 }
 //---------------------------------------------------------------------------
 

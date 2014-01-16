@@ -109,6 +109,9 @@ __published:	// IDE-managed Components
 	TComboBox *cbAudioInputDevice;
 	TLabel *Label8;
 	TLabeledEdit *numberOfMarkersEdit;
+	TCheckBox *sendFrameCheckbox;
+	TComboBox *FrameComboBox;
+	TButton *RefreshStreamsButton;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall cbVideoInputDeviceChange(TObject *Sender);
 	void __fastcall cbVideoInputFormatChange(TObject *Sender);
@@ -148,6 +151,8 @@ __published:	// IDE-managed Components
 	void __fastcall IdentifierEditChange(TObject *Sender);
 	void __fastcall cbAudioInputDeviceChange(TObject *Sender);
 	void __fastcall numberOfMarkersEditChange(TObject *Sender);
+	void __fastcall FrameComboBoxChange(TObject *Sender);
+	void __fastcall RefreshStreamsButtonClick(TObject *Sender);
 
 private:	// User declarations
 	void __fastcall TMainCaptureForm::Start();

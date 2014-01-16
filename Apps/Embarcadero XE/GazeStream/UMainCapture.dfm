@@ -27,10 +27,6 @@ object MainCaptureForm: TMainCaptureForm
     object TabSheet2: TTabSheet
       Caption = 'Video in'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 11
         Top = 0
@@ -135,10 +131,6 @@ object MainCaptureForm: TMainCaptureForm
     object TabSheet1: TTabSheet
       Caption = 'Video out'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label2: TLabel
         Left = 14
         Top = -2
@@ -238,15 +230,11 @@ object MainCaptureForm: TMainCaptureForm
     Top = 193
     Width = 910
     Height = 584
-    ActivePage = tsEyeTracker
+    ActivePage = tsVideo
     TabOrder = 1
     object tsScene: TTabSheet
       Caption = 'Scene'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object xParallaxCorrectionEdit: TLabeledEdit
         Left = 14
         Top = 160
@@ -284,17 +272,9 @@ object MainCaptureForm: TMainCaptureForm
     object tsVideo: TTabSheet
       Caption = 'Video'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
     end
     object tsEyeTracker: TTabSheet
       Caption = 'Eyetracker'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label5: TLabel
         Left = 3
         Top = 425
@@ -691,19 +671,45 @@ object MainCaptureForm: TMainCaptureForm
     TabOrder = 9
     OnChange = IdentifierEditChange
   end
+  object sendFrameCheckbox: TCheckBox
+    Left = 728
+    Top = 149
+    Width = 89
+    Height = 17
+    Caption = 'Send Frame'
+    TabOrder = 10
+  end
+  object FrameComboBox: TComboBox
+    Left = 728
+    Top = 123
+    Width = 177
+    Height = 20
+    TabOrder = 11
+    Text = '<Select Frame Command Stream>'
+    OnChange = FrameComboBoxChange
+  end
+  object RefreshStreamsButton: TButton
+    Left = 728
+    Top = 85
+    Width = 97
+    Height = 25
+    Caption = 'Refresh Streams'
+    TabOrder = 12
+    OnClick = RefreshStreamsButtonClick
+  end
   object Timer1: TTimer
     Interval = 50
     OnTimer = Timer1Timer
-    Left = 840
-    Top = 96
+    Left = 672
+    Top = 72
   end
   object OpenDialog1: TOpenDialog
-    Left = 720
-    Top = 96
+    Left = 552
+    Top = 72
   end
   object xdoc_in: TXMLDocument
-    Left = 784
-    Top = 96
+    Left = 616
+    Top = 72
     DOMVendorDesc = 'MSXML'
   end
 end
