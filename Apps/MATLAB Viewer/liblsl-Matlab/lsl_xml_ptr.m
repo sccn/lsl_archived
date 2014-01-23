@@ -19,6 +19,11 @@ classdef lsl_xml_ptr
         
         % === Tree Navigation ===
         
+        function result = child(self,name)
+            % Get the first child of the element with a given name 
+            result = lsl_xml_ptr(self.LibHandle,lsl_child(self.LibHandle,self.PtrHandle,name));
+        end
+        
         function result = first_child(self)
             % Get the first child of the element
             result = lsl_xml_ptr(self.LibHandle,lsl_first_child(self.LibHandle,self.PtrHandle));
@@ -31,15 +36,23 @@ classdef lsl_xml_ptr
         end
         
         
-        function result = next_sibling(self)
-            % Get the next sibling of the element
-            result = lsl_xml_ptr(self.LibHandle,lsl_next_sibling(self.LibHandle,self.PtrHandle));
+        function result = next_sibling(self,name)
+            % Get the next sibling of the element, optionally of a given name            
+            if nargin>1
+                result = lsl_xml_ptr(self.LibHandle,lsl_next_sibling_n(self.LibHandle,self.PtrHandle,name));
+            else
+                result = lsl_xml_ptr(self.LibHandle,lsl_next_sibling(self.LibHandle,self.PtrHandle));
+            end
         end
         
         
         function result = previous_sibling(self)
-            % Get the previous sibling of the element
-            result = lsl_xml_ptr(self.LibHandle,lsl_previous_sibling(self.LibHandle,self.PtrHandle));
+            % Get the previous sibling of the element, optionally of a given name
+            if nargin>1
+                result = lsl_xml_ptr(self.LibHandle,lsl_previous_sibling_n(self.LibHandle,self.PtrHandle,name));
+            else
+                result = lsl_xml_ptr(self.LibHandle,lsl_previous_sibling(self.LibHandle,self.PtrHandle));
+            end
         end
         
         
@@ -49,13 +62,7 @@ classdef lsl_xml_ptr
         end
         
         
-        % === Tree Navigation By Name ===
-        
-        function result = child(self,name)
-            % Get the first child of the element with a given name 
-            result = lsl_xml_ptr(self.LibHandle,lsl_child(self.LibHandle,self.PtrHandle,name));
-        end
-        
+        % === Tree Navigation By Name (legacy functions, now also without _n) ===
         
         function result = next_sibling_n(self,name)
             % Get the next sibling of the element that has the given name 
@@ -96,9 +103,13 @@ classdef lsl_xml_ptr
         end
         
         
-        function result = child_value(self)
-            % Get child value (value of the first child that is text).
-            result = lsl_child_value(self.LibHandle,self.PtrHandle);
+        function result = child_value(self,name)
+            % Get child value (value of the first child that is text), optionally of a given name.
+            if nargin>1
+                result = lsl_child_value_n(self.LibHandle,self.PtrHandle,name);
+            else
+                result = lsl_child_value(self.LibHandle,self.PtrHandle);
+            end
         end
         
         
