@@ -388,10 +388,10 @@ void TForm11::UpdateInfo()
 	}
 	lsl_streaminfo eventInfo;
 	if(streamIdentifier == NULL) {
-		eventInfo = lsl_create_streaminfo("HotspotEvents", "HotspotEvents", 1,0, cft_string,"");
+		eventInfo = lsl_create_streaminfo("HotspotEvents", "HotspotEvents", 1,0, cft_string,generateGUID());
 	} else {
 		char * fullStreamName = (AnsiString("HotspotEvents_") + streamIdentifier).c_str();
-		eventInfo = lsl_create_streaminfo(fullStreamName, fullStreamName, 1,0, cft_string,"");
+		eventInfo = lsl_create_streaminfo(fullStreamName, fullStreamName, 1,0, cft_string,generateGUID());
 	}
 	//see liblsl/C API/lsl_xml_element_c.cpp,  http://pugixml.googlecode.com/svn/tags/release-0.9/docs/manual/modify.html
 	//lsl_xml_ptr is binary equivalent to pugi::xml_node_struct*
@@ -417,10 +417,10 @@ void TForm11::UpdateInfo()
 
 	lsl_streaminfo dataInfo;
 	if(streamIdentifier == NULL) {
-		dataInfo = lsl_create_streaminfo("HotspotData", "HotspotData", dataChannels, (phasespaceThread) ? phasespaceThread->GetResamplingRate() : 0.0, cft_float32, "");
+		dataInfo = lsl_create_streaminfo("HotspotData", "HotspotData", dataChannels, (phasespaceThread) ? phasespaceThread->GetResamplingRate() : 0.0, cft_float32, generateGUID());
 	} else {
 		char * fullStreamName = (AnsiString("HotspotData_") + streamIdentifier).c_str();
-		dataInfo = lsl_create_streaminfo(fullStreamName, fullStreamName, dataChannels, (phasespaceThread) ? phasespaceThread->GetResamplingRate() : 0.0, cft_float32, "");
+		dataInfo = lsl_create_streaminfo(fullStreamName, fullStreamName, dataChannels, (phasespaceThread) ? phasespaceThread->GetResamplingRate() : 0.0, cft_float32, generateGUID());
 	}
 	dataOutlet = lsl_create_outlet(dataInfo,0,360);
 
@@ -651,28 +651,23 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 			}
 			else  {
 				pHs->activeShape->Brush->Color = clRed;
+				code = -pHs->value;
 			}
 			pHs->isChanged = pHs->isIn !=in;
 			pHs->isIn = in;
 
 			if (pHs->isChanged)
 			{
-				if (pHs->unchangedCount>4 && pHs->isIn) // only moving into the hotspot after being out for 4 samples!
-				{
+				char *codeStr = (char *) malloc(sizeof(char)*256);
 
-					char *codeStr = (char *) malloc(sizeof(char)*256);
-					sprintf(codeStr, "%d", code);
-					lsl_push_sample_strtp(eventOutlet, &codeStr, lsl_local_clock(), 1);
-					changedNames.push_back(code);
-					free(codeStr);
-				}
+				sprintf(codeStr, "%d", code);
 
-				pHs->unchangedCount = 0;
+				lsl_push_sample_strtp(eventOutlet, &codeStr, lsl_local_clock(), 1);
+				changedNames.push_back(code);
+				free(codeStr);
+
 			}
-			else
-			{
-				pHs->unchangedCount++;  // count time unchanged
-			}
+
 			++i;
 		}
 
@@ -716,25 +711,20 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 				}
 				else  {
 					pHs->activeShape->Brush->Color = clRed;
+					code = -pHs->value;
 				}
 				pHs->isChanged = pHs->isIn !=in;
 				pHs->isIn = in;
 
 				if (pHs->isChanged)
 				{
-					if (pHs->unchangedCount>4 && pHs->isIn) // only moving into the hotspot after being out for 4 samples!
-					{
-						char *codeStr = (char *) malloc(sizeof(char)*256);
-						sprintf(codeStr, "%d", code);
-						lsl_push_sample_strtp(eventOutlet, &codeStr, lsl_local_clock(), 1);
-						changedNames.push_back(code);
-						free(codeStr);
-					}
-					pHs->unchangedCount = 0;
-				}
-				else
-				{
-					pHs->unchangedCount++;  // count time unchanged
+
+					char *codeStr = (char *) malloc(sizeof(char)*256);
+					sprintf(codeStr, "%d", code);
+
+					lsl_push_sample_strtp(eventOutlet, &codeStr, lsl_local_clock(), 1);
+					changedNames.push_back(code);
+					free(codeStr);
 				}
 				++i;
 			}
@@ -830,25 +820,22 @@ void ProcessData(float * data, int nChannels, double samplingRate)
 			}
 			else  {
 				hotspotScreen->activeShape->Brush->Color = clRed;
+				code = -hotspotScreen->device;
 			}
 			hotspotScreen->isChanged = hotspotScreen->isIn !=in;
 			hotspotScreen->isIn = in;
 
 			if (hotspotScreen->isChanged)
 			{
-				if (hotspotScreen->unchangedCount>4 && hotspotScreen->isIn) // only moving into the hotspot after being out for 4 samples!
-				{
-					char *codeStr = (char *) malloc(sizeof(char)*256);
-					sprintf(codeStr, "%d", code);
-					lsl_push_sample_strtp(eventOutlet, &codeStr, lsl_local_clock(), 1);
-					changedNames.push_back(code);
-					free(codeStr);
-				}
-				hotspotScreen->unchangedCount = 0;
-			}
-			else
-			{
-				hotspotScreen->unchangedCount++;  // count time unchanged
+
+				char *codeStr = (char *) malloc(sizeof(char)*256);
+
+				sprintf(codeStr, "%d", code);
+
+				lsl_push_sample_strtp(eventOutlet, &codeStr, lsl_local_clock(), 1);
+				changedNames.push_back(code);
+				free(codeStr);
+
 			}
 
 
@@ -1118,7 +1105,7 @@ void __fastcall TForm11::FormCreate(TObject *Sender)
 
 
 
-  //	lsl_streaminfo eventInfo = lsl_create_streaminfo("HotspotEvents", "HotspotEvents", 1,0, cft_int32,"");
+  //	lsl_streaminfo eventInfo = lsl_create_streaminfo("HotspotEvents", "HotspotEvents", 1,0, cft_int32,generateGUID());
   //	lsl_xml_ptr desc = lsl_get_desc(eventInfo);
   //	eventOutlet = lsl_create_outlet(eventInfo,0,360);
 
@@ -2113,13 +2100,6 @@ void __fastcall TForm11::Button4Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
-
-
-
-
-
-
 void __fastcall TForm11::PhaseComboBoxChange(TObject *Sender)
 {
 	if(hMutex) {
@@ -2181,7 +2161,7 @@ void __fastcall TForm11::GazeComboBoxChange(TObject *Sender)
 		streamName = (AnsiString("HotGazeStream_") + streamIdentifier).c_str();
 	}
 
-	lsl_streaminfo gazeInfo = lsl_create_streaminfo(streamName, streamName, GAZE_CHANNELS, 30, cft_float32,"");
+	lsl_streaminfo gazeInfo = lsl_create_streaminfo(streamName, streamName, GAZE_CHANNELS, 30, cft_float32,generateGUID());
 	lsl_xml_ptr desc = lsl_get_desc(gazeInfo);
 	lsl_xml_ptr chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","pupil position x");
