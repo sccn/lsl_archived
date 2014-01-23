@@ -8,7 +8,7 @@
 
 # It is ok to redistribute this file "solely for informational 
 # purposes in the creation of products supporting the Unicode Standard".
-# We don't nee to add a Boost License to this file: lslboostinspect:nolicense.
+# We don't nee to add a Boost License to this file: boostinspect:nolicense.
 
 # ================================================
 

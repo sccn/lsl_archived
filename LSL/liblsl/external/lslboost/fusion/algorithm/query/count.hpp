@@ -10,6 +10,8 @@
 
 #include <lslboost/fusion/algorithm/query/count_if.hpp>
 #include <lslboost/fusion/algorithm/query/detail/count.hpp>
+#include <lslboost/fusion/support/is_sequence.hpp>
+#include <lslboost/utility/enable_if.hpp>
 
 namespace lslboost { namespace fusion
 {
@@ -23,7 +25,12 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence, typename T>
-    inline int
+    inline
+    typename
+        enable_if<
+            traits::is_sequence<Sequence>
+          , int
+        >::type
     count(Sequence const& seq, T const& x)
     {
         detail::count_compare<T> f(x);

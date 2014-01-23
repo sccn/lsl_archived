@@ -13,6 +13,7 @@
 #include <lslboost/range/begin.hpp>
 #include <lslboost/range/end.hpp>
 #include <lslboost/range/concepts.hpp>
+#include <lslboost/utility/enable_if.hpp>
 #include <lslboost/ref.hpp>
 #include <algorithm>
 

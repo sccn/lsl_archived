@@ -6,7 +6,9 @@
 #ifndef BOOST_THREAD_REVERSE_LOCK_HPP
 #define BOOST_THREAD_REVERSE_LOCK_HPP
 #include <lslboost/thread/detail/config.hpp>
-#include <lslboost/thread/locks.hpp>
+#include <lslboost/thread/detail/move.hpp>
+#include <lslboost/thread/lockable_traits.hpp>
+#include <lslboost/thread/lock_options.hpp>
 #include <lslboost/thread/detail/delete.hpp>
 
 namespace lslboost
@@ -15,7 +17,6 @@ namespace lslboost
     template<typename Lock>
     class reverse_lock
     {
-
     public:
         typedef typename Lock::mutex_type mutex_type;
         BOOST_THREAD_NO_COPYABLE(reverse_lock)

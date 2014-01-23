@@ -55,6 +55,9 @@ namespace lslboost
             index_type m_index;
 
         public:
+            indexed_iterator()
+            : m_index(index_type()) {}
+            
             explicit indexed_iterator( Iter i, index_type index )
             : base(i), m_index(index)
             {

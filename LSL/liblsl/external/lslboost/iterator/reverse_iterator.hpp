@@ -7,8 +7,8 @@
 #ifndef BOOST_REVERSE_ITERATOR_23022003THW_HPP
 #define BOOST_REVERSE_ITERATOR_23022003THW_HPP
 
+#include <lslboost/next_prior.hpp>
 #include <lslboost/iterator.hpp>
-#include <lslboost/utility.hpp>
 #include <lslboost/iterator/iterator_adaptor.hpp>
 
 namespace lslboost

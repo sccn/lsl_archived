@@ -2,7 +2,7 @@
 // detail/handler_tracking.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -18,8 +18,8 @@
 #include <lslboost/asio/detail/config.hpp>
 
 #if defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
-# include <lslboost/cstdint.hpp>
 # include <lslboost/system/error_code.hpp>
+# include <lslboost/asio/detail/cstdint.hpp>
 # include <lslboost/asio/detail/static_mutex.hpp>
 # include <lslboost/asio/detail/tss_ptr.hpp>
 #endif // defined(BOOST_ASIO_ENABLE_HANDLER_TRACKING)
@@ -44,7 +44,7 @@ public:
     // Only the handler_tracking class will have access to the id.
     friend class handler_tracking;
     friend class completion;
-    lslboost::uint64_t id_;
+    uint64_t id_;
 
   protected:
     // Constructor initialises with no id.
@@ -94,7 +94,7 @@ public:
 
   private:
     friend class handler_tracking;
-    lslboost::uint64_t id_;
+    uint64_t id_;
     bool invoked_;
     completion* next_;
   };

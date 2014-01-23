@@ -1,11 +1,9 @@
-#include "../include/lsl_cpp.h"
 #include "../include/lsl_c.h"
 #include "pugixml/pugixml.hpp"
 
 
 // === implementation of the lsl_xml_ptr functions of lsl_c.h ===
 
-using namespace lsl;
 using namespace pugi;
 
 LIBLSL_C_API lsl_xml_ptr lsl_first_child(lsl_xml_ptr e) { return (lsl_xml_ptr)xml_node((xml_node_struct*)e).first_child().internal_object(); }

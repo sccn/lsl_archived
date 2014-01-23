@@ -100,6 +100,7 @@ namespace lslboost { namespace fusion
 
 namespace lslboost 
 {
+#if !defined(BOOST_RESULT_OF_USE_DECLTYPE) || defined(BOOST_NO_CXX11_DECLTYPE)
     template<class F>
     struct result_of< lslboost::fusion::unfused<F> const () >
     {
@@ -107,6 +108,17 @@ namespace lslboost
     };
     template<class F>
     struct result_of< lslboost::fusion::unfused<F>() >
+    {
+        typedef typename lslboost::fusion::unfused<F>::call_0_result type;
+    };
+#endif
+    template<class F>
+    struct tr1_result_of< lslboost::fusion::unfused<F> const () >
+    {
+        typedef typename lslboost::fusion::unfused<F>::call_const_0_result type;
+    };
+    template<class F>
+    struct tr1_result_of< lslboost::fusion::unfused<F>() >
     {
         typedef typename lslboost::fusion::unfused<F>::call_0_result type;
     };

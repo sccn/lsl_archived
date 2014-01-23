@@ -2,7 +2,7 @@
 // detail/deadline_timer_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -19,6 +19,7 @@
 #include <cstddef>
 #include <lslboost/asio/error.hpp>
 #include <lslboost/asio/io_service.hpp>
+#include <lslboost/asio/detail/addressof.hpp>
 #include <lslboost/asio/detail/bind_handler.hpp>
 #include <lslboost/asio/detail/fenced_block.hpp>
 #include <lslboost/asio/detail/noncopyable.hpp>
@@ -28,6 +29,11 @@
 #include <lslboost/asio/detail/timer_scheduler.hpp>
 #include <lslboost/asio/detail/wait_handler.hpp>
 #include <lslboost/asio/detail/wait_op.hpp>
+
+#if defined(BOOST_ASIO_WINDOWS_RUNTIME)
+# include <chrono>
+# include <thread>
+#endif // defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 #include <lslboost/asio/detail/push_options.hpp>
 
@@ -170,11 +176,11 @@ public:
 
   // Start an asynchronous wait on the timer.
   template <typename Handler>
-  void async_wait(implementation_type& impl, Handler handler)
+  void async_wait(implementation_type& impl, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
     typedef wait_handler<Handler> op;
-    typename op::ptr p = { lslboost::addressof(handler),
+    typename op::ptr p = { lslboost::asio::detail::addressof(handler),
       lslboost_asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);
@@ -194,10 +200,17 @@ private:
   template <typename Duration>
   void do_wait(const Duration& timeout, lslboost::system::error_code& ec)
   {
+#if defined(BOOST_ASIO_WINDOWS_RUNTIME)
+    std::this_thread::sleep_for(
+        std::chrono::seconds(timeout.total_seconds())
+        + std::chrono::microseconds(timeout.total_microseconds()));
+    ec = lslboost::system::error_code();
+#else // defined(BOOST_ASIO_WINDOWS_RUNTIME)
     ::timeval tv;
     tv.tv_sec = timeout.total_seconds();
     tv.tv_usec = timeout.total_microseconds() % 1000000;
     socket_ops::select(0, 0, 0, 0, &tv, ec);
+#endif // defined(BOOST_ASIO_WINDOWS_RUNTIME)
   }
 
   // The queue of timers.

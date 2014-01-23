@@ -1,8 +1,7 @@
 #ifndef INLET_CONNECTION_H
 #define INLET_CONNECTION_H
 
-#include "version.h"
-#include "../include/lsl_cpp.h"
+#include "common.h"
 #include "resolver_impl.h"
 #include "cancellation.h"
 #include <map>
@@ -18,7 +17,7 @@ namespace lsl {
 
 	/**
 	* An inlet connection encapsulates the inlet's connection endpoint (for the other components of the inlet) 
-	* and provides a recovery mechanism in case it breaks down (e.g., due to a computer crash).
+	* and provides a recovery mechanism in case the connection breaks down (e.g., due to a remote computer crash).
 	*
 	* When a client of the connection (one of the other inlet components) experiences a connection loss it invokes the 
 	* function try_recover_from_error() which attempts to update the endpoint to a valid state (possible once the stream is back online). 
@@ -47,12 +46,14 @@ namespace lsl {
 		void disengage();
 
 
-		// === endpoint information ===
+		// === endpoint information (might change if the connection is rehosted) ===
 
 		/// Get the current TCP endpoint from the info (according to our configured protocol).
 		tcp::endpoint get_tcp_endpoint();
 		/// Get the current UDP endpoint from the info (according to our configured protocol).
 		udp::endpoint get_udp_endpoint();
+		/// Get the current hostname from the info.
+		std::string get_hostname();
 
 		/// Get the TCP protocol type.
 		tcp tcp_protocol() const { return tcp_protocol_; }
@@ -88,7 +89,7 @@ namespace lsl {
 		/// The recovery watchdog will be inactive while no transmission is requested.
 		void release_watchdog();
 
-		/// Inform the connection that content was received from the source (using lsl::local_clock()).
+		/// Inform the connection that content was received from the source (using lsl::lsl_clock()).
 		/// If a sufficient amount of time has passed since the last call the watchdog thread will 
 		/// try to recover the connection.
 		void update_receive_time(double t);

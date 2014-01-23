@@ -12,7 +12,7 @@
 #define BOOST_STRING_FIND_ITERATOR_DETAIL_HPP
 
 #include <lslboost/algorithm/string/config.hpp>
-#include <lslboost/range/iterator_range.hpp>
+#include <lslboost/range/iterator_range_core.hpp>
 #include <lslboost/iterator/iterator_facade.hpp>
 #include <lslboost/iterator/iterator_categories.hpp>
 #include <lslboost/function.hpp>

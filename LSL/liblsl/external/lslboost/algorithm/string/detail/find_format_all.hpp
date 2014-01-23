@@ -12,7 +12,7 @@
 #define BOOST_STRING_FIND_FORMAT_ALL_DETAIL_HPP
 
 #include <lslboost/algorithm/string/config.hpp>
-#include <lslboost/range/iterator_range.hpp>
+#include <lslboost/range/iterator_range_core.hpp>
 #include <lslboost/range/const_iterator.hpp>
 #include <lslboost/range/value_type.hpp>
 #include <lslboost/algorithm/string/detail/find_format_store.hpp>
@@ -58,7 +58,7 @@ namespace lslboost {
                 {
                     // Copy the beginning of the sequence
                     Output = std::copy( LastMatch, M.begin(), Output );
-                    // Copy formated result
+                    // Copy formatted result
                     Output = std::copy( ::lslboost::begin(M.format_result()), ::lslboost::end(M.format_result()), Output );
 
                     // Proceed to the next match
@@ -134,9 +134,9 @@ namespace lslboost {
                 while( M )
                 {
                     // Copy the beginning of the sequence
-                    insert( Output, ::lslboost::end(Output), LastMatch, M.begin() );
-                    // Copy formated result
-                    insert( Output, ::lslboost::end(Output), M.format_result() );
+                    lslboost::algorithm::detail::insert( Output, ::lslboost::end(Output), LastMatch, M.begin() );
+                    // Copy formatted result
+                    lslboost::algorithm::detail::insert( Output, ::lslboost::end(Output), M.format_result() );
 
                     // Proceed to the next match
                     LastMatch=M.end();
@@ -218,7 +218,7 @@ namespace lslboost {
                     // Adjust search iterator
                     SearchIt=M.end();
 
-                    // Copy formated replace to the storage
+                    // Copy formatted replace to the storage
                     ::lslboost::algorithm::detail::copy_to_storage( Storage, M.format_result() );
 
                     // Find range for a next match

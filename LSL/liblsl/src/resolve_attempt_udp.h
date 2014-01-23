@@ -1,7 +1,7 @@
 #ifndef RESOLVE_ATTEMPT_UDP_H
 #define RESOLVE_ATTEMPT_UDP_H
 
-#include "version.h"
+#include "common.h"
 #include "stream_info_impl.h"
 #include "cancellation.h"
 #include <map>
@@ -60,7 +60,9 @@ namespace lsl {
 		/// Start the attempt asynchronously.
 		void begin();
 
-		/// Cancel operations asynchronously.
+		/// Cancel operations asynchronously, and destructively.
+		/// Note that this mostly serves to expedite the destruction of the object,
+		/// which would happen anyway after some time.
 		/// As the attempt instance is owned by the handler chains 
 		/// the cancellation eventually leads to the destruction of the object.
 		void cancel();
@@ -83,10 +85,10 @@ namespace lsl {
 		// === cancellation ===
 
 		/// Handler that gets called when the give up timeout has expired.
-		void handle_cancel(error_code err);
+		void handle_timeout(error_code err);
 
 		/// Cancel the outstanding operations.
-		void cancel_operations();
+		void do_cancel();
 
 
 		// data shared with the resolver_impl
@@ -96,6 +98,7 @@ namespace lsl {
 
 		// constant over the lifetime of this attempt
 		double cancel_after_;			// the timeout for giving up
+		bool cancelled_;				// whether the operation has been cancelled
 		bool is_v4_;					// whether we're on IPv4 or IPv6
 		udp protocol_;					// the protocol to use
 		std::vector<udp::endpoint> targets_;// list of endpoints that should receive the query

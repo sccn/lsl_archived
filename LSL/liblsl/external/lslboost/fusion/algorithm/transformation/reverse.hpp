@@ -8,6 +8,8 @@
 #define FUSION_REVERSE_07212005_1230
 
 #include <lslboost/fusion/view/reverse_view/reverse_view.hpp>
+#include <lslboost/fusion/support/is_sequence.hpp>
+#include <lslboost/utility/enable_if.hpp>
 
 namespace lslboost { namespace fusion
 {
@@ -21,7 +23,12 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence>
-    inline reverse_view<Sequence const>
+    inline 
+    typename
+        enable_if<
+            traits::is_sequence<Sequence>
+          , reverse_view<Sequence const>
+        >::type
     reverse(Sequence const& view)
     {
         return reverse_view<Sequence const>(view);

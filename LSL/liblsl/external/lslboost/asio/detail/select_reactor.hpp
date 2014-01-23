@@ -2,7 +2,7 @@
 // detail/select_reactor.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -20,20 +20,19 @@
 #if defined(BOOST_ASIO_HAS_IOCP) \
   || (!defined(BOOST_ASIO_HAS_DEV_POLL) \
       && !defined(BOOST_ASIO_HAS_EPOLL) \
-      && !defined(BOOST_ASIO_HAS_KQUEUE))
+      && !defined(BOOST_ASIO_HAS_KQUEUE) \
+	  && !defined(BOOST_ASIO_WINDOWS_RUNTIME))
 
-#include <lslboost/limits.hpp>
 #include <cstddef>
 #include <lslboost/asio/detail/fd_set_adapter.hpp>
+#include <lslboost/asio/detail/limits.hpp>
 #include <lslboost/asio/detail/mutex.hpp>
 #include <lslboost/asio/detail/op_queue.hpp>
 #include <lslboost/asio/detail/reactor_op.hpp>
 #include <lslboost/asio/detail/reactor_op_queue.hpp>
 #include <lslboost/asio/detail/select_interrupter.hpp>
-#include <lslboost/asio/detail/select_reactor_fwd.hpp>
 #include <lslboost/asio/detail/socket_types.hpp>
 #include <lslboost/asio/detail/timer_queue_base.hpp>
-#include <lslboost/asio/detail/timer_queue_fwd.hpp>
 #include <lslboost/asio/detail/timer_queue_set.hpp>
 #include <lslboost/asio/detail/wait_op.hpp>
 #include <lslboost/asio/io_service.hpp>
@@ -52,13 +51,13 @@ class select_reactor
   : public lslboost::asio::detail::service_base<select_reactor>
 {
 public:
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
   enum op_types { read_op = 0, write_op = 1, except_op = 2,
     max_select_ops = 3, connect_op = 3, max_ops = 4 };
-#else // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#else // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
   enum op_types { read_op = 0, write_op = 1, except_op = 2,
     max_select_ops = 3, connect_op = 1, max_ops = 3 };
-#endif // defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 
   // Per-descriptor data.
   struct per_descriptor_data
@@ -92,15 +91,15 @@ public:
       per_descriptor_data& descriptor_data, reactor_op* op);
 
   // Post a reactor operation for immediate completion.
-  void post_immediate_completion(reactor_op* op)
+  void post_immediate_completion(reactor_op* op, bool is_continuation)
   {
-    io_service_.post_immediate_completion(op);
+    io_service_.post_immediate_completion(op, is_continuation);
   }
 
   // Start a new operation. The reactor operation will be performed when the
   // given descriptor is flagged as ready, or an error has occurred.
   BOOST_ASIO_DECL void start_op(int op_type, socket_type descriptor,
-      per_descriptor_data&, reactor_op* op, bool);
+      per_descriptor_data&, reactor_op* op, bool is_continuation, bool);
 
   // Cancel all operations associated with the given descriptor. The
   // handlers associated with the descriptor will be invoked with the
@@ -216,6 +215,7 @@ private:
 #endif // defined(BOOST_ASIO_HAS_IOCP)
        //   || (!defined(BOOST_ASIO_HAS_DEV_POLL)
        //       && !defined(BOOST_ASIO_HAS_EPOLL)
-       //       && !defined(BOOST_ASIO_HAS_KQUEUE))
+       //       && !defined(BOOST_ASIO_HAS_KQUEUE)
+       //       && !defined(BOOST_ASIO_WINDOWS_RUNTIME))
 
 #endif // BOOST_ASIO_DETAIL_SELECT_REACTOR_HPP

@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////////
 //
-// (C) Copyright Ion Gaztanaga  2006-2009
+// (C) Copyright Ion Gaztanaga  2006-2013
 //
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
@@ -100,10 +100,10 @@ struct any_unordered_node_traits
    {  n->node_ptr_2 = prev;  }
 
    static std::size_t get_hash(const const_node_ptr & n)
-   {  return n->size_t_1;  } 
+   {  return n->size_t_1;  }
 
    static void set_hash(const node_ptr & n, std::size_t h)
-   {  n->size_t_1 = h;  } 
+   {  n->size_t_1 = h;  }
 };
 
 

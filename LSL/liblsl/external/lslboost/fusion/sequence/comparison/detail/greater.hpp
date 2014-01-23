@@ -12,6 +12,7 @@
 #include <lslboost/fusion/iterator/deref.hpp>
 #include <lslboost/fusion/iterator/next.hpp>
 #include <lslboost/fusion/iterator/equal_to.hpp>
+#include <lslboost/fusion/support/as_const.hpp>
 
 namespace lslboost { namespace fusion { namespace detail
 {
@@ -32,8 +33,9 @@ namespace lslboost { namespace fusion { namespace detail
         static bool
         call(I1 const& a, I2 const& b, mpl::false_)
         {
-            return *a > *b ||
-                (!(*b > *a) && call(fusion::next(a), fusion::next(b)));
+            return extension::as_const(*a) > extension::as_const(*b) ||
+                (!(extension::as_const(*b) > extension::as_const(*a)) && 
+                 call(fusion::next(a), fusion::next(b)));
         }
 
         template <typename I1, typename I2>

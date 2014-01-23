@@ -13,6 +13,12 @@
 // locate which compiler we are using and define
 // BOOST_COMPILER_CONFIG as needed: 
 
+#if defined __CUDACC__
+//  NVIDIA CUDA C++ compiler for GPU
+#   include "lslboost/config/compiler/nvcc.hpp"
+
+#endif
+
 #if defined(__GCCXML__)
 // GCC-XML emulates other compilers, it has to appear first here!
 #   define BOOST_COMPILER_CONFIG "lslboost/config/compiler/gcc_xml.hpp"
@@ -20,10 +26,6 @@
 #elif defined(_CRAYC)
 // EDG based Cray compiler:
 #   define BOOST_COMPILER_CONFIG "lslboost/config/compiler/cray.hpp"
-
-#elif defined __CUDACC__
-//  NVIDIA CUDA C++ compiler for GPU
-#   define BOOST_COMPILER_CONFIG "lslboost/config/compiler/nvcc.hpp"
 
 #elif defined __COMO__
 //  Comeau C++
@@ -33,6 +35,10 @@
 // PathScale EKOPath compiler (has to come before clang and gcc)
 #   define BOOST_COMPILER_CONFIG "lslboost/config/compiler/pathscale.hpp"
 
+#elif defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC) || defined(__ECC)
+//  Intel
+#   define BOOST_COMPILER_CONFIG "lslboost/config/compiler/intel.hpp"
+
 #elif defined __clang__
 //  Clang C++ emulates GCC, so it has to appear early.
 #   define BOOST_COMPILER_CONFIG "lslboost/config/compiler/clang.hpp"
@@ -40,10 +46,6 @@
 #elif defined __DMC__
 //  Digital Mars C++
 #   define BOOST_COMPILER_CONFIG "lslboost/config/compiler/digitalmars.hpp"
-
-#elif defined(__INTEL_COMPILER) || defined(__ICL) || defined(__ICC) || defined(__ECC)
-//  Intel
-#   define BOOST_COMPILER_CONFIG "lslboost/config/compiler/intel.hpp"
 
 # elif defined __GNUC__
 //  GNU C++:

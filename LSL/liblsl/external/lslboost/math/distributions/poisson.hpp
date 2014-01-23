@@ -52,68 +52,6 @@ namespace lslboost
 {
   namespace math
   {
-     namespace detail{
-      template <class Dist>
-      inline typename Dist::value_type
-         inverse_discrete_quantile(
-            const Dist& dist,
-            const typename Dist::value_type& p,
-            const typename Dist::value_type& guess,
-            const typename Dist::value_type& multiplier,
-            const typename Dist::value_type& adder,
-            const policies::discrete_quantile<policies::integer_round_nearest>&,
-            lslboost::uintmax_t& max_iter);
-      template <class Dist>
-      inline typename Dist::value_type
-         inverse_discrete_quantile(
-            const Dist& dist,
-            const typename Dist::value_type& p,
-            const typename Dist::value_type& guess,
-            const typename Dist::value_type& multiplier,
-            const typename Dist::value_type& adder,
-            const policies::discrete_quantile<policies::integer_round_up>&,
-            lslboost::uintmax_t& max_iter);
-      template <class Dist>
-      inline typename Dist::value_type
-         inverse_discrete_quantile(
-            const Dist& dist,
-            const typename Dist::value_type& p,
-            const typename Dist::value_type& guess,
-            const typename Dist::value_type& multiplier,
-            const typename Dist::value_type& adder,
-            const policies::discrete_quantile<policies::integer_round_down>&,
-            lslboost::uintmax_t& max_iter);
-      template <class Dist>
-      inline typename Dist::value_type
-         inverse_discrete_quantile(
-            const Dist& dist,
-            const typename Dist::value_type& p,
-            const typename Dist::value_type& guess,
-            const typename Dist::value_type& multiplier,
-            const typename Dist::value_type& adder,
-            const policies::discrete_quantile<policies::integer_round_outwards>&,
-            lslboost::uintmax_t& max_iter);
-      template <class Dist>
-      inline typename Dist::value_type
-         inverse_discrete_quantile(
-            const Dist& dist,
-            const typename Dist::value_type& p,
-            const typename Dist::value_type& guess,
-            const typename Dist::value_type& multiplier,
-            const typename Dist::value_type& adder,
-            const policies::discrete_quantile<policies::integer_round_inwards>&,
-            lslboost::uintmax_t& max_iter);
-      template <class Dist>
-      inline typename Dist::value_type
-         inverse_discrete_quantile(
-            const Dist& dist,
-            const typename Dist::value_type& p,
-            const typename Dist::value_type& guess,
-            const typename Dist::value_type& multiplier,
-            const typename Dist::value_type& adder,
-            const policies::discrete_quantile<policies::real>&,
-            lslboost::uintmax_t& max_iter);
-     }
     namespace poisson_detail
     {
       // Common error checking routines for Poisson distribution functions.
@@ -209,7 +147,7 @@ namespace lslboost
       typedef RealType value_type;
       typedef Policy policy_type;
 
-      poisson_distribution(RealType mean = 1) : m_l(mean) // mean (lambda).
+      poisson_distribution(RealType l_mean = 1) : m_l(l_mean) // mean (lambda).
       { // Expected mean number of events that occur during the given interval.
         RealType r;
         poisson_detail::check_dist(
@@ -443,9 +381,10 @@ namespace lslboost
     inline RealType quantile(const poisson_distribution<RealType, Policy>& dist, const RealType& p)
     { // Quantile (or Percent Point) Poisson function.
       // Return the number of expected events k for a given probability p.
+      static const char* function = "lslboost::math::quantile(const poisson_distribution<%1%>&, %1%)";
       RealType result = 0; // of Argument checks:
       if(false == poisson_detail::check_prob(
-        "lslboost::math::quantile(const poisson_distribution<%1%>&, %1%)",
+        function,
         p,
         &result, Policy()))
       {
@@ -455,23 +394,21 @@ namespace lslboost
       if (dist.mean() == 0)
       { // if mean = 0 then p = 0, so k can be anything?
          if (false == poisson_detail::check_mean_NZ(
-         "lslboost::math::quantile(const poisson_distribution<%1%>&, %1%)",
+         function,
          dist.mean(),
          &result, Policy()))
         {
           return result;
         }
       }
-      /*
-      BOOST_MATH_STD_USING // ADL of std functions.
-      // if(p == 0) NOT necessarily zero!
-      // Not necessarily any special value of k because is unlimited.
-      if (p <= exp(-dist.mean()))
-      { // if p <= cdf for 0 events (== pdf for 0 events), then quantile must be zero.
-         return 0;
+      if(p == 0)
+      {
+         return 0; // Exact result regardless of discrete-quantile Policy
       }
-      return gamma_q_inva(dist.mean(), p, Policy()) - 1;
-      */
+      if(p == 1)
+      {
+         return policies::raise_overflow_error<RealType>(function, 0, Policy());
+      }
       typedef typename Policy::discrete_quantile_type discrete_type;
       lslboost::uintmax_t max_iter = policies::get_max_root_iterations<Policy>();
       RealType guess, factor = 8;
@@ -497,7 +434,7 @@ namespace lslboost
       return detail::inverse_discrete_quantile(
          dist,
          p,
-         1-p,
+         false,
          guess,
          factor,
          RealType(1),
@@ -512,11 +449,12 @@ namespace lslboost
       // complement of the probability q.
       //
       // Error checks:
+      static const char* function = "lslboost::math::quantile(complement(const poisson_distribution<%1%>&, %1%))";
       RealType q = c.param;
       const poisson_distribution<RealType, Policy>& dist = c.dist;
       RealType result = 0;  // of argument checks.
       if(false == poisson_detail::check_prob(
-        "lslboost::math::quantile(const poisson_distribution<%1%>&, %1%)",
+        function,
         q,
         &result, Policy()))
       {
@@ -526,20 +464,21 @@ namespace lslboost
       if (dist.mean() == 0)
       { // if mean = 0 then p = 0, so k can be anything?
          if (false == poisson_detail::check_mean_NZ(
-         "lslboost::math::quantile(const poisson_distribution<%1%>&, %1%)",
+         function,
          dist.mean(),
          &result, Policy()))
         {
           return result;
         }
       }
-      /*
-      if (-q <= lslboost::math::expm1(-dist.mean()))
-      { // if q <= cdf(complement for 0 events, then quantile must be zero.
-         return 0;
+      if(q == 0)
+      {
+         return policies::raise_overflow_error<RealType>(function, 0, Policy());
       }
-      return gamma_p_inva(dist.mean(), q, Policy()) -1;
-      */
+      if(q == 1)
+      {
+         return 0;  // Exact result regardless of discrete-quantile Policy
+      }
       typedef typename Policy::discrete_quantile_type discrete_type;
       lslboost::uintmax_t max_iter = policies::get_max_root_iterations<Policy>();
       RealType guess, factor = 8;
@@ -564,8 +503,8 @@ namespace lslboost
 
       return detail::inverse_discrete_quantile(
          dist,
-         1-q,
          q,
+         true,
          guess,
          factor,
          RealType(1),

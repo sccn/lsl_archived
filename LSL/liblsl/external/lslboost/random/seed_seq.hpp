@@ -7,7 +7,7 @@
  *
  * See http://www.lslboost.org for most recent version including documentation.
  *
- * $Id: seed_seq.hpp 78340 2012-05-05 21:14:37Z steven_watanabe $
+ * $Id: seed_seq.hpp 85813 2013-09-21 20:17:00Z jewillco $
  *
  */
 
@@ -23,7 +23,7 @@
 #include <algorithm>
 #include <iterator>
 
-#ifndef BOOST_NO_0X_HDR_INITIALIZER_LIST
+#ifndef BOOST_NO_CXX11_HDR_INITIALIZER_LIST
 #include <initializer_list>
 #endif
 
@@ -42,7 +42,7 @@ public:
 
     /** Initializes a seed_seq to hold an empty sequence. */
     seed_seq() {}
-#ifndef BOOST_NO_0X_HDR_INITIALIZER_LIST
+#ifndef BOOST_NO_CXX11_HDR_INITIALIZER_LIST
     /** Initializes the sequence from an initializer_list. */
     template<class T>
     seed_seq(const std::initializer_list<T>& il) : v(il.begin(), il.end()) {}

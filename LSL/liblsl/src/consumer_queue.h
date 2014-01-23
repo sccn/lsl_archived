@@ -2,7 +2,7 @@
 #define CONSUMER_QUEUE_H
 
 #include "sample.h"
-#include <boost/circular_buffer.hpp>
+#include <boost/lockfree/spsc_queue.hpp>
 #include <boost/thread.hpp>
 
 
@@ -17,15 +17,14 @@ namespace lsl {
 	* Erases the oldest samples if max capacity is exceeded. Implemented as a circular buffer.
 	*/
 	class consumer_queue: private boost::noncopyable {
-		typedef boost::circular_buffer_space_optimized<sample_p> buffer_type;
+		typedef boost::lockfree::spsc_queue<sample_p> buffer_type;
 	public:
 		/**
 		* Create a new queue with a given capacity.
 		* @param max_capacity The maximum number of samples that can be held by the queue. Beyond that, the oldest samples are dropped.
-		* @param min_capacity The minimum capacity reserved by the queue (the queue does not try to shrink below this).
 		* @param registry Optionally a pointer to a registration facility, for multiple-reader arrangements.
 		*/
-		consumer_queue(std::size_t max_capacity, std::size_t min_capacity, send_buffer_p registry=send_buffer_p());
+		consumer_queue(std::size_t max_capacity, send_buffer_p registry=send_buffer_p());
 
 		/**
 		* Destructor.
@@ -46,21 +45,15 @@ namespace lsl {
 		sample_p pop_sample(double timeout=FOREVER);
 
 		/**
-		* Query the current size of the buffer, i.e. the number of samples that are buffered.
+		* Check whether the buffer is empty.
 		*/ 
-		std::size_t buffer_size();
+		bool empty();
 
 	private:
-		/// pop_back is waiting for this condition
-		bool is_not_empty() const { return !buffer_.empty(); }
-
 		send_buffer_p registry_;				// optional consumer registry
 		buffer_type buffer_;					// the sample buffer
-		boost::mutex buffer_mut_;				// mutex to protect the buffer's integrity
-		boost::condition_variable not_empty_;	// condition variable signaling that the buffer is not empty
 	};
 
 }
 
 #endif
-

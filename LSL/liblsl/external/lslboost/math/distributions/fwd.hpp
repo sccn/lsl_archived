@@ -1,6 +1,6 @@
 // fwd.hpp Forward declarations of Boost.Math distributions.
 
-// Copyright Paul A. Bristow 2007, 2010.
+// Copyright Paul A. Bristow 2007, 2010, 2012.
 // Copyright John Maddock 2007.
 
 // Use, modification and distribution are subject to the
@@ -10,6 +10,8 @@
 
 #ifndef BOOST_MATH_DISTRIBUTIONS_FWD_HPP
 #define BOOST_MATH_DISTRIBUTIONS_FWD_HPP
+
+// 31 distributions at Boost 1.52
 
 namespace lslboost{ namespace math{
 
@@ -56,9 +58,6 @@ template <class RealType, class Policy>
 class inverse_gaussian_distribution;
 
 template <class RealType, class Policy>
-class inverse_uniform_distribution;
-
-template <class RealType, class Policy>
 class laplace_distribution;
 
 template <class RealType, class Policy>
@@ -71,10 +70,10 @@ template <class RealType, class Policy>
 class negative_binomial_distribution;
 
 template <class RealType, class Policy>
-class non_central_chi_squared_distribution;
+class non_central_beta_distribution;
 
 template <class RealType, class Policy>
-class non_central_beta_distribution;
+class non_central_chi_squared_distribution;
 
 template <class RealType, class Policy>
 class non_central_f_distribution;
@@ -93,6 +92,9 @@ class poisson_distribution;
 
 template <class RealType, class Policy>
 class rayleigh_distribution;
+
+template <class RealType, class Policy>
+class skew_normal_distribution;
 
 template <class RealType, class Policy>
 class students_t_distribution;
@@ -118,27 +120,27 @@ class weibull_distribution;
    typedef lslboost::math::extreme_value_distribution<Type, Policy> extreme_value;\
    typedef lslboost::math::fisher_f_distribution<Type, Policy> fisher_f;\
    typedef lslboost::math::gamma_distribution<Type, Policy> gamma;\
+   typedef lslboost::math::geometric_distribution<Type, Policy> geometric;\
+   typedef lslboost::math::hypergeometric_distribution<Type, Policy> hypergeometric;\
+   typedef lslboost::math::inverse_chi_squared_distribution<Type, Policy> inverse_chi_squared;\
+   typedef lslboost::math::inverse_gaussian_distribution<Type, Policy> inverse_gaussian;\
+   typedef lslboost::math::inverse_gamma_distribution<Type, Policy> inverse_gamma;\
    typedef lslboost::math::laplace_distribution<Type, Policy> laplace;\
    typedef lslboost::math::logistic_distribution<Type, Policy> logistic;\
    typedef lslboost::math::lognormal_distribution<Type, Policy> lognormal;\
    typedef lslboost::math::negative_binomial_distribution<Type, Policy> negative_binomial;\
+   typedef lslboost::math::non_central_beta_distribution<Type, Policy> non_central_beta;\
+   typedef lslboost::math::non_central_chi_squared_distribution<Type, Policy> non_central_chi_squared;\
+   typedef lslboost::math::non_central_f_distribution<Type, Policy> non_central_f;\
+   typedef lslboost::math::non_central_t_distribution<Type, Policy> non_central_t;\
    typedef lslboost::math::normal_distribution<Type, Policy> normal;\
    typedef lslboost::math::pareto_distribution<Type, Policy> pareto;\
    typedef lslboost::math::poisson_distribution<Type, Policy> poisson;\
    typedef lslboost::math::rayleigh_distribution<Type, Policy> rayleigh;\
+   typedef lslboost::math::skew_normal_distribution<Type, Policy> skew_normal;\
    typedef lslboost::math::students_t_distribution<Type, Policy> students_t;\
    typedef lslboost::math::triangular_distribution<Type, Policy> triangular;\
    typedef lslboost::math::uniform_distribution<Type, Policy> uniform;\
-   typedef lslboost::math::weibull_distribution<Type, Policy> weibull;\
-   typedef lslboost::math::non_central_chi_squared_distribution<Type, Policy> non_central_chi_squared;\
-   typedef lslboost::math::non_central_beta_distribution<Type, Policy> non_central_beta;\
-   typedef lslboost::math::non_central_f_distribution<Type, Policy> non_central_f;\
-   typedef lslboost::math::non_central_t_distribution<Type, Policy> non_central_t;\
-   typedef lslboost::math::hypergeometric_distribution<Type, Policy> hypergeometric;\
-   typedef lslboost::math::inverse_uniform_distribution<Type, Policy> inverse_uniform;\
-   typedef lslboost::math::geometric_distribution<Type, Policy> geometric;\
-   typedef lslboost::math::inverse_chi_squared_distribution<Type, Policy> inverse_chi_squared;\
-   typedef lslboost::math::inverse_gamma_distribution<Type, Policy> inverse_gamma;\
-   typedef lslboost::math::inverse_gaussian_distribution<Type, Policy> inverse_gaussian;\
+   typedef lslboost::math::weibull_distribution<Type, Policy> weibull;
 
 #endif // BOOST_MATH_DISTRIBUTIONS_FWD_HPP

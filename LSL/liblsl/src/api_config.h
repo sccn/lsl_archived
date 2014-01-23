@@ -52,6 +52,12 @@ namespace lsl {
 		int port_range() const { return port_range_; }
 
 		/**
+		* Whether to allow binding to a randomly assigned port.
+		* This can be used when the regular port range has been exhausted.
+		*/
+		int allow_random_ports() const { return allow_random_ports_; }
+
+		/**
 		* Port over which multi-cast communication is handled.
 		* This is the communication medium for the announcement and discovery of streams 
 		* between inlets and outlets. Note that according to the router configuration some 
@@ -115,6 +121,8 @@ namespace lsl {
 
 		// === tuning parameters ===
 
+		/// The network protocol version to use.
+		int use_protocol_version() const { return use_protocol_version_; }
 		/// The interval at which the watchdog checks if connections are still fine.
 		double watchdog_check_interval() const { return watchdog_check_interval_; }
 		/// The watchdog takes no action if not at least this much time has passed since the last receipt of data. In seconds.
@@ -141,6 +149,14 @@ namespace lsl {
 		double time_probe_interval() const { return time_probe_interval_; }
 		/// Maximum assumed RTT of a time probe (= extra waiting time).
 		double time_probe_max_rtt() const { return time_probe_max_rtt_; }
+		/// Default pre-allocated buffer size for the outlet, in ms (regular streams).
+		int outlet_buffer_reserve_ms() const { return outlet_buffer_reserve_ms_; }
+		/// Default pre-allocated buffer size for the outlet, in samples (irregular streams).
+		int outlet_buffer_reserve_samples() const { return outlet_buffer_reserve_samples_; }
+		/// Default pre-allocated buffer size for the inlet, in ms (regular streams).
+		int inlet_buffer_reserve_ms() const { return inlet_buffer_reserve_ms_; }
+		/// Default pre-allocated buffer size for the inlet, in samples (irregular streams).
+		int inlet_buffer_reserve_samples() const { return inlet_buffer_reserve_samples_; }
 
 	private:
 		// Thread-safe initialization logic (boilerplate).
@@ -164,6 +180,7 @@ namespace lsl {
 		std::string ipv6_;
 		int base_port_;
 		int port_range_;
+		bool allow_random_ports_;
 		int multicast_port_;
 		std::string resolve_scope_;
 		std::vector<std::string> multicast_addresses_;
@@ -171,6 +188,7 @@ namespace lsl {
 		std::vector<std::string> known_peers_;
 		std::string session_id_;
 		// tuning parameters
+		int use_protocol_version_;
 		double watchdog_time_threshold_;
 		double watchdog_check_interval_;
 		double multicast_min_rtt_;
@@ -184,6 +202,10 @@ namespace lsl {
 		int time_probe_count_;
 		double time_probe_interval_;
 		double time_probe_max_rtt_;
+		int outlet_buffer_reserve_ms_;
+		int outlet_buffer_reserve_samples_;
+		int inlet_buffer_reserve_ms_;
+		int inlet_buffer_reserve_samples_;
 	};
 }
 

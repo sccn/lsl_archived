@@ -7,6 +7,9 @@
 #if !defined(BOOST_FUSION_FOR_EACH_FWD_HPP_INCLUDED)
 #define BOOST_FUSION_FOR_EACH_FWD_HPP_INCLUDED
 
+#include <lslboost/fusion/support/is_sequence.hpp>
+#include <lslboost/utility/enable_if.hpp>
+
 namespace lslboost { namespace fusion
 {
     namespace result_of
@@ -16,11 +19,21 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence, typename F>
-    void
+    inline
+    typename
+        enable_if<
+            traits::is_sequence<Sequence>
+          , void
+        >::type
     for_each(Sequence& seq, F const& f);
 
     template <typename Sequence, typename F>
-    void
+    inline
+    typename
+        enable_if<
+            traits::is_sequence<Sequence>
+          , void
+        >::type
     for_each(Sequence const& seq, F const& f);
 }}
 

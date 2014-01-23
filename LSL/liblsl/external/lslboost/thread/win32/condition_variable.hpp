@@ -6,22 +6,30 @@
 // (C) Copyright 2007-8 Anthony Williams
 // (C) Copyright 2011-2012 Vicente J. Botet Escriba
 
-#include <lslboost/thread/mutex.hpp>
 #include <lslboost/thread/win32/thread_primitives.hpp>
-#include <limits.h>
-#include <lslboost/assert.hpp>
-#include <algorithm>
-#include <lslboost/thread/cv_status.hpp>
 #include <lslboost/thread/win32/thread_data.hpp>
-#include <lslboost/thread/thread_time.hpp>
+#include <lslboost/thread/win32/thread_data.hpp>
 #include <lslboost/thread/win32/interlocked_read.hpp>
+#include <lslboost/thread/cv_status.hpp>
+#if defined BOOST_THREAD_USES_DATETIME
 #include <lslboost/thread/xtime.hpp>
-#include <vector>
+#endif
+#include <lslboost/thread/mutex.hpp>
+#include <lslboost/thread/thread_time.hpp>
+#include <lslboost/thread/lock_guard.hpp>
+#include <lslboost/thread/lock_types.hpp>
+
+#include <lslboost/assert.hpp>
 #include <lslboost/intrusive_ptr.hpp>
+
 #ifdef BOOST_THREAD_USES_CHRONO
 #include <lslboost/chrono/system_clocks.hpp>
 #include <lslboost/chrono/ceil.hpp>
 #endif
+
+#include <limits.h>
+#include <algorithm>
+#include <vector>
 
 #include <lslboost/config/abi_prefix.hpp>
 
@@ -81,9 +89,9 @@ namespace lslboost
                 return notified;
             }
 
-            bool wait(timeout wait_until)
+            bool wait(timeout abs_time)
             {
-                return this_thread::interruptible_wait(semaphore,wait_until);
+                return this_thread::interruptible_wait(semaphore,abs_time);
             }
 
             bool woken()
@@ -183,14 +191,16 @@ namespace lslboost
             struct entry_manager
             {
                 entry_ptr const entry;
+                lslboost::mutex& internal_mutex;
 
                 BOOST_THREAD_NO_COPYABLE(entry_manager)
-                entry_manager(entry_ptr const& entry_):
-                    entry(entry_)
+                entry_manager(entry_ptr const& entry_, lslboost::mutex& mutex_):
+                    entry(entry_), internal_mutex(mutex_)
                 {}
 
                 ~entry_manager()
                 {
+                    lslboost::lock_guard<lslboost::mutex> internal_lock(internal_mutex);
                     entry->remove_waiter();
                 }
 
@@ -203,18 +213,18 @@ namespace lslboost
 
         protected:
             template<typename lock_type>
-            bool do_wait(lock_type& lock,timeout wait_until)
+            bool do_wait(lock_type& lock,timeout abs_time)
             {
                 relocker<lock_type> locker(lock);
 
-                entry_manager entry(get_wait_entry());
+                entry_manager entry(get_wait_entry(), internal_mutex);
 
                 locker.unlock();
 
                 bool woken=false;
                 while(!woken)
                 {
-                    if(!entry->wait(wait_until))
+                    if(!entry->wait(abs_time))
                     {
                         return false;
                     }
@@ -225,11 +235,11 @@ namespace lslboost
             }
 
             template<typename lock_type,typename predicate_type>
-            bool do_wait(lock_type& m,timeout const& wait_until,predicate_type pred)
+            bool do_wait(lock_type& m,timeout const& abs_time,predicate_type pred)
             {
                 while (!pred())
                 {
-                    if(!do_wait(m, wait_until))
+                    if(!do_wait(m, abs_time))
                         return pred();
                 }
                 return true;
@@ -314,14 +324,15 @@ namespace lslboost
         }
 
 
-        bool timed_wait(unique_lock<mutex>& m,lslboost::system_time const& wait_until)
+#if defined BOOST_THREAD_USES_DATETIME
+        bool timed_wait(unique_lock<mutex>& m,lslboost::system_time const& abs_time)
         {
-            return do_wait(m,wait_until);
+            return do_wait(m,abs_time);
         }
 
-        bool timed_wait(unique_lock<mutex>& m,lslboost::xtime const& wait_until)
+        bool timed_wait(unique_lock<mutex>& m,lslboost::xtime const& abs_time)
         {
-            return do_wait(m,system_time(wait_until));
+            return do_wait(m,system_time(abs_time));
         }
         template<typename duration_type>
         bool timed_wait(unique_lock<mutex>& m,duration_type const& wait_duration)
@@ -330,21 +341,21 @@ namespace lslboost
         }
 
         template<typename predicate_type>
-        bool timed_wait(unique_lock<mutex>& m,lslboost::system_time const& wait_until,predicate_type pred)
+        bool timed_wait(unique_lock<mutex>& m,lslboost::system_time const& abs_time,predicate_type pred)
         {
-            return do_wait(m,wait_until,pred);
+            return do_wait(m,abs_time,pred);
         }
         template<typename predicate_type>
-        bool timed_wait(unique_lock<mutex>& m,lslboost::xtime const& wait_until,predicate_type pred)
+        bool timed_wait(unique_lock<mutex>& m,lslboost::xtime const& abs_time,predicate_type pred)
         {
-            return do_wait(m,system_time(wait_until),pred);
+            return do_wait(m,system_time(abs_time),pred);
         }
         template<typename duration_type,typename predicate_type>
         bool timed_wait(unique_lock<mutex>& m,duration_type const& wait_duration,predicate_type pred)
         {
             return do_wait(m,wait_duration.total_milliseconds(),pred);
         }
-
+#endif
 #ifdef BOOST_THREAD_USES_CHRONO
 
         template <class Clock, class Duration>
@@ -354,7 +365,11 @@ namespace lslboost
                 const chrono::time_point<Clock, Duration>& t)
         {
           using namespace chrono;
-          do_wait(lock, ceil<milliseconds>(t-Clock::now()).count());
+          chrono::time_point<Clock, Duration> now = Clock::now();
+          if (t<=now) {
+            return cv_status::timeout;
+          }
+          do_wait(lock, ceil<milliseconds>(t-now).count());
           return Clock::now() < t ? cv_status::no_timeout :
                                              cv_status::timeout;
         }
@@ -366,6 +381,10 @@ namespace lslboost
                 const chrono::duration<Rep, Period>& d)
         {
           using namespace chrono;
+          if (d<=chrono::duration<Rep, Period>::zero()) {
+            return cv_status::timeout;
+          }
+
           steady_clock::time_point c_now = steady_clock::now();
           do_wait(lock, ceil<milliseconds>(d).count());
           return steady_clock::now() - c_now < d ? cv_status::no_timeout :
@@ -393,7 +412,7 @@ namespace lslboost
                 const chrono::duration<Rep, Period>& d,
                 Predicate pred)
         {
-            return wait_until(lock, chrono::steady_clock::now() + d, pred);
+            return wait_until(lock, chrono::steady_clock::now() + d, lslboost::move(pred));
         }
 #endif
     };
@@ -421,16 +440,17 @@ namespace lslboost
             while(!pred()) wait(m);
         }
 
+#if defined BOOST_THREAD_USES_DATETIME
         template<typename lock_type>
-        bool timed_wait(lock_type& m,lslboost::system_time const& wait_until)
+        bool timed_wait(lock_type& m,lslboost::system_time const& abs_time)
         {
-            return do_wait(m,wait_until);
+            return do_wait(m,abs_time);
         }
 
         template<typename lock_type>
-        bool timed_wait(lock_type& m,lslboost::xtime const& wait_until)
+        bool timed_wait(lock_type& m,lslboost::xtime const& abs_time)
         {
-            return do_wait(m,system_time(wait_until));
+            return do_wait(m,system_time(abs_time));
         }
 
         template<typename lock_type,typename duration_type>
@@ -440,15 +460,15 @@ namespace lslboost
         }
 
         template<typename lock_type,typename predicate_type>
-        bool timed_wait(lock_type& m,lslboost::system_time const& wait_until,predicate_type pred)
+        bool timed_wait(lock_type& m,lslboost::system_time const& abs_time,predicate_type pred)
         {
-            return do_wait(m,wait_until,pred);
+            return do_wait(m,abs_time,pred);
         }
 
         template<typename lock_type,typename predicate_type>
-        bool timed_wait(lock_type& m,lslboost::xtime const& wait_until,predicate_type pred)
+        bool timed_wait(lock_type& m,lslboost::xtime const& abs_time,predicate_type pred)
         {
-            return do_wait(m,system_time(wait_until),pred);
+            return do_wait(m,system_time(abs_time),pred);
         }
 
         template<typename lock_type,typename duration_type,typename predicate_type>
@@ -456,6 +476,7 @@ namespace lslboost
         {
             return do_wait(m,wait_duration.total_milliseconds(),pred);
         }
+#endif
 #ifdef BOOST_THREAD_USES_CHRONO
 
         template <class lock_type, class Clock, class Duration>
@@ -465,7 +486,11 @@ namespace lslboost
                 const chrono::time_point<Clock, Duration>& t)
         {
           using namespace chrono;
-          do_wait(lock, ceil<milliseconds>(t-Clock::now()).count());
+          chrono::time_point<Clock, Duration> now = Clock::now();
+          if (t<=now) {
+            return cv_status::timeout;
+          }
+          do_wait(lock, ceil<milliseconds>(t-now).count());
           return Clock::now() < t ? cv_status::no_timeout :
                                              cv_status::timeout;
         }
@@ -477,6 +502,9 @@ namespace lslboost
                 const chrono::duration<Rep, Period>& d)
         {
           using namespace chrono;
+          if (d<=chrono::duration<Rep, Period>::zero()) {
+            return cv_status::timeout;
+          }
           steady_clock::time_point c_now = steady_clock::now();
           do_wait(lock, ceil<milliseconds>(d).count());
           return steady_clock::now() - c_now < d ? cv_status::no_timeout :
@@ -505,11 +533,12 @@ namespace lslboost
                 const chrono::duration<Rep, Period>& d,
                 Predicate pred)
         {
-            return wait_until(lock, chrono::steady_clock::now() + d, pred);
+            return wait_until(lock, chrono::steady_clock::now() + d, lslboost::move(pred));
         }
 #endif
     };
 
+        BOOST_THREAD_DECL void notify_all_at_thread_exit(condition_variable& cond, unique_lock<mutex> lk);
 }
 
 #include <lslboost/config/abi_suffix.hpp>

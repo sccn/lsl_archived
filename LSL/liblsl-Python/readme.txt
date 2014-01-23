@@ -1,3 +1,9 @@
-To use the pylsl module in a Python program, take the files pylsl.py alongside with the folders binaries-python* and put them in a package or path that is accessible to your program. If you like to distribute your program, we recommend that you bundle pylsl together with it.
+This is the Python interface to the lab streaming layer. 
+To use pylsl you need to make sure that the liblsl binary 
+for your platform is found (e.g., in your application's working 
+directory, or in a system path). 
 
-If you like to rebuild pylsl for a particular Python version, you need to install that Python version and set up the environment variables PYTHON_INCLUDE to the value C:\your\path\to\python\include and PYTHON_LIB to the value C:\your\path\to\python\libs\python32.lib (or whatever lib version you have). You also need to install SWIG (http://www.swig.org/download.html) and add it to the path. Then open the .sln file with Visual Studio (you probably need 2008), switch to Release mode and rebuild it. This generates the files _liblsl.pyd and liblsl.py files in the same folder as the .sln file. Make a new folder named binaries-pythonX.Y and copy these two files there. IMPORTANT: Also put a copy of the file liblsl32.dll from LSL/liblsl/bin into this binaries folder! A few other files are also created during the build process which you can safely ignore or delete (just don't delete the liblsl.i file, which is needed to rebuild the module). Now pylsl.py should import correctly on your platform. For 64-bit Python you will need to put the liblsl64.dll in the binaries folder and upconvert the solution to x64.
+Pylsl should work with any recent version of liblsl (although you need 
+at least 1.10+ to use the particularly speedy chunk transfer functions), 
+on any operating system and with any recent Python version, including 
+2.5+ and 3.x. Let us know if you encounter any bugs.

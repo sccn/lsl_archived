@@ -2,7 +2,7 @@
 // read_until.hpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -17,16 +17,14 @@
 
 #include <lslboost/asio/detail/config.hpp>
 
-#if !defined(BOOST_NO_IOSTREAM)
+#if !defined(BOOST_ASIO_NO_IOSTREAM)
 
 #include <cstddef>
-#include <lslboost/type_traits/is_function.hpp>
-#include <lslboost/type_traits/remove_pointer.hpp>
-#include <lslboost/utility/enable_if.hpp>
-#include <lslboost/detail/workaround.hpp>
 #include <string>
+#include <lslboost/asio/async_result.hpp>
 #include <lslboost/asio/basic_streambuf.hpp>
 #include <lslboost/asio/detail/regex_fwd.hpp>
+#include <lslboost/asio/detail/type_traits.hpp>
 #include <lslboost/asio/error.hpp>
 
 #include <lslboost/asio/detail/push_options.hpp>
@@ -59,7 +57,8 @@ struct is_match_condition
 #else
   enum
   {
-    value = lslboost::is_function<typename lslboost::remove_pointer<T>::type>::value
+    value = lslboost::asio::is_function<
+        typename lslboost::asio::remove_pointer<T>::type>::value
       || detail::has_result_type<T>::value
   };
 #endif
@@ -247,6 +246,9 @@ std::size_t read_until(SyncReadStream& s,
     lslboost::asio::basic_streambuf<Allocator>& b, const std::string& delim,
     lslboost::system::error_code& ec);
 
+#if defined(BOOST_ASIO_HAS_BOOST_REGEX) \
+  || defined(GENERATING_DOCUMENTATION)
+
 /// Read data into a streambuf until some part of the data it contains matches
 /// a regular expression.
 /**
@@ -338,6 +340,9 @@ template <typename SyncReadStream, typename Allocator>
 std::size_t read_until(SyncReadStream& s,
     lslboost::asio::basic_streambuf<Allocator>& b, const lslboost::regex& expr,
     lslboost::system::error_code& ec);
+
+#endif // defined(BOOST_ASIO_HAS_BOOST_REGEX)
+       // || defined(GENERATING_DOCUMENTATION)
 
 /// Read data into a streambuf until a function object indicates a match.
 /**
@@ -441,7 +446,7 @@ std::size_t read_until(SyncReadStream& s,
 template <typename SyncReadStream, typename Allocator, typename MatchCondition>
 std::size_t read_until(SyncReadStream& s,
     lslboost::asio::basic_streambuf<Allocator>& b, MatchCondition match_condition,
-    typename lslboost::enable_if<is_match_condition<MatchCondition> >::type* = 0);
+    typename enable_if<is_match_condition<MatchCondition>::value>::type* = 0);
 
 /// Read data into a streambuf until a function object indicates a match.
 /**
@@ -497,7 +502,7 @@ template <typename SyncReadStream, typename Allocator, typename MatchCondition>
 std::size_t read_until(SyncReadStream& s,
     lslboost::asio::basic_streambuf<Allocator>& b,
     MatchCondition match_condition, lslboost::system::error_code& ec,
-    typename lslboost::enable_if<is_match_condition<MatchCondition> >::type* = 0);
+    typename enable_if<is_match_condition<MatchCondition>::value>::type* = 0);
 
 /*@}*/
 /**
@@ -588,7 +593,9 @@ std::size_t read_until(SyncReadStream& s,
  * @c async_read_until operation.
  */
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
-void async_read_until(AsyncReadStream& s,
+BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (lslboost::system::error_code, std::size_t))
+async_read_until(AsyncReadStream& s,
     lslboost::asio::basic_streambuf<Allocator>& b,
     char delim, BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
 
@@ -671,9 +678,14 @@ void async_read_until(AsyncReadStream& s,
  * @c async_read_until operation.
  */
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
-void async_read_until(AsyncReadStream& s,
+BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (lslboost::system::error_code, std::size_t))
+async_read_until(AsyncReadStream& s,
     lslboost::asio::basic_streambuf<Allocator>& b, const std::string& delim,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
+
+#if defined(BOOST_ASIO_HAS_BOOST_REGEX) \
+  || defined(GENERATING_DOCUMENTATION)
 
 /// Start an asynchronous operation to read data into a streambuf until some
 /// part of its data matches a regular expression.
@@ -758,9 +770,14 @@ void async_read_until(AsyncReadStream& s,
  * @c async_read_until operation.
  */
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
-void async_read_until(AsyncReadStream& s,
+BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (lslboost::system::error_code, std::size_t))
+async_read_until(AsyncReadStream& s,
     lslboost::asio::basic_streambuf<Allocator>& b, const lslboost::regex& expr,
     BOOST_ASIO_MOVE_ARG(ReadHandler) handler);
+
+#endif // defined(BOOST_ASIO_HAS_BOOST_REGEX)
+       // || defined(GENERATING_DOCUMENTATION)
 
 /// Start an asynchronous operation to read data into a streambuf until a
 /// function object indicates a match.
@@ -887,10 +904,12 @@ void async_read_until(AsyncReadStream& s,
  */
 template <typename AsyncReadStream, typename Allocator,
     typename MatchCondition, typename ReadHandler>
-void async_read_until(AsyncReadStream& s,
+BOOST_ASIO_INITFN_RESULT_TYPE(ReadHandler,
+    void (lslboost::system::error_code, std::size_t))
+async_read_until(AsyncReadStream& s,
     lslboost::asio::basic_streambuf<Allocator>& b,
     MatchCondition match_condition, BOOST_ASIO_MOVE_ARG(ReadHandler) handler,
-    typename lslboost::enable_if<is_match_condition<MatchCondition> >::type* = 0);
+    typename enable_if<is_match_condition<MatchCondition>::value>::type* = 0);
 
 /*@}*/
 
@@ -901,6 +920,6 @@ void async_read_until(AsyncReadStream& s,
 
 #include <lslboost/asio/impl/read_until.hpp>
 
-#endif // !defined(BOOST_NO_IOSTREAM)
+#endif // !defined(BOOST_ASIO_NO_IOSTREAM)
 
 #endif // BOOST_ASIO_READ_UNTIL_HPP

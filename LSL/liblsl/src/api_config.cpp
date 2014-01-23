@@ -1,4 +1,5 @@
 #include "api_config.h"
+#include "common.h"
 #include <iostream>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
@@ -13,7 +14,7 @@ using namespace boost::filesystem;
 using namespace boost::algorithm;
 
 /// Helper function: Substitute the "~" character by the full home directory (according to environment variables).
-path expand_tilde(const std::string &filename) {
+path static expand_tilde(const std::string &filename) {
 	if (!filename.empty() && filename[0] == '~') {
 		if (getenv("HOME"))
 			return path(getenv("HOME")) / path(filename.substr(1));
@@ -27,7 +28,7 @@ path expand_tilde(const std::string &filename) {
 }
 
 /// Helper function: Parse a set specifier (a string of the form {a, b, c, ...}) into a vector of strings.
-std::vector<std::string> parse_set(const std::string &setstr) {
+static std::vector<std::string> parse_set(const std::string &setstr) {
 	std::vector<std::string> result;
 	if ((setstr.size() > 2) && setstr[0] == '{' && setstr[setstr.size()-1] == '}') {
 		// non-empty set: split by ","
@@ -80,6 +81,7 @@ void api_config::load_from_file(const std::string &filename) {
 		multicast_port_ = pt.get("ports.MulticastPort",16571);
 		base_port_ = pt.get("ports.BasePort",16572);
 		port_range_ = pt.get("ports.PortRange",32);
+		allow_random_ports_ = pt.get("ports.AllowRandomPorts",true);
 #ifdef __APPLE__
 		ipv6_ = pt.get("ports.IPv6","disable"); // on Mac OS (10.7) there's a bug in the IPv6 implementation that breaks LSL when it tries to use both v4 and v6
 #else
@@ -151,6 +153,7 @@ void api_config::load_from_file(const std::string &filename) {
 		session_id_ = pt.get("lab.SessionID","default");
 
 		// read the [tuning] settings
+		use_protocol_version_ = std::min(LSL_PROTOCOL_VERSION,pt.get("tuning.UseProtocolVersion",LSL_PROTOCOL_VERSION));
 		watchdog_check_interval_ = pt.get("tuning.WatchdogCheckInterval",15.0);
 		watchdog_time_threshold_ = pt.get("tuning.WatchdogTimeThreshold",15.0);
 		multicast_min_rtt_ = pt.get("tuning.MulticastMinRTT",0.5);
@@ -164,6 +167,10 @@ void api_config::load_from_file(const std::string &filename) {
 		time_probe_count_ = pt.get("tuning.TimeProbeCount",8);
 		time_probe_interval_ = pt.get("tuning.TimeProbeInterval",0.064);
 		time_probe_max_rtt_ = pt.get("tuning.TimeProbeMaxRTT",0.128);
+		outlet_buffer_reserve_ms_ = pt.get("tuning.OutletBufferReserveMs",5000);
+		outlet_buffer_reserve_samples_ = pt.get("tuning.OutletBufferReserveSamples",128);
+		inlet_buffer_reserve_ms_ = pt.get("tuning.InletBufferReserveMs",5000);
+		inlet_buffer_reserve_samples_ = pt.get("tuning.InletBufferReserveSamples",128);
 
 	} catch(std::exception &e) {
 		std::cerr << "Error parsing config file " << filename << " (" << e.what() << "). Rolling back to defaults." << std::endl;

@@ -16,6 +16,8 @@
 #include <lslboost/fusion/sequence/intrinsic/begin.hpp>
 #include <lslboost/fusion/sequence/intrinsic/end.hpp>
 #include <lslboost/fusion/adapted/mpl/mpl_iterator.hpp>
+#include <lslboost/fusion/support/is_sequence.hpp>
+#include <lslboost/utility/enable_if.hpp>
 
 namespace lslboost { namespace fusion
 {
@@ -38,8 +40,12 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence, typename Position, typename T>
-    inline typename result_of::insert<
-        Sequence const, Position, T>::type
+    inline 
+    typename
+        lazy_enable_if<
+            traits::is_sequence<Sequence>
+          , result_of::insert<Sequence const, Position, T>
+        >::type
     insert(Sequence const& seq, Position const& pos, T const& x)
     {
         typedef result_of::insert<

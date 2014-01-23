@@ -1,12 +1,14 @@
-You can use this file to generate wrappers for any major scripting language, including:
-* C#, D, Go, Lua, OCaml, Octave, Perl, PHP, R, Ruby and a few lesser-known ones
+You can use this file to generate liblsl wrappers for any major scripting language, including 
+PHP, Ruby, Perl, Python, Go, Lua, R, Octave, OCaml, D, and potentially some more.
 
 To accomplish this, you need to:
 1) download and install SWIG (http://www.swig.org/download.html), which is a simple command-line tool
 2) open a command line prompt and change into this directory
 3) Run the command:
-   swig -c++ -<yourlanguage> liblsl.i  (where <yourlanguage> is one of csharp, d, go, ocaml, octave, perl, php, r, ruby)
+   swig -c++ -<yourlanguage> liblsl_cpp.i  (where <yourlanguage> is one of csharp, d, go, lua, ocaml, octave, perl, php, r, ruby)
    ... this generates a few wrapper files in your language (e.g., .cs for C#), and a file named liblsl_wrap.cxx
+   The wrappers will exactly mirror the object-oriented C++ interface of liblsl_cpp.h; alternatively you can wrap the 
+   procedural C interface, by running the swig command with liblsl_c.i instead.
    * at your convenience you can have the wrapper library generated in the context of a "package" (or namespace) or
      whatever it is called in your language. This is done by passing -package <packagename> to the swig command;
 	 note that for a first test it is probably best to skip this feature.
@@ -31,7 +33,11 @@ To accomplish this, you need to:
 	 the dependent library is the business of your operating system's usual way of finding shared libraries (e.g.,
 	 in the same path as you wrapper library and/or the working directory of the app, or in a standard system path,
 	 or in a path that you have manually "baked into" one of the libraries using custom build options (particularly rpath).
-5) Now you can use the library in much the same way as the python code samples do it
-   (see LSL/liblsl-Python/examples -- these use a wrapper that was generated using the process explained here)
+5) Now you can use the library in much the same way as the included python code samples under examples do it
+   (examples -- these use a wrapper that was generated using the process explained here)
+6) Note that the wrapper file that you compiled and the underlying liblsl32/64 library, as well as your scripting language
+   runtime need to be binary-compatible. For example, you cannot mix 32-bit and 64-bit libraries in one application
+   (resulting in file-not-found errors), and for some scripting languages you cannot mix binaries compiled with incompatible 
+   C++ compiler versions (e.g., MSVC2008 vs. MSVC2010 or MSVC2012) (resulting in crashes upon object creation).
    
 Happy scripting!

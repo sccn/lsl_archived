@@ -2,7 +2,7 @@
 // detail/impl/win_iocp_io_service.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -19,11 +19,11 @@
 
 #if defined(BOOST_ASIO_HAS_IOCP)
 
-#include <lslboost/limits.hpp>
 #include <lslboost/asio/error.hpp>
 #include <lslboost/asio/io_service.hpp>
 #include <lslboost/asio/detail/handler_alloc_helpers.hpp>
 #include <lslboost/asio/detail/handler_invoke_helpers.hpp>
+#include <lslboost/asio/detail/limits.hpp>
 #include <lslboost/asio/detail/throw_error.hpp>
 #include <lslboost/asio/detail/win_iocp_io_service.hpp>
 
@@ -68,13 +68,15 @@ win_iocp_io_service::win_iocp_io_service(
     iocp_(),
     outstanding_work_(0),
     stopped_(0),
+    stop_event_posted_(0),
     shutdown_(0),
     dispatch_required_(0)
 {
   BOOST_ASIO_HANDLER_TRACKING_INIT;
 
   iocp_.handle = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0,
-      static_cast<DWORD>((std::min<size_t>)(concurrency_hint, DWORD(~0))));
+      static_cast<DWORD>(concurrency_hint < DWORD(~0)
+        ? concurrency_hint : DWORD(~0)));
   if (!iocp_.handle)
   {
     DWORD last_error = ::GetLastError();
@@ -148,12 +150,13 @@ size_t win_iocp_io_service::run(lslboost::system::error_code& ec)
 {
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
-    InterlockedExchange(&stopped_, 1);
+    stop();
     ec = lslboost::system::error_code();
     return 0;
   }
 
-  call_stack<win_iocp_io_service>::context ctx(this);
+  win_iocp_thread_info this_thread;
+  thread_call_stack::context ctx(this, this_thread);
 
   size_t n = 0;
   while (do_one(true, ec))
@@ -166,12 +169,13 @@ size_t win_iocp_io_service::run_one(lslboost::system::error_code& ec)
 {
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
-    InterlockedExchange(&stopped_, 1);
+    stop();
     ec = lslboost::system::error_code();
     return 0;
   }
 
-  call_stack<win_iocp_io_service>::context ctx(this);
+  win_iocp_thread_info this_thread;
+  thread_call_stack::context ctx(this, this_thread);
 
   return do_one(true, ec);
 }
@@ -180,12 +184,13 @@ size_t win_iocp_io_service::poll(lslboost::system::error_code& ec)
 {
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
-    InterlockedExchange(&stopped_, 1);
+    stop();
     ec = lslboost::system::error_code();
     return 0;
   }
 
-  call_stack<win_iocp_io_service>::context ctx(this);
+  win_iocp_thread_info this_thread;
+  thread_call_stack::context ctx(this, this_thread);
 
   size_t n = 0;
   while (do_one(false, ec))
@@ -198,12 +203,13 @@ size_t win_iocp_io_service::poll_one(lslboost::system::error_code& ec)
 {
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
-    InterlockedExchange(&stopped_, 1);
+    stop();
     ec = lslboost::system::error_code();
     return 0;
   }
 
-  call_stack<win_iocp_io_service>::context ctx(this);
+  win_iocp_thread_info this_thread;
+  thread_call_stack::context ctx(this, this_thread);
 
   return do_one(false, ec);
 }
@@ -212,12 +218,15 @@ void win_iocp_io_service::stop()
 {
   if (::InterlockedExchange(&stopped_, 1) == 0)
   {
-    if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
+    if (::InterlockedExchange(&stop_event_posted_, 1) == 0)
     {
-      DWORD last_error = ::GetLastError();
-      lslboost::system::error_code ec(last_error,
-          lslboost::asio::error::get_system_category());
-      lslboost::asio::detail::throw_error(ec, "pqcs");
+      if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
+      {
+        DWORD last_error = ::GetLastError();
+        lslboost::system::error_code ec(last_error,
+            lslboost::asio::error::get_system_category());
+        lslboost::asio::detail::throw_error(ec, "pqcs");
+      }
     }
   }
 }
@@ -228,8 +237,7 @@ void win_iocp_io_service::post_deferred_completion(win_iocp_operation* op)
   op->ready_ = 1;
 
   // Enqueue the operation on the I/O completion port.
-  if (!::PostQueuedCompletionStatus(iocp_.handle,
-        0, overlapped_contains_result, op))
+  if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op))
   {
     // Out of resources. Put on completed queue instead.
     mutex::scoped_lock lock(dispatch_mutex_);
@@ -249,8 +257,7 @@ void win_iocp_io_service::post_deferred_completions(
     op->ready_ = 1;
 
     // Enqueue the operation on the I/O completion port.
-    if (!::PostQueuedCompletionStatus(iocp_.handle,
-          0, overlapped_contains_result, op))
+    if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op))
     {
       // Out of resources. Put on completed queue instead.
       mutex::scoped_lock lock(dispatch_mutex_);
@@ -421,17 +428,23 @@ size_t win_iocp_io_service::do_one(bool block, lslboost::system::error_code& ec)
     }
     else
     {
+      // Indicate that there is no longer an in-flight stop event.
+      ::InterlockedExchange(&stop_event_posted_, 0);
+
       // The stopped_ flag is always checked to ensure that any leftover
-      // interrupts from a previous run invocation are ignored.
+      // stop events from a previous run invocation are ignored.
       if (::InterlockedExchangeAdd(&stopped_, 0) != 0)
       {
         // Wake up next thread that is blocked on GetQueuedCompletionStatus.
-        if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
+        if (::InterlockedExchange(&stop_event_posted_, 1) == 0)
         {
-          last_error = ::GetLastError();
-          ec = lslboost::system::error_code(last_error,
-              lslboost::asio::error::get_system_category());
-          return 0;
+          if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, 0))
+          {
+            last_error = ::GetLastError();
+            ec = lslboost::system::error_code(last_error,
+                lslboost::asio::error::get_system_category());
+            return 0;
+          }
         }
 
         ec = lslboost::system::error_code();

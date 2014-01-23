@@ -1,20 +1,23 @@
 // Copyright (C) 2001-2003
 // William E. Kempf
 // Copyright (C) 2007-8 Anthony Williams
-// (C) Copyright 2011 Vicente J. Botet Escriba
+// (C) Copyright 2011-2012 Vicente J. Botet Escriba
 //
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
 
 #include <lslboost/thread/detail/config.hpp>
 
-#include <lslboost/thread/thread.hpp>
+#include <lslboost/thread/thread_only.hpp>
+#if defined BOOST_THREAD_USES_DATETIME
 #include <lslboost/thread/xtime.hpp>
-#include <lslboost/thread/condition.hpp>
+#endif
+#include <lslboost/thread/condition_variable.hpp>
 #include <lslboost/thread/locks.hpp>
 #include <lslboost/thread/once.hpp>
 #include <lslboost/thread/tss.hpp>
-#include <lslboost/throw_exception.hpp>
+#include <lslboost/thread/future.hpp>
+
 #ifdef __GLIBC__
 #include <sys/sysinfo.h>
 #elif defined(__APPLE__) || defined(__FreeBSD__)
@@ -24,14 +27,26 @@
 #include <unistd.h>
 #endif
 
-#include "timeconv.inl"
+#include "./timeconv.inl"
 
 namespace lslboost
 {
     namespace detail
     {
         thread_data_base::~thread_data_base()
-        {}
+        {
+            for (notify_list_t::iterator i = notify.begin(), e = notify.end();
+                    i != e; ++i)
+            {
+                i->second->unlock();
+                i->first->notify_all();
+            }
+            for (async_states_t::iterator i = async_states_.begin(), e = async_states_.end();
+                    i != e; ++i)
+            {
+                (*i)->make_ready();
+            }
+        }
 
         struct thread_exit_callback_node
         {
@@ -62,6 +77,7 @@ namespace lslboost
                     {
                         while(!thread_info->tss_data.empty() || thread_info->thread_exit_callbacks)
                         {
+
                             while(thread_info->thread_exit_callbacks)
                             {
                                 detail::thread_exit_callback_node* const current_node=thread_info->thread_exit_callbacks;
@@ -87,7 +103,10 @@ namespace lslboost
                                 thread_info->tss_data.erase(current);
                             }
                         }
-                        thread_info->self.reset();
+                        if (thread_info) // fixme: should we test this?
+                        {
+                          thread_info->self.reset();
+                        }
                     }
                 }
             }
@@ -138,38 +157,57 @@ namespace lslboost
                 lslboost::detail::thread_data_ptr thread_info = static_cast<lslboost::detail::thread_data_base*>(param)->self;
                 thread_info->self.reset();
                 detail::set_current_thread_data(thread_info.get());
-                try
+#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
+                BOOST_TRY
                 {
+#endif
                     thread_info->run();
+#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
+
                 }
-                catch(thread_interrupted const&)
+                BOOST_CATCH (thread_interrupted const&)
                 {
                 }
 // Removed as it stops the debugger identifying the cause of the exception
 // Unhandled exceptions still cause the application to terminate
-//                 catch(...)
+//                 BOOST_CATCH(...)
 //                 {
+//                   throw;
+//
 //                     std::terminate();
 //                 }
-
+                BOOST_CATCH_END
+#endif
                 detail::tls_destructor(thread_info.get());
                 detail::set_current_thread_data(0);
                 lslboost::lock_guard<lslboost::mutex> lock(thread_info->data_mutex);
                 thread_info->done=true;
                 thread_info->done_condition.notify_all();
+
                 return 0;
             }
         }
-
+    }
+    namespace detail
+    {
         struct externally_launched_thread:
             detail::thread_data_base
         {
             externally_launched_thread()
             {
+#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
                 interrupt_enabled=false;
+#endif
             }
-
+            ~externally_launched_thread() {
+              BOOST_ASSERT(notify.empty());
+              notify.clear();
+              BOOST_ASSERT(async_states_.empty());
+              async_states_.clear();
+            }
             void run()
+            {}
+            void notify_all_at_thread_exit(condition_variable*, mutex*)
             {}
 
         private:
@@ -177,18 +215,18 @@ namespace lslboost
             void operator=(externally_launched_thread&);
         };
 
-        detail::thread_data_base* make_external_thread_data()
+        thread_data_base* make_external_thread_data()
         {
-            detail::thread_data_base* const me(new externally_launched_thread());
+            thread_data_base* const me(new externally_launched_thread());
             me->self.reset(me);
             set_current_thread_data(me);
             return me;
         }
 
 
-        detail::thread_data_base* get_or_make_current_thread_data()
+        thread_data_base* get_or_make_current_thread_data()
         {
-            detail::thread_data_base* current_thread_data(detail::get_current_thread_data());
+            thread_data_base* current_thread_data(get_current_thread_data());
             if(!current_thread_data)
             {
                 current_thread_data=make_external_thread_data();
@@ -202,18 +240,20 @@ namespace lslboost
     thread::thread() BOOST_NOEXCEPT
     {}
 
-    void thread::start_thread()
+    bool thread::start_thread_noexcept()
     {
         thread_info->self=thread_info;
         int const res = pthread_create(&thread_info->thread_handle, 0, &thread_proxy, thread_info.get());
         if (res != 0)
         {
             thread_info->self.reset();
-            lslboost::throw_exception(thread_resource_error(res, "lslboost thread: failed in pthread_create"));
+            return false;
+//            lslboost::throw_exception(thread_resource_error(res, "lslboost thread: failed in pthread_create"));
         }
+        return true;
     }
 
-    void thread::start_thread(const attributes& attr)
+    bool thread::start_thread_noexcept(const attributes& attr)
     {
         thread_info->self=thread_info;
         const attributes::native_handle_type* h = attr.native_handle();
@@ -221,14 +261,16 @@ namespace lslboost
         if (res != 0)
         {
             thread_info->self.reset();
-            throw thread_resource_error();
+            return false;
+//            lslboost::throw_exception(thread_resource_error(res, "lslboost thread: failed in pthread_create"));
         }
         int detached_state;
         res = pthread_attr_getdetachstate(h, &detached_state);
         if (res != 0)
         {
             thread_info->self.reset();
-            throw thread_resource_error();
+            return false;
+//            lslboost::throw_exception(thread_resource_error(res, "lslboost thread: failed in pthread_attr_getdetachstate"));
         }
         if (PTHREAD_CREATE_DETACHED==detached_state)
         {
@@ -246,6 +288,7 @@ namespace lslboost
               }
           }
         }
+        return true;
     }
 
 
@@ -255,12 +298,8 @@ namespace lslboost
         return thread_info;
     }
 
-    void thread::join()
+    bool thread::join_noexcept()
     {
-        if (this_thread::get_id() == get_id())
-        {
-            lslboost::throw_exception(thread_resource_error(system::errc::resource_deadlock_would_occur, "lslboost thread: trying joining itself"));
-        }
         detail::thread_data_ptr const local_thread_info=(get_thread_info)();
         if(local_thread_info)
         {
@@ -299,15 +338,16 @@ namespace lslboost
             {
                 thread_info.reset();
             }
+            return true;
+        }
+        else
+        {
+          return false;
         }
     }
 
-    bool thread::do_try_join_until(struct timespec const &timeout)
+    bool thread::do_try_join_until_noexcept(struct timespec const &timeout, bool& res)
     {
-        if (this_thread::get_id() == get_id())
-        {
-            lslboost::throw_exception(thread_resource_error(system::errc::resource_deadlock_would_occur, "lslboost thread: trying joining itself"));
-        }
         detail::thread_data_ptr const local_thread_info=(get_thread_info)();
         if(local_thread_info)
         {
@@ -317,9 +357,10 @@ namespace lslboost
                 unique_lock<mutex> lock(local_thread_info->data_mutex);
                 while(!local_thread_info->done)
                 {
-                    if(!local_thread_info->done_condition.do_timed_wait(lock,timeout))
+                    if(!local_thread_info->done_condition.do_wait_until(lock,timeout))
                     {
-                        return false;
+                      res=false;
+                      return true;
                     }
                 }
                 do_join=!local_thread_info->join_started;
@@ -349,17 +390,22 @@ namespace lslboost
             {
                 thread_info.reset();
             }
+            res=true;
+            return true;
         }
-        return true;
+        else
+        {
+          return false;
+        }
     }
 
     bool thread::joinable() const BOOST_NOEXCEPT
     {
-        return (get_thread_info)();
+        return (get_thread_info)()?true:false;
     }
 
 
-    void thread::detach() BOOST_NOEXCEPT
+    void thread::detach()
     {
         detail::thread_data_ptr local_thread_info;
         thread_info.swap(local_thread_info);
@@ -378,88 +424,104 @@ namespace lslboost
 
     namespace this_thread
     {
-
-#ifdef __DECXXX
-        /// Workaround of DECCXX issue of incorrect template substitution
-        template<>
-#endif
-        void sleep(const system_time& st)
+      namespace hiden
+      {
+        void BOOST_THREAD_DECL sleep_for(const timespec& ts)
         {
-            detail::thread_data_base* const thread_info=detail::get_current_thread_data();
+            lslboost::detail::thread_data_base* const thread_info=lslboost::detail::get_current_thread_data();
 
             if(thread_info)
             {
-                unique_lock<mutex> lk(thread_info->sleep_mutex);
-                while(thread_info->sleep_condition.timed_wait(lk,st)) {}
+              unique_lock<mutex> lk(thread_info->sleep_mutex);
+              while( thread_info->sleep_condition.do_wait_for(lk,ts)) {}
             }
             else
             {
-                xtime const xt=get_xtime(st);
 
-                for (int foo=0; foo < 5; ++foo)
-                {
-#   if defined(BOOST_HAS_PTHREAD_DELAY_NP)
-                    timespec ts;
-                    to_timespec_duration(xt, ts);
-                    BOOST_VERIFY(!pthread_delay_np(&ts));
-#   elif defined(BOOST_HAS_NANOSLEEP)
-                    timespec ts;
-                    to_timespec_duration(xt, ts);
+              if (lslboost::detail::timespec_ge(ts, lslboost::detail::timespec_zero()))
+              {
 
-                    //  nanosleep takes a timespec that is an offset, not
-                    //  an absolute time.
-                    nanosleep(&ts, 0);
-#   else
-                    mutex mx;
-                    mutex::scoped_lock lock(mx);
-                    condition cond;
-                    cond.timed_wait(lock, xt);
-#   endif
-                    xtime cur;
-                    xtime_get(&cur, TIME_UTC_);
-                    if (xtime_cmp(xt, cur) <= 0)
-                        return;
-                }
-            }
-        }
-
-#ifdef BOOST_THREAD_USES_CHRONO
-        void
-        sleep_for(const chrono::nanoseconds& ns)
-        {
-            using namespace chrono;
-            if (ns >= nanoseconds::zero())
-            {
-                timespec ts;
-                ts.tv_sec = static_cast<long>(duration_cast<seconds>(ns).count());
-                ts.tv_nsec = static_cast<long>((ns - seconds(ts.tv_sec)).count());
-
-#   if defined(BOOST_HAS_PTHREAD_DELAY_NP)
+  #   if defined(BOOST_HAS_PTHREAD_DELAY_NP)
+  #     if defined(__IBMCPP__)
+                BOOST_VERIFY(!pthread_delay_np(const_cast<timespec*>(&ts)));
+  #     else
                 BOOST_VERIFY(!pthread_delay_np(&ts));
-#   elif defined(BOOST_HAS_NANOSLEEP)
+  #     endif
+  #   elif defined(BOOST_HAS_NANOSLEEP)
                 //  nanosleep takes a timespec that is an offset, not
                 //  an absolute time.
                 nanosleep(&ts, 0);
-#   else
+  #   else
                 mutex mx;
-                mutex::scoped_lock lock(mx);
+                unique_lock<mutex> lock(mx);
                 condition_variable cond;
-                cond.wait_for(lock, ns);
-#   endif
+                cond.do_wait_for(lock, ts);
+  #   endif
+              }
             }
         }
-#endif
 
+        void BOOST_THREAD_DECL sleep_until(const timespec& ts)
+        {
+            lslboost::detail::thread_data_base* const thread_info=lslboost::detail::get_current_thread_data();
+
+            if(thread_info)
+            {
+              unique_lock<mutex> lk(thread_info->sleep_mutex);
+              while(thread_info->sleep_condition.do_wait_until(lk,ts)) {}
+            }
+            else
+            {
+              timespec now = lslboost::detail::timespec_now();
+              if (lslboost::detail::timespec_gt(ts, now))
+              {
+                for (int foo=0; foo < 5; ++foo)
+                {
+
+  #   if defined(BOOST_HAS_PTHREAD_DELAY_NP)
+                  timespec d = lslboost::detail::timespec_minus(ts, now);
+                  BOOST_VERIFY(!pthread_delay_np(&d));
+  #   elif defined(BOOST_HAS_NANOSLEEP)
+                  //  nanosleep takes a timespec that is an offset, not
+                  //  an absolute time.
+                  timespec d = lslboost::detail::timespec_minus(ts, now);
+                  nanosleep(&d, 0);
+  #   else
+                  mutex mx;
+                  unique_lock<mutex> lock(mx);
+                  condition_variable cond;
+                  cond.do_wait_until(lock, ts);
+  #   endif
+                  timespec now2 = lslboost::detail::timespec_now();
+                  if (lslboost::detail::timespec_ge(now2, ts))
+                  {
+                    return;
+                  }
+                }
+              }
+            }
+        }
+      } // hiden
+    } // this_thread
+    namespace this_thread
+    {
         void yield() BOOST_NOEXCEPT
         {
 #   if defined(BOOST_HAS_SCHED_YIELD)
             BOOST_VERIFY(!sched_yield());
 #   elif defined(BOOST_HAS_PTHREAD_YIELD)
             BOOST_VERIFY(!pthread_yield());
+//#   elif defined BOOST_THREAD_USES_DATETIME
+//            xtime xt;
+//            xtime_get(&xt, TIME_UTC_);
+//            sleep(xt);
+//            sleep_for(chrono::milliseconds(0));
 #   else
-            xtime xt;
-            xtime_get(&xt, TIME_UTC_);
-            sleep(xt);
+#error
+            timespec ts;
+            ts.tv_sec= 0;
+            ts.tv_nsec= 0;
+            hiden::sleep_for(ts);
 #   endif
         }
     }
@@ -481,24 +543,7 @@ namespace lslboost
 #endif
     }
 
-    thread::id thread::get_id() const BOOST_NOEXCEPT
-    {
-    #if defined BOOST_THREAD_PROVIDES_BASIC_THREAD_ID
-        //return local_thread_info->thread_handle;
-        return const_cast<thread*>(this)->native_handle();
-    #else
-        detail::thread_data_ptr const local_thread_info=(get_thread_info)();
-        if(local_thread_info)
-        {
-            return id(local_thread_info);
-        }
-        else
-        {
-                return id();
-        }
-    #endif
-    }
-
+#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
     void thread::interrupt()
     {
         detail::thread_data_ptr const local_thread_info=(get_thread_info)();
@@ -527,6 +572,7 @@ namespace lslboost
             return false;
         }
     }
+#endif
 
     thread::native_handle_type thread::native_handle()
     {
@@ -544,20 +590,12 @@ namespace lslboost
 
 
 
+#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
     namespace this_thread
     {
-        thread::id get_id() BOOST_NOEXCEPT
-        {
-        #if defined BOOST_THREAD_PROVIDES_BASIC_THREAD_ID
-             return pthread_self();
-        #else
-            lslboost::detail::thread_data_base* const thread_info=get_or_make_current_thread_data();
-            return thread::id(thread_info?thread_info->shared_from_this():detail::thread_data_ptr());
-        #endif
-        }
-
         void interruption_point()
         {
+#ifndef BOOST_NO_EXCEPTIONS
             lslboost::detail::thread_data_base* const thread_info=detail::get_current_thread_data();
             if(thread_info && thread_info->interrupt_enabled)
             {
@@ -568,6 +606,7 @@ namespace lslboost
                     throw thread_interrupted();
                 }
             }
+#endif
         }
 
         bool interruption_enabled() BOOST_NOEXCEPT
@@ -623,6 +662,7 @@ namespace lslboost
             }
         }
     }
+#endif
 
     namespace detail
     {
@@ -646,7 +686,7 @@ namespace lslboost
                     return &current_node->second;
                 }
             }
-            return NULL;
+            return 0;
         }
 
         void* get_tss_data(void const* key)
@@ -655,7 +695,7 @@ namespace lslboost
             {
                 return current_node->value;
             }
-            return NULL;
+            return 0;
         }
 
         void add_new_tss_node(void const* key,
@@ -668,8 +708,11 @@ namespace lslboost
 
         void erase_tss_node(void const* key)
         {
-            detail::thread_data_base* const current_thread_data(get_or_make_current_thread_data());
-            current_thread_data->tss_data.erase(key);
+            detail::thread_data_base* const current_thread_data(get_current_thread_data());
+            if(current_thread_data)
+            {
+                current_thread_data->tss_data.erase(key);
+            }
         }
 
         void set_tss_data(void const* key,
@@ -692,12 +735,33 @@ namespace lslboost
                     erase_tss_node(key);
                 }
             }
-            else
+            else if(func || (tss_data!=0))
             {
                 add_new_tss_node(key,func,tss_data);
             }
         }
     }
+
+    BOOST_THREAD_DECL void notify_all_at_thread_exit(condition_variable& cond, unique_lock<mutex> lk)
+    {
+      detail::thread_data_base* const current_thread_data(detail::get_current_thread_data());
+      if(current_thread_data)
+      {
+        current_thread_data->notify_all_at_thread_exit(&cond, lk.release());
+      }
+    }
+namespace detail {
+
+    void BOOST_THREAD_DECL make_ready_at_thread_exit(shared_ptr<shared_state_base> as)
+    {
+      detail::thread_data_base* const current_thread_data(detail::get_current_thread_data());
+      if(current_thread_data)
+      {
+        current_thread_data->make_ready_at_thread_exit(as);
+      }
+    }
+}
+
 
 
 }

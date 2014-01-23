@@ -1,0 +1,45 @@
+Boost Endian library
+
+To experiment with the Endian library, various other boost libraries must be
+available. So you need to install a current version of Boost if you have not
+already done so.
+
+Boost.Endian is a header-only library, so there is no need to run a build
+for it, but these instructions run a bootstrap so that b2 is available.
+
+These instructions assume you want to use a fresh copy of boost. If you are
+going to use an existing copy, skip the svn export and bootstrap steps.
+
+Windows
+=======
+
+    svn export --non-interactive --trust-server-cert ^
+      http://svn.boost.org/svn/boost/trunk boost-root
+    cd boost-root  
+    .\bootstrap
+    cd libs
+    git clone git://github.com/Beman/endian.git
+    cd ..\boost
+    mklink /d endian ..\libs\endian\include\boost\endian
+    cd ..\libs\endian\test
+    ..\..\..\b2
+  
+Others
+======
+
+    svn export --non-interactive --trust-server-cert \
+      http://svn.boost.org/svn/boost/trunk boost-root
+    cd boost-root  
+    ./bootstrap.sh
+    cd libs
+    git clone git://github.com/Beman/endian.git
+    cd ../boost
+    ln -s ../libs/endian/include/boost/endian endian
+    cd ../libs/endian/test
+    ../../../b2
+  
+---------------------------
+Copyright Beman Dawes, 2013
+
+Distributed under the Boost Software License, Version 1.0.
+http://www.boost.org/LICENSE_1_0.txt 

@@ -10,8 +10,10 @@
 #ifndef BOOST_RANGE_DETAIL_ANY_ITERATOR_WRAPPER_HPP_INCLUDED
 #define BOOST_RANGE_DETAIL_ANY_ITERATOR_WRAPPER_HPP_INCLUDED
 
+#include <lslboost/cast.hpp>
 #include <lslboost/range/config.hpp>
 #include <lslboost/range/detail/any_iterator_interface.hpp>
+#include <lslboost/range/concepts.hpp>
 
 namespace lslboost
 {

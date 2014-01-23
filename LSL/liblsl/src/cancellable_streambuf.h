@@ -47,7 +47,7 @@ namespace boost {
 			typedef typename Protocol::endpoint endpoint_type;
 
 			/// Construct a cancellable_streambuf without establishing a connection.
-			cancellable_streambuf(): basic_socket<Protocol, StreamSocketService>(boost::base_from_member<boost::asio::io_service>::member), cancelled_(false) {
+			cancellable_streambuf(): basic_socket<Protocol, StreamSocketService>(boost::base_from_member<boost::asio::io_service>::member), cancel_issued_(false), cancel_started_(false) {
 				init_buffers();
 			}
 
@@ -60,13 +60,14 @@ namespace boost {
 			}
 
 			/**
-			* Cancel the current stream operations.
-			* This has the same effect as the other side closing the connection.
-			* Safe to call from another thread.
+			* Cancel the current stream operations destructively.
+			* All blocking operations will fail after a cancel() has been issued, 
+			* and the stream buffer cannot be reused.
 			*/
 			void cancel() {
+				cancel_issued_ = true;
 				boost::lock_guard<boost::recursive_mutex> lock(cancel_mut_);
-				cancelled_ = true;
+				cancel_started_ = false;
 				this->get_service().get_io_service().post(boost::bind(&cancellable_streambuf::close_if_open,this));
 			}
 
@@ -79,18 +80,21 @@ namespace boost {
 			* pointer otherwise.
 			*/
 			cancellable_streambuf<Protocol, StreamSocketService>* connect(const endpoint_type& endpoint) {
-				init_buffers();
+				{
+					boost::lock_guard<boost::recursive_mutex> lock(cancel_mut_);
+					if (cancel_issued_)
+						throw std::runtime_error("Attempt to connect() a cancellable_streambuf after it has been cancelled.");
 
-				this->basic_socket<Protocol, StreamSocketService>::close(ec_);
+					init_buffers();
+					this->basic_socket<Protocol, StreamSocketService>::close(ec_);
 
-				io_handler handler = { this };
-				this->basic_socket<Protocol, StreamSocketService>::async_connect(endpoint, handler);
-
+					io_handler handler = { this };
+					this->basic_socket<Protocol, StreamSocketService>::async_connect(endpoint, handler);
+					this->get_service().get_io_service().reset();
+				}
 				ec_ = boost::asio::error::would_block;
-				this->get_service().get_io_service().reset();
 				do this->get_service().get_io_service().run_one();
-				while (ec_ == boost::asio::error::would_block);
-
+				while (!cancel_issued_ && ec_ == boost::asio::error::would_block);
 				return !ec_ ? this : 0;
 			}
 
@@ -117,18 +121,18 @@ namespace boost {
 		protected:
 			/// Close the socket if it's open.
 			void close_if_open() {
-				if (this->is_open())
+				if (!cancel_started_ && this->is_open()) {
+					cancel_started_ = true;
 					close();
+				}
 			}
 
 			/// This function makes sure that a cancellation, if issued, is not being eaten by the io_service reset()
 			void protected_reset() {
 				boost::lock_guard<boost::recursive_mutex> lock(cancel_mut_);
 				// if the cancel() comes between completion of a run_one() and this call, close will be issued right here at the next opportunity
-				if (cancelled_ && this->is_open()) {
-					cancelled_ = false;
-					close();
-				}
+				if (cancel_issued_)
+					close_if_open();
 				this->get_service().get_io_service().reset();
 				// if the cancel() comes between this call and a completion of run_one(), the posted close will be processed by the run_one
 			}
@@ -221,7 +225,8 @@ namespace boost {
 			boost::asio::detail::array<char, buffer_size> put_buffer_;
 			boost::system::error_code ec_;
 			std::size_t bytes_transferred_;
-			bool cancelled_;
+			bool cancel_issued_;
+			bool cancel_started_;
 			boost::recursive_mutex cancel_mut_;
 		};
 

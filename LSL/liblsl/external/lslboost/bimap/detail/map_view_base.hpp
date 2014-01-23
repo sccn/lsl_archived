@@ -31,12 +31,13 @@
 #include <lslboost/bimap/relation/support/data_extractor.hpp>
 #include <lslboost/bimap/relation/support/opposite_tag.hpp>
 #include <lslboost/bimap/relation/support/pair_type_by.hpp>
-#include <lslboost/bimap/support/iterator_type_by.hpp>
+//#include <lslboost/bimap/support/iterator_type_by.hpp>
 #include <lslboost/bimap/support/key_type_by.hpp>
 #include <lslboost/bimap/support/data_type_by.hpp>
 #include <lslboost/bimap/support/value_type_by.hpp>
 #include <lslboost/bimap/detail/modifier_adaptor.hpp>
 #include <lslboost/bimap/detail/debug/static_error.hpp>
+#include <lslboost/bimap/detail/map_view_iterator.hpp>
 
 namespace lslboost {
 namespace bimaps {
@@ -47,27 +48,20 @@ namespace detail {
 // The next macro can be converted in a metafunctor to gain code robustness.
 /*===========================================================================*/
 #define BOOST_BIMAP_MAP_VIEW_CONTAINER_ADAPTOR(                               \
-    CONTAINER_ADAPTOR, TAG,BIMAP, OTHER_ITER, CONST_OTHER_ITER                \
+    CONTAINER_ADAPTOR, TAG, BIMAP, OTHER_ITER, CONST_OTHER_ITER               \
 )                                                                             \
 ::lslboost::bimaps::container_adaptor::CONTAINER_ADAPTOR                         \
 <                                                                             \
     BOOST_DEDUCED_TYPENAME BIMAP::core_type::                                 \
         BOOST_NESTED_TEMPLATE index<TAG>::type,                               \
-    BOOST_DEDUCED_TYPENAME ::lslboost::bimaps::support::                         \
-        iterator_type_by<TAG,BIMAP>::type,                                    \
-    BOOST_DEDUCED_TYPENAME ::lslboost::bimaps::support::                         \
-        const_iterator_type_by<TAG,BIMAP>::type,                              \
-    BOOST_DEDUCED_TYPENAME ::lslboost::bimaps::support::                         \
-        OTHER_ITER<TAG,BIMAP>::type,                                          \
-    BOOST_DEDUCED_TYPENAME ::lslboost::bimaps::support::                         \
-        CONST_OTHER_ITER<TAG,BIMAP>::type,                                    \
+    ::lslboost::bimaps::detail::      map_view_iterator<TAG,BIMAP>,              \
+    ::lslboost::bimaps::detail::const_map_view_iterator<TAG,BIMAP>,              \
+    ::lslboost::bimaps::detail::      OTHER_ITER<TAG,BIMAP>,                     \
+    ::lslboost::bimaps::detail::CONST_OTHER_ITER<TAG,BIMAP>,                     \
     ::lslboost::bimaps::container_adaptor::support::iterator_facade_to_base      \
     <                                                                         \
-        BOOST_DEDUCED_TYPENAME ::lslboost::bimaps::support::                     \
-                  iterator_type_by<TAG,BIMAP>::type,                          \
-        BOOST_DEDUCED_TYPENAME ::lslboost::bimaps::support::                     \
-            const_iterator_type_by<TAG,BIMAP>::type                           \
-                                                                              \
+        ::lslboost::bimaps::detail::      map_view_iterator<TAG,BIMAP>,          \
+        ::lslboost::bimaps::detail::const_map_view_iterator<TAG,BIMAP>           \
     >,                                                                        \
     ::lslboost::mpl::na,                                                         \
     ::lslboost::mpl::na,                                                         \
@@ -102,13 +96,8 @@ class map_view_base
 {
     typedef ::lslboost::bimaps::container_adaptor::support::
         iterator_facade_to_base<
-
-            BOOST_DEDUCED_TYPENAME ::lslboost::bimaps::support::
-                iterator_type_by<Tag,BimapType>::type,
-
-            BOOST_DEDUCED_TYPENAME ::lslboost::bimaps::support::
-                const_iterator_type_by<Tag,BimapType>::type
-
+            ::lslboost::bimaps::detail::      map_view_iterator<Tag,BimapType>,
+            ::lslboost::bimaps::detail::const_map_view_iterator<Tag,BimapType>
         > iterator_to_base_;
 
     typedef ::lslboost::bimaps::relation::detail::
@@ -125,8 +114,8 @@ class map_view_base
            pair_type_by<Tag,
               BOOST_DEDUCED_TYPENAME BimapType::relation>::type value_type_;
 
-    typedef BOOST_DEDUCED_TYPENAME ::lslboost::bimaps::support::
-                    iterator_type_by<Tag,BimapType>::type         iterator_;
+    typedef 
+        ::lslboost::bimaps::detail::map_view_iterator<Tag,BimapType> iterator_;
 
     public:
 
@@ -144,7 +133,8 @@ class map_view_base
         return derived().base().replace(
             derived().template functor<iterator_to_base_>()(position),
             derived().template functor<value_to_base_>()(
-                value_type_(k,position->second)
+                ::lslboost::bimaps::relation::detail::
+                    copy_with_first_replaced(*position,k)
             )
         );
     }
@@ -155,7 +145,8 @@ class map_view_base
         return derived().base().replace(
             derived().template functor<iterator_to_base_>()(position),
             derived().template functor<value_to_base_>()(
-                value_type_(position->first,d)
+                ::lslboost::bimaps::relation::detail::
+                    copy_with_second_replaced(*position,d)
             )
         );
     }
@@ -263,8 +254,8 @@ class mutable_data_unique_map_view_access
     template< class CompatibleKey >
     data_type_ & at(const CompatibleKey& k)
     {
-        typedef BOOST_DEDUCED_TYPENAME ::lslboost::bimaps::support::
-                            iterator_type_by<Tag,BimapType>::type iterator;
+        typedef ::lslboost::bimaps::detail::
+            map_view_iterator<Tag,BimapType> iterator;
 
         iterator iter = derived().find(k);
         if( iter == derived().end() )
@@ -279,8 +270,8 @@ class mutable_data_unique_map_view_access
     template< class CompatibleKey >
     const data_type_ & at(const CompatibleKey& k) const
     {
-        typedef BOOST_DEDUCED_TYPENAME ::lslboost::bimaps::support::
-                const_iterator_type_by<Tag,BimapType>::type const_iterator;
+        typedef ::lslboost::bimaps::detail::
+                const_map_view_iterator<Tag,BimapType> const_iterator;
 
         const_iterator iter = derived().find(k);
         if( iter == derived().end() )
@@ -295,8 +286,8 @@ class mutable_data_unique_map_view_access
     template< class CompatibleKey >
     data_type_ & operator[](const CompatibleKey& k)
     {
-        typedef BOOST_DEDUCED_TYPENAME ::lslboost::bimaps::support::
-                      iterator_type_by<Tag,BimapType>::type       iterator;
+        typedef ::lslboost::bimaps::detail::
+                      map_view_iterator<Tag,BimapType>          iterator;
 
         typedef BOOST_DEDUCED_TYPENAME ::lslboost::bimaps::support::
                          value_type_by<Tag,BimapType>::type     value_type;
@@ -341,8 +332,8 @@ class non_mutable_data_unique_map_view_access
     template< class CompatibleKey >
     const data_type_ & at(const CompatibleKey& k) const
     {
-        typedef BOOST_DEDUCED_TYPENAME ::lslboost::bimaps::support::
-                const_iterator_type_by<Tag,BimapType>::type const_iterator;
+        typedef ::lslboost::bimaps::detail::
+                const_map_view_iterator<Tag,BimapType> const_iterator;
 
         const_iterator iter = derived().find(k);
         if( iter == derived().end() )
@@ -355,7 +346,7 @@ class non_mutable_data_unique_map_view_access
     }
 
     template< class CompatibleKey >
-    data_type_ & operator[](const CompatibleKey& k)
+    data_type_ & operator[](const CompatibleKey&)
     {
         BOOST_BIMAP_STATIC_ERROR( OPERATOR_BRACKET_IS_NOT_SUPPORTED, (Derived));
     }
@@ -493,7 +484,7 @@ void assign(BOOST_DEDUCED_TYPENAME BASE::size_type n,                         \
             const BOOST_DEDUCED_TYPENAME BASE::value_type& v)                 \
 {                                                                             \
     this->clear();                                                            \
-    for(BOOST_DEDUCED_TYPENAME BASE::size_type i = 0 ; i < n ; ++n)           \
+    for(BOOST_DEDUCED_TYPENAME BASE::size_type i = 0 ; i < n ; ++i)           \
     {                                                                         \
         this->push_back(v);                                                   \
     }                                                                         \

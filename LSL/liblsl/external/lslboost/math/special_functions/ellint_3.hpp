@@ -26,6 +26,7 @@
 #include <lslboost/math/constants/constants.hpp>
 #include <lslboost/math/policies/error_handling.hpp>
 #include <lslboost/math/tools/workaround.hpp>
+#include <lslboost/math/special_functions/round.hpp>
 
 // Elliptic integrals (complete and incomplete) of the third kind
 // Carlson, Numerische Mathematik, vol 33, 1 (1979)
@@ -182,14 +183,14 @@ T ellint_pi_imp(T v, T phi, T k, T vc, const Policy& pol)
     }
     else
     {
-       T rphi = lslboost::math::tools::fmod_workaround(T(fabs(phi)), T(constants::pi<T>() / 2));
-       T m = floor((2 * fabs(phi)) / constants::pi<T>());
+       T rphi = lslboost::math::tools::fmod_workaround(T(fabs(phi)), T(constants::half_pi<T>()));
+       T m = lslboost::math::round((fabs(phi) - rphi) / constants::half_pi<T>());
        int sign = 1;
        if(lslboost::math::tools::fmod_workaround(m, T(2)) > 0.5)
        {
           m += 1;
           sign = -1;
-          rphi = constants::pi<T>() / 2 - rphi;
+          rphi = constants::half_pi<T>() - rphi;
        }
        T sinp = sin(rphi);
        T cosp = cos(rphi);

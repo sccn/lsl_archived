@@ -1,7 +1,7 @@
 #ifndef UDP_SERVER_H
 #define UDP_SERVER_H
 
-#include "version.h"
+#include "common.h"
 #include "stream_info_impl.h"
 #include <boost/asio.hpp>
 #include <boost/enable_shared_from_this.hpp>
@@ -12,7 +12,7 @@ using boost::system::error_code;
 
 namespace lsl {
 
-	/// pointer to a string
+	/// shared pointer to a string
 	typedef boost::shared_ptr<std::string> string_p;
 	/// shared pointer to a UDP server object
 	typedef boost::shared_ptr<class udp_server> udp_server_p;

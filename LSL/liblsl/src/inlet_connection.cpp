@@ -19,12 +19,12 @@ using namespace boost::asio;
 * @param recover Try to silently recover lost streams that are recoverable (=those that that have a source_id set).
 *				 In all other cases (recover is false or the stream is not recoverable) a lost_error is thrown where indicated if the stream's source is lost (e.g., due to an app or computer crash).
 */
-inlet_connection::inlet_connection(const stream_info_impl &info, bool recover): type_info_(info), host_info_(info), recovery_enabled_(recover), tcp_protocol_(tcp::v4()), udp_protocol_(udp::v4()), lost_(false), shutdown_(false), last_receive_time_(local_clock()), active_transmissions_(0) {
+inlet_connection::inlet_connection(const stream_info_impl &info, bool recover): type_info_(info), host_info_(info), recovery_enabled_(recover), tcp_protocol_(tcp::v4()), udp_protocol_(udp::v4()), lost_(false), shutdown_(false), last_receive_time_(lsl_clock()), active_transmissions_(0) {
 	// if the given stream_info is already fully resolved...
 	if (!host_info_.v4address().empty() || !host_info_.v6address().empty()) {
 
 		// check LSL protocol version (we strictly forbid incompatible protocols instead of risking silent failure)
-		if (type_info_.version()/100 > protocol_version()/100)
+		if (type_info_.version()/100 > api_config::get_instance()->use_protocol_version()/100)
 			throw std::runtime_error((std::string("The received stream (")+=host_info_.name()) += ") uses a newer protocol version than this inlet. Please update.");
 
 		// select TCP/UDP protocol versions
@@ -94,7 +94,7 @@ void inlet_connection::disengage() {
 	shutdown_cond_.notify_all();
 	// cancel all operations (resolver, streams, ...)
 	resolver_.cancel();
-	cancel_all_registered();
+	cancel_and_shutdown();
 	// and wait for the watchdog to finish
 	if (recovery_enabled_)
 		watchdog_thread_.join();
@@ -117,6 +117,12 @@ udp::endpoint inlet_connection::get_udp_endpoint() {
 	std::string address = (udp_protocol_ == udp::v4()) ? host_info_.v4address() : host_info_.v6address();
 	int port = (udp_protocol_ == udp::v4()) ? host_info_.v4service_port() : host_info_.v6service_port();
 	return udp::endpoint(ip::address::from_string(address),(unsigned short)port);
+}
+
+// get the hostname from the info
+std::string inlet_connection::get_hostname() {
+	boost::shared_lock<boost::shared_mutex> lock(host_info_mut_);
+	return host_info_.hostname();
 }
 
 /// get the current stream UID (may change between crashes/reconnects)
@@ -204,7 +210,7 @@ void inlet_connection::watchdog_thread() {
 			// we only try to recover if a) there are active transmissions and b) we haven't seen new data for some time
 			{
 				boost::unique_lock<boost::mutex> lock(client_status_mut_);
-				if ((active_transmissions_ > 0) && (local_clock() - last_receive_time_ > api_config::get_instance()->watchdog_time_threshold())) {
+				if ((active_transmissions_ > 0) && (lsl_clock() - last_receive_time_ > api_config::get_instance()->watchdog_time_threshold())) {
 					lock.unlock();
 					try_recover();
 				}

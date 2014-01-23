@@ -11,6 +11,8 @@
 #include <lslboost/fusion/algorithm/iteration/detail/for_each.hpp>
 #include <lslboost/fusion/algorithm/iteration/detail/segmented_for_each.hpp>
 #include <lslboost/fusion/support/is_segmented.hpp>
+#include <lslboost/fusion/support/is_sequence.hpp>
+#include <lslboost/utility/enable_if.hpp>
 
 namespace lslboost { namespace fusion
 {
@@ -24,14 +26,24 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence, typename F>
-    inline void
+    inline
+    typename
+        enable_if<
+            traits::is_sequence<Sequence>
+          , void
+        >::type
     for_each(Sequence& seq, F const& f)
     {
         detail::for_each(seq, f, typename traits::is_segmented<Sequence>::type());
     }
 
     template <typename Sequence, typename F>
-    inline void
+    inline
+    typename
+        enable_if<
+            traits::is_sequence<Sequence>
+          , void
+        >::type
     for_each(Sequence const& seq, F const& f)
     {
         detail::for_each(seq, f, typename traits::is_segmented<Sequence>::type());

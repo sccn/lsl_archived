@@ -18,7 +18,6 @@
 #pragma warning(push) // Temporary until lexical cast fixed.
 #pragma warning(disable: 4127 4701)
 #endif
-#include <lslboost/lexical_cast.hpp>
 #ifdef BOOST_MSVC
 #pragma warning(pop)
 #endif

@@ -33,8 +33,8 @@ References:
     http://www.cs.utexas.edu/users/moore/best-ideas/string-searching/
     http://www.cs.utexas.edu/~moore/publications/fstrpos.pdf
     
-Explanations:   lslboostinspect:noascii (test tool complains)
-    http://en.wikipedia.org/wiki/Boyer–Moore_string_search_algorithm
+Explanations:
+    http://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_string_search_algorithm
     http://www.movsd.com/bm.htm
     http://www.cs.ucdavis.edu/~gusfield/cs224f09/bnotes.pdf
 
@@ -223,7 +223,7 @@ Requirements:
     corpusIter boyer_moore_search ( 
         corpusIter corpus_first, corpusIter corpus_last, const PatternRange &pattern )
     {
-        typedef typename lslboost::range_iterator<PatternRange> pattern_iterator;
+        typedef typename lslboost::range_iterator<const PatternRange>::type pattern_iterator;
         boyer_moore<pattern_iterator> bm ( lslboost::begin(pattern), lslboost::end (pattern));
         return bm ( corpus_first, corpus_last );
     }
@@ -242,7 +242,7 @@ Requirements:
     typename lslboost::range_iterator<CorpusRange>::type
     boyer_moore_search ( CorpusRange &corpus, const PatternRange &pattern )
     {
-        typedef typename lslboost::range_iterator<PatternRange> pattern_iterator;
+        typedef typename lslboost::range_iterator<const PatternRange>::type pattern_iterator;
         boyer_moore<pattern_iterator> bm ( lslboost::begin(pattern), lslboost::end (pattern));
         return bm (lslboost::begin (corpus), lslboost::end (corpus));
     }

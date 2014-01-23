@@ -2,7 +2,7 @@
 // asio.hpp
 // ~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -17,6 +17,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include <lslboost/asio/async_result.hpp>
 #include <lslboost/asio/basic_datagram_socket.hpp>
 #include <lslboost/asio/basic_deadline_timer.hpp>
 #include <lslboost/asio/basic_io_object.hpp>
@@ -40,12 +41,20 @@
 #include <lslboost/asio/buffers_iterator.hpp>
 #include <lslboost/asio/completion_condition.hpp>
 #include <lslboost/asio/connect.hpp>
+#include <lslboost/asio/coroutine.hpp>
 #include <lslboost/asio/datagram_socket_service.hpp>
 #include <lslboost/asio/deadline_timer_service.hpp>
 #include <lslboost/asio/deadline_timer.hpp>
 #include <lslboost/asio/error.hpp>
+#include <lslboost/asio/generic/basic_endpoint.hpp>
+#include <lslboost/asio/generic/datagram_protocol.hpp>
+#include <lslboost/asio/generic/raw_protocol.hpp>
+#include <lslboost/asio/generic/seq_packet_protocol.hpp>
+#include <lslboost/asio/generic/stream_protocol.hpp>
 #include <lslboost/asio/handler_alloc_hook.hpp>
+#include <lslboost/asio/handler_continuation_hook.hpp>
 #include <lslboost/asio/handler_invoke_hook.hpp>
+#include <lslboost/asio/handler_type.hpp>
 #include <lslboost/asio/io_service.hpp>
 #include <lslboost/asio/ip/address.hpp>
 #include <lslboost/asio/ip/address_v4.hpp>

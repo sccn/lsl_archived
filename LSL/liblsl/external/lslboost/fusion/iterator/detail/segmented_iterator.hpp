@@ -19,7 +19,7 @@
 
 namespace lslboost { namespace fusion
 {
-    struct nil;
+    struct nil_;
 
     namespace detail
     {

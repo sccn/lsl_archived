@@ -96,6 +96,7 @@
 #include <boost/archive/basic_binary_oprimitive.hpp>
 #include <boost/archive/basic_binary_oarchive.hpp>
 
+
 #if BOOST_VERSION >= 103500
 #include <boost/archive/shared_ptr_helper.hpp>
 #endif
@@ -167,6 +168,13 @@ namespace endian = boost::spirit::detail;
 
 namespace eos {
 
+	// IMPORTANT: We are fixing the boost serialization archive version
+	//		      at 9; if you upgrade your boost distribution
+	//			  you may at some point pull in a breaking change which
+	//            will break LSL protocol version 1.00 compatibility.
+	//            This does not affect LSL protocols 1.10 or later.
+	const archive_version_type FIXED_VERSION = archive_version_type(9);
+
 	// forward declaration
 	class portable_oarchive;
 
@@ -230,7 +238,7 @@ namespace eos {
 
 				// write current version
 //				save<unsigned>(archive_version);
-				operator<<(archive_version);
+				operator<<(FIXED_VERSION);	
 			}
 		}
 

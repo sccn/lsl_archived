@@ -1,5 +1,5 @@
 #include "../include/lsl_c.h"
-#include "version.h"
+#include "common.h"
 #include "resolver_impl.h"
 #include <boost/chrono/system_clocks.hpp>
 
@@ -14,7 +14,7 @@ using std::vector;
 /**
 * Get the protocol version.
 */
-LIBLSL_C_API int lsl_protocol_version() { return LSL_PROTOCOL_VERSION; }
+LIBLSL_C_API int lsl_protocol_version() { return api_config::get_instance()->use_protocol_version(); }
 
 /**
 * Get the library version.
@@ -136,3 +136,13 @@ LIBLSL_C_API int lsl_resolve_bypred(lsl_streaminfo *buffer, unsigned buffer_elem
 	}
 }
 
+/** 
+* Deallocate a string that has been transferred to the application.
+* The only use case is to deallocate the contents of string-valued samples
+* received from LSL in an application where no free() method is available 
+* (e.g., in some scripting languages).
+*/
+LIBLSL_C_API void lsl_destroy_string(char *s) {
+	if (s)
+		free(s);
+}

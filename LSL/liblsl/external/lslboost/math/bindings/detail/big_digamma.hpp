@@ -9,6 +9,7 @@
 #include <lslboost/math/tools/rational.hpp>
 #include <lslboost/math/policies/error_handling.hpp>
 #include <lslboost/math/constants/constants.hpp>
+#include <lslboost/lexical_cast.hpp>
 
 namespace lslboost{ namespace math{ namespace detail{
 

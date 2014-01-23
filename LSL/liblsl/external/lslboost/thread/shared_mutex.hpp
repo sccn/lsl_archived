@@ -18,9 +18,32 @@
 #include <lslboost/thread/win32/shared_mutex.hpp>
 #endif
 #elif defined(BOOST_THREAD_PLATFORM_PTHREAD)
+//#include <lslboost/thread/v2/shared_mutex.hpp>
 #include <lslboost/thread/pthread/shared_mutex.hpp>
 #else
 #error "Boost threads unavailable on this platform"
 #endif
+
+#include <lslboost/thread/lockable_traits.hpp>
+
+namespace lslboost
+{
+  namespace sync
+  {
+#ifdef BOOST_THREAD_NO_AUTO_DETECT_MUTEX_TYPES
+    template<>
+    struct is_basic_lockable<shared_mutex>
+    {
+      BOOST_STATIC_CONSTANT(bool, value = true);
+    };
+    template<>
+    struct is_lockable<shared_mutex>
+    {
+      BOOST_STATIC_CONSTANT(bool, value = true);
+    };
+#endif
+
+  }
+}
 
 #endif

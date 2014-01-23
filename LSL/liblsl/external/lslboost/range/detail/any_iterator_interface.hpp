@@ -11,8 +11,12 @@
 #define BOOST_RANGE_DETAIL_ANY_ITERATOR_INTERFACE_HPP_INCLUDED
 
 #include <lslboost/range/detail/any_iterator_buffer.hpp>
-#include <lslboost/type_traits/add_reference.hpp>
+#include <lslboost/iterator/iterator_categories.hpp>
 #include <lslboost/type_traits/add_const.hpp>
+#include <lslboost/type_traits/add_reference.hpp>
+#include <lslboost/type_traits/is_reference.hpp>
+#include <lslboost/type_traits/remove_const.hpp>
+#include <lslboost/type_traits/remove_reference.hpp>
 
 namespace lslboost
 {

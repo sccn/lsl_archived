@@ -7,7 +7,6 @@
 #define BOOST_BIG_LANCZOS_HPP
 
 #include <lslboost/math/special_functions/lanczos.hpp>
-#include <lslboost/lexical_cast.hpp>
 
 namespace lslboost{ namespace math{ namespace lanczos{
 

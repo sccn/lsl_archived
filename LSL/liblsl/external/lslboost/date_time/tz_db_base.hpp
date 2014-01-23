@@ -5,7 +5,7 @@
  * Subject to the Boost Software License, Version 1.0. 
  * (See accompanying file LICENSE_1_0.txt or http://www.lslboost.org/LICENSE_1_0.txt)
  * Author: Jeff Garland, Bart Garst
- * $Date: 2012-05-26 15:33:09 -0400 (Sat, 26 May 2012) $
+ * $Date: 2013-09-21 13:17:00 -0700 (Sat, 21 Sep 2013) $
  */
 
 #include <map>
@@ -301,7 +301,15 @@ namespace lslboost {
         const char_type sep_char[] = { ';', '\0'};
         char_separator_type sep(sep_char);
         tokenizer tokens(rule, sep); // 3 fields
-        
+
+        if ( std::distance ( tokens.begin(), tokens.end ()) != 3 ) {
+          std::ostringstream msg;
+          msg << "Expecting 3 fields, got " 
+              << std::distance ( tokens.begin(), tokens.end ()) 
+              << " fields in line: " << rule;
+          lslboost::throw_exception(bad_field_count(msg.str()));
+        }
+
         tokenizer_iterator tok_iter = tokens.begin(); 
         nth = std::atoi(tok_iter->c_str()); ++tok_iter;
         d   = std::atoi(tok_iter->c_str()); ++tok_iter;

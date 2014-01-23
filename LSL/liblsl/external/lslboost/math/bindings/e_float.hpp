@@ -25,6 +25,7 @@
 #include <lslboost/math/special_functions/fpclassify.hpp>
 #include <lslboost/math/bindings/detail/big_digamma.hpp>
 #include <lslboost/math/bindings/detail/big_lanczos.hpp>
+#include <lslboost/lexical_cast.hpp>
 
 
 namespace lslboost{ namespace math{ namespace ef{
@@ -714,7 +715,7 @@ lslboost::math::ef::e_float bessel_i0(lslboost::math::ef::e_float x)
     }
     else                                // x in (15, \infty)
     {
-        lslboost::math::ef::e_float y = 1 / x - 1 / 15;
+        lslboost::math::ef::e_float y = 1 / x - lslboost::math::ef::e_float(1) / 15;
         r = evaluate_polynomial(P2, y) / evaluate_polynomial(Q2, y);
         factor = exp(x) / sqrt(x);
         value = factor * r;

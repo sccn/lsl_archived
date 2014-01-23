@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //
-// (C) Copyright Ion Gaztanaga 2011-2011. Distributed under the Boost
+// (C) Copyright Ion Gaztanaga 2011-2013. Distributed under the Boost
 // Software License, Version 1.0. (See accompanying file
 // LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
 //
@@ -18,6 +18,7 @@
       #include <lslboost/intrusive/detail/config_begin.hpp>
       #include <lslboost/intrusive/detail/workaround.hpp>
       #include <lslboost/intrusive/detail/preprocessor.hpp>
+      #include <lslboost/intrusive/detail/mpl.hpp>
       #include <lslboost/static_assert.hpp>
       #include <lslboost/move/move.hpp>
 
@@ -85,7 +86,7 @@
             void BOOST_INTRUSIVE_HAS_MEMBER_FUNCTION_CALLABLE_WITH_FUNCNAME();
          };
 
-         struct Base : public Type, public BaseMixin { Base(); };
+         struct Base : public ::lslboost::intrusive::detail::remove_cv<Type>::type, public BaseMixin { Base(); };
          template <typename T, T t> class Helper{};
 
          template <typename U>
@@ -158,7 +159,7 @@
 
                template <class U>
                static lslboost_intrusive_has_member_function_callable_with::no_type Test(...);
-              
+
                static const bool value = sizeof(Test< Fun >(0))
                                     == sizeof(lslboost_intrusive_has_member_function_callable_with::yes_type);
             };
@@ -224,7 +225,7 @@
 
             template <class U>
             static lslboost_intrusive_has_member_function_callable_with::no_type Test(...);
-           
+
             static const bool value = sizeof(Test< Fun >(0))
                                  == sizeof(lslboost_intrusive_has_member_function_callable_with::yes_type);
          };

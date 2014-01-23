@@ -39,6 +39,7 @@
 #include <lslboost/math/distributions/pareto.hpp>
 #include <lslboost/math/distributions/poisson.hpp>
 #include <lslboost/math/distributions/rayleigh.hpp>
+#include <lslboost/math/distributions/skew_normal.hpp>
 #include <lslboost/math/distributions/students_t.hpp>
 #include <lslboost/math/distributions/triangular.hpp>
 #include <lslboost/math/distributions/uniform.hpp>

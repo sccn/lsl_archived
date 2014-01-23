@@ -50,7 +50,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="0"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -128,7 +128,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="0"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -200,6 +200,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
+				InlineFunctionExpansion="0"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="..\..\..\external"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBLSL_EXPORTS;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;BOOST_ALL_NO_LIB;BOOST_THREAD_BUILD_LIB"
@@ -207,7 +208,7 @@
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				AssemblerOutput="0"
-				WarningLevel="3"
+				WarningLevel="0"
 				DebugInformationFormat="1"
 			/>
 			<Tool
@@ -288,7 +289,7 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="0"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -341,7 +342,7 @@
 	</References>
 	<Files>
 		<Filter
-			Name="C API"
+			Name="C/C++ API"
 			>
 			<File
 				RelativePath="..\..\..\include\lsl_c.h"
@@ -349,6 +350,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\lsl_continuous_resolver_c.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\lsl_cpp.h"
 				>
 			</File>
 			<File
@@ -373,38 +378,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="C++ API"
-			>
-			<File
-				RelativePath="..\..\..\src\continuous_resolver.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\freefuncs.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\lsl_cpp.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\stream_info.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\stream_inlet.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\stream_outlet.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\xml_element.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="Source"
 			>
 			<File
@@ -421,6 +394,14 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\cancellation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\common.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\common.h"
 				>
 			</File>
 			<File
@@ -476,6 +457,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\sample.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\sample.h"
 				>
 			</File>
@@ -485,6 +470,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\send_buffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\socket_utils.cpp"
 				>
 			</File>
 			<File
@@ -533,10 +522,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\udp_server.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\version.h"
 				>
 			</File>
 			<Filter
@@ -754,6 +739,34 @@
 						</File>
 					</Filter>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="endian"
+				>
+				<File
+					RelativePath="..\..\..\src\endian\conversion.hpp"
+					>
+				</File>
+				<Filter
+					Name="detail"
+					>
+					<File
+						RelativePath="..\..\..\src\endian\detail\intrinsic.hpp"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="legacy"
+				>
+				<File
+					RelativePath="..\..\..\src\legacy\legacy_abi.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\legacy\legacy_abi.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 	</Files>

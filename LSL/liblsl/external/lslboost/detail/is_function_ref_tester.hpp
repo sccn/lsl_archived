@@ -112,7 +112,7 @@ lslboost::type_traits::yes_type is_function_ref_tester(R (&)(T0,T1,T2,T3,T4,T5,T
 #else
 
 #define BOOST_PP_ITERATION_PARAMS_1 \
-    (3, (0, 25, "lslboost/type_traits/detail/is_function_ref_tester.hpp"))
+    (3, (0, 25, "lslboost/detail/is_function_ref_tester.hpp"))
 #include BOOST_PP_ITERATE()
 
 #endif // BOOST_TT_PREPROCESSING_MODE
@@ -133,3 +133,4 @@ lslboost::type_traits::yes_type is_function_ref_tester(R (&)(BOOST_PP_ENUM_PARAM
 
 #undef i
 #endif // BOOST_PP_IS_ITERATING
+

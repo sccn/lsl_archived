@@ -19,7 +19,7 @@
 #include <set>
 
 #include <lslboost/config.hpp>
-#include <lslboost/utility.hpp>
+#include <lslboost/noncopyable.hpp>
 #include <lslboost/archive/detail/auto_link_archive.hpp>
 
 #include <lslboost/archive/detail/abi_prefix.hpp> // must be the last header

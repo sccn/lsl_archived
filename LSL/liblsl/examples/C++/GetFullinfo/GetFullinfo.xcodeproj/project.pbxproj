@@ -24,7 +24,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		AA35E18E1513CB00003F3939 /* GetFullinfo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = GetFullinfo; path = "GetFullinfo-mac"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA35E18E1513CB00003F3939 /* GetFullinfo-mac */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "GetFullinfo-mac"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA35E1A11513CB79003F3939 /* GetFullinfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetFullinfo.cpp; sourceTree = "<group>"; };
 		AAE64A1315782C86009EEA4A /* liblsl64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblsl64.dylib; path = ../../../bin/liblsl64.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -53,7 +53,7 @@
 		AA35E18F1513CB00003F3939 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA35E18E1513CB00003F3939 /* GetFullinfo */,
+				AA35E18E1513CB00003F3939 /* GetFullinfo-mac */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -75,7 +75,7 @@
 			);
 			name = GetFullinfo;
 			productName = GetFullinfo;
-			productReference = AA35E18E1513CB00003F3939 /* GetFullinfo */;
+			productReference = AA35E18E1513CB00003F3939 /* GetFullinfo-mac */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -178,6 +178,7 @@
 					"\"$(SRCROOT)/../../../bin\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)-mac";
+				SDKROOT = macosx10.8;
 			};
 			name = Debug;
 		};
@@ -190,6 +191,7 @@
 					"\"$(SRCROOT)/../../../bin\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)-mac";
+				SDKROOT = macosx10.8;
 			};
 			name = Release;
 		};

@@ -284,7 +284,7 @@ namespace lslboost { namespace spirit { namespace ucd
 
     inline properties::script get_script(::lslboost::uint32_t ch)
     {
-        return static_cast<properties::script>(detail::script_lookup(ch) & 0x3F);
+        return static_cast<properties::script>(detail::script_lookup(ch) & 0x7F);
     }
 
     inline ::lslboost::uint32_t to_lowercase(::lslboost::uint32_t ch)

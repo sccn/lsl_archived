@@ -9,11 +9,8 @@ using namespace lsl;
 /**
 * Create a new send buffer.
 * @param max_capacity Hard upper bound on queue capacity beyond which the oldest samples will be dropped.
-* @param min_capacity_hint Minimum capacity that should be at least reserved to prevent inefficient allocator churn.
-*						   Note that the actual buffer size can be smaller than this if the upper limit for a buffer
-*						   is smaller than min_capacity_hint.
 */
-send_buffer::send_buffer(int max_capacity, int min_capacity_hint): max_capacity_(max_capacity), min_capacity_hint_(std::min(max_capacity,min_capacity_hint)) {} 
+send_buffer::send_buffer(int max_capacity): max_capacity_(max_capacity) {} 
 
 
 /**
@@ -26,7 +23,7 @@ send_buffer::send_buffer(int max_capacity, int min_capacity_hint): max_capacity_
 */
 consumer_queue_p send_buffer::new_consumer(int max_buffered) { 
 	max_buffered = max_buffered ? std::min(max_buffered,max_capacity_) : max_capacity_;
-	return consumer_queue_p(new consumer_queue(max_buffered, std::min(max_buffered, min_capacity_hint_), shared_from_this())); 
+	return consumer_queue_p(new consumer_queue(max_buffered, shared_from_this())); 
 }
 
 

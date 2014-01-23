@@ -6,6 +6,8 @@
 #ifndef BOOST_CHRONO_DETAIL_SYSTEM_HPP
 #define BOOST_CHRONO_DETAIL_SYSTEM_HPP
 
+#if !defined BOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING
+
 #include <lslboost/version.hpp>
 #include <lslboost/system/error_code.hpp>
 
@@ -15,7 +17,7 @@
 #define BOOST_CHRONO_SYSTEM_CATEGORY lslboost::system::system_category()
 #endif
 
-#ifdef BOOST_SYSTEM_NO_DEPRECATED 
+#ifdef BOOST_SYSTEM_NO_DEPRECATED
 #define BOOST_CHRONO_THROWS lslboost::throws()
 #define BOOST_CHRONO_IS_THROWS(EC) (&EC==&lslboost::throws())
 #else
@@ -23,4 +25,5 @@
 #define BOOST_CHRONO_IS_THROWS(EC) (&EC==&lslboost::system::throws)
 #endif
 
+#endif
 #endif

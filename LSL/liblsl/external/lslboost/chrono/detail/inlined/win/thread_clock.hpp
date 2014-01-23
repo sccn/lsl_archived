@@ -15,9 +15,9 @@
 #include <lslboost/chrono/thread_clock.hpp>
 #include <cassert>
 
-#include <lslboost/detail/win/GetLastError.hpp>
-#include <lslboost/detail/win/GetCurrentThread.hpp>
-#include <lslboost/detail/win/GetThreadTimes.hpp>
+#include <lslboost/detail/winapi/GetLastError.hpp>
+#include <lslboost/detail/winapi/GetCurrentThread.hpp>
+#include <lslboost/detail/winapi/GetThreadTimes.hpp>
 
 namespace lslboost
 {
@@ -28,10 +28,10 @@ namespace chrono
 thread_clock::time_point thread_clock::now( system::error_code & ec )
 {
     //  note that Windows uses 100 nanosecond ticks for FILETIME
-    lslboost::detail::win32::FILETIME_ creation, exit, user_time, system_time;
+    lslboost::detail::winapi::FILETIME_ creation, exit, user_time, system_time;
 
-    if ( lslboost::detail::win32::GetThreadTimes(
-            lslboost::detail::win32::GetCurrentThread (), &creation, &exit,
+    if ( lslboost::detail::winapi::GetThreadTimes(
+            lslboost::detail::winapi::GetCurrentThread (), &creation, &exit,
             &system_time, &user_time ) )
     {
         duration user = duration(
@@ -55,13 +55,13 @@ thread_clock::time_point thread_clock::now( system::error_code & ec )
         {
             lslboost::throw_exception(
                     system::system_error( 
-                            lslboost::detail::win32::GetLastError(), 
+                            lslboost::detail::winapi::GetLastError(), 
                             BOOST_CHRONO_SYSTEM_CATEGORY, 
                             "chrono::thread_clock" ));
         } 
         else 
         {
-            ec.assign( lslboost::detail::win32::GetLastError(), BOOST_CHRONO_SYSTEM_CATEGORY );
+            ec.assign( lslboost::detail::winapi::GetLastError(), BOOST_CHRONO_SYSTEM_CATEGORY );
             return thread_clock::time_point(duration(0));
         }
     }
@@ -72,10 +72,10 @@ thread_clock::time_point thread_clock::now() BOOST_NOEXCEPT
 {
 
     //  note that Windows uses 100 nanosecond ticks for FILETIME
-    lslboost::detail::win32::FILETIME_ creation, exit, user_time, system_time;
+    lslboost::detail::winapi::FILETIME_ creation, exit, user_time, system_time;
 
-    if ( lslboost::detail::win32::GetThreadTimes( 
-            lslboost::detail::win32::GetCurrentThread (), &creation, &exit,
+    if ( lslboost::detail::winapi::GetThreadTimes( 
+            lslboost::detail::winapi::GetCurrentThread (), &creation, &exit,
             &system_time, &user_time ) )
     {
         duration user   = duration(

@@ -2,7 +2,7 @@
 // detail/posix_fd_set_adapter.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -17,7 +17,9 @@
 
 #include <lslboost/asio/detail/config.hpp>
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(BOOST_ASIO_WINDOWS) \
+  && !defined(__CYGWIN__) \
+  && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 #include <cstring>
 #include <lslboost/asio/detail/noncopyable.hpp>
@@ -84,6 +86,8 @@ private:
 
 #include <lslboost/asio/detail/pop_options.hpp>
 
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(BOOST_ASIO_WINDOWS)
+       // && !defined(__CYGWIN__)
+       // && !defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 #endif // BOOST_ASIO_DETAIL_POSIX_FD_SET_ADAPTER_HPP

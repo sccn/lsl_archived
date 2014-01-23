@@ -1,16 +1,21 @@
 #!/usr/bin/env/python
 import os
-def process(loc):
+def process(loc,forward=True):
     for dir,subdirs,names in os.walk(loc):
         for name in names:
-            if name.endswith('.hpp') or name.endswith('.cpp') or name.endswith('.ipp') or name.endswith('.inl'):
+            if name.endswith('.hpp') or name.endswith('.h') or name.endswith('.cpp') or name.endswith('.ipp') or name.endswith('.inl'):
                 path = os.path.join(dir, name)
                 print '  ',path
                 text = open(path,'r').read()
-                text = text.replace('boost','lslboost')
+                if forward:
+                    text = text.replace('boost','lslboost')
+                else:
+                    text = text.replace('lslboost','boost')             
                 open(path,'w').write(text)
                 
-
+#process('./src',False)
+#exit()
+                
 if os.path.exists('boost') and os.path.exists('libs'):
     print 'renaming directories...'
     # first rename the directories 
@@ -29,17 +34,26 @@ else:
 # now generate redirect headers
 redirect_headers = [
     'asio.hpp',
+    'atomic.hpp',
     'bimap.hpp',
     'bind.hpp',
     'chrono.hpp',
+    'config.hpp',
     'circular_buffer.hpp',
     'cstdint.hpp',
     'enable_shared_from_this.hpp',
     'filesystem.hpp',
+    'format.hpp',
+    'function.hpp',
+    'intrusive_ptr.hpp',
     'lexical_cast.hpp',
     'noncopyable.hpp',
     'random.hpp',
+    'scoped_ptr.hpp',
     'shared_ptr.hpp',
+    'smart_ptr.hpp',
+    'static_assert.hpp',
+    'type_traits.hpp',
     'thread.hpp',
     'variant.hpp',
     'version.hpp',
@@ -72,8 +86,11 @@ redirect_headers = [
     'asio/detail/throw_error.hpp',
     'chrono/system_clocks.hpp',
     'container/flat_set.hpp',
+    'detail/scoped_enum_emulation.hpp',
+    'detail/endian.hpp',
     'functional/hash.hpp',
     'integer/endian.hpp',
+    'lockfree/spsc_queue.hpp',
     'math/fpclassify.hpp',
     'program_options/config.hpp',
     'program_options/detail/convert.hpp',

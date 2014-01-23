@@ -8,18 +8,30 @@
 
 #include <lslboost/thread/detail/config.hpp>
 #include <lslboost/thread/exceptions.hpp>
+#include <lslboost/thread/lock_guard.hpp>
+#include <lslboost/thread/lock_types.hpp>
+#include <lslboost/thread/mutex.hpp>
+#include <lslboost/thread/pthread/condition_variable_fwd.hpp>
+
 #include <lslboost/shared_ptr.hpp>
 #include <lslboost/enable_shared_from_this.hpp>
-#include <lslboost/thread/mutex.hpp>
 #include <lslboost/optional.hpp>
-#include <pthread.h>
 #include <lslboost/assert.hpp>
-#include <lslboost/thread/pthread/condition_variable_fwd.hpp>
-#include <map>
-#include <unistd.h>
 #ifdef BOOST_THREAD_USES_CHRONO
 #include <lslboost/chrono/system_clocks.hpp>
 #endif
+
+#include <map>
+#include <vector>
+#include <utility>
+
+#if defined(__ANDROID__)
+#include <asm/page.h> // http://code.google.com/p/android/issues/detail?id=39983
+#endif
+
+#include <pthread.h>
+#include <unistd.h>
+
 #include <lslboost/config/abi_prefix.hpp>
 
 namespace lslboost
@@ -70,6 +82,7 @@ namespace lslboost
 
     namespace detail
     {
+        struct shared_state_base;
         struct tss_cleanup_function;
         struct thread_exit_callback_node;
         struct tss_data_node
@@ -100,27 +113,57 @@ namespace lslboost
             bool joined;
             lslboost::detail::thread_exit_callback_node* thread_exit_callbacks;
             std::map<void const*,lslboost::detail::tss_data_node> tss_data;
-            bool interrupt_enabled;
-            bool interrupt_requested;
+
             pthread_mutex_t* cond_mutex;
             pthread_cond_t* current_cond;
+            typedef std::vector<std::pair<condition_variable*, mutex*>
+            //, hidden_allocator<std::pair<condition_variable*, mutex*> >
+            > notify_list_t;
+            notify_list_t notify;
 
+            typedef std::vector<shared_ptr<shared_state_base> > async_states_t;
+            async_states_t async_states_;
+
+//#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
+            // These data must be at the end so that the access to the other fields doesn't change
+            // when BOOST_THREAD_PROVIDES_INTERRUPTIONS is defined.
+            // Another option is to have them always
+            bool interrupt_enabled;
+            bool interrupt_requested;
+//#endif
             thread_data_base():
+                thread_handle(0),
                 done(false),join_started(false),joined(false),
                 thread_exit_callbacks(0),
-                interrupt_enabled(true),
-                interrupt_requested(false),
-                current_cond(0)
+                cond_mutex(0),
+                current_cond(0),
+                notify(),
+                async_states_()
+//#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
+                , interrupt_enabled(true)
+                , interrupt_requested(false)
+//#endif
             {}
             virtual ~thread_data_base();
 
             typedef pthread_t native_handle_type;
 
             virtual void run()=0;
+            virtual void notify_all_at_thread_exit(condition_variable* cv, mutex* m)
+            {
+              notify.push_back(std::pair<condition_variable*, mutex*>(cv, m));
+            }
+
+            void make_ready_at_thread_exit(shared_ptr<shared_state_base> as)
+            {
+              async_states_.push_back(as);
+            }
+
         };
 
         BOOST_THREAD_DECL thread_data_base* get_current_thread_data();
 
+#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
         class interruption_checker
         {
             thread_data_base* const thread_info;
@@ -129,11 +172,13 @@ namespace lslboost
 
             void check_for_interruption()
             {
+#ifndef BOOST_NO_EXCEPTIONS
                 if(thread_info->interrupt_requested)
                 {
                     thread_info->interrupt_requested=false;
-                    throw thread_interrupted();
+                    throw thread_interrupted(); // BOOST_NO_EXCEPTIONS protected
                 }
+#endif
             }
 
             void operator=(interruption_checker&);
@@ -170,35 +215,47 @@ namespace lslboost
                 }
             }
         };
+#endif
     }
 
     namespace this_thread
     {
+      namespace hiden
+      {
+        void BOOST_THREAD_DECL sleep_for(const timespec& ts);
+        void BOOST_THREAD_DECL sleep_until(const timespec& ts);
+      }
+
 #ifdef BOOST_THREAD_USES_CHRONO
-        void BOOST_SYMBOL_VISIBLE sleep_for(const chrono::nanoseconds& ns);
+#ifdef BOOST_THREAD_SLEEP_FOR_IS_STEADY
+
+        inline
+        void BOOST_SYMBOL_VISIBLE sleep_for(const chrono::nanoseconds& ns)
+        {
+            return lslboost::this_thread::hiden::sleep_for(lslboost::detail::to_timespec(ns));
+        }
 #endif
+#endif // BOOST_THREAD_USES_CHRONO
+
         void BOOST_THREAD_DECL yield() BOOST_NOEXCEPT;
 
+#if defined BOOST_THREAD_USES_DATETIME
 #ifdef __DECXXX
         /// Workaround of DECCXX issue of incorrect template substitution
-        template<typename TimeDuration>
-        inline void sleep(TimeDuration const& rel_time)
-        {
-            this_thread::sleep(get_system_time()+rel_time);
-        }
-
         template<>
-        void BOOST_THREAD_DECL sleep(system_time const& abs_time);
-#else
-        void BOOST_THREAD_DECL sleep(system_time const& abs_time);
+#endif
+        inline void sleep(system_time const& abs_time)
+        {
+          return lslboost::this_thread::hiden::sleep_until(lslboost::detail::to_timespec(abs_time));
+        }
 
         template<typename TimeDuration>
         inline BOOST_SYMBOL_VISIBLE void sleep(TimeDuration const& rel_time)
         {
             this_thread::sleep(get_system_time()+rel_time);
         }
-#endif
-    }
+#endif // BOOST_THREAD_USES_DATETIME
+    } // this_thread
 }
 
 #include <lslboost/config/abi_suffix.hpp>

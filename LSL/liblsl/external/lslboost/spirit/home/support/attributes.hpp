@@ -1,6 +1,6 @@
 /*=============================================================================
     Copyright (c) 2001-2011 Joel de Guzman
-    Copyright (c) 2001-2011 Hartmut Kaiser
+    Copyright (c) 2001-2012 Hartmut Kaiser
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -520,6 +520,29 @@ namespace lslboost { namespace spirit { namespace traits
         }
     };
 
+    namespace detail
+    {
+        struct attribute_size_visitor : static_visitor<std::size_t>
+        {
+            template <typename T>
+            std::size_t operator()(T const& val) const
+            {
+                return spirit::traits::size(val);
+            }
+        };
+    }
+
+    template <BOOST_VARIANT_ENUM_PARAMS(typename T)>
+    struct attribute_size<variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
+    {
+        typedef std::size_t type;
+
+        static type call(variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& val)
+        {
+            return apply_visitor(detail::attribute_size_visitor(), val);
+        }
+    };
+
     template <typename Iterator>
     struct attribute_size<iterator_range<Iterator> >
     {
@@ -748,7 +771,7 @@ namespace lslboost { namespace spirit { namespace traits
             };
 
             // never called, but needed for decltype-based result_of (C++0x)
-#ifndef BOOST_NO_RVALUE_REFERENCES
+#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
             template <typename Element>
             typename result<element_attribute(Element)>::type
             operator()(Element&&) const;
@@ -1158,8 +1181,8 @@ namespace lslboost { namespace spirit { namespace traits
         template <typename Out>
         struct print_fusion_sequence
         {
-            print_fusion_sequence(Out& out)
-              : out(out), is_first(true) {}
+            print_fusion_sequence(Out& out_)
+              : out(out_), is_first(true) {}
 
             typedef void result_type;
 
@@ -1181,7 +1204,7 @@ namespace lslboost { namespace spirit { namespace traits
         template <typename Out>
         struct print_visitor : static_visitor<>
         {
-            print_visitor(Out& out) : out(out) {}
+            print_visitor(Out& out_) : out(out_) {}
 
             template <typename T>
             void operator()(T const& val) const

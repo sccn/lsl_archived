@@ -597,7 +597,7 @@ struct ibeta_fraction2_t
 {
    typedef std::pair<T, T> result_type;
 
-   ibeta_fraction2_t(T a_, T b_, T x_) : a(a_), b(b_), x(x_), m(0) {}
+   ibeta_fraction2_t(T a_, T b_, T x_, T y_) : a(a_), b(b_), x(x_), y(y_), m(0) {}
 
    result_type operator()()
    {
@@ -607,7 +607,7 @@ struct ibeta_fraction2_t
 
       T bN = m;
       bN += (m * (b - m) * x) / (a + 2*m - 1);
-      bN += ((a + m) * (a - (a + b) * x + 1 + m *(2 - x))) / (a + 2*m + 1);
+      bN += ((a + m) * (a * y - b * x + 1 + m *(2 - x))) / (a + 2*m + 1);
 
       ++m;
 
@@ -615,7 +615,7 @@ struct ibeta_fraction2_t
    }
 
 private:
-   T a, b, x;
+   T a, b, x, y;
    int m;
 };
 //
@@ -635,8 +635,10 @@ inline T ibeta_fraction2(T a, T b, T x, T y, const Policy& pol, bool normalised,
    if(result == 0)
       return result;
 
-   ibeta_fraction2_t<T> f(a, b, x);
+   ibeta_fraction2_t<T> f(a, b, x, y);
    T fract = lslboost::math::tools::continued_fraction_b(f, lslboost::math::policies::get_epsilon<T, Policy>());
+   BOOST_MATH_INSTRUMENT_VARIABLE(fract);
+   BOOST_MATH_INSTRUMENT_VARIABLE(result);
    return result / fract;
 }
 //
@@ -933,6 +935,49 @@ T ibeta_imp(T a, T b, T x, const Policy& pol, bool inv, bool normalised, T* p_de
       }
       return (invert == 0 ? (normalised ? 1 : lslboost::math::beta(a, b, pol)) : 0);
    }
+   if((a == 0.5f) && (b == 0.5f))
+   {
+      // We have an arcsine distribution:
+      if(p_derivative)
+      {
+         *p_derivative = (invert ? -1 : 1) / constants::pi<T>() * sqrt(y * x);
+      }
+      T p = invert ? asin(sqrt(y)) / constants::half_pi<T>() : asin(sqrt(x)) / constants::half_pi<T>();
+      if(!normalised)
+         p *= constants::pi<T>();
+      return p;
+   }
+   if(a == 1)
+   {
+      std::swap(a, b);
+      std::swap(x, y);
+      invert = !invert;
+   }
+   if(b == 1)
+   {
+      //
+      // Special case see: http://functions.wolfram.com/GammaBetaErf/BetaRegularized/03/01/01/
+      //
+      if(a == 1)
+      {
+         if(p_derivative)
+            *p_derivative = invert ? -1 : 1;
+         return invert ? y : x;
+      }
+      
+      if(p_derivative)
+      {
+         *p_derivative = (invert ? -1 : 1) * a * pow(x, a - 1);
+      }
+      T p;
+      if(y < 0.5)
+         p = invert ? T(-expm1(a * log1p(-y))) : T(exp(a * log1p(-y)));
+      else
+         p = invert ? T(-powm1(x, a)) : T(pow(x, a));
+      if(!normalised)
+         p /= a;
+      return p;
+   }
 
    if((std::min)(a, b) <= 1)
    {
@@ -1115,7 +1160,7 @@ T ibeta_imp(T a, T b, T x, const Policy& pol, bool inv, bool normalised, T* p_de
       
       if(b < 40)
       {
-         if((floor(a) == a) && (floor(b) == b))
+         if((floor(a) == a) && (floor(b) == b) && (a < (std::numeric_limits<int>::max)() - 100))
          {
             // relate to the binomial distribution and use a finite sum:
             T k = a - 1;
@@ -1329,7 +1374,6 @@ inline typename tools::promote_args<RT1, RT2, RT3>::type
    BOOST_FPU_EXCEPTION_GUARD
    typedef typename tools::promote_args<RT1, RT2, RT3>::type result_type;
    typedef typename policies::evaluation<result_type, Policy>::type value_type;
-   typedef typename lanczos::lanczos<value_type, Policy>::type evaluation_type;
    typedef typename policies::normalise<
       Policy, 
       policies::promote_float<false>, 
@@ -1347,7 +1391,6 @@ inline typename tools::promote_args<RT1, RT2, RT3>::type
    BOOST_FPU_EXCEPTION_GUARD
    typedef typename tools::promote_args<RT1, RT2, RT3>::type result_type;
    typedef typename policies::evaluation<result_type, Policy>::type value_type;
-   typedef typename lanczos::lanczos<value_type, Policy>::type evaluation_type;
    typedef typename policies::normalise<
       Policy, 
       policies::promote_float<false>, 

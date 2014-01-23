@@ -13,7 +13,7 @@ namespace lslboost { namespace fusion
 {
     struct cons_tag;
 
-    struct nil;
+    struct nil_;
 
     template <typename Car, typename Cdr>
     struct cons;
@@ -28,7 +28,7 @@ namespace lslboost { namespace fusion
         {
             template <typename Sequence>
             struct apply
-                : lslboost::is_convertible<Sequence, nil>
+                : lslboost::is_convertible<Sequence, nil_>
             {};
         };
     }

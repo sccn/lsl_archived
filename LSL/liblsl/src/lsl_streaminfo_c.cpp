@@ -20,6 +20,15 @@ LIBLSL_C_API lsl_streaminfo lsl_create_streaminfo(char *name, char *type, int ch
 	}
 }
 
+LIBLSL_C_API lsl_streaminfo lsl_copy_streaminfo(lsl_streaminfo info) { 
+	try {
+		return (lsl_streaminfo)new stream_info_impl(*(stream_info_impl*)info); 
+	} catch(std::exception &e) {
+		std::cerr << "Unexpected error while copying a streaminfo: " << e.what() << std::endl;
+		return NULL;
+	}
+}
+
 LIBLSL_C_API void lsl_destroy_streaminfo(lsl_streaminfo info) {
 	try {
 		delete (stream_info_impl*)info;
@@ -39,7 +48,7 @@ LIBLSL_C_API double lsl_get_created_at(lsl_streaminfo info) { return ((stream_in
 LIBLSL_C_API char *lsl_get_uid(lsl_streaminfo info) { return const_cast<char*>(((stream_info_impl*)info)->uid().c_str()); }
 LIBLSL_C_API char *lsl_get_session_id(lsl_streaminfo info) { return const_cast<char*>(((stream_info_impl*)info)->session_id().c_str()); }
 LIBLSL_C_API char *lsl_get_hostname(lsl_streaminfo info) { return const_cast<char*>(((stream_info_impl*)info)->hostname().c_str()); }
-LIBLSL_C_API lsl_xml_ptr lsl_get_desc(lsl_streaminfo info) { return (lsl_xml_ptr)((stream_info_impl*)info)->desc().ptr(); }
+LIBLSL_C_API lsl_xml_ptr lsl_get_desc(lsl_streaminfo info) { return (lsl_xml_ptr)((stream_info_impl*)info)->desc().internal_object(); }
 
 LIBLSL_C_API char *lsl_get_xml(lsl_streaminfo info) {
 	try {
@@ -52,4 +61,5 @@ LIBLSL_C_API char *lsl_get_xml(lsl_streaminfo info) {
 		return NULL;
 	}
 }
-
+LIBLSL_C_API int lsl_get_channel_bytes(lsl_streaminfo info) { return ((stream_info_impl*)info)->channel_bytes(); }
+LIBLSL_C_API int lsl_get_sample_bytes(lsl_streaminfo info) { return ((stream_info_impl*)info)->sample_bytes(); }

@@ -1,6 +1,6 @@
 #include "../include/lsl_c.h"
 #include "resolver_impl.h"
-#include "version.h"
+#include "common.h"
 #include <iostream>
 
 
@@ -38,7 +38,7 @@ LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver(double forge
 *				      this is the time in seconds after which it is no longer reported by the resolver.
 *					  The recommended default value is 5.0.
 */
-LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver(char *prop, char *value, double forget_after) {
+LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_byprop(char *prop, char *value, double forget_after) {
 	try {
 		// create a new resolver
 		resolver_impl *resolver = new resolver_impl();
@@ -60,7 +60,7 @@ LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver(char *prop, 
 *				      this is the time in seconds after which it is no longer reported by the resolver.
 *					  The recommended default value is 5.0.
 */
-LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver(char *pred, double forget_after) {
+LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_bypred(char *pred, double forget_after) {
 	try {
 		// create a new resolver
 		resolver_impl *resolver = new resolver_impl();

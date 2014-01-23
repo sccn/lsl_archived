@@ -14,11 +14,23 @@
 #define BOOST_FUNCTIONAL_HASH_EXTENSIONS_HPP
 
 #include <lslboost/functional/hash/hash.hpp>
-#include <lslboost/functional/hash/detail/container_fwd_0x.hpp>
+#include <lslboost/detail/container_fwd.hpp>
 #include <lslboost/utility/enable_if.hpp>
 #include <lslboost/static_assert.hpp>
 #include <lslboost/preprocessor/repetition/repeat_from_to.hpp>
 #include <lslboost/preprocessor/repetition/enum_params.hpp>
+
+#if !defined(BOOST_NO_CXX11_HDR_ARRAY)
+#   include <array>
+#endif
+
+#if !defined(BOOST_NO_CXX11_HDR_TUPLE)
+#   include <tuple>
+#endif
+
+#if !defined(BOOST_NO_CXX11_HDR_MEMORY)
+#   include <memory>
+#endif
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
 # pragma once
@@ -114,7 +126,7 @@ namespace lslboost
         return seed;
     }
 
-#if !defined(BOOST_NO_0X_HDR_ARRAY)
+#if !defined(BOOST_NO_CXX11_HDR_ARRAY)
     template <class T, std::size_t N>
     std::size_t hash_value(std::array<T, N> const& v)
     {
@@ -122,7 +134,7 @@ namespace lslboost
     }
 #endif
 
-#if !defined(BOOST_NO_0X_HDR_TUPLE)
+#if !defined(BOOST_NO_CXX11_HDR_TUPLE)
     namespace hash_detail {
         template <std::size_t I, typename T>
         inline typename lslboost::enable_if_c<(I == std::tuple_size<T>::value),
@@ -149,7 +161,7 @@ namespace lslboost
         }
     }
 
-#if !defined(BOOST_NO_VARIADIC_TEMPLATES)
+#if !defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES)
     template <typename... T>
     inline std::size_t hash_value(std::tuple<T...> const& v)
     {
@@ -177,6 +189,18 @@ namespace lslboost
 #   undef BOOST_HASH_TUPLE_F
 #endif
 
+#endif
+
+#if !defined(BOOST_NO_CXX11_SMART_PTR)
+    template <typename T>
+    inline std::size_t hash_value(std::shared_ptr<T> const& x) {
+        return lslboost::hash_value(x.get());
+    }
+
+    template <typename T, typename Deleter>
+    inline std::size_t hash_value(std::unique_ptr<T, Deleter> const& x) {
+        return lslboost::hash_value(x.get());
+    }
 #endif
 
     //

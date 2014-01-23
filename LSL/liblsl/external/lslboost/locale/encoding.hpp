@@ -229,6 +229,8 @@ namespace lslboost {
             #endif
 
 
+            /// \endcond
+
             /// @}
 
         } // conv

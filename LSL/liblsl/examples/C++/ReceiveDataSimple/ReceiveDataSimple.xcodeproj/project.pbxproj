@@ -24,7 +24,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		AA35E1F51513CE34003F3939 /* ReceiveDataSimple */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = ReceiveDataSimple; path = "ReceiveDataSimple-mac"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA35E1F51513CE34003F3939 /* ReceiveDataSimple-mac */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ReceiveDataSimple-mac"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA35E2191513CEA5003F3939 /* ReceiveDataSimple.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReceiveDataSimple.cpp; sourceTree = "<group>"; };
 		AAE64A1C15782CA0009EEA4A /* liblsl64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblsl64.dylib; path = ../../../bin/liblsl64.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -53,7 +53,7 @@
 		AA35E1F61513CE34003F3939 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA35E1F51513CE34003F3939 /* ReceiveDataSimple */,
+				AA35E1F51513CE34003F3939 /* ReceiveDataSimple-mac */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -75,7 +75,7 @@
 			);
 			name = ReceiveDataSimple;
 			productName = ReceiveDataSimple;
-			productReference = AA35E1F51513CE34003F3939 /* ReceiveDataSimple */;
+			productReference = AA35E1F51513CE34003F3939 /* ReceiveDataSimple-mac */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -178,7 +178,7 @@
 					"\"$(SRCROOT)/../../../bin\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)-mac";
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx10.8;
 				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
@@ -192,7 +192,7 @@
 					"\"$(SRCROOT)/../../../bin\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)-mac";
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx10.8;
 				VALID_ARCHS = x86_64;
 			};
 			name = Release;

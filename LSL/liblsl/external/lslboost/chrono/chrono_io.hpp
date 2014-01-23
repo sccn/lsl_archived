@@ -14,6 +14,21 @@
 #define BOOST_CHRONO_CHRONO_IO_HPP
 
 #include <lslboost/chrono/config.hpp>
+
+//#if BOOST_CHRONO_VERSION == 2
+//#include <lslboost/chrono/io/time_point_io.hpp>
+//#include <lslboost/chrono/io/duration_io.hpp>
+//#elif BOOST_CHRONO_VERSION == 1
+//#include <lslboost/chrono/io_v1/chrono_io.hpp>
+//#endif
+
+#if defined BOOST_CHRONO_DONT_PROVIDES_DEPRECATED_IO_SINCE_V2_0_0
+#include <lslboost/chrono/io/time_point_io.hpp>
+#include <lslboost/chrono/io/duration_io.hpp>
+#else
 #include <lslboost/chrono/io_v1/chrono_io.hpp>
+#endif
+
+#include <lslboost/chrono/io/utility/to_string.hpp>
 
 #endif  // BOOST_CHRONO_CHRONO_IO_HPP

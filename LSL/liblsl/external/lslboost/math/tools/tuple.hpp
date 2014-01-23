@@ -9,7 +9,7 @@
 
 #include <lslboost/tr1/detail/config.hpp>  // for BOOST_HAS_TR1_TUPLE
 
-#ifndef BOOST_NO_0X_HDR_TUPLE
+#ifndef BOOST_NO_CXX11_HDR_TUPLE
 
 #include <tuple>
 
@@ -49,7 +49,7 @@ using ::std::tr1::tuple_element;
 
 }}
 
-#elif (defined(__BORLANDC__) && (__BORLANDC__ <= 0x600)) || (defined(_MSC_VER) && (_MSC_VER < 1310)) || defined(__IBMCPP__)
+#elif (defined(__BORLANDC__) && (__BORLANDC__ <= 0x600)) || defined(__IBMCPP__)
 
 #include <lslboost/tuple/tuple.hpp>
 #include <lslboost/tuple/tuple_comparison.hpp>

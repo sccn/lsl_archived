@@ -387,6 +387,8 @@ LIBLSL_C_API double lsl_pull_sample_buf(lsl_inlet in, char **buffer, unsigned *b
 		// allocate memory and copy over into buffer
 		for (unsigned k=0;k<tmp.size();k++) {
 			buffer[k] = (char*)malloc(tmp[k].size());
+			if (buffer[k] == NULL)
+				return lsl_internal_error;
 			buffer_lengths[k] = (unsigned)tmp[k].size();
 			memcpy(buffer[k],&tmp[k][0],tmp[k].size());
 		}
@@ -452,6 +454,261 @@ LIBLSL_C_API double lsl_pull_sample_v(lsl_inlet in, void *buffer, int buffer_byt
 			*ec = lsl_internal_error; 
 	}
 	return 0.0;
+}
+
+LIBLSL_C_API unsigned long lsl_pull_chunk_f(lsl_inlet in, float *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec) {
+	if (ec)
+		*ec = lsl_no_error;
+	try {
+		return ((stream_inlet_impl*)in)->pull_chunk_multiplexed(data_buffer,timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout);
+	}
+	catch(timeout_error &) { 
+		if (ec)
+			*ec = lsl_timeout_error; 
+	}
+	catch(lost_error &) { 
+		if (ec)
+			*ec = lsl_lost_error; 
+	}
+	catch(std::invalid_argument &) { 
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::range_error &) {
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::exception &) { 
+		if (ec)
+			*ec = lsl_internal_error; 
+	}
+	return 0;
+}
+
+LIBLSL_C_API unsigned long lsl_pull_chunk_d(lsl_inlet in, double *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec) {
+	if (ec)
+		*ec = lsl_no_error;
+	try {
+		return ((stream_inlet_impl*)in)->pull_chunk_multiplexed(data_buffer,timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout);
+	}
+	catch(timeout_error &) { 
+		if (ec)
+			*ec = lsl_timeout_error; 
+	}
+	catch(lost_error &) { 
+		if (ec)
+			*ec = lsl_lost_error; 
+	}
+	catch(std::invalid_argument &) { 
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::range_error &) {
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::exception &) { 
+		if (ec)
+			*ec = lsl_internal_error; 
+	}
+	return 0;
+}
+
+LIBLSL_C_API unsigned long lsl_pull_chunk_l(lsl_inlet in, long *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec) {
+	if (ec)
+		*ec = lsl_no_error;
+	try {
+		return ((stream_inlet_impl*)in)->pull_chunk_multiplexed(data_buffer,timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout);
+	}
+	catch(timeout_error &) { 
+		if (ec)
+			*ec = lsl_timeout_error; 
+	}
+	catch(lost_error &) { 
+		if (ec)
+			*ec = lsl_lost_error; 
+	}
+	catch(std::invalid_argument &) { 
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::range_error &) {
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::exception &) { 
+		if (ec)
+			*ec = lsl_internal_error; 
+	}
+	return 0;
+}
+
+LIBLSL_C_API unsigned long lsl_pull_chunk_i(lsl_inlet in, int *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec) {
+	if (ec)
+		*ec = lsl_no_error;
+	try {
+		return ((stream_inlet_impl*)in)->pull_chunk_multiplexed(data_buffer,timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout);
+	}
+	catch(timeout_error &) { 
+		if (ec)
+			*ec = lsl_timeout_error; 
+	}
+	catch(lost_error &) { 
+		if (ec)
+			*ec = lsl_lost_error; 
+	}
+	catch(std::invalid_argument &) { 
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::range_error &) {
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::exception &) { 
+		if (ec)
+			*ec = lsl_internal_error; 
+	}
+	return 0;
+}
+
+LIBLSL_C_API unsigned long lsl_pull_chunk_s(lsl_inlet in, short *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec) {
+	if (ec)
+		*ec = lsl_no_error;
+	try {
+		return ((stream_inlet_impl*)in)->pull_chunk_multiplexed(data_buffer,timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout);
+	}
+	catch(timeout_error &) { 
+		if (ec)
+			*ec = lsl_timeout_error; 
+	}
+	catch(lost_error &) { 
+		if (ec)
+			*ec = lsl_lost_error; 
+	}
+	catch(std::invalid_argument &) { 
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::range_error &) {
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::exception &) { 
+		if (ec)
+			*ec = lsl_internal_error; 
+	}
+	return 0;
+}
+
+LIBLSL_C_API unsigned long lsl_pull_chunk_c(lsl_inlet in, char *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec) {
+	if (ec)
+		*ec = lsl_no_error;
+	try {
+		return ((stream_inlet_impl*)in)->pull_chunk_multiplexed(data_buffer,timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout);
+	}
+	catch(timeout_error &) { 
+		if (ec)
+			*ec = lsl_timeout_error; 
+	}
+	catch(lost_error &) { 
+		if (ec)
+			*ec = lsl_lost_error; 
+	}
+	catch(std::invalid_argument &) { 
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::range_error &) {
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::exception &) { 
+		if (ec)
+			*ec = lsl_internal_error; 
+	}
+	return 0;
+}
+
+LIBLSL_C_API unsigned long lsl_pull_chunk_str(lsl_inlet in, char **data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec) {
+	if (ec)
+		*ec = lsl_no_error;
+	try {
+		// capture output in a temporary string buffer
+		if (data_buffer_elements) {
+			std::vector<std::string> tmp(data_buffer_elements);
+			unsigned long result = ((stream_inlet_impl*)in)->pull_chunk_multiplexed(&tmp[0],timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout);
+			// allocate memory and copy over into buffer
+			for (unsigned k=0;k<tmp.size();k++) {
+				data_buffer[k] = (char*)malloc(tmp[k].size()+1);
+				strcpy(data_buffer[k],tmp[k].c_str());
+			}
+			return result;
+		} else
+			return 0;
+	}
+	catch(timeout_error &) { 
+		if (ec)
+			*ec = lsl_timeout_error; 
+	}
+	catch(lost_error &) { 
+		if (ec)
+			*ec = lsl_lost_error; 
+	}
+	catch(std::invalid_argument &) { 
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::range_error &) {
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::exception &) { 
+		if (ec)
+			*ec = lsl_internal_error; 
+	}
+	return 0;
+}
+
+LIBLSL_C_API unsigned long lsl_pull_chunk_buf(lsl_inlet in, char **data_buffer, unsigned *lengths_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec) {
+	if (ec)
+		*ec = lsl_no_error;
+	try {
+		// capture output in a temporary string buffer
+		if (data_buffer_elements) {
+			std::vector<std::string> tmp(data_buffer_elements);
+			unsigned long result = ((stream_inlet_impl*)in)->pull_chunk_multiplexed(&tmp[0],timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout);
+			// allocate memory and copy over into buffer
+			for (unsigned k=0;k<tmp.size();k++) {
+				data_buffer[k] = (char*)malloc(tmp[k].size()+1);
+				lengths_buffer[k] = (unsigned)tmp[k].size();
+				strcpy(data_buffer[k],tmp[k].c_str());
+			}
+			return result;
+		} else
+			return 0;
+	}
+	catch(timeout_error &) { 
+		if (ec)
+			*ec = lsl_timeout_error; 
+	}
+	catch(lost_error &) { 
+		if (ec)
+			*ec = lsl_lost_error; 
+	}
+	catch(std::invalid_argument &) { 
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::range_error &) {
+		if (ec)
+			*ec = lsl_argument_error; 
+	}
+	catch(std::exception &) { 
+		if (ec)
+			*ec = lsl_internal_error; 
+	}
+	return 0;
 }
 
 /**

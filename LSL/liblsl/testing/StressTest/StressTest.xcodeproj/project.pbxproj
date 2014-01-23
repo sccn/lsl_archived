@@ -209,7 +209,7 @@
 					"\"$(SRCROOT)/../../bin\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx10.8;
 				USER_HEADER_SEARCH_PATHS = "$(inherited) \"$(SRCROOT)/../../external\"";
 				VALID_ARCHS = x86_64;
 			};
@@ -228,7 +228,7 @@
 					"\"$(SRCROOT)/../../bin\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx10.8;
 				USER_HEADER_SEARCH_PATHS = "$(inherited) \"$(SRCROOT)/../../external\"";
 				VALID_ARCHS = x86_64;
 			};

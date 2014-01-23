@@ -15,7 +15,7 @@
 #include <lslboost/algorithm/string/constants.hpp>
 #include <lslboost/detail/iterator.hpp>
 
-#include <lslboost/range/iterator_range.hpp>
+#include <lslboost/range/iterator_range_core.hpp>
 #include <lslboost/range/begin.hpp>
 #include <lslboost/range/end.hpp>
 #include <lslboost/range/empty.hpp>
@@ -92,7 +92,7 @@ namespace lslboost {
 
 //  find last functor -----------------------------------------------//
 
-            // find the last match a subseqeunce in the sequence ( functor )
+            // find the last match a subsequence in the sequence ( functor )
             /*
                 Returns a pair <begin,end> marking the subsequence in the sequence.
                 If the find fails, returns <End,End>
@@ -142,7 +142,6 @@ namespace lslboost {
                     ForwardIteratorT End,
                     std::forward_iterator_tag ) const
                 {
-                    typedef ForwardIteratorT input_iterator_type;
                     typedef iterator_range<ForwardIteratorT> result_type;
 
                     first_finder_type first_finder(
@@ -263,7 +262,6 @@ namespace lslboost {
                     ForwardIteratorT End,
                     unsigned int N) const
                 {
-                    typedef ForwardIteratorT input_iterator_type;
                     typedef iterator_range<ForwardIteratorT> result_type;
 
                     // Sanity check
@@ -298,7 +296,6 @@ namespace lslboost {
                     ForwardIteratorT End,
                     unsigned int N) const
                 {
-                    typedef ForwardIteratorT input_iterator_type;
                     typedef iterator_range<ForwardIteratorT> result_type;
 
                     // Sanity check
@@ -362,7 +359,6 @@ namespace lslboost {
                 unsigned int N,
                 std::random_access_iterator_tag )
             {
-                typedef ForwardIteratorT input_iterator_type;
                 typedef iterator_range<ForwardIteratorT> result_type;
 
                 if ( (End<=Begin) || ( static_cast<unsigned int>(End-Begin) < N ) )
@@ -436,7 +432,6 @@ namespace lslboost {
                 unsigned int N,
                 std::random_access_iterator_tag )
             {
-                typedef ForwardIteratorT input_iterator_type;
                 typedef iterator_range<ForwardIteratorT> result_type;
 
                 if ( (End<=Begin) || ( static_cast<unsigned int>(End-Begin) < N ) )

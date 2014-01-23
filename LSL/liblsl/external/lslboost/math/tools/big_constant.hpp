@@ -8,7 +8,9 @@
 #define BOOST_MATH_TOOLS_BIG_CONSTANT_HPP
 
 #include <lslboost/math/tools/config.hpp>
+#ifndef BOOST_MATH_NO_LEXICAL_CAST
 #include <lslboost/lexical_cast.hpp>
+#endif
 #include <lslboost/type_traits/is_convertible.hpp>
 
 namespace lslboost{ namespace math{ 
@@ -25,11 +27,13 @@ inline BOOST_CONSTEXPR_OR_CONST T make_big_value(long double v, const char*, mpl
 {
    return static_cast<T>(v);
 }
+#ifndef BOOST_MATH_NO_LEXICAL_CAST
 template <class T>
 inline T make_big_value(long double, const char* s, mpl::false_ const&, mpl::false_ const&)
 {
    return lslboost::lexical_cast<T>(s);
 }
+#endif
 template <class T>
 inline BOOST_CONSTEXPR const char* make_big_value(long double, const char* s, mpl::false_ const&, mpl::true_ const&)
 {
@@ -53,7 +57,9 @@ inline BOOST_CONSTEXPR const char* make_big_value(long double, const char* s, mp
 // For constants too huge for any conceivable long double (and which generate compiler errors if we try and declare them as such):
 //
 #define BOOST_MATH_HUGE_CONSTANT(T, D, x)\
-   lslboost::math::tools::make_big_value<T>(0.0L, BOOST_STRINGIZE(x), mpl::bool_<false>(), lslboost::is_convertible<const char*, T>())
+   lslboost::math::tools::make_big_value<T>(0.0L, BOOST_STRINGIZE(x), \
+   mpl::bool_<is_floating_point<T>::value || (std::numeric_limits<T>::is_specialized && std::numeric_limits<T>::max_exponent <= std::numeric_limits<long double>::max_exponent && std::numeric_limits<T>::digits <= std::numeric_limits<long double>::digits)>(), \
+   lslboost::is_convertible<const char*, T>())
 
 }}} // namespaces
 

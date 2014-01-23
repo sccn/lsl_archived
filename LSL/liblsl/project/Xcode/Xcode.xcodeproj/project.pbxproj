@@ -77,13 +77,6 @@
 			remoteGlobalIDString = AA35E24A1513CF7B003F3939;
 			remoteInfo = SendDataInChunks;
 		};
-		AA35E27D1513D00B003F3939 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = AA35E2791513D00B003F3939 /* SendStringMarkers.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = AA35E26C1513D00B003F3939;
-			remoteInfo = SendStringMarkers;
-		};
 		AA48E46F1512E76400DBC29F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AA48E46B1512E76400DBC29F /* liblsl.xcodeproj */;
@@ -127,7 +120,7 @@
 		AA1103E21513AC8D006FD0CF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA1103E61513AC8E006FD0CF /* SendData */,
+				AA1103E61513AC8E006FD0CF /* SendData-mac */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -135,7 +128,7 @@
 		AA35E1361513C035003F3939 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA35E13A1513C036003F3939 /* ReceiveData */,
+				AA35E13A1513C036003F3939 /* ReceiveData-mac */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -143,7 +136,7 @@
 		AA35E1581513C404003F3939 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA35E15C1513C404003F3939 /* ReceiveStringMarkers */,
+				AA35E15C1513C404003F3939 /* ReceiveStringMarkers-mac */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -151,7 +144,7 @@
 		AA35E17A1513C57E003F3939 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA35E17E1513C57F003F3939 /* GetAllStreams */,
+				AA35E17E1513C57F003F3939 /* GetAllStreams-mac */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -159,7 +152,7 @@
 		AA35E19C1513CB00003F3939 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA35E1A01513CB00003F3939 /* GetFullinfo */,
+				AA35E1A01513CB00003F3939 /* GetFullinfo-mac */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -167,7 +160,7 @@
 		AA35E1BE1513CBD1003F3939 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA35E1C21513CBD2003F3939 /* GetTimeCorrection */,
+				AA35E1C21513CBD2003F3939 /* GetTimeCorrection-mac */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -175,7 +168,7 @@
 		AA35E1DC1513CC46003F3939 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA35E1E01513CC47003F3939 /* ReceiveDataInChunks */,
+				AA35E1E01513CC47003F3939 /* ReceiveDataInChunks-mac */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -183,7 +176,7 @@
 		AA35E2031513CE34003F3939 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA35E2071513CE34003F3939 /* ReceiveDataSimple */,
+				AA35E2071513CE34003F3939 /* ReceiveDataSimple-mac */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -191,7 +184,7 @@
 		AA35E2361513CEEE003F3939 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA35E23A1513CEEE003F3939 /* SendDataSimple */,
+				AA35E23A1513CEEE003F3939 /* SendDataSimple-mac */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -200,14 +193,6 @@
 			isa = PBXGroup;
 			children = (
 				AA35E25C1513CF7B003F3939 /* SendDataInChunks-mac */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		AA35E27A1513D00B003F3939 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				AA35E27E1513D00B003F3939 /* SendStringMarkers-mac */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -312,10 +297,6 @@
 					ProjectRef = AA35E2351513CEEE003F3939 /* SendDataSimple.xcodeproj */;
 				},
 				{
-					ProductGroup = AA35E27A1513D00B003F3939 /* Products */;
-					ProjectRef = AA35E2791513D00B003F3939 /* SendStringMarkers.xcodeproj */;
-				},
-				{
 					ProductGroup = AA6FC01A15B9EB5C0048161D /* Products */;
 					ProjectRef = AA6FC01915B9EB5C0048161D /* StressTest.xcodeproj */;
 				},
@@ -327,74 +308,65 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		AA1103E61513AC8E006FD0CF /* SendData */ = {
+		AA1103E61513AC8E006FD0CF /* SendData-mac */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			name = SendData;
 			path = "SendData-mac";
 			remoteRef = AA1103E51513AC8E006FD0CF /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		AA35E13A1513C036003F3939 /* ReceiveData */ = {
+		AA35E13A1513C036003F3939 /* ReceiveData-mac */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			name = ReceiveData;
 			path = "ReceiveData-mac";
 			remoteRef = AA35E1391513C036003F3939 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		AA35E15C1513C404003F3939 /* ReceiveStringMarkers */ = {
+		AA35E15C1513C404003F3939 /* ReceiveStringMarkers-mac */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			name = ReceiveStringMarkers;
 			path = "ReceiveStringMarkers-mac";
 			remoteRef = AA35E15B1513C404003F3939 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		AA35E17E1513C57F003F3939 /* GetAllStreams */ = {
+		AA35E17E1513C57F003F3939 /* GetAllStreams-mac */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			name = GetAllStreams;
 			path = "GetAllStreams-mac";
 			remoteRef = AA35E17D1513C57F003F3939 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		AA35E1A01513CB00003F3939 /* GetFullinfo */ = {
+		AA35E1A01513CB00003F3939 /* GetFullinfo-mac */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			name = GetFullinfo;
 			path = "GetFullinfo-mac";
 			remoteRef = AA35E19F1513CB00003F3939 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		AA35E1C21513CBD2003F3939 /* GetTimeCorrection */ = {
+		AA35E1C21513CBD2003F3939 /* GetTimeCorrection-mac */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			name = GetTimeCorrection;
 			path = "GetTimeCorrection-mac";
 			remoteRef = AA35E1C11513CBD2003F3939 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		AA35E1E01513CC47003F3939 /* ReceiveDataInChunks */ = {
+		AA35E1E01513CC47003F3939 /* ReceiveDataInChunks-mac */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			name = ReceiveDataInChunks;
 			path = "ReceiveDataInChunks-mac";
 			remoteRef = AA35E1DF1513CC47003F3939 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		AA35E2071513CE34003F3939 /* ReceiveDataSimple */ = {
+		AA35E2071513CE34003F3939 /* ReceiveDataSimple-mac */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			name = ReceiveDataSimple;
 			path = "ReceiveDataSimple-mac";
 			remoteRef = AA35E2061513CE34003F3939 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		AA35E23A1513CEEE003F3939 /* SendDataSimple */ = {
+		AA35E23A1513CEEE003F3939 /* SendDataSimple-mac */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			name = SendDataSimple;
 			path = "SendDataSimple-mac";
 			remoteRef = AA35E2391513CEEE003F3939 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -404,13 +376,6 @@
 			fileType = "compiled.mach-o.executable";
 			path = "SendDataInChunks-mac";
 			remoteRef = AA35E25B1513CF7B003F3939 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		AA35E27E1513D00B003F3939 /* SendStringMarkers-mac */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = "SendStringMarkers-mac";
-			remoteRef = AA35E27D1513D00B003F3939 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		AA48E4701512E76400DBC29F /* liblsl64-debug.dylib */ = {

@@ -2,7 +2,7 @@
 // detail/win_iocp_overlapped_ptr.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -19,8 +19,8 @@
 
 #if defined(BOOST_ASIO_HAS_IOCP)
 
-#include <lslboost/utility/addressof.hpp>
 #include <lslboost/asio/io_service.hpp>
+#include <lslboost/asio/detail/addressof.hpp>
 #include <lslboost/asio/detail/handler_alloc_helpers.hpp>
 #include <lslboost/asio/detail/noncopyable.hpp>
 #include <lslboost/asio/detail/win_iocp_overlapped_op.hpp>
@@ -78,7 +78,7 @@ public:
   void reset(lslboost::asio::io_service& io_service, Handler handler)
   {
     typedef win_iocp_overlapped_op<Handler> op;
-    typename op::ptr p = { lslboost::addressof(handler),
+    typename op::ptr p = { lslboost::asio::detail::addressof(handler),
       lslboost_asio_handler_alloc_helpers::allocate(
         sizeof(op), handler), 0 };
     p.p = new (p.v) op(handler);

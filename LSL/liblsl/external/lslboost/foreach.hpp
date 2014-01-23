@@ -31,7 +31,7 @@
 #include <lslboost/detail/workaround.hpp>
 
 // Some compilers let us detect even const-qualified rvalues at compile-time
-#if !defined(BOOST_NO_RVALUE_REFERENCES)                                                         \
+#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)                                                   \
  || BOOST_WORKAROUND(BOOST_MSVC, >= 1310) && !defined(_PREFAST_)                                 \
  || (BOOST_WORKAROUND(__GNUC__, == 4) && (__GNUC_MINOR__ <= 5) && !defined(BOOST_INTEL) &&       \
                                                                   !defined(BOOST_CLANG))         \
@@ -228,7 +228,7 @@ template<typename T>
 inline lslboost::mpl::true_ *is_const_(T const &) { return 0; }
 #endif
 
-#ifdef BOOST_NO_RVALUE_REFERENCES
+#ifdef BOOST_NO_CXX11_RVALUE_REFERENCES
 template<typename T>
 inline lslboost::mpl::false_ *is_rvalue_(T &, int) { return 0; }
 
@@ -437,7 +437,6 @@ inline T (*&to_ptr(T (&)[N]))[N]
     static T (*t)[N] = 0;
     return t;
 }
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // derefof
@@ -454,8 +453,13 @@ inline T &derefof(T *t)
     );
 }
 
+# define BOOST_FOREACH_DEREFOF(T) lslboost::foreach_detail_::derefof(*T)
+#else
+# define BOOST_FOREACH_DEREFOF(T) (*T)
+#endif
+
 #if defined(BOOST_FOREACH_COMPILE_TIME_CONST_RVALUE_DETECTION)                                  \
- && !defined(BOOST_NO_RVALUE_REFERENCES)
+ && !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
 ///////////////////////////////////////////////////////////////////////////////
 // Rvalue references makes it drop-dead simple to detect at compile time
 // whether an expression is an rvalue.
@@ -465,7 +469,7 @@ inline T &derefof(T *t)
     lslboost::foreach_detail_::is_rvalue_((COL), 0)
 
 #elif defined(BOOST_FOREACH_COMPILE_TIME_CONST_RVALUE_DETECTION)                                \
- && defined(BOOST_NO_RVALUE_REFERENCES)
+ && defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
 ///////////////////////////////////////////////////////////////////////////////
 // Detect at compile-time whether an expression yields an rvalue or
 // an lvalue. This is rather non-standard, but some popular compilers
@@ -667,7 +671,7 @@ begin(auto_any_t col, type2type<T, C> *, lslboost::mpl::false_ *) // lvalue
     typedef BOOST_DEDUCED_TYPENAME type2type<T, C>::type type;
     typedef BOOST_DEDUCED_TYPENAME foreach_iterator<T, C>::type iterator;
     return auto_any<BOOST_DEDUCED_TYPENAME foreach_iterator<T, C>::type>(
-        iterator(lslboost::begin(derefof(auto_any_cast<type *, lslboost::mpl::false_>(col)))));
+        iterator(lslboost::begin(BOOST_FOREACH_DEREFOF((auto_any_cast<type *, lslboost::mpl::false_>(col))))));
 }
 
 #ifdef BOOST_FOREACH_RUN_TIME_CONST_RVALUE_DETECTION
@@ -707,7 +711,7 @@ end(auto_any_t col, type2type<T, C> *, lslboost::mpl::false_ *) // lvalue
     typedef BOOST_DEDUCED_TYPENAME type2type<T, C>::type type;
     typedef BOOST_DEDUCED_TYPENAME foreach_iterator<T, C>::type iterator;
     return auto_any<BOOST_DEDUCED_TYPENAME foreach_iterator<T, C>::type>(
-        iterator(lslboost::end(derefof(auto_any_cast<type *, lslboost::mpl::false_>(col)))));
+        iterator(lslboost::end(BOOST_FOREACH_DEREFOF((auto_any_cast<type *, lslboost::mpl::false_>(col))))));
 }
 
 #ifdef BOOST_FOREACH_RUN_TIME_CONST_RVALUE_DETECTION
@@ -786,7 +790,7 @@ rbegin(auto_any_t col, type2type<T, C> *, lslboost::mpl::false_ *) // lvalue
     typedef BOOST_DEDUCED_TYPENAME type2type<T, C>::type type;
     typedef BOOST_DEDUCED_TYPENAME foreach_reverse_iterator<T, C>::type iterator;
     return auto_any<BOOST_DEDUCED_TYPENAME foreach_reverse_iterator<T, C>::type>(
-        iterator(lslboost::rbegin(derefof(auto_any_cast<type *, lslboost::mpl::false_>(col)))));
+        iterator(lslboost::rbegin(BOOST_FOREACH_DEREFOF((auto_any_cast<type *, lslboost::mpl::false_>(col))))));
 }
 
 #ifdef BOOST_FOREACH_RUN_TIME_CONST_RVALUE_DETECTION
@@ -829,7 +833,7 @@ rend(auto_any_t col, type2type<T, C> *, lslboost::mpl::false_ *) // lvalue
     typedef BOOST_DEDUCED_TYPENAME type2type<T, C>::type type;
     typedef BOOST_DEDUCED_TYPENAME foreach_reverse_iterator<T, C>::type iterator;
     return auto_any<BOOST_DEDUCED_TYPENAME foreach_reverse_iterator<T, C>::type>(
-        iterator(lslboost::rend(derefof(auto_any_cast<type *, lslboost::mpl::false_>(col)))));
+        iterator(lslboost::rend(BOOST_FOREACH_DEREFOF((auto_any_cast<type *, lslboost::mpl::false_>(col))))));
 }
 
 #ifdef BOOST_FOREACH_RUN_TIME_CONST_RVALUE_DETECTION
@@ -955,7 +959,7 @@ rderef(auto_any_t cur, type2type<T, C> *)
     (true ? lslboost::foreach_detail_::make_probe((COL), BOOST_FOREACH_ID(_foreach_is_rvalue)) : (COL))
 
 // The rvalue/lvalue-ness of the collection expression is determined dynamically, unless
-// type type is an array or is noncopyable or is non-const, in which case we know it's an lvalue.
+// the type is an array or is noncopyable or is non-const, in which case we know it's an lvalue.
 // If the type happens to be a lightweight proxy, always make a copy.
 # define BOOST_FOREACH_SHOULD_COPY(COL)                                                         \
     (lslboost::foreach_detail_::should_copy_impl(                                                  \

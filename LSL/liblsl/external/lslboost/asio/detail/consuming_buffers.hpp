@@ -2,7 +2,7 @@
 // detail/consuming_buffers.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -17,9 +17,9 @@
 
 #include <lslboost/asio/detail/config.hpp>
 #include <cstddef>
-#include <lslboost/iterator.hpp>
-#include <lslboost/limits.hpp>
+#include <iterator>
 #include <lslboost/asio/buffer.hpp>
+#include <lslboost/asio/detail/limits.hpp>
 
 #include <lslboost/asio/detail/push_options.hpp>
 
@@ -30,9 +30,23 @@ namespace detail {
 // A proxy iterator for a sub-range in a list of buffers.
 template <typename Buffer, typename Buffer_Iterator>
 class consuming_buffers_iterator
-  : public lslboost::iterator<std::forward_iterator_tag, const Buffer>
 {
 public:
+  /// The type used for the distance between two iterators.
+  typedef std::ptrdiff_t difference_type;
+
+  /// The type of the value pointed to by the iterator.
+  typedef Buffer value_type;
+
+  /// The type of the result of applying operator->() to the iterator.
+  typedef const Buffer* pointer;
+
+  /// The type of the result of applying operator*() to the iterator.
+  typedef const Buffer& reference;
+
+  /// The iterator category.
+  typedef std::forward_iterator_tag iterator_category;
+
   // Default constructor creates an end iterator.
   consuming_buffers_iterator()
     : at_end_(true)

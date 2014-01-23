@@ -6,7 +6,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //
-// (C) Copyright Ion Gaztanaga 2011-2011. Distributed under the Boost
+// (C) Copyright Ion Gaztanaga 2011-2013. Distributed under the Boost
 // Software License, Version 1.0. (See accompanying file
 // LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
 //
@@ -74,17 +74,17 @@ struct pointer_traits
       typedef BOOST_INTRUSIVE_OBTAIN_TYPE_WITH_DEFAULT
          (lslboost::intrusive::detail::, Ptr, difference_type, std::ptrdiff_t)   difference_type;
       //
-      typedef typename lslboost::intrusive::detail::unvoid<element_type>::type&  reference;
+      typedef typename lslboost::intrusive::detail::unvoid_ref<element_type>::type  reference;
       //
       template <class U> struct rebind_pointer
       {
          typedef typename lslboost::intrusive::detail::type_rebinder<Ptr, U>::type  type;
       };
 
-      #if !defined(BOOST_NO_TEMPLATE_ALIASES)
+      #if !defined(BOOST_NO_CXX11_TEMPLATE_ALIASES)
          template <class U> using rebind = typename lslboost::intrusive::detail::type_rebinder<Ptr, U>::type;
       #endif
-   #endif   //#if !defined(BOOST_NO_TEMPLATE_ALIASES)
+   #endif   //#if !defined(BOOST_NO_CXX11_TEMPLATE_ALIASES)
 
    //! <b>Remark</b>: If element_type is (possibly cv-qualified) void, r type is unspecified; otherwise,
    //!   it is element_type &.
@@ -170,7 +170,7 @@ struct pointer_traits
 
    template<class UPtr>
    static pointer priv_static_cast_from(lslboost::false_type, const UPtr &uptr)
-   {  return pointer_to(static_cast<element_type&>(*uptr));  }
+   {  return pointer_to(*static_cast<element_type*>(to_raw_pointer(uptr)));  }
 
    //priv_const_cast_from
    template<class UPtr>
@@ -224,15 +224,15 @@ struct pointer_traits<T*>
       //!shall be used instead of rebind<U> to obtain a pointer to U.
       template <class U> using rebind = U*;
    #else
-      typedef typename lslboost::intrusive::detail::unvoid<element_type>::type& reference;
-      #if !defined(BOOST_NO_TEMPLATE_ALIASES)
+      typedef typename lslboost::intrusive::detail::unvoid_ref<element_type>::type reference;
+      #if !defined(BOOST_NO_CXX11_TEMPLATE_ALIASES)
          template <class U> using rebind = U*;
       #endif
    #endif
 
    template <class U> struct rebind_pointer
    {  typedef U* type;  };
-  
+
    //! <b>Returns</b>: addressof(r)
    //!
    static pointer pointer_to(reference r)

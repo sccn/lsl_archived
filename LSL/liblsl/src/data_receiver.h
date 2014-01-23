@@ -53,13 +53,15 @@ namespace lsl {
 			if (conn_.lost())
 				throw lost_error("The stream read by this outlet has been lost. To recover, you need to re-resolve the source and re-create the inlet.");
 			// start data thread implicitly if necessary
-			if (!data_thread_.joinable())
+			if (check_thread_start_ && !data_thread_.joinable()) {
 				data_thread_ = boost::thread(&data_receiver::data_thread,this);
+				check_thread_start_ = false;
+			}
 			// get the sample with timeout
 			if (sample_p s = sample_queue_.pop_sample(timeout)) {
 				if (buffer_elements != conn_.type_info().channel_count())
 					throw std::range_error("The number of buffer elements provided does not match the number of channels in the sample.");
-				s->retrieve_typed_ptr(buffer);
+				s->retrieve_typed(buffer);
 				return s->timestamp;
 			} else {
 				if (conn_.lost())
@@ -71,8 +73,8 @@ namespace lsl {
 		/// Read sample from the inlet and read it into a pointer to raw data.
 		double pull_sample_untyped(void *buffer, int buffer_bytes, double timeout=FOREVER);
 
-		/// Query the current size of the buffer, i.e. the number of samples that are buffered.
-		std::size_t buffer_size() { return sample_queue_.buffer_size(); };
+		/// Check whether the underlying buffer is empty. This value may be inaccurate.
+		bool empty() { return sample_queue_.empty(); };
 
 	private:
 		/// The data reader thread.
@@ -81,12 +83,13 @@ namespace lsl {
 		/// Function that is polled by the condition variable
 		bool connection_completed() { return connected_ || conn_.lost(); }
 
-
 		// the underlying connection
 		inlet_connection &conn_;
 
 		// fields related to the data reader thread
+		sample::factory_p sample_factory_;			// a factory to create samples of appropriate type
 		boost::thread data_thread_;					// background read thread
+		bool check_thread_start_;					// whether we need to check whether the thread has been started
 		bool closing_stream_;						// indicates to the data thread that it a close has been requested
 		bool connected_;							// whether the stream has been connected / opened
 		consumer_queue sample_queue_;				// queue of samples ready to be picked up (populated by the data thread)

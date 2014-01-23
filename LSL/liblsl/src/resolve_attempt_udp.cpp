@@ -32,8 +32,8 @@ using boost::posix_time::millisec;
 * @param registry A registry where the attempt can register itself as active so it can be cancelled during shutdown.
 */
 resolve_attempt_udp::resolve_attempt_udp(io_service &io, const udp &protocol, const std::vector<udp::endpoint> &targets, const std::string &query, result_container &results, boost::mutex &results_mut, double cancel_after, cancellable_registry *registry): 
-	io_(io), results_(results), results_mut_(results_mut), cancel_after_(cancel_after), is_v4_(protocol == udp::v4()), protocol_(protocol),
-	targets_(targets), unicast_socket_(io), broadcast_socket_(io), multicast_socket_(io), recv_socket_(io), query_(query), cancel_timer_(io) 
+	io_(io), results_(results), results_mut_(results_mut), cancel_after_(cancel_after), cancelled_(false), is_v4_(protocol == udp::v4()), protocol_(protocol),
+	targets_(targets), unicast_socket_(io), broadcast_socket_(io), multicast_socket_(io), recv_socket_(io), query_(query), cancel_timer_(io)
 {
 	// open the sockets that we might need
 	recv_socket_.open(protocol);
@@ -87,13 +87,13 @@ void resolve_attempt_udp::begin() {
 	// also initiate the cancel event, if desired
 	if (cancel_after_ != FOREVER) {
 		cancel_timer_.expires_from_now(millisec(1000*cancel_after_));
-		cancel_timer_.async_wait(boost::bind(&resolve_attempt_udp::handle_cancel,shared_from_this(),placeholders::error));
+		cancel_timer_.async_wait(boost::bind(&resolve_attempt_udp::handle_timeout,shared_from_this(),placeholders::error));
 	}
 }
 
 /// Post a command to cancel all operations.
 void resolve_attempt_udp::cancel() {
-	io_.post(boost::bind(&resolve_attempt_udp::cancel_operations,shared_from_this()));
+	io_.post(boost::bind(&resolve_attempt_udp::do_cancel,shared_from_this()));
 }
 
 
@@ -107,7 +107,7 @@ void resolve_attempt_udp::receive_next_result() {
 
 /// Handler that gets called when a receive has completed
 void resolve_attempt_udp::handle_receive_outcome(error_code err, std::size_t len) {
-	if (err != error::operation_aborted && err != error::not_connected && err != error::not_socket) {
+	if (!cancelled_ && err != error::operation_aborted && err != error::not_connected && err != error::not_socket) {
 		if (!err) {
 			try {
 				// first parse & check the query id
@@ -123,9 +123,9 @@ void resolve_attempt_udp::handle_receive_outcome(error_code err, std::size_t len
 						// update the results
 						boost::lock_guard<boost::mutex> lock(results_mut_);
 						if (results_.find(uid) == results_.end())
-							results_[uid] = std::make_pair(info,local_clock()); // insert new result
+							results_[uid] = std::make_pair(info,lsl_clock()); // insert new result
 						else							
-							results_[uid].second = local_clock(); // update only the receive time
+							results_[uid].second = lsl_clock(); // update only the receive time
 						// ... also update the address associated with the result (but don't override the 
 						// address of an earlier record for this stream since this would be the faster route)
 						if (remote_endpoint_.address().is_v4()) {
@@ -151,7 +151,7 @@ void resolve_attempt_udp::handle_receive_outcome(error_code err, std::size_t len
 
 /// Thus function starts an async send operation for the given current endpoint
 void resolve_attempt_udp::send_next_query(endpoint_list::const_iterator i) {
-	if (i != targets_.end()) {
+	if (i != targets_.end() && !cancelled_) {
 		udp::endpoint ep(*i);
 		// endpoint matches our active protocol?
 		if (ep.address().is_v4() == is_v4_) {
@@ -168,7 +168,7 @@ void resolve_attempt_udp::send_next_query(endpoint_list::const_iterator i) {
 
 /// Handler that gets called when a send has completed
 void resolve_attempt_udp::handle_send_outcome(endpoint_list::const_iterator i, error_code err) {
-	if (err != error::operation_aborted && err != error::not_connected && err != error::not_socket)
+	if (!cancelled_ && err != error::operation_aborted && err != error::not_connected && err != error::not_socket)
 		send_next_query(i);
 }
 
@@ -176,14 +176,15 @@ void resolve_attempt_udp::handle_send_outcome(endpoint_list::const_iterator i, e
 // === cancellation logic ===
 
 /// Give up the current operations.
-void resolve_attempt_udp::handle_cancel(error_code err) {
+void resolve_attempt_udp::handle_timeout(error_code err) {
 	if (!err)
-		cancel_operations();
+		do_cancel();
 }
 
 /// Cancel the outstanding operations.
-void resolve_attempt_udp::cancel_operations() {
+void resolve_attempt_udp::do_cancel() {
 	try {
+		cancelled_ = true;
 		if (unicast_socket_.is_open())
 			unicast_socket_.close();
 		if (multicast_socket_.is_open())

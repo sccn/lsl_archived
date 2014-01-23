@@ -50,7 +50,7 @@ T erf_inv_imp(const T& p, const T& q, const Policy&, const lslboost::mpl::int_<6
          BOOST_MATH_BIG_CONSTANT(T, 64, -0.00538772965071242932965)
       };
       static const T Q[] = {    
-         1,
+         BOOST_MATH_BIG_CONSTANT(T, 64, 1.0),
          BOOST_MATH_BIG_CONSTANT(T, 64, -0.970005043303290640362),
          BOOST_MATH_BIG_CONSTANT(T, 64, -1.56574558234175846809),
          BOOST_MATH_BIG_CONSTANT(T, 64, 1.56221558398423026363),
@@ -147,7 +147,7 @@ T erf_inv_imp(const T& p, const T& q, const Policy&, const lslboost::mpl::int_<6
             BOOST_MATH_BIG_CONSTANT(T, 64, -0.681149956853776992068e-9)
          };
          static const T Q[] = {    
-            1,
+            BOOST_MATH_BIG_CONSTANT(T, 64, 1.0),
             BOOST_MATH_BIG_CONSTANT(T, 64, 3.46625407242567245975),
             BOOST_MATH_BIG_CONSTANT(T, 64, 5.38168345707006855425),
             BOOST_MATH_BIG_CONSTANT(T, 64, 4.77846592945843778382),
@@ -282,7 +282,7 @@ struct erf_roots
       BOOST_MATH_STD_USING
       T derivative = sign * (2 / sqrt(constants::pi<T>())) * exp(-(guess * guess));
       T derivative2 = -2 * guess * derivative;
-      return lslboost::math::make_tuple(((sign > 0) ? lslboost::math::erf(guess, Policy()) : lslboost::math::erfc(guess, Policy())) - target, derivative, derivative2);
+      return lslboost::math::make_tuple(((sign > 0) ? static_cast<T>(lslboost::math::erf(guess, Policy()) - target) : static_cast<T>(lslboost::math::erfc(guess, Policy())) - target), derivative, derivative2);
    }
    erf_roots(T z, int s) : target(z), sign(s) {}
 private:
@@ -339,10 +339,20 @@ struct erf_inv_initializer
          lslboost::math::erfc_inv(static_cast<T>(1e-15), Policy());
          if(static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 1e-130)) != 0)
             lslboost::math::erfc_inv(static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 1e-130)), Policy());
+
+         // Some compilers choke on constants that would underflow, even in code that isn't instantiated
+         // so try and filter these cases out in the preprocessor:
+#if LDBL_MAX_10_EXP >= 800
          if(static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 1e-800)) != 0)
             lslboost::math::erfc_inv(static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 1e-800)), Policy());
          if(static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 1e-900)) != 0)
             lslboost::math::erfc_inv(static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 1e-900)), Policy());
+#else
+         if(static_cast<T>(BOOST_MATH_HUGE_CONSTANT(T, 64, 1e-800)) != 0)
+            lslboost::math::erfc_inv(static_cast<T>(BOOST_MATH_HUGE_CONSTANT(T, 64, 1e-800)), Policy());
+         if(static_cast<T>(BOOST_MATH_HUGE_CONSTANT(T, 64, 1e-900)) != 0)
+            lslboost::math::erfc_inv(static_cast<T>(BOOST_MATH_HUGE_CONSTANT(T, 64, 1e-900)), Policy());
+#endif
       }
       void force_instantiate()const{}
    };

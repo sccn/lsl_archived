@@ -14,7 +14,7 @@
 #include <lslboost/config.hpp>
 
 #ifdef BOOST_NO_LIMITS
-# include <lslboost/detail/limits.hpp>
+#  error "There is no std::numeric_limits suppport available."
 #else
 # include <limits>
 #endif

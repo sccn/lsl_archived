@@ -13,7 +13,7 @@
 
 #include <lslboost/algorithm/string/config.hpp>
 
-#include <lslboost/range/iterator_range.hpp>
+#include <lslboost/range/iterator_range_core.hpp>
 #include <lslboost/range/begin.hpp>
 #include <lslboost/range/end.hpp>
 #include <lslboost/range/iterator.hpp>

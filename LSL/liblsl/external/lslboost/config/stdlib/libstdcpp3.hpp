@@ -35,7 +35,8 @@
 #  if defined(_GLIBCXX_HAVE_GTHR_DEFAULT) \
         || defined(_GLIBCXX__PTHREADS) \
         || defined(_GLIBCXX_HAS_GTHREADS) \
-        || defined(_WIN32)
+        || defined(_WIN32) \
+        || defined(_AIX)
       //
       // If the std lib has thread support turned on, then turn it on in Boost
       // as well.  We do this because some gcc-3.4 std lib headers define _REENTANT
@@ -108,7 +109,6 @@
 #  define BOOST_NO_CXX11_HDR_ARRAY
 #  define BOOST_NO_CXX11_HDR_REGEX
 #  define BOOST_NO_CXX11_HDR_TUPLE
-#  define BOOST_NO_STD_UNORDERED  // deprecated; see following
 #  define BOOST_NO_CXX11_HDR_UNORDERED_MAP
 #  define BOOST_NO_CXX11_HDR_UNORDERED_SET
 #  define BOOST_NO_CXX11_HDR_FUNCTIONAL
@@ -137,7 +137,7 @@
 //  C++0x features in GCC 4.5.0 and later
 //
 #if __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 5) || !defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  define BOOST_NO_NUMERIC_LIMITS_LOWEST
+#  define BOOST_NO_CXX11_NUMERIC_LIMITS
 #  define BOOST_NO_CXX11_HDR_FUTURE
 #  define BOOST_NO_CXX11_HDR_RANDOM
 #endif

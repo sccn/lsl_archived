@@ -3,7 +3,7 @@
 // ~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
-// Copyright (c) 2005-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2005-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -19,8 +19,8 @@
 #include <lslboost/asio/detail/config.hpp>
 #include <cstddef>
 #include <lslboost/noncopyable.hpp>
-#include <lslboost/type_traits/remove_reference.hpp>
 #include <lslboost/asio/detail/throw_error.hpp>
+#include <lslboost/asio/detail/type_traits.hpp>
 #include <lslboost/asio/error.hpp>
 #include <lslboost/asio/ssl/basic_context.hpp>
 #include <lslboost/asio/ssl/stream_base.hpp>
@@ -60,7 +60,7 @@ class stream
 {
 public:
   /// The type of the next layer.
-  typedef typename lslboost::remove_reference<Stream>::type next_layer_type;
+  typedef typename remove_reference<Stream>::type next_layer_type;
 
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;

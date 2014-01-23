@@ -12,7 +12,7 @@
 #define BOOST_STRING_FIND_FORMAT_STORE_DETAIL_HPP
 
 #include <lslboost/algorithm/string/config.hpp>
-#include <lslboost/range/iterator_range.hpp>
+#include <lslboost/range/iterator_range_core.hpp>
 
 namespace lslboost {
     namespace algorithm {

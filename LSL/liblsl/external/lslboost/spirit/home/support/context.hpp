@@ -116,8 +116,8 @@ namespace lslboost { namespace spirit
             )
           , locals() {}
 
-        context(Attributes const& attributes)
-          : attributes(attributes), locals() {}
+        context(Attributes const& attributes_)
+          : attributes(attributes_), locals() {}
 
         Attributes attributes;  // The attributes
         Locals locals;          // Local variables

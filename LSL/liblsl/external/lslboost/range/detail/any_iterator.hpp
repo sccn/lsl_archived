@@ -14,12 +14,14 @@
 #include <lslboost/mpl/and.hpp>
 #include <lslboost/mpl/or.hpp>
 #include <lslboost/mpl/not.hpp>
+#include <lslboost/iterator/iterator_facade.hpp>
 #include <lslboost/type_traits/is_const.hpp>
 #include <lslboost/type_traits/is_reference.hpp>
 #include <lslboost/type_traits/remove_reference.hpp>
 #include <lslboost/range/detail/any_iterator_buffer.hpp>
 #include <lslboost/range/detail/any_iterator_interface.hpp>
 #include <lslboost/range/detail/any_iterator_wrapper.hpp>
+#include <lslboost/utility/enable_if.hpp>
 
 namespace lslboost
 {
@@ -556,7 +558,7 @@ namespace lslboost
                 }
 
                 // If this is a non-null iterator then we need to put
-                // a clone of this iterators impementation into the other
+                // a clone of this iterators implementation into the other
                 // iterator.
                 // We can't just swap because of the small buffer optimization.
                 if (m_impl)

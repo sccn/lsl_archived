@@ -19,25 +19,33 @@
 */
 
 #ifdef _WIN32
-	#ifdef LIBLSL_EXPORTS
-		#define LIBLSL_C_API __declspec(dllexport)
-	#else
-		#ifndef _DEBUG
-			#ifdef _WIN64
-				#pragma comment (lib,"liblsl64.lib")
-			#else
-				#pragma comment (lib,"liblsl32.lib")
-			#endif
-		#else
-			#ifdef _WIN64
-				#pragma comment (lib,"liblsl64-debug.lib")
-			#else
-				#pragma comment (lib,"liblsl32-debug.lib")
-			#endif
-		#endif
-		#define LIBLSL_C_API __declspec(dllimport)
-	#endif
-	#pragma warning (disable:4275)
+    #ifdef LIBLSL_EXPORTS
+        #define LIBLSL_C_API __declspec(dllexport)
+    #else
+        #ifndef _DEBUG
+            #ifdef _WIN64
+                #pragma comment (lib,"liblsl64.lib")
+            #else
+                #pragma comment (lib,"liblsl32.lib")
+            #endif
+        #else
+            #ifdef LSL_DEBUG_BINDINGS
+                #ifdef _WIN64
+                    #pragma comment (lib,"liblsl64-debug.lib")
+                #else
+                    #pragma comment (lib,"liblsl32-debug.lib")
+                #endif
+            #else
+                #ifdef _WIN64
+                    #pragma comment (lib,"liblsl64.lib")
+                #else
+                    #pragma comment (lib,"liblsl32.lib")
+                #endif
+            #endif
+        #endif
+        #define LIBLSL_C_API __declspec(dllimport)
+    #endif
+    #pragma warning (disable:4275)
 #else
     #pragma GCC visibility push(default)
     #define LIBLSL_C_API
@@ -82,21 +90,21 @@ extern "C" {
 * Data format of a channel (each transmitted sample holds an array of channels).
 */
 typedef enum {
-	cft_float32 = 1,	/* For up to 24-bit precision measurements in the appropriate physical unit */
-						/* (e.g., microvolts). Integers from -16777216 to 16777216 are represented accurately. */
-	cft_double64 = 2,	/* For universal numeric data as long as permitted by network & disk budget. */
-						/* The largest representable integer is 53-bit. */
-	cft_string = 3,		/* For variable-length ASCII strings or data blobs, such as video frames, */
-						/* complex event descriptions, etc. */
-	cft_int32 = 4,		/* For high-rate digitized formats that require 32-bit precision. Depends critically on */
-						/* meta-data to represent meaningful units. Useful for application event codes or other coded data. */
-	cft_int16 = 5,		/* For very high rate signals (40Khz+) or consumer-grade audio */ 
-						/* (for professional audio float is recommended). */
-	cft_int8 = 6,		/* For binary signals or other coded data. */
-						/* Not recommended for encoding string data. */
-	cft_int64 = 7,		/* For now only for future compatibility. Support for this type is not yet exposed in all languages. */
-						/* Also, some builds of liblsl will not be able to send or receive data of this type. */
-	cft_undefined = 0	/* Can not be transmitted. */
+    cft_float32 = 1,    /* For up to 24-bit precision measurements in the appropriate physical unit */
+                        /* (e.g., microvolts). Integers from -16777216 to 16777216 are represented accurately. */
+    cft_double64 = 2,   /* For universal numeric data as long as permitted by network & disk budget. */
+                        /* The largest representable integer is 53-bit. */
+    cft_string = 3,     /* For variable-length ASCII strings or data blobs, such as video frames, */
+                        /* complex event descriptions, etc. */
+    cft_int32 = 4,      /* For high-rate digitized formats that require 32-bit precision. Depends critically on */
+                        /* meta-data to represent meaningful units. Useful for application event codes or other coded data. */
+    cft_int16 = 5,      /* For very high rate signals (40Khz+) or consumer-grade audio */ 
+                        /* (for professional audio float is recommended). */
+    cft_int8 = 6,       /* For binary signals or other coded data. */
+                        /* Not recommended for encoding string data. */
+    cft_int64 = 7,      /* For now only for future compatibility. Support for this type is not yet exposed in all languages. */
+                        /* Also, some builds of liblsl will not be able to send or receive data of this type. */
+    cft_undefined = 0   /* Can not be transmitted. */
 } lsl_channel_format_t;
 
 
@@ -104,11 +112,11 @@ typedef enum {
 * Possible error codes.
 */
 typedef enum {
-	lsl_no_error = 0,			/* No error occurred */
-	lsl_timeout_error = -1,		/* The operation failed due to a timeout. */
-	lsl_lost_error = -2,		/* The stream has been lost. */
-	lsl_argument_error = -3,	/* An argument was incorrectly specified (e.g., wrong format or wrong length). */
-	lsl_internal_error = -4		/* Some other internal error has happened. */
+    lsl_no_error = 0,           /* No error occurred */
+    lsl_timeout_error = -1,     /* The operation failed due to a timeout. */
+    lsl_lost_error = -2,        /* The stream has been lost. */
+    lsl_argument_error = -3,    /* An argument was incorrectly specified (e.g., wrong format or wrong length). */
+    lsl_internal_error = -4     /* Some other internal error has happened. */
 } lsl_error_code_t;
 
 
@@ -187,7 +195,7 @@ extern LIBLSL_C_API int lsl_library_version();
 
 
 /**
-* Obtain a local system time stamp in seconds. The resolution is better than a milisecond.
+* Obtain a local system time stamp in seconds. The resolution is better than a millisecond.
 * This reading can be used to assign time stamps to samples as they are being acquired. 
 * If the "age" of a sample is known at a particular time (e.g., from USB transmission 
 * delays), it can be used as an offset to lsl_local_clock() to obtain a better estimate of 
@@ -204,18 +212,18 @@ extern LIBLSL_C_API double lsl_local_clock();
 * (see Configuration File in the documentation).
 * This is the default mechanism used by the browsing programs and the recording program.
 * @param buffer A user-allocated buffer to hold the resolve results.
-*				Note: it is the user's responsibility to either destroy the resulting streaminfo 
-*				objects or to pass them back to the LSL during during creation of an inlet.
-*				Note 2: The stream_info's returned by the resolver are only short versions that do not
-*				include the .desc() field (which can be arbitrarily big). To obtain the full
-*				stream information you need to call .info() on the inlet after you have created one.
+*               Note: it is the user's responsibility to either destroy the resulting streaminfo 
+*               objects or to pass them back to the LSL during during creation of an inlet.
+*               Note 2: The stream_info's returned by the resolver are only short versions that do not
+*               include the .desc() field (which can be arbitrarily big). To obtain the full
+*               stream information you need to call .info() on the inlet after you have created one.
 * @param buffer_elements The user-provided buffer length.
 * @param wait_time The waiting time for the operation, in seconds, to search for streams.
-*				   The recommended wait time is 1 second (or 2 for a busy and large recording operation).
-*				   Warning: If this is too short (<0.5s) only a subset (or none) of the 
-*							outlets that are present on the network may be returned.
+*                  The recommended wait time is 1 second (or 2 for a busy and large recording operation).
+*                  Warning: If this is too short (<0.5s) only a subset (or none) of the 
+*                           outlets that are present on the network may be returned.
 * @return The number of results written into the buffer (never more than the provided # of slots) 
-*		  or a negative number if an error has occurred (values corresponding to lsl_error_code_t).
+*         or a negative number if an error has occurred (values corresponding to lsl_error_code_t).
 */
 extern LIBLSL_C_API int lsl_resolve_all(lsl_streaminfo *buffer, unsigned buffer_elements, double wait_time);
 
@@ -223,19 +231,19 @@ extern LIBLSL_C_API int lsl_resolve_all(lsl_streaminfo *buffer, unsigned buffer_
 * Resolve all streams with a given value for a property.
 * If the goal is to resolve a specific stream, this method is preferred over resolving all streams and then selecting the desired one.
 * @param buffer A user-allocated buffer to hold the resolve results.
-*				Note: it is the user's responsibility to either destroy the resulting streaminfo 
-*				objects or to pass them back to the LSL during during creation of an inlet.
-*				Note 2: The stream_info's returned by the resolver are only short versions that do not
-*				include the .desc() field (which can be arbitrarily big). To obtain the full
-*				stream information you need to call .info() on the inlet after you have created one.
+*               Note: it is the user's responsibility to either destroy the resulting streaminfo 
+*               objects or to pass them back to the LSL during during creation of an inlet.
+*               Note 2: The stream_info's returned by the resolver are only short versions that do not
+*               include the .desc() field (which can be arbitrarily big). To obtain the full
+*               stream information you need to call .info() on the inlet after you have created one.
 * @param buffer_elements The user-provided buffer length.
 * @param prop The streaminfo property that should have a specific value ("name", "type", "source_id", or, e.g., "desc/manufaturer" if present).
 * @param value The string value that the property should have (e.g., "EEG" as the type).
 * @param minimum Return at least this number of streams.
 * @param timeout Optionally a timeout of the operation, in seconds (default: no timeout).
-*				  If the timeout expires, less than the desired number of streams (possibly none) will be returned.
+*                 If the timeout expires, less than the desired number of streams (possibly none) will be returned.
 * @return The number of results written into the buffer (never more than the provided # of slots) 
-*		  or a negative number if an error has occurred (values corresponding to lsl_error_code_t).
+*         or a negative number if an error has occurred (values corresponding to lsl_error_code_t).
 */
 extern LIBLSL_C_API int lsl_resolve_byprop(lsl_streaminfo *buffer, unsigned buffer_elements, char *prop, char *value, int minimum, double timeout);
 
@@ -244,21 +252,28 @@ extern LIBLSL_C_API int lsl_resolve_byprop(lsl_streaminfo *buffer, unsigned buff
 * Advanced query that allows to impose more conditions on the retrieved streams; the given string is an XPath 1.0 
 * predicate for the <info> node (omitting the surrounding []'s), see also http://en.wikipedia.org/w/index.php?title=XPath_1.0&oldid=474981951.
 * @param buffer A user-allocated buffer to hold the resolve results.
-*				Note: it is the user's responsibility to either destroy the resulting streaminfo 
-*				objects or to pass them back to the LSL during during creation of an inlet.
-*				Note 2: The stream_info's returned by the resolver are only short versions that do not
-*				include the .desc() field (which can be arbitrarily big). To obtain the full
-*				stream information you need to call .info() on the inlet after you have created one.
+*               Note: it is the user's responsibility to either destroy the resulting streaminfo 
+*               objects or to pass them back to the LSL during during creation of an inlet.
+*               Note 2: The stream_info's returned by the resolver are only short versions that do not
+*               include the .desc() field (which can be arbitrarily big). To obtain the full
+*               stream information you need to call .info() on the inlet after you have created one.
 * @param buffer_elements The user-provided buffer length.
 * @param pred The predicate string, e.g. "name='BioSemi'" or "type='EEG' and starts-with(name,'BioSemi') and count(info/desc/channel)=32"
 * @param minimum Return at least this number of streams.
 * @param timeout Optionally a timeout of the operation, in seconds (default: no timeout).
-*				  If the timeout expires, less than the desired number of streams (possibly none) will be returned.
+*                 If the timeout expires, less than the desired number of streams (possibly none) will be returned.
 * @return The number of results written into the buffer (never more than the provided # of slots) 
-*		  or a negative number if an error has occurred (values corresponding to lsl_error_code_t).
+*         or a negative number if an error has occurred (values corresponding to lsl_error_code_t).
 */
 extern LIBLSL_C_API int lsl_resolve_bypred(lsl_streaminfo *buffer, unsigned buffer_elements, char *pred, int minimum, double timeout);
 
+/** 
+* Deallocate a string that has been transferred to the application.
+* Rarely used: the only use case is to deallocate the contents of 
+* string-valued samples received from LSL in an application where
+* no free() method is available (e.g., in some scripting languages).
+*/
+extern LIBLSL_C_API void lsl_destroy_string(char *s);
 
 
 
@@ -270,16 +285,16 @@ extern LIBLSL_C_API int lsl_resolve_bypred(lsl_streaminfo *buffer, unsigned buff
 * Construct a new streaminfo object.
 * Core stream information is specified here. Any remaining meta-data can be added later.
 * @param name Name of the stream. Describes the device (or product series) that this stream makes available 
-*			  (for use by programs, experimenters or data analysts). Cannot be empty.
+*             (for use by programs, experimenters or data analysts). Cannot be empty.
 * @param type Content type of the stream. Please see Table of Content Types in the documentation for naming recommendations.
-*			  The content type is the preferred way to find streams (as opposed to searching by name).
+*             The content type is the preferred way to find streams (as opposed to searching by name).
 * @param channel_count Number of channels per sample. This stays constant for the lifetime of the stream.
 * @param nominal_srate The sampling rate (in Hz) as advertised by the data source, if regular (otherwise set to IRREGULAR_RATE).
 * @param channel_format Format/type of each channel. If your channels have different formats, consider supplying 
 *                       multiple streams or use the largest type that can hold them all (such as cft_double64). A good default is cft_float32.
 * @param source_id Unique identifier of the source or device, if available (such as the serial number). 
 *                  Allows recipients to recover from failure even after the serving app or device crashes.
-*				   May in some cases also be constructed from device settings.
+*                  May in some cases also be constructed from device settings.
 * @return A newly created streaminfo handle or NULL in the event that an error occurred.
 */
 extern LIBLSL_C_API lsl_streaminfo lsl_create_streaminfo(char *name, char *type, int channel_count, double nominal_srate, lsl_channel_format_t channel_format, char *source_id);
@@ -288,6 +303,11 @@ extern LIBLSL_C_API lsl_streaminfo lsl_create_streaminfo(char *name, char *type,
 * Destroy a previously created streaminfo object.
 */
 extern LIBLSL_C_API void lsl_destroy_streaminfo(lsl_streaminfo info);
+
+/**
+* Copy an existing streaminfo object (rarely used).
+*/
+extern LIBLSL_C_API lsl_streaminfo lsl_copy_streaminfo(lsl_streaminfo info);
 
 /**
 * Name of the stream.
@@ -399,6 +419,12 @@ extern LIBLSL_C_API lsl_xml_ptr lsl_get_desc(lsl_streaminfo info);
 */
 extern LIBLSL_C_API char *lsl_get_xml(lsl_streaminfo info);
 
+/// Number of bytes occupied by a channel (0 for string-typed channels).
+extern LIBLSL_C_API int lsl_get_channel_bytes(lsl_streaminfo info);
+
+/// Number of bytes occupied by a sample (0 for string-typed channels).
+extern LIBLSL_C_API int lsl_get_sample_bytes(lsl_streaminfo info);
+
 
 
 
@@ -409,18 +435,20 @@ extern LIBLSL_C_API char *lsl_get_xml(lsl_streaminfo info);
 /**
 * Establish a new stream outlet. This makes the stream discoverable.
 * @param info The stream information to use for creating this stream. Stays constant over the lifetime of the outlet.
-*		      Note: the outlet makes a copy of the streaminfo object upon construction (so the old info should still be destroyed.)
+*             Note: the outlet makes a copy of the streaminfo object upon construction (so the old info should still be destroyed.)
 * @param chunk_size Optionally the desired chunk granularity (in samples) for transmission. If specified as 0,
-*				    each push operation yields one chunk. Stream recipients can have this setting bypassed.
+*                   each push operation yields one chunk. Stream recipients can have this setting bypassed.
 * @param max_buffered Optionally the maximum amount of data to buffer (in seconds if there is a nominal 
 *                     sampling rate, otherwise x100 in samples). A good default is 360, which corresponds to 6 minutes of data. 
+*                     Note that, for high-bandwidth data you will almost certainly want to use a lower value here to avoid 
+*                     running out of RAM. 
 * @return A newly created lsl_outlet handle or NULL in the event that an error occurred.
 */
 extern LIBLSL_C_API lsl_outlet lsl_create_outlet(lsl_streaminfo info, int chunk_size, int max_buffered);
 
 /**
 * Destroy an outlet.
-* The outlet will no longer be discoverable after destruction and all paired inlets will stop delivering data.
+* The outlet will no longer be discoverable after destruction and all connected inlets will stop delivering data.
 */
 extern LIBLSL_C_API void lsl_destroy_outlet(lsl_outlet out);
 
@@ -429,10 +457,10 @@ extern LIBLSL_C_API void lsl_destroy_outlet(lsl_outlet out);
 * Handles type checking & conversion.
 * @param out The lsl_outlet object through which to push the data.
 * @param data A pointer to values to push. The number of values pointed to must be no less than the number of channels in the sample.
-* @param lengths For lsl_push_sample_buf*, a pointer the number of elements to push for each sample (string lengths). 
+* @param lengths For lsl_push_sample_buf*, a pointer the number of elements to push for each channel (string lengths). 
 * @param timestamp Optionally the capture time of the sample, in agreement with lsl_local_clock(); if omitted, the current time is used.
 * @param pushthrough Whether to push the sample through to the receivers instead of buffering it with subsequent samples.
-*					 Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
+*                    Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
 * @return Error code of the operation or lsl_no_error if successful (usually attributed to the wrong data type).
 */
 extern LIBLSL_C_API int lsl_push_sample_f(lsl_outlet out, float *data);
@@ -463,6 +491,64 @@ extern LIBLSL_C_API int lsl_push_sample_v(lsl_outlet out, void *data);
 extern LIBLSL_C_API int lsl_push_sample_vt(lsl_outlet out, void *data, double timestamp);
 extern LIBLSL_C_API int lsl_push_sample_vtp(lsl_outlet out, void *data, double timestamp, int pushthrough);
 
+
+/**
+* Push a chunk of multiplexed samples into the outlet. One timestamp per sample is provided.
+* IMPORTANT: Note that the provided buffer size is measured in channel values (e.g., floats) rather than in samples.
+* Handles type checking & conversion.
+* @param out The lsl_outlet object through which to push the data.
+* @param data A buffer of channel values holding the data for zero or more successive samples to send.
+* @param lengths For lsl_push_chunk_buf*, a pointer the number of elements to push for each value (string lengths). 
+* @param timestamp Optionally the capture time of the most recent sample, in agreement with local_clock(); if omitted, the current time is used.
+*                   The time stamps of other samples are automatically derived based on the sampling rate of the stream.
+* @param timestamps Alternatively a buffer of timestamp values holding time stamps for each sample in the data buffer.
+* @param data_elements The number of data values (of type T) in the data buffer. Must be a multiple of the channel count.
+* @param pushthrough Whether to push the chunk through to the receivers instead of buffering it with subsequent samples.
+*                    Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
+* @return Error code of the operation (usually attributed to the wrong data type).
+*/
+extern LIBLSL_C_API int lsl_push_chunk_f(lsl_outlet out, float *data, unsigned long data_elements);
+extern LIBLSL_C_API int lsl_push_chunk_ft(lsl_outlet out, float *data, unsigned long data_elements, double timestamp);
+extern LIBLSL_C_API int lsl_push_chunk_ftp(lsl_outlet out, float *data, unsigned long data_elements, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_ftn(lsl_outlet out, float *data, unsigned long data_elements, double *timestamps);
+extern LIBLSL_C_API int lsl_push_chunk_ftnp(lsl_outlet out, float *data, unsigned long data_elements, double *timestamps, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_d(lsl_outlet out, double *data, unsigned long data_elements);
+extern LIBLSL_C_API int lsl_push_chunk_dt(lsl_outlet out, double *data, unsigned long data_elements, double timestamp);
+extern LIBLSL_C_API int lsl_push_chunk_dtp(lsl_outlet out, double *data, unsigned long data_elements, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_dtn(lsl_outlet out, double *data, unsigned long data_elements, double *timestamps);
+extern LIBLSL_C_API int lsl_push_chunk_dtnp(lsl_outlet out, double *data, unsigned long data_elements, double *timestamps, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_l(lsl_outlet out, long *data, unsigned long data_elements);
+extern LIBLSL_C_API int lsl_push_chunk_lt(lsl_outlet out, long *data, unsigned long data_elements, double timestamp);
+extern LIBLSL_C_API int lsl_push_chunk_ltp(lsl_outlet out, long *data, unsigned long data_elements, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_ltn(lsl_outlet out, long *data, unsigned long data_elements, double *timestamps);
+extern LIBLSL_C_API int lsl_push_chunk_ltnp(lsl_outlet out, long *data, unsigned long data_elements, double *timestamps, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_i(lsl_outlet out, int *data, unsigned long data_elements);
+extern LIBLSL_C_API int lsl_push_chunk_it(lsl_outlet out, int *data, unsigned long data_elements, double timestamp);
+extern LIBLSL_C_API int lsl_push_chunk_itp(lsl_outlet out, int *data, unsigned long data_elements, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_itn(lsl_outlet out, int *data, unsigned long data_elements, double *timestamps);
+extern LIBLSL_C_API int lsl_push_chunk_itnp(lsl_outlet out, int *data, unsigned long data_elements, double *timestamps, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_s(lsl_outlet out, short *data, unsigned long data_elements);
+extern LIBLSL_C_API int lsl_push_chunk_st(lsl_outlet out, short *data, unsigned long data_elements, double timestamp);
+extern LIBLSL_C_API int lsl_push_chunk_stp(lsl_outlet out, short *data, unsigned long data_elements, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_stn(lsl_outlet out, short *data, unsigned long data_elements, double *timestamps);
+extern LIBLSL_C_API int lsl_push_chunk_stnp(lsl_outlet out, short *data, unsigned long data_elements, double *timestamps, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_c(lsl_outlet out, char *data, unsigned long data_elements);
+extern LIBLSL_C_API int lsl_push_chunk_ct(lsl_outlet out, char *data, unsigned long data_elements, double timestamp);
+extern LIBLSL_C_API int lsl_push_chunk_ctp(lsl_outlet out, char *data, unsigned long data_elements, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_ctn(lsl_outlet out, char *data, unsigned long data_elements, double *timestamps);
+extern LIBLSL_C_API int lsl_push_chunk_ctnp(lsl_outlet out, char *data, unsigned long data_elements, double *timestamps, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_str(lsl_outlet out, char **data, unsigned long data_elements);
+extern LIBLSL_C_API int lsl_push_chunk_strt(lsl_outlet out, char **data, unsigned long data_elements, double timestamp);
+extern LIBLSL_C_API int lsl_push_chunk_strtp(lsl_outlet out, char **data, unsigned long data_elements, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_strtn(lsl_outlet out, char **data, unsigned long data_elements, double *timestamps);
+extern LIBLSL_C_API int lsl_push_chunk_strtnp(lsl_outlet out, char **data, unsigned long data_elements, double *timestamps, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_buf(lsl_outlet out, char **data, unsigned *lengths, unsigned long data_elements);
+extern LIBLSL_C_API int lsl_push_chunk_buft(lsl_outlet out, char **data, unsigned *lengths, unsigned long data_elements, double timestamp);
+extern LIBLSL_C_API int lsl_push_chunk_buftp(lsl_outlet out, char **data, unsigned *lengths, unsigned long data_elements, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_buftn(lsl_outlet out, char **data, unsigned *lengths, unsigned long data_elements, double *timestamps);
+extern LIBLSL_C_API int lsl_push_chunk_buftnp(lsl_outlet out, char **data, unsigned *lengths, unsigned long data_elements, double *timestamps, int pushthrough);
+
+
 /**
 * Check whether consumers are currently registered.
 * While it does not hurt, there is technically no reason to push samples if there is no consumer.
@@ -479,7 +565,7 @@ extern LIBLSL_C_API int lsl_wait_for_consumers(lsl_outlet out, double timeout);
 * Retrieve a handle to the stream info provided by this outlet.
 * This is what was used to create the stream (and also has the Additional Network Information fields assigned).
 * @return A copy of the streaminfo of the outlet or NULL in the event that an error occurred.
-*		  Note: it is the user's responsibility to destroy it when it is no longer needed.
+*         Note: it is the user's responsibility to destroy it when it is no longer needed.
 */ 
 extern LIBLSL_C_API lsl_streaminfo lsl_get_info(lsl_outlet out);
 
@@ -493,23 +579,23 @@ extern LIBLSL_C_API lsl_streaminfo lsl_get_info(lsl_outlet out);
 /**
 * Construct a new stream inlet from a resolved stream info.
 * @param info A resolved stream info object (as coming from one of the resolver functions).
-*		      Note: the inlet makes a copy of the info object at its construction.
-*		      Note: the stream_inlet may also be constructed with a fully-specified stream_info, 
-*					if the desired channel format and count is already known up-front, but this is 
-*					strongly discouraged and should only ever be done if there is no time to resolve the 
-*					stream up-front (e.g., due to limitations in the client program).
+*             Note: the inlet makes a copy of the info object at its construction.
+*             Note: the stream_inlet may also be constructed with a fully-specified stream_info, 
+*                   if the desired channel format and count is already known up-front, but this is 
+*                   strongly discouraged and should only ever be done if there is no time to resolve the 
+*                   stream up-front (e.g., due to limitations in the client program).
 * @param max_buflen Optionally the maximum amount of data to buffer (in seconds if there is a nominal 
-*					sampling rate, otherwise x100 in samples). Recording applications want to use a fairly 
-*					large buffer size here, while real-time applications would only buffer as much as 
-*					they need to perform their next calculation. A good default is 360, which corresponds to 6 minutes of data.
+*                   sampling rate, otherwise x100 in samples). Recording applications want to use a fairly 
+*                   large buffer size here, while real-time applications would only buffer as much as 
+*                   they need to perform their next calculation. A good default is 360, which corresponds to 6 minutes of data.
 * @param max_chunklen Optionally the maximum size, in samples, at which chunks are transmitted.
-*					  If specified as 0, the chunk sizes preferred by the sender are used.
-*				      Recording applications can use a generous size here (leaving it to the network how 
-*					  to pack things), while real-time applications may want a finer (perhaps 1-sample) granularity.
+*                     If specified as 0, the chunk sizes preferred by the sender are used.
+*                     Recording applications can use a generous size here (leaving it to the network how 
+*                     to pack things), while real-time applications may want a finer (perhaps 1-sample) granularity.
 * @param recover Try to silently recover lost streams that are recoverable (=those that that have a source_id set).
-*				 It is generally a good idea to enable this, unless the application wants to act in a special way
-*				 when a data provider has temporarily crashed. If recover is 0 or the stream is not recoverable, 
-*				 most outlet functions will return an lsl_lost_error if the stream's source is lost.
+*                It is generally a good idea to enable this, unless the application wants to act in a special way
+*                when a data provider has temporarily crashed. If recover is 0 or the stream is not recoverable, 
+*                most outlet functions will return an lsl_lost_error if the stream's source is lost.
 * @return A newly created lsl_inlet handle or NULL in the event that an error occurred.
 */
 extern LIBLSL_C_API lsl_inlet lsl_create_inlet(lsl_streaminfo info, int max_buflen, int max_chunklen, int recover);
@@ -527,7 +613,7 @@ extern LIBLSL_C_API void lsl_destroy_inlet(lsl_inlet in);
 * @param timeout Timeout of the operation. Use LSL_FOREVER to effectively disable it.
 * @param ec Error code: if nonzero, can be either lsl_timeout_error (if the timeout has expired) or lsl_lost_error (if the stream source has been lost).
 * @return A copy of the full streaminfo of the inlet or NULL in the event that an error happened.
-*		  Note: it is the user's responsibility to destroy it when it is no longer needed.
+*         Note: it is the user's responsibility to destroy it when it is no longer needed.
 */
 extern LIBLSL_C_API lsl_streaminfo lsl_get_fullinfo(lsl_inlet in, double timeout, int *ec);
 
@@ -544,22 +630,24 @@ extern LIBLSL_C_API void lsl_open_stream(lsl_inlet in, double timeout, int *ec);
 
 /**
 * Drop the current data stream.
-* All samples that are still buffered or in flight will be dropped and the source will halt its buffering of data for this inlet.
-* If an application stops being interested in data from a source (temporarily or not) but keeps the outlet alive, it should 
-* call lsl_close_stream() to not pressure the source outlet to buffer unnecessarily large amounts of data.
+* All samples that are still buffered or in flight will be dropped and transmission 
+* and buffering of data for this inlet will be stopped. If an application stops being 
+* interested in data from a source (temporarily or not) but keeps the outlet alive, 
+* it should call lsl_close_stream() to not waste unnecessary system and network 
+* resources.
 */
 extern LIBLSL_C_API void lsl_close_stream(lsl_inlet in);
 
 /**
 * Retrieve an estimated time correction offset for the given stream.
-* The first call to this function takes several miliseconds until a reliable first estimate is obtained.
+* The first call to this function takes several milliseconds until a reliable first estimate is obtained.
 * Subsequent calls are instantaneous (and rely on periodic background updates).
 * The precision of these estimates should be below 1 ms (empirically it is within +/-0.2 ms).
 * @param in The lsl_inlet object to act on.
 * @param timeout Timeout to acquire the first time-correction estimate. Use LSL_FOREVER to defuse the timeout.
 * @param ec Error code: if nonzero, can be either lsl_timeout_error (if the timeout has expired) or lsl_lost_error (if the stream source has been lost).
 * @return The time correction estimate. This is the number that needs to be added to a time stamp that was remotely generated via lsl_local_clock() 
-*		  to map it into the local clock domain of this machine.
+*         to map it into the local clock domain of this machine.
 */
 extern LIBLSL_C_API double lsl_time_correction(lsl_inlet in, double timeout, int *ec);
 
@@ -573,12 +661,12 @@ extern LIBLSL_C_API double lsl_time_correction(lsl_inlet in, double timeout, int
 * @param buffer A pointer to hold the resulting values. 
 * @param buffer_elements The number of samples allocated in the buffer. Note: it is the responsibility of the user to allocate enough memory.
 * @param timeout The timeout for this operation, if any. Use LSL_FOREVER to effectively disable it. It is also permitted to use
-*				 0.0 here; in this case a sample is only returned if one is currently buffered.
+*                0.0 here; in this case a sample is only returned if one is currently buffered.
 * @param ec Error code: can be either no error or lsl_lost_error (if the stream source has been lost).
-*			Note: if the timeout expires before a new sample was received the function returns 0.0; 
-*				  ec is *not* set to lsl_timeout_error (because this case is not considered an error condition).
+*           Note: if the timeout expires before a new sample was received the function returns 0.0; 
+*                 ec is *not* set to lsl_timeout_error (because this case is not considered an error condition).
 * @return The capture time of the sample on the remote machine, or 0.0 if no new sample was available. 
-*		  To remap this time stamp to the local clock, add the value returned by lsl_time_correction() to it. 
+*         To remap this time stamp to the local clock, add the value returned by lsl_time_correction() to it. 
 */
 extern LIBLSL_C_API double lsl_pull_sample_f(lsl_inlet in, float *buffer, int buffer_elements, double timeout, int *ec);
 extern LIBLSL_C_API double lsl_pull_sample_d(lsl_inlet in, double *buffer, int buffer_elements, double timeout, int *ec);
@@ -597,12 +685,12 @@ extern LIBLSL_C_API double lsl_pull_sample_str(lsl_inlet in, char **buffer, int 
 * @param buffer_elements The number of samples allocated in the buffer and buffer_lengths variables. 
 *                        Note: it is the responsibility of the user to allocate enough memory.
 * @param timeout The timeout for this operation, if any. Use LSL_FOREVER to effectively disable it. It is also permitted to use
-*				 0.0 here; in this case a sample is only returned if one is currently buffered.
+*                0.0 here; in this case a sample is only returned if one is currently buffered.
 * @param ec Error code: can be either no error or lsl_lost_error (if the stream source has been lost).
-*			Note: if the timeout expires before a new sample was received the function returns 0.0; 
-*				  ec is *not* set to lsl_timeout_error (because this case is not considered an error condition).
+*           Note: if the timeout expires before a new sample was received the function returns 0.0; 
+*                 ec is *not* set to lsl_timeout_error (because this case is not considered an error condition).
 * @return The capture time of the sample on the remote machine, or 0.0 if no new sample was available. 
-*		  To remap this time stamp to the local clock, add the value returned by lsl_time_correction() to it. 
+*         To remap this time stamp to the local clock, add the value returned by lsl_time_correction() to it. 
 */
 extern LIBLSL_C_API double lsl_pull_sample_buf(lsl_inlet in, char **buffer, unsigned *buffer_lengths, int buffer_elements, double timeout, int *ec);
 
@@ -612,21 +700,74 @@ extern LIBLSL_C_API double lsl_pull_sample_buf(lsl_inlet in, char **buffer, unsi
 * @param in The lsl_inlet object to act on.
 * @param sample Pointer to hold the sample data. Search for #pragma pack for information on how to pack structs appropriately.
 * @param timeout The timeout for this operation, if any. Aside from LSL_FOREVER it is also permitted to use
-*				 0.0 here; in this case a sample is only returned if one is currently buffered.
+*                0.0 here; in this case a sample is only returned if one is currently buffered.
 * @param ec Error code: can be either no error or lsl_lost_error (if the stream source has been lost).
-*			Note: if the timeout expires before a new sample was received the function returns 0.0; 
-*				  ec is *not* set to lsl_timeout_error (because this case is not considered an error condition).
+*           Note: if the timeout expires before a new sample was received the function returns 0.0; 
+*                 ec is *not* set to lsl_timeout_error (because this case is not considered an error condition).
 * @return The capture time of the sample on the remote machine, or 0.0 if no new sample was available. 
-*		   To remap this time stamp to the local clock, add the value returned by .time_correction() to it. 
+*          To remap this time stamp to the local clock, add the value returned by .time_correction() to it. 
 */
 extern LIBLSL_C_API double lsl_pull_sample_v(lsl_inlet in, void *buffer, int buffer_bytes, double timeout, int *ec);
 
 /**
-* Query the number of samples that are currently available for immediate pickup.
-* The maximum capacity of the buffer is specified at construction of the inlet.
-* Note that it is not a good idea to rely on samples_available() to determine whether 
+* Pull a chunk of data from the inlet and read it into a buffer.
+* Handles type checking & conversion.
+* IMPORTANT: Note that the provided data buffer size is measured in channel values (e.g., floats) rather than in samples.
+* @param in The lsl_inlet object to act on.
+* @param data_buffer A pointer to a buffer of data values where the results shall be stored.
+* @param timestamp_buffer A pointer to a buffer of timestamp values where time stamps shall be stored. 
+*                         If this is NULL, no time stamps will be returned.
+* @param data_buffer_elements The size of the data buffer, in channel data elements (of type T). 
+*                             Must be a multiple of the stream's channel count.
+* @param timestamp_buffer_elements The size of the timestamp buffer. If a timestamp buffer is provided then this 
+*                                  must correspond to the same number of samples as data_buffer_elements.
+* @param timeout The timeout for this operation, if any. When the timeout expires, the function may return
+*                before the entire buffer is filled. The default value of 0.0 will retrieve only data 
+*                available for immediate pickup.
+* @param ec Error code: can be either no error or lsl_lost_error (if the stream source has been lost).
+*           Note: if the timeout expires before a new sample was received the function returns 0.0; 
+*                 ec is *not* set to lsl_timeout_error (because this case is not considered an error condition).
+* @return data_elements_written Number of channel data elements written to the data buffer.
+*/
+extern LIBLSL_C_API unsigned long lsl_pull_chunk_f(lsl_inlet in, float *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec);
+extern LIBLSL_C_API unsigned long lsl_pull_chunk_d(lsl_inlet in, double *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec);
+extern LIBLSL_C_API unsigned long lsl_pull_chunk_l(lsl_inlet in, long *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec);
+extern LIBLSL_C_API unsigned long lsl_pull_chunk_i(lsl_inlet in, int *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec);
+extern LIBLSL_C_API unsigned long lsl_pull_chunk_s(lsl_inlet in, short *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec);
+extern LIBLSL_C_API unsigned long lsl_pull_chunk_c(lsl_inlet in, char *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec);
+extern LIBLSL_C_API unsigned long lsl_pull_chunk_str(lsl_inlet in, char **data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec);
+
+/**
+* Pull a chunk of data from the inlet and read it into an array of binary strings. 
+* These strings may contains 0's, therefore the lengths are read into the lengths_buffer array. 
+* Handles type checking & conversion.
+* IMPORTANT: Note that the provided data buffer size is measured in channel values (e.g., floats) rather than in samples.
+* @param in The lsl_inlet object to act on.
+* @param data_buffer A pointer to a buffer of data values where the results shall be stored.
+* @param lengths_buffer A pointer to an array that holds the resulting lengths for each returned binary string.
+* @param timestamp_buffer A pointer to a buffer of timestamp values where time stamps shall be stored. 
+*                         If this is NULL, no time stamps will be returned.
+* @param data_buffer_elements The size of the data buffer, in channel data elements (of type T). 
+*                             Must be a multiple of the stream's channel count.
+* @param timestamp_buffer_elements The size of the timestamp buffer. If a timestamp buffer is provided then this 
+*                                  must correspond to the same number of samples as data_buffer_elements.
+* @param timeout The timeout for this operation, if any. When the timeout expires, the function may return
+*                before the entire buffer is filled. The default value of 0.0 will retrieve only data 
+*                available for immediate pickup.
+* @param ec Error code: can be either no error or lsl_lost_error (if the stream source has been lost).
+*           Note: if the timeout expires before a new sample was received the function returns 0.0; 
+*                 ec is *not* set to lsl_timeout_error (because this case is not considered an error condition).
+* @return data_elements_written Number of channel data elements written to the data buffer.
+*/
+
+extern LIBLSL_C_API unsigned long lsl_pull_chunk_buf(lsl_inlet in, char **data_buffer, unsigned *lengths_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec);
+
+/**
+* Query whether samples are currently available for immediate pickup.
+* Note that it is not a good idea to use samples_available() to determine whether 
 * a pull_*() call would block: to be sure, set the pull timeout to 0.0 or an acceptably
-* low value.
+* low value. If the underlying implementation supports it, the value will be the number of 
+* samples available (otherwise it will be 1 or 0).
 */
 extern LIBLSL_C_API unsigned lsl_samples_available(lsl_inlet in);
 
@@ -753,8 +894,8 @@ extern LIBLSL_C_API void lsl_remove_child(lsl_xml_ptr e, lsl_xml_ptr e2);
 * Construct a new continuous_resolver that resolves all streams on the network. 
 * This is analogous to the functionality offered by the free function resolve_streams().
 * @param forget_after When a stream is no longer visible on the network (e.g., because it was shut down),
-*				      this is the time in seconds after which it is no longer reported by the resolver.
-*					  The recommended default value is 5.0.
+*                     this is the time in seconds after which it is no longer reported by the resolver.
+*                     The recommended default value is 5.0.
 */
 extern LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver(double forget_after);
 
@@ -764,8 +905,8 @@ extern LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver(doubl
 * @param prop The stream_info property that should have a specific value (e.g., "name", "type", "source_id", or "desc/manufaturer").
 * @param value The string value that the property should have (e.g., "EEG" as the type property).
 * @param forget_after When a stream is no longer visible on the network (e.g., because it was shut down),
-*				      this is the time in seconds after which it is no longer reported by the resolver.
-*					  The recommended default value is 5.0.
+*                     this is the time in seconds after which it is no longer reported by the resolver.
+*                     The recommended default value is 5.0.
 */
 extern LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_byprop(char *prop, char *value, double forget_after);
 
@@ -774,8 +915,8 @@ extern LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_bypro
 * This is analogous to the functionality provided by the free function resolve_stream(pred).
 * @param pred The predicate string, e.g. "name='BioSemi'" or "type='EEG' and starts-with(name,'BioSemi') and count(info/desc/channel)=32"
 * @param forget_after When a stream is no longer visible on the network (e.g., because it was shut down),
-*				      this is the time in seconds after which it is no longer reported by the resolver.
-*					  The recommended default value is 5.0.
+*                     this is the time in seconds after which it is no longer reported by the resolver.
+*                     The recommended default value is 5.0.
 */
 extern LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_bypred(char *pred, double forget_after);
 
@@ -783,14 +924,14 @@ extern LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_bypre
 * Obtain the set of currently present streams on the network (i.e. resolve result).
 * @param res A continuous resolver (previously created with one of the lsl_create_continuous_resolver functions).
 * @param buffer A user-allocated buffer to hold the current resolve results.
-*				Note: it is the user's responsibility to either destroy the resulting streaminfo 
-*				objects or to pass them back to the LSL during during creation of an inlet.
-*				Note 2: The stream_info's returned by the resolver are only short versions that do not
-*				include the .desc() field (which can be arbitrarily big). To obtain the full
-*				stream information you need to call .info() on the inlet after you have created one.
+*               Note: it is the user's responsibility to either destroy the resulting streaminfo 
+*               objects or to pass them back to the LSL during during creation of an inlet.
+*               Note 2: The stream_info's returned by the resolver are only short versions that do not
+*               include the .desc() field (which can be arbitrarily big). To obtain the full
+*               stream information you need to call .info() on the inlet after you have created one.
 * @param buffer_elements The user-provided buffer length.
 * @return The number of results written into the buffer (never more than the provided # of slots) 
-*		  or a negative number if an error has occurred (values corresponding to lsl_error_code_t).
+*         or a negative number if an error has occurred (values corresponding to lsl_error_code_t).
 */
 extern LIBLSL_C_API int lsl_resolver_results(lsl_continuous_resolver res, lsl_streaminfo *buffer, unsigned buffer_elements);
 
@@ -798,8 +939,6 @@ extern LIBLSL_C_API int lsl_resolver_results(lsl_continuous_resolver res, lsl_st
 * Destructor for the continuous resolver.
 */
 extern LIBLSL_C_API void lsl_destroy_continuous_resolver(lsl_continuous_resolver res);
-
-
 
 
 #ifdef __cplusplus

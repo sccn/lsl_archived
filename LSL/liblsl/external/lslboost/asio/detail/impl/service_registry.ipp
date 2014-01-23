@@ -2,7 +2,7 @@
 // detail/impl/service_registry.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -16,9 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <lslboost/asio/detail/config.hpp>
-#include <lslboost/throw_exception.hpp>
 #include <vector>
 #include <lslboost/asio/detail/service_registry.hpp>
+#include <lslboost/asio/detail/throw_exception.hpp>
 
 #include <lslboost/asio/detail/push_options.hpp>
 
@@ -146,7 +146,7 @@ void service_registry::do_add_service(
     lslboost::asio::io_service::service* new_service)
 {
   if (&owner_ != &new_service->get_io_service())
-    lslboost::throw_exception(invalid_service_owner());
+    lslboost::asio::detail::throw_exception(invalid_service_owner());
 
   lslboost::asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -155,7 +155,7 @@ void service_registry::do_add_service(
   while (service)
   {
     if (keys_match(service->key_, key))
-      lslboost::throw_exception(service_already_exists());
+      lslboost::asio::detail::throw_exception(service_already_exists());
     service = service->next_;
   }
 

@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //
 // (C) Copyright Olaf Krzikalla 2004-2006.
-// (C) Copyright Ion Gaztanaga  2006-2009
+// (C) Copyright Ion Gaztanaga  2006-2013
 //
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
@@ -16,6 +16,7 @@
 
 #include <lslboost/intrusive/detail/config_begin.hpp>
 #include <lslboost/intrusive/intrusive_fwd.hpp>
+#include <lslboost/intrusive/detail/utilities.hpp>
 #include <cstddef>
 
 namespace lslboost {
@@ -73,7 +74,7 @@ class circular_list_algorithms
    //! <b>Complexity</b>: Constant
    //!
    //! <b>Throws</b>: Nothing.
-   static bool inited(const const_node_ptr &this_node) 
+   static bool inited(const const_node_ptr &this_node)
    {  return !NodeTraits::get_next(this_node); }
 
    //! <b>Effects</b>: Constructs an empty list, making this_node the only
@@ -174,7 +175,7 @@ class circular_list_algorithms
       NodeTraits::set_previous(this_node, prev);
       NodeTraits::set_next(this_node, nxt_node);
       //nxt_node might be an alias for prev->next_
-      //so use it before update it before NodeTraits::set_next(prev, ...)
+      //so use it before NodeTraits::set_next(prev, ...)
       //is called and the reference changes it's value
       NodeTraits::set_previous(nxt_node, this_node);
       NodeTraits::set_next(prev, this_node);
@@ -354,7 +355,7 @@ class circular_list_algorithms
    {
       node_ptr f(NodeTraits::get_next(p));
       node_ptr i(NodeTraits::get_next(f)), e(p);
-     
+
       while(i != e) {
          node_ptr n = i;
          i = NodeTraits::get_next(i);
@@ -404,6 +405,16 @@ class circular_list_algorithms
       link_after(last, p);
    }
 };
+
+/// @cond
+
+template<class NodeTraits>
+struct get_algo<CircularListAlgorithms, NodeTraits>
+{
+   typedef circular_list_algorithms<NodeTraits> type;
+};
+
+/// @endcond
 
 } //namespace intrusive
 } //namespace lslboost

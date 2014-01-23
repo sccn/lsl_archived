@@ -48,9 +48,7 @@ namespace lslboost { namespace spirit { namespace iterator_policies
             typedef
                 typename lslboost::detail::iterator_traits<T>::pointer
             pointer;
-            typedef
-                typename lslboost::detail::iterator_traits<T>::reference
-            reference;
+            typedef result_type& reference;
             typedef result_type value_type;
 
         protected:

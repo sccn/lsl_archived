@@ -1,8 +1,9 @@
 #ifndef SOCKET_UTILS_H
 #define SOCKET_UTILS_H
 
-#include "version.h"
+#include "common.h"
 #include "api_config.h"
+#include <boost/cstdint.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
@@ -16,7 +17,16 @@ namespace lsl {
 				return k + api_config::get_instance()->base_port();
 			} catch (boost::system::system_error &) { /* port occupied */ }
 		}
-		throw std::runtime_error("All local ports were found occupied. You may have more open outlets on this machine than your PortRange setting allows (see Configuration File in the lab streaming layer API docs) or you have a problem with your network configuration.");
+		if (api_config::get_instance()->allow_random_ports()) {
+			while (true) {
+				unsigned short port = 1025 + rand()%64000;
+				try {
+					sock.bind(typename Protocol::endpoint(protocol,port));
+					return port;
+				} catch (boost::system::system_error &) { /* port occupied */ }
+			}
+		} else
+			throw std::runtime_error("All local ports were found occupied. You may have more open outlets on this machine than your PortRange setting allows (see Configuration File in the lab streaming layer API docs) or you have a problem with your network configuration.");
 	}
     
     /// Bind to and listen at a socket (or acceptor) on a free port in the configured port range or throw an error otherwise.
@@ -28,7 +38,17 @@ namespace lsl {
 				return k + api_config::get_instance()->base_port();
 			} catch (boost::system::system_error &) { /* port occupied */ }
 		}
-		throw std::runtime_error("All local ports were found occupied. You may have more open outlets on this machine than your PortRange setting allows (see Configuration File in the lab streaming layer API docs) or you have a problem with your network configuration.");
+		if (api_config::get_instance()->allow_random_ports()) {
+			while (true) {
+				unsigned short port = 1025 + rand()%64000;
+				try {
+					sock.bind(typename Protocol::endpoint(protocol,port));
+					sock.listen(backlog);
+					return port;
+				} catch (boost::system::system_error &) { /* port occupied */ }
+			}
+		} else
+			throw std::runtime_error("All local ports were found occupied. You may have more open outlets on this machine than your PortRange setting allows (see Configuration File in the lab streaming layer API docs) or you have a problem with your network configuration.");
 	}
     
 	/// Gracefully close a socket.
@@ -56,6 +76,8 @@ namespace lsl {
 		}
 	}
 
+	/// Measure the endian conversion performance of this machine.
+	double measure_endian_performance();
 }
 
 #endif

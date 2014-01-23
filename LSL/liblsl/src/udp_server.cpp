@@ -100,12 +100,12 @@ void udp_server::handle_receive_outcome(error_code err, std::size_t len) {
 		try {
 			if (!err) {
 				// remember the time of packet reception for possible later use
-				double t1 = time_services_enabled_ ? local_clock() : 0.0;
+				double t1 = time_services_enabled_ ? lsl_clock() : 0.0;
 
-				// wrap received packet into a request stream and parse the command from it
+				// wrap received packet into a request stream and parse the method from it
 				std::istringstream request_stream(std::string(buffer_,buffer_+len));
-				std::string command; getline(request_stream,command); boost::trim(command);
-				if (command == "LSL:shortinfo") {
+				std::string method; getline(request_stream,method); boost::trim(method);
+				if (method == "LSL:shortinfo") {
 					// shortinfo request: parse content query string
 					std::string query; getline(request_stream,query); boost::trim(query);
 					// parse return address, port, and query ID
@@ -121,12 +121,12 @@ void udp_server::handle_receive_outcome(error_code err, std::size_t len) {
 						return;
 					}
 				} else {
-					if (time_services_enabled_ && command == "LSL:timedata") {
+					if (time_services_enabled_ && method == "LSL:timedata") {
 						// timedata request: parse time of original transmission
 						int wave_id; request_stream >> wave_id;
 						double t0; request_stream >> t0;
 						// send it off (including the time of packet submission and a shared ptr to the message content owned by the handler)
-						std::ostringstream reply; reply.precision(16); reply << " " << wave_id << " " << t0 << " " << t1 << " " << local_clock();
+						std::ostringstream reply; reply.precision(16); reply << " " << wave_id << " " << t0 << " " << t1 << " " << lsl_clock();
 						string_p replymsg(new std::string(reply.str()));
 						socket_->async_send_to(boost::asio::buffer(*replymsg), remote_endpoint_,
 							boost::bind(&udp_server::handle_send_outcome,shared_from_this(),replymsg,placeholders::error));

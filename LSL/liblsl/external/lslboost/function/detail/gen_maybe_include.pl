@@ -13,7 +13,7 @@
 # This software is provided "as is" without express or implied warranty,
 # and with no claim as to its suitability for any purpose.
 #
-# For more information, see http://www.lslboost.org
+# For more information, see http://www.boost.org
 use English;
 
 $max_args = $ARGV[0];
@@ -29,7 +29,7 @@ for($on_arg = 0; $on_arg <= $max_args; ++$on_arg) {
     print OUT " BOOST_FUNCTION_NUM_ARGS == $on_arg\n";
     print OUT "#  ifndef BOOST_FUNCTION_$on_arg\n";
     print OUT "#    define BOOST_FUNCTION_$on_arg\n";
-    print OUT "#    include <lslboost/function/function_template.hpp>\n";
+    print OUT "#    include <boost/function/function_template.hpp>\n";
     print OUT "#  endif\n";
 }
 print OUT "#else\n";

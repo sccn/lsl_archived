@@ -2,7 +2,7 @@
 // detail/win_iocp_io_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -19,20 +19,19 @@
 
 #if defined(BOOST_ASIO_HAS_IOCP)
 
-#include <lslboost/limits.hpp>
 #include <lslboost/asio/io_service.hpp>
 #include <lslboost/asio/detail/call_stack.hpp>
+#include <lslboost/asio/detail/limits.hpp>
 #include <lslboost/asio/detail/mutex.hpp>
 #include <lslboost/asio/detail/op_queue.hpp>
 #include <lslboost/asio/detail/scoped_ptr.hpp>
 #include <lslboost/asio/detail/socket_types.hpp>
 #include <lslboost/asio/detail/thread.hpp>
 #include <lslboost/asio/detail/timer_queue_base.hpp>
-#include <lslboost/asio/detail/timer_queue_fwd.hpp>
 #include <lslboost/asio/detail/timer_queue_set.hpp>
 #include <lslboost/asio/detail/wait_op.hpp>
-#include <lslboost/asio/detail/win_iocp_io_service_fwd.hpp>
 #include <lslboost/asio/detail/win_iocp_operation.hpp>
+#include <lslboost/asio/detail/win_iocp_thread_info.hpp>
 
 #include <lslboost/asio/detail/push_options.hpp>
 
@@ -107,20 +106,20 @@ public:
   // Return whether a handler can be dispatched immediately.
   bool can_dispatch()
   {
-    return call_stack<win_iocp_io_service>::contains(this) != 0;
+    return thread_call_stack::contains(this) != 0;
   }
 
   // Request invocation of the given handler.
   template <typename Handler>
-  void dispatch(Handler handler);
+  void dispatch(Handler& handler);
 
   // Request invocation of the given handler and return immediately.
   template <typename Handler>
-  void post(Handler handler);
+  void post(Handler& handler);
 
   // Request invocation of the given operation and return immediately. Assumes
   // that work_started() has not yet been called for the operation.
-  void post_immediate_completion(win_iocp_operation* op)
+  void post_immediate_completion(win_iocp_operation* op, bool)
   {
     work_started();
     post_deferred_completion(op);
@@ -140,7 +139,7 @@ public:
   // called for the operation.
   void post_private_immediate_completion(win_iocp_operation* op)
   {
-    post_immediate_completion(op);
+    post_immediate_completion(op, false);
   }
 
   // Request invocation of the given operation using the thread-private queue
@@ -237,6 +236,11 @@ private:
   // Flag to indicate whether the event loop has been stopped.
   mutable long stopped_;
 
+  // Flag to indicate whether there is an in-flight stop event. Every event
+  // posted using PostQueuedCompletionStatus consumes non-paged pool, so to
+  // avoid exhausting this resouce we limit the number of outstanding events.
+  long stop_event_posted_;
+
   // Flag to indicate whether the service has been shut down.
   long shutdown_;
 
@@ -285,6 +289,10 @@ private:
 
   // The operations that are ready to dispatch.
   op_queue<win_iocp_operation> completed_ops_;
+
+  // Per-thread call stack to track the state of each thread in the io_service.
+  typedef call_stack<win_iocp_io_service,
+      win_iocp_thread_info> thread_call_stack;
 };
 
 } // namespace detail

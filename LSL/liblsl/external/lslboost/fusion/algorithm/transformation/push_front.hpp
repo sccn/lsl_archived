@@ -10,6 +10,8 @@
 #include <lslboost/fusion/support/detail/as_fusion_element.hpp>
 #include <lslboost/fusion/view/joint_view/joint_view.hpp>
 #include <lslboost/fusion/view/single_view/single_view.hpp>
+#include <lslboost/fusion/support/is_sequence.hpp>
+#include <lslboost/utility/enable_if.hpp>
 
 namespace lslboost { namespace fusion
 {
@@ -24,7 +26,12 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence, typename T>
-    inline typename result_of::push_front<Sequence const, T>::type
+    inline 
+    typename
+        lazy_enable_if<
+            traits::is_sequence<Sequence>
+          , result_of::push_front<Sequence const, T>
+        >::type
     push_front(Sequence const& seq, T const& x)
     {
         typedef typename result_of::push_front<Sequence const, T> push_front;

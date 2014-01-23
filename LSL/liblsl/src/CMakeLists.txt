@@ -2,11 +2,10 @@ include_directories (${Boost_INCLUDE_DIRS})
 
 set (sources
   api_config.cpp
+  common.cpp
   consumer_queue.cpp
-  continuous_resolver.cpp
   data_receiver.cpp
   dllmain.cpp
-  freefuncs.cpp
   info_receiver.cpp
   inlet_connection.cpp
   lsl_continuous_resolver_c.cpp
@@ -17,17 +16,16 @@ set (sources
   lsl_xml_element_c.cpp
   resolve_attempt_udp.cpp
   resolver_impl.cpp
+  sample.cpp
   send_buffer.cpp
-  stream_info.cpp
+  socket_utils.cpp
   stream_info_impl.cpp
-  stream_inlet.cpp
-  stream_outlet.cpp
   stream_outlet_impl.cpp
   tcp_server.cpp
   time_receiver.cpp
   udp_server.cpp
-  xml_element.cpp
   pugixml/pugixml.cpp
+  legacy/legacy_abi.cpp
 )
 
 message (${Boost_LIBRARIES})

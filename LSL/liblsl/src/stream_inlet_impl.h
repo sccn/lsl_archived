@@ -1,8 +1,7 @@
 #ifndef STREAM_INLET_IMPL_H
 #define STREAM_INLET_IMPL_H
 
-#include "version.h"
-#include "../include/lsl_cpp.h"
+#include "common.h"
 #include "inlet_connection.h"
 #include "info_receiver.h"
 #include "time_receiver.h"
@@ -101,6 +100,39 @@ namespace lsl {
 		double pull_numeric_raw(void *sample, int buffer_bytes, double timeout=FOREVER) { return data_receiver_.pull_sample_untyped(sample,buffer_bytes,timeout); }
 
 		/**
+		* Pull a chunk of data from the inlet.
+		* IMPORTANT: Note that the provided buffer size is measured in channel values (e.g., floats) rather than in samples.
+		* @param data_buffer A pointer to a buffer of data values where the results shall be stored.
+		* @param timestamp_buffer A pointer to a buffer of timestamp values where time stamps shall be stored. 
+		*                         If this is NULL, no time stamps will be returned.
+		* @param data_buffer_elements The size of the data buffer, in channel data elements (of type T). 
+		*                             Must be a multiple of the stream's channel count.
+		* @param timestamp_buffer_elements The size of the timestamp buffer. If a timestamp buffer is provided then this 
+		*                                  must correspond to the same number of samples as data_buffer_elements.
+		* @param timeout The timeout for this operation, if any. When the timeout expires, the function may return
+		*                before the entire buffer is filled. The default value of 0.0 will retrieve only data 
+		*                available for immediate pickup.
+		* @return data_elements_written Number of channel data elements written to the data buffer.
+		* @throws lost_error (if the stream source has been lost).
+		*/
+		template<class T> std::size_t pull_chunk_multiplexed(T *data_buffer, double *timestamp_buffer, std::size_t data_buffer_elements, std::size_t timestamp_buffer_elements, double timeout=0.0) {
+			std::size_t samples_written=0, num_chans = info().channel_count(), max_samples = data_buffer_elements/num_chans;
+			if (data_buffer_elements % num_chans != 0)
+				throw std::runtime_error("The number of buffer elements must be a multiple of the stream's channel count.");
+			if (timestamp_buffer && max_samples != timestamp_buffer_elements)
+				throw std::runtime_error("The timestamp buffer must hold the same number of samples as the data buffer.");
+			double end_time = timeout ? lsl_clock()+timeout : 0.0;
+			for (samples_written=0; samples_written<max_samples; samples_written++) {
+				if (double ts=pull_sample(&data_buffer[samples_written*num_chans],num_chans,timeout?end_time-lsl_clock():0.0)) {
+					if (timestamp_buffer)
+						timestamp_buffer[samples_written] = ts;
+				} else
+					break;
+			}
+			return samples_written*num_chans;
+		}
+
+		/**
 		* Retrieve the complete information of the given stream, including the extended description.
 		* Can be invoked at any time of the stream's lifetime.
 		* @param timeout Timeout of the operation (default: no timeout).
@@ -136,8 +168,11 @@ namespace lsl {
 		*/
 		void close_stream() { data_receiver_.close_stream(); }
 
-		/// Query the current size of the buffer, i.e. the number of samples that are buffered.
-		std::size_t samples_available() { return data_receiver_.buffer_size(); };
+		/** 
+		* Query the current size of the buffer, i.e. the number of samples that are buffered.
+		* Note that this value may be inaccurate and should not be relied on for program logic.
+		*/
+		std::size_t samples_available() { return (std::size_t)data_receiver_.empty(); };
 
 		/// Query whether the clock was potentially reset since the last call to was_clock_reset().
 		/// This is only interesting for applications that combine multiple time_correction values to estimate clock drift

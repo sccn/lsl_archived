@@ -1,4 +1,4 @@
-#include "version.h"
+#include "common.h"
 
 
 // === auto-generated DLL code ===

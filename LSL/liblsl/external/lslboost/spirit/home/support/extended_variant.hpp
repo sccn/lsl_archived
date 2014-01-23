@@ -43,6 +43,10 @@ namespace lslboost { namespace spirit
         extended_variant(T const& var)
             : var(var) {}
 
+        template <typename T>
+        extended_variant(T& var)
+            : var(var) {}
+
         template <typename F>
         typename F::result_type apply_visitor(F const& v)
         {

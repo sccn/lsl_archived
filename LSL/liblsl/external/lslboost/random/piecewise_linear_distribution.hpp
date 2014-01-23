@@ -7,7 +7,7 @@
  *
  * See http://www.lslboost.org for most recent version including documentation.
  *
- * $Id: piecewise_linear_distribution.hpp 78340 2012-05-05 21:14:37Z steven_watanabe $
+ * $Id: piecewise_linear_distribution.hpp 85813 2013-09-21 20:17:00Z jewillco $
  */
 
 #ifndef BOOST_RANDOM_PIECEWISE_LINEAR_DISTRIBUTION_HPP_INCLUDED
@@ -24,7 +24,7 @@
 #include <lslboost/random/detail/operators.hpp>
 #include <lslboost/random/detail/vector_io.hpp>
 
-#ifndef BOOST_NO_0X_HDR_INITIALIZER_LIST
+#ifndef BOOST_NO_CXX11_HDR_INITIALIZER_LIST
 #include <initializer_list>
 #endif
 
@@ -89,7 +89,7 @@ public:
                 }
             }
         }
-#ifndef BOOST_NO_0X_HDR_INITIALIZER_LIST
+#ifndef BOOST_NO_CXX11_HDR_INITIALIZER_LIST
         /**
          * Constructs a @c param_type object from an initializer_list
          * containing the interval boundaries and a unary function
@@ -278,7 +278,7 @@ public:
             init();
         }
     }
-#ifndef BOOST_NO_0X_HDR_INITIALIZER_LIST
+#ifndef BOOST_NO_CXX11_HDR_INITIALIZER_LIST
     /**
      * Constructs a piecewise_linear_distribution from an
      * initializer_list containing the interval boundaries

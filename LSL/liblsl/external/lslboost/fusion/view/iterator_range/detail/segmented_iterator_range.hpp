@@ -21,6 +21,8 @@
 #include <lslboost/fusion/iterator/equal_to.hpp>
 #include <lslboost/fusion/container/list/detail/reverse_cons.hpp>
 #include <lslboost/fusion/iterator/detail/segment_sequence.hpp>
+#include <lslboost/fusion/support/is_sequence.hpp>
+#include <lslboost/utility/enable_if.hpp>
 
 //  Invariants:
 //  - Each segmented iterator has a stack
@@ -45,11 +47,19 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence, typename T>
-    typename result_of::push_back<Sequence const, T>::type
+    typename
+        lazy_enable_if<
+            traits::is_sequence<Sequence>
+          , result_of::push_back<Sequence const, T>
+        >::type
     push_back(Sequence const& seq, T const& x);
 
     template <typename Sequence, typename T>
-    typename result_of::push_front<Sequence const, T>::type
+    typename
+        lazy_enable_if<
+            traits::is_sequence<Sequence>
+          , result_of::push_front<Sequence const, T>
+        >::type
     push_front(Sequence const& seq, T const& x);
 }}
 
@@ -60,7 +70,7 @@ namespace lslboost { namespace fusion { namespace detail
     //  switch (size(stack_begin))
     //  {
     //  case 1:
-    //    return nil;
+    //    return nil_;
     //  case 2:
     //    // car(cdr(stack_begin)) is a range over values.
     //    assert(end(front(car(stack_begin))) == end(car(cdr(stack_begin))));
@@ -195,7 +205,7 @@ namespace lslboost { namespace fusion { namespace detail
     template <typename Stack>
     struct make_segment_sequence_front<Stack, 1>
     {
-        typedef typename Stack::cdr_type type; // nil
+        typedef typename Stack::cdr_type type; // nil_
 
         static type call(Stack const &stack)
         {
@@ -208,7 +218,7 @@ namespace lslboost { namespace fusion { namespace detail
     //  switch (size(stack_end))
     //  {
     //  case 1:
-    //    return nil;
+    //    return nil_;
     //  case 2:
     //    // car(cdr(stack_back)) is a range over values.
     //    assert(end(front(car(stack_end))) == end(car(cdr(stack_end))));
@@ -338,7 +348,7 @@ namespace lslboost { namespace fusion { namespace detail
     template <typename Stack>
     struct make_segment_sequence_back<Stack, 1>
     {
-        typedef typename Stack::cdr_type type; // nil
+        typedef typename Stack::cdr_type type; // nil_
 
         static type call(Stack const& stack)
         {

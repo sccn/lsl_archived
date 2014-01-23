@@ -1,8 +1,7 @@
 #ifndef RESOLVER_IMPL_H
 #define RESOLVER_IMPL_H
 
-#include "version.h"
-#include "../include/lsl_cpp.h"
+#include "common.h"
 #include "api_config.h"
 #include "stream_info_impl.h"
 #include "resolve_attempt_udp.h"
@@ -99,7 +98,7 @@ namespace lsl {
 		void wave_timeout_expired(error_code err);
 
 		/// Cancel the currently ongoing resolve, if any.
-		void cancel_resolve();
+		void cancel_ongoing_resolve();
 
 
 		// constants (mostly config-deduced)
@@ -110,7 +109,8 @@ namespace lsl {
 		std::vector<udp::endpoint> ucast_endpoints_;	// the list of per-host UDP endpoints under consideration
 
 		// things related to cancellation
-		bool cancelled_;								// if set, no more resolves can be done
+		bool cancelled_;								// if set, no more resolves can be started (destructively cancelled).
+		bool expired_;									// if set, ongoing operations will finished quickly
 
 		// reinitialized for each query
 		std::string query_;								// our current query string

@@ -5,7 +5,7 @@
 
 #ifndef UUID_C3E1741C754311DDB2834CCA55D89593
 #define UUID_C3E1741C754311DDB2834CCA55D89593
-#if defined(__GNUC__) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+#if (__GNUC__*100+__GNUC_MINOR__>301) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
 #pragma GCC system_header
 #endif
 #if defined(_MSC_VER) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
@@ -15,9 +15,9 @@
 #include <lslboost/detail/sp_typeinfo.hpp>
 #include <lslboost/current_function.hpp>
 #include <lslboost/config.hpp>
-#ifndef BOOST_NO_TYPEID
-#include <lslboost/units/detail/utility.hpp>
-#endif
+//#ifndef BOOST_NO_TYPEID
+//#include <lslboost/units/detail/utility.hpp>
+//#endif
 #include <string>
 
 namespace
@@ -31,7 +31,7 @@ lslboost
 #ifdef BOOST_NO_TYPEID
         return BOOST_CURRENT_FUNCTION;
 #else
-        return units::detail::demangle(typeid(T*).name());
+        return /*units::detail::demangle*/(typeid(T*).name());
 #endif
         }
 
@@ -43,7 +43,7 @@ lslboost
 #ifdef BOOST_NO_TYPEID
         return BOOST_CURRENT_FUNCTION;
 #else
-        return units::detail::demangle(typeid(T).name());
+        return /*units::detail::demangle*/(typeid(T).name());
 #endif
         }
 

@@ -124,7 +124,7 @@ void time_receiver::next_estimate_scheduled(error_code err) {
 void time_receiver::send_next_packet(int packet_num) {
 	try {
 		// form the request & send it
-		std::ostringstream request; request.precision(16); request << "LSL:timedata\r\n" << current_wave_id_ << " " << local_clock() << "\r\n";
+		std::ostringstream request; request.precision(16); request << "LSL:timedata\r\n" << current_wave_id_ << " " << lsl_clock() << "\r\n";
 		string_p msg_buffer(new std::string(request.str()));
 		time_sock_.async_send_to(boost::asio::buffer(*msg_buffer), conn_.get_udp_endpoint(),
 			boost::bind(&time_receiver::handle_send_outcome,this,msg_buffer,placeholders::error));
@@ -161,7 +161,7 @@ void time_receiver::handle_receive_outcome(error_code err, std::size_t len) {
 			std::istringstream is(std::string(recv_buffer_,len));
 			int wave_id; is >> wave_id;
 			if (wave_id == current_wave_id_) {
-				double t0, t1, t2, t3 = local_clock();
+				double t0, t1, t2, t3 = lsl_clock();
 				is >> t0 >> t1 >> t2;
 				// calculate RTT and offset
 				double rtt = (t3-t0) - (t2-t1);				// round trip time (time passed here - time passed there)

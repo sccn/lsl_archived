@@ -18,8 +18,6 @@
 #include <lslboost/mpl/if.hpp>
 #include <lslboost/math/policies/policy.hpp>
 
-#include <iostream>
-#include <iomanip>
 // These two are for LDBL_MAN_DIG:
 #include <limits.h>
 #include <math.h>

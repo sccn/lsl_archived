@@ -17,7 +17,7 @@
 #include <lslboost/range/iterator.hpp>
 #include <lslboost/range/const_iterator.hpp>
 #include <lslboost/range/as_literal.hpp>
-#include <lslboost/range/iterator_range.hpp>
+#include <lslboost/range/iterator_range_core.hpp>
 
 #include <lslboost/algorithm/string/compare.hpp>
 #include <lslboost/algorithm/string/find.hpp>

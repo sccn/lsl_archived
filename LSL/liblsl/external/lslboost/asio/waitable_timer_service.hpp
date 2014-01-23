@@ -2,7 +2,7 @@
 // waitable_timer_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -17,6 +17,7 @@
 
 #include <lslboost/asio/detail/config.hpp>
 #include <cstddef>
+#include <lslboost/asio/async_result.hpp>
 #include <lslboost/asio/detail/chrono_time_traits.hpp>
 #include <lslboost/asio/detail/deadline_timer_service.hpp>
 #include <lslboost/asio/io_service.hpp>
@@ -136,10 +137,18 @@ public:
 
   // Start an asynchronous wait on the timer.
   template <typename WaitHandler>
-  void async_wait(implementation_type& impl,
+  BOOST_ASIO_INITFN_RESULT_TYPE(WaitHandler,
+      void (lslboost::system::error_code))
+  async_wait(implementation_type& impl,
       BOOST_ASIO_MOVE_ARG(WaitHandler) handler)
   {
-    service_impl_.async_wait(impl, BOOST_ASIO_MOVE_CAST(WaitHandler)(handler));
+    detail::async_result_init<
+      WaitHandler, void (lslboost::system::error_code)> init(
+        BOOST_ASIO_MOVE_CAST(WaitHandler)(handler));
+
+    service_impl_.async_wait(impl, init.handler);
+
+    return init.result.get();
   }
 
 private:

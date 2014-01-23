@@ -20,7 +20,7 @@ using boost::posix_time::millisec;
 * If KnownPeers is non-empty, a multicast wave an a unicast wave will be schedule in alternation. The spacing between waves will be no shorter than the respective minimum RTTs.
 * TCP resolves are currently not implemented (but may be at a later time); these are only necessary when UDP traffic is disabled on a particular router.
 */
-resolver_impl::resolver_impl(): cfg_(api_config::get_instance()), cancelled_(false), forget_after_(FOREVER), fast_mode_(true),  
+resolver_impl::resolver_impl(): cfg_(api_config::get_instance()), cancelled_(false), expired_(false), forget_after_(FOREVER), fast_mode_(true),  
 	io_(io_service_p(new io_service())), resolve_timeout_expired_(*io_), wave_timer_(*io_), unicast_timer_(*io_) 
 {
 	// parse the multicast addresses into endpoints and store them
@@ -74,10 +74,11 @@ std::vector<stream_info_impl> resolver_impl::resolve_oneshot(const std::string &
 	io_->reset();
 	query_ = query;
 	minimum_ = minimum;
-	wait_until_ = local_clock() + minimum_time;
+	wait_until_ = lsl_clock() + minimum_time;
 	results_.clear();
 	forget_after_ = FOREVER;
 	fast_mode_ = true;
+	expired_ = false;
 
 	// start a timer that cancels all outstanding IO operations and wave schedules after the timeout has expired
 	if (timeout != FOREVER) {
@@ -109,6 +110,7 @@ void resolver_impl::resolve_continuous(const std::string &query, double forget_a
 	results_.clear();
 	forget_after_ = forget_after;
 	fast_mode_ = false;
+	expired_ = false;
 	// start a wave of resolve packets
 	next_resolve_wave();
 	// spawn a thread that runs the IO operations
@@ -119,7 +121,7 @@ void resolver_impl::resolve_continuous(const std::string &query, double forget_a
 std::vector<stream_info_impl> resolver_impl::results() {
 	std::vector<stream_info_impl> output;
 	boost::lock_guard<boost::mutex> lock(results_mut_);
-	double expired_before = local_clock() - forget_after_;
+	double expired_before = lsl_clock() - forget_after_;
 	for(result_container::iterator i=results_.begin(); i!=results_.end();) {
 		if (i->second.second < expired_before) {
 			result_container::iterator tmp = i++;
@@ -141,9 +143,9 @@ void resolver_impl::next_resolve_wave() {
 		boost::lock_guard<boost::mutex> lock(results_mut_);
 		num_results = results_.size();
 	}
-	if (cancelled_ || (minimum_ && (num_results >= (std::size_t)minimum_) && local_clock() >= wait_until_)) {
+	if (cancelled_ || expired_ || (minimum_ && (num_results >= (std::size_t)minimum_) && lsl_clock() >= wait_until_)) {
 		// stopping criteria satisfied: cancel the ongoing operations
-		cancel_resolve();
+		cancel_ongoing_resolve();
 	} else {
 		// start a new multicast wave
 		udp_multicast_burst();
@@ -195,7 +197,7 @@ void resolver_impl::udp_unicast_burst(error_code err) {
 /// This handler is called when the overall resolve timeout (if any) expires.
 void resolver_impl::resolve_timeout_expired(error_code err) {
 	if (err != error::operation_aborted)
-		cancel_resolve();
+		cancel_ongoing_resolve();
 }
 
 /// This handler is called when the wave timeout expires.
@@ -211,11 +213,13 @@ void resolver_impl::wave_timeout_expired(error_code err) {
 /// This can be used to cancel a blocking resolve_oneshot() from another thread (e.g., to initiate teardown of the object).
 void resolver_impl::cancel() {
 	cancelled_ = true;
-	cancel_resolve();
+	cancel_ongoing_resolve();
 }
 
-/// Cancel an ongoing resolve, if any
-void resolver_impl::cancel_resolve() {
+/// Cancel an ongoing resolve, if any (otherwise without effect).
+void resolver_impl::cancel_ongoing_resolve() {
+	// make sure that ongoing handler loops terminate
+	expired_ = true;
 	// timer fires: cancel the next wave schedule
 	io_->post(boost::bind(&deadline_timer::cancel,&wave_timer_));
 	io_->post(boost::bind(&deadline_timer::cancel,&unicast_timer_));

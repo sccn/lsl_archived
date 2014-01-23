@@ -14,18 +14,19 @@
 #ifndef BOOST_CONTAINER_DETAIL_ITERATORS_HPP
 #define BOOST_CONTAINER_DETAIL_ITERATORS_HPP
 
-#if (defined _MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 #  pragma once
 #endif
 
 #include "config_begin.hpp"
 #include <lslboost/container/detail/workaround.hpp>
-#include <lslboost/move/move.hpp>
+#include <lslboost/move/utility.hpp>
 #include <lslboost/container/allocator_traits.hpp>
+#include <lslboost/container/detail/type_traits.hpp>
+#include <lslboost/static_assert.hpp>
 
 #ifdef BOOST_CONTAINER_PERFECT_FORWARDING
 #include <lslboost/container/detail/variadic_templates_tools.hpp>
-#include <lslboost/container/detail/stored_ref.hpp>
 #else
 #include <lslboost/container/detail/preprocessor.hpp>
 #endif
@@ -114,7 +115,7 @@ class constant_iterator
    const T& operator*() const
    { return dereference(); }
 
-   const T& operator[] (Difference n) const
+   const T& operator[] (Difference ) const
    { return dereference(); }
 
    const T* operator->() const
@@ -147,89 +148,87 @@ class constant_iterator
 };
 
 template <class T, class Difference = std::ptrdiff_t>
-class default_construct_iterator
+class value_init_construct_iterator
   : public std::iterator
       <std::random_access_iterator_tag, T, Difference, const T*, const T &>
 {
-   typedef  default_construct_iterator<T, Difference> this_type;
+   typedef  value_init_construct_iterator<T, Difference> this_type;
 
    public:
-   explicit default_construct_iterator(Difference range_size)
+   explicit value_init_construct_iterator(Difference range_size)
       :  m_num(range_size){}
 
    //Constructors
-   default_construct_iterator()
+   value_init_construct_iterator()
       :  m_num(0){}
 
-   default_construct_iterator& operator++()
+   value_init_construct_iterator& operator++()
    { increment();   return *this;   }
   
-   default_construct_iterator operator++(int)
+   value_init_construct_iterator operator++(int)
    {
-      default_construct_iterator result (*this);
+      value_init_construct_iterator result (*this);
       increment();
       return result;
    }
 
-   default_construct_iterator& operator--()
+   value_init_construct_iterator& operator--()
    { decrement();   return *this;   }
   
-   default_construct_iterator operator--(int)
+   value_init_construct_iterator operator--(int)
    {
-      default_construct_iterator result (*this);
+      value_init_construct_iterator result (*this);
       decrement();
       return result;
    }
 
-   friend bool operator== (const default_construct_iterator& i, const default_construct_iterator& i2)
+   friend bool operator== (const value_init_construct_iterator& i, const value_init_construct_iterator& i2)
    { return i.equal(i2); }
 
-   friend bool operator!= (const default_construct_iterator& i, const default_construct_iterator& i2)
+   friend bool operator!= (const value_init_construct_iterator& i, const value_init_construct_iterator& i2)
    { return !(i == i2); }
 
-   friend bool operator< (const default_construct_iterator& i, const default_construct_iterator& i2)
+   friend bool operator< (const value_init_construct_iterator& i, const value_init_construct_iterator& i2)
    { return i.less(i2); }
 
-   friend bool operator> (const default_construct_iterator& i, const default_construct_iterator& i2)
+   friend bool operator> (const value_init_construct_iterator& i, const value_init_construct_iterator& i2)
    { return i2 < i; }
 
-   friend bool operator<= (const default_construct_iterator& i, const default_construct_iterator& i2)
+   friend bool operator<= (const value_init_construct_iterator& i, const value_init_construct_iterator& i2)
    { return !(i > i2); }
 
-   friend bool operator>= (const default_construct_iterator& i, const default_construct_iterator& i2)
+   friend bool operator>= (const value_init_construct_iterator& i, const value_init_construct_iterator& i2)
    { return !(i < i2); }
 
-   friend Difference operator- (const default_construct_iterator& i, const default_construct_iterator& i2)
+   friend Difference operator- (const value_init_construct_iterator& i, const value_init_construct_iterator& i2)
    { return i2.distance_to(i); }
 
    //Arithmetic
-   default_construct_iterator& operator+=(Difference off)
+   value_init_construct_iterator& operator+=(Difference off)
    {  this->advance(off); return *this;   }
 
-   default_construct_iterator operator+(Difference off) const
+   value_init_construct_iterator operator+(Difference off) const
    {
-      default_construct_iterator other(*this);
+      value_init_construct_iterator other(*this);
       other.advance(off);
       return other;
    }
 
-   friend default_construct_iterator operator+(Difference off, const default_construct_iterator& right)
+   friend value_init_construct_iterator operator+(Difference off, const value_init_construct_iterator& right)
    {  return right + off; }
 
-   default_construct_iterator& operator-=(Difference off)
+   value_init_construct_iterator& operator-=(Difference off)
    {  this->advance(-off); return *this;   }
 
-   default_construct_iterator operator-(Difference off) const
+   value_init_construct_iterator operator-(Difference off) const
    {  return *this + (-off);  }
 
-   const T& operator*() const
-   { return dereference(); }
-
-   const T* operator->() const
-   { return &(dereference()); }
-
-   const T& operator[] (Difference n) const
-   { return dereference(); }
+   //This pseudo-iterator's dereference operations have no sense since value is not
+   //constructed until ::lslboost::container::construct_in_place is called.
+   //So comment them to catch bad uses
+   //const T& operator*() const;
+   //const T& operator[](difference_type) const;
+   //const T* operator->() const;
 
    private:
    Difference  m_num;
@@ -258,6 +257,118 @@ class default_construct_iterator
    Difference distance_to(const this_type &other)const
    {  return m_num - other.m_num;   }
 };
+
+template <class T, class Difference = std::ptrdiff_t>
+class default_init_construct_iterator
+  : public std::iterator
+      <std::random_access_iterator_tag, T, Difference, const T*, const T &>
+{
+   typedef  default_init_construct_iterator<T, Difference> this_type;
+
+   public:
+   explicit default_init_construct_iterator(Difference range_size)
+      :  m_num(range_size){}
+
+   //Constructors
+   default_init_construct_iterator()
+      :  m_num(0){}
+
+   default_init_construct_iterator& operator++()
+   { increment();   return *this;   }
+  
+   default_init_construct_iterator operator++(int)
+   {
+      default_init_construct_iterator result (*this);
+      increment();
+      return result;
+   }
+
+   default_init_construct_iterator& operator--()
+   { decrement();   return *this;   }
+  
+   default_init_construct_iterator operator--(int)
+   {
+      default_init_construct_iterator result (*this);
+      decrement();
+      return result;
+   }
+
+   friend bool operator== (const default_init_construct_iterator& i, const default_init_construct_iterator& i2)
+   { return i.equal(i2); }
+
+   friend bool operator!= (const default_init_construct_iterator& i, const default_init_construct_iterator& i2)
+   { return !(i == i2); }
+
+   friend bool operator< (const default_init_construct_iterator& i, const default_init_construct_iterator& i2)
+   { return i.less(i2); }
+
+   friend bool operator> (const default_init_construct_iterator& i, const default_init_construct_iterator& i2)
+   { return i2 < i; }
+
+   friend bool operator<= (const default_init_construct_iterator& i, const default_init_construct_iterator& i2)
+   { return !(i > i2); }
+
+   friend bool operator>= (const default_init_construct_iterator& i, const default_init_construct_iterator& i2)
+   { return !(i < i2); }
+
+   friend Difference operator- (const default_init_construct_iterator& i, const default_init_construct_iterator& i2)
+   { return i2.distance_to(i); }
+
+   //Arithmetic
+   default_init_construct_iterator& operator+=(Difference off)
+   {  this->advance(off); return *this;   }
+
+   default_init_construct_iterator operator+(Difference off) const
+   {
+      default_init_construct_iterator other(*this);
+      other.advance(off);
+      return other;
+   }
+
+   friend default_init_construct_iterator operator+(Difference off, const default_init_construct_iterator& right)
+   {  return right + off; }
+
+   default_init_construct_iterator& operator-=(Difference off)
+   {  this->advance(-off); return *this;   }
+
+   default_init_construct_iterator operator-(Difference off) const
+   {  return *this + (-off);  }
+
+   //This pseudo-iterator's dereference operations have no sense since value is not
+   //constructed until ::lslboost::container::construct_in_place is called.
+   //So comment them to catch bad uses
+   //const T& operator*() const;
+   //const T& operator[](difference_type) const;
+   //const T* operator->() const;
+
+   private:
+   Difference  m_num;
+
+   void increment()
+   { --m_num; }
+
+   void decrement()
+   { ++m_num; }
+
+   bool equal(const this_type &other) const
+   {  return m_num == other.m_num;   }
+
+   bool less(const this_type &other) const
+   {  return other.m_num < m_num;   }
+
+   const T & dereference() const
+   {
+      static T dummy;
+      return dummy;
+   }
+
+   void advance(Difference n)
+   {  m_num -= n; }
+
+   Difference distance_to(const this_type &other)const
+   {  return m_num - other.m_num;   }
+};
+
 
 template <class T, class Difference = std::ptrdiff_t>
 class repeat_iterator
@@ -337,7 +448,7 @@ class repeat_iterator
    T& operator*() const
    { return dereference(); }
 
-   T& operator[] (Difference n) const
+   T& operator[] (Difference ) const
    { return dereference(); }
 
    T *operator->() const
@@ -445,14 +556,12 @@ class emplace_iterator
    this_type operator-(difference_type off) const
    {  return *this + (-off);  }
 
-   const T& operator*() const
-   { return dereference(); }
-
-   const T& operator[](difference_type) const
-   { return dereference(); }
-
-   const T* operator->() const
-   { return &(dereference()); }
+   //This pseudo-iterator's dereference operations have no sense since value is not
+   //constructed until ::lslboost::container::construct_in_place is called.
+   //So comment them to catch bad uses
+   //const T& operator*() const;
+   //const T& operator[](difference_type) const;
+   //const T* operator->() const;
 
    template<class A>
    void construct_in_place(A &a, T* ptr)
@@ -506,8 +615,7 @@ struct emplace_functor
    void inplace_impl(A &a, T* ptr, const container_detail::index_tuple<IdxPack...>&)
    {
       allocator_traits<A>::construct
-         (a, ptr, container_detail::stored_ref<Args>::forward
-          (container_detail::get<IdxPack>(args_))...);
+         (a, ptr, ::lslboost::forward<Args>(container_detail::get<IdxPack>(args_))...);
    }
 
    container_detail::tuple<Args&...> args_;
@@ -539,10 +647,166 @@ struct emplace_functor
 
 #endif
 
+namespace container_detail {
+
+template<class T>
+struct has_iterator_category
+{
+   template <typename X>
+   static char test(int, typename X::iterator_category*);
+
+   template <typename X>
+   static int test(int, ...);
+
+   static const bool value = (1 == sizeof(test<T>(0, 0)));
+};
+
+
+template<class T, bool = has_iterator_category<T>::value >
+struct is_input_iterator
+{
+   static const bool value = is_same<typename T::iterator_category, std::input_iterator_tag>::value;
+};
+
+template<class T>
+struct is_input_iterator<T, false>
+{
+   static const bool value = false;
+};
+
+template<class T, bool = has_iterator_category<T>::value >
+struct is_forward_iterator
+{
+   static const bool value = is_same<typename T::iterator_category, std::forward_iterator_tag>::value;
+};
+
+template<class T>
+struct is_forward_iterator<T, false>
+{
+   static const bool value = false;
+};
+
+template<class T, bool = has_iterator_category<T>::value >
+struct is_bidirectional_iterator
+{
+   static const bool value = is_same<typename T::iterator_category, std::bidirectional_iterator_tag>::value;
+};
+
+template<class T>
+struct is_bidirectional_iterator<T, false>
+{
+   static const bool value = false;
+};
+
+template<class IIterator>
+struct iiterator_types
+{
+   typedef typename IIterator::value_type                            it_value_type;
+   typedef typename it_value_type::value_type                        value_type;
+   typedef typename std::iterator_traits<IIterator>::pointer         it_pointer;
+   typedef typename std::iterator_traits<IIterator>::difference_type difference_type;
+   typedef typename ::lslboost::intrusive::pointer_traits<it_pointer>::
+      template rebind_pointer<value_type>::type                      pointer;
+   typedef typename ::lslboost::intrusive::pointer_traits<it_pointer>::
+      template rebind_pointer<const value_type>::type                const_pointer;
+   typedef typename ::lslboost::intrusive::
+      pointer_traits<pointer>::reference                             reference;
+   typedef typename ::lslboost::intrusive::
+      pointer_traits<const_pointer>::reference                       const_reference;
+   typedef typename IIterator::iterator_category                     iterator_category;
+};
+
+template<class IIterator, bool IsConst>
+struct std_iterator
+{
+   typedef typename std::iterator
+      < typename iiterator_types<IIterator>::iterator_category
+      , typename iiterator_types<IIterator>::value_type
+      , typename iiterator_types<IIterator>::difference_type
+      , typename iiterator_types<IIterator>::const_pointer
+      , typename iiterator_types<IIterator>::const_reference> type;
+};
+
+template<class IIterator>
+struct std_iterator<IIterator, false>
+{
+   typedef typename std::iterator
+      < typename iiterator_types<IIterator>::iterator_category
+      , typename iiterator_types<IIterator>::value_type
+      , typename iiterator_types<IIterator>::difference_type
+      , typename iiterator_types<IIterator>::pointer
+      , typename iiterator_types<IIterator>::reference> type;
+};
+
+template<class IIterator, bool IsConst>
+class iterator
+   :  public std_iterator<IIterator, IsConst>::type
+{
+   typedef typename std_iterator<IIterator, IsConst>::type types_t;
+
+   public:
+   typedef typename types_t::value_type      value_type;
+   typedef typename types_t::pointer         pointer;
+   typedef typename types_t::reference       reference;
+
+   iterator()
+   {}
+
+   explicit iterator(IIterator iit) BOOST_CONTAINER_NOEXCEPT
+      : m_iit(iit)
+   {}
+
+   iterator(iterator<IIterator, false> const& other) BOOST_CONTAINER_NOEXCEPT
+      :  m_iit(other.get())
+   {}
+
+   iterator& operator++() BOOST_CONTAINER_NOEXCEPT
+   {  ++this->m_iit;   return *this;  }
+
+   iterator operator++(int) BOOST_CONTAINER_NOEXCEPT
+   {
+      iterator result (*this);
+      ++this->m_iit;
+      return result;
+   }
+
+   iterator& operator--() BOOST_CONTAINER_NOEXCEPT
+   {
+      //If the iterator is not a bidirectional iterator, operator-- should not exist
+      BOOST_STATIC_ASSERT((is_bidirectional_iterator<iterator>::value));
+      --this->m_iit;   return *this;
+   }
+
+   iterator operator--(int) BOOST_CONTAINER_NOEXCEPT
+   {
+      iterator result (*this);
+      --this->m_iit;
+      return result;
+   }
+
+   friend bool operator== (const iterator& l, const iterator& r) BOOST_CONTAINER_NOEXCEPT
+   {  return l.m_iit == r.m_iit;   }
+
+   friend bool operator!= (const iterator& l, const iterator& r) BOOST_CONTAINER_NOEXCEPT
+   {  return !(l == r); }
+
+   reference operator*()  const BOOST_CONTAINER_NOEXCEPT
+   {  return (*this->m_iit).get_data();  }
+
+   pointer   operator->() const BOOST_CONTAINER_NOEXCEPT
+   {  return ::lslboost::intrusive::pointer_traits<pointer>::pointer_to(this->operator*());  }
+
+   const IIterator &get() const BOOST_CONTAINER_NOEXCEPT
+   {  return this->m_iit;   }
+
+   private:
+   IIterator m_iit;
+};
+
+}  //namespace container_detail {
 }  //namespace container {
 }  //namespace lslboost {
 
 #include <lslboost/container/detail/config_end.hpp>
 
 #endif   //#ifndef BOOST_CONTAINER_DETAIL_ITERATORS_HPP
-

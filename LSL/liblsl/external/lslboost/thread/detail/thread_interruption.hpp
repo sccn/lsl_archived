@@ -9,6 +9,8 @@
 #include <lslboost/thread/detail/config.hpp>
 #include <lslboost/thread/detail/delete.hpp>
 
+#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
+
 namespace lslboost
 {
     namespace this_thread
@@ -33,4 +35,5 @@ namespace lslboost
     }
 }
 
-#endif
+#endif // BOOST_THREAD_PROVIDES_INTERRUPTIONS
+#endif // header

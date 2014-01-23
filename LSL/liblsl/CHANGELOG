@@ -76,3 +76,20 @@ Library Version 1.03.3
 Library Version 1.04
 * Added a preprocessor switch to toggle between using the system-supplied boost or the shrink-wrapped version (in external/lslboost)
 * Added documentation on how to get an updated boost distribution included with liblsl (and added a script to automate that)
+
+Library Version 1.05
+* Suppressed a spurious warning about non-matching query ids
+
+Library Version 1.10 (mostly throughput optimizations)
+* Added the ability to allocate ports outside the default port range once if it is exhausted (configurable, enabled by default).
+* Replaced consumer_queue implementation by a lock-free single-producer/single-consumer queue 
+* Minor speed improvements in data_receiver: Removed a slow check in pull_sample() and calling local_clock() only every k'th iteration in data_thread().
+* Changed the data layout of the sample class for faster allocation/deallocation.
+* Speeded up the assignment/retrieval functions of the sample class (uses memcpy where appropriate).
+* Added a factory class for fast allocation/deallocation of samples.
+* Implemented a faster data transmission protocol (1.10) for samples, as alternative to the baseline protocol (1.00).
+* Implemented a new version of protocol negotiation between tcp_server and data_receiver, using an HTTP-like request/response style.
+* Fixed some potential rare hang bugs during shutdown of inlets and outlets (deadlocks/livelocks)
+* Added the ability to transmit multiplexed chunks to the C and C++ APIs
+* Minor improvements to documentation
+* Added clean cross-platform Python and C# wrappers (pylsl.py and LSL.cs)

@@ -21,7 +21,9 @@
 #include <lslboost/assert.hpp>
 #include <lslboost/iterator/iterator_traits.hpp>
 #include <lslboost/iterator/iterator_facade.hpp>
+#include <lslboost/mpl/or.hpp>
 #include <lslboost/type_traits/is_abstract.hpp>
+#include <lslboost/type_traits/is_array.hpp>
 #include <lslboost/type_traits/is_pointer.hpp>
 #include <lslboost/range/functions.hpp>
 #include <lslboost/range/iterator.hpp>
@@ -167,7 +169,8 @@ namespace lslboost
 
         private: // for return value of operator()()
             typedef BOOST_DEDUCED_TYPENAME
-                lslboost::mpl::if_< lslboost::is_abstract<value_type>,
+                lslboost::mpl::if_< lslboost::mpl::or_< lslboost::is_abstract< value_type >, 
+                                                  lslboost::is_array< value_type > >,
                                  reference, value_type >::type abstract_value_type;
 
         public:

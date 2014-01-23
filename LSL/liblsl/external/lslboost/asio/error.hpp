@@ -2,7 +2,7 @@
 // error.hpp
 // ~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -18,7 +18,9 @@
 #include <lslboost/asio/detail/config.hpp>
 #include <lslboost/cerrno.hpp>
 #include <lslboost/system/error_code.hpp>
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if defined(BOOST_ASIO_WINDOWS) \
+  || defined(__CYGWIN__) \
+  || defined(BOOST_ASIO_WINDOWS_RUNTIME)
 # include <winerror.h>
 #else
 # include <cerrno>
@@ -36,7 +38,13 @@
 # define BOOST_ASIO_GETADDRINFO_ERROR(e) implementation_defined
 /// INTERNAL ONLY.
 # define BOOST_ASIO_WIN_OR_POSIX(e_win, e_posix) implementation_defined
-#elif defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#elif defined(BOOST_ASIO_WINDOWS_RUNTIME)
+# define BOOST_ASIO_NATIVE_ERROR(e) __HRESULT_FROM_WIN32(e)
+# define BOOST_ASIO_SOCKET_ERROR(e) __HRESULT_FROM_WIN32(WSA ## e)
+# define BOOST_ASIO_NETDB_ERROR(e) __HRESULT_FROM_WIN32(WSA ## e)
+# define BOOST_ASIO_GETADDRINFO_ERROR(e) __HRESULT_FROM_WIN32(WSA ## e)
+# define BOOST_ASIO_WIN_OR_POSIX(e_win, e_posix) e_win
+#elif defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 # define BOOST_ASIO_NATIVE_ERROR(e) e
 # define BOOST_ASIO_SOCKET_ERROR(e) WSA ## e
 # define BOOST_ASIO_NETDB_ERROR(e) WSA ## e
@@ -216,7 +224,7 @@ inline const lslboost::system::error_category& get_system_category()
   return lslboost::system::system_category();
 }
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 extern BOOST_ASIO_DECL
 const lslboost::system::error_category& get_netdb_category();
@@ -224,7 +232,7 @@ const lslboost::system::error_category& get_netdb_category();
 extern BOOST_ASIO_DECL
 const lslboost::system::error_category& get_addrinfo_category();
 
-#else // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#else // !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 inline const lslboost::system::error_category& get_netdb_category()
 {
@@ -236,7 +244,7 @@ inline const lslboost::system::error_category& get_addrinfo_category()
   return get_system_category();
 }
 
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 extern BOOST_ASIO_DECL
 const lslboost::system::error_category& get_misc_category();

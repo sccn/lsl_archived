@@ -19,5 +19,6 @@
 #include <lslboost/fusion/support/deduce.hpp>
 #include <lslboost/fusion/support/deduce_sequence.hpp>
 #include <lslboost/fusion/support/unused.hpp>
+#include <lslboost/fusion/support/as_const.hpp>
 
 #endif

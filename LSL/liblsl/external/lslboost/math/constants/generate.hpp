@@ -17,7 +17,7 @@
 #elif defined(USE_MPREAL)
 #include <lslboost/math/bindings/mpreal.hpp>
 #elif defined(USE_CPP_FLOAT)
-#include <lslboost/multiprecision/cpp_float.hpp>
+#include <lslboost/multiprecision/cpp_dec_float.hpp>
 #else
 #include <lslboost/math/bindings/rr.hpp>
 #endif
@@ -29,7 +29,7 @@ typedef mpfr_class generator_type;
 #elif defined(USE_MPREAL)
 typedef mpfr::mpreal generator_type;
 #elif defined(USE_CPP_FLOAT)
-typedef lslboost::multiprecision::mp_number<lslboost::multiprecision::cpp_float<500> > generator_type;
+typedef lslboost::multiprecision::number<lslboost::multiprecision::cpp_dec_float<500> > generator_type;
 #else
 typedef ntl::RR generator_type;
 #endif

@@ -2,7 +2,7 @@
 // detail/descriptor_read_op.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -17,9 +17,9 @@
 
 #include <lslboost/asio/detail/config.hpp>
 
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
 
-#include <lslboost/utility/addressof.hpp>
+#include <lslboost/asio/detail/addressof.hpp>
 #include <lslboost/asio/detail/bind_handler.hpp>
 #include <lslboost/asio/detail/buffer_sequence_adapter.hpp>
 #include <lslboost/asio/detail/descriptor_ops.hpp>
@@ -81,7 +81,7 @@ public:
   {
     // Take ownership of the handler object.
     descriptor_read_op* o(static_cast<descriptor_read_op*>(base));
-    ptr p = { lslboost::addressof(o->handler_), o, o };
+    ptr p = { lslboost::asio::detail::addressof(o->handler_), o, o };
 
     BOOST_ASIO_HANDLER_COMPLETION((o));
 
@@ -93,7 +93,7 @@ public:
     // deallocated the memory here.
     detail::binder2<Handler, lslboost::system::error_code, std::size_t>
       handler(o->handler_, o->ec_, o->bytes_transferred_);
-    p.h = lslboost::addressof(handler.handler_);
+    p.h = lslboost::asio::detail::addressof(handler.handler_);
     p.reset();
 
     // Make the upcall if required.
@@ -116,6 +116,6 @@ private:
 
 #include <lslboost/asio/detail/pop_options.hpp>
 
-#endif // !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(BOOST_ASIO_WINDOWS) && !defined(__CYGWIN__)
 
 #endif // BOOST_ASIO_DETAIL_DESCRIPTOR_READ_OP_HPP

@@ -24,7 +24,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		AA35E1B01513CBD1003F3939 /* GetTimeCorrection */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = GetTimeCorrection; path = "GetTimeCorrection-mac"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA35E1B01513CBD1003F3939 /* GetTimeCorrection-mac */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "GetTimeCorrection-mac"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA35E1E51513CCE9003F3939 /* GetTimeCorrection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetTimeCorrection.cpp; sourceTree = "<group>"; };
 		AAE64A1615782C8F009EEA4A /* liblsl64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblsl64.dylib; path = ../../../bin/liblsl64.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -53,7 +53,7 @@
 		AA35E1B11513CBD1003F3939 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA35E1B01513CBD1003F3939 /* GetTimeCorrection */,
+				AA35E1B01513CBD1003F3939 /* GetTimeCorrection-mac */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -75,7 +75,7 @@
 			);
 			name = GetTimeCorrection;
 			productName = GetTimeCorrection;
-			productReference = AA35E1B01513CBD1003F3939 /* GetTimeCorrection */;
+			productReference = AA35E1B01513CBD1003F3939 /* GetTimeCorrection-mac */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -178,6 +178,7 @@
 					"\"$(SRCROOT)/../../../bin\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)-mac";
+				SDKROOT = macosx10.8;
 			};
 			name = Debug;
 		};
@@ -190,6 +191,7 @@
 					"\"$(SRCROOT)/../../../bin\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)-mac";
+				SDKROOT = macosx10.8;
 			};
 			name = Release;
 		};

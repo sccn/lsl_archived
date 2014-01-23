@@ -13,6 +13,7 @@
 
 #include <lslboost/assert.hpp>
 #include <lslboost/config.hpp>
+#include <lslboost/static_assert.hpp>
 #include <lslboost/pending/cstddef.hpp>
 #include <lslboost/detail/iterator.hpp>
 #include <lslboost/concept_check.hpp>
@@ -147,6 +148,7 @@ namespace lslboost {
 #else
   template <class T>
   struct property_traits<T*> {
+    // BOOST_STATIC_ASSERT(lslboost::is_same<T, T*>::value && !"Using pointers as property maps is deprecated");
     typedef T value_type;
     typedef value_type& reference;
     typedef std::ptrdiff_t key_type;
@@ -154,6 +156,7 @@ namespace lslboost {
   };
   template <class T>
   struct property_traits<const T*> {
+    // BOOST_STATIC_ASSERT(lslboost::is_same<T, T*>::value && !"Using pointers as property maps is deprecated");
     typedef T value_type;
     typedef const value_type& reference;
     typedef std::ptrdiff_t key_type;

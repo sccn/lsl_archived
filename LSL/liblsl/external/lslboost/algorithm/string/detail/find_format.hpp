@@ -12,7 +12,7 @@
 #define BOOST_STRING_FIND_FORMAT_DETAIL_HPP
 
 #include <lslboost/algorithm/string/config.hpp>
-#include <lslboost/range/iterator_range.hpp>
+#include <lslboost/range/iterator_range_core.hpp>
 #include <lslboost/range/const_iterator.hpp>
 #include <lslboost/range/iterator.hpp>
 #include <lslboost/algorithm/string/detail/find_format_store.hpp>
@@ -56,7 +56,7 @@ namespace lslboost {
                 // Copy the beginning of the sequence
                 Output = std::copy( ::lslboost::begin(Input), ::lslboost::begin(M), Output );
                 // Format find result
-                // Copy formated result
+                // Copy formatted result
                 Output = std::copy( ::lslboost::begin(M.format_result()), ::lslboost::end(M.format_result()), Output );
                 // Copy the rest of the sequence
                 Output = std::copy( M.end(), ::lslboost::end(Input), Output );
@@ -118,11 +118,11 @@ namespace lslboost {
 
                 InputT Output;
                 // Copy the beginning of the sequence
-                insert( Output, ::lslboost::end(Output), ::lslboost::begin(Input), M.begin() );
-                // Copy formated result
-                insert( Output, ::lslboost::end(Output), M.format_result() );
+                lslboost::algorithm::detail::insert( Output, ::lslboost::end(Output), ::lslboost::begin(Input), M.begin() );
+                // Copy formatted result
+                lslboost::algorithm::detail::insert( Output, ::lslboost::end(Output), M.format_result() );
                 // Copy the rest of the sequence
-                insert( Output, ::lslboost::end(Output), M.end(), ::lslboost::end(Input) );
+                lslboost::algorithm::detail::insert( Output, ::lslboost::end(Output), M.end(), ::lslboost::end(Input) );
 
                 return Output;
             }

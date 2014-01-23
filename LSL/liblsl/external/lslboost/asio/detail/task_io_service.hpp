@@ -2,7 +2,7 @@
 // detail/task_io_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -26,7 +26,6 @@
 #include <lslboost/asio/detail/mutex.hpp>
 #include <lslboost/asio/detail/op_queue.hpp>
 #include <lslboost/asio/detail/reactor_fwd.hpp>
-#include <lslboost/asio/detail/task_io_service_fwd.hpp>
 #include <lslboost/asio/detail/task_io_service_operation.hpp>
 
 #include <lslboost/asio/detail/push_options.hpp>
@@ -34,6 +33,8 @@
 namespace lslboost {
 namespace asio {
 namespace detail {
+
+struct task_io_service_thread_info;
 
 class task_io_service
   : public lslboost::asio::detail::service_base<task_io_service>
@@ -94,15 +95,16 @@ public:
 
   // Request invocation of the given handler.
   template <typename Handler>
-  void dispatch(Handler handler);
+  void dispatch(Handler& handler);
 
   // Request invocation of the given handler and return immediately.
   template <typename Handler>
-  void post(Handler handler);
+  void post(Handler& handler);
 
   // Request invocation of the given operation and return immediately. Assumes
   // that work_started() has not yet been called for the operation.
-  BOOST_ASIO_DECL void post_immediate_completion(operation* op);
+  BOOST_ASIO_DECL void post_immediate_completion(
+      operation* op, bool is_continuation);
 
   // Request invocation of the given operation and return immediately. Assumes
   // that work_started() was previously called for the operation.
@@ -112,33 +114,25 @@ public:
   // that work_started() was previously called for each operation.
   BOOST_ASIO_DECL void post_deferred_completions(op_queue<operation>& ops);
 
-  // Request invocation of the given operation using the thread-private queue
-  // and return immediately. Assumes that work_started() has not yet been
-  // called for the operation.
-  BOOST_ASIO_DECL void post_private_immediate_completion(operation* op);
-
-  // Request invocation of the given operation using the thread-private queue
-  // and return immediately. Assumes that work_started() was previously called
-  // for the operation.
-  BOOST_ASIO_DECL void post_private_deferred_completion(operation* op);
-
   // Process unfinished operations as part of a shutdown_service operation.
   // Assumes that work_started() was previously called for the operations.
   BOOST_ASIO_DECL void abandon_operations(op_queue<operation>& ops);
 
 private:
   // Structure containing information about an idle thread.
-  struct thread_info;
+  typedef task_io_service_thread_info thread_info;
 
-  // Run at most one operation. Blocks only if this_idle_thread is non-null.
+  // Enqueue the given operation following a failed attempt to dispatch the
+  // operation for immediate invocation.
+  BOOST_ASIO_DECL void do_dispatch(operation* op);
+
+  // Run at most one operation. May block.
   BOOST_ASIO_DECL std::size_t do_run_one(mutex::scoped_lock& lock,
-      thread_info& this_thread, op_queue<operation>& private_op_queue,
-      const lslboost::system::error_code& ec);
+      thread_info& this_thread, const lslboost::system::error_code& ec);
 
   // Poll for at most one operation.
   BOOST_ASIO_DECL std::size_t do_poll_one(mutex::scoped_lock& lock,
-      op_queue<operation>& private_op_queue,
-      const lslboost::system::error_code& ec);
+      thread_info& this_thread, const lslboost::system::error_code& ec);
 
   // Stop the task and all idle threads.
   BOOST_ASIO_DECL void stop_all_threads(mutex::scoped_lock& lock);

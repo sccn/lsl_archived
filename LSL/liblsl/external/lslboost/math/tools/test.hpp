@@ -15,6 +15,8 @@
 #include <lslboost/math/special_functions/fpclassify.hpp>
 #include <lslboost/test/test_tools.hpp>
 #include <stdexcept>
+#include <iostream>
+#include <iomanip>
 
 namespace lslboost{ namespace math{ namespace tools{
 

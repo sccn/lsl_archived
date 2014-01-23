@@ -15,9 +15,10 @@ using namespace boost::asio;
 *					If 0 (=default), the chunk size is determined by the pushthrough flag in push_sample or push_chunk.
 * @param max_capacity The maximum number of samples buffered for unresponsive receivers. If more samples get pushed, the oldest will be dropped.
 *					   The default is sufficient to hold a bit more than 15 minutes of data at 512Hz, while consuming not more than ca. 512MB of RAM.
-* @param min_capacity The minimum number of samples reserved in the buffer. If less than this many samples have to be buffered, no unnecessary buffer reallocations will be made.
 */
-stream_outlet_impl::stream_outlet_impl(const stream_info_impl &info, int chunk_size, int max_capacity, int min_capacity): chunk_size_(chunk_size), info_(new stream_info_impl(info)), send_buffer_(new send_buffer(max_capacity,min_capacity)){
+stream_outlet_impl::stream_outlet_impl(const stream_info_impl &info, int chunk_size, int max_capacity): chunk_size_(chunk_size), info_(new stream_info_impl(info)), 
+	sample_factory_(new sample::factory(info.channel_format(),info.channel_count(),info.nominal_srate()?info.nominal_srate()*api_config::get_instance()->outlet_buffer_reserve_ms()/1000:api_config::get_instance()->outlet_buffer_reserve_samples())), send_buffer_(new send_buffer(max_capacity))
+{
 	const api_config *cfg = api_config::get_instance();
 
 	// instantiate IPv4 and/or IPv6 stacks (depending on settings)
@@ -65,7 +66,7 @@ void stream_outlet_impl::instantiate_stack(tcp tcp_protocol, udp udp_protocol) {
 	int multicast_port = cfg->multicast_port();
 	// create TCP data server
 	ios_.push_back(io_service_p(new io_service()));
-	tcp_servers_.push_back(tcp_server_p(new tcp_server(info_, ios_.back(), send_buffer_, tcp_protocol, chunk_size_)));
+	tcp_servers_.push_back(tcp_server_p(new tcp_server(info_, ios_.back(), send_buffer_, sample_factory_, tcp_protocol, chunk_size_)));
 	// create UDP time server
 	ios_.push_back(io_service_p(new io_service()));
 	udp_servers_.push_back(udp_server_p(new udp_server(info_, *ios_.back(), udp_protocol)));

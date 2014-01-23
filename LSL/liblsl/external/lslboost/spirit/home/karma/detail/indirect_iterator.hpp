@@ -25,14 +25,16 @@ namespace lslboost { namespace spirit { namespace karma { namespace detail
             indirect_iterator<Iterator>
           , typename lslboost::detail::iterator_traits<Iterator>::value_type
           , lslboost::forward_traversal_tag
-          , typename lslboost::detail::iterator_traits<Iterator>::value_type const&>
+          , typename lslboost::detail::iterator_traits<Iterator>::reference>
     {
         typedef typename lslboost::detail::iterator_traits<Iterator>::value_type
             base_value_type;
+        typedef typename lslboost::detail::iterator_traits<Iterator>::reference
+            base_reference_type;
 
         typedef lslboost::iterator_facade<
             indirect_iterator<Iterator>, base_value_type
-          , lslboost::forward_traversal_tag, base_value_type const&
+          , lslboost::forward_traversal_tag, base_reference_type
         > base_type;
 
     public:
@@ -56,7 +58,7 @@ namespace lslboost { namespace spirit { namespace karma { namespace detail
             return *iter_ == *other.iter_;
         }
 
-        typename base_type::reference dereference() const
+        base_reference_type dereference() const
         {
             return **iter_;
         }

@@ -488,7 +488,7 @@ namespace lslboost
       return detail::inverse_discrete_quantile(
          dist,
          P,
-         1-P,
+         false,
          guess,
          factor,
          RealType(1),
@@ -564,8 +564,8 @@ namespace lslboost
        typedef typename Policy::discrete_quantile_type discrete_type;
        return detail::inverse_discrete_quantile(
           dist,
-          1-Q,
           Q,
+          true,
           guess,
           factor,
           RealType(1),

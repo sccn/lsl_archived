@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //
 // (C) Copyright Olaf Krzikalla 2004-2006.
-// (C) Copyright Ion Gaztanaga  2006-2009
+// (C) Copyright Ion Gaztanaga  2006-2013
 //
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
@@ -17,6 +17,7 @@
 #include <lslboost/intrusive/detail/config_begin.hpp>
 #include <lslboost/intrusive/intrusive_fwd.hpp>
 #include <lslboost/intrusive/detail/common_slist_algorithms.hpp>
+#include <lslboost/intrusive/detail/utilities.hpp>
 #include <cstddef>
 #include <utility>
 
@@ -255,7 +256,7 @@ class linear_slist_algorithms
       if(!end_found){
          old_last = base_t::get_previous_node(first, node_ptr());
       }
-     
+
       //Now link p after the new last node
       NodeTraits::set_next(old_last, p);
       NodeTraits::set_next(new_last, node_ptr());
@@ -300,7 +301,7 @@ class linear_slist_algorithms
          //If the shift is a multiple of the size there is nothing to do
          if(!new_before_last_pos)
             return ret;
-        
+
          for( new_last = p
             ; --new_before_last_pos
             ; new_last = node_traits::get_next(new_last)){
@@ -318,6 +319,16 @@ class linear_slist_algorithms
       return ret;
    }
 };
+
+/// @cond
+
+template<class NodeTraits>
+struct get_algo<LinearSListAlgorithms, NodeTraits>
+{
+   typedef linear_slist_algorithms<NodeTraits> type;
+};
+
+/// @endcond
 
 } //namespace intrusive
 } //namespace lslboost

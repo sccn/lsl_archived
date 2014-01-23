@@ -13,5 +13,4 @@
 #ifdef BOOST_RATIO_EXTENSIONS
 #include <lslboost/ratio/mpl/rational_constant.hpp>
 #endif
-
 #endif  // BOOST_RATIO_INCLUDE_HPP

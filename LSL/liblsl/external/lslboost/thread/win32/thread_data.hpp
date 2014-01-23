@@ -7,17 +7,31 @@
 // (C) Copyright 2011-2012 Vicente J. Botet Escriba
 
 #include <lslboost/thread/detail/config.hpp>
-#include <lslboost/intrusive_ptr.hpp>
 #include <lslboost/thread/thread_time.hpp>
 #include <lslboost/thread/win32/thread_primitives.hpp>
 #include <lslboost/thread/win32/thread_heap_alloc.hpp>
+
+#include <lslboost/intrusive_ptr.hpp>
 #ifdef BOOST_THREAD_USES_CHRONO
 #include <lslboost/chrono/system_clocks.hpp>
 #endif
+
+#include <map>
+#include <vector>
+#include <utility>
+
 #include <lslboost/config/abi_prefix.hpp>
+
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable:4251)
+#endif
 
 namespace lslboost
 {
+  class condition_variable;
+  class mutex;
+
   class thread_attributes {
   public:
       thread_attributes() BOOST_NOEXCEPT {
@@ -58,32 +72,58 @@ namespace lslboost
 
     namespace detail
     {
+        struct shared_state_base;
+        struct tss_cleanup_function;
         struct thread_exit_callback_node;
-        struct tss_data_node;
+        struct tss_data_node
+        {
+            lslboost::shared_ptr<lslboost::detail::tss_cleanup_function> func;
+            void* value;
+
+            tss_data_node(lslboost::shared_ptr<lslboost::detail::tss_cleanup_function> func_,
+                          void* value_):
+                func(func_),value(value_)
+            {}
+        };
 
         struct thread_data_base;
         void intrusive_ptr_add_ref(thread_data_base * p);
         void intrusive_ptr_release(thread_data_base * p);
 
-        struct BOOST_SYMBOL_VISIBLE thread_data_base
+        struct BOOST_THREAD_DECL thread_data_base
         {
             long count;
             detail::win32::handle_manager thread_handle;
-            detail::win32::handle_manager interruption_handle;
             lslboost::detail::thread_exit_callback_node* thread_exit_callbacks;
-            lslboost::detail::tss_data_node* tss_data;
-            bool interruption_enabled;
+            std::map<void const*,lslboost::detail::tss_data_node> tss_data;
             unsigned id;
+            typedef std::vector<std::pair<condition_variable*, mutex*>
+            //, hidden_allocator<std::pair<condition_variable*, mutex*> >
+            > notify_list_t;
+            notify_list_t notify;
+
+            typedef std::vector<shared_ptr<shared_state_base> > async_states_t;
+            async_states_t async_states_;
+//#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
+            // These data must be at the end so that the access to the other fields doesn't change
+            // when BOOST_THREAD_PROVIDES_INTERRUPTIONS is defined
+            // Another option is to have them always
+            detail::win32::handle_manager interruption_handle;
+            bool interruption_enabled;
+//#endif
 
             thread_data_base():
                 count(0),thread_handle(detail::win32::invalid_handle_value),
-                interruption_handle(create_anonymous_event(detail::win32::manual_reset_event,detail::win32::event_initially_reset)),
-                thread_exit_callbacks(0),tss_data(0),
-                interruption_enabled(true),
-                id(0)
+                thread_exit_callbacks(0),tss_data(),
+                id(0),
+                notify(),
+                async_states_()
+//#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
+                , interruption_handle(create_anonymous_event(detail::win32::manual_reset_event,detail::win32::event_initially_reset))
+                , interruption_enabled(true)
+//#endif
             {}
-            virtual ~thread_data_base()
-            {}
+            virtual ~thread_data_base();
 
             friend void intrusive_ptr_add_ref(thread_data_base * p)
             {
@@ -98,21 +138,34 @@ namespace lslboost
                 }
             }
 
+#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
             void interrupt()
             {
                 BOOST_VERIFY(detail::win32::SetEvent(interruption_handle)!=0);
             }
-
+#endif
             typedef detail::win32::handle native_handle_type;
 
             virtual void run()=0;
+
+            virtual void notify_all_at_thread_exit(condition_variable* cv, mutex* m)
+            {
+              notify.push_back(std::pair<condition_variable*, mutex*>(cv, m));
+            }
+
+            void make_ready_at_thread_exit(shared_ptr<shared_state_base> as)
+            {
+              async_states_.push_back(as);
+            }
+
         };
+        BOOST_THREAD_DECL thread_data_base* get_current_thread_data();
 
         typedef lslboost::intrusive_ptr<detail::thread_data_base> thread_data_ptr;
 
         struct BOOST_SYMBOL_VISIBLE timeout
         {
-            unsigned long start;
+            win32::ticks_type start;
             uintmax_t milliseconds;
             bool relative;
             lslboost::system_time abs_time;
@@ -120,14 +173,14 @@ namespace lslboost
             static unsigned long const max_non_infinite_wait=0xfffffffe;
 
             timeout(uintmax_t milliseconds_):
-                start(win32::GetTickCount()),
+                start(win32::GetTickCount64()),
                 milliseconds(milliseconds_),
                 relative(true),
                 abs_time(lslboost::get_system_time())
             {}
 
             timeout(lslboost::system_time const& abs_time_):
-                start(win32::GetTickCount()),
+                start(win32::GetTickCount64()),
                 milliseconds(0),
                 relative(false),
                 abs_time(abs_time_)
@@ -152,8 +205,8 @@ namespace lslboost
                 }
                 else if(relative)
                 {
-                    unsigned long const now=win32::GetTickCount();
-                    unsigned long const elapsed=now-start;
+                    win32::ticks_type const now=win32::GetTickCount64();
+                    win32::ticks_type const elapsed=now-start;
                     return remaining_time((elapsed<milliseconds)?(milliseconds-elapsed):0);
                 }
                 else
@@ -205,7 +258,6 @@ namespace lslboost
         {
             interruptible_wait(detail::win32::invalid_handle_value,abs_time);
         }
-
         template<typename TimeDuration>
         inline BOOST_SYMBOL_VISIBLE void sleep(TimeDuration const& rel_time)
         {
@@ -224,6 +276,10 @@ namespace lslboost
     }
 
 }
+
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
 
 #include <lslboost/config/abi_suffix.hpp>
 

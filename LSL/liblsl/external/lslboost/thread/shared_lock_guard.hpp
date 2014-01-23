@@ -6,7 +6,8 @@
 #ifndef BOOST_THREAD_SHARED_LOCK_GUARD_HPP
 #define BOOST_THREAD_SHARED_LOCK_GUARD_HPP
 #include <lslboost/thread/detail/config.hpp>
-#include <lslboost/thread/locks.hpp>
+//#include <lslboost/thread/locks.hpp>
+#include <lslboost/thread/lock_options.hpp>
 #include <lslboost/thread/detail/delete.hpp>
 
 namespace lslboost

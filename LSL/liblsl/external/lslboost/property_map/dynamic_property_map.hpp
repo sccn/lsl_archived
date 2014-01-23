@@ -171,13 +171,13 @@ public:
 
   virtual lslboost::any get(const any& key)
   {
-    return get_wrapper_xxx(property_map_, any_cast<key_type>(key));
+    return get_wrapper_xxx(property_map_, any_cast<typename lslboost::property_traits<PropertyMap>::key_type>(key));
   }
 
   virtual std::string get_string(const any& key)
   {
     std::ostringstream out;
-    out << get_wrapper_xxx(property_map_, any_cast<key_type>(key));
+    out << get_wrapper_xxx(property_map_, any_cast<typename lslboost::property_traits<PropertyMap>::key_type>(key));
     return out.str();
   }
 
@@ -227,10 +227,20 @@ public:
   property(const std::string& name, PropertyMap property_map_)
   {
     lslboost::shared_ptr<dynamic_property_map> pm(
-      lslboost::make_shared<detail::dynamic_property_map_adaptor<PropertyMap> >(property_map_));
+      lslboost::static_pointer_cast<dynamic_property_map>(
+        lslboost::make_shared<detail::dynamic_property_map_adaptor<PropertyMap> >(property_map_)));
     property_maps.insert(property_maps_type::value_type(name, pm));
 
     return *this;
+  }
+
+  template<typename PropertyMap>
+  dynamic_properties
+  property(const std::string& name, PropertyMap property_map_) const
+  {
+    dynamic_properties result = *this;
+    result.property(name, property_map_);
+    return result;
   }
 
   iterator       begin()       { return property_maps.begin(); }

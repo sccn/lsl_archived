@@ -140,6 +140,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)\$(ProjectName)64-debug.exe"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="..\..\..\bin"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
 				SubSystem="1"

@@ -16,5 +16,6 @@
 #include <lslboost/fusion/adapted/struct/adapt_struct.hpp>
 #include <lslboost/fusion/adapted/struct/define_assoc_struct.hpp>
 #include <lslboost/fusion/adapted/struct/define_struct.hpp>
+#include <lslboost/fusion/adapted/struct/define_struct_inline.hpp>
 
 #endif

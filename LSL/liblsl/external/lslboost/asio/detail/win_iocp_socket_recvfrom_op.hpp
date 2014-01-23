@@ -2,7 +2,7 @@
 // detail/win_iocp_socket_recvfrom_op.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -19,7 +19,7 @@
 
 #if defined(BOOST_ASIO_HAS_IOCP)
 
-#include <lslboost/utility/addressof.hpp>
+#include <lslboost/asio/detail/addressof.hpp>
 #include <lslboost/asio/detail/bind_handler.hpp>
 #include <lslboost/asio/detail/buffer_sequence_adapter.hpp>
 #include <lslboost/asio/detail/fenced_block.hpp>
@@ -67,7 +67,7 @@ public:
     // Take ownership of the operation object.
     win_iocp_socket_recvfrom_op* o(
         static_cast<win_iocp_socket_recvfrom_op*>(base));
-    ptr p = { lslboost::addressof(o->handler_), o, o };
+    ptr p = { lslboost::asio::detail::addressof(o->handler_), o, o };
 
     BOOST_ASIO_HANDLER_COMPLETION((o));
 
@@ -93,7 +93,7 @@ public:
     // deallocated the memory here.
     detail::binder2<Handler, lslboost::system::error_code, std::size_t>
       handler(o->handler_, ec, bytes_transferred);
-    p.h = lslboost::addressof(handler.handler_);
+    p.h = lslboost::asio::detail::addressof(handler.handler_);
     p.reset();
 
     // Make the upcall if required.

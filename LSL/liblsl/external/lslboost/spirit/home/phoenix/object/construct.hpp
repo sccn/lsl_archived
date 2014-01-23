@@ -27,7 +27,7 @@ namespace lslboost { namespace phoenix
 
             template <typename RT, typename Env>
             static RT
-            eval(Env const& env)
+            eval(Env const& /*env*/)
             {
                 return RT();
             }

@@ -24,11 +24,8 @@ namespace lsl {
 		/**
 		* Create a new send buffer.
 		* @param max_capacity Hard upper bound on queue capacity beyond which the oldest samples will be dropped.
-		* @param min_capacity_hint Minimum capacity that should be at least reserved to prevent inefficient allocator churn.
-		*						   Note that the actual buffer size can be smaller than this if the upper limit for a buffer
-		*						   is smaller than min_capacity_hint.
 		*/
-		send_buffer(int max_capacity, int min_capacity_hint);
+		send_buffer(int max_capacity);
 
 		/**
 		* Add a new consumer queue to the buffer.
@@ -65,7 +62,6 @@ namespace lsl {
 		bool some_registered() const { return !consumers_.empty(); }
 
 		int max_capacity_;							// maximum capacity beyond which the oldest samples will be dropped
-		int min_capacity_hint_;						// minimum allocated capacity hint
 		consumer_set consumers_;					// a set of registered consumer queues
 		boost::mutex consumers_mut_;				// mutex to protect the integrity of consumers_
 		boost::condition_variable some_registered_;	// condition variable signaling that a consumer has registered

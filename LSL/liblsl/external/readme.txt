@@ -1,4 +1,6 @@
-The only external dependency is boost 1.50 or newer. The external folder is only used if you build liblsl as a standalone library with boost compiled in (on Linux and Mac you can alternatively compile and link against shared system-provided boost headers and libraries). 
+The only external dependency is boost 1.55 or newer. The external folder is only used if you build liblsl as a standalone library with boost compiled in (on Linux and Mac you can alternatively compile and link against shared system-provided boost headers and libraries). 
+
+Note that, when you upgrade your boost libraries you might inadvertently break backwards compatibility with old versions of liblsl (<1.10). In particular, you should check whether boost.serialization has received a breaking change since 1.55.
 
 To build a standalone library with a newer version of boost compiled in, delete the boost, lslboost and src folders and copy the folders boost and libs (not lib!) from boost_1_xx_0 to liblsl/external. Then you have two options: 
 

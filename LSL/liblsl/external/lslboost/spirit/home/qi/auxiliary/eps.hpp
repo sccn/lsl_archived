@@ -80,8 +80,8 @@ namespace lslboost { namespace spirit { namespace qi
             typedef unused_type type;
         };
 
-        semantic_predicate(bool predicate)
-          : predicate(predicate) {}
+        semantic_predicate(bool predicate_)
+          : predicate(predicate_) {}
 
         template <typename Iterator, typename Context
           , typename Skipper, typename Attribute>

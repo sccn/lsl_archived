@@ -22,6 +22,7 @@
 #include <lslboost/math/special_functions/math_fwd.hpp>
 #include <lslboost/math/special_functions/sqrt1pm1.hpp>
 #include <lslboost/math/special_functions/log1p.hpp>
+#include <lslboost/math/constants/constants.hpp>
 
 // This is the inverse of the hyperbolic sine function.
 
@@ -52,7 +53,7 @@ namespace lslboost
                 {
                     // http://functions.wolfram.com/ElementaryFunctions/ArcSinh/06/01/06/01/0001/
                     // approximation by laurent series in 1/x at 0+ order from -1 to 1
-                    return log(x * 2) + 1/ (4 * x * x);
+                    return constants::ln_two<T>() + log(x) + 1/ (4 * x * x);
                 }
                 else if(x < 0.5f)
                 {
@@ -67,7 +68,7 @@ namespace lslboost
             }
             else if    (x <= -tools::forth_root_epsilon<T>())
             {
-                return(-asinh(-x));
+                return(-asinh(-x, pol));
             }
             else
             {

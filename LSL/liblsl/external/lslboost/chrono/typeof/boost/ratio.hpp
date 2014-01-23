@@ -15,8 +15,6 @@
 #define BOOST_CHRONO_TYPEOF_RATIO_HPP
 
 #include <lslboost/ratio/ratio.hpp>
-#define BOOST_TYPEOF_SILENT
-
 #include <lslboost/typeof/typeof.hpp>
 
 #include BOOST_TYPEOF_INCREMENT_REGISTRATION_GROUP()

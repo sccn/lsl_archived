@@ -3,7 +3,12 @@
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
 
+#include <lslboost/thread/detail/config.hpp>
+#ifdef BOOST_THREAD_ONCE_ATOMIC
+#include "./once_atomic.cpp"
+#else
 #define __STDC_CONSTANT_MACROS
+#include <lslboost/thread/pthread/pthread_mutex_scoped_lock.hpp>
 #include <lslboost/thread/once.hpp>
 #include <lslboost/assert.hpp>
 #include <pthread.h>
@@ -12,9 +17,9 @@
 
 namespace lslboost
 {
-    namespace detail
+    namespace thread_detail
     {
-        BOOST_THREAD_DECL lslboost::uintmax_t once_global_epoch=UINTMAX_C(~0);
+        BOOST_THREAD_DECL uintmax_atomic_t once_global_epoch=BOOST_THREAD_DETAIL_UINTMAX_ATOMIC_MAX_C;
         BOOST_THREAD_DECL pthread_mutex_t once_epoch_mutex=PTHREAD_MUTEX_INITIALIZER;
         BOOST_THREAD_DECL pthread_cond_t once_epoch_cv = PTHREAD_COND_INITIALIZER;
 
@@ -55,18 +60,19 @@ namespace lslboost
 #endif
         }
 
-        lslboost::uintmax_t& get_once_per_thread_epoch()
+        uintmax_atomic_t& get_once_per_thread_epoch()
         {
             BOOST_VERIFY(!pthread_once(&epoch_tss_key_flag,create_epoch_tss_key));
             void* data=pthread_getspecific(epoch_tss_key);
             if(!data)
             {
-                data=malloc(sizeof(lslboost::uintmax_t));
+                data=malloc(sizeof(thread_detail::uintmax_atomic_t));
                 BOOST_VERIFY(!pthread_setspecific(epoch_tss_key,data));
-                *static_cast<lslboost::uintmax_t*>(data)=UINTMAX_C(~0);
+                *static_cast<thread_detail::uintmax_atomic_t*>(data)=BOOST_THREAD_DETAIL_UINTMAX_ATOMIC_MAX_C;
             }
-            return *static_cast<lslboost::uintmax_t*>(data);
+            return *static_cast<thread_detail::uintmax_atomic_t*>(data);
         }
     }
 
 }
+#endif //

@@ -80,6 +80,7 @@ namespace lslboost { namespace fusion
 
 namespace lslboost 
 {
+#if !defined(BOOST_RESULT_OF_USE_DECLTYPE) || defined(BOOST_NO_CXX11_DECLTYPE)
     template<class F, class Seq>
     struct result_of< lslboost::fusion::unfused_typed<F,Seq> const () >
         : lslboost::fusion::unfused_typed<F,Seq>::template result< 
@@ -87,6 +88,17 @@ namespace lslboost
     { };
     template<class F, class Seq>
     struct result_of< lslboost::fusion::unfused_typed<F,Seq>() >
+        : lslboost::fusion::unfused_typed<F,Seq>::template result< 
+            lslboost::fusion::unfused_typed<F,Seq> () >
+    { };
+#endif
+    template<class F, class Seq>
+    struct tr1_result_of< lslboost::fusion::unfused_typed<F,Seq> const () >
+        : lslboost::fusion::unfused_typed<F,Seq>::template result< 
+            lslboost::fusion::unfused_typed<F,Seq> const () >
+    { };
+    template<class F, class Seq>
+    struct tr1_result_of< lslboost::fusion::unfused_typed<F,Seq>() >
         : lslboost::fusion::unfused_typed<F,Seq>::template result< 
             lslboost::fusion::unfused_typed<F,Seq> () >
     { };

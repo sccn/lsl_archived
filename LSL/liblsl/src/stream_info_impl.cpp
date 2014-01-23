@@ -21,7 +21,7 @@ stream_info_impl::stream_info_impl(): channel_count_(0), nominal_srate_(0), chan
 
 /// Constructor.
 stream_info_impl::stream_info_impl(const string &name, const string &type, int channel_count, double nominal_srate, channel_format_t channel_format, const string &source_id):
-	name_(name), type_(type), channel_count_(channel_count), nominal_srate_(nominal_srate), channel_format_(channel_format), source_id_(source_id), version_(protocol_version()),
+	name_(name), type_(type), channel_count_(channel_count), nominal_srate_(nominal_srate), channel_format_(channel_format), source_id_(source_id), version_(api_config::get_instance()->use_protocol_version()),
 	v4data_port_(0), v4service_port_(0), v6data_port_(0), v6service_port_(0), created_at_(0) {
 	if (name.empty())
 		throw std::invalid_argument("The name of a stream must be non-empty.");
@@ -38,24 +38,24 @@ stream_info_impl::stream_info_impl(const string &name, const string &type, int c
 /// Initialize the XML DOM structure (leaving .desc unchanged) from the data.
 void stream_info_impl::write_xml(xml_document &doc) {
 	const char *channel_format_strings[] = {"undefined","float32","double64","string","int32","int16","int8","int64"};
-	xml_element info = doc.append_child("info");
-	info.append_child_value("name",name_.c_str());
-	info.append_child_value("type",type_.c_str());
-	info.append_child_value("channel_count",lexical_cast<string>(channel_count_).c_str());
-	info.append_child_value("nominal_srate",lexical_cast<string>(nominal_srate_).c_str());
-	info.append_child_value("channel_format",channel_format_strings[channel_format_]);
-	info.append_child_value("source_id",source_id_.c_str());
-	info.append_child_value("version",lexical_cast<string>(version_/100.0).c_str());
-	info.append_child_value("created_at",lexical_cast<string>(created_at_).c_str());
-	info.append_child_value("uid",uid_.c_str());
-	info.append_child_value("session_id",session_id_.c_str());
-	info.append_child_value("hostname",hostname_.c_str());
-	info.append_child_value("v4address",v4address_.c_str());
-	info.append_child_value("v4data_port",lexical_cast<string>(v4data_port_).c_str());
-	info.append_child_value("v4service_port",lexical_cast<string>(v4service_port_).c_str());
-	info.append_child_value("v6address",v6address_.c_str());
-	info.append_child_value("v6data_port",lexical_cast<string>(v6data_port_).c_str());
-	info.append_child_value("v6service_port",lexical_cast<string>(v6service_port_).c_str());
+	xml_node info = doc.append_child("info");
+	info.append_child("name").append_child(node_pcdata).set_value(name_.c_str());
+	info.append_child("type").append_child(node_pcdata).set_value(type_.c_str());
+	info.append_child("channel_count").append_child(node_pcdata).set_value(lexical_cast<string>(channel_count_).c_str());
+	info.append_child("nominal_srate").append_child(node_pcdata).set_value(lexical_cast<string>(nominal_srate_).c_str());
+	info.append_child("channel_format").append_child(node_pcdata).set_value(channel_format_strings[channel_format_]);
+	info.append_child("source_id").append_child(node_pcdata).set_value(source_id_.c_str());
+	info.append_child("version").append_child(node_pcdata).set_value(lexical_cast<string>(version_/100.0).c_str());
+	info.append_child("created_at").append_child(node_pcdata).set_value(lexical_cast<string>(created_at_).c_str());
+	info.append_child("uid").append_child(node_pcdata).set_value(uid_.c_str());
+	info.append_child("session_id").append_child(node_pcdata).set_value(session_id_.c_str());
+	info.append_child("hostname").append_child(node_pcdata).set_value(hostname_.c_str());
+	info.append_child("v4address").append_child(node_pcdata).set_value(v4address_.c_str());
+	info.append_child("v4data_port").append_child(node_pcdata).set_value(lexical_cast<string>(v4data_port_).c_str());
+	info.append_child("v4service_port").append_child(node_pcdata).set_value(lexical_cast<string>(v4service_port_).c_str());
+	info.append_child("v6address").append_child(node_pcdata).set_value(v6address_.c_str());
+	info.append_child("v6data_port").append_child(node_pcdata).set_value(lexical_cast<string>(v6data_port_).c_str());
+	info.append_child("v6service_port").append_child(node_pcdata).set_value(lexical_cast<string>(v6service_port_).c_str());
 	info.append_child("desc");
 }
 
@@ -153,7 +153,7 @@ string stream_info_impl::to_shortinfo_message() {
 */
 void stream_info_impl::from_shortinfo_message(const std::string &m) {
 	// load the doc from the message string
-	xml_parse_result result = doc_.load_buffer(m.c_str(),m.size());
+	doc_.load_buffer(m.c_str(),m.size());
 	// and assign all the struct fields, too...
 	read_xml(doc_);
 }
@@ -175,7 +175,7 @@ std::string stream_info_impl::to_fullinfo_message() {
 */
 void stream_info_impl::from_fullinfo_message(const std::string &m) {
 	// load the doc from the message string
-	xml_parse_result result = doc_.load_buffer(m.c_str(),m.size());
+	doc_.load_buffer(m.c_str(),m.size());
 	// and assign all the struct fields, too...
 	read_xml(doc_);
 }
@@ -190,7 +190,7 @@ bool stream_info_impl::matches_query(const string &query) {
 		// found in cache
 		bool is_match = it->second.second;
 		// update the last-use time stamp
-		cached_.left.replace_data(it,std::make_pair(local_clock(),is_match));
+		cached_.left.replace_data(it,std::make_pair(lsl_clock(),is_match));
 		return is_match;
 	} else {
 		// not found in cache
@@ -199,7 +199,7 @@ bool stream_info_impl::matches_query(const string &query) {
 			string fullquery = (string("/info[") += query) += "]";
 			bool result = !doc_.select_nodes(fullquery.c_str()).empty();
 			// insert result into cache
-			cached_.left.insert(std::make_pair(query,std::make_pair(local_clock(),result)));
+			cached_.left.insert(std::make_pair(query,std::make_pair(lsl_clock(),result)));
 			// remove oldest results until we're within capacity
 			while ((int)cached_.size() > api_config::get_instance()->max_cached_queries())
 				cached_.right.erase(cached_.right.begin());
@@ -214,27 +214,36 @@ bool stream_info_impl::matches_query(const string &query) {
 /**
 * Return a handle to the info/desc element.
 */
-xml_element stream_info_impl::desc() {return doc_.child("info").child("desc"); }
-xml_element stream_info_impl::desc() const { return doc_.child("info").child("desc"); }
+xml_node stream_info_impl::desc() {return doc_.child("info").child("desc"); }
+xml_node stream_info_impl::desc() const { return doc_.child("info").child("desc"); }
 
 /**
 * Set the info / protocol version used by the stream.
 */
-void stream_info_impl::version(int v) { version_ = v; xml_element(doc_.child("info")).set_child_value("version", lexical_cast<string>(version_/100.0).c_str()); }
+void stream_info_impl::version(int v) { 
+	version_ = v; 
+	doc_.child("info").child("version").first_child().set_value(lexical_cast<string>(version_/100.0).c_str()); 
+}
 
 /**
 * Set the creation time stamp of a stream.
 * This is the time stamp (via now()) of when the stream was first created
 * (in the time domain of the providing machine).
 */
-void stream_info_impl::created_at(double v) { created_at_ = v; xml_element(doc_.child("info")).set_child_value("created_at", lexical_cast<string>(created_at_).c_str()); }
+void stream_info_impl::created_at(double v) { 
+	created_at_ = v; 
+	doc_.child("info").child("created_at").first_child().set_value(lexical_cast<string>(created_at_).c_str()); 
+}
 
 /**
 * Set the UID of a stream instance (once assigned).
 * This is a unique identifier of the stream instance, and is guaranteed to be different
 * across multiple instantiations of the same stream (e.g., after a re-start).
 */
-void stream_info_impl::uid(const std::string &v) { uid_ = v; xml_element(doc_.child("info")).set_child_value("uid", uid_.c_str()); }
+void stream_info_impl::uid(const std::string &v) { 
+	uid_ = v; 
+	doc_.child("info").child("uid").first_child().set_value(uid_.c_str()); 
+}
 
 /**
 * Set the session id for the given stream.
@@ -243,46 +252,70 @@ void stream_info_impl::uid(const std::string &v) { uid_ = v; xml_element(doc_.ch
 * accidentally recording from an unrelated concurrent session on the same network.
 * The session id can be set via the configuration file (see Configuration File in the documentation).
 */
-void stream_info_impl::session_id(const std::string &v) { session_id_ = v; xml_element(doc_.child("info")).set_child_value("session_id", session_id_.c_str()); }
+void stream_info_impl::session_id(const std::string &v) { 
+	session_id_ = v; 
+	doc_.child("info").child("session_id").first_child().set_value(session_id_.c_str()); 
+}
 
 /**
 * Set the provider hostname for the given stream.
 */
-void stream_info_impl::hostname(const std::string &v) { hostname_ = v; xml_element(doc_.child("info")).set_child_value("hostname", hostname_.c_str()); }
+void stream_info_impl::hostname(const std::string &v) { 
+	hostname_ = v; 
+	doc_.child("info").child("hostname").first_child().set_value(hostname_.c_str()); 
+}
 
 /**
 * Set the host name or IP address where the stream is hosted.
 */
-void stream_info_impl::v4address(const std::string &v) { v4address_ = v; xml_element(doc_.child("info")).set_child_value("v4address", v4address_.c_str()); }
+void stream_info_impl::v4address(const std::string &v) { 
+	v4address_ = v; 
+	doc_.child("info").child("v4address").first_child().set_value(v4address_.c_str()); 
+}
 
 /**
 * Set the TCP data port where the stream is hosted (once assigned).
 * This port is internally used to obtain data and meta-data from a stream.
 */
-void stream_info_impl::v4data_port(int v) { v4data_port_ = v; xml_element(doc_.child("info")).set_child_value("v4data_port", lexical_cast<string>(v4data_port_).c_str()); }
+void stream_info_impl::v4data_port(int v) { 
+	v4data_port_ = v; 
+	doc_.child("info").child("v4data_port").first_child().set_value(lexical_cast<string>(v4data_port_).c_str()); 
+}
 
 /**
 * Set the UDP service port where the stream is hosted (once assigned).
 * This port is internally used to obtain time correction information for a stream.
 */
-void stream_info_impl::v4service_port(int v) { v4service_port_ = v; xml_element(doc_.child("info")).set_child_value("v4service_port", lexical_cast<string>(v4service_port_).c_str()); }
+void stream_info_impl::v4service_port(int v) { 
+	v4service_port_ = v; 
+	doc_.child("info").child("v4service_port").first_child().set_value(lexical_cast<string>(v4service_port_).c_str()); 
+}
 
 /**
 * Set the host name or IP address where the stream is hosted.
 */
-void stream_info_impl::v6address(const std::string &v) { v6address_ = v; xml_element(doc_.child("info")).set_child_value("v6address", v6address_.c_str()); }
+void stream_info_impl::v6address(const std::string &v) { 
+	v6address_ = v; 
+	doc_.child("info").child("v6address").first_child().set_value(v6address_.c_str()); 
+}
 
 /**
 * Set the TCP data port where the stream is hosted (once assigned).
 * This port is internally used to obtain data and meta-data from a stream.
 */
-void stream_info_impl::v6data_port(int v) { v6data_port_ = v; xml_element(doc_.child("info")).set_child_value("v6data_port", lexical_cast<string>(v6data_port_).c_str()); }
+void stream_info_impl::v6data_port(int v) { 
+	v6data_port_ = v; 
+	doc_.child("info").child("v6data_port").first_child().set_value(lexical_cast<string>(v6data_port_).c_str()); 
+}
 
 /**
 * Set the UDP service port where the stream is hosted (once assigned).
 * This port is internally used to obtain time correction information for a stream.
 */
-void stream_info_impl::v6service_port(int v) { v6service_port_ = v; xml_element(doc_.child("info")).set_child_value("v6service_port", lexical_cast<string>(v6service_port_).c_str()); }
+void stream_info_impl::v6service_port(int v) { 
+	v6service_port_ = v; 
+	doc_.child("info").child("v6service_port").first_child().set_value(lexical_cast<string>(v6service_port_).c_str()); 
+}
 
 /**
 * Assignment operator.

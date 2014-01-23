@@ -1,5 +1,5 @@
-//  Copyright John Maddock 2006, 2007.
-//  Copyright Paul A. Bristow 2006, 2007.
+//  Copyright John Maddock 2006, 2007, 2012.
+//  Copyright Paul A. Bristow 2006, 2007, 2012
 
 //  Use, modification and distribution are subject to the
 //  Boost Software License, Version 1.0. (See accompanying file
@@ -12,6 +12,7 @@
 #ifndef BOOST_MATH_SPECIAL_FUNCTIONS_HPP
 #define BOOST_MATH_SPECIAL_FUNCTIONS_HPP
 
+#include <lslboost/math/special_functions/airy.hpp>
 #include <lslboost/math/special_functions/acosh.hpp>
 #include <lslboost/math/special_functions/asinh.hpp>
 #include <lslboost/math/special_functions/atanh.hpp>
@@ -36,12 +37,14 @@
 #include <lslboost/math/special_functions/gamma.hpp>
 #include <lslboost/math/special_functions/hermite.hpp>
 #include <lslboost/math/special_functions/hypot.hpp>
+#include <lslboost/math/special_functions/jacobi_elliptic.hpp>
 #include <lslboost/math/special_functions/laguerre.hpp>
 #include <lslboost/math/special_functions/lanczos.hpp>
 #include <lslboost/math/special_functions/legendre.hpp>
 #include <lslboost/math/special_functions/log1p.hpp>
 #include <lslboost/math/special_functions/math_fwd.hpp>
 #include <lslboost/math/special_functions/next.hpp>
+#include <lslboost/math/special_functions/owens_t.hpp>
 #include <lslboost/math/special_functions/powm1.hpp>
 #include <lslboost/math/special_functions/sign.hpp>
 #include <lslboost/math/special_functions/sin_pi.hpp>

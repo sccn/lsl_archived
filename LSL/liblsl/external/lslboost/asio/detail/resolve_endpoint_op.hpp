@@ -2,7 +2,7 @@
 // detail/resolve_endpoint_op.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -16,10 +16,10 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <lslboost/asio/detail/config.hpp>
-#include <lslboost/utility/addressof.hpp>
 #include <lslboost/asio/error.hpp>
 #include <lslboost/asio/io_service.hpp>
 #include <lslboost/asio/ip/basic_resolver_iterator.hpp>
+#include <lslboost/asio/detail/addressof.hpp>
 #include <lslboost/asio/detail/bind_handler.hpp>
 #include <lslboost/asio/detail/fenced_block.hpp>
 #include <lslboost/asio/detail/handler_alloc_helpers.hpp>
@@ -58,7 +58,7 @@ public:
   {
     // Take ownership of the operation object.
     resolve_endpoint_op* o(static_cast<resolve_endpoint_op*>(base));
-    ptr p = { lslboost::addressof(o->handler_), o, o };
+    ptr p = { lslboost::asio::detail::addressof(o->handler_), o, o };
 
     if (owner && owner != &o->io_service_impl_)
     {
@@ -92,7 +92,7 @@ public:
       // after we have deallocated the memory here.
       detail::binder2<Handler, lslboost::system::error_code, iterator_type>
         handler(o->handler_, o->ec_, o->iter_);
-      p.h = lslboost::addressof(handler.handler_);
+      p.h = lslboost::asio::detail::addressof(handler.handler_);
       p.reset();
 
       if (owner)

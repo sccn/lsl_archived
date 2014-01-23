@@ -17,9 +17,9 @@
 
 #include <lslboost/asio/detail/config.hpp>
 #include <lslboost/function.hpp>
-#include <lslboost/assert.hpp>
 #include <lslboost/bind.hpp>
 #include <lslboost/asio/buffer.hpp>
+#include <lslboost/asio/detail/assert.hpp>
 #include <lslboost/asio/detail/socket_ops.hpp>
 #include <lslboost/asio/placeholders.hpp>
 #include <lslboost/asio/ssl/detail/openssl_types.hpp>
@@ -154,7 +154,7 @@ public:
                 // For connect/accept/shutdown, the operation
                 // is done, when return code is 1
                 // for write, it is done, when is retcode > 0
-                // for read, is is done when retcode > 0
+                // for read, it is done when retcode > 0
 
     int error_code =  !is_operation_done ?
           ::SSL_get_error( session_, rc ) :
@@ -314,7 +314,7 @@ private:
         unsigned char *data_start = send_buf_.get_unused_start();
         send_buf_.data_added(len);
  
-        BOOST_ASSERT(strand_); 
+        BOOST_ASIO_ASSERT(strand_);
         lslboost::asio::async_write
         ( 
           socket_, 
@@ -379,7 +379,7 @@ private:
   int do_async_read()
   {
     // Wait for new data
-    BOOST_ASSERT(strand_);
+    BOOST_ASIO_ASSERT(strand_);
     socket_.async_read_some
     ( 
       lslboost::asio::buffer(recv_buf_.get_unused_start(),

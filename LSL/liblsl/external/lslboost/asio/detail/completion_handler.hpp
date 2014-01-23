@@ -2,7 +2,7 @@
 // detail/completion_handler.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -15,6 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include <lslboost/asio/detail/addressof.hpp>
 #include <lslboost/asio/detail/config.hpp>
 #include <lslboost/asio/detail/fenced_block.hpp>
 #include <lslboost/asio/detail/handler_alloc_helpers.hpp>
@@ -45,7 +46,7 @@ public:
   {
     // Take ownership of the handler object.
     completion_handler* h(static_cast<completion_handler*>(base));
-    ptr p = { lslboost::addressof(h->handler_), h, h };
+    ptr p = { lslboost::asio::detail::addressof(h->handler_), h, h };
 
     BOOST_ASIO_HANDLER_COMPLETION((h));
 
@@ -56,7 +57,7 @@ public:
     // to ensure that any owning sub-object remains valid until after we have
     // deallocated the memory here.
     Handler handler(BOOST_ASIO_MOVE_CAST(Handler)(h->handler_));
-    p.h = lslboost::addressof(handler);
+    p.h = lslboost::asio::detail::addressof(handler);
     p.reset();
 
     // Make the upcall if required.

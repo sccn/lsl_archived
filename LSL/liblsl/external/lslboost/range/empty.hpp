@@ -28,7 +28,7 @@ namespace lslboost
         return lslboost::begin( r ) == lslboost::end( r );
     }
 
-} // namepace 'lslboost'
+} // namespace 'lslboost'
 
 
 #endif

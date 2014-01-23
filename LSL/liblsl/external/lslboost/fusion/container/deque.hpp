@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_SEQUENCE_CONTAINER_DEQUE_24112006_2036)
 #define BOOST_FUSION_SEQUENCE_CONTAINER_DEQUE_24112006_2036
 
+#include <lslboost/fusion/container/deque/deque_fwd.hpp>
 #include <lslboost/fusion/container/deque/deque.hpp>
 #include <lslboost/fusion/container/deque/convert.hpp>
 

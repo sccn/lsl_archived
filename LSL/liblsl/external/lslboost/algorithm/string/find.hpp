@@ -13,7 +13,7 @@
 
 #include <lslboost/algorithm/string/config.hpp>
 
-#include <lslboost/range/iterator_range.hpp>
+#include <lslboost/range/iterator_range_core.hpp>
 #include <lslboost/range/begin.hpp>
 #include <lslboost/range/end.hpp>
 #include <lslboost/range/iterator.hpp>
@@ -86,7 +86,7 @@ namespace lslboost {
 
         //! Find first algorithm ( case insensitive )
         /*!
-            Search for the first occurence of the substring in the input. 
+            Search for the first occurrence of the substring in the input. 
             Searching is case insensitive.
             
             \param Input A string which will be searched.
@@ -293,7 +293,7 @@ namespace lslboost {
             If the "token compress mode" is enabled, adjacent tokens are considered to be one match.
             
             \param Input A input string.
-            \param Pred An unary predicate to identify a token
+            \param Pred A unary predicate to identify a token
             \param eCompress Enable/Disable compressing of adjacent tokens
             \return 
                 An \c iterator_range delimiting the match. 

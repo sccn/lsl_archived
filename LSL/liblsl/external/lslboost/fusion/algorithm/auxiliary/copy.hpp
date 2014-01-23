@@ -11,8 +11,11 @@
 #include <lslboost/fusion/sequence/intrinsic/end.hpp>
 #include <lslboost/fusion/sequence/intrinsic/size.hpp>
 #include <lslboost/fusion/sequence/comparison/detail/equal_to.hpp>
+#include <lslboost/fusion/support/is_sequence.hpp>
 #include <lslboost/config.hpp>
 #include <lslboost/static_assert.hpp>
+#include <lslboost/utility/enable_if.hpp>
+#include <lslboost/type_traits/ice.hpp>
 
 #if defined (BOOST_MSVC)
 #  pragma warning(push)
@@ -54,11 +57,19 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Seq1, typename Seq2>
-    inline void
+    inline
+    typename
+        enable_if_c<
+            type_traits::ice_and<
+                traits::is_sequence<Seq1>::value
+              , traits::is_sequence<Seq2>::value
+            >::value,
+            void
+        >::type
     copy(Seq1 const& src, Seq2& dest)
     {
         BOOST_STATIC_ASSERT(
-            result_of::size<Seq1>::value == result_of::size<Seq2>::value);
+            result_of::size<Seq1>::value <= result_of::size<Seq2>::value);
 
         detail::sequence_copy<
             Seq1 const, Seq2>::

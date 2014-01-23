@@ -2,7 +2,7 @@
 // ip/impl/address.ipp
 // ~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -17,8 +17,8 @@
 
 #include <lslboost/asio/detail/config.hpp>
 #include <typeinfo>
-#include <lslboost/throw_exception.hpp>
 #include <lslboost/asio/detail/throw_error.hpp>
+#include <lslboost/asio/detail/throw_exception.hpp>
 #include <lslboost/asio/error.hpp>
 #include <lslboost/asio/ip/address.hpp>
 #include <lslboost/system/system_error.hpp>
@@ -105,7 +105,7 @@ lslboost::asio::ip::address_v4 address::to_v4() const
   if (type_ != ipv4)
   {
     std::bad_cast ex;
-    lslboost::throw_exception(ex);
+    lslboost::asio::detail::throw_exception(ex);
   }
   return ipv4_address_;
 }
@@ -115,7 +115,7 @@ lslboost::asio::ip::address_v6 address::to_v6() const
   if (type_ != ipv6)
   {
     std::bad_cast ex;
-    lslboost::throw_exception(ex);
+    lslboost::asio::detail::throw_exception(ex);
   }
   return ipv6_address_;
 }

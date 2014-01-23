@@ -9,6 +9,8 @@
 
 #include <lslboost/fusion/view/transform_view/transform_view.hpp>
 #include <lslboost/fusion/algorithm/transformation/detail/replace.hpp>
+#include <lslboost/fusion/support/is_sequence.hpp>
+#include <lslboost/utility/enable_if.hpp>
 
 namespace lslboost { namespace fusion
 {
@@ -22,7 +24,12 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence, typename T>
-    inline typename result_of::replace<Sequence const, T>::type
+    inline 
+    typename
+        enable_if<
+            traits::is_sequence<Sequence>
+          , typename result_of::replace<Sequence const, T>::type
+        >::type
     replace(Sequence const& seq, T const& old_value, T const& new_value)
     {
         typedef typename result_of::replace<Sequence const, T>::type result;
