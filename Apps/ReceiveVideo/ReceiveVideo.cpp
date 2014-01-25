@@ -50,6 +50,9 @@ int main(int argc, char *argv[]) {
 		}
 		cvReleaseImage(&img);
 		cvDestroyWindow(name);
+		lsl_destroy_inlet(inlet);
+		lsl_destroy_streaminfo(info);
+		lsl_destroy_streaminfo(result);
 	}
 	
     return 0;
