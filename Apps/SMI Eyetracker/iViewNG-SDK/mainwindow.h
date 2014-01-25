@@ -57,8 +57,6 @@ private:
 	iViewTicket *gTicketSubscriptionScene, *gTicketUnsubscription, *gTicketStopAcquisition, *gTicketCalibration;
 	// server
 	iViewHost gServer;
-	// User-provided flags
-	iViewSamplingRate gSamplingRate;
 	// Local data for calibration
 	char gCalibrating;
 };

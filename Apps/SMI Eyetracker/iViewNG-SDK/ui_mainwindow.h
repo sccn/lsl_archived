@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Sat Dec 14 16:16:33 2013
+** Created: Fri Jan 24 18:23:59 2014
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -17,6 +17,7 @@
 #include <QtGui/QCheckBox>
 #include <QtGui/QComboBox>
 #include <QtGui/QFormLayout>
+#include <QtGui/QGroupBox>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
@@ -26,7 +27,6 @@
 #include <QtGui/QMenuBar>
 #include <QtGui/QPushButton>
 #include <QtGui/QSpacerItem>
-#include <QtGui/QSpinBox>
 #include <QtGui/QStatusBar>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QWidget>
@@ -42,6 +42,8 @@ public:
     QAction *actionQuit_2;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
+    QSpacerItem *verticalSpacer;
+    QGroupBox *groupBox;
     QFormLayout *formLayout;
     QLabel *label_4;
     QLineEdit *serverAddress;
@@ -51,21 +53,34 @@ public:
     QLineEdit *licenseKey;
     QLabel *label_3;
     QComboBox *deviceType;
+    QGroupBox *groupBox_3;
+    QFormLayout *formLayout_3;
+    QLabel *label_8;
+    QComboBox *eyeResolution;
+    QLabel *label_10;
+    QComboBox *eyeSamplingRate;
+    QLabel *label_9;
+    QComboBox *eyeTrackSides;
+    QLabel *label_14;
+    QCheckBox *addLeftEyeVideo;
+    QLabel *label_15;
+    QCheckBox *addRightEyeVideo;
+    QLabel *label_12;
+    QCheckBox *addGazeStream;
+    QGroupBox *groupBox_2;
+    QFormLayout *formLayout_2;
     QLabel *label;
-    QComboBox *samplingRate;
+    QComboBox *sceneSamplingRate;
     QLabel *label_6;
     QComboBox *sceneResolution;
     QLabel *label_7;
     QComboBox *sceneColorSpace;
-    QLabel *label_8;
-    QComboBox *eyeResolution;
-    QLabel *label_9;
-    QComboBox *eyeSides;
-    QLabel *label_10;
-    QSpinBox *eyeSamplingRate;
-    QCheckBox *addCompressedSceneStream;
+    QLabel *label_16;
+    QComboBox *sceneWhiteBalance;
+    QLabel *label_13;
+    QCheckBox *addUncompressedSceneStream;
     QLabel *label_11;
-    QSpacerItem *verticalSpacer;
+    QCheckBox *addCompressedSceneStream;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
     QPushButton *linkButton;
@@ -77,7 +92,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(276, 373);
+        MainWindow->resize(372, 596);
         actionLoad_Configuration = new QAction(MainWindow);
         actionLoad_Configuration->setObjectName(QString::fromUtf8("actionLoad_Configuration"));
         actionSave_Configuration = new QAction(MainWindow);
@@ -92,127 +107,197 @@ public:
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        formLayout = new QFormLayout();
+        verticalSpacer = new QSpacerItem(20, 4, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        verticalLayout->addItem(verticalSpacer);
+
+        groupBox = new QGroupBox(centralWidget);
+        groupBox->setObjectName(QString::fromUtf8("groupBox"));
+        formLayout = new QFormLayout(groupBox);
         formLayout->setSpacing(6);
+        formLayout->setContentsMargins(11, 11, 11, 11);
         formLayout->setObjectName(QString::fromUtf8("formLayout"));
-        formLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
-        label_4 = new QLabel(centralWidget);
+        label_4 = new QLabel(groupBox);
         label_4->setObjectName(QString::fromUtf8("label_4"));
 
         formLayout->setWidget(0, QFormLayout::LabelRole, label_4);
 
-        serverAddress = new QLineEdit(centralWidget);
+        serverAddress = new QLineEdit(groupBox);
         serverAddress->setObjectName(QString::fromUtf8("serverAddress"));
 
         formLayout->setWidget(0, QFormLayout::FieldRole, serverAddress);
 
-        label_2 = new QLabel(centralWidget);
+        label_2 = new QLabel(groupBox);
         label_2->setObjectName(QString::fromUtf8("label_2"));
 
         formLayout->setWidget(1, QFormLayout::LabelRole, label_2);
 
-        serverPort = new QLineEdit(centralWidget);
+        serverPort = new QLineEdit(groupBox);
         serverPort->setObjectName(QString::fromUtf8("serverPort"));
 
         formLayout->setWidget(1, QFormLayout::FieldRole, serverPort);
 
-        label_5 = new QLabel(centralWidget);
+        label_5 = new QLabel(groupBox);
         label_5->setObjectName(QString::fromUtf8("label_5"));
 
         formLayout->setWidget(2, QFormLayout::LabelRole, label_5);
 
-        licenseKey = new QLineEdit(centralWidget);
+        licenseKey = new QLineEdit(groupBox);
         licenseKey->setObjectName(QString::fromUtf8("licenseKey"));
 
         formLayout->setWidget(2, QFormLayout::FieldRole, licenseKey);
 
-        label_3 = new QLabel(centralWidget);
+        label_3 = new QLabel(groupBox);
         label_3->setObjectName(QString::fromUtf8("label_3"));
 
         formLayout->setWidget(3, QFormLayout::LabelRole, label_3);
 
-        deviceType = new QComboBox(centralWidget);
+        deviceType = new QComboBox(groupBox);
         deviceType->setObjectName(QString::fromUtf8("deviceType"));
 
         formLayout->setWidget(3, QFormLayout::FieldRole, deviceType);
 
-        label = new QLabel(centralWidget);
-        label->setObjectName(QString::fromUtf8("label"));
 
-        formLayout->setWidget(4, QFormLayout::LabelRole, label);
+        verticalLayout->addWidget(groupBox);
 
-        samplingRate = new QComboBox(centralWidget);
-        samplingRate->setObjectName(QString::fromUtf8("samplingRate"));
-
-        formLayout->setWidget(4, QFormLayout::FieldRole, samplingRate);
-
-        label_6 = new QLabel(centralWidget);
-        label_6->setObjectName(QString::fromUtf8("label_6"));
-
-        formLayout->setWidget(5, QFormLayout::LabelRole, label_6);
-
-        sceneResolution = new QComboBox(centralWidget);
-        sceneResolution->setObjectName(QString::fromUtf8("sceneResolution"));
-
-        formLayout->setWidget(5, QFormLayout::FieldRole, sceneResolution);
-
-        label_7 = new QLabel(centralWidget);
-        label_7->setObjectName(QString::fromUtf8("label_7"));
-
-        formLayout->setWidget(6, QFormLayout::LabelRole, label_7);
-
-        sceneColorSpace = new QComboBox(centralWidget);
-        sceneColorSpace->setObjectName(QString::fromUtf8("sceneColorSpace"));
-
-        formLayout->setWidget(6, QFormLayout::FieldRole, sceneColorSpace);
-
-        label_8 = new QLabel(centralWidget);
+        groupBox_3 = new QGroupBox(centralWidget);
+        groupBox_3->setObjectName(QString::fromUtf8("groupBox_3"));
+        formLayout_3 = new QFormLayout(groupBox_3);
+        formLayout_3->setSpacing(6);
+        formLayout_3->setContentsMargins(11, 11, 11, 11);
+        formLayout_3->setObjectName(QString::fromUtf8("formLayout_3"));
+        label_8 = new QLabel(groupBox_3);
         label_8->setObjectName(QString::fromUtf8("label_8"));
 
-        formLayout->setWidget(7, QFormLayout::LabelRole, label_8);
+        formLayout_3->setWidget(0, QFormLayout::LabelRole, label_8);
 
-        eyeResolution = new QComboBox(centralWidget);
+        eyeResolution = new QComboBox(groupBox_3);
         eyeResolution->setObjectName(QString::fromUtf8("eyeResolution"));
 
-        formLayout->setWidget(7, QFormLayout::FieldRole, eyeResolution);
+        formLayout_3->setWidget(0, QFormLayout::FieldRole, eyeResolution);
 
-        label_9 = new QLabel(centralWidget);
-        label_9->setObjectName(QString::fromUtf8("label_9"));
-
-        formLayout->setWidget(8, QFormLayout::LabelRole, label_9);
-
-        eyeSides = new QComboBox(centralWidget);
-        eyeSides->setObjectName(QString::fromUtf8("eyeSides"));
-
-        formLayout->setWidget(8, QFormLayout::FieldRole, eyeSides);
-
-        label_10 = new QLabel(centralWidget);
+        label_10 = new QLabel(groupBox_3);
         label_10->setObjectName(QString::fromUtf8("label_10"));
 
-        formLayout->setWidget(9, QFormLayout::LabelRole, label_10);
+        formLayout_3->setWidget(1, QFormLayout::LabelRole, label_10);
 
-        eyeSamplingRate = new QSpinBox(centralWidget);
+        eyeSamplingRate = new QComboBox(groupBox_3);
         eyeSamplingRate->setObjectName(QString::fromUtf8("eyeSamplingRate"));
-        eyeSamplingRate->setValue(30);
 
-        formLayout->setWidget(9, QFormLayout::FieldRole, eyeSamplingRate);
+        formLayout_3->setWidget(1, QFormLayout::FieldRole, eyeSamplingRate);
 
-        addCompressedSceneStream = new QCheckBox(centralWidget);
-        addCompressedSceneStream->setObjectName(QString::fromUtf8("addCompressedSceneStream"));
+        label_9 = new QLabel(groupBox_3);
+        label_9->setObjectName(QString::fromUtf8("label_9"));
 
-        formLayout->setWidget(10, QFormLayout::FieldRole, addCompressedSceneStream);
+        formLayout_3->setWidget(2, QFormLayout::LabelRole, label_9);
 
-        label_11 = new QLabel(centralWidget);
+        eyeTrackSides = new QComboBox(groupBox_3);
+        eyeTrackSides->setObjectName(QString::fromUtf8("eyeTrackSides"));
+
+        formLayout_3->setWidget(2, QFormLayout::FieldRole, eyeTrackSides);
+
+        label_14 = new QLabel(groupBox_3);
+        label_14->setObjectName(QString::fromUtf8("label_14"));
+
+        formLayout_3->setWidget(3, QFormLayout::LabelRole, label_14);
+
+        addLeftEyeVideo = new QCheckBox(groupBox_3);
+        addLeftEyeVideo->setObjectName(QString::fromUtf8("addLeftEyeVideo"));
+
+        formLayout_3->setWidget(3, QFormLayout::FieldRole, addLeftEyeVideo);
+
+        label_15 = new QLabel(groupBox_3);
+        label_15->setObjectName(QString::fromUtf8("label_15"));
+
+        formLayout_3->setWidget(4, QFormLayout::LabelRole, label_15);
+
+        addRightEyeVideo = new QCheckBox(groupBox_3);
+        addRightEyeVideo->setObjectName(QString::fromUtf8("addRightEyeVideo"));
+
+        formLayout_3->setWidget(4, QFormLayout::FieldRole, addRightEyeVideo);
+
+        label_12 = new QLabel(groupBox_3);
+        label_12->setObjectName(QString::fromUtf8("label_12"));
+
+        formLayout_3->setWidget(5, QFormLayout::LabelRole, label_12);
+
+        addGazeStream = new QCheckBox(groupBox_3);
+        addGazeStream->setObjectName(QString::fromUtf8("addGazeStream"));
+        addGazeStream->setChecked(true);
+
+        formLayout_3->setWidget(5, QFormLayout::FieldRole, addGazeStream);
+
+
+        verticalLayout->addWidget(groupBox_3);
+
+        groupBox_2 = new QGroupBox(centralWidget);
+        groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
+        formLayout_2 = new QFormLayout(groupBox_2);
+        formLayout_2->setSpacing(6);
+        formLayout_2->setContentsMargins(11, 11, 11, 11);
+        formLayout_2->setObjectName(QString::fromUtf8("formLayout_2"));
+        label = new QLabel(groupBox_2);
+        label->setObjectName(QString::fromUtf8("label"));
+
+        formLayout_2->setWidget(0, QFormLayout::LabelRole, label);
+
+        sceneSamplingRate = new QComboBox(groupBox_2);
+        sceneSamplingRate->setObjectName(QString::fromUtf8("sceneSamplingRate"));
+
+        formLayout_2->setWidget(0, QFormLayout::FieldRole, sceneSamplingRate);
+
+        label_6 = new QLabel(groupBox_2);
+        label_6->setObjectName(QString::fromUtf8("label_6"));
+
+        formLayout_2->setWidget(1, QFormLayout::LabelRole, label_6);
+
+        sceneResolution = new QComboBox(groupBox_2);
+        sceneResolution->setObjectName(QString::fromUtf8("sceneResolution"));
+
+        formLayout_2->setWidget(1, QFormLayout::FieldRole, sceneResolution);
+
+        label_7 = new QLabel(groupBox_2);
+        label_7->setObjectName(QString::fromUtf8("label_7"));
+
+        formLayout_2->setWidget(2, QFormLayout::LabelRole, label_7);
+
+        sceneColorSpace = new QComboBox(groupBox_2);
+        sceneColorSpace->setObjectName(QString::fromUtf8("sceneColorSpace"));
+
+        formLayout_2->setWidget(2, QFormLayout::FieldRole, sceneColorSpace);
+
+        label_16 = new QLabel(groupBox_2);
+        label_16->setObjectName(QString::fromUtf8("label_16"));
+
+        formLayout_2->setWidget(3, QFormLayout::LabelRole, label_16);
+
+        sceneWhiteBalance = new QComboBox(groupBox_2);
+        sceneWhiteBalance->setObjectName(QString::fromUtf8("sceneWhiteBalance"));
+
+        formLayout_2->setWidget(3, QFormLayout::FieldRole, sceneWhiteBalance);
+
+        label_13 = new QLabel(groupBox_2);
+        label_13->setObjectName(QString::fromUtf8("label_13"));
+
+        formLayout_2->setWidget(4, QFormLayout::LabelRole, label_13);
+
+        addUncompressedSceneStream = new QCheckBox(groupBox_2);
+        addUncompressedSceneStream->setObjectName(QString::fromUtf8("addUncompressedSceneStream"));
+
+        formLayout_2->setWidget(4, QFormLayout::FieldRole, addUncompressedSceneStream);
+
+        label_11 = new QLabel(groupBox_2);
         label_11->setObjectName(QString::fromUtf8("label_11"));
 
-        formLayout->setWidget(10, QFormLayout::LabelRole, label_11);
+        formLayout_2->setWidget(5, QFormLayout::LabelRole, label_11);
+
+        addCompressedSceneStream = new QCheckBox(groupBox_2);
+        addCompressedSceneStream->setObjectName(QString::fromUtf8("addCompressedSceneStream"));
+
+        formLayout_2->setWidget(5, QFormLayout::FieldRole, addCompressedSceneStream);
 
 
-        verticalLayout->addLayout(formLayout);
-
-        verticalSpacer = new QSpacerItem(20, 4, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        verticalLayout->addItem(verticalSpacer);
+        verticalLayout->addWidget(groupBox_2);
 
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
@@ -230,9 +315,12 @@ public:
         verticalLayout->addLayout(horizontalLayout);
 
         MainWindow->setCentralWidget(centralWidget);
+        groupBox->raise();
+        groupBox_2->raise();
+        groupBox_3->raise();
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 276, 18));
+        menuBar->setGeometry(QRect(0, 0, 372, 18));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QString::fromUtf8("menuFile"));
         MainWindow->setMenuBar(menuBar);
@@ -248,6 +336,12 @@ public:
 
         retranslateUi(MainWindow);
 
+        eyeResolution->setCurrentIndex(0);
+        eyeSamplingRate->setCurrentIndex(1);
+        eyeTrackSides->setCurrentIndex(2);
+        sceneSamplingRate->setCurrentIndex(1);
+
+
         QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi
 
@@ -258,6 +352,7 @@ public:
         actionSave_Configuration->setText(QApplication::translate("MainWindow", "Save Configuration", 0, QApplication::UnicodeUTF8));
         actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
         actionQuit_2->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
+        groupBox->setTitle(QApplication::translate("MainWindow", "Connection Setup", 0, QApplication::UnicodeUTF8));
         label_4->setText(QApplication::translate("MainWindow", "Server Address", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
         serverAddress->setToolTip(QApplication::translate("MainWindow", "IP address of iViewNG server machine; if set to \"launch process\", a minimal server instance will be started in the background.", 0, QApplication::UnicodeUTF8));
@@ -282,30 +377,76 @@ public:
 #ifndef QT_NO_TOOLTIP
         deviceType->setToolTip(QApplication::translate("MainWindow", "ETG stands for eye tracking glasses -- see the inside of your glasses frame for the version number or check the vendor's website.", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
-        label->setText(QApplication::translate("MainWindow", "Gaze Sampling Rate", 0, QApplication::UnicodeUTF8));
-        samplingRate->clear();
-        samplingRate->insertItems(0, QStringList()
+        groupBox_3->setTitle(QApplication::translate("MainWindow", "Eye Tracking and Eye Video Access", 0, QApplication::UnicodeUTF8));
+        label_8->setText(QApplication::translate("MainWindow", "Eye Camera Resolution", 0, QApplication::UnicodeUTF8));
+        eyeResolution->clear();
+        eyeResolution->insertItems(0, QStringList()
+         << QApplication::translate("MainWindow", "320x240", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "640x480", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "current setting", 0, QApplication::UnicodeUTF8)
+        );
+#ifndef QT_NO_TOOLTIP
+        eyeResolution->setToolTip(QString());
+#endif // QT_NO_TOOLTIP
+        label_10->setText(QApplication::translate("MainWindow", "Eye Camera Sampling Rate", 0, QApplication::UnicodeUTF8));
+        eyeSamplingRate->clear();
+        eyeSamplingRate->insertItems(0, QStringList()
+         << QApplication::translate("MainWindow", "0", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "30", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "60", 0, QApplication::UnicodeUTF8)
         );
+        label_9->setText(QApplication::translate("MainWindow", "Eye Camera Tracking Side", 0, QApplication::UnicodeUTF8));
+        eyeTrackSides->clear();
+        eyeTrackSides->insertItems(0, QStringList()
+         << QApplication::translate("MainWindow", "left eye", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "right eye", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "both eyes", 0, QApplication::UnicodeUTF8)
+        );
 #ifndef QT_NO_TOOLTIP
-        samplingRate->setToolTip(QApplication::translate("MainWindow", "Higher sampling rates might run at lower resolution. Note that not all trackers may support higher sampling rates.", 0, QApplication::UnicodeUTF8));
+        eyeTrackSides->setToolTip(QApplication::translate("MainWindow", "Tracking can be set to use only one eye if necessary.", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
+        label_14->setText(QApplication::translate("MainWindow", "Uncompressed Left Eye Video", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        addLeftEyeVideo->setToolTip(QApplication::translate("MainWindow", "If checked, an uncompressed stream of the left eye camera will be included.", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
+        addLeftEyeVideo->setText(QApplication::translate("MainWindow", "(add)", 0, QApplication::UnicodeUTF8));
+        label_15->setText(QApplication::translate("MainWindow", "Uncompressed Right Eye Video", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        addRightEyeVideo->setToolTip(QApplication::translate("MainWindow", "If checked, an uncompressed stream of the right eye camera will be included.", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
+        addRightEyeVideo->setText(QApplication::translate("MainWindow", "(add)", 0, QApplication::UnicodeUTF8));
+        label_12->setText(QApplication::translate("MainWindow", "Eye Tracking Stream", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        addGazeStream->setToolTip(QApplication::translate("MainWindow", "If checked, a stream of deduced gaze parameters will be included.", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
+        addGazeStream->setText(QApplication::translate("MainWindow", "(add)", 0, QApplication::UnicodeUTF8));
+        groupBox_2->setTitle(QApplication::translate("MainWindow", "Scene Video Access", 0, QApplication::UnicodeUTF8));
+        label->setText(QApplication::translate("MainWindow", "Scene Camera Sampling Rate", 0, QApplication::UnicodeUTF8));
+        sceneSamplingRate->clear();
+        sceneSamplingRate->insertItems(0, QStringList()
+         << QApplication::translate("MainWindow", "0", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "24", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "30", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "60", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "120", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "240", 0, QApplication::UnicodeUTF8)
+        );
+#ifndef QT_NO_TOOLTIP
+        sceneSamplingRate->setToolTip(QApplication::translate("MainWindow", "Note that not all sampling rates might be supported by your device. Also, note that higher sampling rates use more bandwidth.", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
         label_6->setText(QApplication::translate("MainWindow", "Scene Camera Resolution", 0, QApplication::UnicodeUTF8));
         sceneResolution->clear();
         sceneResolution->insertItems(0, QStringList()
-         << QApplication::translate("MainWindow", "(do not stream)", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "160x120", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "320x240", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "400x300", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "640x480", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "960x720", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "1280x720", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "1280x960", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "1920x1080", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "current setting", 0, QApplication::UnicodeUTF8)
         );
 #ifndef QT_NO_TOOLTIP
-        sceneResolution->setToolTip(QApplication::translate("MainWindow", "This stream is uncompressed -- do not record it to disk! On a low-bandwidth network, try to use the lowest possible resolution.", 0, QApplication::UnicodeUTF8));
+        sceneResolution->setToolTip(QApplication::translate("MainWindow", "Consider using a low resolution when including an uncompressed scene stream", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
         label_7->setText(QApplication::translate("MainWindow", "Scene Camera Color Space", 0, QApplication::UnicodeUTF8));
         sceneColorSpace->clear();
@@ -316,37 +457,29 @@ public:
 #ifndef QT_NO_TOOLTIP
         sceneColorSpace->setToolTip(QApplication::translate("MainWindow", "Use grayscale to conserve bandwidth.", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
-        label_8->setText(QApplication::translate("MainWindow", "Eye Camera Resolution", 0, QApplication::UnicodeUTF8));
-        eyeResolution->clear();
-        eyeResolution->insertItems(0, QStringList()
-         << QApplication::translate("MainWindow", "(do not stream)", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "160x120", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "320x240", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "400x300", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "640x480", 0, QApplication::UnicodeUTF8)
+        label_16->setText(QApplication::translate("MainWindow", "Scene Camera White Balance", 0, QApplication::UnicodeUTF8));
+        sceneWhiteBalance->clear();
+        sceneWhiteBalance->insertItems(0, QStringList()
+         << QApplication::translate("MainWindow", "Automatic", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "Outdoor Daylight", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "Outdoor Cloudy", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "Indoor Incandescent (Tungsten)", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "Indoor Fluorescent (White)", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "Indoor Fluorescent (Daylight)", 0, QApplication::UnicodeUTF8)
         );
 #ifndef QT_NO_TOOLTIP
-        eyeResolution->setToolTip(QApplication::translate("MainWindow", "These streams are uncompressed -- do not record them to disk! On a low-bandwidth network, try to use the lowest possible resolution.", 0, QApplication::UnicodeUTF8));
+        sceneWhiteBalance->setToolTip(QString());
 #endif // QT_NO_TOOLTIP
-        label_9->setText(QApplication::translate("MainWindow", "Eye Camera Side", 0, QApplication::UnicodeUTF8));
-        eyeSides->clear();
-        eyeSides->insertItems(0, QStringList()
-         << QApplication::translate("MainWindow", "left eye", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "right eye", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "both eyes", 0, QApplication::UnicodeUTF8)
-        );
+        label_13->setText(QApplication::translate("MainWindow", "Uncompressed Scene Video", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
-        eyeSides->setToolTip(QApplication::translate("MainWindow", "Select which of the eye streams you want to generate.", 0, QApplication::UnicodeUTF8));
+        addUncompressedSceneStream->setToolTip(QApplication::translate("MainWindow", "If checked, an uncompressed scene video stream will be generated -- do not record this stream to disk, as it is very high bandwidth.", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
-        label_10->setText(QApplication::translate("MainWindow", "Eye Camera Rate", 0, QApplication::UnicodeUTF8));
-#ifndef QT_NO_TOOLTIP
-        eyeSamplingRate->setToolTip(QApplication::translate("MainWindow", "Use a low sampling rate to conserve bandwidth", 0, QApplication::UnicodeUTF8));
-#endif // QT_NO_TOOLTIP
+        addUncompressedSceneStream->setText(QApplication::translate("MainWindow", "(add)", 0, QApplication::UnicodeUTF8));
+        label_11->setText(QApplication::translate("MainWindow", "Compressed Scene Video", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
         addCompressedSceneStream->setToolTip(QApplication::translate("MainWindow", "If checked, a compressed scene-image stream will be generated that is mostly useful for recording to disk.", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
-        addCompressedSceneStream->setText(QApplication::translate("MainWindow", "(check)", 0, QApplication::UnicodeUTF8));
-        label_11->setText(QApplication::translate("MainWindow", "Compressed Scene Stream", 0, QApplication::UnicodeUTF8));
+        addCompressedSceneStream->setText(QApplication::translate("MainWindow", "(add)", 0, QApplication::UnicodeUTF8));
         linkButton->setText(QApplication::translate("MainWindow", "Link", 0, QApplication::UnicodeUTF8));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
