@@ -87,8 +87,12 @@ iViewTicket * gTicketUnsubscription = NULL;
 iViewTicket * gTicketStopAcquisition = NULL;
 iViewTicket * gTicketCalibration = NULL;
 
-// camera image parameters
-int scene_color_chans;
+// parameters for hand-shaking control
+static const unsigned int IVIEW_TICKETS_MAX = 1024;
+unsigned int * _iView__receivedTickets = NULL;
+unsigned int * _iView__receivedStreamCounter = NULL;
+int _iView__waitingTime = 0;
+IVIEW_CALLBACK _iView_UserCallback = NULL;
 
 // device parameters
 uint32_t firmwareVersion=0,sceneCamVersion=0;
@@ -103,23 +107,13 @@ double sample_age_accum;	// the accumulated sample age
 double sample_age_count;	// the number of samples in the accumulator (divide by this, if >0)
 boost::shared_ptr<online_regressor> sceneframe_to_timestamp, eyeframe_to_timestamp; // moving-window regression mapping from frame indices to local timestamps
 
-// parameters for hand-shaking control
-static const unsigned int IVIEW_TICKETS_MAX = 1024;
-unsigned int * _iView__receivedTickets = NULL;
-unsigned int * _iView__receivedStreamCounter = NULL;
-int _iView__waitingTime = 0;
-IVIEW_CALLBACK _iView_UserCallback = NULL;
-
-// LSL stream outlets used by the callback function
-boost::shared_ptr<lsl::stream_outlet> outletGaze_;				// stream outlet for gaze coordinates if linked (should be a member of MainWindow, but isn't due to the CBF)
-boost::shared_ptr<lsl::stream_outlet> outletLeftImage_;			// stream outlet for left eye image
-boost::shared_ptr<lsl::stream_outlet> outletRightImage_;		// stream outlet for right eye image
-boost::shared_ptr<lsl::stream_outlet> outletSceneImage_;		// stream outlet for scene camera
-boost::shared_ptr<lsl::stream_outlet> outletCompressedScene_;	// stream outlet for compressed scene camera stream
-
-// temprary images, used for color/size conversions
-int scene_w=0,scene_h=0,eye_w=0,eye_h=0;
+// output image parameters
+int scene_color_chans=0,scene_w=0,scene_h=0,eye_w=0,eye_h=0;
+// temporary images, used for image size/color conversions
 IplImage *sceneImage=NULL,*eyeImage=NULL,*sceneImage2=NULL,*eyeImage2=NULL;
+
+// LSL stream outlets accessed by the callback function
+boost::shared_ptr<lsl::stream_outlet> outletGaze_,outletLeftImage_,outletRightImage_,outletSceneImage_,outletCompressedScene_;
 
 
 // === callback function management ===
@@ -330,7 +324,7 @@ iViewWhiteBalanceProgram whiteBalance2iView(const std::string &wb) {
 
 // === main class ===
 
-MainWindow::MainWindow(QWidget *parent, const std::string &config_file): QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(QWidget *parent, const std::string &config_file): QMainWindow(parent), ui(new Ui::MainWindow), linked_(false) {
 	ui->setupUi(this);
 	// parse startup config file
 	load_config(config_file);
@@ -434,7 +428,7 @@ void MainWindow::save_config(const std::string &filename) {
 
 // start/stop the iViewNG connection
 void MainWindow::link() {
-	if (outletGaze_) {
+	if (linked_) {
 		// === perform unlink action ===
 		try {
 			// shut down the iView connections
@@ -466,6 +460,7 @@ void MainWindow::link() {
 		}
 		// indicate that we are now successfully unlinked
 		ui->linkButton->setText("Link");
+		linked_ = false;
 	} else {
 		// === perform link action ===
 		try {
@@ -513,25 +508,25 @@ void MainWindow::link() {
 			eyeframe_to_timestamp.reset(new online_regressor()); 
 
 			// set up server connection settings
-			memset(&gServer,0,sizeof(iViewHost));
+			iViewHost ivServer = {0};
 			if (serverAddress.empty())
 				serverAddress = "127.0.0.1";
 			if (serverAddress == "(launch process)")
-				gServer.connectionType = IVIEW_SERVERADRRESS_SHAREDMEMORY;
+				ivServer.connectionType = IVIEW_SERVERADRRESS_SHAREDMEMORY;
 			else {
 				if (serverAddress.find(":") != std::string::npos) {
-					gServer.connectionType = IVIEW_SERVERADRRESS_IPV6;
-					strncpy(gServer.hostAddress.ipAddress.ipv6,&serverAddress[0],serverAddress.size());
+					ivServer.connectionType = IVIEW_SERVERADRRESS_IPV6;
+					strncpy(ivServer.hostAddress.ipAddress.ipv6,&serverAddress[0],serverAddress.size());
 				} else {
-					gServer.connectionType = IVIEW_SERVERADRRESS_IPV4;
-					strncpy(gServer.hostAddress.ipAddress.ipv4,&serverAddress[0],serverAddress.size());
+					ivServer.connectionType = IVIEW_SERVERADRRESS_IPV4;
+					strncpy(ivServer.hostAddress.ipAddress.ipv4,&serverAddress[0],serverAddress.size());
 				}
 			}
 			if (serverPort == "(use default)" || serverPort.empty())
-				gServer.hostAddress.port = 0;
+				ivServer.hostAddress.port = 0;
 			else
-				gServer.hostAddress.port = boost::lexical_cast<unsigned short>(serverPort);
-			gServer.device = IVIEWDEVICE_ETG_CAMERAPLAYBACK;
+				ivServer.hostAddress.port = boost::lexical_cast<unsigned short>(serverPort);
+			ivServer.device = IVIEWDEVICE_ETG_CAMERAPLAYBACK;
 
 			// set up license key
 			if (licenseKey == "(use default)")
@@ -543,7 +538,7 @@ void MainWindow::link() {
 			iView_GetLibraryVersion(&lib_version);
 
 			// start server
-			if (IVIEW_SERVERADRRESS_SHAREDMEMORY == gServer.connectionType)
+			if (IVIEW_SERVERADRRESS_SHAREDMEMORY == ivServer.connectionType)
 				CALL_API(iView_StartServer(NULL,L"--mode etg"));
 
 			// set up callback function
@@ -551,7 +546,7 @@ void MainWindow::link() {
 
 			// connect
 			CALL_API(iView_CreateTicket(&gTicketConnect));
-			CALL_API(iView_Connect(gTicketConnect,&gServer,1000,4,NULL));
+			CALL_API(iView_Connect(gTicketConnect,&ivServer,1000,4,NULL));
 
 			// transmit license
 			CALL_API(iView_CreateTicket(&gTicketAddLicense));
@@ -614,7 +609,7 @@ void MainWindow::link() {
 					.append_child_value("height",boost::lexical_cast<std::string>(eye_h).c_str())
 					.append_child_value("color_channels","1")
 					.append_child_value("color_format","GRAY")
-					.append_child_value("codec","raw");
+					.append_child_value("codec","RAW");
 				info.desc().append_child("display")
 					.append_child_value("pixel_aspect","1.0")
 					.append_child_value("origin","top-left");
@@ -651,11 +646,10 @@ void MainWindow::link() {
 			// subscribe to uncompressed scene image?
 			if (streamSceneUncompressed) {
 				scene_color_chans = sceneColorSpace == "Grayscale" ? 1 : 3;
-				if (gServer.connectionType == IVIEW_SERVERADRRESS_SHAREDMEMORY || serverAddress == "127.0.0.1") {
+				if (ivServer.connectionType == IVIEW_SERVERADRRESS_SHAREDMEMORY || serverAddress == "127.0.0.1") {
 					// on a local connection we transfer uncompressed video
 					iViewStreamSubscription subscriptionScene;
 					subscriptionScene.streamType = IVIEWDATASTREAM_SCENEIMAGES;
-					// for uncompressed, we have the option to override the sampling rate
 					subscriptionScene.streamSpec = NULL;
 					CALL_API(iView_CreateTicket(&gTicketSubscriptionScene));
 					CALL_API(iView_StartCatchingTickets());
@@ -666,7 +660,7 @@ void MainWindow::link() {
 					// on a network connection we transfer compressed video
 					iViewStreamSubscription subscriptionScene;
 					subscriptionScene.streamType = IVIEWDATASTREAM_SCENEIMAGES_H264_DECODED;
-					// need to use lossless transport for H.264
+					// need to force lossless transport for H.264
 					iViewDataStreamSpecQualityOfService communicationQuality;
 					communicationQuality.type = IVIEWDATASTREAMSPEC_QUALITY_OF_SERVICE;
 					communicationQuality.next = NULL;
@@ -686,7 +680,7 @@ void MainWindow::link() {
 					.append_child_value("height",boost::lexical_cast<std::string>(scene_h).c_str())
 					.append_child_value("color_channels",boost::lexical_cast<std::string>(scene_color_chans).c_str())
 					.append_child_value("color_format",sceneColorSpace=="Grayscale"?"GRAY":"RGB")
-					.append_child_value("codec","raw");
+					.append_child_value("codec","RAW");
 				info.desc().append_child("display")
 					.append_child_value("pixel_aspect","1.0")
 					.append_child_value("origin","top-left");
@@ -699,7 +693,7 @@ void MainWindow::link() {
 			if (streamSceneCompressed) {
 				iViewStreamSubscription subscriptionScene;
 				subscriptionScene.streamType = IVIEWDATASTREAM_SCENEIMAGES_H264;
-				// need to use lossless transport for H.264
+				// need to force lossless transport for H.264
 				iViewDataStreamSpecQualityOfService communicationQuality;
 				communicationQuality.type = IVIEWDATASTREAMSPEC_QUALITY_OF_SERVICE;
 				communicationQuality.next = NULL;
@@ -789,7 +783,7 @@ void MainWindow::link() {
 			if (0 == iView_WaitForTicket(gTicketStartAcquisition, 4000))
 				throw std::exception("Failed to Start data acquisition.");
 
-			// TODO: implement calibration support
+			// TODO: consider implementing calibration support
 		}
 		catch(std::exception &e) {
 			// reset the outlets again...
@@ -804,6 +798,7 @@ void MainWindow::link() {
 
 		// done, all successful
 		ui->linkButton->setText("Unlink");
+		linked_ = true;
 	}
 }
 

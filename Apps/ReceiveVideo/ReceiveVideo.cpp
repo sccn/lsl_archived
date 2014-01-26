@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
 
 	query = argc>1 ? argv[1] : default_query;
 	while (1) {
-		/* resolve the stream of interest (result array: info, array capacity: 1 element, predicate is our query, resolve at least 1 stream, wait forever if necessary) */
+		/* resolve the stream of interest (result array, array capacity: 1 element, predicate is our query, resolve at least 1 stream, wait forever if necessary) */
 		printf("Now waiting for a stream with %s...",query);
 		lsl_resolve_bypred(&result,1,query,1,LSL_FOREVER);
 		printf("done.\n");
@@ -37,7 +37,6 @@ int main(int argc, char *argv[]) {
 		cvNamedWindow(name, CV_WINDOW_AUTOSIZE);
 		cvMoveWindow(name, 100, 100);
 
-		char *cursample = img->imageData;
 		while (true) {
 			/* get a new sample */
 			lsl_pull_sample_c(inlet,img->imageData,width*height*channels,LSL_FOREVER,&errcode);

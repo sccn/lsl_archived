@@ -167,7 +167,8 @@ end
                     plotdata = bsxfun(@times,plotdata,1./std(plotdata')'); end
                 
                 % zero-mean
-                plotdata = bsxfun(@minus, plotdata, mean(plotdata,2));
+				tmpdata = plotdata; tmpdata(isnan(tmpdata(:))) = 0;
+                plotdata = bsxfun(@minus, plotdata, mean(tmpdata,2));
                 
                 % arrange for plotting
                 plotoffsets = (0:size(plotdata,1)-1)*stream.opts.datascale;

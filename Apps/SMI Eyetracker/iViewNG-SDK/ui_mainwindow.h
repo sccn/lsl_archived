@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Fri Jan 24 18:23:59 2014
+** Created: Sat Jan 25 18:05:13 2014
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -337,9 +337,9 @@ public:
         retranslateUi(MainWindow);
 
         eyeResolution->setCurrentIndex(0);
-        eyeSamplingRate->setCurrentIndex(1);
+        eyeSamplingRate->setCurrentIndex(0);
         eyeTrackSides->setCurrentIndex(2);
-        sceneSamplingRate->setCurrentIndex(1);
+        sceneSamplingRate->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -383,7 +383,6 @@ public:
         eyeResolution->insertItems(0, QStringList()
          << QApplication::translate("MainWindow", "320x240", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "640x480", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "current setting", 0, QApplication::UnicodeUTF8)
         );
 #ifndef QT_NO_TOOLTIP
         eyeResolution->setToolTip(QString());
@@ -391,7 +390,6 @@ public:
         label_10->setText(QApplication::translate("MainWindow", "Eye Camera Sampling Rate", 0, QApplication::UnicodeUTF8));
         eyeSamplingRate->clear();
         eyeSamplingRate->insertItems(0, QStringList()
-         << QApplication::translate("MainWindow", "0", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "30", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "60", 0, QApplication::UnicodeUTF8)
         );
@@ -424,7 +422,6 @@ public:
         label->setText(QApplication::translate("MainWindow", "Scene Camera Sampling Rate", 0, QApplication::UnicodeUTF8));
         sceneSamplingRate->clear();
         sceneSamplingRate->insertItems(0, QStringList()
-         << QApplication::translate("MainWindow", "0", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "24", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "30", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "60", 0, QApplication::UnicodeUTF8)
@@ -443,7 +440,6 @@ public:
          << QApplication::translate("MainWindow", "960x720", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "1280x720", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "1280x960", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "current setting", 0, QApplication::UnicodeUTF8)
         );
 #ifndef QT_NO_TOOLTIP
         sceneResolution->setToolTip(QApplication::translate("MainWindow", "Consider using a low resolution when including an uncompressed scene stream", 0, QApplication::UnicodeUTF8));

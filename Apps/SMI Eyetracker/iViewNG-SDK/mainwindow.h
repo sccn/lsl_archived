@@ -49,16 +49,8 @@ private:
     // raw config file IO
     void load_config(const std::string &filename);
     void save_config(const std::string &filename);
-
-	Ui::MainWindow *ui;
-	// callback tickets
-	iViewTicket *gTicketStartAcquisition, *gTicketConnect, *gTicketAddLicense, *gTicketDeviceParameters;
-	iViewTicket *gTicketSubscriptionGaze, *gTicketSubscriptionLeftEye, *gTicketSubscriptionRightEye;
-	iViewTicket *gTicketSubscriptionScene, *gTicketUnsubscription, *gTicketStopAcquisition, *gTicketCalibration;
-	// server
-	iViewHost gServer;
-	// Local data for calibration
-	char gCalibrating;
+	bool linked_;			// whether we are currently linked
+	Ui::MainWindow *ui;	
 };
 
 #endif // MAINWINDOW_H

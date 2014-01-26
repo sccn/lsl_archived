@@ -143,11 +143,6 @@
            <string>640x480</string>
           </property>
          </item>
-         <item>
-          <property name="text">
-           <string>current setting</string>
-          </property>
-         </item>
         </widget>
        </item>
        <item row="1" column="0">
@@ -160,13 +155,8 @@
        <item row="1" column="1">
         <widget class="QComboBox" name="eyeSamplingRate">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
-         <item>
-          <property name="text">
-           <string>0</string>
-          </property>
-         </item>
          <item>
           <property name="text">
            <string>30</string>
@@ -287,13 +277,8 @@
           <string>Note that not all sampling rates might be supported by your device. Also, note that higher sampling rates use more bandwidth.</string>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
-         <item>
-          <property name="text">
-           <string>0</string>
-          </property>
-         </item>
          <item>
           <property name="text">
            <string>24</string>
@@ -361,11 +346,6 @@
          <item>
           <property name="text">
            <string>1280x960</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>current setting</string>
           </property>
          </item>
         </widget>
