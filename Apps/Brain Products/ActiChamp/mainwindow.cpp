@@ -736,7 +736,7 @@ void MainWindow::read_thread(t_champVersion version, t_champProperty properties,
 
 	try {
 		// create data streaminfo and append some meta-data
-		lsl::stream_info data_info("ActiChamp","EEG",channelCount,samplingRate,lsl::cf_float32,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber));
+		lsl::stream_info data_info("ActiChamp-" + boost::lexical_cast<std::string>(deviceNumber),"EEG",channelCount,samplingRate,lsl::cf_float32,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber));
 		lsl::xml_element channels = data_info.desc().append_child("channels");
 		for (int k=0;k<channelLabels.size();k++)
 			channels.append_child("channel")
@@ -754,7 +754,7 @@ void MainWindow::read_thread(t_champVersion version, t_champProperty properties,
 		lsl::stream_outlet data_outlet(data_info);
 
 		// create marker streaminfo and outlet
-		lsl::stream_info marker_info("ActiChamp-Markers","Markers",1,0,lsl::cf_string,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber) + "_markers");
+		lsl::stream_info marker_info("ActiChamp-" + boost::lexical_cast<std::string>(deviceNumber) + "-Markers","Markers",1,0,lsl::cf_string,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber) + "_markers");
 		lsl::stream_outlet marker_outlet(marker_info);
 			
 		// enter transmission loop		

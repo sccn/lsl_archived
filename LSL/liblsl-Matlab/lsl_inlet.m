@@ -131,6 +131,7 @@ classdef lsl_inlet < handle
             %
             % In:
             %   Timeout : The timeout for this operation, if any. (default: 60)
+			%		      Use 0 to make the function non-blocking.
             %
             % Out:
             %   SampleData : The sample's contents. This is either a numeric vector (type: double) if

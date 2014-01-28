@@ -209,7 +209,7 @@ void MainWindow::read_thread(int deviceNumber, ULONG serialNumber, int impedance
 	std::vector<std::vector<float> > send_buffer(chunkSize,std::vector<float>(channelCount));
 	try {
 		// create data streaminfo and append some meta-data
-		lsl::stream_info data_info("BrainAmpSeries","EEG",channelCount,sampling_rate,lsl::cf_float32,"BrainAmpSeries_" + boost::lexical_cast<std::string>(deviceNumber) + "_" + boost::lexical_cast<std::string>(serialNumber));
+		lsl::stream_info data_info("BrainAmpSeries-" + boost::lexical_cast<std::string>(deviceNumber),"EEG",channelCount,sampling_rate,lsl::cf_float32,"BrainAmpSeries_" + boost::lexical_cast<std::string>(deviceNumber) + "_" + boost::lexical_cast<std::string>(serialNumber));
 		lsl::xml_element channels = data_info.desc().append_child("channels");
 		for (int k=0;k<channelLabels.size();k++)
 			channels.append_child("channel")
@@ -227,7 +227,7 @@ void MainWindow::read_thread(int deviceNumber, ULONG serialNumber, int impedance
 		lsl::stream_outlet data_outlet(data_info);
 
 		// create marker streaminfo and outlet
-		lsl::stream_info marker_info("BrainAmpSeries-Markers","Markers",1,0,lsl::cf_string,"BrainAmpSeries_" + boost::lexical_cast<std::string>(deviceNumber) + "_" + boost::lexical_cast<std::string>(serialNumber) + "_markers");
+		lsl::stream_info marker_info("BrainAmpSeries-" + boost::lexical_cast<std::string>(deviceNumber) + "-Markers","Markers",1,0,lsl::cf_string,"BrainAmpSeries_" + boost::lexical_cast<std::string>(deviceNumber) + "_" + boost::lexical_cast<std::string>(serialNumber) + "_markers");
 		lsl::stream_outlet marker_outlet(marker_info);
 			
 		// enter transmission loop		

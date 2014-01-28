@@ -736,7 +736,7 @@ namespace lsl {
         * Pull a sample from the inlet and read it into an array of values.
         * Handles type checking & conversion.
         * @param sample An array to hold the resulting values.
-        * @param timeout The timeout for this operation, if any.
+        * @param timeout The timeout for this operation, if any.  Use 0.0 to make the function non-blocking.
         * @return The capture time of the sample on the remote machine, or 0.0 if no new sample was available. 
         *          To remap this time stamp to the local clock, add the value returned by .time_correction() to it. 
         * @throws lost_error (if the stream source has been lost).
@@ -747,7 +747,7 @@ namespace lsl {
         * Pull a sample from the inlet and read it into a std vector of values.
         * Handles type checking & conversion and allocates the necessary memory in the vector if necessary.
         * @param sample An STL vector to hold the resulting values.
-        * @param timeout The timeout for this operation, if any.
+        * @param timeout The timeout for this operation, if any.  Use 0.0 to make the function non-blocking.
         * @return The capture time of the sample on the remote machine, or 0.0 if no new sample was available. 
         *          To remap this time stamp to the local clock, add the value returned by .time_correction() to it. 
         * @throws lost_error (if the stream source has been lost).
@@ -765,7 +765,7 @@ namespace lsl {
         * Handles type checking & conversion.
         * @param buffer A pointer to hold the resulting values. 
         * @param buffer_elements The number of samples allocated in the buffer. Note: it is the responsibility of the user to allocate enough memory.
-        * @param timeout The timeout for this operation, if any.
+        * @param timeout The timeout for this operation, if any.  Use 0.0 to make the function non-blocking.
         * @return The capture time of the sample on the remote machine, or 0.0 if no new sample was available. 
         *          To remap this time stamp to the local clock, add the value returned by .time_correction() to it. 
         * @throws lost_error (if the stream source has been lost).
@@ -797,7 +797,7 @@ namespace lsl {
         * Pull a sample from the inlet and read it into a custom C-style struct. 
         * Overall size checking but no type checking or conversion are done. Do not use for variable-size/string-formatted streams.
         * @param sample The raw sample object to hold the data (packed C-style struct). Search for #pragma pack for information on how to pack structs correctly.
-        * @param timeout The timeout for this operation, if any.
+        * @param timeout The timeout for this operation, if any. Use 0.0 to make the function non-blocking.
         * @return The capture time of the sample on the remote machine, or 0.0 if no new sample was available. 
         *          To remap this time stamp to the local clock, add the value returned by .time_correction() to it. 
         * @throws lost_error (if the stream source has been lost).
@@ -809,7 +809,7 @@ namespace lsl {
         * No type checking or conversions are done (not recommended!). Do not use for variable-size/string-formatted streams.
         * @param buffer A pointer to hold the resulting raw sample data.
         * @param buffer_bytes The number of bytes allocated in the buffer. Note: it is the responsibility of the user to allocate enough memory.
-        * @param timeout The timeout for this operation, if any.
+        * @param timeout The timeout for this operation, if any. Use 0.0 to make the function non-blocking.
         * @return The capture time of the sample on the remote machine, or 0.0 if no new sample was available. 
         *          To remap this time stamp to the local clock, add the value returned by .time_correction() to it. 
         * @throws lost_error (if the stream source has been lost).

@@ -570,7 +570,7 @@ public class liblsl
         * Pull a sample from the inlet and read it into an array of values.
         * Handles type checking & conversion.
         * @param sample An array to hold the resulting values.
-        * @param timeout The timeout for this operation, if any.
+        * @param timeout The timeout for this operation, if any. Use 0.0 to make the function non-blocking.
         * @return The capture time of the sample on the remote machine, or 0.0 if no new sample was available. 
         *          To remap this time stamp to the local clock, add the value returned by .time_correction() to it. 
         * @throws LostException (if the stream source has been lost).
