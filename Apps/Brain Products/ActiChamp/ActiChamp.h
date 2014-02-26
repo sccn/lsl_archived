@@ -245,6 +245,13 @@ typedef enum {
   CHAMP_MY_BUTTON_PULL = 3  /* Button change state from hold to none (free by user) */
 } t_champMyButton;
 
+typedef struct {
+	unsigned int Model;
+	unsigned int SerialNumber;
+	char padding[1024];
+} t_champDeviceInfo;
+
+
 #pragma pack(pop) /* restore default packing for structures */
 /*----------------------------------------------------------------------------*/
 /* Functions */
@@ -528,6 +535,8 @@ CHAMP_API int WINAPI champSetModules(HANDLE hDevice, t_champModules *Modules);
 \return - error code
 */
 CHAMP_API int WINAPI champGetMyButton(HANDLE hDevice, t_champMyButton *MyButton);
+
+
 /*----------------------------------------------------------------------------*/
 /*!
   Function to control LED of MyButton via pulse-width modulation

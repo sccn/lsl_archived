@@ -404,7 +404,7 @@ namespace lsl {
                 if (info().nominal_srate() != IRREGULAR_RATE)
                     timestamp = timestamp - (samples.size()-1)/info().nominal_srate();
                 push_sample(samples[0],timestamp,pushthrough && samples.size()==1);
-                for (unsigned k=1; k<samples.size(); k++)
+                for (std::size_t k=1; k<samples.size(); k++)
                     push_sample(samples[k],DEDUCED_TIMESTAMP,pushthrough && k==samples.size()-1);
             }
         }
@@ -439,7 +439,7 @@ namespace lsl {
                 if (info().nominal_srate() != IRREGULAR_RATE)
                     timestamp = timestamp - (samples.size()-1)/info().nominal_srate();
                 push_numeric_struct(samples[0],timestamp,pushthrough && samples.size()==1);
-                for (unsigned k=1; k<samples.size(); k++)
+                for (std::size_t k=1; k<samples.size(); k++)
                     push_numeric_struct(samples[k],DEDUCED_TIMESTAMP,pushthrough && k==samples.size()-1);
             }
         }
@@ -493,7 +493,7 @@ namespace lsl {
             if (!buffer.empty()) { 
                 std::vector<unsigned> lengths(buffer.size()); 
                 std::vector<const char*> pointers(buffer.size()); 
-                for (int k=0;k<buffer.size();k++) {
+				for (std::size_t k=0;k<buffer.size();k++) {
                     pointers[k] = buffer[k].c_str();
                     lengths[k] = (unsigned)buffer[k].size(); 
                 }
@@ -521,7 +521,7 @@ namespace lsl {
             if (buffer_elements) { 
                 std::vector<unsigned> lengths(buffer_elements); 
                 std::vector<const char*> pointers(buffer_elements); 
-                for (int k=0;k<buffer_elements;k++) {
+                for (std::size_t k=0;k<buffer_elements;k++) {
                     pointers[k] = buffer[k].c_str();
                     lengths[k] = (unsigned)buffer[k].size(); 
                 }
@@ -548,7 +548,7 @@ namespace lsl {
             if (data_buffer_elements) { 
                 std::vector<unsigned> lengths(data_buffer_elements); 
                 std::vector<const char*> pointers(data_buffer_elements); 
-                for (int k=0;k<data_buffer_elements;k++) {
+                for (std::size_t k=0;k<data_buffer_elements;k++) {
                     pointers[k] = data_buffer[k].c_str();
                     lengths[k] = (unsigned)data_buffer[k].size(); 
                 }
@@ -904,7 +904,7 @@ namespace lsl {
                 std::vector<unsigned> result_lengths(data_buffer_elements); 
                 std::size_t num = lsl_pull_chunk_buf(obj,&result_strings[0],&result_lengths[0],timestamp_buffer,(unsigned long)data_buffer_elements,(unsigned long)timestamp_buffer_elements,timeout,&ec);
                 check_error(ec);
-                for (int k=0;k<num;k++) {
+                for (std::size_t k=0;k<num;k++) {
                     data_buffer[k].assign(result_strings[k],result_lengths[k]);
                     lsl_destroy_string(result_strings[k]);
                 }

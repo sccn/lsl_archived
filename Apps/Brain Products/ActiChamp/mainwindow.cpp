@@ -1,3 +1,4 @@
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <boost/property_tree/ptree.hpp>
@@ -488,7 +489,8 @@ const double coeffs_10000_to_1000[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1.519574e-
 	1.338956e-004, 4.260406e-019, -1.054849e-004, -1.749852e-004, -2.067444e-004, -2.043512e-004, -1.756247e-004,
 	-1.310480e-004, -8.198651e-005, -3.893685e-005, -1.003438e-005, -1.519574e-034};
 
-MainWindow::MainWindow(QWidget *parent, const std::string &config_file): QMainWindow(parent),ui(new Ui::MainWindow),hDevice(NULL)
+
+MainWindow::MainWindow(QWidget *parent, const std::string &config_file): QMainWindow(parent),ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
 
@@ -580,19 +582,12 @@ void MainWindow::save_config(const std::string &filename) {
 
 // start/stop the ActiChamp connection
 void MainWindow::link() {
-	DWORD bytes_returned;
 	if (reader_thread_) {
 		// === perform unlink action ===
 		try {
 			stop_ = true;
-			reader_thread_->interrupt();
 			reader_thread_->join();
 			reader_thread_.reset();
-			if (hDevice>0) {
-				champStop(hDevice);
-				champClose(hDevice);
-				hDevice = NULL;
-			}
 		} catch(std::exception &e) {
 			QMessageBox::critical(this,"Error",(std::string("Could not stop the background processing: ")+=e.what()).c_str(),QMessageBox::Ok);
 			return;
@@ -603,6 +598,7 @@ void MainWindow::link() {
 	} else {
 		// === perform link action ===
 
+		HANDLE hDevice = NULL;
 		try {
 			// get the UI parameters...
 			int deviceNumber = ui->deviceNumber->value();
@@ -616,10 +612,10 @@ void MainWindow::link() {
 			if (channelLabels.size() != channelCount)
 				throw std::runtime_error("The number of channels labels does not match the channel count device setting.");
 
-			// verify that the requested device is available
+			// try to verify that the requested device is available
 			if (!champGetCount())
 				throw std::runtime_error("According to the driver no amplifier is connected. Please make sure that the device is plugged in, turned on, battery is charged, and that the driver is installed correctly.");
-			if (deviceNumber+1 > champGetCount())
+			if (deviceNumber+1 > (int)champGetCount())
 				throw std::runtime_error("According to the driver there are not enough devices connected for the given device number.");
 
 			// try to open the device
@@ -627,20 +623,16 @@ void MainWindow::link() {
 			if (hDevice == NULL)
 				throw std::runtime_error("Could not open connection to the amplifier. Please make sure that the device is plugged in, turned on, and that the driver is installed correctly.");
 
-			t_champVersion version;
-			if (champGetVersion(hDevice,&version) != CHAMP_ERR_OK)
-				throw std::runtime_error("Could not query device version number.");
-
-			// get device properties
+			// try to get device properties
 			t_champProperty properties;	
 			if (champGetProperty(hDevice,&properties) != CHAMP_ERR_OK)
 				throw std::runtime_error("Could not query device properties.");
-
+			
 			// confirm that the # of channels is in range
-			if (channelCount > properties.CountEeg + (useAUX?properties.CountAux:0))
+			if (channelCount > (int)(properties.CountEeg + (useAUX?properties.CountAux:0)))
 				throw std::runtime_error("The number of desired channels is larger than the number of channels available on the device.");
 
-			// get device module list
+			// try to get device module list
 			t_champModules modules;	
 			if (champGetModules(hDevice,&modules) != CHAMP_ERR_OK)
 				throw std::runtime_error("Could not query device modules.");
@@ -649,23 +641,23 @@ void MainWindow::link() {
 			if (useAUX && !modules.Present&(1<<0))
 				throw std::runtime_error("AUX channels were requested but the device reports that no AUX module is present.");
 			int neededEEGchannels = channelCount - (useAUX?properties.CountAux:0);
-			if (neededEEGchannels>0 && !modules.Present&(1<<1))
+			if (neededEEGchannels>0 && !(modules.Present&(1<<1)))
 				throw std::runtime_error("EEG channels were requested but the first EEG module is not present in the device.");
-			if (neededEEGchannels>32 && !modules.Present&(1<<2))
+			if (neededEEGchannels>32 && !(modules.Present&(1<<2)))
 				throw std::runtime_error("More than 32 EEG channels were requested but the second EEG module is not present in the device.");
-			if (neededEEGchannels>64 && !modules.Present&(1<<3))
+			if (neededEEGchannels>64 && !(modules.Present&(1<<3)))
 				throw std::runtime_error("More than 64 EEG channels were requested but the third EEG module is not present in the device.");
-			if (neededEEGchannels>96 && !modules.Present&(1<<4))
+			if (neededEEGchannels>96 && !(modules.Present&(1<<4)))
 				throw std::runtime_error("More than 96 EEG channels were requested but the fourth EEG module is not present in the device.");
-			if (neededEEGchannels>128 && !modules.Present&(1<<5))
+			if (neededEEGchannels>128 && !(modules.Present&(1<<5)))
 				throw std::runtime_error("More than 128 EEG channels were requested but the fifth EEG module is not present in the device.");
 
-			// enable all present modules
-			modules.Enabled = modules.Present;
+			// try to enable all necessary modules
+			modules.Enabled = (useAUX?1:0) | (neededEEGchannels>0?(1<<1):0) | (neededEEGchannels>32?(1<<2):0) | (neededEEGchannels>64?(1<<3):0) | (neededEEGchannels>96?(1<<4):0) | (neededEEGchannels>128?(1<<5):0);
 			if (champSetModules(hDevice,&modules) != CHAMP_ERR_OK)
 				throw std::runtime_error("Could not enable all present device modules.");
 
-			// set device settings
+			// try to set device settings
 			t_champSettingsEx settings;
 			settings.Mode = activeShield ? CHAMP_MODE_ACTIVE_SHIELD : CHAMP_MODE_NORMAL;
 			settings.Rate = samplingRate==100000 ? CHAMP_RATE_100KHZ : (samplingRate==50000 ? CHAMP_RATE_50KHZ : CHAMP_RATE_10KHZ);
@@ -674,13 +666,14 @@ void MainWindow::link() {
 			if (champSetSettingsEx(hDevice,&settings) != CHAMP_ERR_OK)
 				throw std::runtime_error("Could not apply device settings.");
 
-			// start acquisition
-			if (champStart(hDevice) != CHAMP_ERR_OK)
-				throw std::runtime_error("Could not start data acquisition.");
+			// try to close the amp again
+			if (champClose(hDevice) != CHAMP_ERR_OK)
+				throw std::runtime_error("Could not close the amp.");
+			hDevice = NULL;
 
 			// start reader thread
 			stop_ = false;
-			reader_thread_.reset(new boost::thread(&MainWindow::read_thread,this,version,properties,deviceNumber,channelCount,chunkSize,samplingRate,useAUX,channelLabels));
+			reader_thread_.reset(new boost::thread(&MainWindow::read_thread,this,deviceNumber,channelCount,chunkSize,samplingRate,useAUX,activeShield,channelLabels));
 		}
 
 		catch(std::exception &e) {
@@ -689,7 +682,7 @@ void MainWindow::link() {
 			int errorcode=0; char buffer[16384];
 			if (champGetError(hDevice,&errorcode,buffer,sizeof(buffer)) == CHAMP_ERR_OK)
 				msg.assign(buffer);
-			if (hDevice>0) {
+			if (hDevice) {
 				champClose(hDevice);
 				hDevice = NULL;
 			}
@@ -703,42 +696,77 @@ void MainWindow::link() {
 }
 
 // background data reader thread
-void MainWindow::read_thread(t_champVersion version, t_champProperty properties, int deviceNumber, int channelCount, int chunkSize, int samplingRate, bool useAUX, std::vector<std::string> channelLabels) {
-	float EEG_scale = properties.ResolutionEeg/1000000;
-	float AUX_scale = properties.ResolutionAux/1000000;
-	int eeg_count,aux_count;
-	if (useAUX) {
-		eeg_count = channelCount-8;
-		aux_count = 8;
-	} else {
-		eeg_count = channelCount;
-		aux_count = 0;
-	}
-
-	// calculate the sample size
-	int sampleSize = (ceil(eeg_count/32.0)*32 + aux_count + 2)*sizeof(int);
-
-	// reserve buffers to receive and send data
-	int buffer_bytes = chunkSize*sampleSize;
-	char *recv_buffer = new char[buffer_bytes];
-	std::vector<std::vector<double> > temp_buffer(chunkSize,std::vector<double>(channelCount));
-	std::vector<std::vector<double> > send_buffer(chunkSize,std::vector<double>(channelCount));
-	std::vector<unsigned> trigger_buffer(chunkSize);
-
-	// allocate resampler
-	Resampler<double,double,double> *resampler = NULL;
-	switch (samplingRate) {
-		case 125: resampler = new Resampler<double,double,double>(1,80,coeffs_10000_to_125,sizeof(coeffs_10000_to_125)/sizeof(coeffs_10000_to_125[0])); break;
-		case 250: resampler = new Resampler<double,double,double>(1,40,coeffs_10000_to_250,sizeof(coeffs_10000_to_250)/sizeof(coeffs_10000_to_250[0])); break;
-		case 500: resampler = new Resampler<double,double,double>(1,20,coeffs_10000_to_500,sizeof(coeffs_10000_to_500)/sizeof(coeffs_10000_to_500[0])); break;
-		case 1000: resampler = new Resampler<double,double,double>(1,10,coeffs_10000_to_1000,sizeof(coeffs_10000_to_1000)/sizeof(coeffs_10000_to_1000[0])); break;
-	}
-
+void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, int samplingRate, bool useAUX, bool activeShield, std::vector<std::string> channelLabels) {
+	HANDLE hDevice = NULL;
+	bool started = false;
 	try {
+		// try to open the device again (we're doing everything in the same thread to not confuse the driver)
+		hDevice = champOpen(deviceNumber);
+		if (hDevice == NULL)
+			throw std::runtime_error("Could not open connection to the amplifier. Please make sure that the device is plugged in, turned on, and that the driver is installed correctly.");
+		// try to get version
+		t_champVersion version;
+		if (champGetVersion(hDevice,&version) != CHAMP_ERR_OK)
+			throw std::runtime_error("Could not query device version number.");
+		// try to get device properties
+		t_champProperty properties;	
+		if (champGetProperty(hDevice,&properties) != CHAMP_ERR_OK)
+			throw std::runtime_error("Could not query device properties.");
+		// determine some acquisition parameters
+		float EEG_scale = properties.ResolutionEeg*1000000;
+		float AUX_scale = properties.ResolutionAux*1000000;
+		int eeg_count,aux_count;
+		if (useAUX) {
+			eeg_count = channelCount-8;
+			aux_count = 8;
+		} else {
+			eeg_count = channelCount;
+			aux_count = 0;
+		}
+		// try to get device module list
+		t_champModules modules;	
+		if (champGetModules(hDevice,&modules) != CHAMP_ERR_OK)
+			throw std::runtime_error("Could not query device modules.");
+		// try to enable all necessary modules
+		modules.Enabled = (useAUX?1:0) | (eeg_count>0?(1<<1):0) | (eeg_count>32?(1<<2):0) | (eeg_count>64?(1<<3):0) | (eeg_count>96?(1<<4):0) | (eeg_count>128?(1<<5):0);
+		if (champSetModules(hDevice,&modules) != CHAMP_ERR_OK)
+			throw std::runtime_error("Could not enable all present device modules.");
+		// try to set device settings
+		t_champSettingsEx settings;
+		settings.Mode = activeShield ? CHAMP_MODE_ACTIVE_SHIELD : CHAMP_MODE_NORMAL;
+		settings.Rate = samplingRate==100000 ? CHAMP_RATE_100KHZ : (samplingRate==50000 ? CHAMP_RATE_50KHZ : CHAMP_RATE_10KHZ);
+		settings.AdcFilter  = CHAMP_ADC_NATIVE;
+		settings.Decimation = CHAMP_DECIMATION_0;
+		if (champSetSettingsEx(hDevice,&settings) != CHAMP_ERR_OK)
+			throw std::runtime_error("Could not apply device settings.");
+		// try to start acquisition
+		if (champStart(hDevice) != CHAMP_ERR_OK)
+			throw std::runtime_error("Could not start data acquisition.");
+		started = true;
+
+		// calculate the sample size
+		int sampleSize = (ceil(eeg_count/32.0)*32 + 8 + 2)*sizeof(int);
+
+		// reserve buffers to receive and send data
+		int buffer_bytes = chunkSize*sampleSize;
+		char *recv_buffer = new char[buffer_bytes*10];
+		std::vector<std::vector<double> > temp_buffer(chunkSize,std::vector<double>(channelCount));
+		std::vector<std::vector<double> > send_buffer(chunkSize,std::vector<double>(channelCount));
+		std::vector<unsigned> trigger_buffer(chunkSize);
+
+		// allocate resampler
+		Resampler<double,double,double> *resampler = NULL;
+		switch (samplingRate) {
+			case 125: resampler = new Resampler<double,double,double>(1,80,coeffs_10000_to_125,sizeof(coeffs_10000_to_125)/sizeof(coeffs_10000_to_125[0])); break;
+			case 250: resampler = new Resampler<double,double,double>(1,40,coeffs_10000_to_250,sizeof(coeffs_10000_to_250)/sizeof(coeffs_10000_to_250[0])); break;
+			case 500: resampler = new Resampler<double,double,double>(1,20,coeffs_10000_to_500,sizeof(coeffs_10000_to_500)/sizeof(coeffs_10000_to_500[0])); break;
+			case 1000: resampler = new Resampler<double,double,double>(1,10,coeffs_10000_to_1000,sizeof(coeffs_10000_to_1000)/sizeof(coeffs_10000_to_1000[0])); break;
+		}
+
 		// create data streaminfo and append some meta-data
 		lsl::stream_info data_info("ActiChamp-" + boost::lexical_cast<std::string>(deviceNumber),"EEG",channelCount,samplingRate,lsl::cf_float32,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber));
 		lsl::xml_element channels = data_info.desc().append_child("channels");
-		for (int k=0;k<channelLabels.size();k++)
+		for (std::size_t k=0;k<channelLabels.size();k++)
 			channels.append_child("channel")
 				.append_child_value("label",channelLabels[k].c_str())
 				.append_child_value("type","EEG")
@@ -758,107 +786,109 @@ void MainWindow::read_thread(t_champVersion version, t_champProperty properties,
 		lsl::stream_outlet marker_outlet(marker_info);
 			
 		// enter transmission loop		
-		int bytes_read;
+		int bytes_read, samples_read;
 		while (!stop_) {
 			// read chunk into recv_buffer
-			if ((bytes_read=champGetDataBlocking(hDevice,recv_buffer,buffer_bytes)) < 0)
-				throw std::runtime_error("Could not receive data from amplifier.");
-			if (bytes_read != buffer_bytes)
-				continue;
+			bytes_read = champGetDataBlocking(hDevice,recv_buffer,buffer_bytes);
+			samples_read = bytes_read/sampleSize;
+			if (samples_read > 0) {
+				double now = lsl::local_clock();
+				// copy data into trigger_buffer and temp_buffer, and scale to microvolts
+				trigger_buffer.resize(samples_read);
+				temp_buffer.resize(samples_read,std::vector<double>(channelCount));
+				switch(sampleSize) {
+					case sizeof(t_champDataModelAux):
+						{
+							t_champDataModelAux *data = (t_champDataModelAux*)recv_buffer;
+							for (int s=0;s<samples_read;s++) {
+								trigger_buffer[s] = data[s].Triggers & 0xFFFF;
+								for (int c=0;c<aux_count;c++)
+									temp_buffer[s][c] = data[s].Aux[c] * AUX_scale;
+							}
+							break;
+						}
+					case sizeof(t_champDataModel32):
+						{
+							t_champDataModel32 *data = (t_champDataModel32*)recv_buffer;
+							for (int s=0;s<samples_read;s++) {
+								trigger_buffer[s] = data[s].Triggers & 0xFFFF;
+								for (int c=0;c<eeg_count;c++)
+									temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
+								for (int c=0;c<aux_count;c++)
+									temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
+							}
+							break;
+						}
+					case sizeof(t_champDataModel64):
+						{
+							t_champDataModel64 *data = (t_champDataModel64*)recv_buffer;
+							for (int s=0;s<samples_read;s++) {
+								trigger_buffer[s] = data[s].Triggers & 0xFFFF;
+								for (int c=0;c<eeg_count;c++)
+									temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
+								for (int c=0;c<aux_count;c++)
+									temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
+							}
+							break;
+						}
+					case sizeof(t_champDataModel96):
+						{
+							t_champDataModel96 *data = (t_champDataModel96*)recv_buffer;
+							for (int s=0;s<samples_read;s++) {
+								trigger_buffer[s] = data[s].Triggers & 0xFFFF;
+								for (int c=0;c<eeg_count;c++)
+									temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
+								for (int c=0;c<aux_count;c++)
+									temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
+								}
+							break;
+						}
+					case sizeof(t_champDataModel128):
+						{
+							t_champDataModel128 *data = (t_champDataModel128*)recv_buffer;
+							for (int s=0;s<samples_read;s++) {
+								trigger_buffer[s] = data[s].Triggers & 0xFFFF;
+								for (int c=0;c<eeg_count;c++)
+									temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
+								for (int c=0;c<aux_count;c++)
+									temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
+							}
+							break;
+						}
+					case sizeof(t_champDataModel160):
+						{
+							t_champDataModel160 *data = (t_champDataModel160*)recv_buffer;
+							for (int s=0;s<samples_read;s++) {
+								trigger_buffer[s] = data[s].Triggers & 0xFFFF;
+								for (int c=0;c<eeg_count;c++)
+									temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
+								for (int c=0;c<aux_count;c++)
+									temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
+							}
+							break;
+						}
+				}
 
-			double now = lsl::local_clock();
-			// copy data into trigger_buffer and temp_buffer, and scale to microvolts
-			switch(sampleSize) {
-				case sizeof(t_champDataModelAux):
-					{
-						t_champDataModelAux *data = (t_champDataModelAux*)recv_buffer;
-						for (int s=0;s<chunkSize;s++) {
-							trigger_buffer[s] = data[s].Triggers & 0xFFFF;
-							for (int c=0;c<aux_count;c++)
-								temp_buffer[s][c] = data[s].Aux[c] * AUX_scale;
-						}
-						break;
-					}
-				case sizeof(t_champDataModel32):
-					{
-						t_champDataModel32 *data = (t_champDataModel32*)recv_buffer;
-						for (int s=0;s<chunkSize;s++) {
-							trigger_buffer[s] = data[s].Triggers & 0xFFFF;
-							for (int c=0;c<eeg_count;c++)
-								temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
-							for (int c=0;c<aux_count;c++)
-								temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
-						}
-						break;
-					}
-				case sizeof(t_champDataModel64):
-					{
-						t_champDataModel64 *data = (t_champDataModel64*)recv_buffer;
-						for (int s=0;s<chunkSize;s++) {
-							trigger_buffer[s] = data[s].Triggers & 0xFFFF;
-							for (int c=0;c<eeg_count;c++)
-								temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
-							for (int c=0;c<aux_count;c++)
-								temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
-						}
-						break;
-					}
-				case sizeof(t_champDataModel96):
-					{
-						t_champDataModel96 *data = (t_champDataModel96*)recv_buffer;
-						for (int s=0;s<chunkSize;s++) {
-							trigger_buffer[s] = data[s].Triggers & 0xFFFF;
-							for (int c=0;c<eeg_count;c++)
-								temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
-							for (int c=0;c<aux_count;c++)
-								temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
-						}
-						break;
-					}
-				case sizeof(t_champDataModel128):
-					{
-						t_champDataModel128 *data = (t_champDataModel128*)recv_buffer;
-						for (int s=0;s<chunkSize;s++) {
-							trigger_buffer[s] = data[s].Triggers & 0xFFFF;
-							for (int c=0;c<eeg_count;c++)
-								temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
-							for (int c=0;c<aux_count;c++)
-								temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
-						}
-						break;
-					}
-				case sizeof(t_champDataModel160):
-					{
-						t_champDataModel160 *data = (t_champDataModel160*)recv_buffer;
-						for (int s=0;s<chunkSize;s++) {
-							trigger_buffer[s] = data[s].Triggers & 0xFFFF;
-							for (int c=0;c<eeg_count;c++)
-								temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
-							for (int c=0;c<aux_count;c++)
-								temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
-						}
-						break;
-					}
-			}
+				// optionally resample
+				if (resampler) {
+					resampler->apply_multichannel(temp_buffer,send_buffer);
+					data_outlet.push_chunk(send_buffer,now);
+				} else {
+					data_outlet.push_chunk(temp_buffer,now);
+				}
 
-			// optionally resample
-			if (resampler) {
-				resampler->apply_multichannel(temp_buffer,send_buffer);
-				data_outlet.push_chunk(send_buffer,now);
-			} else {
-				data_outlet.push_chunk(temp_buffer,now);
-			}
-
-			// push markers into outlet
-			int last_mrk = 0;
-			for (int s=0;s<chunkSize;s++)
-				if (int mrk=trigger_buffer[s]) {
-					if (mrk != last_mrk) {
-						std::string mrk_string = boost::lexical_cast<std::string>(mrk);
-						marker_outlet.push_sample(&mrk_string,now + (s + 1 - chunkSize)/samplingRate);
-						last_mrk = mrk;
+				// push markers into outlet
+				int last_mrk = 0;
+				for (int s=0;s<samples_read;s++) {
+					if (int mrk=trigger_buffer[s]) {
+						if (mrk != last_mrk) {
+							std::string mrk_string = boost::lexical_cast<std::string>(mrk);
+							marker_outlet.push_sample(&mrk_string,now + (s + 1 - samples_read)/samplingRate);
+							last_mrk = mrk;
+						}
 					}
 				}
+			}
 		}
 	}
 	catch(boost::thread_interrupted &) {
@@ -866,9 +896,15 @@ void MainWindow::read_thread(t_champVersion version, t_champProperty properties,
 	}
 	catch(std::exception &e) {
 		// any other error
-		QMessageBox::critical(this,"Error",(std::string("Error during processing: ")+=e.what()).c_str(),QMessageBox::Ok);
+		std::cerr << e.what() << std::endl;
 	}
-	delete recv_buffer;
+
+	if (hDevice) {
+		if (started)
+			champStop(hDevice);
+		champClose(hDevice);
+		hDevice = NULL;
+	}
 }
 
 MainWindow::~MainWindow() {

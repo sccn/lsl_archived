@@ -11,6 +11,7 @@
 #include <vector>
 
 // LSL API
+#define LSL_DEBUG_BINDINGS
 #include <lsl_cpp.h>
 
 // BrainAmp API
@@ -44,13 +45,12 @@ private slots:
     void closeEvent(QCloseEvent *ev);
 private:
     // background data reader thread
-	void read_thread(t_champVersion version, t_champProperty properties, int deviceNumber, int channelCount, int chunkSize, int samplingRate, bool useAUX, std::vector<std::string> channelLabels);
+	void read_thread(int deviceNumber, int channelCount, int chunkSize, int samplingRate, bool useAUX, bool activeShield, std::vector<std::string> channelLabels);
 
     // raw config file IO
     void load_config(const std::string &filename);
     void save_config(const std::string &filename);
 	
-	HANDLE hDevice;
 	bool stop_;											// whether the reader thread is supposed to stop
     boost::shared_ptr<boost::thread> reader_thread_;	// our reader thread
 

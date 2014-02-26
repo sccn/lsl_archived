@@ -9,6 +9,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 
+const int impedance_cycle_length = 4;				// cycle length for the impedance signal
 const int samples_per_chunk = 32;					// the chunk granularity at which we transmit data into LSL
 const double value_scale = 1000000.0/4294967296.0;	// rescaling from 32-bit integers to microvolts
 
@@ -182,7 +183,7 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int ch
 	try {
 
 		// create streaminfo
-		lsl::stream_info info("Cognionics","EEG",channelCount,samplingRate,lsl::cf_float32,"Cognionics_C" + boost::lexical_cast<std::string>(channelCount));
+		lsl::stream_info info("Cognionics","EEG",channelCount,samplingRate,lsl::cf_float32,"Cognionics_C" + boost::lexical_cast<std::string>(comPort));
 		// append some meta-data
 		lsl::xml_element channels = info.desc().append_child("channels");
 		for (int k=0;k<channelLabels.size();k++) {
@@ -210,20 +211,40 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int ch
 			WriteFile(hPort,(LPSTR)&cmd_keepimp,1,&dwBytesWritten,NULL);
 
 
-		// enter transmission loop
-		unsigned char temp;
+		unsigned char temp, cur_counter;
 		int msb, lsb2, lsb1;
 		unsigned long bytes_read;
-		while (!stop_) {
-			temp = 0;
-			// scan for the sync byte
-			while (temp != 0xFF)
-				ReadFile(hPort,&temp,1,&bytes_read,NULL);
+		int last_counter=0;
+		unsigned long sample_index=0;
+		int last_skip_index = 0;
+		int skipped_total=0;
+		std::vector<std::vector<float> > impedance_buffer(impedance_cycle_length,std::vector<float>(channelCount));
 
-			// skip the counter
+		// scan for the sync byte to find the beginning of the next sample
+		temp = 0;
+		while (temp != 0xFF)
 			ReadFile(hPort,&temp,1,&bytes_read,NULL);
 
-			// get next sample
+		// enter transmission loop
+		while (!stop_) {
+
+			// receive sample counter value
+			ReadFile(hPort,&cur_counter,1,&bytes_read,NULL);
+			
+			// determine how many samples were skipped (missed due to packet loss)
+			int samples_skipped = cur_counter-last_counter-1;
+			if (samples_skipped < 0)
+				samples_skipped += 128;
+			if (samples_skipped > 40 && sample_index>1500+last_skip_index)
+				last_skip_index = sample_index; // debug breakpoint 
+			skipped_total += samples_skipped;
+			last_counter = cur_counter;
+
+			// insert dummy samples for every skipped sample
+			for (int k=0;k<samples_skipped;k++)
+				outlet.push_sample(impedance_buffer[sample_index++ % impedance_cycle_length]);
+
+			// receive next sample
 			for(int c=0; c < channelCount; c++) {
 				ReadFile(hPort,&temp,1,&bytes_read,NULL);
 				msb = temp;
@@ -234,8 +255,20 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int ch
 				sample[c] = (double)((msb<<24) | (lsb2<<17) | (lsb1<<10)) * value_scale;
 			}
 
-			// push into the outlet
-			outlet.push_sample(sample);
+			// confirm that the sample is complete (i.e., sync byte is next)
+			ReadFile(hPort,&temp,1,&bytes_read,NULL);
+			if (temp == stripImpedance?0x11:0x10) {
+				// sample insert into impedance buffer and push into the outlet
+				impedance_buffer[sample_index++ % impedance_cycle_length] = sample;
+				outlet.push_sample(sample);
+			} else {
+				// the sample was lost, replace it by the contents of the impedance buffer
+				outlet.push_sample(impedance_buffer[sample_index++ % impedance_cycle_length]);
+			}
+			// ... and scan forward until we got the next sync byte
+			temp = 0;
+			while (temp != 0xFF)
+				ReadFile(hPort,&temp,1,&bytes_read,NULL);
 		}
 	}
 	catch(boost::thread_interrupted &e) {
