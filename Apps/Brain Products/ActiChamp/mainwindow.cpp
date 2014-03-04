@@ -786,6 +786,7 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 		lsl::stream_outlet marker_outlet(marker_info);
 			
 		// enter transmission loop		
+		int last_mrk = 0;
 		int bytes_read, samples_read;
 		while (!stop_) {
 			// read chunk into recv_buffer
@@ -878,7 +879,6 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 				}
 
 				// push markers into outlet
-				int last_mrk = 0;
 				for (int s=0;s<samples_read;s++) {
 					if (int mrk=trigger_buffer[s]) {
 						if (mrk != last_mrk) {

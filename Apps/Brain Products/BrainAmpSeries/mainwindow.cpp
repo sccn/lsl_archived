@@ -232,6 +232,7 @@ void MainWindow::read_thread(int deviceNumber, ULONG serialNumber, int impedance
 			
 		// enter transmission loop		
 		DWORD bytes_read;
+		int last_mrk = 0;
 		float scale = unit_scales[resolution];
 		while (!stop_) {
 			// read chunk into recv_buffer
@@ -246,7 +247,6 @@ void MainWindow::read_thread(int deviceNumber, ULONG serialNumber, int impedance
 				// push data chunk into the outlet
 				data_outlet.push_chunk(send_buffer,now);
 				// push markers into outlet
-				int last_mrk = 0;
 				for (int s=0;s<chunkSize;s++)
 					if (int mrk=recv_buffer[channelCount + s*(channelCount+1)]) {
 						if (mrk != last_mrk) {
