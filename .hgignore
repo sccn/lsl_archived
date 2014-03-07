@@ -9,6 +9,7 @@ syntax: glob
 *.intermediate.manifest
 *.obj
 *.dep
+*.dg
 *BuildLog.htm
 *.DS_Store
 *~

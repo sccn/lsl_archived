@@ -64,6 +64,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NODEFAULTLIB:libmmd.lib"
 				OutputFile="$(OutDir)\liblsl32-debug.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
@@ -142,6 +143,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NODEFAULTLIB:libmmd.lib"
 				OutputFile="$(OutDir)\liblsl64-debug.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\external\lib\boost-static-win64"
@@ -222,6 +224,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NODEFAULTLIB:libmmd.lib"
 				OutputFile="$(OutDir)\liblsl32.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
@@ -303,6 +306,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NODEFAULTLIB:libmmd.lib"
 				OutputFile="$(OutDir)\liblsl64.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
