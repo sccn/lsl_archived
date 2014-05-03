@@ -162,16 +162,17 @@ public:
 	double Xthickness, Ythickness, Zthickness;
 	std::list<TRectHotspot*> rectHotspots;
 
-	THotspotGrid(int location1, int location2, int location3, int Xdiv, int Zdiv, double Xthickness, double Ythickness, double Zthickness) {
-		this->location1 = location1;
-		this->location2 = location2;
-		this->location3 = location3;
-		this->Xdiv = Xdiv;
-		this->Zdiv = Zdiv;
-		this->Xthickness = Xthickness;
-		this->Ythickness = Ythickness;
-		this->Zthickness= Zthickness;
-		this->nSquares = Xdiv*Zdiv;
+	THotspotGrid(int lcation1, int lcation2, int lcation3, int Xdv,
+	 int Zdv, double Xthckness, double Ythckness, double Zthckness) :
+		  location1(lcation1),
+		  location2(lcation2),
+		  location3(lcation3),
+		  Xdiv(Xdv),
+		  Zdiv(Zdv),
+		  Xthickness(Xthckness),
+		  Zthickness(Zthckness),
+		  nSquares(Xdv*Zdv) {
+
 	}
 
 	~THotspotGrid() {

@@ -28,6 +28,26 @@ __fastcall TForm2::TForm2(TComponent* Owner)
 }
 //---------------------------------------------------------------------------
 
+void TForm2::testCircleFit() {
+	ublas::matrix<double> data(2,7);
+	data(0,0) = 0;  data(1,0) = 0;
+	data(0,1) = .5;  data(1,1) = .25;
+	data(0,2) = 1;  data(1,2) = 1;
+	data(0,3) = 1.5;  data(1,3) = 2.25;
+	data(0,4) = 2;  data(1,4) = 4;
+	data(0,5) = 2.5;  data(1,5) = 6.25;
+	data(0,6) = 3;  data(1,6) = 9;
+	//x0: -11.8393
+	//y0: 8.44643
+	//radius: 14.6864
+	double x0,y0,radius;
+	FitCircle(data,7, &x0, &y0, &radius);
+	printf("testCircleFit:\n");
+	printf("x0: %g\n", x0);
+	printf("y0: %g\n", y0);
+	printf("radius: %g\n", radius);
+}
+
 void TForm2::testEllipseFit() {
 
 	double Cx = 250;
@@ -37,7 +57,7 @@ void TForm2::testEllipseFit() {
 	double Rotation = .4;
 
   int nPoints = 50;
-  double** data = new2D<double>(2,nPoints,0.0);
+  ublas::matrix<double> data(2,nPoints);
  //  ublas::vector<double> x(nPoints);
  //  ublas::vector<double> y(nPoints);
 
@@ -65,8 +85,8 @@ void TForm2::testEllipseFit() {
 	for (int i=0; i<nPoints; i++) {
 		double tx =  Rx*cos(2*PI*i/nPoints);
 		double ty =  Ry*sin(2*PI*i/nPoints);
-		data[0][i] = i;//tx*cos(Rotation) - ty*sin(Rotation) + Cx;
-		data[1][i] = 0;//tx*sin(Rotation) + ty*cos(Rotation) + Cy;
+		data(0,i) = tx*cos(Rotation) - ty*sin(Rotation) + Cx;
+		data(1,i) = tx*sin(Rotation) + ty*cos(Rotation) + Cy;
 	}
 
 	double x0=0.0,y0=0.0,rA=0.0,rB=0.0,angle=0.0;
@@ -81,7 +101,6 @@ void TForm2::testEllipseFit() {
 	printf("rA: %g\n", rA);
 	printf("rB: %g\n", rB);
 	printf("angle: %g\n", angle);
-	delete2D(data,2);
 }
 
 
@@ -378,7 +397,7 @@ void TForm2::testEyeFit() {
 	}*/
 //}
 
-void TForm2::testCircleFit() {
+void TForm2::testCircleFitOld() {
 		int nData = 60;
 		double **x = new2D<double>(2,nData,0.0);
 		for(int i=0; i<nData; i++) {
@@ -791,7 +810,9 @@ tvec[2]: 143.858
 
 void __fastcall TForm2::FormCreate(TObject *Sender)
 {
-	testPose();
+	testCircleFit();
+	//testEllipseFit();
+	//testPose();
    //	testEPNP();
 	//testCircleFit();
 	//testCovariance2D();

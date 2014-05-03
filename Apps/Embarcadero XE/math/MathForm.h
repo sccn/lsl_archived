@@ -21,11 +21,12 @@ __published:	// IDE-managed Components
 private:	// User declarations
 public:		// User declarations
 	void testMinimize();
-	void testCircleFit();
 	void testEyeFit();
 	void testRigidFit();
 	void testCovariance2D();
 	void testEllipseFit();
+	void testCircleFit();
+	void testCircleFitOld();
 	__fastcall TForm2(TComponent* Owner);
 };
 //---------------------------------------------------------------------------

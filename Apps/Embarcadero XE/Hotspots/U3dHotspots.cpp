@@ -11,9 +11,6 @@
 #include "ScreenDialog.h"
 //---------------------------------------------------------------------------
 
-//#include "GetMMFId.h"
-
-
 #include "GazeUtil.h"
 
 #include "stdio.h"

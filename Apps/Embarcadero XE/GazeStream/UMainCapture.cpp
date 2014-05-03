@@ -17,6 +17,7 @@ Written by Matthew Grivich and Andre Vankov, Swartz Center for Computational Neu
 #include "CaptureWorkerForm.h"
 #include "Math.hpp"
 #include "StreamThread.h"
+#include <memory>
 
 
 //---------------------------------------------------------------------------
@@ -42,40 +43,15 @@ float timestamp = 0;
 #define MAX_STREAMS 200
 
 
-/*
-class TFrameStamp: public TMaxArray
-{
-	public:
-	TFrameStamp()
-	{
-		this->nMaxItems = 10;
-	}
-};
 
-TFrameStamp FrameStamp;
+std::unique_ptr<TFrameThread> frameThread;
 
-class TStimEventcode: public TMaxArray
-{
-	public:
-	TStimEventcode()
-	{
-		this->nMaxItems = 1;
-	}
-};
-
-TStimEventcode FrameNumber,Zero;
-*/
-
-TFrameThread *frameThread;
 HANDLE hMutex = 0;
 
-//HANDLE handleWr1 = 0;
-//HANDLE handleWrScene = 0;
-//HANDLE handleWrVideo = 0;
-//HANDLE handleRd = 0;
+
 lsl_outlet outlet = 0;
 lsl_outlet videoFrameOutlet = 0;
-TStreamThread *gazestreamThread = 0;
+std::unique_ptr<TStreamThread> gazestreamThread;
 
 BITMAP * bmpCanvas = NULL;		// User declarations
 
@@ -119,22 +95,17 @@ void __fastcall TMainCaptureForm::FormCreate(TObject *Sender)
 	//	_control87(MCW_EM, MCW_EM);  //Turn off FPU generated floating point exceptions. Threads still fail however.
 	_control87( 0x1372, 0x137F ); //turns on dialog exceptions, but not in TThread. Exceptions in TThread cause the thread to die.
 
+	pBmpRec = boost::shared_ptr<Graphics::TBitmap>(new Graphics::TBitmap);
+	pBmpRec->LoadFromFile("Rec.bmp");
 
-	pBmpRec=new Graphics::TBitmap;
-	pBmpRec-> LoadFromFile("Rec.bmp");
-	pBmpRecGr=new Graphics::TBitmap;
+	pBmpRecGr = boost::shared_ptr<Graphics::TBitmap>(new Graphics::TBitmap);
 	pBmpRecGr-> LoadFromFile("Rec-gr.bmp");
-	pBmpPau=new Graphics::TBitmap;
-	pBmpPau->LoadFromFile("Pau.bmp");
-	pBmpPauGr=new Graphics::TBitmap;
-	pBmpPauGr->LoadFromFile("Pau-gr.bmp");
 
 	//set default output folder to c:\Users\currentUser\Desktop\capture
 	char pathC[MAX_PATH];
 	SHGetSpecialFolderPath(NULL, pathC, CSIDL_DESKTOP, 1);
 	edOutput->Text = UnicodeString(pathC) + "\\capture";
 
-	frameThread = NULL;
 	hMutex = CreateMutex(0,false,0);
 	BitBtnStop->Enabled = false;
 	nOutlinesEditChange(this);
@@ -149,8 +120,8 @@ void __fastcall TMainCaptureForm::FormCreate(TObject *Sender)
 	cbSceneCalibColorChange(this);
 	cbReferenceCalibColorChange(this);
 	numberOfMarkersEditChange(this);
-	gu = new TGazeUtil();
 
+	gu = boost::shared_ptr<TGazeUtil>(new TGazeUtil());
 
 	allegro_init();
 	set_gdi_color_format();
@@ -240,23 +211,23 @@ void __fastcall TMainCaptureForm::cbVideoInputFormatChange(TObject *Sender)
 			lsl_destroy_outlet(videoFrameOutlet);
 			videoFrameOutlet = NULL;
 		}
-		char * streamName = (AnsiString("VideoFrames_") + AnsiString(IdentifierEdit->Text)).c_str();
-		lsl_streaminfo info = lsl_create_streaminfo(streamName,"VideoRaw",acqWidth*acqHeight*3,0,cft_int8,"1e5f8b95-68cf-418c-8538-45e05ad791df");
-		char s[20];
-		lsl_xml_ptr desc = lsl_get_desc(info);
-		lsl_xml_ptr chn = lsl_append_child(desc, "encoding");
-		sprintf(s, "%d", acqWidth);
-		lsl_append_child_value(chn,"width",s);
-		sprintf(s, "%d", acqHeight);
-		lsl_append_child_value(chn,"height",s);
-		lsl_append_child_value(chn,"color_channels","3");
-		lsl_append_child_value(chn,"color_format","RGB");
-		lsl_append_child_value(chn,"color_space","sRGB");
-		lsl_append_child_value(chn,"codec","RAW");
+		if(enableFrameSending->Checked == true) {
+			char * streamName = (AnsiString("VideoFrames_") + AnsiString(IdentifierEdit->Text)).c_str();
+			lsl_streaminfo info = lsl_create_streaminfo(streamName,"VideoRaw",acqWidth*acqHeight*3,0,cft_int8,"1e5f8b95-68cf-418c-8538-45e05ad791df");
+			char s[20];
+			lsl_xml_ptr desc = lsl_get_desc(info);
+			lsl_xml_ptr chn = lsl_append_child(desc, "encoding");
+			sprintf(s, "%d", acqWidth);
+			lsl_append_child_value(chn,"width",s);
+			sprintf(s, "%d", acqHeight);
+			lsl_append_child_value(chn,"height",s);
+			lsl_append_child_value(chn,"color_channels","3");
+			lsl_append_child_value(chn,"color_format","RGB");
+			lsl_append_child_value(chn,"color_space","sRGB");
+			lsl_append_child_value(chn,"codec","RAW");
 
-
-
-		videoFrameOutlet = lsl_create_outlet(info,0,360);
+			videoFrameOutlet = lsl_create_outlet(info,0,360);
+		}
 	}
 
 }
@@ -277,9 +248,7 @@ void __fastcall TMainCaptureForm::btStopClick(TObject *Sender)
 	cbRecord->Enabled =true;
 
 	frameThread->Terminate();
-	delete frameThread; //will not delete till terminated, by VCL design.
-	frameThread = NULL;
-
+	frameThread.reset(); //will not delete till terminated, by VCL design.
 
 	nFrames = 0;
 
@@ -357,34 +326,6 @@ void __fastcall TMainCaptureForm::Start()
 }
 
 
-
-void __fastcall TMainCaptureForm::FormDestroy(TObject *Sender)
-{
-
-	if(outlet) {
-		lsl_destroy_outlet(outlet);
-		outlet = NULL;
-	}
-	if(gazestreamThread) {
-		gazestreamThread->Terminate();
-		delete gazestreamThread;
-		gazestreamThread = NULL;
-	}
-
-	if(videoFrameOutlet) {
-		lsl_destroy_outlet(videoFrameOutlet);
-		videoFrameOutlet = NULL;
-	}
-
-	if(gu)
-		delete gu;
-
-
-
-}
-
-
-
 enum TKind {isEye,isSceneCalib,isScene, isVideo, isSceneMultiCalib} ;
 TKind isKind = -1;
 enum SceneCalibColor {RED, GREEN, BLUE, WHITE};
@@ -415,14 +356,14 @@ void drawEllipse(BITMAP *bmp, double x0, double y0, double rA, double rB, double
 
 }
 
-list<TOutline*> TMainCaptureForm::findLargestOutlines(BITMAP *aBmp, boolean above,
+list<boost::shared_ptr<TOutline> >  TMainCaptureForm::findLargestOutlines(BITMAP *aBmp, boolean above,
 	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint, int nOutlinesToFind) {
 
 		int subsampling = SubsamplingEdit->Text.ToIntDef(10);
 		int subWidth = (tbRightPosition - tbLeftPosition) /subsampling;
 		int subHeight = (tbLowerPosition - tbUpperPosition)/subsampling;
 		if(subWidth <=0 || subHeight <=0) {
-			list<TOutline*> emptyList;
+			list<boost::shared_ptr<TOutline> > emptyList;
 			return emptyList;
 		}
 		unsigned char ** subsampled = new2D<unsigned char>(subWidth, subHeight, 0);
@@ -447,16 +388,16 @@ list<TOutline*> TMainCaptureForm::findLargestOutlines(BITMAP *aBmp, boolean abov
 				bool isGood;
 				switch(referenceCalibColor) {
 					case RED:
-						isGood = 255*red/(blue+green+red+.01) >= crThreshold->Position && red >= crThreshold->Position;
+						isGood = (255*red)/(blue+green+red+1) >= crThreshold->Position && red >= crThreshold->Position;
 						break;
 					case GREEN:
-						isGood = 255*green/(blue+green+red+.01) >= crThreshold->Position && green >= crThreshold->Position;
+						isGood = (255*green)/(blue+green+red+1) >= crThreshold->Position && green >= crThreshold->Position;
 						break;
 					case BLUE:
-						isGood = 255*blue/(blue+green+red+.01) >= crThreshold->Position && blue >= crThreshold->Position;
+						isGood = (255*blue)/(blue+green+red+1) >= crThreshold->Position && blue >= crThreshold->Position;
 						break;
 					case WHITE:
-						isGood = (blue+green+red) / 3.0 >= crThreshold->Position;
+						isGood = (blue+green+red) / 3 >= crThreshold->Position;
 						break;
 
 				}
@@ -478,8 +419,10 @@ list<TOutline*> TMainCaptureForm::findLargestOutlines(BITMAP *aBmp, boolean abov
 
 			}
 		}
+
 		//find outlines
-		list<TOutline*> outlines;
+
+		list<boost::shared_ptr<TOutline> > outlines;
 	   //	TOutline *largestOutline = new TOutline(subWidth, subHeight);
 		for(int y=0; y<subHeight; y++) {
 			int inSpot = 0;
@@ -490,13 +433,13 @@ list<TOutline*> TMainCaptureForm::findLargestOutlines(BITMAP *aBmp, boolean abov
 				inSpot = mask[x][y] + inSpot;
 				if(inSpot == 0) {
 					if(subsampled[x][y] == 1) {
-						TOutline *outline = new TOutline(subWidth, subHeight);
+						boost::shared_ptr<TOutline> outline(new TOutline(subWidth, subHeight));
 						int nPointsInSpot = outline->findOutline((const unsigned char **) subsampled, mask,x, y, bmpCanvas->line);
 				//		outline->drawSpot(bmpCanvas->line, mask); for testing purposes
-						list<TOutline*>::iterator i = outlines.begin();
+						list<boost::shared_ptr<TOutline> >::iterator i = outlines.begin();
 						int position = 0;
 
-						while(i!= outlines.end() && ((TOutline*) (*i))->getNumberOfPoints() > nPointsInSpot) {
+						while(i!= outlines.end() && ((boost::shared_ptr<TOutline>) (*i))->getNumberOfPoints() > nPointsInSpot) {
 								++i;
 								++position;
 							}
@@ -510,12 +453,8 @@ list<TOutline*> TMainCaptureForm::findLargestOutlines(BITMAP *aBmp, boolean abov
 							if(!_isnan(outline->eccentricity) && outline->eccentricity < maxEccentricity
 									&& !_isnan(outline->r)) {
 								outlines.insert(i, outline);
-							} else {
-								delete outline;
 							}
 
-						} else {
-							delete outline;
 						}
 						inSpot++;
 					}
@@ -525,7 +464,6 @@ list<TOutline*> TMainCaptureForm::findLargestOutlines(BITMAP *aBmp, boolean abov
 		}
 
 		while(outlines.size() > nOutlinesToFind) {
-			delete outlines.back();
 			outlines.pop_back();
 		}
 
@@ -534,14 +472,14 @@ list<TOutline*> TMainCaptureForm::findLargestOutlines(BITMAP *aBmp, boolean abov
 		return outlines;
 }
 
-TOutline* TMainCaptureForm::findLargestOutline(BITMAP *aBmp, boolean above,
+boost::shared_ptr<TOutline> TMainCaptureForm::findLargestOutline(BITMAP *aBmp, boolean above,
 	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint) {
 
 		int subsampling = SubsamplingEdit->Text.ToIntDef(10);
 		int subWidth = (tbRightPosition - tbLeftPosition) /subsampling;
 		int subHeight = (tbLowerPosition - tbUpperPosition)/subsampling;
 		if(subWidth <=0 || subHeight <=0) {
-			return new TOutline(subWidth, subHeight);
+			return boost::shared_ptr<TOutline>(new TOutline(subWidth, subHeight));
 		}
 		unsigned char ** subsampled = new2D<unsigned char>(subWidth, subHeight, 0);
 		signed char ** mask = new2D<signed char>(subWidth, subHeight, 0);
@@ -565,16 +503,16 @@ TOutline* TMainCaptureForm::findLargestOutline(BITMAP *aBmp, boolean above,
 					bool isGood;
 					switch(sceneCalibColor) {
 						case RED:
-							isGood = 255*red/(blue+green+red+.01) >= tbThreshold->Position && red >= tbThreshold->Position;
+							isGood = (255*red)/(blue+green+red+1) >= tbThreshold->Position && red >= tbThreshold->Position;
 							break;
 						case GREEN:
-							isGood = 255*green/(blue+green+red+.01) >= tbThreshold->Position && green >= tbThreshold->Position;
+							isGood = (255*green)/(blue+green+red+1) >= tbThreshold->Position && green >= tbThreshold->Position;
 							break;
 						case BLUE:
-							isGood = 255*blue/(blue+green+red+.01) >= tbThreshold->Position && blue >= tbThreshold->Position;
+							isGood = (255*blue)/(blue+green+red+1) >= tbThreshold->Position && blue >= tbThreshold->Position;
 							break;
 						case WHITE:
-							isGood = (blue+green+red) / 3.0 >= tbThreshold->Position;
+							isGood = (blue+green+red) / 3 >= tbThreshold->Position;
 							break;
 
 					}
@@ -640,7 +578,7 @@ TOutline* TMainCaptureForm::findLargestOutline(BITMAP *aBmp, boolean above,
 		//find outlines
 		int pointsInLargest = 0;
 		int nOutlines = 0;
-		TOutline *largestOutline = new TOutline(subWidth, subHeight);
+		boost::shared_ptr<TOutline> largestOutline(new TOutline(subWidth, subHeight));
 		for(int y=0; y<subHeight; y++) {
 			int inSpot = 0;
 			for(int x=0; x<subWidth; x++) {
@@ -650,7 +588,7 @@ TOutline* TMainCaptureForm::findLargestOutline(BITMAP *aBmp, boolean above,
 				inSpot = mask[x][y] + inSpot;
 				if(inSpot == 0) {
 					if(subsampled[x][y] == 1) {
-						TOutline *outline = new TOutline(subWidth, subHeight);
+						boost::shared_ptr<TOutline> outline(new TOutline(subWidth, subHeight));
 						nOutlines++;
 						int nPointsInSpot = outline->findOutline((const unsigned char **) subsampled, mask,x, y, bmpCanvas->line);
 				//		outline->drawSpot(bmpCanvas->line, mask); for testing purposes
@@ -663,14 +601,8 @@ TOutline* TMainCaptureForm::findLargestOutline(BITMAP *aBmp, boolean above,
 							if(!_isnan(outline->eccentricity) && outline->eccentricity < maxEccentricity
 									&& !_isnan(outline->r)) {
 								pointsInLargest = nPointsInSpot;
-								delete largestOutline;
 								largestOutline = outline;
-							} else {
-								delete outline;
 							}
-
-						} else {
-							delete outline;
 						}
 						inSpot++;
 					}
@@ -690,8 +622,8 @@ TOutline* TMainCaptureForm::findLargestOutline(BITMAP *aBmp, boolean above,
 		return largestOutline;
 }
 
-
-void TMainCaptureForm::fitCircle(BITMAP *aBmp, TOutline *largestOutline, double *x0, double *y0, double *radius, double crX0, double crY0, double crRadius, boolean above,
+ /*
+void TMainCaptureForm::fitCircle(BITMAP *aBmp, boost::shared_ptr<TOutline> largestOutline, double *x0, double *y0, double *radius, double crX0, double crY0, double crRadius, boolean above,
 	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint) {
 
 		int subsampling = SubsamplingEdit->Text.ToIntDef(10);
@@ -702,17 +634,18 @@ void TMainCaptureForm::fitCircle(BITMAP *aBmp, TOutline *largestOutline, double 
 		double * y = new1D<double>(largestOutline->nPointsMinusCR, 0.0);
 		double * sig = new1D<double>(largestOutline->nPointsMinusCR, 1.0);
  //		largestOutline->drawOutline(bmpCanvas->line,x,largestOutline->getNumberOfPoints()); for testing purposes
-		Fitter *fit = new Fitter();
+		boost::shared_ptr<Fitter> fit(new Fitter());
 		//reduce dropped frames due to perverse distibutions.  Typically less than 10 iterations are needed.
 		fit->maxIterations = 50;
-		CircleFunction *f = NULL;
+		boost::shared_ptr<CircleFunction> f;
+	   //	CircleFunction *f = NULL;
 
 		*x0 = *y0 = *radius = NAN; // will be returned if fit fails
 		try {
 			if(largestOutline->nPointsMinusCR > 5) {
 
-				f = new CircleFunction(largestOutline->x0, largestOutline->y0, largestOutline->r);
-				fit->fit(f,x,y,sig,2,largestOutline->nPointsMinusCR);
+				f= boost::shared_ptr<CircleFunction> (new CircleFunction(largestOutline->x0, largestOutline->y0, largestOutline->r));
+				fit->fit(f.get(),x,y,sig,2,largestOutline->nPointsMinusCR);
 
 				double *pOut = fit->getParameters();
 				*x0 = pOut[0]*subsampling+xOffset;
@@ -738,20 +671,60 @@ void TMainCaptureForm::fitCircle(BITMAP *aBmp, TOutline *largestOutline, double 
 		delete2D(x, 2);
 		delete1D(y);
 		delete1D(sig);
-		delete fit;
-		delete f;
-		delete largestOutline;
+
 
 	}
-
- void TMainCaptureForm::fitEllipse(BITMAP *aBmp, TOutline *largestOutline, double *x0, double *y0, double *radiusA, double *radiusB, double *angle, double crX0, double crY0, double crRadius, boolean above,
+ */
+void TMainCaptureForm::fitCircle(BITMAP *aBmp, boost::shared_ptr<TOutline> largestOutline, double *x0, double *y0, double *radius, double crX0, double crY0, double crRadius, boolean above,
 	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint) {
 
 		int subsampling = SubsamplingEdit->Text.ToIntDef(10);
 		int xOffset = subsampling/2+tbLeftPosition;
 		int yOffset =  subsampling/2+tbUpperPosition;
 
-		double ** x = largestOutline->createDataForFit((crX0-xOffset)/subsampling, (crY0-yOffset)/subsampling, crRadius/subsampling);
+		ublas::matrix<double> x = largestOutline->createMatrixForFit((crX0-xOffset)/subsampling, (crY0-yOffset)/subsampling, crRadius/subsampling);
+
+		*x0 = *y0 = *radius = NAN; // will be returned if fit fails
+		try {
+			if(largestOutline->nPointsMinusCR > 5) {
+				double xc, yc, r;
+				FitCircle(x, largestOutline->nPointsMinusCR, &xc,&yc,&r);
+				xc = xc*subsampling + xOffset;
+				yc = yc*subsampling + yOffset;
+				r = r*subsampling;
+
+				*x0 = xc;
+				*y0 = yc;
+				*radius = r;
+
+				if(above) {
+					*radius *= crRadiusMultiplier;
+					if(*radius > crRadiusMax) *radius = crRadiusMax;
+				}
+				if(paint) {
+					if(above)
+						circle(bmpCanvas, *x0/spatialDivisor, *y0/spatialDivisor, *radius/spatialDivisor, makecol(0,255,0));
+					else
+						circle(bmpCanvas,*x0/spatialDivisor, *y0/spatialDivisor, *radius/spatialDivisor, makecol(255,0,0));
+				}
+			}
+		} catch (exception& ex) {
+ //			printf("caught umaincapture\n");
+ //			printf("exception: %s\n", ex.what());
+
+		}
+
+
+	}
+
+ void TMainCaptureForm::fitEllipse(BITMAP *aBmp, boost::shared_ptr<TOutline> largestOutline, double *x0, double *y0, double *radiusA, double *radiusB, double *angle, double crX0, double crY0, double crRadius, boolean above,
+	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint) {
+
+		int subsampling = SubsamplingEdit->Text.ToIntDef(10);
+		int xOffset = subsampling/2+tbLeftPosition;
+		int yOffset =  subsampling/2+tbUpperPosition;
+
+		ublas::matrix<double> x = largestOutline->createMatrixForFit((crX0-xOffset)/subsampling, (crY0-yOffset)/subsampling, crRadius/subsampling);
 
  //		largestOutline->drawOutline(bmpCanvas->line,x,largestOutline->getNumberOfPoints()); for testing purposes
 
@@ -838,10 +811,6 @@ void TMainCaptureForm::fitCircle(BITMAP *aBmp, TOutline *largestOutline, double 
  //			printf("exception: %s\n", ex.what());
 
 		}
-		delete2D(x, 2);
-
-		delete largestOutline;
-
  }
 
 double xScene = 0.0;
@@ -929,7 +898,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		sample[sampleIndex++] = nFrames;
 		sample[sampleIndex++] = numberOfMarkers;
 		double x0, y0, radius;
-		TOutline* largestOutline =  findLargestOutline(aBmp, true,
+		boost::shared_ptr<TOutline> largestOutline =  findLargestOutline(aBmp, true,
 			crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint);
 
 			fitCircle(aBmp, largestOutline, &x0, &y0, &radius, 0.0, 0.0, 0.0, true,
@@ -939,14 +908,14 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		sample[sampleIndex++] = y0;
 
 
-		list<TOutline*> outlines =  findLargestOutlines(aBmp, true,
+	   	list<boost::shared_ptr<TOutline> > outlines =  findLargestOutlines(aBmp, true,
 			crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint, nOutlinesToFind);
 
-		for(std::list<TOutline*>::iterator outlineIterator = outlines.begin(); outlineIterator != outlines.end(); ++outlineIterator) {
-			TOutline *pOutline = *outlineIterator;
+		for(std::list<boost::shared_ptr<TOutline> >::iterator outlineIterator = outlines.begin(); outlineIterator != outlines.end(); ++outlineIterator) {
 
+			boost::shared_ptr<TOutline> pOutline(*outlineIterator);
 			fitCircle(aBmp, pOutline, &x0, &y0, &radius, 0.0, 0.0, 0.0, true,
-				crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint);
+		  		crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint);
 			sample[sampleIndex++] = x0;
 			sample[sampleIndex++] = y0;
 
@@ -985,7 +954,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		double x0, y0, radius;
 //		findAndFitCircle(aBmp, &x0, &y0, &radius, 0.0,0.0,0.0, true,crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint);
 
-		TOutline* largestOutline =  findLargestOutline(aBmp, true,
+		boost::shared_ptr<TOutline> largestOutline =  findLargestOutline(aBmp, true,
 			crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint);
 
 		fitCircle(aBmp, largestOutline, &x0, &y0, &radius, 0.0, 0.0, 0.0, true,
@@ -1123,7 +1092,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		double radiusA = 0.0, radiusB = 0.0, angle = 0.0;
 		double crX0 = 0.0, crY0 = 0.0, crRadius = 0.0;
 		//find cornea reflection
-		TOutline* largestOutline =  findLargestOutline(aBmp, true,
+		boost::shared_ptr<TOutline> largestOutline =  findLargestOutline(aBmp, true,
 			crRoiLeftPosition, crRoiRightPosition, crRoiBottomPosition, crRoiTopPosition, paint);
 
 		fitCircle(aBmp, largestOutline, &crX0, &crY0, &crRadius, NAN, NAN, NAN, true,
@@ -1217,7 +1186,7 @@ void __fastcall TMainCaptureForm::cbRecordClick(TObject *Sender)
 {
 	nFrames=0;
 	edFrame->Text = nFrames;
-	BitBtnPlay->Glyph = cbRecord->Checked ? pBmpRec:pBmpRecGr;
+	BitBtnPlay->Glyph = cbRecord->Checked ? pBmpRec.get():pBmpRecGr.get();
 }
 
 
@@ -1232,7 +1201,8 @@ void __fastcall TMainCaptureForm::BitBtnPlayClick(TObject *Sender)
 	cbAudioInputDevice->Enabled = false;
 
 	Start();
-	frameThread = new TFrameThread(this, bmpQueue, hMutex, false);
+
+	frameThread = std::unique_ptr<TFrameThread>(new TFrameThread(this, bmpQueue, hMutex, false));
 	BitBtnStop->Enabled=true;
 	BitBtnPlay->Enabled=false;
 
@@ -1276,8 +1246,7 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 
 	if(gazestreamThread) {
 		gazestreamThread->Terminate();
-		delete gazestreamThread;
-		gazestreamThread = NULL;
+		gazestreamThread.reset();
 	}
 	//eye camera
 	if (RadioGroup1->ItemIndex==0)
@@ -1291,29 +1260,35 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,6,30,cft_float32,generateGUID());
 
 		lsl_xml_ptr desc = lsl_get_desc(info);
-		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","frame");
+		lsl_xml_ptr chnls = lsl_append_child(desc, "channels");
+
+		lsl_xml_ptr chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","frame");
 		lsl_append_child_value(chn,"unit","number");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","pupil position x");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","pupil position x");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","pupil position y");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","pupil position y");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","pupil radius A");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","pupil radius A");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","pupil radius B");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","pupil radius B");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","pupil angle");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","pupil angle");
 		lsl_append_child_value(chn,"unit","radians");
+
+		lsl_xml_ptr sync = lsl_append_child(desc, "synchronization");
+		lsl_append_child_value(sync, "can_drop_samples", "true");
+
 		outlet = lsl_create_outlet(info,0,360);
 
 
@@ -1338,32 +1313,36 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 		char * streamName = (AnsiString("SceneCalibrateStream_") + AnsiString(IdentifierEdit->Text)).c_str();
 		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,2 + numberOfMarkers*2,30,cft_float32,generateGUID());
 		lsl_xml_ptr desc = lsl_get_desc(info);
-		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","frame");
+		lsl_xml_ptr chnls = lsl_append_child(desc, "channels");
+
+		lsl_xml_ptr chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","frame");
 		lsl_append_child_value(chn,"unit","number");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","reference marker count");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","reference marker count");
 		lsl_append_child_value(chn,"unit","count");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","scene position x");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","scene position x");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","scene position y");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","scene position y");
 		lsl_append_child_value(chn,"unit","pixels");
 
 		for(int i=0; i<numberOfMarkers; i++) {
-			chn = lsl_append_child(desc, "channels");
-			lsl_append_child_value(chn, "name","reference position x");
+			chn = lsl_append_child(chnls, "channel");
+			lsl_append_child_value(chn, "label","reference position x");
 			lsl_append_child_value(chn,"unit","pixels");
 
-			chn = lsl_append_child(desc, "channels");
-			lsl_append_child_value(chn, "name","reference position y");
+			chn = lsl_append_child(chnls, "channel");
+			lsl_append_child_value(chn, "label","reference position y");
 			lsl_append_child_value(chn,"unit","pixels");
 		}
 
+		lsl_xml_ptr sync = lsl_append_child(desc, "synchronization");
+		lsl_append_child_value(sync, "can_drop_samples", "true");
 
 		outlet = lsl_create_outlet(info,0,360);
 
@@ -1381,64 +1360,67 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 		char * streamName = (AnsiString("SceneStream_") + AnsiString(IdentifierEdit->Text)).c_str();
 		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,13,30,cft_float32,generateGUID());
 		lsl_xml_ptr desc = lsl_get_desc(info);
-		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","frame");
+		lsl_xml_ptr chnls = lsl_append_child(desc, "channels");
+
+		lsl_xml_ptr chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","frame");
 		lsl_append_child_value(chn,"unit","number");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","pupil position x");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","pupil position x");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","pupil position y");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","pupil position y");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","screen position x");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","screen position x");
 		lsl_append_child_value(chn,"unit","x/monitorWidth");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","screen position y");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","screen position y");
 		lsl_append_child_value(chn,"unit","y/monitorHeight");
 
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","pupil radius A");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","pupil radius A");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","pupil radius B");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","pupil radius B");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","pupil angle");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","pupil angle");
 		lsl_append_child_value(chn,"unit","radians");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","scene position x");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","scene position x");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","scene position y");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","scene position y");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","parallax correction x");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","parallax correction x");
 		lsl_append_child_value(chn,"unit","pixels");
 
-		chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","parallax correction y");
+		chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","parallax correction y");
 		lsl_append_child_value(chn,"unit","pixels");
+
+		lsl_xml_ptr sync = lsl_append_child(desc, "synchronization");
+		lsl_append_child_value(sync, "can_drop_samples", "true");
 
 		outlet = lsl_create_outlet(info,0,360);
 		streamName = (AnsiString("type='GazeStream_") + AnsiString(IdentifierEdit->Text) + AnsiString("'")).c_str();
 
-			gazestreamThread = new TStreamThread(streamName);
-	   //	gazestreamThread = new TStreamThread("type='GazeStream'");
+		gazestreamThread = std::unique_ptr<TStreamThread>(new TStreamThread(streamName));
 
 
 	}
-//	RadioGroup1->Enabled=false;
 
 
 }
@@ -1452,8 +1434,7 @@ void TMainCaptureForm::SetToVideoMode() {
 
 		if(gazestreamThread) {
 			gazestreamThread->Terminate();
-			delete gazestreamThread;
-			gazestreamThread = NULL;
+			gazestreamThread.reset();
 		}
 
 		isKind = isVideo;
@@ -1472,9 +1453,13 @@ void TMainCaptureForm::SetToVideoMode() {
 		char * streamName = (AnsiString("VideoStream_") + AnsiString(IdentifierEdit->Text)).c_str();
 		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,1,30,cft_int32,"");
 		lsl_xml_ptr desc = lsl_get_desc(info);
-		lsl_xml_ptr chn = lsl_append_child(desc, "channels");
-		lsl_append_child_value(chn, "name","frame");
+		lsl_xml_ptr chnls = lsl_append_child(desc, "channels");
+		lsl_xml_ptr chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","frame");
 		lsl_append_child_value(chn,"unit","number");
+
+		lsl_xml_ptr sync = lsl_append_child(desc, "synchronization");
+		lsl_append_child_value(sync, "can_drop_samples", "true");
 
 		outlet = lsl_create_outlet(info,0,360);
 
@@ -1488,18 +1473,30 @@ void __fastcall TMainCaptureForm::FormClose(TObject *Sender, TCloseAction &Actio
 	if(BitBtnStop->Enabled) btStopClick(this);
 	if(frameThread) {
 		frameThread->Terminate();
-		delete frameThread; //will not delete till terminated, by VCL design.
-		frameThread = NULL;
+		frameThread.reset(); //will not delete till terminated, by VCL design.
+
 	}
 
-	delete pBmpRec;
-	delete pBmpRecGr;
-	delete pBmpPau;
-	delete pBmpPauGr;
 	if(bmpCanvas) {
 		destroy_bitmap(bmpCanvas);
 		bmpCanvas = NULL;
 	}
+
+	if(outlet) {
+		lsl_destroy_outlet(outlet);
+		outlet = NULL;
+	}
+	if(gazestreamThread) {
+		gazestreamThread->Terminate();
+		gazestreamThread.reset();
+	}
+
+	if(videoFrameOutlet) {
+		lsl_destroy_outlet(videoFrameOutlet);
+		videoFrameOutlet = NULL;
+	}
+
+
 
 }
 //---------------------------------------------------------------------------
@@ -1693,7 +1690,9 @@ void __fastcall TMainCaptureForm::cbReferenceCalibColorChange(TObject *Sender)
 void __fastcall TMainCaptureForm::IdentifierEditChange(TObject *Sender)
 {
 	if(BitBtnStop->Enabled) btStopClick(this);
-      RadioGroup1Click(this);
+	enableFrameSendingClick(this);
+	if(isKind != isVideo) RadioGroup1Click(this);
+	else SetToVideoMode();
 }
 //---------------------------------------------------------------------------
 
@@ -1709,7 +1708,8 @@ void __fastcall TMainCaptureForm::numberOfMarkersEditChange(TObject *Sender)
 
 	if(!ex) {
 		numberOfMarkers = numberOfMarkersEdit->Text.ToInt();
-		RadioGroup1Click(this);
+		if(	isKind != isVideo) RadioGroup1Click(this);
+		else SetToVideoMode();
 	}
 }
 //---------------------------------------------------------------------------
@@ -1737,6 +1737,34 @@ void __fastcall TMainCaptureForm::RefreshStreamsButtonClick(TObject *Sender)
 	}
 
 
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainCaptureForm::enableFrameSendingClick(TObject *Sender)
+{
+
+	if(videoFrameOutlet) {
+		lsl_destroy_outlet(videoFrameOutlet);
+		videoFrameOutlet = NULL;
+	}
+	if(enableFrameSending->Checked == true) {
+		char * streamName = (AnsiString("VideoFrames_") + AnsiString(IdentifierEdit->Text)).c_str();
+		lsl_streaminfo info = lsl_create_streaminfo(streamName,"VideoRaw",acqWidth*acqHeight*3,0,cft_int8,"1e5f8b95-68cf-418c-8538-45e05ad791df");
+		char s[20];
+		lsl_xml_ptr desc = lsl_get_desc(info);
+		lsl_xml_ptr chn = lsl_append_child(desc, "encoding");
+		sprintf(s, "%d", acqWidth);
+		lsl_append_child_value(chn,"width",s);
+		sprintf(s, "%d", acqHeight);
+		lsl_append_child_value(chn,"height",s);
+		lsl_append_child_value(chn,"color_channels","3");
+		lsl_append_child_value(chn,"color_format","RGB");
+		lsl_append_child_value(chn,"color_space","sRGB");
+		lsl_append_child_value(chn,"codec","RAW");
+
+		videoFrameOutlet = lsl_create_outlet(info,0,360);
+	}
 
 }
 //---------------------------------------------------------------------------

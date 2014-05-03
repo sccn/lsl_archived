@@ -21,6 +21,7 @@
 #include <XMLIntf.hpp>
 #include "GazeUtil.h"
 #include "TOutline.h"
+#include <boost/shared_ptr.hpp>
 
 #ifdef _DEBUG
 	#undef _DEBUG  //prevent loading of debug version of library.
@@ -29,7 +30,6 @@
 #else
 	#include "lsl_c.h"
 #endif
-
 
 //---------------------------------------------------------------------------
 
@@ -112,11 +112,11 @@ __published:	// IDE-managed Components
 	TCheckBox *sendFrameCheckbox;
 	TComboBox *FrameComboBox;
 	TButton *RefreshStreamsButton;
+	TCheckBox *enableFrameSending;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall cbVideoInputDeviceChange(TObject *Sender);
 	void __fastcall cbVideoInputFormatChange(TObject *Sender);
 	void __fastcall btStopClick(TObject *Sender);
-	void __fastcall FormDestroy(TObject *Sender);
 
 	/**
 	 * Start recording video.
@@ -153,13 +153,11 @@ __published:	// IDE-managed Components
 	void __fastcall numberOfMarkersEditChange(TObject *Sender);
 	void __fastcall FrameComboBoxChange(TObject *Sender);
 	void __fastcall RefreshStreamsButtonClick(TObject *Sender);
+	void __fastcall enableFrameSendingClick(TObject *Sender);
 
 private:	// User declarations
 	void __fastcall TMainCaptureForm::Start();
-	Graphics::TBitmap *pBmpRec;
-	Graphics::TBitmap *pBmpPau;
-	Graphics::TBitmap *pBmpRecGr;
-	Graphics::TBitmap *pBmpPauGr;
+	boost::shared_ptr<Graphics::TBitmap> pBmpRec, pBmpRecGr;
 
 	queue<BITMAP*> bmpQueue;
 	double crRadiusMultiplier;
@@ -168,16 +166,16 @@ private:	// User declarations
 	int nOutlinesDesired;
 public:		// User declarations
 
-TOutline* findLargestOutline(BITMAP *aBmp, boolean above,
+boost::shared_ptr<TOutline> findLargestOutline(BITMAP *aBmp, boolean above,
 	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint);
 
-list<TOutline*> findLargestOutlines(BITMAP *aBmp, boolean above,
+list<boost::shared_ptr<TOutline> > findLargestOutlines(BITMAP *aBmp, boolean above,
 	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint, int count);
 
-void fitCircle(BITMAP *aBmp, TOutline *largestOutline, double *x0, double *y0, double *radius, double crX0, double crY0, double crRadius, boolean above,
+void fitCircle(BITMAP *aBmp, boost::shared_ptr<TOutline> largestOutline, double *x0, double *y0, double *radius, double crX0, double crY0, double crRadius, boolean above,
 	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint);
 
-void fitEllipse(BITMAP *aBmp, TOutline *largestOutline, double *x0, double *y0, double *radiusA, double *radiusB, double *angle, double crX0, double crY0, double crRadius, boolean above,
+void fitEllipse(BITMAP *aBmp, boost::shared_ptr<TOutline> largestOutline, double *x0, double *y0, double *radiusA, double *radiusB, double *angle, double crX0, double crY0, double crRadius, boolean above,
 	int tbLeftPosition, int tbRightPosition, int tbLowerPosition, int tbUpperPosition, bool paint);
 	/**
 	 * Find at fit a circle in the image. Used for tracking the eye, the
@@ -201,8 +199,9 @@ void fitEllipse(BITMAP *aBmp, TOutline *largestOutline, double *x0, double *y0, 
 	 */
 	void __fastcall DoFrame(BITMAP *aBmp);
 	__fastcall TMainCaptureForm(TComponent* Owner);
-	TGazeUtil *gu;
 
+	boost::shared_ptr<TGazeUtil> gu;
+	
 	std::list<ds_Ellipse> storedPupils;//x0,y0,a,b,angle
 };
 //---------------------------------------------------------------------------

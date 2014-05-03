@@ -143,7 +143,13 @@ ublas::matrix<double> inverse(ublas::matrix<double> TB);
  * Maurizio Pilu, Robert Fisher. Pattern Analysis and Machine Intelligence, 1999.
  * Based on code samples (Matlab and Java) at http://homepages.inf.ed.ac.uk/cgi/rbf/CVONLINE/entries.pl?TAG384
  */
-void FitEllipse(double **data, int nPoints, double *x0, double *y0, double *rA, double *rB, double *angle);
+void FitEllipse(ublas::matrix<double> data, int nPoints, double *x0, double *y0, double *rA, double *rB, double *angle);
+
+/**
+ * Fit an ellipse, using Least Squares Method by R. Bullock.
+ * http://www.dtcenter.org/met/users/docs/write_ups/circle_fit.pdf
+ */
+void FitCircle(ublas::matrix<double> data, int nPoints, double *x0, double *y0, double *radius);
 
 ublas::matrix<double> removeColumn(ublas::matrix<double> inMatrix, int column);
 #endif

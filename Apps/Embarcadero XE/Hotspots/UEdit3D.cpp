@@ -68,6 +68,7 @@ extern float * phaseData;
 extern HANDLE hMutex;
 extern HANDLE hCapture;
 extern HANDLE hCaptureDone;
+extern channelsPerMarker;
 
 #include "U3DHotspots.h"
 #include <vcl.h>
@@ -81,9 +82,9 @@ void __fastcall TForm3::Button2Click(TObject *Sender)
 		__try
 		{
 			int SensorNmb = UpDown1->Position;
-			StringGrid1->Cells[0][1]  = phaseData[SensorNmb*4];
-			StringGrid1->Cells[1][1]  = phaseData[SensorNmb*4+1];
-			StringGrid1->Cells[2][1]  = phaseData[SensorNmb*4+2];
+			StringGrid1->Cells[0][1]  = phaseData[SensorNmb*channelsPerMarker];
+			StringGrid1->Cells[1][1]  = phaseData[SensorNmb*channelsPerMarker+1];
+			StringGrid1->Cells[2][1]  = phaseData[SensorNmb*channelsPerMarker+2];
 	//		StringGrid1->Cells[0][1]  = MaxArray.Data[Sensor1 + SensorNmb*3  ];
 	//		StringGrid1->Cells[1][1]  = MaxArray.Data[Sensor1 + SensorNmb*3+1];
 	//		StringGrid1->Cells[2][1]  = MaxArray.Data[Sensor1 + SensorNmb*3+2];

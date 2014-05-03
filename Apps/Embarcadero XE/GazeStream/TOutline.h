@@ -65,6 +65,7 @@ class TOutline {
 		 */
 		double** createDataForFit(double crX0, double crY0, double crRadius);
 
+		ublas::matrix<double> createMatrixForFit(double crX0, double crY0, double crRadius);
 		/**
 		 * Get the number of points in the outline.
 		 */

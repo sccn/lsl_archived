@@ -754,20 +754,81 @@ ublas::matrix<double> inverse(ublas::matrix<double> TB) {
 	return InvB;
 }
 
+void FitCircle(ublas::matrix<double> data, int nPoints, double *x0, double *y0, double *radius) {
+	double meanX=0.0, meanY=0.0;
+	*x0 = NAN;
+	*y0 = NAN;
+	*radius = NAN;
+	for (int i=0; i<nPoints; i++) {
+		meanX += data(0, i);
+		meanY += data(1, i);
+	}
+	meanX /= nPoints;
+	meanY /= nPoints;
+	ublas::vector<double> u(nPoints);
+	ublas::vector<double> v(nPoints);
+	for(int i=0; i<nPoints; i++) {
+		u(i) = data(0,i) - meanX;
+		v(i) = data(1,i) - meanY;
+	}
+ /*
+	printf("meanX: %g\n", meanX);
+	printf("meanY: %g\n", meanY);
+   */
+	double Suu = 0.0, Suv = 0.0, Svv = 0.0, Suuu = 0.0, Suvv = 0.0, Svvv = 0.0, Svuu = 0.0;
 
-//CHANGE TO REUSE MATRICES, DON'T MIX RETURN OF OBJECTS AND EXCEPTIONS.
-void FitEllipse(double **data,int nPoints,	double *x0, double *y0, double *rA, double *rB, double *angle) {
+	for(int i=0; i<nPoints; i++) {
+		Suu +=  u(i)*u(i);
+		Suv += u(i)*v(i);
+		Svv += v(i)*v(i);
+		Suuu += u(i)*u(i)*u(i);
+		Suvv += u(i)*v(i)*v(i);
+		Svvv += v(i)*v(i)*v(i);
+		Svuu += v(i)*u(i)*u(i);
+
+	}
+
+  /*	printf("Suu: %g\n", Suu);
+	printf("Suv: %g\n", Suv);
+	printf("Svv: %g\n", Svv);
+	printf("Suuu: %g\n", Suuu);
+	printf("Suvv: %g\n", Suvv);
+	printf("Svvv: %g\n", Svvv);
+	printf("Svuu: %g\n", Svuu);
+	*/
+	ublas::matrix<double> mat(2,2);
+	mat(0,0) = Suu;
+	mat(0,1) = Suv;
+	mat(1,0) = Suv;
+	mat(1,1) = Svv;
+
+	ublas::vector<double> vec(2);
+	vec(0) =  (Suuu +Suvv)/2.0;
+	vec(1) = (Svvv + Svuu)/2.0;
+	try {
+	ublas::vector<double> uc_vc_Solved = linearSolve(mat, vec);
+
+		*x0 = uc_vc_Solved(0) +meanX;
+		*y0 = uc_vc_Solved(1) + meanY;
+		*radius = sqrt(uc_vc_Solved(0)*uc_vc_Solved(0) + uc_vc_Solved(1)*uc_vc_Solved(1) +(Suu +Svv)/nPoints);
+	} catch(exception &ex) {
+		throw;
+	}
+}
+
+
+void FitEllipse(ublas::matrix<double> data,int nPoints,	double *x0, double *y0, double *rA, double *rB, double *angle) {
 
    //	if(x.size() != y.size()) throw IllegalArgumentException("FitEllipse: x and y must be the same length\n");
 
 	ublas::matrix<double> D(nPoints,6);
 
-	for(unsigned int i=0; i<nPoints; i++) {
-		D(i,0) = data[0][i]*data[0][i];//x(i)*x(i);
-		D(i,1) = data[0][i]*data[1][i];//x(i)*y(i);
-		D(i,2) = data[1][i]*data[1][i];//y(i)*y(i);
-		D(i,3) = data[0][i];//x(i);
-		D(i,4) = data[1][i];//y(i);
+	for(int i=0; i<nPoints; i++) {
+		D(i,0) = data(0,i)*data(0,i);
+		D(i,1) = data(0,i)*data(1,i);
+		D(i,2) = data(1,i)*data(1,i);
+		D(i,3) = data(0,i);
+		D(i,4) = data(1,i);
 		D(i,5) = 1;
 	}
 

@@ -718,6 +718,10 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 
 
 void __fastcall TForm4::eyeCalibration() {
+	if(markerXs.size() == 0) {
+		Application->MessageBoxA(L"There is no calibration data.", L"Error", MB_OK);
+		return;
+	}
 
 	double **coords = new2D<double>(markerXs.size(), 3, 0.0);
 	double **data = new2D<double>(meanEyeXs.size(), 2, 0.0);
@@ -1994,10 +1998,21 @@ void __fastcall TForm4::CalibrationWindowButtonClick(TObject *Sender)
 		markerYsTodo.clear();
 		ifs.clear();
 		ifs.seekg(0);
-		getline(ifs,value);  //skip header line.
+		getline(ifs,value);  //get header line.
+
+		if(strcmp("MonitorIndex,MarkerX,MarkerY", value.c_str())) {
+			Application->MessageBoxA(L"Calibration Window File should start with: MonitorIndex,MarkerX,MarkerY.", L"Error", MB_OK);
+			return;
+		}
+
 		for(int i=0; i<nPoints; i++) {
 			getline(ifs, value, ',');
 			int device = atoi(value.c_str());
+			std::map<int, MonitorDrawer*>::iterator itr = monitorDrawers.find(device);
+			if(itr==monitorDrawers.end()) {
+				Application->MessageBoxA(L"Monitor position file not loaded or monitor position file and calibration window do not agree with respect to monitor numbers.", L"Error", MB_OK);
+                return;
+			}
 			if(!monitorDrawers[device]->visible) monitorDrawers[device]->setVisible(SW_SHOW);
 			devicesTodo.push_back(device);
 
@@ -2203,25 +2218,28 @@ void __fastcall TForm4::LoadIntrinsicButtonClick(TObject *Sender)
 
 		Form4->xdoc_in->LoadFromFile(OpenDialog1->FileName);
 
+
 			_di_IXMLNode node =
 				Form4->xdoc_in->ChildNodes->FindNode("Configuration")->ChildNodes->FindNode("SceneCalibration");
+			if(node == NULL) {
+				Application->MessageBoxA(L"Unable to find SceneCalibration node.", L"Error", MB_OK);
+				return;
+			}
+
 			sceneCameraMatrix = unicodeStringToMatrix<double>(node->Attributes["cameraMatrix"]);
 			sceneDistortionCoeffs = unicodeStringToVector<double>(node->Attributes["distortionCoeffs"]);
 
-			node =
-				Form4->xdoc_in->ChildNodes->FindNode("Configuration")->ChildNodes->FindNode("Scaling");
-
-			monitorWidth = node->Attributes["monitorWidth"];
-			MonitorWidthEdit->Text = monitorWidth;
-
-			monitorHeight = node->Attributes["monitorHeight"];
-			MonitorHeightEdit->Text = monitorHeight;
-
+			node = Form4->xdoc_in->ChildNodes->FindNode("Configuration")->ChildNodes->FindNode("Scaling");
+			if(node == NULL) {
+				Application->MessageBoxA(L"Unable to find Scaling node.", L"Error", MB_OK);
+				return;
+			}
 			cameraWidth = node->Attributes["eyeCameraWidth"];
 			CameraWidthEdit->Text = cameraWidth;
 
 			cameraHeight = node->Attributes["eyeCameraHeight"];
 			CameraHeightEdit->Text = cameraHeight;
+
 
 	}
 

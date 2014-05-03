@@ -221,13 +221,13 @@ object Form4: TForm4
     Caption = 'GridPanel1'
     ColumnCollection = <
       item
-        Value = 33.333333333333340000
+        Value = 33.333333333333330000
       end
       item
-        Value = 33.333333333333340000
+        Value = 33.333333333333330000
       end
       item
-        Value = 33.333333333333340000
+        Value = 33.333333333333330000
       end>
     ControlCollection = <
       item
@@ -397,10 +397,10 @@ object Form4: TForm4
       end>
     RowCollection = <
       item
-        Value = 9.090909090909085000
+        Value = 9.090909090909084000
       end
       item
-        Value = 9.090909090909085000
+        Value = 9.090909090909084000
       end
       item
         Value = 9.090909090909092000
@@ -845,7 +845,7 @@ object Form4: TForm4
     EditLabel.Height = 13
     EditLabel.Caption = 'Head Marker 3'
     TabOrder = 18
-    Text = '29'
+    Text = '3'
     OnChange = HeadMarker3EditChange
   end
   object ReferenceHeadButton: TButton
@@ -1027,7 +1027,7 @@ object Form4: TForm4
   end
   object BackgroundBlueEdit: TLabeledEdit
     Left = 480
-    Top = 860
+    Top = 865
     Width = 65
     Height = 21
     EditLabel.Width = 113
