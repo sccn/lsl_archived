@@ -974,7 +974,7 @@ elif os_name == 'Linux':
     libname = 'liblsl32.so' if bitness == 32 else 'liblsl64.so'
 else:
     raise Exception("Unrecognized operating system:", os_name)
-libpath = os.path.dirname(__file__) + os.sep + libname
+libpath = os.path.dirname(os.path.abspath(__file__)) + os.sep + libname
 if not os.path.isfile(libpath):
     libpath = find_library(libname)
 if not libpath:
