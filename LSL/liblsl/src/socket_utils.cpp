@@ -13,6 +13,6 @@ double lsl::measure_endian_performance() {
 	double data=12335.5, t_end=lsl_clock() + measure_duration;
 	double k;
 	for (k=0; ((int)k & 0xFF) != 0 || lsl_clock()<t_end; k++)
-		boost::endian::reverse_value(data);
+		lslboost::endian::reverse_value(data);
 	return k;
 }

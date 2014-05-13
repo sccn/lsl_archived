@@ -257,7 +257,7 @@ namespace lsl {
 		/// Save a value to a stream buffer with correct endian treatment.
 		template<class StreamBuf, typename T> static void save_value(StreamBuf &sb, const T &v, int use_byte_order) {
 			if (sizeof(T)>1 && use_byte_order != BOOST_BYTE_ORDER) {
-				T temp = boost::endian::reverse_value(v);
+				T temp = lslboost::endian::reverse_value(v);
 				save_raw(sb,&temp,sizeof(temp));
 			} else
 				save_raw(sb,&v,sizeof(v));
@@ -267,7 +267,7 @@ namespace lsl {
 		template<class StreamBuf, typename T> static void load_value(StreamBuf &sb, T &v, int use_byte_order) {
 			load_raw(sb,&v,sizeof(v));
 			if (use_byte_order != BOOST_BYTE_ORDER)
-				boost::endian::reverse(v);
+				lslboost::endian::reverse(v);
 		}
 
 		/// Load a value from a stream buffer; specialization of the above.
@@ -377,12 +377,12 @@ namespace lsl {
 		void convert_endian(void *data) const {
 			switch (format_sizes[format_]) {
 				case 1: break;
-				case sizeof(boost::int16_t): for (boost::int16_t *p=(boost::int16_t*)data,*e=p+num_channels_; p<e; boost::endian::reverse(*p++)); break;
-				case sizeof(boost::int32_t): for (boost::int32_t *p=(boost::int32_t*)data,*e=p+num_channels_; p<e; boost::endian::reverse(*p++)); break;
+				case sizeof(boost::int16_t): for (boost::int16_t *p=(boost::int16_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
+				case sizeof(boost::int32_t): for (boost::int32_t *p=(boost::int32_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
 #ifndef BOOST_NO_INT64_T
-				case sizeof(boost::int64_t): for (boost::int64_t *p=(boost::int64_t*)data,*e=p+num_channels_; p<e; boost::endian::reverse(*p++)); break;
+				case sizeof(boost::int64_t): for (boost::int64_t *p=(boost::int64_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
 #else
-				case sizeof(double): for (double *p=(double*)data,*e=p+num_channels_; p<e; boost::endian::reverse(*p++)); break;
+				case sizeof(double): for (double *p=(double*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
 #endif
 				default: throw std::runtime_error("Unsupported channel format for endian conversion.");
 			}
