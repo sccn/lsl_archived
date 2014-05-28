@@ -1,0 +1,1 @@
+This program grabs all keystrokes and releases done at a computer to allow for recording keyboard events from closed-source stimulus presentation software. Note that no passwords or personal information should be entered while this program is running. Also note that this program must run on the stimulus presentation PC.
