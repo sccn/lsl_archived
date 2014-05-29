@@ -1,4 +1,11 @@
+ /*
 
+ Application to allow the calibrating of a head-mounted, one scene camera, one eye camera
+ eye tracker.
+
+ Written by Matthew Grivich, Swartz Center for Computational Neuroscience, UCSD
+
+ */
 
 // ---------------------------------------------------------------------------
 #include "LinearAlgebra.h"
@@ -171,18 +178,6 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 		delete1D(buf);
 	}
 	if(sceneInlet) {
-		/*
-		float *buf = new1D<float>(sceneChannels,0);
-		while(lsl_pull_sample_f(sceneInlet,buf,sceneChannels,0.0,&errcode)) {
-			static int sceneSamples = 0;
-			sceneX = buf[1];
-			sceneY = buf[2];
-			Form4->SceneProgressBar->Position = sceneSamples % 120;
-
-			sceneSamples++;
-		}
-		delete1D(buf);
-		*/
 
 		//Convert from x,y in pixels to x,y,z in mm with respect to camera
 		float *buf = new1D<float>(sceneChannels,0);
@@ -206,7 +201,7 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 			}
 
 
-			//rescale markerXsTodo to scene camera pixels (markerXsTodoInPixels.
+			//rescale markerXsTodo to scene camera pixels (markerXsTodoInPixels)
 
 			double oldMean, oldStddev, newMean, newStddev;
 
@@ -1583,18 +1578,6 @@ void __fastcall TForm4::GazeComboBoxChange(TObject *Sender)
 
 void __fastcall TForm4::SceneComboBoxChange(TObject *Sender)
 {
- /*	AnsiString s = SceneComboBox->Text;
-	s[strlen(s.c_str())-1] = 0;
-	AnsiString fn = "/tmp/" + s;
-
-	if(hSceneStream)
-		ds_Close(hSceneStream);
-	hSceneStream = ds_Open(fn.c_str());
-
-	if(hGazeStream && hSceneStream) {
-		Timer1->Enabled = true;
-	}
-	*/
 
 	if(sceneInlet) lsl_destroy_inlet(sceneInlet);
 
@@ -1610,19 +1593,6 @@ void __fastcall TForm4::SceneComboBoxChange(TObject *Sender)
 
 void __fastcall TForm4::PhaseComboBoxChange(TObject *Sender)
 {
-/*
-	AnsiString s = PhaseComboBox->Text;
-	s[strlen(s.c_str())-1] = 0;
-	AnsiString fn = "/tmp/" + s;
-
-	if(hPhasespace)
-		ds_Close(hPhasespace);
-	hPhasespace = ds_Open(fn.c_str());
-
-	if(hGazeStream && hSceneStream) {
-		Timer1->Enabled = true;
-	}
-	*/
 
 	if(phasespaceInlet) lsl_destroy_inlet(phasespaceInlet);
 

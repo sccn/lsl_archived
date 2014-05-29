@@ -26,10 +26,6 @@ object MainCaptureForm: TMainCaptureForm
     object TabSheet2: TTabSheet
       Caption = 'Video in'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 11
         Top = 0
@@ -237,15 +233,11 @@ object MainCaptureForm: TMainCaptureForm
     Top = 193
     Width = 910
     Height = 584
-    ActivePage = tsEyeTracker
+    ActivePage = tsScene
     TabOrder = 1
     object tsScene: TTabSheet
       Caption = 'Scene'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object xParallaxCorrectionEdit: TLabeledEdit
         Left = 14
         Top = 160

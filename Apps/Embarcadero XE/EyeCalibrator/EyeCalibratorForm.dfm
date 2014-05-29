@@ -397,10 +397,10 @@ object Form4: TForm4
       end>
     RowCollection = <
       item
-        Value = 9.090909090909084000
+        Value = 9.090909090909085000
       end
       item
-        Value = 9.090909090909084000
+        Value = 9.090909090909085000
       end
       item
         Value = 9.090909090909092000
@@ -1010,7 +1010,7 @@ object Form4: TForm4
     EditLabel.Height = 13
     EditLabel.Caption = 'Calib Background (Red)'
     TabOrder = 35
-    Text = '200'
+    Text = '0'
     OnChange = BackgroundRedEditChange
   end
   object BackgroundGreenEdit: TLabeledEdit
@@ -1022,7 +1022,7 @@ object Form4: TForm4
     EditLabel.Height = 13
     EditLabel.Caption = 'Calib Background (Green)'
     TabOrder = 36
-    Text = '200'
+    Text = '0'
     OnChange = BackgroundGreenEditChange
   end
   object BackgroundBlueEdit: TLabeledEdit
@@ -1034,7 +1034,7 @@ object Form4: TForm4
     EditLabel.Height = 13
     EditLabel.Caption = 'Calib Background (Blue)'
     TabOrder = 37
-    Text = '200'
+    Text = '0'
     OnChange = BackgroundBlueEditChange
   end
   object xd: TXMLDocument

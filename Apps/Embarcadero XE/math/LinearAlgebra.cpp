@@ -36,14 +36,14 @@ void print(char *name, ublas::vector<double> v) {
 
 
 double determinate(ublas::matrix<double> m) {
-	if(m.size1() != m.size2()) throw new IllegalArgumentException("Determinate: Matrix must be square.\n");
+	if(m.size1() != m.size2()) throw IllegalArgumentException("Determinate: Matrix must be square.\n");
 
 	if(m.size1() == 1) return m(0,0);
 	else if(m.size1() == 2) return m(0,0)*m(1,1) - m(0,1)*m(1,0);
 	else if(m.size1() == 3) return (m(0,0)*(m(1,1)*m(2,2) - m(1,2)*m(2,1)) -
 								m(0,1)*(m(1,0)*m(2,2) - m(1,2)*m(2,0)) +
 								m(0,2)*(m(1,0)*m(2,1) - m(1,1)*m(2,0)));
-	else throw new IllegalArgumentException("Determinate: Sizes greater than 3x3 not implemented.\n");
+	else throw IllegalArgumentException("Determinate: Sizes greater than 3x3 not implemented.\n");
 	//see lapack.cpp from opencv for an open algorithm for matrices larger than 3x3.
 
 	return NAN;
@@ -70,7 +70,7 @@ bool hasNan(ublas::vector<double> v) {
 }
 
 ublas::vector<double> cross(ublas::vector<double> a, ublas::vector<double> b) {
-	if(a.size() != 3 || b.size() != 3) throw new IllegalArgumentException("Cross products require vectors of length 3.\n");
+	if(a.size() != 3 || b.size() != 3) throw IllegalArgumentException("Cross products require vectors of length 3.\n");
 
 	ublas::vector<double> out(3);
 	out(0) = a(1)*b(2) - a(2)*b(1);
@@ -162,9 +162,9 @@ void svdcmp(ublas::matrix<double> a, ublas::matrix<double> &u, ublas::vector<dou
 
 	int m = a.size1();
 	int n = a.size2();
-	if((int) u.size1() != m || (int) u.size2() != n) throw new IllegalArgumentException("svdcmp: U has incorrect dimensions.");
-	if((int) w.size() != n) throw new IllegalArgumentException("svdcmp: W has incorrect length.");
-	if((int) v.size1() != n || (int) v.size2() != n) throw new IllegalArgumentException("svdcmp: V has incorrect dimensions.");
+	if((int) u.size1() != m || (int) u.size2() != n) throw IllegalArgumentException("svdcmp: U has incorrect dimensions.");
+	if((int) w.size() != n) throw IllegalArgumentException("svdcmp: W has incorrect length.");
+	if((int) v.size1() != n || (int) v.size2() != n) throw IllegalArgumentException("svdcmp: V has incorrect dimensions.");
 	int flag,i,its,j,jj,k,l,nm;
 	double anorm,c,f,g,h,s,scale,x,y,z;
 
@@ -289,7 +289,7 @@ void svdcmp(ublas::matrix<double> a, ublas::matrix<double> &u, ublas::vector<dou
 				}
 				break;
 			}
-			if (its == 30) throw new FitFailedException("No convergence in 30 svdcmp iterations.");
+			if (its == 30) throw FitFailedException("No convergence in 30 svdcmp iterations.");
 			x=w(l); /* Shift from bottom 2-by-2 minor. */
 			nm=k-1;
 			y=w(nm);
@@ -492,8 +492,8 @@ ublas::vector<double> moveRigidVector(ublas::vector<double> orig, ublas::vector<
 
 ublas::vector<double> findMidpoint(ublas::vector<double> p1, ublas::vector<double> p2,
 		ublas::vector<double> p3, ublas::vector<double> p4) {
-	if(p1(0) == p2(0) && p1(1) == p2(1) && p1(2) == p2(2)) throw new IllegalArgumentException("findMidpoint: p1->p2 has zero length");
-	if(p3(0) == p4(0) && p3(1) == p4(1) && p3(2) == p4(2)) throw new IllegalArgumentException("findMidpoint: p3->p4 has zero length");
+	if(p1(0) == p2(0) && p1(1) == p2(1) && p1(2) == p2(2)) throw IllegalArgumentException("findMidpoint: p1->p2 has zero length");
+	if(p3(0) == p4(0) && p3(1) == p4(1) && p3(2) == p4(2)) throw IllegalArgumentException("findMidpoint: p3->p4 has zero length");
 
 	ublas::vector<double> p13(3), p43(3), p21(3), pa(3), pb(3);
    double d1343,d4321,d1321,d4343,d2121, mua, mub;
@@ -518,12 +518,12 @@ ublas::vector<double> findMidpoint(ublas::vector<double> p1, ublas::vector<doubl
    d2121 = p21(0) * p21(0) + p21(1) * p21(1) + p21(2) * p21(2);
 
    denom = d2121 * d4343 - d4321 * d4321;
-   if (denom == 0) throw new IllegalArgumentException("findMidpoint: Divide by zero.");;
+   if (denom == 0) throw IllegalArgumentException("findMidpoint: Divide by zero.");;
    numer = d1343 * d4321 - d1321 * d4343;
 
    mua = numer / denom;
 
-   if(d4343 == 0) throw new IllegalArgumentException("findMidpoint: Divide by zero.");
+   if(d4343 == 0) throw IllegalArgumentException("findMidpoint: Divide by zero.");
    mub = (d1343 + d4321 * (mua)) / d4343;
 
    pa(0) = p1(0) + mua * p21(0);

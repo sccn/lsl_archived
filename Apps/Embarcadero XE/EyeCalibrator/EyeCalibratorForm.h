@@ -1,3 +1,12 @@
+ /*
+
+ Application to allow the calibrating of a head-mounted, one scene camera, one eye camera
+ eye tracker.
+
+ Written by Matthew Grivich, Swartz Center for Computational Neuroscience, UCSD
+
+ */
+
 //---------------------------------------------------------------------------
 
 #ifndef EyeCalibratorFormH

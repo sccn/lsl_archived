@@ -1,5 +1,11 @@
+ /*
 
+ Linear Algebra library.
 
+ Written by Matthew Grivich, Swartz Center for Computational Neuroscience, UCSD
+
+ Mostly ported from other sources. See below for details.
+ */
 //---------------------------------------------------------------------------
 
 #ifndef LinearAlgebraH
@@ -58,12 +64,12 @@ double norm(ublas::vector<double> v);
 
 ublas::vector<double> linearSolve(ublas::matrix<double> A, ublas::vector<double> b);
 
-/*******************************************************************************
+/*
 Given a matrix a[1..m][1..n], this routine computes its singular value
 decomposition, A = U.W.VT.  U has the same dimensions as A.  The diagonal
 matrix of singular values W is output as a vector w[1..n].  The matrix V (not
 the transpose VT) is output as v[1..n][1..n].  Caller must initialize all matrices.
-*******************************************************************************/
+*/
 void svdcmp(ublas::matrix<double> a, ublas::matrix<double> &u, ublas::vector<double> &w, ublas::matrix<double> &v);
 
 /**
@@ -146,7 +152,7 @@ ublas::matrix<double> inverse(ublas::matrix<double> TB);
 void FitEllipse(ublas::matrix<double> data, int nPoints, double *x0, double *y0, double *rA, double *rB, double *angle);
 
 /**
- * Fit an ellipse, using Least Squares Method by R. Bullock.
+ * Fit a circle, using Least Squares Method by R. Bullock.
  * http://www.dtcenter.org/met/users/docs/write_ups/circle_fit.pdf
  */
 void FitCircle(ublas::matrix<double> data, int nPoints, double *x0, double *y0, double *radius);

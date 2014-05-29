@@ -1,7 +1,7 @@
 /*
 Main form for GazeStream.
 
-Written by Matthew Grivich and Andre Vankov, Swartz Center for Computational Neuroscience, UCSD, 2011
+Written by Matthew Grivich, Swartz Center for Computational Neuroscience, UCSD, 2011-2014
 */
 //---------------------------------------------------------------------------
 #include "LinearAlgebra.h"

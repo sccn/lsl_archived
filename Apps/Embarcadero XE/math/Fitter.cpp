@@ -341,7 +341,7 @@
 
 	void Fitter::setMaxIterations(int maxIterations) {
 		if (maxIterations < 1) {
-			throw new FitFailedException("maxIterations must be at least 1");
+			throw FitFailedException("maxIterations must be at least 1");
 		}
 
 		this->maxIterations = maxIterations;
