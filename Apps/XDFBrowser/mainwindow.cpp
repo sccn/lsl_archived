@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 	connect(ui->textEdit, SIGNAL(textChanged()), this, SLOT(onTextChanged()));
   
-  //  OpenConsole();
+    OpenConsole();
 }
 
 

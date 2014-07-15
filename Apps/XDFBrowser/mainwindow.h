@@ -5,9 +5,20 @@
 #include <boost/shared_ptr.hpp>
 #include "xdffile.h"
 #include <QThread>
+#include <QStringListModel>
 
-
-
+class StringList : public QStringListModel
+{
+public:
+  void append (const QString& string){
+    insertRows(rowCount(), 1);
+    setData(index(rowCount()-1), string);
+  }
+  StringList& operator<<(const QString& string){
+    append(string);
+    return *this;
+  }
+};
 
 
 namespace Ui {
