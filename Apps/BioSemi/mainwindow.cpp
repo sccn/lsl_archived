@@ -581,6 +581,14 @@ void MainWindow::read_thread(std::map<std::string,std::vector<std::string> > loc
 		.append_child_value("compensated_lag",boost::lexical_cast<std::string>(compensated_lag).c_str())
 		.append_child_value("causal_correction",boost::lexical_cast<std::string>(sigproc_lag).c_str());
 
+	// <synchronization> meta-data
+	info.desc().append_child("synchronization")
+		.append_child_value("offset_mean", "0.00772")
+		.append_child_value("offset_rms", "0.000070")
+		.append_child_value("offset_median", "0.00772")
+		.append_child_value("offset_5_centile", "0.00764")
+		.append_child_value("offset_95_centile", "0.00783");
+
 	// make a new outlet
 	lsl::stream_outlet outlet(info);
 

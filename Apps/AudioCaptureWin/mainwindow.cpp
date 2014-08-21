@@ -154,6 +154,14 @@ void MainWindow::process_samples(IMMDeviceEnumerator *pEnumerator,IMMDevice *pDe
 		channels.append_child("channel").append_child_value("label","FrontRight");
 	}
 
+	// <synchronization> meta-data
+	info.desc().append_child("synchronization")
+		.append_child_value("offset_mean", "0.01047")
+		.append_child_value("offset_rms", "0.000033")
+		.append_child_value("offset_median", "0.01046")
+		.append_child_value("offset_5_centile", "0.01003")
+		.append_child_value("offset_95_centile", "0.01095");
+
 	// create the outlet
 	lsl::stream_outlet out(info);
 
