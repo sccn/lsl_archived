@@ -113,6 +113,8 @@ __published:	// IDE-managed Components
 	TComboBox *FrameComboBox;
 	TButton *RefreshStreamsButton;
 	TCheckBox *enableFrameSending;
+	TLabeledEdit *edtRequestedFrameRate;
+	TLabeledEdit *measuredFrameRateEdit;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall cbVideoInputDeviceChange(TObject *Sender);
 	void __fastcall cbVideoInputFormatChange(TObject *Sender);
@@ -164,6 +166,8 @@ private:	// User declarations
 	double crRadiusMax;
 	double eyeRadiusMax;
 	int nOutlinesDesired;
+	double frameRate;
+
 public:		// User declarations
 
 boost::shared_ptr<TOutline> findLargestOutline(BITMAP *aBmp, boolean above,

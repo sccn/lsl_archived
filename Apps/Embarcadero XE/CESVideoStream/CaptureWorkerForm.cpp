@@ -1112,13 +1112,13 @@ void DrawCircle (TCanvas *Canvas, int xCenter, int yCenter, int Radius)
 //---------------------------------------------------------------------------
 
 
-void TCaptureWorkerForm::SetQueue( queue<BITMAP*>& bmpQueue, HANDLE hMutex, lsl_outlet outlet) {
+void TCaptureWorkerForm::SetQueue( queue<BITMAP*>& bmpQueue, HANDLE hMutex, lsl_outlet outlet, double requestedFrameRate) {
 	this->bmpQueue= &bmpQueue;
 	this->hMutex = hMutex;
 	this->nFrames = 0;
 	this->goodFrames = 0;
 	this->dropped = 0.0;
-	this->frameRate = 0.0;
+	this->frameRate = requestedFrameRate;
 	this->goodTime = 0.0;
 	this->timestamp = 0.0;
 	this->outlet = outlet;
@@ -1135,24 +1135,22 @@ void __fastcall TCaptureWorkerForm::VideoGrabberFrameBitmap(TObject *Sender,
 	lsl_push_sample_itp(outlet, sample, timestamp,1);
 
 	if(nFrames == 0) {
-		firstTimestamp = timestamp;
+		firstTimestamp = lsl_local_clock();//ds_TimestampMs();
 		oldTimestamp = firstTimestamp;
-		frameRate = 15.0;//HACK FOR POINT GREY BUG;   VideoGrabber->CurrentFrameRate;
-	 //	printf("frameRateInit: %g\n", frameRate);
 	 } else {
-		currentTimestamp = timestamp;
+		currentTimestamp = lsl_local_clock();//ds_TimestampMs();
 		double interval = (currentTimestamp - oldTimestamp);
+
 		//if frame interval is reasonable, use it to estimate frame rate.
 		if(RoundTo(interval*frameRate,0) == 1) {
+       // if(frameRate*interval < 1.4 && frameRate*interval > .6) {
 			goodFrames++;
 			goodTime += interval;
-			frameRate = goodFrames/goodTime;
-	 //		printf("frameRate: %g    %g\n", frameRate, VideoGrabber->CurrentFrameRate);
-
 		}
+
+		if(goodFrames > 0 && goodTime > 0) measuredFrameRate = goodFrames/goodTime;
 		oldTimestamp = currentTimestamp;
-		dropped = (currentTimestamp - firstTimestamp)*frameRate  - nFrames;
-   //		printf("%g    %g   %g\n", dropped, currentTimestamp, firstTimestamp);
+		dropped = (currentTimestamp - firstTimestamp)*measuredFrameRate  - nFrames;
 	}
 	nFrames++;
 

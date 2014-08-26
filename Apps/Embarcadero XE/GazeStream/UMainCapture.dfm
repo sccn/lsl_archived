@@ -18,7 +18,7 @@ object MainCaptureForm: TMainCaptureForm
   object PageControl1: TPageControl
     Left = 6
     Top = 6
-    Width = 380
+    Width = 491
     Height = 181
     ActivePage = TabSheet2
     TabOrder = 0
@@ -26,6 +26,7 @@ object MainCaptureForm: TMainCaptureForm
     object TabSheet2: TTabSheet
       Caption = 'Video in'
       ImageIndex = 1
+      ExplicitWidth = 381
       object Label1: TLabel
         Left = 11
         Top = 0
@@ -86,13 +87,13 @@ object MainCaptureForm: TMainCaptureForm
         OnClick = RadioGroup1Click
       end
       object edtFrameRate: TLabeledEdit
-        Left = 259
-        Top = 127
-        Width = 78
+        Left = 362
+        Top = 55
+        Width = 77
         Height = 20
-        EditLabel.Width = 50
+        EditLabel.Width = 94
         EditLabel.Height = 12
-        EditLabel.Caption = 'Frame Rate'
+        EditLabel.Caption = 'Reported Frame Rate'
         TabOrder = 3
       end
       object cbVideoInput: TComboBox
@@ -110,8 +111,8 @@ object MainCaptureForm: TMainCaptureForm
         OnChange = cbVideoInputChange
       end
       object cbRecordAudio: TCheckBox
-        Left = 204
-        Top = 131
+        Left = 206
+        Top = 98
         Width = 49
         Height = 12
         Alignment = taLeftJustify
@@ -126,14 +127,32 @@ object MainCaptureForm: TMainCaptureForm
         TabOrder = 6
         OnChange = cbAudioInputDeviceChange
       end
+      object edtRequestedFrameRate: TLabeledEdit
+        Left = 362
+        Top = 15
+        Width = 77
+        Height = 20
+        EditLabel.Width = 99
+        EditLabel.Height = 12
+        EditLabel.Caption = 'Requested Frame Rate'
+        TabOrder = 7
+        Text = '30'
+      end
+      object measuredFrameRateEdit: TLabeledEdit
+        Left = 362
+        Top = 98
+        Width = 77
+        Height = 20
+        EditLabel.Width = 96
+        EditLabel.Height = 12
+        EditLabel.Caption = 'Measured Frame Rate'
+        TabOrder = 8
+      end
     end
     object TabSheet1: TTabSheet
       Caption = 'Video out'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 372
       object Label2: TLabel
         Left = 14
         Top = -2
@@ -233,7 +252,7 @@ object MainCaptureForm: TMainCaptureForm
     Top = 193
     Width = 910
     Height = 584
-    ActivePage = tsScene
+    ActivePage = tsVideo
     TabOrder = 1
     object tsScene: TTabSheet
       Caption = 'Scene'
@@ -275,17 +294,9 @@ object MainCaptureForm: TMainCaptureForm
     object tsVideo: TTabSheet
       Caption = 'Video'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
     end
     object tsEyeTracker: TTabSheet
       Caption = 'Eyetracker'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label5: TLabel
         Left = 3
         Top = 425
@@ -527,7 +538,7 @@ object MainCaptureForm: TMainCaptureForm
     end
   end
   object BitBtnPlay: TBitBtn
-    Left = 527
+    Left = 647
     Top = 25
     Width = 64
     Height = 20
@@ -572,7 +583,7 @@ object MainCaptureForm: TMainCaptureForm
     OnClick = BitBtnPlayClick
   end
   object BitBtnStop: TBitBtn
-    Left = 605
+    Left = 725
     Top = 25
     Width = 59
     Height = 20
@@ -618,7 +629,7 @@ object MainCaptureForm: TMainCaptureForm
     OnClick = btStopClick
   end
   object BacklogEdit: TLabeledEdit
-    Left = 392
+    Left = 512
     Top = 105
     Width = 101
     Height = 20
@@ -628,7 +639,7 @@ object MainCaptureForm: TMainCaptureForm
     TabOrder = 4
   end
   object FrameDivisorEdit: TLabeledEdit
-    Left = 392
+    Left = 512
     Top = 152
     Width = 101
     Height = 20
@@ -640,7 +651,7 @@ object MainCaptureForm: TMainCaptureForm
     OnChange = FrameDivisorEditChange
   end
   object tPanel: TPanel
-    Left = 161
+    Left = 163
     Top = 270
     Width = 631
     Height = 492
@@ -650,7 +661,7 @@ object MainCaptureForm: TMainCaptureForm
     TabOrder = 7
   end
   object droppedFramesEdit: TLabeledEdit
-    Left = 392
+    Left = 512
     Top = 65
     Width = 101
     Height = 20
@@ -660,7 +671,7 @@ object MainCaptureForm: TMainCaptureForm
     TabOrder = 5
   end
   object SpatialDivisorEdit: TLabeledEdit
-    Left = 512
+    Left = 632
     Top = 152
     Width = 101
     Height = 20
@@ -672,7 +683,7 @@ object MainCaptureForm: TMainCaptureForm
     OnChange = SpatialDivisorEditChange
   end
   object IdentifierEdit: TLabeledEdit
-    Left = 392
+    Left = 512
     Top = 25
     Width = 121
     Height = 20
@@ -683,7 +694,7 @@ object MainCaptureForm: TMainCaptureForm
     OnChange = IdentifierEditChange
   end
   object sendFrameCheckbox: TCheckBox
-    Left = 728
+    Left = 848
     Top = 149
     Width = 89
     Height = 17
@@ -691,7 +702,7 @@ object MainCaptureForm: TMainCaptureForm
     TabOrder = 10
   end
   object FrameComboBox: TComboBox
-    Left = 728
+    Left = 848
     Top = 123
     Width = 177
     Height = 20
@@ -700,7 +711,7 @@ object MainCaptureForm: TMainCaptureForm
     OnChange = FrameComboBoxChange
   end
   object RefreshStreamsButton: TButton
-    Left = 728
+    Left = 848
     Top = 85
     Width = 97
     Height = 25
@@ -709,7 +720,7 @@ object MainCaptureForm: TMainCaptureForm
     OnClick = RefreshStreamsButtonClick
   end
   object enableFrameSending: TCheckBox
-    Left = 728
+    Left = 848
     Top = 62
     Width = 129
     Height = 17
@@ -722,15 +733,15 @@ object MainCaptureForm: TMainCaptureForm
   object Timer1: TTimer
     Interval = 50
     OnTimer = Timer1Timer
-    Left = 672
+    Left = 792
     Top = 72
   end
   object OpenDialog1: TOpenDialog
-    Left = 552
+    Left = 672
     Top = 72
   end
   object xdoc_in: TXMLDocument
-    Left = 616
+    Left = 736
     Top = 72
     DOMVendorDesc = 'MSXML'
   end

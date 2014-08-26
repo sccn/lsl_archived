@@ -45,7 +45,7 @@ __published:	// IDE-managed Components
 	TCheckBox *cbRecord;
 	TComboBox *cbVideoCodecs;
 	TLabel *Label2;
-	TEdit *edOutput;
+	TEdit *edOutput0;
 	TLabel *lbCodecs;
 	TLabel *Label4;
 	TEdit *edTimestamp;
@@ -77,6 +77,17 @@ __published:	// IDE-managed Components
 	TComboBox *cbVideoInputDevice1;
 	TComboBox *cbVideoInputDevice2;
 	TComboBox *cbVideoInputDevice3;
+	TEdit *edOutput1;
+	TEdit *edOutput2;
+	TEdit *edOutput3;
+	TLabeledEdit *edtRequestedFrameRate;
+	TBitBtn *BitBtnPlay1;
+	TBitBtn *BitBtnPlay2;
+	TBitBtn *BitBtnPlay3;
+	TLabeledEdit *measuredFrameRateEdit;
+	TLabeledEdit *measuredFrameRateEdit1;
+	TLabeledEdit *measuredFrameRateEdit2;
+	TLabeledEdit *measuredFrameRateEdit3;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall cbVideoInputDeviceChange(TObject *Sender);
 	void __fastcall cbVideoInputFormatChange(TObject *Sender);
@@ -101,10 +112,13 @@ __published:	// IDE-managed Components
 	void __fastcall cbVideoInputDevice1Change(TObject *Sender);
 	void __fastcall cbVideoInputDevice2Change(TObject *Sender);
 	void __fastcall cbVideoInputDevice3Change(TObject *Sender);
+	void __fastcall BitBtnPlay1Click(TObject *Sender);
+	void __fastcall BitBtnPlay2Click(TObject *Sender);
+	void __fastcall BitBtnPlay3Click(TObject *Sender);
 
 
 private:	// User declarations
-	void __fastcall TMainCaptureForm::Start();
+	void __fastcall TMainCaptureForm::Start(TCaptureWorkerForm *CaptureWorkerForm, UnicodeString saveRoot, queue<BITMAP*> &bmpQueue, HANDLE hMutex, lsl_outlet outlet, double requestedFrameRate);
 	Graphics::TBitmap *pBmpRec;
 	Graphics::TBitmap *pBmpPau;
 	Graphics::TBitmap *pBmpRecGr;

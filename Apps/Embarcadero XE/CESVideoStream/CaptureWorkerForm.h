@@ -423,9 +423,10 @@ __published:	// IDE-managed Components
 private:	// User declarations
 		queue<BITMAP*>* bmpQueue;
 		HANDLE hMutex;
-		double frameRate;
+
 		double goodTime;
 		int goodFrames;
+		double frameRate;
 		double firstTimestamp, oldTimestamp, currentTimestamp;
 		lsl_outlet outlet;
 
@@ -463,12 +464,13 @@ public:		// User declarations
 		int yScene;
 		double dropped;
 		int nFrames;
+		double measuredFrameRate;
 		double timestamp;
 		int frameDivisor;
 
 		__fastcall TCaptureWorkerForm(TComponent* Owner);
 		void __fastcall TCaptureWorkerForm::InitVMR9Trackbar (TVMR9ImageAdjustment VMR9ImageAdjustment, TTrackBar *Trackbar);
-		void SetQueue( queue<BITMAP*>& bmpQueue, HANDLE hMutex, lsl_outlet outlet);
+		void SetQueue( queue<BITMAP*>& bmpQueue, HANDLE hMutex, lsl_outlet outlet, double requestedFrameRate);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TCaptureWorkerForm *CaptureWorkerForm;

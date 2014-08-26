@@ -3,7 +3,7 @@ object MainCaptureForm: TMainCaptureForm
   Top = 0
   Caption = 'GazeStream'
   ClientHeight = 981
-  ClientWidth = 1732
+  ClientWidth = 1596
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -27,10 +27,6 @@ object MainCaptureForm: TMainCaptureForm
     object TabSheet2: TTabSheet
       Caption = 'Video in'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 11
         Top = 0
@@ -71,13 +67,13 @@ object MainCaptureForm: TMainCaptureForm
         OnChange = cbVideoInputFormatChange
       end
       object edtFrameRate: TLabeledEdit
-        Left = 12
+        Left = 212
         Top = 231
         Width = 78
         Height = 20
-        EditLabel.Width = 50
+        EditLabel.Width = 94
         EditLabel.Height = 12
-        EditLabel.Caption = 'Frame Rate'
+        EditLabel.Caption = 'Reported Frame Rate'
         TabOrder = 2
       end
       object cbVideoInput: TComboBox
@@ -121,14 +117,21 @@ object MainCaptureForm: TMainCaptureForm
         TabOrder = 6
         OnChange = cbVideoInputDevice3Change
       end
+      object edtRequestedFrameRate: TLabeledEdit
+        Left = 12
+        Top = 231
+        Width = 78
+        Height = 20
+        EditLabel.Width = 99
+        EditLabel.Height = 12
+        EditLabel.Caption = 'Requested Frame Rate'
+        TabOrder = 7
+        Text = '25'
+      end
     end
     object TabSheet1: TTabSheet
       Caption = 'Video out'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label2: TLabel
         Left = 14
         Top = -2
@@ -137,81 +140,81 @@ object MainCaptureForm: TMainCaptureForm
         Caption = 'File name (.avi)'
       end
       object lbCodecs: TLabel
-        Left = 14
-        Top = 42
+        Left = 17
+        Top = 178
         Width = 33
         Height = 12
         Caption = 'Codecs'
         Visible = False
       end
       object Label4: TLabel
-        Left = 11
-        Top = 81
+        Left = 14
+        Top = 217
         Width = 47
         Height = 12
         Caption = 'Timestamp'
       end
       object Label3: TLabel
-        Left = 107
-        Top = 81
+        Left = 110
+        Top = 217
         Width = 38
         Height = 12
         Caption = 'Frame #'
       end
       object cbRecord: TCheckBox
-        Left = 206
-        Top = 60
+        Left = 209
+        Top = 196
         Width = 49
-        Height = 12
+        Height = 13
         Alignment = taLeftJustify
         Caption = 'Record'
         TabOrder = 0
         OnClick = cbRecordClick
       end
       object cbVideoCodecs: TComboBox
-        Left = 11
-        Top = 58
+        Left = 14
+        Top = 194
         Width = 176
         Height = 20
         TabOrder = 1
       end
-      object edOutput: TEdit
+      object edOutput0: TEdit
         Left = 13
         Top = 16
         Width = 255
         Height = 20
         TabOrder = 2
-        Text = 'c:\capture'
+        Text = 'e:\capture0_'
       end
       object edTimestamp: TEdit
-        Left = 11
-        Top = 98
+        Left = 14
+        Top = 234
         Width = 87
         Height = 20
         TabOrder = 3
       end
       object edFrame: TEdit
-        Left = 107
-        Top = 98
+        Left = 110
+        Top = 234
         Width = 80
         Height = 20
         TabOrder = 4
       end
       object cbRecordAudio: TCheckBox
-        Left = 206
-        Top = 78
+        Left = 209
+        Top = 214
         Width = 49
-        Height = 12
+        Height = 13
         Alignment = taLeftJustify
         Caption = 'Audio'
         TabOrder = 5
         OnClick = cbRecordClick
       end
       object cbCompress: TCheckBox
-        Left = 278
-        Top = 60
+        Left = 281
+        Top = 196
         Width = 65
-        Height = 12
+        Height = 13
         Alignment = taLeftJustify
         Caption = 'Compress'
         Checked = True
@@ -219,10 +222,34 @@ object MainCaptureForm: TMainCaptureForm
         TabOrder = 6
         OnClick = cbRecordClick
       end
+      object edOutput1: TEdit
+        Left = 13
+        Top = 42
+        Width = 255
+        Height = 20
+        TabOrder = 7
+        Text = 'f:\capture1_'
+      end
+      object edOutput2: TEdit
+        Left = 13
+        Top = 68
+        Width = 255
+        Height = 20
+        TabOrder = 8
+        Text = 'g:\capture2_'
+      end
+      object edOutput3: TEdit
+        Left = 13
+        Top = 94
+        Width = 255
+        Height = 20
+        TabOrder = 9
+        Text = 'h:\capture3_'
+      end
     end
   end
   object BitBtnPlay: TBitBtn
-    Left = 8
+    Left = 29
     Top = 384
     Width = 64
     Height = 20
@@ -267,8 +294,8 @@ object MainCaptureForm: TMainCaptureForm
     OnClick = BitBtnPlayClick
   end
   object BitBtnStop: TBitBtn
-    Left = 92
-    Top = 384
+    Left = 241
+    Top = 560
     Width = 59
     Height = 20
     DoubleBuffered = True
@@ -314,7 +341,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object BacklogEdit: TLabeledEdit
     Left = 8
-    Top = 472
+    Top = 520
     Width = 101
     Height = 20
     EditLabel.Width = 75
@@ -324,7 +351,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object FrameDivisorEdit: TLabeledEdit
     Left = 8
-    Top = 519
+    Top = 567
     Width = 101
     Height = 20
     EditLabel.Width = 97
@@ -346,14 +373,14 @@ object MainCaptureForm: TMainCaptureForm
   end
   object SpatialDivisorEdit: TLabeledEdit
     Left = 115
-    Top = 519
+    Top = 567
     Width = 101
     Height = 20
     EditLabel.Width = 98
     EditLabel.Height = 12
     EditLabel.Caption = 'Spatial Display Divisor'
     TabOrder = 6
-    Text = '1'
+    Text = '2'
     OnChange = SpatialDivisorEditChange
   end
   object tPanel: TPanel
@@ -378,7 +405,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object BacklogEdit1: TLabeledEdit
     Left = 115
-    Top = 471
+    Top = 519
     Width = 101
     Height = 20
     EditLabel.Width = 75
@@ -418,7 +445,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object BacklogEdit2: TLabeledEdit
     Left = 222
-    Top = 468
+    Top = 516
     Width = 101
     Height = 20
     EditLabel.Width = 75
@@ -428,7 +455,7 @@ object MainCaptureForm: TMainCaptureForm
   end
   object BacklogEdit3: TLabeledEdit
     Left = 329
-    Top = 468
+    Top = 516
     Width = 101
     Height = 20
     EditLabel.Width = 75
@@ -455,6 +482,181 @@ object MainCaptureForm: TMainCaptureForm
     BorderStyle = bsSingle
     Color = clNone
     TabOrder = 16
+  end
+  object BitBtnPlay1: TBitBtn
+    Left = 136
+    Top = 384
+    Width = 64
+    Height = 20
+    DoubleBuffered = True
+    Glyph.Data = {
+      36040000424D3604000000000000360000002800000010000000100000000100
+      2000000000000004000074120000741200000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF00000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF0000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB0
+      00FF4CB000FF0000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB0
+      00FF4CB000FF4CB000FF4CB000FF000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB0
+      00FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF00000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB0
+      00FF4CB000FF4CB000FF4CB000FF000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB0
+      00FF4CB000FF0000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF0000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF00000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000}
+    ParentDoubleBuffered = False
+    TabOrder = 17
+    OnClick = BitBtnPlay1Click
+  end
+  object BitBtnPlay2: TBitBtn
+    Left = 236
+    Top = 384
+    Width = 64
+    Height = 20
+    DoubleBuffered = True
+    Glyph.Data = {
+      36040000424D3604000000000000360000002800000010000000100000000100
+      2000000000000004000074120000741200000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF00000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF0000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB0
+      00FF4CB000FF0000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB0
+      00FF4CB000FF4CB000FF4CB000FF000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB0
+      00FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF00000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB0
+      00FF4CB000FF4CB000FF4CB000FF000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB0
+      00FF4CB000FF0000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF0000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF00000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000}
+    ParentDoubleBuffered = False
+    TabOrder = 18
+    OnClick = BitBtnPlay2Click
+  end
+  object BitBtnPlay3: TBitBtn
+    Left = 345
+    Top = 384
+    Width = 64
+    Height = 20
+    DoubleBuffered = True
+    Glyph.Data = {
+      36040000424D3604000000000000360000002800000010000000100000000100
+      2000000000000004000074120000741200000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF00000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF0000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB0
+      00FF4CB000FF0000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB0
+      00FF4CB000FF4CB000FF4CB000FF000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB0
+      00FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF00000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB0
+      00FF4CB000FF4CB000FF4CB000FF000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB0
+      00FF4CB000FF0000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF4CB000FF4CB000FF0000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF4CB000FF4CB000FF00000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000004CB000FF4CB000FF000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000}
+    ParentDoubleBuffered = False
+    TabOrder = 19
+    OnClick = BitBtnPlay3Click
+  end
+  object measuredFrameRateEdit: TLabeledEdit
+    Left = 8
+    Top = 472
+    Width = 103
+    Height = 20
+    EditLabel.Width = 86
+    EditLabel.Height = 12
+    EditLabel.Caption = 'Meas. Frame Rate 0'
+    TabOrder = 20
+  end
+  object measuredFrameRateEdit1: TLabeledEdit
+    Left = 113
+    Top = 472
+    Width = 103
+    Height = 20
+    EditLabel.Width = 86
+    EditLabel.Height = 12
+    EditLabel.Caption = 'Meas. Frame Rate 1'
+    TabOrder = 21
+  end
+  object measuredFrameRateEdit2: TLabeledEdit
+    Left = 222
+    Top = 472
+    Width = 103
+    Height = 20
+    EditLabel.Width = 86
+    EditLabel.Height = 12
+    EditLabel.Caption = 'Meas. Frame Rate 2'
+    TabOrder = 22
+  end
+  object measuredFrameRateEdit3: TLabeledEdit
+    Left = 331
+    Top = 472
+    Width = 103
+    Height = 20
+    EditLabel.Width = 86
+    EditLabel.Height = 12
+    EditLabel.Caption = 'Meas. Frame Rate 3'
+    TabOrder = 23
   end
   object Timer1: TTimer
     Interval = 50

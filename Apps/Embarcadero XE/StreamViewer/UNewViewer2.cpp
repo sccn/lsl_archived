@@ -240,6 +240,13 @@ void ProcessDataString(char *data, int nChannels, double samplingRate) {
 	HWND hWnd;
 	HDC 	hDC;
 	RECT r;
+	if(processDataCount == 0 && Form1->cbParseData->Checked) {
+		vector<UnicodeString> lines = splitString(UnicodeString(listenThread->xmlHeader), L'\n');
+		Form1->Memo1->Clear();
+		for(int i=0; i<lines.size(); i++) {
+			Form1->Memo1->Lines->Add(lines[i]);
+		}
+	}
 	if(samplingRate == 0.0) {
 		Form1->Display->ShowString(lsl_local_clock(), data);
 		hWnd =Form1->PageControl2->ActivePage->Handle;
@@ -250,6 +257,7 @@ void ProcessDataString(char *data, int nChannels, double samplingRate) {
 		draw_to_hdc (hDC,Form1->Display->bmpCodeCanvas,r.left,r.top);
 		ReleaseDC(hWnd,hDC);
 	}
+	processDataCount++;
 }
 
 
@@ -318,14 +326,14 @@ void ProcessData(float *data, int nChannels, double samplingRate) {
 				Form1->z1Edit->Text = FormatFloat("0.00",data[sensor1*channelsPerMarker+2]*distanceScaleFactor);
 
 			}
-			if(sensor1 >= 0 && sensor2*channelsPerMarker < nChannels) {
+			if(sensor2 >= 0 && sensor2*channelsPerMarker < nChannels) {
 				Form1->x2Edit->Text = FormatFloat("0.00",data[sensor2*channelsPerMarker]*distanceScaleFactor);
 				Form1->y2Edit->Text = FormatFloat("0.00",data[sensor2*channelsPerMarker+1]*distanceScaleFactor);
 				Form1->z2Edit->Text = FormatFloat("0.00",data[sensor2*channelsPerMarker+2]*distanceScaleFactor);
 
 			}
 
-			if(sensor1 >= 0 && sensor3*channelsPerMarker < nChannels) {
+			if(sensor3 >= 0 && sensor3*channelsPerMarker < nChannels) {
 				Form1->x3Edit->Text = FormatFloat("0.00",data[sensor3*channelsPerMarker]*distanceScaleFactor);
 				Form1->y3Edit->Text = FormatFloat("0.00",data[sensor3*channelsPerMarker+1]*distanceScaleFactor);
 				Form1->z3Edit->Text = FormatFloat("0.00",data[sensor3*channelsPerMarker+2]*distanceScaleFactor);
@@ -861,4 +869,5 @@ void __fastcall TForm1::PageControl2Change(TObject *Sender)
 	}
 }
 //---------------------------------------------------------------------------
+
 

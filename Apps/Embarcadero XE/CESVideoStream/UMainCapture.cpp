@@ -105,9 +105,9 @@ void __fastcall TMainCaptureForm::FormCreate(TObject *Sender)
 	pBmpPauGr->LoadFromFile("Pau-gr.bmp");
 
 	//set default output folder to c:\Users\currentUser\Desktop\capture
-	char pathC[MAX_PATH];
-	SHGetSpecialFolderPath(NULL, pathC, CSIDL_DESKTOP, 1);
-	edOutput->Text = UnicodeString(pathC) + "\\capture";
+ //	char pathC[MAX_PATH];
+ //	SHGetSpecialFolderPath(NULL, pathC, CSIDL_DESKTOP, 1);
+ //	edOutput->Text = UnicodeString(pathC) + "\\capture";
 
 	frameThread = NULL;
 	frameThread1 = NULL;
@@ -296,22 +296,36 @@ void __fastcall TMainCaptureForm::btStopClick(TObject *Sender)
 
 	BitBtnStop->Enabled=false;
 	BitBtnPlay->Enabled=true;
+	BitBtnPlay1->Enabled=true;
+	BitBtnPlay2->Enabled=true;
+	BitBtnPlay3->Enabled=true;
 
 	cbRecord->Enabled =true;
 
-	frameThread->Terminate();
-	frameThread1->Terminate();
-	frameThread2->Terminate();
-	frameThread3->Terminate();
-	delete frameThread; //will not delete till terminated, by VCL design.
-	delete frameThread1;
-	delete frameThread2;
-	delete frameThread3;
+	if(frameThread) {
+		frameThread->Terminate();
+		delete frameThread; //will not delete till terminated, by VCL design.
+		frameThread = NULL;
+	}
 
-	frameThread = NULL;
-	frameThread1 = NULL;
-	frameThread2 = NULL;
-	frameThread3 = NULL;
+	if(frameThread1) {
+		frameThread1->Terminate();
+		delete frameThread1; //will not delete till terminated, by VCL design.
+		frameThread1 = NULL;
+	}
+
+
+	if(frameThread2) {
+		frameThread2->Terminate();
+		delete frameThread2; //will not delete till terminated, by VCL design.
+		frameThread2 = NULL;
+	}
+
+	if(frameThread3) {
+		frameThread3->Terminate();
+		delete frameThread3; //will not delete till terminated, by VCL design.
+		frameThread3 = NULL;
+	}
 
 	nFrames = 0;
 
@@ -327,51 +341,30 @@ void __fastcall TMainCaptureForm::btStopClick(TObject *Sender)
 
 //---------------------------------------------------------------------------
 
-void __fastcall TMainCaptureForm::Start()
+void __fastcall TMainCaptureForm::Start(TCaptureWorkerForm *localCaptureWorkerForm, UnicodeString saveRoot, queue<BITMAP*> &bmpQueue, HANDLE hMutex, lsl_outlet outlet, double requestedFrameRate)
 {
 
-
-		CaptureWorkerForm->VideoGrabber->AnalogVideoStandard = CaptureWorkerForm->VideoGrabber->AnalogVideoStandardIndex ("NTSC M");
-		CaptureWorkerForm1->VideoGrabber->AnalogVideoStandard = CaptureWorkerForm1->VideoGrabber->AnalogVideoStandardIndex ("NTSC M");
-		CaptureWorkerForm2->VideoGrabber->AnalogVideoStandard = CaptureWorkerForm2->VideoGrabber->AnalogVideoStandardIndex ("NTSC M");
-		CaptureWorkerForm3->VideoGrabber->AnalogVideoStandard = CaptureWorkerForm3->VideoGrabber->AnalogVideoStandardIndex ("NTSC M");
+		localCaptureWorkerForm->VideoGrabber->AnalogVideoStandard = localCaptureWorkerForm->VideoGrabber->AnalogVideoStandardIndex ("NTSC M");
 
 
-		cbRecord->Enabled =false;
-		CaptureWorkerForm->VideoGrabber->RecordingInNativeFormat = false;
-		CaptureWorkerForm1->VideoGrabber->RecordingInNativeFormat = false;
-		CaptureWorkerForm2->VideoGrabber->RecordingInNativeFormat = false;
-		CaptureWorkerForm3->VideoGrabber->RecordingInNativeFormat = false;
+		localCaptureWorkerForm->VideoGrabber->RecordingInNativeFormat = false;
+
+		localCaptureWorkerForm->VideoGrabber->FrameRate = edtRequestedFrameRate->Text.ToDouble();
 
 		if(cbRecord->Checked == true) {
-		  //	CaptureWorkerForm->VideoGrabber->VideoProcessing_FlipVertical = true;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
-		  //	CaptureWorkerForm1->VideoGrabber->VideoProcessing_FlipVertical = true;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
-		  //	CaptureWorkerForm2->VideoGrabber->VideoProcessing_FlipVertical = true;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
-		  //	CaptureWorkerForm3->VideoGrabber->VideoProcessing_FlipVertical = true;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
+		  //	localCaptureWorkerForm->VideoGrabber->VideoProcessing_FlipVertical = true;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
 
 
-			CaptureWorkerForm->SetQueue(bmpQueue, hMutex, outlet);
-			CaptureWorkerForm1->SetQueue(bmpQueue1, hMutex1, outlet1);
-			CaptureWorkerForm2->SetQueue(bmpQueue2, hMutex2, outlet2);
-			CaptureWorkerForm3->SetQueue(bmpQueue3, hMutex3, outlet3);
+			localCaptureWorkerForm->SetQueue(bmpQueue, hMutex, outlet, requestedFrameRate);
 
 			//save to specified filename
 			int n=0;
 			UnicodeString outputFileName;
-			UnicodeString outputFileName1;
-			UnicodeString outputFileName2;
-			UnicodeString outputFileName3;
 			while(true) {
 				if(cbCompress->Checked) {
-					outputFileName =  edOutput->Text+ IntToStr(n)+"_EchoBack.asf";
-					outputFileName1 =  edOutput->Text+ IntToStr(n)+"_DeltaBack.asf";
-					outputFileName2 =  edOutput->Text+ IntToStr(n)+"_EchoFront.asf";
-					outputFileName3 =  edOutput->Text+ IntToStr(n)+"_DeltaFront.asf";
+					outputFileName =  saveRoot /*edOutput0->Text*/+ IntToStr(n)+".asf";
 				} else {
-					outputFileName =  edOutput->Text+ IntToStr(n)+"_EchoBack.avi";
-					outputFileName1 =  edOutput->Text+ IntToStr(n)+"_DeltaBack.avi";
-					outputFileName2 =  edOutput->Text+ IntToStr(n)+"_EchoFront.avi";
-					outputFileName3 =  edOutput->Text+ IntToStr(n)+"_DeltaFront.avi";
+					outputFileName =  saveRoot /*edOutput0->Text*/+ IntToStr(n)+".avi";
 				}
 
 				if(!FileExists(outputFileName)) break;
@@ -384,83 +377,41 @@ void __fastcall TMainCaptureForm::Start()
 				return;
 			}
 
-			CaptureWorkerForm->VideoGrabber->RecordingFileName= outputFileName;
-			CaptureWorkerForm1->VideoGrabber->RecordingFileName= outputFileName1;
-			CaptureWorkerForm2->VideoGrabber->RecordingFileName= outputFileName2;
-			CaptureWorkerForm3->VideoGrabber->RecordingFileName= outputFileName3;
+			localCaptureWorkerForm->VideoGrabber->RecordingFileName= outputFileName;
 
 			//record audio?
-			CaptureWorkerForm->VideoGrabber->AudioRecording = cbRecordAudio->Checked;
-			CaptureWorkerForm1->VideoGrabber->AudioRecording = cbRecordAudio->Checked;
-			CaptureWorkerForm2->VideoGrabber->AudioRecording = cbRecordAudio->Checked;
-			CaptureWorkerForm3->VideoGrabber->AudioRecording = cbRecordAudio->Checked;
+			localCaptureWorkerForm->VideoGrabber->AudioRecording = cbRecordAudio->Checked;
 
 			//turn off some unused features
-			CaptureWorkerForm->VideoGrabber->FrameGrabber = TFrameGrabber (0);
-			CaptureWorkerForm1->VideoGrabber->FrameGrabber = TFrameGrabber (0);
-			CaptureWorkerForm2->VideoGrabber->FrameGrabber = TFrameGrabber (0);
-			CaptureWorkerForm3->VideoGrabber->FrameGrabber = TFrameGrabber (0);
+			localCaptureWorkerForm->VideoGrabber->FrameGrabber = TFrameGrabber (0);
 
 			//save as compressed asf
-			CaptureWorkerForm->VideoGrabber->VideoCompressor = cbVideoCodecs->ItemIndex;
-			CaptureWorkerForm1->VideoGrabber->VideoCompressor = cbVideoCodecs->ItemIndex;
-			CaptureWorkerForm2->VideoGrabber->VideoCompressor = cbVideoCodecs->ItemIndex;
-			CaptureWorkerForm3->VideoGrabber->VideoCompressor = cbVideoCodecs->ItemIndex;
+			localCaptureWorkerForm->VideoGrabber->VideoCompressor = cbVideoCodecs->ItemIndex;
 
 			if(cbCompress->Checked) {
-				CaptureWorkerForm->VideoGrabber->CompressionMode = cm_CompressOnTheFly;
-				CaptureWorkerForm->VideoGrabber->RecordingMethod = rm_ASF;
-				CaptureWorkerForm1->VideoGrabber->CompressionMode = cm_CompressOnTheFly;
-				CaptureWorkerForm1->VideoGrabber->RecordingMethod = rm_ASF;
-				CaptureWorkerForm2->VideoGrabber->CompressionMode = cm_CompressOnTheFly;
-				CaptureWorkerForm2->VideoGrabber->RecordingMethod = rm_ASF;
-				CaptureWorkerForm3->VideoGrabber->CompressionMode = cm_CompressOnTheFly;
-				CaptureWorkerForm3->VideoGrabber->RecordingMethod = rm_ASF;
+				localCaptureWorkerForm->VideoGrabber->CompressionMode = cm_CompressOnTheFly;
+				localCaptureWorkerForm->VideoGrabber->RecordingMethod = rm_ASF;
 			} else {
 
-				CaptureWorkerForm->VideoGrabber->CompressionMode = cm_NoCompression;
-				CaptureWorkerForm->VideoGrabber->RecordingMethod = rm_AVI;
-				CaptureWorkerForm1->VideoGrabber->CompressionMode = cm_NoCompression;
-				CaptureWorkerForm1->VideoGrabber->RecordingMethod = rm_AVI;
-				CaptureWorkerForm2->VideoGrabber->CompressionMode = cm_NoCompression;
-				CaptureWorkerForm2->VideoGrabber->RecordingMethod = rm_AVI;
-				CaptureWorkerForm3->VideoGrabber->CompressionMode = cm_NoCompression;
-				CaptureWorkerForm3->VideoGrabber->RecordingMethod = rm_AVI;
+				localCaptureWorkerForm->VideoGrabber->CompressionMode = cm_NoCompression;
+				localCaptureWorkerForm->VideoGrabber->RecordingMethod = rm_AVI;
 			}
 
 
-			CaptureWorkerForm->VideoGrabber->HoldRecording = false;
-			CaptureWorkerForm1->VideoGrabber->HoldRecording = false;
-			CaptureWorkerForm2->VideoGrabber->HoldRecording = false;
-			CaptureWorkerForm3->VideoGrabber->HoldRecording = false;
+			localCaptureWorkerForm->VideoGrabber->HoldRecording = false;
 
-			CaptureWorkerForm->VideoGrabber->StartRecording();
-			CaptureWorkerForm1->VideoGrabber->StartRecording();
-			CaptureWorkerForm2->VideoGrabber->StartRecording();
-			CaptureWorkerForm3->VideoGrabber->StartRecording();
-
+			localCaptureWorkerForm->VideoGrabber->StartRecording();
 
 		} else {
-			CaptureWorkerForm->VideoGrabber->VideoProcessing_FlipVertical = false;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
-			CaptureWorkerForm1->VideoGrabber->VideoProcessing_FlipVertical = false;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
-			CaptureWorkerForm2->VideoGrabber->VideoProcessing_FlipVertical = false;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
-			CaptureWorkerForm3->VideoGrabber->VideoProcessing_FlipVertical = false;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
+			localCaptureWorkerForm->VideoGrabber->VideoProcessing_FlipVertical = false;//HACK FOR POINT GREY BUG, RECORD ONLY, flipVertCheckbox->Checked;
 
-			CaptureWorkerForm->SetQueue(bmpQueue, hMutex, outlet);
-			CaptureWorkerForm1->SetQueue(bmpQueue1, hMutex1, outlet1);
-			CaptureWorkerForm2->SetQueue(bmpQueue2, hMutex2, outlet2);
-			CaptureWorkerForm3->SetQueue(bmpQueue3, hMutex3, outlet3);
+			localCaptureWorkerForm->SetQueue(bmpQueue, hMutex, outlet, requestedFrameRate);
 
-			CaptureWorkerForm->VideoGrabber->StartPreview();
-			CaptureWorkerForm1->VideoGrabber->StartPreview();
-			CaptureWorkerForm2->VideoGrabber->StartPreview();
-			CaptureWorkerForm3->VideoGrabber->StartPreview();
-
+			localCaptureWorkerForm->VideoGrabber->StartPreview();
 
 		}
 
 }
-
 
 
 void __fastcall TMainCaptureForm::FormDestroy(TObject *Sender)
@@ -515,7 +466,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp, HANDLE hmut)
 				HDC  hDC  = GetDC(hWnd);
 				draw_to_hdc (hDC,bmpCanvas,0,0);
 				ReleaseDC(hWnd,hDC);
-				droppedFramesEdit->Text = FormatFloat("0", CaptureWorkerForm->dropped);
+
 			}
 		}
 
@@ -530,7 +481,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp, HANDLE hmut)
 				HDC  hDC  = GetDC(hWnd);
 				draw_to_hdc (hDC,bmpCanvas1,0,0);
 				ReleaseDC(hWnd,hDC);
-				droppedFramesEdit1->Text = FormatFloat("0", CaptureWorkerForm1->dropped);
+
 			}
 		}
 
@@ -545,7 +496,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp, HANDLE hmut)
 				HDC  hDC  = GetDC(hWnd);
 				draw_to_hdc (hDC,bmpCanvas2,0,0);
 				ReleaseDC(hWnd,hDC);
-				droppedFramesEdit2->Text = FormatFloat("0", CaptureWorkerForm2->dropped);
+	
 			}
 		}
 
@@ -560,7 +511,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp, HANDLE hmut)
 				HDC  hDC  = GetDC(hWnd);
 				draw_to_hdc (hDC,bmpCanvas3,0,0);
 				ReleaseDC(hWnd,hDC);
-				droppedFramesEdit3->Text = FormatFloat("0", CaptureWorkerForm3->dropped);
+
 			}
 		}
 
@@ -573,88 +524,53 @@ void __fastcall TMainCaptureForm::cbRecordClick(TObject *Sender)
 	nFrames=0;
 	edFrame->Text = nFrames;
 	BitBtnPlay->Glyph = cbRecord->Checked ? pBmpRec:pBmpRecGr;
+	BitBtnPlay1->Glyph = cbRecord->Checked ? pBmpRec:pBmpRecGr;
+	BitBtnPlay2->Glyph = cbRecord->Checked ? pBmpRec:pBmpRecGr;
+	BitBtnPlay3->Glyph = cbRecord->Checked ? pBmpRec:pBmpRecGr;
 }
-
-
 void __fastcall TMainCaptureForm::BitBtnPlayClick(TObject *Sender)
 {
-
-
 
 	if(outlet) {
 		lsl_destroy_outlet(outlet);
 		outlet = NULL;
 	}
-	if(outlet1) {
-		lsl_destroy_outlet(outlet1);
-		outlet1 = NULL;
-	}
-	if(outlet2) {
-		lsl_destroy_outlet(outlet2);
-		outlet2 = NULL;
-	}
-	if(outlet3) {
-		lsl_destroy_outlet(outlet3);
-		outlet3 = NULL;
-	}
-
-	lsl_streaminfo info = lsl_create_streaminfo("VideoStream_EchoBack","VideoStream_EchoBack",1,15,cft_int32,"");
+	double requestedFrameRate = edtRequestedFrameRate->Text.ToDouble();
+	lsl_streaminfo info = lsl_create_streaminfo("VideoStream_0","VideoStream_0",1,requestedFrameRate,cft_int32,"");
 	lsl_xml_ptr desc = lsl_get_desc(info);
 	lsl_xml_ptr chn = lsl_append_child(desc, "channels");
 	lsl_append_child_value(chn, "name","frame");
 	lsl_append_child_value(chn,"unit","number");
 
+	lsl_xml_ptr sync = lsl_append_child(desc, "synchronization");
+	lsl_append_child_value(sync, "can_drop_samples", "true");
+
 	outlet = lsl_create_outlet(info,0,360);
-
-	info = lsl_create_streaminfo("VideoStream_DeltaBack","VideoStream_DeltaBack",1,15,cft_int32,"");
-	desc = lsl_get_desc(info);
-	chn = lsl_append_child(desc, "channels");
-	lsl_append_child_value(chn, "name","frame");
-	lsl_append_child_value(chn,"unit","number");
-
-	outlet1 = lsl_create_outlet(info,0,360);
-
-	info = lsl_create_streaminfo("VideoStream_EchoFront","VideoStream_EchoFront",1,15,cft_int32,"");
-	desc = lsl_get_desc(info);
-	chn = lsl_append_child(desc, "channels");
-	lsl_append_child_value(chn, "name","frame");
-	lsl_append_child_value(chn,"unit","number");
-
-	outlet2 = lsl_create_outlet(info,0,360);
-
-	info = lsl_create_streaminfo("VideoStream_DeltaFront","VideoStream_DeltaFront",1,15,cft_int32,"");
-	desc = lsl_get_desc(info);
-	chn = lsl_append_child(desc, "channels");
-	lsl_append_child_value(chn, "name","frame");
-	lsl_append_child_value(chn,"unit","number");
-
-	outlet3 = lsl_create_outlet(info,0,360);
 
 
 	cbVideoInputDevice->Enabled = false;
-	cbVideoInputDevice1->Enabled = false;
-	cbVideoInputDevice2->Enabled = false;
-	cbVideoInputDevice3->Enabled = false;
 	cbVideoInput->Enabled = false;
 	cbVideoInputFormat->Enabled = false;
 	SpatialDivisorEdit->Enabled = false;
+	cbRecord->Enabled =false;
 
-	Start();
+	Start(CaptureWorkerForm, edOutput0->Text, bmpQueue, hMutex, outlet, requestedFrameRate);
 	frameThread = new TFrameThread(this, bmpQueue, hMutex, false);
-	frameThread1 = new TFrameThread(this, bmpQueue1, hMutex1, false);
-	frameThread2 = new TFrameThread(this, bmpQueue2, hMutex2, false);
-	frameThread3 = new TFrameThread(this, bmpQueue3, hMutex3, false);
 
 	BitBtnStop->Enabled=true;
 	BitBtnPlay->Enabled=false;
 
-	edtFrameRate->Text = 15.0;//HACK FOR POINTGREY BUG FormatFloat ("0.00", CaptureWorkerForm->VideoGrabber->CurrentFrameRate);
+	edtFrameRate->Text = FormatFloat ("0.00", CaptureWorkerForm->VideoGrabber->CurrentFrameRate);
 
-	  /*			Sleep(100);
-			printf("sleep0: %g\n", frameThread->sleepTime);
-			printf("sleep1: %g\n", frameThread1->sleepTime);
-			printf("sleep2: %g\n", frameThread2->sleepTime);
-			printf("sleep3: %g\n", frameThread3->sleepTime);  */
+
+	double ratio = requestedFrameRate/CaptureWorkerForm->VideoGrabber->CurrentFrameRate;
+	if(ratio > 1.02 || ratio < .98) {
+		edtFrameRate->Text = FormatFloat ("0.00", CaptureWorkerForm->VideoGrabber->CurrentFrameRate);
+		Application->MessageBoxA(L"Camera 0 unable to display requested frame rate.", L"Error", MB_OK);
+		btStopClick(this);
+		return;
+	}
+
 }
 //---------------------------------------------------------------------------
 
@@ -665,15 +581,23 @@ void __fastcall TMainCaptureForm::Timer1Timer(TObject *Sender)
 {
 	if(frameThread) {
 		BacklogEdit->Text = bmpQueue.size();
+		droppedFramesEdit->Text = FormatFloat("0", CaptureWorkerForm->dropped);
+		measuredFrameRateEdit->Text = FormatFloat("0.00", CaptureWorkerForm->measuredFrameRate);
 	}
 	if(frameThread1) {
 		BacklogEdit1->Text = bmpQueue1.size();
+		droppedFramesEdit1->Text = FormatFloat("0", CaptureWorkerForm1->dropped);
+		measuredFrameRateEdit1->Text = FormatFloat("0.00", CaptureWorkerForm1->measuredFrameRate);
 	}
 	if(frameThread2) {
 		BacklogEdit2->Text = bmpQueue2.size();
+		droppedFramesEdit2->Text = FormatFloat("0", CaptureWorkerForm2->dropped);
+		measuredFrameRateEdit2->Text = FormatFloat("0.00", CaptureWorkerForm2->measuredFrameRate);
 	}
 	if(frameThread3) {
 		BacklogEdit3->Text = bmpQueue3.size();
+		droppedFramesEdit3->Text = FormatFloat("0", CaptureWorkerForm3->dropped);
+	   	measuredFrameRateEdit3->Text = FormatFloat("0.00", CaptureWorkerForm3->measuredFrameRate);
 	}
 }
 //---------------------------------------------------------------------------
@@ -790,6 +714,143 @@ void __fastcall TMainCaptureForm::SpatialDivisorEditChange(TObject *Sender)
 	}
 }
 
+
+
+
+
+void __fastcall TMainCaptureForm::BitBtnPlay1Click(TObject *Sender)
+{
+
+	if(outlet1) {
+		lsl_destroy_outlet(outlet1);
+		outlet1 = NULL;
+	}
+	double requestedFrameRate = edtRequestedFrameRate->Text.ToDouble();
+	lsl_streaminfo info = lsl_create_streaminfo("VideoStream_1","VideoStream_1",1,requestedFrameRate,cft_int32,"");
+	lsl_xml_ptr desc = lsl_get_desc(info);
+	lsl_xml_ptr chn = lsl_append_child(desc, "channels");
+	lsl_append_child_value(chn, "name","frame");
+	lsl_append_child_value(chn,"unit","number");
+
+	lsl_xml_ptr sync = lsl_append_child(desc, "synchronization");
+	lsl_append_child_value(sync, "can_drop_samples", "true");
+
+	outlet1 = lsl_create_outlet(info,0,360);
+
+
+	cbVideoInputDevice1->Enabled = false;
+	cbVideoInput->Enabled = false;
+	cbVideoInputFormat->Enabled = false;
+	SpatialDivisorEdit->Enabled = false;
+	cbRecord->Enabled =false;
+
+	Start(CaptureWorkerForm1, edOutput1->Text, bmpQueue1, hMutex1, outlet1, requestedFrameRate);
+	frameThread1 = new TFrameThread(this, bmpQueue1, hMutex1, false);
+
+	BitBtnStop->Enabled=true;
+	BitBtnPlay1->Enabled=false;
+
+	edtFrameRate->Text = FormatFloat ("0.00", CaptureWorkerForm1->VideoGrabber->CurrentFrameRate);
+
+
+	double ratio = requestedFrameRate/CaptureWorkerForm1->VideoGrabber->CurrentFrameRate;
+	if(ratio > 1.02 || ratio < .98) {
+		edtFrameRate->Text = FormatFloat ("0.00", CaptureWorkerForm1->VideoGrabber->CurrentFrameRate);
+		Application->MessageBoxA(L"Camera 0 unable to display requested frame rate.", L"Error", MB_OK);
+		btStopClick(this);
+		return;
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainCaptureForm::BitBtnPlay2Click(TObject *Sender)
+{
+
+	if(outlet2) {
+		lsl_destroy_outlet(outlet2);
+		outlet2 = NULL;
+	}
+	double requestedFrameRate = edtRequestedFrameRate->Text.ToDouble();
+	lsl_streaminfo info = lsl_create_streaminfo("VideoStream_2","VideoStream_2",1,requestedFrameRate,cft_int32,"");
+	lsl_xml_ptr desc = lsl_get_desc(info);
+	lsl_xml_ptr chn = lsl_append_child(desc, "channels");
+	lsl_append_child_value(chn, "name","frame");
+	lsl_append_child_value(chn,"unit","number");
+
+	lsl_xml_ptr sync = lsl_append_child(desc, "synchronization");
+	lsl_append_child_value(sync, "can_drop_samples", "true");
+
+	outlet2 = lsl_create_outlet(info,0,360);
+
+
+	cbVideoInputDevice2->Enabled = false;
+	cbVideoInput->Enabled = false;
+	cbVideoInputFormat->Enabled = false;
+	SpatialDivisorEdit->Enabled = false;
+	cbRecord->Enabled =false;
+
+	Start(CaptureWorkerForm2, edOutput2->Text, bmpQueue2, hMutex2, outlet2,requestedFrameRate);
+	frameThread2 = new TFrameThread(this, bmpQueue2, hMutex2, false);
+
+	BitBtnStop->Enabled=true;
+	BitBtnPlay2->Enabled=false;
+
+	edtFrameRate->Text = FormatFloat ("0.00", CaptureWorkerForm1->VideoGrabber->CurrentFrameRate);
+
+
+	double ratio = requestedFrameRate/CaptureWorkerForm2->VideoGrabber->CurrentFrameRate;
+	if(ratio > 1.02 || ratio < .98) {
+		edtFrameRate->Text = FormatFloat ("0.00", CaptureWorkerForm2->VideoGrabber->CurrentFrameRate);
+		Application->MessageBoxA(L"Camera 0 unable to display requested frame rate.", L"Error", MB_OK);
+		btStopClick(this);
+		return;
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainCaptureForm::BitBtnPlay3Click(TObject *Sender)
+{
+	if(outlet3) {
+		lsl_destroy_outlet(outlet3);
+		outlet3 = NULL;
+	}
+	double requestedFrameRate = edtRequestedFrameRate->Text.ToDouble();
+	lsl_streaminfo info = lsl_create_streaminfo("VideoStream_3","VideoStream_3",1,requestedFrameRate,cft_int32,"");
+	lsl_xml_ptr desc = lsl_get_desc(info);
+	lsl_xml_ptr chn = lsl_append_child(desc, "channels");
+	lsl_append_child_value(chn, "name","frame");
+	lsl_append_child_value(chn,"unit","number");
+
+	lsl_xml_ptr sync = lsl_append_child(desc, "synchronization");
+	lsl_append_child_value(sync, "can_drop_samples", "true");
+
+	outlet3 = lsl_create_outlet(info,0,360);
+
+
+	cbVideoInputDevice3->Enabled = false;
+	cbVideoInput->Enabled = false;
+	cbVideoInputFormat->Enabled = false;
+	SpatialDivisorEdit->Enabled = false;
+	cbRecord->Enabled =false;
+
+	Start(CaptureWorkerForm3, edOutput3->Text, bmpQueue3, hMutex3, outlet3,requestedFrameRate);
+	frameThread3 = new TFrameThread(this, bmpQueue3, hMutex3, false);
+
+	BitBtnStop->Enabled=true;
+	BitBtnPlay3->Enabled=false;
+
+	edtFrameRate->Text = FormatFloat ("0.00", CaptureWorkerForm3->VideoGrabber->CurrentFrameRate);
+
+
+	double ratio = requestedFrameRate/CaptureWorkerForm3->VideoGrabber->CurrentFrameRate;
+	if(ratio > 1.02 || ratio < .98) {
+		edtFrameRate->Text = FormatFloat ("0.00", CaptureWorkerForm3->VideoGrabber->CurrentFrameRate);
+		Application->MessageBoxA(L"Camera 0 unable to display requested frame rate.", L"Error", MB_OK);
+		btStopClick(this);
+		return;
+	}
+}
+//---------------------------------------------------------------------------
 
 
 

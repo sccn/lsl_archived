@@ -39,7 +39,6 @@ bool storeFit = false;
 
 
 int nFrames = 0;
-float timestamp = 0;
 #define MAX_STREAMS 200
 
 
@@ -128,7 +127,6 @@ void __fastcall TMainCaptureForm::FormCreate(TObject *Sender)
 	set_color_depth(CDEPTH);
 
 	nFrames=0;
-
 }
 
 
@@ -264,6 +262,7 @@ void __fastcall TMainCaptureForm::btStopClick(TObject *Sender)
 
 void __fastcall TMainCaptureForm::Start()
 {
+		double requestedFrameRate = edtRequestedFrameRate->Text.ToDouble();
  		CaptureWorkerForm->VideoGrabber->VideoProcessing_FlipVertical = flipVertCheckbox->Checked;
 		CaptureWorkerForm->VideoGrabber->AnalogVideoStandard = CaptureWorkerForm->VideoGrabber->AnalogVideoStandardIndex ("NTSC M");
 		cbRecord->Enabled =false;
@@ -817,7 +816,7 @@ double xScene = 0.0;
 double yScene = 0.0;
 int goodFrames = 0;
 double goodTime = 0.0;
-double frameRate = 30;
+
 
 double firstTimestamp, oldTimestamp, currentTimestamp;
 
@@ -840,16 +839,21 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 	 } else {
 		currentTimestamp = lsl_local_clock();//ds_TimestampMs();
 		double interval = (currentTimestamp - oldTimestamp);
-
+		double localFrameRate = frameRate;
 		//if frame interval is reasonable, use it to estimate frame rate.
 		if(RoundTo(interval*frameRate,0) == 1) {
+       // if(frameRate*interval < 1.4 && frameRate*interval > .6) {
 			goodFrames++;
 			goodTime += interval;
-			frameRate = goodFrames/goodTime;
 		}
+
+		if(goodFrames > 0 && goodTime > 0) localFrameRate = goodFrames/goodTime;
 		oldTimestamp = currentTimestamp;
-		double dropped = (currentTimestamp - firstTimestamp)*frameRate  - nFrames;
+		double dropped = (currentTimestamp - firstTimestamp)*localFrameRate  - nFrames;
 		droppedFramesEdit->Text =  FormatFloat ("0", dropped);
+		measuredFrameRateEdit->Text = FormatFloat("0.00", localFrameRate);
+
+   //		printf("frame rate:%g   interval:%g   goodFrames:%d  goodTimes:%g\n", localFrameRate, interval, goodFrames, goodTime);
 	}
 
 	char *sbuf;
@@ -1014,7 +1018,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 				gu->sceneMap(&xScene, &yScene);
 			  //	static v=0;
 
-			   //	if(v++ % 30 == 0) printf("x0: %g y0: %g xMonitor: %g yMonitor: %g xScene: %g yScene: %g\n", x0scene, y0scene, xMonitor, yMonitor, xScene, yScene);
+			   //	if(v++ % frameRate == 0) printf("x0: %g y0: %g xMonitor: %g yMonitor: %g xScene: %g yScene: %g\n", x0scene, y0scene, xMonitor, yMonitor, xScene, yScene);
 
 		}
 
@@ -1071,6 +1075,10 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 		int sample [1];
 		sample[0] = nFrames;
 		double timestamp = lsl_local_clock();
+		char *txt = "f";
+
+
+		//lsl_push_sample_strtp(outlet, &txt, timestamp, 1);
 		lsl_push_sample_itp(outlet, sample, timestamp,1);
 		nFrames++;
 
@@ -1087,7 +1095,7 @@ void __fastcall TMainCaptureForm::DoFrame(BITMAP *aBmp)
 
 	   //	TMaxArray fr;
 
-		bool pr = (nFrames%30 == 0);
+		bool pr = (nFrames%int(frameRate) == 0);
 		double x0 = 0.0, y0 = 0.0, radius = 0.0;
 		double radiusA = 0.0, radiusB = 0.0, angle = 0.0;
 		double crX0 = 0.0, crY0 = 0.0, crRadius = 0.0;
@@ -1186,7 +1194,7 @@ void __fastcall TMainCaptureForm::cbRecordClick(TObject *Sender)
 {
 	nFrames=0;
 	edFrame->Text = nFrames;
-	BitBtnPlay->Glyph = cbRecord->Checked ? pBmpRec.get():pBmpRecGr.get();
+ 	BitBtnPlay->Glyph = cbRecord->Checked ? pBmpRec.get():pBmpRecGr.get();
 }
 
 
@@ -1200,64 +1208,17 @@ void __fastcall TMainCaptureForm::BitBtnPlayClick(TObject *Sender)
 	SpatialDivisorEdit->Enabled = false;
 	cbAudioInputDevice->Enabled = false;
 
-	Start();
+	double requestedFrameRate = edtRequestedFrameRate->Text.ToDouble();
+	CaptureWorkerForm->VideoGrabber->FrameRate = requestedFrameRate;
 
-	frameThread = std::unique_ptr<TFrameThread>(new TFrameThread(this, bmpQueue, hMutex, false));
-	BitBtnStop->Enabled=true;
-	BitBtnPlay->Enabled=false;
-
-	edtFrameRate->Text = FormatFloat ("0.00", CaptureWorkerForm->VideoGrabber->CurrentFrameRate);
-
-}
-//---------------------------------------------------------------------------
-
-
-
-double alphaX = 0;
-double alphaY = 0;
-int posX;
-int posY;
-
-void __fastcall TMainCaptureForm::Timer1Timer(TObject *Sender)
-{
-	if(frameThread) {
-		BacklogEdit->Text = bmpQueue.size();
-		edFrame->Text = nFrames;
-		 edTimestamp->Text = timestamp;
-	}
-}
-//---------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
-{
-	if(BitBtnStop->Enabled) btStopClick(this);
-	if(outlet) {
+   	if(outlet) {
 		lsl_destroy_outlet(outlet);
 		outlet = NULL;
 	}
 
-	if(gazestreamThread) {
-		gazestreamThread->Terminate();
-		gazestreamThread.reset();
-	}
-	//eye camera
-	if (RadioGroup1->ItemIndex==0)
-	{
-		isKind = isEye;
-		PageControl2->ActivePage = tsEyeTracker;
-		Caption = "Video stream: eye camera";
-
-
+ if(isKind == isEye) {
 		char * streamName = (AnsiString("GazeStream_") + AnsiString(IdentifierEdit->Text)).c_str();
-		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,6,30,cft_float32,generateGUID());
+		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,6,requestedFrameRate,cft_float32,generateGUID());
 
 		lsl_xml_ptr desc = lsl_get_desc(info);
 		lsl_xml_ptr chnls = lsl_append_child(desc, "channels");
@@ -1290,28 +1251,9 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 		lsl_append_child_value(sync, "can_drop_samples", "true");
 
 		outlet = lsl_create_outlet(info,0,360);
-
-
-	}
-
-	else
-	//scene camera multi-spot calibrate
-	if (RadioGroup1->ItemIndex==1)
-	{
-
-
-
-		crRoiLeft->Position = 40;
-		crRoiRight->Position = 600;
-		crRoiTop->Position = 40;
-		crRoiBottom->Position = 440;
-		isKind = isSceneMultiCalib;
-		PageControl2->ActivePage = tsEyeTracker;
-		Caption = "Video stream: scene camera calibrate";
-
-
-		char * streamName = (AnsiString("SceneCalibrateStream_") + AnsiString(IdentifierEdit->Text)).c_str();
-		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,2 + numberOfMarkers*2,30,cft_float32,generateGUID());
+  } else if (isKind == isSceneMultiCalib) {
+ 	char * streamName = (AnsiString("SceneCalibrateStream_") + AnsiString(IdentifierEdit->Text)).c_str();
+		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,2 + numberOfMarkers*2,requestedFrameRate,cft_float32,generateGUID());
 		lsl_xml_ptr desc = lsl_get_desc(info);
 		lsl_xml_ptr chnls = lsl_append_child(desc, "channels");
 
@@ -1346,19 +1288,10 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 
 		outlet = lsl_create_outlet(info,0,360);
 
-	}
-	else
 
-	//scene display
-	if (RadioGroup1->ItemIndex==2)
-	{
-		isKind = isScene;
-		PageControl2->ActivePage = tsScene;
-		Caption = "Video stream: scene camera";
-
-
-		char * streamName = (AnsiString("SceneStream_") + AnsiString(IdentifierEdit->Text)).c_str();
-		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,13,30,cft_float32,generateGUID());
+  } else if (isKind == isScene) {
+	char * streamName = (AnsiString("SceneStream_") + AnsiString(IdentifierEdit->Text)).c_str();
+		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,13,requestedFrameRate,cft_float32,generateGUID());
 		lsl_xml_ptr desc = lsl_get_desc(info);
 		lsl_xml_ptr chnls = lsl_append_child(desc, "channels");
 
@@ -1419,6 +1352,116 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 
 		gazestreamThread = std::unique_ptr<TStreamThread>(new TStreamThread(streamName));
 
+  } else if (isKind == isVideo) {
+   		char * streamName = (AnsiString("VideoStream_") + AnsiString(IdentifierEdit->Text)).c_str();
+		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,1,/*LSL_IRREGULAR_RATE*/requestedFrameRate,/*cft_string*/cft_int32,generateGUID());
+		lsl_xml_ptr desc = lsl_get_desc(info);
+		lsl_xml_ptr chnls = lsl_append_child(desc, "channels");
+		lsl_xml_ptr chn = lsl_append_child(chnls, "channel");
+		lsl_append_child_value(chn, "label","frame");
+		lsl_append_child_value(chn,"unit","number");
+
+		lsl_xml_ptr sync = lsl_append_child(desc, "synchronization");
+		lsl_append_child_value(sync, "can_drop_samples", "true");
+
+		outlet = lsl_create_outlet(info,0,360);
+
+  }
+
+  	goodFrames = 0;
+	goodTime = 0;
+	nFrames = 0;
+
+	Start();
+
+	frameThread = std::unique_ptr<TFrameThread>(new TFrameThread(this, bmpQueue, hMutex, false));
+	BitBtnStop->Enabled=true;
+	BitBtnPlay->Enabled=false;
+
+	edtFrameRate->Text = FormatFloat ("0.00", CaptureWorkerForm->VideoGrabber->CurrentFrameRate);
+
+	frameRate = CaptureWorkerForm->VideoGrabber->CurrentFrameRate;
+
+	double ratio = requestedFrameRate/frameRate;
+	if(ratio > 1.02 || ratio < .98) {
+		edtFrameRate->Text = FormatFloat ("0.00", CaptureWorkerForm->VideoGrabber->CurrentFrameRate);
+		Application->MessageBoxA(L"Camera unable to display at requested frame rate.", L"Error", MB_OK);
+		btStopClick(this);
+		return;
+	}
+}
+//---------------------------------------------------------------------------
+
+
+
+double alphaX = 0;
+double alphaY = 0;
+int posX;
+int posY;
+
+void __fastcall TMainCaptureForm::Timer1Timer(TObject *Sender)
+{
+	if(frameThread) {
+		BacklogEdit->Text = bmpQueue.size();
+		edFrame->Text = nFrames;
+		edTimestamp->Text = FormatFloat("0.00", currentTimestamp - firstTimestamp);
+	}
+}
+//---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
+{
+	if(BitBtnStop->Enabled) btStopClick(this);
+
+
+	if(gazestreamThread) {
+		gazestreamThread->Terminate();
+		gazestreamThread.reset();
+	}
+	//eye camera
+	if (RadioGroup1->ItemIndex==0)
+	{
+		isKind = isEye;
+		PageControl2->ActivePage = tsEyeTracker;
+		Caption = "Video stream: eye camera";
+
+
+	}
+
+	else
+	//scene camera multi-spot calibrate
+	if (RadioGroup1->ItemIndex==1)
+	{
+
+
+
+		crRoiLeft->Position = 40;
+		crRoiRight->Position = 600;
+		crRoiTop->Position = 40;
+		crRoiBottom->Position = 440;
+		isKind = isSceneMultiCalib;
+		PageControl2->ActivePage = tsEyeTracker;
+		Caption = "Video stream: scene camera calibrate";
+
+
+	}
+	else
+
+	//scene display
+	if (RadioGroup1->ItemIndex==2)
+	{
+		isKind = isScene;
+		PageControl2->ActivePage = tsScene;
+		Caption = "Video stream: scene camera";
+
 
 	}
 
@@ -1427,10 +1470,7 @@ void __fastcall TMainCaptureForm::RadioGroup1Click(TObject *Sender)
 
 
 void TMainCaptureForm::SetToVideoMode() {
-		if(outlet) {
-			lsl_destroy_outlet(outlet);
-			outlet = NULL;
-		}
+
 
 		if(gazestreamThread) {
 			gazestreamThread->Terminate();
@@ -1450,18 +1490,7 @@ void TMainCaptureForm::SetToVideoMode() {
 		bmpCanvas = create_bitmap_ex(CDEPTH,tPanel->Width,tPanel->Height);
 		clear_bitmap(bmpCanvas);
 
-		char * streamName = (AnsiString("VideoStream_") + AnsiString(IdentifierEdit->Text)).c_str();
-		lsl_streaminfo info = lsl_create_streaminfo(streamName,streamName,1,30,cft_int32,"");
-		lsl_xml_ptr desc = lsl_get_desc(info);
-		lsl_xml_ptr chnls = lsl_append_child(desc, "channels");
-		lsl_xml_ptr chn = lsl_append_child(chnls, "channel");
-		lsl_append_child_value(chn, "label","frame");
-		lsl_append_child_value(chn,"unit","number");
 
-		lsl_xml_ptr sync = lsl_append_child(desc, "synchronization");
-		lsl_append_child_value(sync, "can_drop_samples", "true");
-
-		outlet = lsl_create_outlet(info,0,360);
 
 
 }
@@ -1750,7 +1779,7 @@ void __fastcall TMainCaptureForm::enableFrameSendingClick(TObject *Sender)
 	}
 	if(enableFrameSending->Checked == true) {
 		char * streamName = (AnsiString("VideoFrames_") + AnsiString(IdentifierEdit->Text)).c_str();
-		lsl_streaminfo info = lsl_create_streaminfo(streamName,"VideoRaw",acqWidth*acqHeight*3,0,cft_int8,"1e5f8b95-68cf-418c-8538-45e05ad791df");
+		lsl_streaminfo info = lsl_create_streaminfo(streamName,"VideoRaw",acqWidth*acqHeight*3,0,cft_int8,generateGUID());
 		char s[20];
 		lsl_xml_ptr desc = lsl_get_desc(info);
 		lsl_xml_ptr chn = lsl_append_child(desc, "encoding");
@@ -1768,4 +1797,5 @@ void __fastcall TMainCaptureForm::enableFrameSendingClick(TObject *Sender)
 
 }
 //---------------------------------------------------------------------------
+
 
