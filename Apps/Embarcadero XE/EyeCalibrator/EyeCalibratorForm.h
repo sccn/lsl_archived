@@ -135,6 +135,7 @@ __published:	// IDE-managed Components
 	TLabeledEdit *BackgroundRedEdit;
 	TLabeledEdit *BackgroundGreenEdit;
 	TLabeledEdit *BackgroundBlueEdit;
+	TLabeledEdit *CalibDistanceEdit;
 
 	/**
 	 * Main loop. Pulls all available data from input streams. Stores data

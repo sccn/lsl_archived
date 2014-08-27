@@ -1037,6 +1037,16 @@ object Form4: TForm4
     Text = '0'
     OnChange = BackgroundBlueEditChange
   end
+  object CalibDistanceEdit: TLabeledEdit
+    Left = 186
+    Top = 852
+    Width = 121
+    Height = 21
+    EditLabel.Width = 162
+    EditLabel.Height = 13
+    EditLabel.Caption = 'Distance to Calibration Point (mm)'
+    TabOrder = 38
+  end
   object xd: TXMLDocument
     Left = 1322
     Top = 723

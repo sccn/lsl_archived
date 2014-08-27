@@ -213,6 +213,7 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 				sceneY = NAN;
 				sceneZ = NAN;
 				printf("Unable to calculate stats for markers.\n");
+				CalibDistanceEdit->Text = "Unknown";
 				continue;
 			}
 
@@ -230,7 +231,11 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 				sceneX = NAN;
 				sceneY = NAN;
 				sceneZ = NAN;
-				printf("Unable to calculate stats for markers.\n");
+				static int qq = 0;
+				if(qq++%30 == 0) {
+					CalibDistanceEdit->Text = "Unknown";
+					printf("Unable to calculate stats for markers.\n");
+				}
 				continue;
 			}
 
@@ -297,15 +302,23 @@ void __fastcall TForm4::Timer1Timer(TObject *Sender) {
 			poseFinder(sortedRefMarkerXs, sortedRefMarkerYs);
 			static int v = 0;
 			if(v++%30 == 0) {
-			printf("%g %g %g ",sceneX, sceneY, sceneZ);
-			if(CONSOLE && !_isnan(sceneX)) {
-				printf("distance: %g\n",
-				sqrt(
-				(sceneX)*(sceneX)+
-				(sceneY)*(sceneY)+
-				(sceneZ)*(sceneZ)));
+				if(CONSOLE) printf("%g %g %g ",sceneX, sceneY, sceneZ);
+				if(CONSOLE && !_isnan(sceneX)) {
+					printf("distance: %g\n",
+					sqrt(
+					(sceneX)*(sceneX)+
+					(sceneY)*(sceneY)+
+					(sceneZ)*(sceneZ)));
+				}
+				if(_isnan(sceneX)) {
+					CalibDistanceEdit->Text = "Unknown";
+				} else {
+					CalibDistanceEdit->Text = FormatFloat ("0.00", 	sqrt(
+						(sceneX)*(sceneX)+
+						(sceneY)*(sceneY)+
+						(sceneZ)*(sceneZ)));
+				}
 			}
-		}
 
  // printf("\n\n");
 
