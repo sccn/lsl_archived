@@ -442,6 +442,16 @@ void MainWindow::read_thread(float srate, int interpolation, std::vector<OWLCame
 				.append_child_value("type","Confidence");
 			info.desc().append_child("acquisition").append_child_value("compensated_lag",boost::lexical_cast<std::string>(compensated_lag).c_str());
 
+			// <synchronization> meta-data
+			// the mean and rms here are measured accurately
+			//the other numbers are approximate based on histograms
+			info.desc().append_child("synchronization")
+				.append_child_value("offset_mean","-.00778")
+				.append_child_value("offset_rms", "0.0003")
+				.append_child_value("offset_median", "-0.00778")
+				.append_child_value("offset_5_centile", "-0.00928")
+				.append_child_value("offset_95_centile", "-0.00628");
+
 			// make outlet
 			rigid_outlets.push_back(boost::shared_ptr<lsl::stream_outlet>(new lsl::stream_outlet(info)));
 		}
