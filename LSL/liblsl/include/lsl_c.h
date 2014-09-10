@@ -425,6 +425,9 @@ extern LIBLSL_C_API int lsl_get_channel_bytes(lsl_streaminfo info);
 /// Number of bytes occupied by a sample (0 for string-typed channels).
 extern LIBLSL_C_API int lsl_get_sample_bytes(lsl_streaminfo info);
 
+/// Create a streaminfo object from an XML representation
+extern LIBLSL_C_API lsl_streaminfo lsl_streaminfo_from_xml(char *xml);
+
 
 
 

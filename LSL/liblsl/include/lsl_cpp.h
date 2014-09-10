@@ -242,7 +242,7 @@ namespace lsl {
         * Important: if you use a stream content type for which meta-data recommendations exist, please 
         * try to lay out your meta-data in agreement with these recommendations for compatibility with other applications.
         */
-        xml_element desc();
+		xml_element desc();
 
 
         // ===============================
@@ -279,6 +279,9 @@ namespace lsl {
 
         /// Destructor.
         ~stream_info() { lsl_destroy_streaminfo(obj); }
+
+		/// Utility function to create a stream_info from an XML representation
+		static stream_info from_xml(const std::string &xml) { return stream_info(lsl_streaminfo_from_xml((char*)xml.c_str())); }
     private:
         mutable lsl_streaminfo obj;
     };

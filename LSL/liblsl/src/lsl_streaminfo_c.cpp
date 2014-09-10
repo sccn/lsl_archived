@@ -63,3 +63,14 @@ LIBLSL_C_API char *lsl_get_xml(lsl_streaminfo info) {
 }
 LIBLSL_C_API int lsl_get_channel_bytes(lsl_streaminfo info) { return ((stream_info_impl*)info)->channel_bytes(); }
 LIBLSL_C_API int lsl_get_sample_bytes(lsl_streaminfo info) { return ((stream_info_impl*)info)->sample_bytes(); }
+
+LIBLSL_C_API lsl_streaminfo lsl_streaminfo_from_xml(char *xml) {
+	try {
+		stream_info_impl *impl = new stream_info_impl(); 
+		impl->from_fullinfo_message(xml);
+		return (lsl_streaminfo)impl;
+	} catch(std::exception &e) {
+		std::cerr << "Unexpected error during streaminfo construction: " << e.what() << std::endl;
+		return NULL;
+	}
+}
