@@ -1,24 +1,30 @@
 CC=g++
 
 TARGET=ClickMe
+QTINCLUDE= 
+INCLUDE = -I../../LSL/liblsl/include -I./zmq/include -I/usr/include/QtGui -I./ 
 CPPFLAGS = -DWINDOWS='$(IS_WINDOWS)'
-INCLUDE = -I/home/dmedine/SCCN/labstreaminglayer/LSL/liblsl/inlude
-LIBPATH = -L/home/dmedine/SCCN/labstreaminglayer/LSL/liblsl/bin 
-LIBS = -llsl64 -lboost_thread -lQtGui -lQtNetwork -lQtCore
+LIBPATH = -L../../LSL/liblsl/bin 
+LIBS = -llsl64 -lboost_thread -lQtGui -lQtNetwork -lQtCore 
 
-.PHONY = mainwindow.o $(TARGET)
+SRCS = mainwindow.cpp moc_mainwindow.cpp main.cpp
+OBJS = $(SRCS:.c=.o)
 
-all: mainwindow.o $(TARGET)
 
-moc_mainwindow.o: moc_mainwindow.cpp
-	$(CC) $(CPPFLAGS ) $(INLCUDE) $(LIBPATH) $(LIBS) -c -o $@ $^
+.PHONY = $(TARGET)
 
-mainwindow.o: mainwindow.cpp
-	$(CC) $(CPPFLAGS ) $(INLCUDE) $(LIBPATH) $(LIBS) -c -o $@ $^ 
+all: $(TARGET)
 
-$(TARGET): main.o mainwindow.o moc_mainwindow.o
-	$(CC) -g -o $@ $^ $(CFLAGS) $(LIBPATH) $(LIBS) -Wl,-rpath=../linux_libs 
+$(TARGET): $(OBJS)
+	$(CC) -g -o $@ $(OBJS) $(INCLUDE) $(CFLAGS) $(LIBPATH) $(LIBS) -Wl,-rpath=../linux_libs -Wl,-rpath=../linuxlibs
+
+.cpp.o:
+	$(CC) $(INCLUDE) $(CPPFLAGS)  $(LIBPATH) $(LIBS) -c -o $@ $^
+
+
 
 clean:
 	rm *.o
 	rm $(TARGET)
+
+
