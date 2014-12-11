@@ -16,7 +16,7 @@ OBJS = $(SRCS:.c=.o)
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) -g -o $@ $(OBJS) $(INCLUDE) $(CFLAGS) $(LIBPATH) $(LIBS) -Wl,-rpath=../linux_libs -Wl,-rpath=./zmq/bin/linux
+	$(CC) -g -o $@ $(OBJS) $(INCLUDE) $(CFLAGS) $(LIBPATH) $(LIBS) -Wl,-rpath=./linux_libs -Wl,-rpath=./zmq/bin/linux
 
 .cpp.o:
 	$(CC) $(INCLUDE) $(CPPFLAGS)  $(LIBPATH) $(LIBS) -c -o $@ $^
