@@ -1,6 +1,9 @@
 import sys, os, socket, time, ctypes
 from optparse import OptionParser
 
+
+#import pylsl            
+
 if sys.version_info[0] == 2:
 	if sys.version_info[1] == 6:
 		sys.path.append("binaries-python2.6")
@@ -14,7 +17,9 @@ if sys.version_info[0] == 2:
 		print "Error: this program has not yet been built for your version of Python 2.x"
 else:
 	print "Error: this program has not yet been built for Python 3"
-	
+
+
+
 
 from PySide.QtCore import *
 from PySide.QtGui import *
