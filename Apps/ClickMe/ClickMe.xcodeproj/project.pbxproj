@@ -1,0 +1,416 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		14030FB267B619C665EA0C8B /* QtCore.framework in Frameworks & Libraries */ = {isa = PBXBuildFile; fileRef = 98147451093A70FCFFA99C13 /* QtCore.framework */; };
+		26C2BED6C570C95F5243C556 /* moc_mainwindow.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 336D3C48DD3B44974395C633 /* moc_mainwindow.cpp */; settings = {ATTRIBUTES = (); }; };
+		2B093CA6F071B023A473CED0 /* main.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 118FCBAABA162BA17933C789 /* main.cpp */; settings = {ATTRIBUTES = (); }; };
+		462C0F34BBEF2375A9469BB5 /* mainwindow.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = EA177DE95BF7D3EF58EE43F7 /* mainwindow.cpp */; settings = {ATTRIBUTES = (); }; };
+		52F1FAADF4FE86970C9D8F8B /* boost_thread-mt in Frameworks & Libraries */ = {isa = PBXBuildFile; fileRef = 4D97731782BCD54DAFDEC436 /* boost_thread-mt */; };
+		884B07938A5D3B6474FB2C3F /* boost_system-mt in Frameworks & Libraries */ = {isa = PBXBuildFile; fileRef = A14DBA87C082F448E809B93A /* boost_system-mt */; };
+		A2D72ED53526E83B9CAE8BEE /* lsl64 in Frameworks & Libraries */ = {isa = PBXBuildFile; fileRef = 99D42C8F472C85D865DD4609 /* lsl64 */; };
+		BC793246637FF51827EA4C5F /* QtGui.framework in Frameworks & Libraries */ = {isa = PBXBuildFile; fileRef = 6657E5C12ADFA1502DD63F0C /* QtGui.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		118FCBAABA162BA17933C789 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = SOURCE_ROOT; };
+		336D3C48DD3B44974395C633 /* moc_mainwindow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = moc_mainwindow.cpp; sourceTree = SOURCE_ROOT; };
+		4D97731782BCD54DAFDEC436 /* boost_thread-mt */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "boost_thread-mt"; path = "/opt/local/lib/libboost_thread-mt.dylib"; sourceTree = "<absolute>"; };
+		6657E5C12ADFA1502DD63F0C /* QtGui.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtGui.framework; path = /opt/local/Library/Frameworks/QtGui.framework; sourceTree = "<absolute>"; };
+		880402731A425ED10017398D /* ClickMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClickMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		98147451093A70FCFFA99C13 /* QtCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtCore.framework; path = /opt/local/Library/Frameworks/QtCore.framework; sourceTree = "<absolute>"; };
+		99D42C8F472C85D865DD4609 /* lsl64 */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = lsl64; path = mac_libs/liblsl64.dylib; sourceTree = SOURCE_ROOT; };
+		A14DBA87C082F448E809B93A /* boost_system-mt */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "boost_system-mt"; path = "/opt/local/lib/libboost_system-mt.dylib"; sourceTree = "<absolute>"; };
+		AB241F823D3821A41AAC4BDE /* mainwindow.ui */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = mainwindow.ui; sourceTree = SOURCE_ROOT; };
+		AFB98B37FF0012B837A2131C /* ui_mainwindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ui_mainwindow.h; sourceTree = SOURCE_ROOT; };
+		BCFA877E5C9387250D1EDFBF /* ClickMe.pro */ = {isa = PBXFileReference; lastKnownFileType = text; path = ClickMe.pro; sourceTree = SOURCE_ROOT; };
+		C63FA392C61F27B1B13369C1 /* mainwindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mainwindow.h; sourceTree = SOURCE_ROOT; };
+		EA177DE95BF7D3EF58EE43F7 /* mainwindow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mainwindow.cpp; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2A1043669E6E5A7426EA502A /* Frameworks & Libraries */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A2D72ED53526E83B9CAE8BEE /* lsl64 in Frameworks & Libraries */,
+				884B07938A5D3B6474FB2C3F /* boost_system-mt in Frameworks & Libraries */,
+				52F1FAADF4FE86970C9D8F8B /* boost_thread-mt in Frameworks & Libraries */,
+				BC793246637FF51827EA4C5F /* QtGui.framework in Frameworks & Libraries */,
+				14030FB267B619C665EA0C8B /* QtCore.framework in Frameworks & Libraries */,
+			);
+			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		05596AB53D8D521C69802C27 /* ClickMe */ = {
+			isa = PBXGroup;
+			children = (
+				FB61758D0F0FDA4BA867C3D5 /* Sources */,
+				46E892BBB6BB6952967E0561 /* Temporary Sources */,
+				883D7615C4D2DE3FA1218F12 /* Headers */,
+				7CABE3C80E79AD2B307756D2 /* Sources [qmake] */,
+				EEC299C65D5017EB9DD513B0 /* Sources [UIC] */,
+				ED1E82605DD74B483AF3C982 /* External Frameworks and Libraries */,
+				880402741A425ED10017398D /* Products */,
+			);
+			name = ClickMe;
+			sourceTree = "<Group>";
+		};
+		46E892BBB6BB6952967E0561 /* Temporary Sources */ = {
+			isa = PBXGroup;
+			children = (
+				336D3C48DD3B44974395C633 /* moc_mainwindow.cpp */,
+				AFB98B37FF0012B837A2131C /* ui_mainwindow.h */,
+			);
+			name = "Temporary Sources";
+			sourceTree = "<Group>";
+		};
+		7CABE3C80E79AD2B307756D2 /* Sources [qmake] */ = {
+			isa = PBXGroup;
+			children = (
+				BCFA877E5C9387250D1EDFBF /* ClickMe.pro */,
+			);
+			name = "Sources [qmake]";
+			sourceTree = "<Group>";
+		};
+		880402741A425ED10017398D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				880402731A425ED10017398D /* ClickMe.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		883D7615C4D2DE3FA1218F12 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				C63FA392C61F27B1B13369C1 /* mainwindow.h */,
+			);
+			name = Headers;
+			sourceTree = "<Group>";
+		};
+		ED1E82605DD74B483AF3C982 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				99D42C8F472C85D865DD4609 /* lsl64 */,
+				A14DBA87C082F448E809B93A /* boost_system-mt */,
+				4D97731782BCD54DAFDEC436 /* boost_thread-mt */,
+				6657E5C12ADFA1502DD63F0C /* QtGui.framework */,
+				98147451093A70FCFFA99C13 /* QtCore.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<Group>";
+		};
+		EEC299C65D5017EB9DD513B0 /* Sources [UIC] */ = {
+			isa = PBXGroup;
+			children = (
+				AB241F823D3821A41AAC4BDE /* mainwindow.ui */,
+			);
+			name = "Sources [UIC]";
+			sourceTree = "<Group>";
+		};
+		FB61758D0F0FDA4BA867C3D5 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				118FCBAABA162BA17933C789 /* main.cpp */,
+				EA177DE95BF7D3EF58EE43F7 /* mainwindow.cpp */,
+			);
+			name = Sources;
+			sourceTree = "<Group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D1DEDE8BCAD6A5B54DC4E95A /* ClickMe */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 17B3380A4D6A7D415E7F2E1E /* Build configuration list for PBXNativeTarget "ClickMe" */;
+			buildPhases = (
+				D7BA7D76DAB5DD13389D6332 /* Qt Qmake */,
+				A0A52A2ADF7A1E2A99738674 /* Qt Preprocessors */,
+				C29B8785722055ED95EF7B57 /* Build Sources */,
+				2A1043669E6E5A7426EA502A /* Frameworks & Libraries */,
+				3787F99312C85FF0073FD7BA /* Bundle Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ClickMe;
+			productName = ClickMe;
+			productReference = 880402731A425ED10017398D /* ClickMe.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		91B15E841AA80083484172DE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+			};
+			buildConfigurationList = CC82A9286117DFED018F418F /* Build configuration list for PBXProject "ClickMe" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 05596AB53D8D521C69802C27 /* ClickMe */;
+			productRefGroup = 880402741A425ED10017398D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D1DEDE8BCAD6A5B54DC4E95A /* ClickMe */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3787F99312C85FF0073FD7BA /* Bundle Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "Bundle Resources";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A0A52A2ADF7A1E2A99738674 /* Qt Preprocessors */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "Qt Preprocessors";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Volumes/projects/dmedine/hg-labstreaminglayer/Apps/ClickMe -f 'ClickMe.xcodeproj/qt_preprocess.mak'";
+		};
+		D7BA7D76DAB5DD13389D6332 /* Qt Qmake */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "Qt Qmake";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Volumes/projects/dmedine/hg-labstreaminglayer/Apps/ClickMe -f 'ClickMe.xcodeproj/qt_makeqmake.mak'";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C29B8785722055ED95EF7B57 /* Build Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2B093CA6F071B023A473CED0 /* main.cpp in Build Sources */,
+				462C0F34BBEF2375A9469BB5 /* mainwindow.cpp in Build Sources */,
+				26C2BED6C570C95F5243C556 /* moc_mainwindow.cpp in Build Sources */,
+			);
+			name = "Build Sources";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		4B72B24813252891014BCF61 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					/opt/local/Library/Frameworks,
+					/opt/local/lib,
+					/opt/local/Library/Frameworks,
+					/opt/local/lib,
+					/opt/local/Library/Frameworks,
+					/opt/local/lib,
+				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = (
+					.,
+					/opt/local/Library/Frameworks/QtCore.framework/Versions/4/Headers,
+					/opt/local/Library/Frameworks/QtGui.framework/Versions/4/Headers,
+					../../LSL/liblsl/include,
+					/opt/local/include,
+					/opt/local/include,
+					/opt/local/Library/Frameworks/QtGui.framework/Versions/4/Headers,
+					/opt/local/Library/Frameworks/QtCore.framework/Versions/4/Headers,
+					/opt/local/include,
+					.,
+					/usr/local/include,
+					/System/Library/Frameworks/CarbonCore.framework/Headers,
+					"/opt/local/share/qt4/mkspecs/macx-xcode",
+				);
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(PROJECT_DIR)/mac_libs/";
+				LIBRARY_SEARCH_PATHS = (
+					"/Volumes/projects/dmedine/hg-labstreaminglayer/Apps/ClickMe/mac_libs/",
+					"/Volumes/projects/dmedine/hg-labstreaminglayer/Apps/ClickMe/../../../../../../opt/local/lib/",
+					/opt/local/lib/,
+					/opt/local/lib,
+					/opt/local/Library/Frameworks,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"-pipe",
+					"-O2",
+					"-Wall",
+					"-W",
+					"-DQT_NO_DEBUG",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-pipe",
+					"-O2",
+					"-Wall",
+					"-W",
+					"-DQT_NO_DEBUG",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED",
+				);
+				OTHER_LDFLAGS = (
+					"-headerpad_max_install_names",
+					"-F/opt/local/Library/Frameworks",
+					"-F/opt/local/lib",
+					"-L/Volumes/projects/dmedine/hg-labstreaminglayer/Apps/ClickMe/mac_libs/",
+					"-L/Volumes/projects/dmedine/hg-labstreaminglayer/Apps/ClickMe/../../../../../../opt/local/lib/",
+					"-F/opt/local/Library/Frameworks",
+					"-F/opt/local/lib",
+					"-L/opt/local/lib",
+				);
+				PRODUCT_NAME = ClickMe;
+			};
+			name = Debug;
+		};
+		8C7174830A1E4DCBA0332EC1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				PRODUCT_NAME = ClickMe;
+			};
+			name = Release;
+		};
+		BEC09A62E69C3553534FF35E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = ClickMe;
+			};
+			name = Debug;
+		};
+		D70590BEB531B51029F711BB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					/opt/local/Library/Frameworks,
+					/opt/local/lib,
+					/opt/local/Library/Frameworks,
+					/opt/local/lib,
+					/opt/local/Library/Frameworks,
+					/opt/local/lib,
+				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				HEADER_SEARCH_PATHS = (
+					.,
+					/opt/local/Library/Frameworks/QtCore.framework/Versions/4/Headers,
+					/opt/local/Library/Frameworks/QtGui.framework/Versions/4/Headers,
+					../../LSL/liblsl/include,
+					/opt/local/include,
+					/opt/local/include,
+					/opt/local/Library/Frameworks/QtGui.framework/Versions/4/Headers,
+					/opt/local/Library/Frameworks/QtCore.framework/Versions/4/Headers,
+					/opt/local/include,
+					.,
+					/usr/local/include,
+					/System/Library/Frameworks/CarbonCore.framework/Headers,
+					"/opt/local/share/qt4/mkspecs/macx-xcode",
+				);
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(PROJECT_DIR)/mac_libs/";
+				LIBRARY_SEARCH_PATHS = (
+					"/Volumes/projects/dmedine/hg-labstreaminglayer/Apps/ClickMe/mac_libs/",
+					"/Volumes/projects/dmedine/hg-labstreaminglayer/Apps/ClickMe/../../../../../../opt/local/lib/",
+					/opt/local/lib/,
+					/opt/local/lib,
+					/opt/local/Library/Frameworks,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				OTHER_CFLAGS = (
+					"-pipe",
+					"-O2",
+					"-Wall",
+					"-W",
+					"-DQT_NO_DEBUG",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-pipe",
+					"-O2",
+					"-Wall",
+					"-W",
+					"-DQT_NO_DEBUG",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED",
+				);
+				OTHER_LDFLAGS = (
+					"-headerpad_max_install_names",
+					"-F/opt/local/Library/Frameworks",
+					"-F/opt/local/lib",
+					"-L/Volumes/projects/dmedine/hg-labstreaminglayer/Apps/ClickMe/mac_libs/",
+					"-L/Volumes/projects/dmedine/hg-labstreaminglayer/Apps/ClickMe/../../../../../../opt/local/lib/",
+					"-F/opt/local/Library/Frameworks",
+					"-F/opt/local/lib",
+					"-L/opt/local/lib",
+				);
+				PRODUCT_NAME = ClickMe;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		17B3380A4D6A7D415E7F2E1E /* Build configuration list for PBXNativeTarget "ClickMe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BEC09A62E69C3553534FF35E /* Debug */,
+				8C7174830A1E4DCBA0332EC1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CC82A9286117DFED018F418F /* Build configuration list for PBXProject "ClickMe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B72B24813252891014BCF61 /* Debug */,
+				D70590BEB531B51029F711BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 91B15E841AA80083484172DE /* Project object */;
+}
