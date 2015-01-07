@@ -1,18 +1,24 @@
+#ifdef _WIN32
 #pragma once
 #include "targetver.h"
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#endif
+
 #include "RecorderLib.h"
-#include "lsl_c.h"
+#include "../../../../../LSL/liblsl/include/lsl_c.h"
 #include "recording.h"
 #include <boost/algorithm/string.hpp>
 
-
+#ifdef _WIN32
 RECORDERLIB_API rl_recording rl_start_recording(char *filename, void **recordfrom, unsigned num_recordfrom, char *watchforc, int collect_offsets) {
+#else
+rl_recording rl_start_recording(char *filename, void **recordfrom, unsigned num_recordfrom, char *watchforc, int collect_offsets) {
+#endif
 	// first remap the C API streaminfo array to a vector<lsl::streaminfo>
 	std::vector<lsl::stream_info> streams;
 	for (std::size_t k=0; k<num_recordfrom; k++)
-		streams.push_back(lsl::stream_info((lsl::stream_info_impl*)recordfrom[k]));
+		streams.push_back(lsl::stream_info((lsl_streaminfo)recordfrom[k]));
 
 	// then parse split the watchfor string
 	std::vector<std::string> watchfor;
@@ -25,12 +31,14 @@ RECORDERLIB_API rl_recording rl_start_recording(char *filename, void **recordfro
 	return (rl_recording)result;
 }
 
-
+#ifdef _WIN32
 RECORDERLIB_API void rl_end_recording(rl_recording rec) { delete (recording*)rec; }
+#else
+void rl_end_recording(rl_recording rec) { delete (recording*)rec; }
+#endif
 
 
-
-
+#ifdef _WIN32
 BOOL APIENTRY DllMain( HMODULE hModule,
 					  DWORD  ul_reason_for_call,
 					  LPVOID lpReserved
@@ -46,4 +54,5 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 	}
 	return TRUE;
 }
-
+#endif
+// .so (shared object) and .dylib (Mac's dynamic library) don't use a DLLMain

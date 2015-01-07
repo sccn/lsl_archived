@@ -1,24 +1,31 @@
 import sys, os, socket, time, ctypes
 from optparse import OptionParser
+import platform, struct
+from ctypes.util import find_library
+from ctypes import CDLL, c_void_p
 
+import pylsl.pylsl as pylsl
 
-#import pylsl            
-
-if sys.version_info[0] == 2:
-	if sys.version_info[1] == 6:
-		sys.path.append("binaries-python2.6")
-		import pylsl
-		import RecorderLib
-	elif sys.version_info[1] == 7:
-		sys.path.append("binaries-python2.7")
-		import pylsl
-		import RecorderLib
-	else:
-		print "Error: this program has not yet been built for your version of Python 2.x"
+# find and load library
+os_name = platform.system()
+bitness = 8 * struct.calcsize("P")
+if os_name in ['Windows','Microsoft']:
+    libname = 'RecorderLib32.dll' if bitness == 32 else 'RecorderLib64.dll'
+elif os_name == 'Darwin':
+    libname = 'RecorderLib32.dylib' if bitness == 32 else 'RecorderLib64.dylib'
+elif os_name == 'Linux':
+    libname = 'RecorderLib32.so' if bitness == 32 else 'RecorderLib64.so'
 else:
-	print "Error: this program has not yet been built for Python 3"
-
-
+    raise Exception("Unrecognized operating system:", os_name)
+libpath = os.path.dirname(os.path.abspath(__file__)) + os.sep + libname
+if not os.path.isfile(libpath):
+    libpath = find_library(libname)
+if not libpath:
+    raise Exception("The library " + libname + " was not found. Please make "
+        "sure that it is on the search path (e.g., in the same folder as "
+        "LabRecorder.py).")
+recorder_lib = CDLL(libpath)
+recorder_lib.rl_start_recording.restype = c_void_p
 
 
 from PySide.QtCore import *
@@ -269,11 +276,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         into_streams.append(self.ResolvedStreams[i])
             
             # determine the streams to record from...
-            num_streams = len(into_streams)
-            streams = RecorderLib.new_info(num_streams)
-            for i in range(num_streams):
-                RecorderLib.info_setitem(streams,i,into_streams[i].impl())
-        
+            stream_array = c_void_p*len(into_streams)
+            streams = [c_void_p(s.handle()) for s in into_streams]
+            streams = stream_array(*streams)
+
             # watchfor
             watchfor = ''
             for i in range(len(into_watchfor)):
@@ -282,7 +288,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 watchfor = watchfor + into_watchfor[i].encode("utf-8")
 
             # start recording
-            self.CurrentRecording = RecorderLib.rl_start_recording(filename.encode("utf-8"),streams,num_streams,watchfor,1)
+            self.CurrentRecording = recorder_lib.rl_start_recording(filename.encode("utf-8"),streams,len(into_streams),watchfor,1)
             self.StartTime = time.time()            
             self.CurrentlyRecording = True
             self.stopButton.setEnabled(True)
@@ -313,7 +319,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     
             # stop the actual recording
             try:
-                RecorderLib.rl_end_recording(self.CurrentRecording)
+                recorder_lib.rl_end_recording(self.CurrentRecording)
             finally:
                 self.CurrentlyRecording = False
                 self.startButton.setEnabled(True)
