@@ -15,7 +15,7 @@
 #define HEADER_PUGIXML_HPP
 
 #include "pugiconfig.hpp"
-
+#include <string>
 #ifndef PUGIXML_NO_STL
 namespace std
 {
@@ -28,13 +28,16 @@ namespace std
 	template <class _charT, class _Traits> class basic_istream;
 	template <class _charT, class _Traits> class basic_ostream;
 	template <class _charT, class _Traits, class _Allocator> class basic_string;
-#else
+
+#endif
+#ifdef __BORLANDC__
 	// Borland C++ compiler has a bug which forces template argument names in forward declarations to be the same as in actual definitions
 	template <class _Ty> class allocator;
 	template <class _Ty> struct char_traits;
 	template <class _Elem, class _Traits> class basic_istream;
 	template <class _Elem, class _Traits> class basic_ostream;
 	template <class _Elem, class _Traits, class _Ax> class basic_string;
+
 #endif
 
 	// Digital Mars compiler has a bug which requires a forward declaration for explicit instantiation (otherwise type selection is messed up later, producing link errors)

@@ -1,12 +1,13 @@
 #ifndef STREAM_OUTLET_IMPL_H
 #define STREAM_OUTLET_IMPL_H
 
+#include "tcp_server.h"
+#include "send_buffer.h"
 #include "common.h"
 #include "api_config.h"
-#include "tcp_server.h"
 #include "udp_server.h"
 #include "sample.h"
-#include "send_buffer.h"
+
 
 
 namespace lsl { 

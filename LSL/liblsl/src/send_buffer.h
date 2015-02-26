@@ -1,11 +1,12 @@
 #ifndef SEND_BUFFER_H
 #define SEND_BUFFER_H
 
-#include "sample.h"
-#include "consumer_queue.h"
 #include <set>
 #include <boost/container/flat_set.hpp>
 #include <boost/enable_shared_from_this.hpp>
+#include "consumer_queue.h"
+#include "sample.h"
+
 
 
 namespace lsl {

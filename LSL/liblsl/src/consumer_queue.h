@@ -1,10 +1,9 @@
 #ifndef CONSUMER_QUEUE_H
 #define CONSUMER_QUEUE_H
 
-#include "sample.h"
 #include <boost/lockfree/spsc_queue.hpp>
 #include <boost/thread.hpp>
-
+#include "sample.h"
 
 namespace lsl {
 	/// shared pointer to a consumer queue

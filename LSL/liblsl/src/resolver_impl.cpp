@@ -1,4 +1,3 @@
-#include "resolver_impl.h"
 #include <sstream>
 #include <iostream>
 #include <istream>
@@ -6,6 +5,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/functional/hash.hpp>
+#include "resolver_impl.h"
 
 
 // === implementation of the resolver_impl class ===

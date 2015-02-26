@@ -1,13 +1,13 @@
 #ifndef INLET_CONNECTION_H
 #define INLET_CONNECTION_H
 
-#include "common.h"
-#include "resolver_impl.h"
-#include "cancellation.h"
 #include <map>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include <boost/function.hpp>
+#include "common.h"
+#include "resolver_impl.h"
+#include "cancellation.h"
 
 
 using boost::asio::ip::tcp;

@@ -1,12 +1,12 @@
 #ifndef TIME_RECEIVER_H
 #define TIME_RECEIVER_H
 
-#include "inlet_connection.h"
+
 #include <limits>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include <boost/random.hpp>
-
+#include "inlet_connection.h"
 
 using boost::asio::ip::udp;
 using boost::asio::deadline_timer;

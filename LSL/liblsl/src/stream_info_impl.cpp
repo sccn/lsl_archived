@@ -1,9 +1,9 @@
-#include "stream_info_impl.h"
-#include "api_config.h"
 #include <sstream>
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include "stream_info_impl.h"
+#include "api_config.h"
 
 
 // === implementation of the stream_info_impl class ===

@@ -1,8 +1,8 @@
 #include "../common.h"
-#include "legacy_abi.h"
-#include "../stream_info_impl.h"
 #include "../stream_outlet_impl.h"
 #include "../stream_inlet_impl.h"
+#include "../stream_info_impl.h"
+#include "legacy_abi.h"
 #include "../resolver_impl.h"
 #include "../pugixml/pugixml.hpp"
 

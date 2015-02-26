@@ -1,11 +1,12 @@
 #ifndef STREAM_INLET_IMPL_H
 #define STREAM_INLET_IMPL_H
 
+
+#include "data_receiver.h"
+#include "time_receiver.h"
 #include "common.h"
 #include "inlet_connection.h"
 #include "info_receiver.h"
-#include "time_receiver.h"
-#include "data_receiver.h"
 
 
 namespace lsl {

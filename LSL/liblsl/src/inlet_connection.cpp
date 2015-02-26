@@ -1,8 +1,8 @@
-#include "inlet_connection.h"
-#include "api_config.h"
 #include <iostream>
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
+#include "inlet_connection.h"
+#include "api_config.h"
 
 
 // === implementation of the inlet_connection class ===

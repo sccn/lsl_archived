@@ -1,7 +1,7 @@
 #ifndef SAMPLE_H
 #define SAMPLE_H
 
-#include "common.h"
+#include <boost/lexical_cast.hpp>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -11,9 +11,9 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/atomic.hpp>
 #include <boost/static_assert.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/serialization/split_member.hpp>
 #include "endian/conversion.hpp"
+#include "common.h"
 
 namespace lsl {
 	// if you get an error here your machine cannot represent the double-precision time-stamp format required by LSL

@@ -1,5 +1,3 @@
-#include "tcp_server.h"
-#include "socket_utils.h"
 #include <iostream>
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
@@ -7,6 +5,8 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/serialization/split_member.hpp>
+#include "tcp_server.h"
+#include "socket_utils.h"
 
 
 // === implementation of the tcp_server class ===

@@ -3,15 +3,16 @@
 
 #pragma warning (disable:4800)	// (inefficiently converting int to bool in portable_oarchive instantiation...)
 
-#include "common.h"
 #include "stream_info_impl.h"
-#include "send_buffer.h"
-#include "api_config.h"
-#include "portable_archive/portable_oarchive.hpp"
 #include <set>
 #include <iostream>
 #include <boost/asio.hpp>
 #include <boost/enable_shared_from_this.hpp>
+#include "common.h"
+
+#include "send_buffer.h"
+#include "api_config.h"
+#include "portable_archive/portable_oarchive.hpp"
 
 
 using boost::asio::ip::tcp;

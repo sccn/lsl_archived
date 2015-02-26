@@ -1,10 +1,11 @@
 #ifndef DATA_RECEIVER_H
 #define DATA_RECEIVER_H
 
-#include "inlet_connection.h"
-#include "consumer_queue.h"
-#include "cancellable_streambuf.h"
 #include <boost/thread.hpp>
+#include "consumer_queue.h"
+#include "inlet_connection.h"
+#include "cancellable_streambuf.h"
+
 
 
 using boost::asio::ip::tcp;

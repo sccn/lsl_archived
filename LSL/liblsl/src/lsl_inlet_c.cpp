@@ -1,6 +1,6 @@
 #include "../include/lsl_c.h"
 #include "stream_inlet_impl.h"
-#include <iostream>
+
 
 
 // === implementation of the stream_inlet class ===
