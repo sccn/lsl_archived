@@ -41,6 +41,9 @@ private:
 	bool shutdown_;										// tells the thread that it should shut itself down
 	boost::shared_ptr<boost::thread> reader_thread_;	// the background thread
     Ui::MainWindow *ui;									// window pointer
+	
+	std::string source_id;
+
 };
 
 #endif // MAINWINDOW_H

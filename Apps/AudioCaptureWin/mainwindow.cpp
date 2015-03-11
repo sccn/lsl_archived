@@ -32,7 +32,9 @@ lsl::channel_format_t bits2fmt(int bits) {
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
 	ui->setupUi(this);
+	
 	QObject::connect(ui->linkButton, SIGNAL(clicked()), this, SLOT(link_audio()));
+
 }
 
 void MainWindow::closeEvent(QCloseEvent *ev) {
@@ -55,6 +57,9 @@ void MainWindow::link_audio() {
 		}
 
 		ui->linkButton->setText("Link");
+		ui->lineEdit->setEnabled(true);
+		ui->lineEdit->setReadOnly(false);
+
 	} else {
 		// === perform link action ===
 		shutdown_ = false;
@@ -115,7 +120,8 @@ void MainWindow::link_audio() {
 
 			// now we are linked
 			ui->linkButton->setText("Unlink");
-
+			ui->lineEdit->setDisabled(true);
+			ui->lineEdit->setReadOnly(true);
 		} catch(std::runtime_error &e) {
 			// got an exception during initialization: release resources...
 			if (pCaptureClient)
@@ -143,8 +149,8 @@ MainWindow::~MainWindow() {
 void MainWindow::process_samples(IMMDeviceEnumerator *pEnumerator,IMMDevice *pDevice,IAudioClient *pAudioClient,IAudioCaptureClient *pCaptureClient,WAVEFORMATEX *pwfx,LPWSTR devID) {
 	// set up the stream info
 	std::wstring tmp(devID);
-	std::string source_id = QHostInfo::localHostName().toStdString() += std::string(tmp.begin(),tmp.end());
-	lsl::stream_info info("AudioCaptureWin","Audio",pwfx->nChannels,pwfx->nSamplesPerSec,lsl::cf_float32,source_id);
+	source_id = QHostInfo::localHostName().toStdString() += std::string(tmp.begin(),tmp.end());
+	lsl::stream_info info(ui->lineEdit->text().toStdString(),"Audio",pwfx->nChannels,pwfx->nSamplesPerSec,lsl::cf_float32,source_id);
 	info.desc().append_child("provider").append_child_value("api","WASAPI");
 	lsl::xml_element channels = info.desc().append_child("channels");
 	if (pwfx->nChannels == 1) {
