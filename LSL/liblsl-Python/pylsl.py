@@ -543,9 +543,7 @@ class StreamInlet:
         self.do_pull_chunk = fmt2pull_chunk[self.channel_format]
         self.value_type = fmt2type[self.channel_format]
         self.sample_type = self.value_type*self.channel_count
-        #self.sample = self.sample_type()
-# for OSX:
-        self.sample = cast(self.sample_type(), POINTER(self.value_type))
+        self.sample = self.sample_type()
         self.buffers = {}
 
     def __del__(self):
@@ -567,8 +565,7 @@ class StreamInlet:
         stream source has been lost).
         """
         errcode = c_int()
-        #result = lib.lsl_get_fullinfo(self.obj,c_double(timeout),byref(errcode))
-        result = lib.lsl_get_fullinfo(c_void_p(self.obj),c_double(timeout),byref(errcode))
+        result = lib.lsl_get_fullinfo(self.obj,c_double(timeout),byref(errcode))
         handle_error(errcode)
         return StreamInfo(handle=result)
 
@@ -586,8 +583,7 @@ class StreamInlet:
         stream source has been lost).
         """
         errcode = c_int()
-        #lib.lsl_open_stream(self.obj,c_double(timeout),byref(errcode))
-        lib.lsl_open_stream(c_void_p(self.obj),c_double(timeout),byref(errcode))
+        lib.lsl_open_stream(self.obj,c_double(timeout),byref(errcode))
         handle_error(errcode)
         
     def close_stream(self):
@@ -620,8 +616,7 @@ class StreamInlet:
         stream source has been lost).
         """
         errcode = c_int()
-        #result = lib.lsl_time_correction(self.obj,c_double(timeout),
-        result = lib.lsl_time_correction(c_void_p(self.obj),c_double(timeout),
+        result = lib.lsl_time_correction(self.obj,c_double(timeout),
             byref(errcode))
         handle_error(errcode)
         return result
@@ -653,13 +648,11 @@ class StreamInlet:
             assign_to = None
                 
         errcode = c_int()
-        #timestamp = self.do_pull_sample(self.obj, byref(self.sample), self.
-        timestamp = self.do_pull_sample(self.obj, self.sample, self.
+        timestamp = self.do_pull_sample(self.obj, byref(self.sample), self.
             channel_count, c_double(timeout), byref(errcode))
         handle_error(errcode)        
         if timestamp:
-            #sample = [v for v in self.sample]
-            sample = [self.sample[i] for i in range(self.channel_count)]
+            sample = [v for v in self.sample]
             if assign_to is not None:
                 assign_to[:] = sample
             return (sample,timestamp)
@@ -684,19 +677,13 @@ class StreamInlet:
         num_channels = self.channel_count
         max_values = max_samples*num_channels
         if not max_samples in self.buffers:
-            self.buffers[max_samples] = (\
-            cast((self.value_type*max_values)(),POINTER(self.value_type)),\
-            cast((c_double*max_samples)(),POINTER(c_double)))
-            #self.buffers[max_samples] = ((self.value_type*max_values)(),
-                                         #(c_double*max_samples)())
+            self.buffers[max_samples] = ((self.value_type*max_values)(),
+                                         (c_double*max_samples)())
         buffer = self.buffers[max_samples]
         # read data into it
         errcode = c_int()
-        #num_elements = self.do_pull_chunk(self.obj, byref(buffer[0]), 
-            #byref(buffer[1]), max_values, max_samples, c_double(timeout), 
-            #byref(errcode))
-        num_elements = self.do_pull_chunk(self.obj, buffer[0], 
-            buffer[1], max_values, max_samples, c_double(timeout), 
+        num_elements = self.do_pull_chunk(self.obj, byref(buffer[0]), 
+            byref(buffer[1]), max_values, max_samples, c_double(timeout), 
             byref(errcode))
         handle_error(errcode)
         # return results (note: could offer a more efficient format in the 
@@ -981,17 +968,15 @@ def resolve_stream(*args):
 
 # find and load library
 os_name = platform.system()
+bitness = 8 * struct.calcsize("P")
 if os_name in ['Windows','Microsoft']:
-    libext = '.dll'
+    libname = 'liblsl32.dll' if bitness == 32 else 'liblsl64.dll'
 elif os_name == 'Darwin':
-    libext = '.dylib'
+    libname = 'liblsl32.dylib' if bitness == 32 else 'liblsl64.dylib'
 elif os_name == 'Linux':
-    libext = '.so'
+    libname = 'liblsl32.so' if bitness == 32 else 'liblsl64.so'
 else:
     raise Exception("Unrecognized operating system:", os_name)
-bitness = 8 * struct.calcsize("P")
-libbit = '32' if bitness == 32 else '64'
-libname = 'liblsl' + libbit + libext
 libpath = os.path.dirname(os.path.abspath(__file__)) + os.sep + libname
 if not os.path.isfile(libpath):
     libpath = find_library(libname)
@@ -999,313 +984,69 @@ if not libpath:
     raise Exception("The library " + libname + " was not found. Please make "
         "sure that it is on the search path (e.g., in the same folder as "
         "pylsl.py).")
+print libpath
 lib = CDLL(libpath)
     
 
 # set function return types where necessary
-lib.lsl_local_clock.restype = c_double
+lib.lsl_local_clock.restype=c_double
 lib.lsl_create_streaminfo.restype = c_void_p
-lib.lsl_destroy_streaminfo.argtypes = [c_void_p,]
 lib.lsl_get_name.restype = c_char_p
-lib.lsl_get_name.argtypes = [c_void_p,]
 lib.lsl_get_type.restype = c_char_p
-lib.lsl_get_type.argtypes = [c_void_p,]
-lib.lsl_get_channel_count.restype = c_int
-lib.lsl_get_channel_count.argtypes = [c_void_p,]
 lib.lsl_get_nominal_srate.restype = c_double
-lib.lsl_get_nominal_srate.argtypes = [c_void_p,]
-#lib.lsl_get_channel_format.restype = c_char_p
-lib.lsl_get_channel_format.argtypes = [c_void_p,]
 lib.lsl_get_source_id.restype = c_char_p
-lib.lsl_get_source_id.argtypes = [c_void_p,]
-lib.lsl_get_version.restype = c_int
-lib.lsl_get_version.argtypes = [c_void_p,]
 lib.lsl_get_created_at.restype = c_double
-lib.lsl_get_created_at.argtypes = [c_void_p,]
 lib.lsl_get_uid.restype = c_char_p
-lib.lsl_get_uid.argtypes = [c_void_p,]
 lib.lsl_get_session_id.restype = c_char_p
-lib.lsl_get_session_id.argtypes = [c_void_p,]
 lib.lsl_get_hostname.restype = c_char_p
-lib.lsl_get_hostname.argtypes = [c_void_p,]
 lib.lsl_get_desc.restype = c_void_p
-lib.lsl_get_desc.argtypes = [c_void_p,]
 lib.lsl_get_xml.restype = c_char_p
-lib.lsl_get_xml.argtypes = [c_void_p,]
-
-
-#
-# OUTLET
-#
 lib.lsl_create_outlet.restype = c_void_p
-lib.lsl_create_outlet.argtypes = [c_void_p, c_int, c_int]
-lib.lsl_destroy_outlet.argtypes = [c_void_p,]
-lib.lsl_get_info.restype = c_void_p
-lib.lsl_get_info.argtypes = [c_void_p,]
-#
-lib.lsl_push_sample_f.restype = c_int
-lib.lsl_push_sample_f.argtypes = [c_void_p, POINTER(c_float)]
-lib.lsl_push_sample_ft.restype = c_int
-lib.lsl_push_sample_ft.argtypes = [c_void_p, POINTER(c_float), c_double]
-lib.lsl_push_sample_ftp.restype = c_int
-lib.lsl_push_sample_ftp.argtypes = [c_void_p, POINTER(c_float), c_double, c_int]
-#
-lib.lsl_push_sample_d.restype = c_int
-lib.lsl_push_sample_d.argtypes = [c_void_p, POINTER(c_double)]
-lib.lsl_push_sample_dt.restype = c_int
-lib.lsl_push_sample_dt.argtypes = [c_void_p, POINTER(c_double), c_double]
-lib.lsl_push_sample_dtp.restype = c_int
-lib.lsl_push_sample_dtp.argtypes = [c_void_p, POINTER(c_double), c_double, c_int]
-#
-lib.lsl_push_sample_l.restype = c_int
-lib.lsl_push_sample_l.argtypes = [c_void_p, POINTER(c_long)]
-lib.lsl_push_sample_lt.restype = c_int
-lib.lsl_push_sample_lt.argtypes = [c_void_p, POINTER(c_long), c_double]
-lib.lsl_push_sample_ltp.restype = c_int
-lib.lsl_push_sample_ltp.argtypes = [c_void_p, POINTER(c_long), c_double, c_int]
-#
-lib.lsl_push_sample_i.restype = c_int
-lib.lsl_push_sample_i.argtypes = [c_void_p, POINTER(c_int)]
-lib.lsl_push_sample_it.restype = c_int
-lib.lsl_push_sample_it.argtypes = [c_void_p, POINTER(c_int), c_double]
-lib.lsl_push_sample_itp.restype = c_int
-lib.lsl_push_sample_itp.argtypes = [c_void_p, POINTER(c_int), c_double, c_int]
-#
-lib.lsl_push_sample_s.restype = c_int
-lib.lsl_push_sample_s.argtypes = [c_void_p, POINTER(c_short)]
-lib.lsl_push_sample_st.restype = c_int
-lib.lsl_push_sample_st.argtypes = [c_void_p, POINTER(c_short), c_double]
-lib.lsl_push_sample_stp.restype = c_int
-lib.lsl_push_sample_stp.argtypes = [c_void_p, POINTER(c_short), c_double, c_int]
-#
-lib.lsl_push_sample_c.restype = c_int
-lib.lsl_push_sample_c.argtypes = [c_void_p, POINTER(c_char)]
-lib.lsl_push_sample_ct.restype = c_int
-lib.lsl_push_sample_ct.argtypes = [c_void_p, POINTER(c_char), c_double]
-lib.lsl_push_sample_ctp.restype = c_int
-lib.lsl_push_sample_ctp.argtypes = [c_void_p, POINTER(c_char), c_double, c_int]
-#
-lib.lsl_push_sample_v.restype = c_int
-lib.lsl_push_sample_v.argtypes = [c_void_p, c_void_p]
-lib.lsl_push_sample_vt.restype = c_int
-lib.lsl_push_sample_vt.argtypes = [c_void_p, c_void_p, c_double]
-lib.lsl_push_sample_vtp.restype = c_int
-lib.lsl_push_sample_vtp.argtypes = [c_void_p, c_void_p, c_double, c_int]
-#
-lib.lsl_push_sample_str.restype = c_int
-lib.lsl_push_sample_str.argtypes = [c_void_p, POINTER(c_char_p)]
-lib.lsl_push_sample_strt.restype = c_int
-lib.lsl_push_sample_strt.argtypes = [c_void_p, POINTER(c_char_p), c_double]
-lib.lsl_push_sample_strtp.restype = c_int
-lib.lsl_push_sample_strtp.argtypes = [c_void_p, POINTER(c_char_p), c_double, c_int]
-#
-lib.lsl_push_sample_buf.restype = c_int
-lib.lsl_push_sample_buf.argtypes = [c_void_p, POINTER(c_char_p), POINTER(c_ubyte)]
-lib.lsl_push_sample_buft.restype = c_int
-lib.lsl_push_sample_buft.argtypes = [c_void_p, POINTER(c_char_p), POINTER(c_ubyte), c_double]
-lib.lsl_push_sample_buftp.restype = c_int
-lib.lsl_push_sample_buftp.argtypes = [c_void_p, POINTER(c_char_p), POINTER(c_ubyte), c_double, c_int]
-#
-lib.lsl_push_sample_str.restype = c_int
-lib.lsl_push_sample_str.argtypes = [c_void_p, POINTER(c_char_p)]
-lib.lsl_push_sample_strt.restype = c_int
-lib.lsl_push_sample_strt.argtypes = [c_void_p, POINTER(c_char_p), c_double]
-lib.lsl_push_sample_strtp.restype = c_int
-lib.lsl_push_sample_strtp.argtypes = [c_void_p, POINTER(c_char_p), c_double, c_int]
-
-#
-# INLET
-#
-lib.lsl_create_inlet.restype = c_void_p
-lib.lsl_create_inlet.argtypes = [c_void_p, ]
-lib.lsl_destroy_inlet.argtypes = [c_void_p,]
+lib.lsl_create_inlet.restype = c_void_p 
 lib.lsl_get_fullinfo.restype = c_void_p
-lib.lsl_get_fullinfo.argtypes = [c_void_p, c_double, POINTER(c_int)]
 lib.lsl_open_stream.restype = c_void_p
-lib.lsl_open_stream.argtypes = [c_void_p, c_double, POINTER(c_int)]
-lib.lsl_close_stream.argtypes = [c_void_p,]
 lib.lsl_time_correction.restype = c_double
-lib.lsl_time_correction.argtypes = [c_void_p, c_double, POINTER(c_int)]
 lib.lsl_pull_sample_f.restype = c_double
-lib.lsl_pull_sample_f.argtypes = [c_void_p, POINTER(c_float), c_int, c_double, POINTER(c_int)]
 lib.lsl_pull_sample_d.restype = c_double
-lib.lsl_pull_sample_d.argtypes = [c_void_p, POINTER(c_double), c_int, c_double, POINTER(c_int)]
 lib.lsl_pull_sample_l.restype = c_double
-lib.lsl_pull_sample_l.argtypes = [c_void_p, POINTER(c_long), c_int, c_double, POINTER(c_int)]
 lib.lsl_pull_sample_i.restype = c_double
-lib.lsl_pull_sample_i.argtypes = [c_void_p, POINTER(c_int), c_int, c_double, POINTER(c_int)]
 lib.lsl_pull_sample_s.restype = c_double
-lib.lsl_pull_sample_s.argtypes = [c_void_p, POINTER(c_short), c_int, c_double, POINTER(c_int)]
 lib.lsl_pull_sample_c.restype = c_double
-lib.lsl_pull_sample_c.argtypes = [c_void_p, POINTER(c_char), c_int, c_double, POINTER(c_int)]
 lib.lsl_pull_sample_str.restype = c_double
-lib.lsl_pull_sample_str.argtypes = [c_void_p, POINTER(c_char_p), c_int, c_double, POINTER(c_int)]
 lib.lsl_pull_sample_buf.restype = c_double
-lib.lsl_pull_sample_buf.argtypes = [c_void_p, POINTER(c_char_p), POINTER(c_ubyte), c_int, c_double, POINTER(c_int)]
-
-#
-# XML Element
-#
 lib.lsl_first_child.restype = c_void_p
-lib.lsl_first_child.argtypes = [c_void_p,]
 lib.lsl_last_child.restype = c_void_p
-lib.lsl_last_child.argtypes = [c_void_p,]
 lib.lsl_next_sibling.restype = c_void_p
-lib.lsl_next_sibling.argtypes = [c_void_p,]
 lib.lsl_previous_sibling.restype = c_void_p
-lib.lsl_previous_sibling.argtypes = [c_void_p,]
 lib.lsl_parent.restype = c_void_p
-lib.lsl_parent.argtypes = [c_void_p,]
 lib.lsl_child.restype = c_void_p
-lib.lsl_child.argtypes = [c_void_p, POINTER(c_char)]
 lib.lsl_next_sibling_n.restype = c_void_p
-lib.lsl_next_sibling_n.argtypes = [c_void_p, POINTER(c_char)]
 lib.lsl_previous_sibling_n.restype = c_void_p
-lib.lsl_previous_sibling_n.argtypes = [c_void_p, POINTER(c_char)]
 lib.lsl_name.restype = c_char_p
-lib.lsl_name.argtypes = [c_void_p,]
 lib.lsl_value.restype = c_char_p
-lib.lsl_value.argtypes = [c_void_p,]
 lib.lsl_child_value.restype = c_char_p
-lib.lsl_child_value.argtypes = [c_void_p,]
 lib.lsl_child_value_n.restype = c_char_p
-lib.lsl_child_value_n.argtypes = [c_void_p, POINTER(c_char)]
 lib.lsl_append_child_value.restype = c_void_p
-lib.lsl_append_child_value.argtypes = [c_void_p, POINTER(c_char), POINTER(c_char)]
 lib.lsl_prepend_child_value.restype = c_void_p
-lib.lsl_prepend_child_value.argtypes = [c_void_p, POINTER(c_char), POINTER(c_char)]
 lib.lsl_append_child.restype = c_void_p
-lib.lsl_append_child.argtypes = [c_void_p, POINTER(c_char)]
 lib.lsl_prepend_child.restype = c_void_p
-lib.lsl_prepend_child.argtypes = [c_void_p, POINTER(c_char)]
 lib.lsl_append_copy.restype = c_void_p
-lib.lsl_append_copy.argtypes = [c_void_p, c_void_p]
 lib.lsl_prepend_copy.restype = c_void_p
-lib.lsl_prepend_copy.argtypes = [c_void_p, c_void_p]
-
-
 try:
-
-    #
-    # OUTLET
-    #
-    lib.lsl_push_chunk_f.restype = c_int
-    lib.lsl_push_chunk_f.argtypes = [c_void_p, POINTER(c_float), c_ulong]
-    lib.lsl_push_chunk_ft.restype = c_int
-    lib.lsl_push_chunk_ft.argtypes = [c_void_p, POINTER(c_float), c_ulong, c_double]
-    lib.lsl_push_chunk_ftp.restype = c_int
-    lib.lsl_push_chunk_ftp.argtypes = [c_void_p, POINTER(c_float), c_ulong, c_double, c_int]
-    lib.lsl_push_chunk_ftn.restype = c_int
-    lib.lsl_push_chunk_ftn.argtypes = [c_void_p, POINTER(c_float), c_ulong, POINTER(c_double)]
-    lib.lsl_push_chunk_ftnp.restype = c_int
-    lib.lsl_push_chunk_ftnp.argtypes = [c_void_p, POINTER(c_float), c_ulong, POINTER(c_double), c_int]
-    #    
-    lib.lsl_push_chunk_d.restype = c_int
-    lib.lsl_push_chunk_d.argtypes = [c_void_p, POINTER(c_double), c_ulong]
-    lib.lsl_push_chunk_dt.restype = c_int
-    lib.lsl_push_chunk_dt.argtypes = [c_void_p, POINTER(c_double), c_ulong, c_double]
-    lib.lsl_push_chunk_dtp.restype = c_int
-    lib.lsl_push_chunk_dtp.argtypes = [c_void_p, POINTER(c_double), c_ulong, c_double, c_int]
-    lib.lsl_push_chunk_dtn.restype = c_int
-    lib.lsl_push_chunk_dtn.argtypes = [c_void_p, POINTER(c_double), c_ulong, POINTER(c_double)]
-    lib.lsl_push_chunk_dtnp.restype = c_int
-    lib.lsl_push_chunk_dtnp.argtypes = [c_void_p, POINTER(c_double), c_ulong, POINTER(c_double), c_int]
-    #
-    lib.lsl_push_chunk_l.restype = c_int
-    lib.lsl_push_chunk_l.argtypes = [c_void_p, POINTER(c_long), c_ulong]
-    lib.lsl_push_chunk_lt.restype = c_int
-    lib.lsl_push_chunk_lt.argtypes = [c_void_p, POINTER(c_long), c_ulong, c_double]
-    lib.lsl_push_chunk_ltp.restype = c_int
-    lib.lsl_push_chunk_ltp.argtypes = [c_void_p, POINTER(c_long), c_ulong, c_double, c_int]
-    lib.lsl_push_chunk_ltn.restype = c_int
-    lib.lsl_push_chunk_ltn.argtypes = [c_void_p, POINTER(c_long), c_ulong, POINTER(c_double)]
-    lib.lsl_push_chunk_ltnp.restype = c_int
-    lib.lsl_push_chunk_ltnp.argtypes = [c_void_p, POINTER(c_long), c_ulong, POINTER(c_double), c_int]
-    #
-    lib.lsl_push_chunk_i.restype = c_int
-    lib.lsl_push_chunk_i.argtypes = [c_void_p, POINTER(c_int), c_ulong]
-    lib.lsl_push_chunk_it.restype = c_int
-    lib.lsl_push_chunk_it.argtypes = [c_void_p, POINTER(c_int), c_ulong, c_double]
-    lib.lsl_push_chunk_itp.restype = c_int
-    lib.lsl_push_chunk_itp.argtypes = [c_void_p, POINTER(c_int), c_ulong, c_double, c_int]
-    lib.lsl_push_chunk_itn.restype = c_int
-    lib.lsl_push_chunk_itn.argtypes = [c_void_p, POINTER(c_int), c_ulong, POINTER(c_double)]
-    lib.lsl_push_chunk_itnp.restype = c_int
-    lib.lsl_push_chunk_itnp.argtypes = [c_void_p, POINTER(c_int), c_ulong, POINTER(c_double), c_int]
-    #
-    lib.lsl_push_chunk_s.restype = c_int
-    lib.lsl_push_chunk_s.argtypes = [c_void_p, POINTER(c_short), c_ulong]
-    lib.lsl_push_chunk_st.restype = c_int
-    lib.lsl_push_chunk_st.argtypes = [c_void_p, POINTER(c_short), c_ulong, c_double]
-    lib.lsl_push_chunk_stp.restype = c_int
-    lib.lsl_push_chunk_stp.argtypes = [c_void_p, POINTER(c_short), c_ulong, c_double, c_int]
-    lib.lsl_push_chunk_stn.restype = c_int
-    lib.lsl_push_chunk_stn.argtypes = [c_void_p, POINTER(c_short), c_ulong, POINTER(c_double)]
-    lib.lsl_push_chunk_stnp.restype = c_int
-    lib.lsl_push_chunk_stnp.argtypes = [c_void_p, POINTER(c_short), c_ulong, POINTER(c_double), c_int]
-    #
-    lib.lsl_push_chunk_c.restype = c_int
-    lib.lsl_push_chunk_c.argtypes = [c_void_p, POINTER(c_char), c_ulong]
-    lib.lsl_push_chunk_ct.restype = c_int
-    lib.lsl_push_chunk_ct.argtypes = [c_void_p, POINTER(c_char), c_ulong, c_double]
-    lib.lsl_push_chunk_ctp.restype = c_int
-    lib.lsl_push_chunk_ctp.argtypes = [c_void_p, POINTER(c_char), c_ulong, c_double, c_int]
-    lib.lsl_push_chunk_ctn.restype = c_int
-    lib.lsl_push_chunk_ctn.argtypes = [c_void_p, POINTER(c_char), c_ulong, POINTER(c_double)]
-    lib.lsl_push_chunk_ctnp.restype = c_int
-    lib.lsl_push_chunk_ctnp.argtypes = [c_void_p, POINTER(c_char), c_ulong, POINTER(c_double), c_int]
-    #
-    lib.lsl_push_chunk_str.restype = c_int
-    lib.lsl_push_chunk_str.argtypes = [c_void_p, POINTER(c_char_p), c_ulong]
-    lib.lsl_push_chunk_strt.restype = c_int
-    lib.lsl_push_chunk_strt.argtypes = [c_void_p, POINTER(c_char_p), c_ulong, c_double]
-    lib.lsl_push_chunk_strtp.restype = c_int
-    lib.lsl_push_chunk_strtp.argtypes = [c_void_p, POINTER(c_char_p), c_ulong, c_double, c_int]
-    lib.lsl_push_chunk_strtn.restype = c_int
-    lib.lsl_push_chunk_strtn.argtypes = [c_void_p, POINTER(c_char_p), c_ulong, POINTER(c_double)]
-    lib.lsl_push_chunk_strtnp.restype = c_int
-    lib.lsl_push_chunk_strtnp.argtypes = [c_void_p, POINTER(c_char_p), c_ulong, POINTER(c_double), c_int]
-    #
-    lib.lsl_push_chunk_buf.restype = c_int
-    lib.lsl_push_chunk_buf.argtypes = [c_void_p, POINTER(c_char), POINTER(c_ubyte), c_ulong]
-    lib.lsl_push_chunk_buft.restype = c_int
-    lib.lsl_push_chunk_buft.argtypes = [c_void_p, POINTER(c_char), POINTER(c_ubyte), c_ulong, c_double]
-    lib.lsl_push_chunk_buftp.restype = c_int
-    lib.lsl_push_chunk_buftp.argtypes = [c_void_p, POINTER(c_char), POINTER(c_ubyte), c_ulong, c_double, c_int]
-    lib.lsl_push_chunk_buftn.restype = c_int
-    lib.lsl_push_chunk_buftn.argtypes = [c_void_p, POINTER(c_char), POINTER(c_ubyte), c_ulong, POINTER(c_double)]
-    lib.lsl_push_chunk_buftnp.restype = c_int
-    lib.lsl_push_chunk_buftnp.argtypes = [c_void_p, POINTER(c_char), POINTER(c_ubyte), c_ulong, POINTER(c_double), c_int]
-    #
-    # INLET
-    #
     lib.lsl_pull_chunk_f.restype = c_long
-    lib.lsl_pull_chunk_f.argtypes = [c_void_p, POINTER(c_float), POINTER(c_double), c_ulong, c_ulong, c_double, POINTER(c_int)]
     lib.lsl_pull_chunk_d.restype = c_long
-    lib.lsl_pull_chunk_d.argtypes = [c_void_p, POINTER(c_double), POINTER(c_double), c_ulong, c_ulong, c_double, POINTER(c_int)]
     lib.lsl_pull_chunk_l.restype = c_long
-    lib.lsl_pull_chunk_l.argtypes = [c_void_p, POINTER(c_long), POINTER(c_double), c_ulong, c_ulong, c_double, POINTER(c_int)]
     lib.lsl_pull_chunk_i.restype = c_long
-    lib.lsl_pull_chunk_i.argtypes = [c_void_p, POINTER(c_int), POINTER(c_double), c_ulong, c_ulong, c_double, POINTER(c_int)]
     lib.lsl_pull_chunk_s.restype = c_long
-    lib.lsl_pull_chunk_s.argtypes = [c_void_p, POINTER(c_short), POINTER(c_double), c_ulong, c_ulong, c_double, POINTER(c_int)]
     lib.lsl_pull_chunk_c.restype = c_long
-    lib.lsl_pull_chunk_c.argtypes = [c_void_p, POINTER(c_char), POINTER(c_double), c_ulong, c_ulong, c_double, POINTER(c_int)]
     lib.lsl_pull_chunk_str.restype = c_long
-    lib.lsl_pull_chunk_str.argtypes = [c_void_p, POINTER(c_char_p), POINTER(c_double), c_ulong, c_ulong, c_double, POINTER(c_int)]  # Just a guess at POINTER(c_char_p)
     lib.lsl_pull_chunk_buf.restype = c_long
-    lib.lsl_pull_chunk_buf.argtypes = [c_void_p, POINTER(c_char_p), POINTER(c_ubyte), POINTER(c_double), c_ulong, c_ulong, c_double, POINTER(c_int)]  # Just a guess at POINTER(c_char_p)
-
-
 except:
     print "pylsl: Chunk transfer functions not available in your liblsl version."
 try:
     lib.lsl_create_continuous_resolver.restype = c_void_p
-    lib.lsl_create_continuous_resolver.argtypes = [c_double]
     lib.lsl_create_continuous_resolver_bypred.restype = c_void_p
-    lib.lsl_create_continuous_resolver_bypred.argtypes = [POINTER(c_char), c_double]
     lib.lsl_create_continuous_resolver_byprop.restype = c_void_p
-    lib.lsl_create_continuous_resolver_byprop.argtypes = [POINTER(c_char), POINTER(c_char), c_double]
 except:
     print "pylsl: ContinuousResolver not (fully) available in your liblsl version."
         
