@@ -1,0 +1,240 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{5BF290DC-B2B4-493B-8BF8-25BC86D63A6C}</ProjectGuid>
+			<ProjectType>CppVCLApplication</ProjectType>
+			<MainSource>GazeStream.cpp</MainSource>
+			<Config Condition="'$(Config)'==''">Debug</Config>
+			<ProjectVersion>12.3</ProjectVersion>
+			<Base>True</Base>
+			<Platform>Win32</Platform>
+			<AppType>Application</AppType>
+			<FrameworkType>VCL</FrameworkType>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_1)'!=''">
+			<Cfg_1>true</Cfg_1>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
+			<Cfg_2>true</Cfg_2>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
+			<BCC_MonitorThis>true</BCC_MonitorThis>
+			<BCC_MonitorGlobalAndStackData>true</BCC_MonitorGlobalAndStackData>
+			<BCC_MonitorInlinePtrAccess>true</BCC_MonitorInlinePtrAccess>
+			<LinkPackageStatics>vcl.lib;rtl.lib;xmlrtl.lib;vclimg.lib;TVidGrab.lib</LinkPackageStatics>
+			<IncludePath>..\shared\;..\shared\4.4.0-msvc\include\;..\shared\include\;..\math\;..\;..\shared\boost_1_47_0;$(IncludePath)</IncludePath>
+			<TASM_Defines>NO_STRICT;$(TASM_Defines)</TASM_Defines>
+			<BRCC_Defines>NO_STRICT;$(BRCC_Defines)</BRCC_Defines>
+			<ILINK_AppType>Windows</ILINK_AppType>
+			<DCC_UnitSearchPath>..\Common;..\FFT;..\..\common;.\;$(BDS)\lib;$(BDS)\lib\obj;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+			<DCC_ResourcePath>..\Common;..\FFT;..\..\common;$(DCC_ResourcePath)</DCC_ResourcePath>
+			<PackageImports>vcl.bpi;vclx.bpi;dbrtl.bpi;Rave65VCL.bpi;bdertl.bpi;rtl.bpi;vcldb.bpi;adortl.bpi;dbxcds.bpi;dbexpress.bpi;vclib.bpi;ibxpress.bpi;xmlrtl.bpi;vclactnband.bpi;inet.bpi;IntrawebDB_90_100.bpi;Intraweb_90_100.bpi;vclie.bpi;inetdbbde.bpi;inetdbxpress.bpi;indy.bpi;bcbofficexp.bpi;bcbsmp.bpi;soaprtl.bpi;dsnap.bpi;bcbie.bpi;teeui.bpi;teedb.bpi;tee.bpi;vcldbx.bpi;VisioForge_Video_Capture_3_BCB.bpi;vclimg.bpi;TVidGrab.bpi</PackageImports>
+			<BCC_IncludePath>..\Common;..\FFT;..\..\common;$(BDS)\include;$(BDS)\include\dinkumware;$(BDS)\include\vcl;..\..\..\..\andrey_code\bds\datasuite\visioforge video capture sdk (activex) + mpeg\demos\bcb 2006\package;..\include;..\..\dsuitesdk\include;..\..\dsuitesdk\sdk;..\..\include;..\..\data_river_files\include\sdl;$(BCC_IncludePath)</BCC_IncludePath>
+			<BRCC_IncludePath>..\Common;..\FFT;..\..\common;$(BDS)\include;$(BDS)\include\dinkumware;$(BDS)\include\vcl;..\..\..\..\andrey_code\bds\datasuite\visioforge video capture sdk (activex) + mpeg\demos\bcb 2006\package;..\include;..\..\dsuitesdk\include;..\..\dsuitesdk\sdk;..\..\include;..\..\data_river_files\include\sdl;$(BRCC_IncludePath)</BRCC_IncludePath>
+			<DCC_IncludePath>..\Common;..\FFT;..\..\common;.\;$(BDS)\lib;$(BDS)\lib\obj;$(DCC_IncludePath)</DCC_IncludePath>
+			<BCC_PCHCache>true</BCC_PCHCache>
+			<TASM_IncludePath>..\Common;..\FFT;..\..\common;$(BDS)\include;$(BDS)\include\dinkumware;$(BDS)\include\vcl;..\..\..\..\andrey_code\bds\datasuite\visioforge video capture sdk (activex) + mpeg\demos\bcb 2006\package;..\include;..\..\dsuitesdk\include;..\..\dsuitesdk\sdk;..\..\include;..\..\data_river_files\include\sdl;$(TASM_IncludePath)</TASM_IncludePath>
+			<FinalOutputDir>..\bin</FinalOutputDir>
+			<BCC_GenerateWindowsApp>true</BCC_GenerateWindowsApp>
+			<BCC_GenerateMultithreaded>true</BCC_GenerateMultithreaded>
+			<ILINK_ObjectSearchPath>..\Common;E:\Documents and Settings\andrey\My Documents\Borland Studio Projects\Bpl;..\FFT;..\..\common;$(ILINK_ObjectSearchPath)</ILINK_ObjectSearchPath>
+			<AllPackageLibs>vcl.lib;rtl.lib;xmlrtl.lib;vclimg.lib;TVidGrab.lib</AllPackageLibs>
+			<OutputExt>exe</OutputExt>
+			<BCC_Defines>NO_STRICT;$(BCC_Defines)</BCC_Defines>
+			<DCC_CBuilderOutput>JPHNE</DCC_CBuilderOutput>
+			<DCC_ObjPath>..\Common;..\FFT;..\..\common;$(DCC_ObjPath)</DCC_ObjPath>
+			<Multithreaded>true</Multithreaded>
+			<ILINK_LibraryPath>..\shared\;..\shared\4.4.0-msvc\include\;..\bin\;..\shared\include\;..\..\..\..\..\sdk\cpp\src\;..\..\..\..\..\sdk\c\src\;..\..\..\..\..\sdk\windows\x32\c\src\;..\..\..\..\..\bin\windows\x32\sdk\c\;..\..\..\..\bin\sdk\c\;..\..\..\..\shared\4.4.0-msvc\include\;..\..\..\..\shared\include\;..\math\;..\;..\..\..\..\shared\lib\;..\..\..\..\shared\;$(BDS)\lib\obj;..\..\..\..\..\bin\windows\x32\datariver;..\..\..\..\..\x\bin\datariver;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_1)'!=''">
+			<BCC_Defines>_DEBUG;$(BCC_Defines);$(BCC_Defines)</BCC_Defines>
+			<BCC_UserSuppliedOptions> -k</BCC_UserSuppliedOptions>
+			<ILINK_LibraryPath>$(BDS)\lib\debug;$(ILINK_LibraryPath);$(ILINK_LibraryPath)</ILINK_LibraryPath>
+			<DCC_Define>DEBUG;$(DCC_Define);$(DCC_Define)</DCC_Define>
+			<BCC_SourceDebuggingOn>true</BCC_SourceDebuggingOn>
+			<IntermediateOutputDir>Debug_Build</IntermediateOutputDir>
+			<ILINK_FullDebugInfo>true</ILINK_FullDebugInfo>
+			<TASM_DisplaySourceLines>true</TASM_DisplaySourceLines>
+			<ILINK_DisableIncrementalLinking>true</ILINK_DisableIncrementalLinking>
+			<BCC_DisableOptimizations>true</BCC_DisableOptimizations>
+			<TASM_Debugging>Full</TASM_Debugging>
+			<DCC_AdditionalSwitches> -V</DCC_AdditionalSwitches>
+			<BCC_DebugLineNumbers>true</BCC_DebugLineNumbers>
+			<DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
+			<BCC_InlineFunctionExpansion>false</BCC_InlineFunctionExpansion>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2)'!=''">
+			<BCC_Defines>NDEBUG;$(BCC_Defines);$(BCC_Defines)</BCC_Defines>
+			<IntermediateOutputDir>Release_Build</IntermediateOutputDir>
+			<BCC_OptimizeForSpeed>true</BCC_OptimizeForSpeed>
+			<BCC_UserSuppliedOptions> -r</BCC_UserSuppliedOptions>
+			<TASM_Debugging>None</TASM_Debugging>
+			<DCC_AdditionalSwitches> -$O+</DCC_AdditionalSwitches>
+			<ILINK_LibraryPath>$(BDS)\lib\release;$(ILINK_LibraryPath);$(ILINK_LibraryPath)</ILINK_LibraryPath>
+		</PropertyGroup>
+		<ItemGroup>
+			<LibFiles Include="..\bin\alleg44.lib">
+				<IgnorePath>true</IgnorePath>
+				<BuildOrder>17</BuildOrder>
+			</LibFiles>
+			<LibFiles Include="..\bin\liblsl32.lib">
+				<IgnorePath>true</IgnorePath>
+				<BuildOrder>18</BuildOrder>
+			</LibFiles>
+			<CppCompile Include="CaptureWorkerForm.cpp">
+				<Form>CaptureWorkerForm</Form>
+				<DependentOn>CaptureWorkerForm.h</DependentOn>
+				<BuildOrder>21</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="GazeStream.cpp">
+				<BuildOrder>-1</BuildOrder>
+				<BuildOrder>0</BuildOrder>
+			</CppCompile>
+			<ResFiles Include="GazeStream.res">
+				<BuildOrder>-1</BuildOrder>
+				<BuildOrder>1</BuildOrder>
+			</ResFiles>
+			<CppCompile Include="GazeUtil.cpp">
+				<DependentOn>GazeUtil.h</DependentOn>
+				<BuildOrder>22</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="TFrameThread.cpp">
+				<DependentOn>TFrameThread.h</DependentOn>
+				<BuildOrder>19</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="TOutline.cpp">
+				<DependentOn>TOutline.h</DependentOn>
+				<BuildOrder>13</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="UMainCapture.cpp">
+				<Form>MainCaptureForm</Form>
+				<DependentOn>UMainCapture.h</DependentOn>
+				<BuildOrder>13</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="..\math\CircleFunction.cpp">
+				<DependentOn>..\math\CircleFunction.h</DependentOn>
+				<BuildOrder>16</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="..\math\FitFailedException.cpp">
+				<DependentOn>..\math\FitFailedException.h</DependentOn>
+				<BuildOrder>17</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="..\math\FittableFunction.cpp">
+				<DependentOn>..\math\FittableFunction.h</DependentOn>
+				<BuildOrder>15</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="..\math\Fitter.cpp">
+				<DependentOn>..\math\Fitter.h</DependentOn>
+				<BuildOrder>14</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="..\math\LinearAlgebra.cpp">
+				<DependentOn>..\math\LinearAlgebra.h</DependentOn>
+				<BuildOrder>24</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="..\math\math_util.cpp">
+				<DependentOn>..\math\math_util.h</DependentOn>
+				<BuildOrder>18</BuildOrder>
+			</CppCompile>
+			<None Include="..\shared\4.4.0-msvc\include\allegro.h">
+				<BuildOrder>19</BuildOrder>
+			</None>
+			<None Include="..\shared\include\general_util.h">
+				<BuildOrder>20</BuildOrder>
+			</None>
+			<None Include="..\shared\include\lsl_c.h">
+				<BuildOrder>18</BuildOrder>
+			</None>
+			<None Include="..\shared\include\useallegro4.h">
+				<BuildOrder>18</BuildOrder>
+			</None>
+			<CppCompile Include="..\shared\StreamThread.cpp">
+				<DependentOn>..\shared\StreamThread.h</DependentOn>
+				<BuildOrder>18</BuildOrder>
+			</CppCompile>
+			<FormResources Include="CaptureWorkerForm.dfm"/>
+			<FormResources Include="UMainCapture.dfm"/>
+			<BuildConfiguration Include="Release">
+				<Key>Cfg_2</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Base">
+				<Key>Base</Key>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Debug">
+				<Key>Cfg_1</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+		</ItemGroup>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Cpp.Targets')" Project="$(BDS)\Bin\CodeGear.Cpp.Targets"/>
+		<Import Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')" Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj"/>
+		<ProjectExtensions>
+			<Borland.Personality>CPlusPlusBuilder.Personality.12</Borland.Personality>
+			<Borland.ProjectType>CppVCLApplication</Borland.ProjectType>
+			<BorlandProject>
+				<CPlusPlusBuilder.Personality>
+					<VersionInfo>
+						<VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+						<VersionInfo Name="AutoIncBuild">False</VersionInfo>
+						<VersionInfo Name="MajorVer">1</VersionInfo>
+						<VersionInfo Name="MinorVer">0</VersionInfo>
+						<VersionInfo Name="Release">0</VersionInfo>
+						<VersionInfo Name="Build">0</VersionInfo>
+						<VersionInfo Name="Debug">False</VersionInfo>
+						<VersionInfo Name="PreRelease">False</VersionInfo>
+						<VersionInfo Name="Special">False</VersionInfo>
+						<VersionInfo Name="Private">False</VersionInfo>
+						<VersionInfo Name="DLL">False</VersionInfo>
+						<VersionInfo Name="Locale">1033</VersionInfo>
+						<VersionInfo Name="CodePage">1252</VersionInfo>
+					</VersionInfo>
+					<VersionInfoKeys>
+						<VersionInfoKeys Name="CompanyName"/>
+						<VersionInfoKeys Name="FileDescription"/>
+						<VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="InternalName"/>
+						<VersionInfoKeys Name="LegalCopyright"/>
+						<VersionInfoKeys Name="LegalTrademarks"/>
+						<VersionInfoKeys Name="OriginalFilename"/>
+						<VersionInfoKeys Name="ProductName"/>
+						<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="Comments"/>
+					</VersionInfoKeys>
+					<Debugging>
+						<Debugging Name="DebugSourceDirs"/>
+					</Debugging>
+					<Parameters>
+						<Parameters Name="RemoteHost"/>
+						<Parameters Name="RemotePath"/>
+						<Parameters Name="RemoteParams"/>
+						<Parameters Name="RemoteLauncher"/>
+						<Parameters Name="UseRemoteLauncher">False</Parameters>
+						<Parameters Name="RemoteCWD"/>
+						<Parameters Name="RemoteDebug">False</Parameters>
+					</Parameters>
+					<Source>
+						<Source Name="MainSource">GazeStream.cpp</Source>
+					</Source>
+					<ProjectProperties>
+						<ProjectProperties Name="AutoShowDeps">False</ProjectProperties>
+						<ProjectProperties Name="ManagePaths">True</ProjectProperties>
+						<ProjectProperties Name="VerifyPackages">True</ProjectProperties>
+					</ProjectProperties>
+					<Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\bcboffice2k150.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\bcbofficexp150.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+					</Excluded_Packages>
+				</CPlusPlusBuilder.Personality>
+				<Platforms>
+					<Platform value="Win32">True</Platform>
+				</Platforms>
+			</BorlandProject>
+			<ProjectFileVersion>12</ProjectFileVersion>
+		</ProjectExtensions>
+	</Project>

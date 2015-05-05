@@ -1,0 +1,8 @@
+LIBLSL_V1.03 
+{
+global:
+    lsl*;
+local:
+    *;
+};
+

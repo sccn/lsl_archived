@@ -1,0 +1,222 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA35E23C1513CF4B003F3939 /* SendDataSimple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA35E23B1513CF4B003F3939 /* SendDataSimple.cpp */; };
+		AAE64A2015782CA9009EEA4A /* liblsl64.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AAE64A1F15782CA9009EEA4A /* liblsl64.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		AA35E2261513CEEE003F3939 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		AA35E2281513CEEE003F3939 /* SendDataSimple-mac */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "SendDataSimple-mac"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA35E23B1513CF4B003F3939 /* SendDataSimple.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SendDataSimple.cpp; sourceTree = "<group>"; };
+		AAE64A1F15782CA9009EEA4A /* liblsl64.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblsl64.dylib; path = ../../../bin/liblsl64.dylib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA35E2251513CEEE003F3939 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AAE64A2015782CA9009EEA4A /* liblsl64.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA35E21D1513CEEE003F3939 = {
+			isa = PBXGroup;
+			children = (
+				AAE64A1F15782CA9009EEA4A /* liblsl64.dylib */,
+				AA35E23B1513CF4B003F3939 /* SendDataSimple.cpp */,
+				AA35E2291513CEEE003F3939 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA35E2291513CEEE003F3939 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA35E2281513CEEE003F3939 /* SendDataSimple-mac */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA35E2271513CEEE003F3939 /* SendDataSimple */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA35E2321513CEEE003F3939 /* Build configuration list for PBXNativeTarget "SendDataSimple" */;
+			buildPhases = (
+				AA35E2241513CEEE003F3939 /* Sources */,
+				AA35E2251513CEEE003F3939 /* Frameworks */,
+				AA35E2261513CEEE003F3939 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SendDataSimple;
+			productName = SendDataSimple;
+			productReference = AA35E2281513CEEE003F3939 /* SendDataSimple-mac */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA35E21F1513CEEE003F3939 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = AA35E2221513CEEE003F3939 /* Build configuration list for PBXProject "SendDataSimple" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = AA35E21D1513CEEE003F3939;
+			productRefGroup = AA35E2291513CEEE003F3939 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA35E2271513CEEE003F3939 /* SendDataSimple */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA35E2241513CEEE003F3939 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA35E23C1513CF4B003F3939 /* SendDataSimple.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AA35E2301513CEEE003F3939 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				OBJROOT = "$(SRCROOT)/../../../examples/C++/$(PROJECT_NAME)/build";
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.6;
+				SYMROOT = "$(SRCROOT)/../../../bin";
+				VALID_ARCHS = x86_64;
+			};
+			name = Debug;
+		};
+		AA35E2311513CEEE003F3939 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				OBJROOT = "$(SRCROOT)/../../../examples/C++/$(PROJECT_NAME)/build";
+				SDKROOT = macosx10.6;
+				SYMROOT = "$(SRCROOT)/../../../bin";
+				VALID_ARCHS = x86_64;
+			};
+			name = Release;
+		};
+		AA35E2331513CEEE003F3939 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/ @loader_path/ /usr/lib /usr/local/lib ~/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../bin\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)-mac";
+				SDKROOT = macosx10.8;
+			};
+			name = Debug;
+		};
+		AA35E2341513CEEE003F3939 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/ @loader_path/ /usr/lib /usr/local/lib ~/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../bin\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)-mac";
+				SDKROOT = macosx10.8;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA35E2221513CEEE003F3939 /* Build configuration list for PBXProject "SendDataSimple" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA35E2301513CEEE003F3939 /* Debug */,
+				AA35E2311513CEEE003F3939 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA35E2321513CEEE003F3939 /* Build configuration list for PBXNativeTarget "SendDataSimple" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA35E2331513CEEE003F3939 /* Debug */,
+				AA35E2341513CEEE003F3939 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AA35E21F1513CEEE003F3939 /* Project object */;
+}

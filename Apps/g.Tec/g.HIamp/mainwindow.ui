@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>303</width>
+    <height>271</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>gHIamp Connector</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string>Channel Labels</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QPlainTextEdit" name="channelLabels">
+         <property name="plainText">
+          <string>Ch1
+Ch2
+Ch3
+Ch4
+Ch5
+Ch6
+Ch7
+Ch8
+Ch9
+Ch10
+Ch11
+Ch12
+Ch13
+Ch14
+Ch15
+Ch16
+Ch17
+Ch18
+Ch19
+Ch20
+Ch21
+Ch22
+Ch23
+Ch24
+Ch25
+Ch26
+Ch27
+Ch28
+Ch29
+Ch30
+Ch31
+Ch32
+Ch33
+Ch34
+Ch35
+Ch36
+Ch37
+Ch38
+Ch39
+Ch40
+Ch41
+Ch42
+Ch43
+Ch44
+Ch45
+Ch46
+Ch47
+Ch48
+Ch49
+Ch50
+Ch51
+Ch52
+Ch53
+Ch54
+Ch55
+Ch56
+Ch57
+Ch58
+Ch59
+Ch60
+Ch61
+Ch62
+Ch63
+Ch64
+Ch65
+Ch66
+Ch67
+Ch68
+Ch69
+Ch70
+Ch71
+Ch72
+Ch73
+Ch74
+Ch75
+Ch76
+Ch77
+Ch78
+Ch79
+Ch80
+Ch81
+Ch82
+Ch83
+Ch84
+Ch85
+Ch86
+Ch87
+Ch88
+Ch89
+Ch90
+Ch91
+Ch92
+Ch93
+Ch94
+Ch95
+Ch96
+Ch97
+Ch98
+Ch99
+Ch100
+Ch101
+Ch102
+Ch103
+Ch104
+Ch105
+Ch106
+Ch107
+Ch108
+Ch109
+Ch110
+Ch111
+Ch112
+Ch113
+Ch114
+Ch115
+Ch116
+Ch117
+Ch118
+Ch119
+Ch120
+Ch121
+Ch122
+Ch123
+Ch124
+Ch125
+Ch126
+Ch127
+Ch128
+Ch129
+Ch130
+Ch131
+Ch132
+Ch133
+Ch134
+Ch135
+Ch136
+Ch137
+Ch138
+Ch139
+Ch140
+Ch141
+Ch142
+Ch143
+Ch144
+Ch145
+Ch146
+Ch147
+Ch148
+Ch149
+Ch150
+Ch151
+Ch152
+Ch153
+Ch154
+Ch155
+Ch156
+Ch157
+Ch158
+Ch159
+Ch160
+Ch161
+Ch162
+Ch163
+Ch164
+Ch165
+Ch166
+Ch167
+Ch168
+Ch169
+Ch170
+Ch171
+Ch172
+Ch173
+Ch174
+Ch175
+Ch176
+Ch177
+Ch178
+Ch179
+Ch180
+Ch181
+Ch182
+Ch183
+Ch184
+Ch185
+Ch186
+Ch187
+Ch188
+Ch189
+Ch190
+Ch191
+Ch192
+Ch193
+Ch194
+Ch195
+Ch196
+Ch197
+Ch198
+Ch199
+Ch200
+Ch201
+Ch202
+Ch203
+Ch204
+Ch205
+Ch206
+Ch207
+Ch208
+Ch209
+Ch210
+Ch211
+Ch212
+Ch213
+Ch214
+Ch215
+Ch216
+Ch217
+Ch218
+Ch219
+Ch220
+Ch221
+Ch222
+Ch223
+Ch224
+Ch225
+Ch226
+Ch227
+Ch228
+Ch229
+Ch230
+Ch231
+Ch232
+Ch233
+Ch234
+Ch235
+Ch236
+Ch237
+Ch238
+Ch239
+Ch240
+Ch241
+Ch242
+Ch243
+Ch244
+Ch245
+Ch246
+Ch247
+Ch248
+Ch249
+Ch250
+Ch251
+Ch252
+Ch253
+Ch254
+Ch255
+Ch256</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>Device Settings</string>
+        </property>
+        <layout class="QFormLayout" name="formLayout">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Device Port or Serial</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="deviceNumber">
+           <property name="toolTip">
+            <string>This is either the USB port number of the device, or the serial number of the device. If left as (search), all USB ports will be searched.</string>
+           </property>
+           <property name="text">
+            <string>(search)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Number of Channels</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QSpinBox" name="channelCount">
+           <property name="toolTip">
+            <string>This must match the number of entries in the channel list</string>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>256</number>
+           </property>
+           <property name="value">
+            <number>256</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Chunk Size</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QSpinBox" name="chunkSize">
+           <property name="toolTip">
+            <string>The number of samples per chunk emitted by the driver -- a small value will lead to lower overall latency but causes more CPU load. The official recommendation is to use a power of two that is closest to sampling rate / 32.</string>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>256</number>
+           </property>
+           <property name="value">
+            <number>32</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Sampling Rate</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QComboBox" name="samplingRate">
+           <property name="toolTip">
+            <string>Sampling rate to use.</string>
+           </property>
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <item>
+            <property name="text">
+             <string>256</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>512</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>600</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>1200</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>2400</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>4800</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>9600</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>19200</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>38400</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QCheckBox" name="isSlave">
+           <property name="toolTip">
+            <string>Note: this is highly experimental -- can be used to sync multiple amps with a trigger cable. This needs to be checked for all slave devices, and unchecked for the 'master' device. The master must be linked/unlinked last (i.e., after all the slaves).</string>
+           </property>
+           <property name="text">
+            <string>(check)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Act as Slave</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="linkButton">
+          <property name="text">
+           <string>Link</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>303</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionLoad_Configuration"/>
+    <addaction name="actionSave_Configuration"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit_2"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionLoad_Configuration">
+   <property name="text">
+    <string>Load Configuration</string>
+   </property>
+  </action>
+  <action name="actionSave_Configuration">
+   <property name="text">
+    <string>Save Configuration</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionQuit_2">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,261 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA0888E2177BBD7B00B04BAB /* error_code.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0888E1177BBD7B00B04BAB /* error_code.cpp */; };
+		AA0888E4177BBDAA00B04BAB /* tss_null.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0888E3177BBDAA00B04BAB /* tss_null.cpp */; };
+		AA0888E7177BBDB700B04BAB /* once.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0888E5177BBDB700B04BAB /* once.cpp */; };
+		AA0888E8177BBDB700B04BAB /* thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0888E6177BBDB700B04BAB /* thread.cpp */; };
+		AA6FC01315B9EB5C0048161D /* StressTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = AA6FC01215B9EB5C0048161D /* StressTest.1 */; };
+		AA6FC02015B9EC180048161D /* StressTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6FC01F15B9EC180048161D /* StressTest.cpp */; };
+		AA6FC02815BA16DC0048161D /* liblsl64-debug.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AA6FC02715BA16DC0048161D /* liblsl64-debug.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		AA6FC00A15B9EB5C0048161D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				AA6FC01315B9EB5C0048161D /* StressTest.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		AA0888E1177BBD7B00B04BAB /* error_code.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = error_code.cpp; path = ../../../../../../Users/christian/Desktop/labstreaminglayer/LSL/liblsl/external/src/system/src/error_code.cpp; sourceTree = "<group>"; };
+		AA0888E3177BBDAA00B04BAB /* tss_null.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tss_null.cpp; path = ../../../../../../Users/christian/Desktop/labstreaminglayer/LSL/liblsl/external/src/thread/src/tss_null.cpp; sourceTree = "<group>"; };
+		AA0888E5177BBDB700B04BAB /* once.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = once.cpp; path = ../../../../../../Users/christian/Desktop/labstreaminglayer/LSL/liblsl/external/src/thread/src/pthread/once.cpp; sourceTree = "<group>"; };
+		AA0888E6177BBDB700B04BAB /* thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = thread.cpp; path = ../../../../../../Users/christian/Desktop/labstreaminglayer/LSL/liblsl/external/src/thread/src/pthread/thread.cpp; sourceTree = "<group>"; };
+		AA6FC00C15B9EB5C0048161D /* StressTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = StressTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA6FC01215B9EB5C0048161D /* StressTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = StressTest.1; sourceTree = "<group>"; };
+		AA6FC01F15B9EC180048161D /* StressTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StressTest.cpp; sourceTree = SOURCE_ROOT; };
+		AA6FC02715BA16DC0048161D /* liblsl64-debug.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "liblsl64-debug.dylib"; path = "../../bin/liblsl64-debug.dylib"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA6FC00915B9EB5C0048161D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA6FC02815BA16DC0048161D /* liblsl64-debug.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA6FC00115B9EB5B0048161D = {
+			isa = PBXGroup;
+			children = (
+				AA0888E5177BBDB700B04BAB /* once.cpp */,
+				AA0888E6177BBDB700B04BAB /* thread.cpp */,
+				AA0888E3177BBDAA00B04BAB /* tss_null.cpp */,
+				AA0888E1177BBD7B00B04BAB /* error_code.cpp */,
+				AA6FC02715BA16DC0048161D /* liblsl64-debug.dylib */,
+				AA6FC00F15B9EB5C0048161D /* StressTest */,
+				AA6FC00D15B9EB5C0048161D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA6FC00D15B9EB5C0048161D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA6FC00C15B9EB5C0048161D /* StressTest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA6FC00F15B9EB5C0048161D /* StressTest */ = {
+			isa = PBXGroup;
+			children = (
+				AA6FC01F15B9EC180048161D /* StressTest.cpp */,
+				AA6FC01215B9EB5C0048161D /* StressTest.1 */,
+			);
+			path = StressTest;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA6FC00B15B9EB5C0048161D /* StressTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA6FC01615B9EB5C0048161D /* Build configuration list for PBXNativeTarget "StressTest" */;
+			buildPhases = (
+				AA6FC00815B9EB5C0048161D /* Sources */,
+				AA6FC00915B9EB5C0048161D /* Frameworks */,
+				AA6FC00A15B9EB5C0048161D /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StressTest;
+			productName = StressTest;
+			productReference = AA6FC00C15B9EB5C0048161D /* StressTest */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA6FC00315B9EB5B0048161D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = AA6FC00615B9EB5B0048161D /* Build configuration list for PBXProject "StressTest" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = AA6FC00115B9EB5B0048161D;
+			productRefGroup = AA6FC00D15B9EB5C0048161D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA6FC00B15B9EB5C0048161D /* StressTest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA6FC00815B9EB5C0048161D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA6FC02015B9EC180048161D /* StressTest.cpp in Sources */,
+				AA0888E2177BBD7B00B04BAB /* error_code.cpp in Sources */,
+				AA0888E4177BBDAA00B04BAB /* tss_null.cpp in Sources */,
+				AA0888E7177BBDB700B04BAB /* once.cpp in Sources */,
+				AA0888E8177BBDB700B04BAB /* thread.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AA6FC01415B9EB5C0048161D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.6;
+				SYMROOT = "$(SRCROOT)/../../bin";
+				VALID_ARCHS = x86_64;
+			};
+			name = Debug;
+		};
+		AA6FC01515B9EB5C0048161D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = macosx10.6;
+				SYMROOT = "$(SRCROOT)/../../bin";
+				VALID_ARCHS = x86_64;
+			};
+			name = Release;
+		};
+		AA6FC01715B9EB5C0048161D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../external\"",
+				);
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/ @loader_path/ /usr/lib /usr/local/lib ~/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../bin\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.8;
+				USER_HEADER_SEARCH_PATHS = "$(inherited) \"$(SRCROOT)/../../external\"";
+				VALID_ARCHS = x86_64;
+			};
+			name = Debug;
+		};
+		AA6FC01815B9EB5C0048161D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../external\"",
+				);
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/ @loader_path/ /usr/lib /usr/local/lib ~/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../bin\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.8;
+				USER_HEADER_SEARCH_PATHS = "$(inherited) \"$(SRCROOT)/../../external\"";
+				VALID_ARCHS = x86_64;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA6FC00615B9EB5B0048161D /* Build configuration list for PBXProject "StressTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA6FC01415B9EB5C0048161D /* Debug */,
+				AA6FC01515B9EB5C0048161D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA6FC01615B9EB5C0048161D /* Build configuration list for PBXNativeTarget "StressTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA6FC01715B9EB5C0048161D /* Debug */,
+				AA6FC01815B9EB5C0048161D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AA6FC00315B9EB5B0048161D /* Project object */;
+}

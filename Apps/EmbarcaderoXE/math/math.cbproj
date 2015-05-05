@@ -1,0 +1,215 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{6317E0A4-CCB4-4316-A7E2-0F722548D738}</ProjectGuid>
+			<ProjectVersion>12.3</ProjectVersion>
+			<MainSource>math.cpp</MainSource>
+			<Config Condition="'$(Config)'==''">Debug</Config>
+			<Base>True</Base>
+			<Platform>Win32</Platform>
+			<AppType>Application</AppType>
+			<FrameworkType>VCL</FrameworkType>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_1)'!=''">
+			<Cfg_1>true</Cfg_1>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
+			<Cfg_2>true</Cfg_2>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base)'!=''">
+			<LinkPackageStatics>rtl.lib;vcl.lib</LinkPackageStatics>
+			<FinalOutputDir>..\</FinalOutputDir>
+			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
+			<BCC_MonitorGlobalAndStackData>true</BCC_MonitorGlobalAndStackData>
+			<OutputExt>exe</OutputExt>
+			<BCC_MonitorThis>true</BCC_MonitorThis>
+			<BCC_MonitorInlinePtrAccess>true</BCC_MonitorInlinePtrAccess>
+			<Multithreaded>true</Multithreaded>
+			<ProjectType>CppVCLApplication</ProjectType>
+			<PackageImports>vclx.bpi;vcl.bpi;vclimg.bpi;dbrtl.bpi;Rave77VCL.bpi;bdertl.bpi;rtl.bpi;bcbie.bpi;vclactnband.bpi;xmlrtl.bpi;bcbsmp.bpi;vcldb.bpi;vcldbx.bpi;vcltouch.bpi;dsnap.bpi;dsnapcon.bpi;TeeUI.bpi;TeeDB.bpi;Tee.bpi;vclib.bpi;ibxpress.bpi;adortl.bpi;IndyCore.bpi;IndySystem.bpi;IndyProtocols.bpi;inet.bpi;intrawebdb_100_140.bpi;Intraweb_100_140.bpi;VclSmp.bpi;vclie.bpi;inetdb.bpi;webdsnap.bpi;websnap.bpi;inetdbbde.bpi;inetdbxpress.bpi;soaprtl.bpi;vclribbon.bpi;DbxCommonDriver.bpi;DbxClientDriver.bpi;DBXInterBaseDriver.bpi;DBXMySQLDriver.bpi;dbexpress.bpi;dbxcds.bpi;VisioForge_Video_Capture_3_BCB.bpi</PackageImports>
+			<AllPackageLibs>rtl.lib;vcl.lib</AllPackageLibs>
+			<DCC_CBuilderOutput>JPHNE</DCC_CBuilderOutput>
+			<IncludePath>..\shared\include\;$(BDS)\include;$(BDS)\include\dinkumware;..\shared\boost_1_47_0;$(IncludePath)</IncludePath>
+			<ILINK_LibraryPath>..\bin\;..\shared\include\;dsMatrix\;matrix\;..\..\..\Desktop\X\sccn\trunk\c\datariver\math\;$(BDS)\lib\obj;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+			<BCC_wpar>false</BCC_wpar>
+			<BCC_OptimizeForSpeed>true</BCC_OptimizeForSpeed>
+			<BCC_ExtendedErrorInfo>true</BCC_ExtendedErrorInfo>
+			<ILINK_TranslatedLibraryPath>$(BDS)\lib\$(LANGDIR)</ILINK_TranslatedLibraryPath>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_1)'!=''">
+			<FinalOutputDir>..\bin</FinalOutputDir>
+			<BCC_OptimizeForSpeed>false</BCC_OptimizeForSpeed>
+			<BCC_DisableOptimizations>true</BCC_DisableOptimizations>
+			<DCC_Optimize>false</DCC_Optimize>
+			<DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
+			<Defines>_DEBUG;$(Defines)</Defines>
+			<BCC_InlineFunctionExpansion>false</BCC_InlineFunctionExpansion>
+			<IntermediateOutputDir>Debug</IntermediateOutputDir>
+			<BCC_UseRegisterVariables>None</BCC_UseRegisterVariables>
+			<DCC_Define>DEBUG</DCC_Define>
+			<BCC_DebugLineNumbers>true</BCC_DebugLineNumbers>
+			<TASM_DisplaySourceLines>true</TASM_DisplaySourceLines>
+			<BCC_StackFrames>true</BCC_StackFrames>
+			<ILINK_LibraryPath>$(BDS)\lib\debug;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+			<ILINK_FullDebugInfo>true</ILINK_FullDebugInfo>
+			<TASM_Debugging>Full</TASM_Debugging>
+			<BCC_SourceDebuggingOn>true</BCC_SourceDebuggingOn>
+			<ILINK_TranslatedLibraryPath>$(BDS)\lib\$(LANGDIR)\debug;$(ILINK_TranslatedLibraryPath)</ILINK_TranslatedLibraryPath>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2)'!=''">
+			<FinalOutputDir>..\bin</FinalOutputDir>
+			<Defines>NDEBUG;$(Defines)</Defines>
+			<IntermediateOutputDir>Release</IntermediateOutputDir>
+			<ILINK_LibraryPath>$(BDS)\lib\release;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+			<TASM_Debugging>None</TASM_Debugging>
+			<ILINK_TranslatedLibraryPath>$(BDS)\lib\$(LANGDIR)\release;$(ILINK_TranslatedLibraryPath)</ILINK_TranslatedLibraryPath>
+		</PropertyGroup>
+		<ItemGroup>
+			<LibFiles Include="..\bin\cvWrapper.lib">
+				<IgnorePath>true</IgnorePath>
+				<BuildOrder>15</BuildOrder>
+			</LibFiles>
+			<CppCompile Include="CircleFunction.cpp">
+				<DependentOn>CircleFunction.h</DependentOn>
+				<BuildOrder>7</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="epnp.cpp">
+				<DependentOn>epnp.h</DependentOn>
+				<BuildOrder>13</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="FitFailedException.cpp">
+				<DependentOn>FitFailedException.h</DependentOn>
+				<BuildOrder>8</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="FittableFunction.cpp">
+				<DependentOn>FittableFunction.h</DependentOn>
+				<BuildOrder>4</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="Fitter.cpp">
+				<DependentOn>Fitter.h</DependentOn>
+				<BuildOrder>3</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="IllegalArgumentException.cpp">
+				<DependentOn>IllegalArgumentException.h</DependentOn>
+				<BuildOrder>11</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="Linear1DFunction.cpp">
+				<DependentOn>Linear1DFunction.h</DependentOn>
+				<BuildOrder>5</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="LinearAlgebra.cpp">
+				<DependentOn>LinearAlgebra.h</DependentOn>
+				<BuildOrder>12</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="math.cpp">
+				<BuildOrder>0</BuildOrder>
+			</CppCompile>
+			<ResFiles Include="math.res">
+				<BuildOrder>1</BuildOrder>
+			</ResFiles>
+			<CppCompile Include="MathForm.cpp">
+				<Form>Form2</Form>
+				<DependentOn>MathForm.h</DependentOn>
+				<BuildOrder>2</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="math_util.cpp">
+				<DependentOn>math_util.h</DependentOn>
+				<BuildOrder>6</BuildOrder>
+			</CppCompile>
+			<CppCompile Include="Minimizer.cpp">
+				<DependentOn>Minimizer.h</DependentOn>
+				<BuildOrder>9</BuildOrder>
+			</CppCompile>
+			<None Include="..\shared\include\cvWrapper.h">
+				<BuildOrder>14</BuildOrder>
+			</None>
+			<None Include="..\shared\include\general_util.h">
+				<BuildOrder>12</BuildOrder>
+			</None>
+			<FormResources Include="MathForm.dfm"/>
+			<BuildConfiguration Include="Release">
+				<Key>Cfg_2</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Base">
+				<Key>Base</Key>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Debug">
+				<Key>Cfg_1</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+		</ItemGroup>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Cpp.Targets')" Project="$(BDS)\Bin\CodeGear.Cpp.Targets"/>
+		<Import Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')" Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj"/>
+		<ProjectExtensions>
+			<Borland.Personality>CPlusPlusBuilder.Personality.12</Borland.Personality>
+			<Borland.ProjectType>CppVCLApplication</Borland.ProjectType>
+			<BorlandProject>
+				<CPlusPlusBuilder.Personality>
+					<Source>
+						<Source Name="MainSource">math.cpp</Source>
+					</Source>
+					<VersionInfo>
+						<VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+						<VersionInfo Name="AutoIncBuild">False</VersionInfo>
+						<VersionInfo Name="MajorVer">1</VersionInfo>
+						<VersionInfo Name="MinorVer">0</VersionInfo>
+						<VersionInfo Name="Release">0</VersionInfo>
+						<VersionInfo Name="Build">0</VersionInfo>
+						<VersionInfo Name="Debug">False</VersionInfo>
+						<VersionInfo Name="PreRelease">False</VersionInfo>
+						<VersionInfo Name="Special">False</VersionInfo>
+						<VersionInfo Name="Private">False</VersionInfo>
+						<VersionInfo Name="DLL">False</VersionInfo>
+						<VersionInfo Name="Locale">1033</VersionInfo>
+						<VersionInfo Name="CodePage">1252</VersionInfo>
+					</VersionInfo>
+					<VersionInfoKeys>
+						<VersionInfoKeys Name="CompanyName"/>
+						<VersionInfoKeys Name="FileDescription"/>
+						<VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="InternalName"/>
+						<VersionInfoKeys Name="LegalCopyright"/>
+						<VersionInfoKeys Name="LegalTrademarks"/>
+						<VersionInfoKeys Name="OriginalFilename"/>
+						<VersionInfoKeys Name="ProductName"/>
+						<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="Comments"/>
+					</VersionInfoKeys>
+					<Debugging>
+						<Debugging Name="DebugSourceDirs"/>
+					</Debugging>
+					<Parameters>
+						<Parameters Name="RemoteHost"/>
+						<Parameters Name="RemotePath"/>
+						<Parameters Name="RemoteParams"/>
+						<Parameters Name="RemoteLauncher"/>
+						<Parameters Name="UseRemoteLauncher">False</Parameters>
+						<Parameters Name="RemoteCWD"/>
+						<Parameters Name="RemoteDebug">False</Parameters>
+					</Parameters>
+					<ProjectProperties>
+						<ProjectProperties Name="AutoShowDeps">False</ProjectProperties>
+						<ProjectProperties Name="ManagePaths">True</ProjectProperties>
+						<ProjectProperties Name="VerifyPackages">True</ProjectProperties>
+					</ProjectProperties>
+					<Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\bcboffice2k150.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\bcbofficexp150.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dcloffice2k150.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dclofficexp150.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+					</Excluded_Packages>
+				</CPlusPlusBuilder.Personality>
+				<Platforms>
+					<Platform value="Win32">True</Platform>
+				</Platforms>
+			</BorlandProject>
+			<ProjectFileVersion>12</ProjectFileVersion>
+		</ProjectExtensions>
+	</Project>
