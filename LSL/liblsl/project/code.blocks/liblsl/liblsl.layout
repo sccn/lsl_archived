@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Release" />
+	<File name="../../../external/src/serialization/src/basic_serializer_map.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="1414" topLine="34" />
+	</File>
+	<File name="../../../external/src/serialization/src/binary_wiarchive.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="1056" topLine="18" />
+	</File>
+	<File name="../../../src/inlet_connection.h" open="1" top="1" tabpos="4">
+		<Cursor position="5558" topLine="117" />
+	</File>
+</CodeBlocks_layout_file>

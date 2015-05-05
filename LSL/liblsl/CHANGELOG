@@ -1,0 +1,95 @@
+Changes for distribution 1.0.10  (library version 0.91)
+* fix: in the C++ interface, the template pull_chunk() that fills a vector of time stamps did not clear this vector initially
+       (no recompile necessary, just a header fix)
+* change: simplified the rule for deciding which chunk size to use when both the outlet and the inlet have a preference:
+          now the inlet's preference overrides the one of the outlet, if present.
+
+Changes for distribution 1.0.18 (library version 0.92)
+* fix: rebuild Linux and Mac libraries with most boost symbols stripped off (reducing the conflict of name clashes during dynamic linking, e.g. in MATLAB).
+* Adding support for constructing inlets with unresolved stream_info's (if they are fully specified at construction).
+
+Changes for distribution 1.0.19 (library version 0.93)
+* removed the entire boost static library dependency across Win/Linux/Mac (instead now using the relevant .cpp files directly). 
+  This simplifies the build process and reduces the symbol pollution on Linux/Mac.
+* Documented compatibility with pugixml in C API.
+* Documented the timeout in resolve_all better in C API.
+
+Changes for distribution 1.0.20 (library version 1.00) -- internal code review.
+* Added a continuous_resolver class that allows to resolve streams in the background.
+* Added ability to query receive buffer size.
+* Extended the error reporting in the C API (some functions now return error conditions).
+* Added some extra argument checking in the stream_info constructor (negative channel count / sample rate, empty name).
+
+* Upgraded from boost 1.47.0 to boost 1.50.0, and from portable_archive 4.2 to portable_archive 5.0.
+
+* Improved code documentation and slightly refactored some of the library code for better readability / comprehensibility.
+  - renamed some internal variables
+  - enhanced documentation
+  - switched largely to boost.chrono based timing instead of boost.date_time (new standard)
+  - following boost synchronization guidelines more strictly (preferentially using the simplest primitive that gets the job done)
+  - made the stream_inlet more tolerant to protocol errors at the sender side (threads do not exit but try to reconnect until successful).
+  - using incomplete struct types in the LSL C API to prevent accidental type confusions.
+  - simplified (and robustified) the data and info fetching threads in the inlet.
+  - reduced the amount of data copying when pushing samples into the library
+  - the IPv4 and IPv6 stacks in the outlet now run on two separate threads to improve robustness in case an OS implements a protocol badly
+  - improved efficiency of stream_info accessors (now return const references instead of copies)
+  - now using boost.container.flat_set in the send_buffer instead of std.set (more efficient)
+
+* Fixed a bug that prevented the use of LSL_FOREVER in the C API under 32-bit Mac (and possibly 32-bit Linux, too).
+* Fixed some potential hangups in the inlet when the connection gets lost irrecoverably 
+  (affected info(), time_correction() and pull_sample()).
+* Fixed several missing exception handlers for the C API wrappers (increasing robustness in case of bad errors).
+* Fixed a minor bug when resolving streams from a list of known peers (used the wrong time constant).
+* Fixed 2 cases where strings were allocated incorrectly in the liblsl C API (lsl_get_xml() and lsl_pull_sample_str()).
+* Fixed a bug where -0.0 would be transmitted as +0.0 (fixed in the portable_archive upgrade).
+* Fixed several destructors that could have thrown exceptions and thus caused application termination.
+* Fixed a bug that prevented the use of minimum buffer sizes that were larger than the lower capacity bound (then 4096).
+
+Changes for distribution 1.0.21 (library version 1.02) -- after extensive stress testing.
+* Added a stress-testing app under testing/StressTest
+* Relaxed the timing of reconnect attempts by the inlet a bit.
+* Fixed the handling of the chunk size when passed in at construction of an inlet or outlet (oversight)
+* Fixed a rare abstract function call or access violation when cancelling resolve attempts
+* Fixed a relatively rare access violation in the TCP server shutdown
+* Fixed a relatively rare access violation in the stream outlet shutdown
+* Fixed an occasional "not a socket" error in the TCP server shutdown
+* Fixed handling of some unusual parameter settings in the inlet (buffer size=0)
+
+Library version 1.03
+* Added support for Windows XP (required more tolerance in case of missing IPv6 support)
+* Fixed a case where an inlet could spam an outlet with rapid reconnect requests
+* Rebuilt against a sufficiently old Linux to run out-of-the-box for most distributions
+
+Library version 1.03.1
+* Made the resolver tolerant w.r.t. invalid hostnames in the KnownPeers config variable
+
+Library version 1.03.2
+* Moved a definition inside the C++ header file to make SWIG happy (which is needed for certain features in the Python wrapper to be enabled)
+* pylsl should now work out of the box on all Windows platforms and all recent Python versions
+
+Library Version 1.03.3
+* renamed internal use of boost namespace into lslboost to avoid link-time symbol conflicts
+* Added the ability to push/pull length-delimeted string values in the C API (lsl_push_sample_buf / lsl_pull_sample_buf)
+  in addition to 0-terminated
+* Added an experimental Java wrapper
+
+Library Version 1.04
+* Added a preprocessor switch to toggle between using the system-supplied boost or the shrink-wrapped version (in external/lslboost)
+* Added documentation on how to get an updated boost distribution included with liblsl (and added a script to automate that)
+
+Library Version 1.05
+* Suppressed a spurious warning about non-matching query ids
+
+Library Version 1.10 (mostly throughput optimizations)
+* Added the ability to allocate ports outside the default port range once if it is exhausted (configurable, enabled by default).
+* Replaced consumer_queue implementation by a lock-free single-producer/single-consumer queue 
+* Minor speed improvements in data_receiver: Removed a slow check in pull_sample() and calling local_clock() only every k'th iteration in data_thread().
+* Changed the data layout of the sample class for faster allocation/deallocation.
+* Speeded up the assignment/retrieval functions of the sample class (uses memcpy where appropriate).
+* Added a factory class for fast allocation/deallocation of samples.
+* Implemented a faster data transmission protocol (1.10) for samples, as alternative to the baseline protocol (1.00).
+* Implemented a new version of protocol negotiation between tcp_server and data_receiver, using an HTTP-like request/response style.
+* Fixed some potential rare hang bugs during shutdown of inlets and outlets (deadlocks/livelocks)
+* Added the ability to transmit multiplexed chunks to the C and C++ APIs
+* Minor improvements to documentation
+* Added clean cross-platform Python and C# wrappers (pylsl.py and LSL.cs)

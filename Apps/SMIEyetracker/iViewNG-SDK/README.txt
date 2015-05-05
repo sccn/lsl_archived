@@ -1,0 +1,19 @@
+== Driver Installation ==
+
+Before you can use this app, you need to obtain the iViewNG SDK from www.smivision.com (note that this program requires the "iViewNG SDK", not the older  "iView X SDK"; there is a different app for the new SDK). At the time of this writing, the download page is: http://www.smivision.com/en/gaze-and-eye-tracking-systems/support/software-download.html (alternatively you might try to google for iViewNG SDK). Please make sure that your eye tracking model is supported by the SDK. Note the installation location and after you have installed the drivers, copy the contents of the bin/bin-Windows7-32, lib/lib-Windows7-32, and optionally include/ folders into this folder. You should now be able to run the app!
+
+== Usage ==
+
+By default this app will start a lightweight server in the background, unless you explicitly specify the IP address of a machine that runs a server. In this mode no configuration should be necessary as long as your eye tracker is correctly installed (USB drivers, etc), which requires that you also install the regular tracking software. However, the downside is that you will not be able to calibrate your tracker as this program has no calibration GUI on its own (although the default calibration is okay for testing).
+
+If you run an SMI tracking server locally, you can use the IP address 127.0.0.1 to connect to it. The benefit of using a separate tracking server is that it allows you to calibrate the eye tracker in its GUI and troubleshooting is much easier (if you run into issues you should always first confirm that your glasses work with the official tracking programs before contacting us). You can get the server program from SMI (one server is called iViewETG for the eye tracking glasses). 
+
+As of this writing you can ignore the license key and device type settings.
+
+By default this program will only stream gaze coordinates. In addition, you can add extra streams, such as the uncompressed video from the eye cameras or the scene camera, by checking the respective checkboxes labeled (add). Since these streams require a lot of network bandwidth, the default resolution and color space are set to low settings -- if your network connection can take it, you can increase these values. In any case, it is strongly discouraged to record these streams to disk, as you will run out of disk space in no time -- instead, you should record only the Compressed Scene Video if you like to archive the scene video. However, you will need a specialized software to later decode this stream (which is in H.264 format); we (SCCN) do not currently supply such software.
+
+Note that the user interface exposes more settings than what is supported by actual hardware, particularly recording at very high data rates. If you get an Invalid Parameter error, check your device's specs and try again with a lower setting. Also, some features might not work simultaneously -- for example, you may not be able to stream eye camera videos at both 640x480 and 60Hz, or record both the compressed and uncompressed scene video stream at the same time.
+
+== Optional ==
+
+The configuration settings can be saved to a .cfg file (see File / Save Configuration) and subsequently loaded from such a file (via File / Load Configuration). Importantly, the program can be started with a command-line argument of the form "iViewNG.exe -c myconfig.cfg", which allows to load the config automatically at start-up. The recommended procedure to use the app in production experiments is to make a shortcut on the experimenter's desktop which points to a previously saved configuration customized to the study being recorded to minimize the chance of operator error.

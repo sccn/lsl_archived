@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>372</width>
+    <height>596</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>SMI iViewNG Connector</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>4</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Connection Setup</string>
+      </property>
+      <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Server Address</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="serverAddress">
+         <property name="toolTip">
+          <string>IP address of iViewNG server machine; if set to &quot;launch process&quot;, a minimal server instance will be started in the background.</string>
+         </property>
+         <property name="text">
+          <string>(launch process)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Server Port</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="serverPort">
+         <property name="toolTip">
+          <string>Note: the default port is 1100</string>
+         </property>
+         <property name="text">
+          <string>(use default)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>License Key</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="licenseKey">
+         <property name="toolTip">
+          <string>Not all features might be available with the default license key, but as of 2013 there is no notable restriction.</string>
+         </property>
+         <property name="text">
+          <string>(use default)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Device Type</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="deviceType">
+         <property name="toolTip">
+          <string>ETG stands for eye tracking glasses -- see the inside of your glasses frame for the version number or check the vendor's website.</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>ETG 1.x</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>ETG 2.x</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox_3">
+      <property name="title">
+       <string>Eye Tracking and Eye Video Access</string>
+      </property>
+      <layout class="QFormLayout" name="formLayout_3">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Eye Camera Resolution</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="eyeResolution">
+         <property name="toolTip">
+          <string/>
+         </property>
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>320x240</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>640x480</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>Eye Camera Sampling Rate</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="eyeSamplingRate">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>30</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>60</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Eye Camera Tracking Side</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="eyeTrackSides">
+         <property name="toolTip">
+          <string>Tracking can be set to use only one eye if necessary.</string>
+         </property>
+         <property name="currentIndex">
+          <number>2</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>left eye</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>right eye</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>both eyes</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_14">
+         <property name="text">
+          <string>Uncompressed Left Eye Video</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QCheckBox" name="addLeftEyeVideo">
+         <property name="toolTip">
+          <string>If checked, an uncompressed stream of the left eye camera will be included.</string>
+         </property>
+         <property name="text">
+          <string>(add)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_15">
+         <property name="text">
+          <string>Uncompressed Right Eye Video</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QCheckBox" name="addRightEyeVideo">
+         <property name="toolTip">
+          <string>If checked, an uncompressed stream of the right eye camera will be included.</string>
+         </property>
+         <property name="text">
+          <string>(add)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>Eye Tracking Stream</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QCheckBox" name="addGazeStream">
+         <property name="toolTip">
+          <string>If checked, a stream of deduced gaze parameters will be included.</string>
+         </property>
+         <property name="text">
+          <string>(add)</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string>Scene Video Access</string>
+      </property>
+      <layout class="QFormLayout" name="formLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Scene Camera Sampling Rate</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="sceneSamplingRate">
+         <property name="toolTip">
+          <string>Note that not all sampling rates might be supported by your device. Also, note that higher sampling rates use more bandwidth.</string>
+         </property>
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>24</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>30</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>60</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>120</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>240</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Scene Camera Resolution</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="sceneResolution">
+         <property name="toolTip">
+          <string>Consider using a low resolution when including an uncompressed scene stream</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>320x240</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>400x300</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>640x480</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>960x720</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1280x720</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1280x960</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Scene Camera Color Space</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="sceneColorSpace">
+         <property name="toolTip">
+          <string>Use grayscale to conserve bandwidth.</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>Grayscale</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>FullColor</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_16">
+         <property name="text">
+          <string>Scene Camera White Balance</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="sceneWhiteBalance">
+         <property name="toolTip">
+          <string/>
+         </property>
+         <item>
+          <property name="text">
+           <string>Automatic</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Outdoor Daylight</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Outdoor Cloudy</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Indoor Incandescent (Tungsten)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Indoor Fluorescent (White)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Indoor Fluorescent (Daylight)</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_13">
+         <property name="text">
+          <string>Uncompressed Scene Video</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QCheckBox" name="addUncompressedSceneStream">
+         <property name="toolTip">
+          <string>If checked, an uncompressed scene video stream will be generated -- do not record this stream to disk, as it is very high bandwidth.</string>
+         </property>
+         <property name="text">
+          <string>(add)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Compressed Scene Video</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QCheckBox" name="addCompressedSceneStream">
+         <property name="toolTip">
+          <string>If checked, a compressed scene-image stream will be generated that is mostly useful for recording to disk.</string>
+         </property>
+         <property name="text">
+          <string>(add)</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="linkButton">
+        <property name="text">
+         <string>Link</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+   <zorder>verticalSpacer</zorder>
+   <zorder>groupBox</zorder>
+   <zorder>groupBox_2</zorder>
+   <zorder>groupBox_3</zorder>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>372</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionLoad_Configuration"/>
+    <addaction name="actionSave_Configuration"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit_2"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionLoad_Configuration">
+   <property name="text">
+    <string>Load Configuration</string>
+   </property>
+  </action>
+  <action name="actionSave_Configuration">
+   <property name="text">
+    <string>Save Configuration</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionQuit_2">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

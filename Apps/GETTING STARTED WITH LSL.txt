@@ -1,0 +1,58 @@
+LSL (short for lab streaming layer) is a simple modular data recording system.
+It consists of the recording program (the LabRecorder) and a collection of device modules.
+
+An extensive wiki that discusses the various programs and usage considerations is found at https://code.google.com/p/labstreaminglayer/w/list
+
+A basic session with LSL works as follows:
+
+=== installation ===
+
+* To use the recording program (LabRecorder), please have a look at the installation instructions in the LabRecorder folder (you need to install a
+  compatible version of Python and a particular GUI package for it called PySide).
+    
+* Some hardware device modules require that you first install the drivers for the respective hardware (e.g., BioSemi -- drivers are found on the
+  manufacturer's website).
+
+* On Windows your firewall will probably be set to block the communication of your LSL applications. The easiest way to fix this issue is to go to
+  the Control Panel / Windows Firewall / Turn Windows Firewall On or Off (on the left side) / and then under "Home or work (private) network location
+  settings" set it to "Turn off Windows Firewall". Do NOT turn off the "Public network location settings" firewall switch, unless you are attempting to
+  record over a public network. Note that if you have a personal firewall you will need to grant your LSL apps access to the network, as well.
+
+
+=== preparation ===
+1. turn on your hardware (e.g. BioSemi amp, PhaseSpace server, microphone, ...).
+2. turn on your support software (e.g., PhaseSpace Master, SNAP in waiting mode)
+
+=== recording ===
+3a. open the device modules and configure them as necessary (for a simple test nothing needs to be configured, but for production recordings,
+    things such as the marker labels or cap type should be configured, and the configuration should be saved for later reuse)
+3b. link the device modules by clicking the "Link" button (note: the Link button changes its label to "Unlink" only when everything went well,
+    otherwise you'll get a warning/error message)
+4. start the LabRecorder, select a file name to record to (or stick with the default), and make sure that each stream that you
+   want to record from shows up in green color in the "Record from Streams" listbox. Each one should be checked by default, but you may
+   uncheck any streams that you don't actually want to record (e.g., GazeStream internals or the like). You can refresh the list of streams
+   by clicking "Update" (e.g. when you added devices after you started the recorder program).
+5. click "Start" in the recording program; the status bar shows the time since you pressed start and the current size of the file that you
+   are saving to -- as long as this number is growing you know that you are at least recording something. When you are done, click stop.
+   Note that you can't close any program while it is linked or recording (to protect against accidental closing).
+
+=== importing the data ===
+You can import the data into MATLAB using the function that is in LSL Apps/MATLAB Importer (also found at http://code.google.com/p/xdf/downloads/list),
+see documentation of that function. MoBILAB and EEGLAB also have an importer (so far only the SCCN versions).
+
+
+=== advanced uses ===
+To allow for fast setup during experiments, each program can load configuration files (these can be edited with a text editor, or more
+convenienently just saved to disk from the GUI after changes to settings have been made). The config file can be loaded via the GUI, but it
+is more efficient (and less error prone) to make a shortcut on the desktop that has the line --config name_of_the_file.cfg
+appended to its command-line arguments. Typically each running study would have a group of desktop shortcuts that bring up the necessary
+programs in a ready-to-go state.
+
+The LabRecorder has a variety of configurable expert features that allow to remote-control SNAP or other experiment scripting programs or perform
+other scriptable tasks. Aside from these, it is possible to list the names of required streams for a study (so it can warn when a stream is missing
+upon clicking record). One can also pre-configure the file names that shall be proposed for various blocks in a recording session. There is further
+documentation on these features in the LabRecorder folder (see LSL Apps), including the existing .cfg files themselves.
+
+=== known issues ===
+When adding a new custom cap labeling scheme in the BioSemi Link program, one needs to press Enter to commit it to the list of schemes -- only
+then can it be stored in a config file.
