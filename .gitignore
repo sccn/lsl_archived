@@ -104,6 +104,14 @@ external_libs/
 # any autosave from emacs
 *~
 
+# strip all executables
+*.exe
+*.app/
+
+# unfortunately, in the case of linux, since there is no extension, we must name it
+linux/PupilPro
+linux/XDFBrowser
+
 ## C++.gitignore:
 
 # Compiled Object files
