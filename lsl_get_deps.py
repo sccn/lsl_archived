@@ -58,46 +58,46 @@ op_sys =  ["win32", "win64", "OSX", "linux"] # which os to unstrip -- win32 is t
 
 # which apps are to be stripped/unstripped
 apps = [
-    #"AMTIForcePlate",
-    #"AudioCaptureWin",
-    #"BAlert", # note -- App doesn't run on my computer because I am missing a certain 'SiUSBXp.dll' -- consider providing this? -- fixed: by downloading said .dll and copying into C:\Windows\System32
-    #"BioSemi",
-    #"BrainProducts/ActiChamp",
-    #"BrainProducts/BrainAmpSeries",
-    #"BrainProducts/BrainVisionRDA",
-    #"EGIAmpServer",
-    #"EmbarcaderoXE/bin", 
-    #"EmbarcaderoXE/GazeStream", 
-    #"Enobio", # note -- enobio.dll is missing from my computer -- it seems this is proprietary - supposedly the user will own it?
-    #"EyeLink", # note -- EyeLink has a number of dependencies in the pylink folder, but they are all rather small, so we will not bother to stip/unstrip them
+    "AMTIForcePlate",
+    "AudioCaptureWin",
+    "BAlert", # note -- App doesn't run on my computer because I am missing a certain 'SiUSBXp.dll' -- consider providing this? -- fixed: by downloading said .dll and copying into C:\Windows\System32
+    "BioSemi",
+    "BrainProducts/ActiChamp",
+    "BrainProducts/BrainAmpSeries",
+    "BrainProducts/BrainVisionRDA",
+    "EGIAmpServer",
+    "EmbarcaderoXE/bin", 
+    "EmbarcaderoXE/GazeStream", 
+    "Enobio", # note -- enobio.dll is missing from my computer -- it seems this is proprietary - supposedly the user will own it?
+    "EyeLink", # note -- EyeLink has a number of dependencies in the pylink folder, but they are all rather small, so we will not bother to stip/unstrip them
     # also, Eyelink depends on an outdated version of pylsl -- this needs to be tested with the new version
-    #"g.Tec/g.HIamp",
-    #"g.Tec/g.USBamp",
-    #"Keyboard",
-    #"KinectMocap/KinectMocap", # note -- kinect10.dll is missing from my computer -- fixed: one must install kinect runtime or the appropriate SDK
-    #"LabRecorder/src", 
-    #"LabRecorder/src/pylsl",
-    #"MATLABViewer", 
-    #"MINDO",
-    #"Mouse",
-    #"MQTT", # note -- ask Christian about this -- at least a special case
-    #"MQTT/mqtt2lsl/Release",
-    #"MQTT/lsl2mqtt/Release",
-    #"Neuroscan",
-    #"Optitrack/OptiTrack-v1.4",
-    #"Optitrack/OptiTrack-v2.2",
-    #"PhaseSpace",
-    #"PupilPro", 
-    #"ReceiveVideo", # note -- ask Christian about this, I'm not convinved of how this actually works or what it does
-    #"SerialPort",
+    "g.Tec/g.HIamp",
+    "g.Tec/g.USBamp",
+    "Keyboard",
+    "KinectMocap/KinectMocap", # note -- kinect10.dll is missing from my computer -- fixed: one must install kinect runtime or the appropriate SDK
+    "LabRecorder/src", 
+    "LabRecorder/src/pylsl",
+    "MATLABViewer", 
+    "MINDO",
+    "Mouse",
+    "MQTT", # note -- ask Christian about this -- at least a special case
+    "MQTT/mqtt2lsl/Release",
+    "MQTT/lsl2mqtt/Release",
+    "Neuroscan",
+    "Optitrack/OptiTrack-v1.4",
+    "Optitrack/OptiTrack-v2.2",
+    "PhaseSpace",
+    "PupilPro", 
+    "ReceiveVideo", # note -- ask Christian about this, I'm not convinved of how this actually works or what it does
+    "SerialPort",
     "SMIEyetracker", 
     "SMIEyetracker/iViewNG-SDK", 
     "SMIEyetracker/iViewX-SDK", 
     "SMIEyetracker/Legacy-SDK", 
-    #"StaticInfo",
-    #"Tobii",
-    #"Wiimote/Wiimote", # note -- discovered some build problems when reorganizing the build directory -- consult with Christian
-    #"XDFBrowser"
+    "StaticInfo",
+    "Tobii",
+    "Wiimote/Wiimote", # note -- discovered some build problems when reorganizing the build directory -- consult with Christian
+    "XDFBrowser"
     
 
 ] 
