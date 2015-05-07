@@ -331,7 +331,7 @@ def strip_apps():
         win_files = [f for f in os.listdir(apps_dir+i)] 
         # find the dlls in the root folder -- windows is king here
         for f in win_files:
-            if f[-3:] in ("dll", "lib", "bmp") or f[-5:] =="dylib" or f[-2:] == "so":
+            if f[-3:] in ("dll", "lib", "bmp", "exe") or f[-5:] =="dylib" or f[-2:] == "so":
                 print("Attempting to remove:")
                 print(apps_dir+i+"/"+f)
                 try:
@@ -455,7 +455,7 @@ def strip_libs():
         files = [f for f in os.listdir(libs_dir+i)] 
         
         for f in files:
-            if f[-3:] == "dll" or f[-3:] == "lib" or f[-5:]=="dylib" or f[-2:] == "so":
+            if f[-3:] == "exe" or f[-3:]=="mac" or f[-5:] == "linux":
              try:
                  os.remove(libs_dir+i+"/"+f)
              except WindowsError as detail: # TODO find out the OS so that we handle this exception correctly
