@@ -107,6 +107,8 @@ external_libs/
 # strip all executables
 *.exe
 *.app/
+*-mac
+*-linux
 
 # unfortunately, in the case of linux, since there is no extension, we must name it
 linux/PupilPro
@@ -338,7 +340,7 @@ docs/_build/
 *.moc
 moc_*.cpp
 qrc_*.cpp
-ui_*.h
+#ui_*.h
 Makefile*
 *-build-*
 
