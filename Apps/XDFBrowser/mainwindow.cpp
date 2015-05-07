@@ -2,14 +2,16 @@
 #include "ui_mainwindow.h"
 
 #include "stdio.h"
-#include "Windows.h"
+#ifdef __WIN32
+#include "windows.h"
+#endif
 #include <QFileDialog>
 #include <QThread>
 #include <QMessageBox>
 
 #include "xdffile.h"
 
-
+#ifdef __WIN32
 void OpenConsole() {
      // create the console
     if(AllocConsole()) {
@@ -24,11 +26,13 @@ void OpenConsole() {
 
 }
 
+
+
 void CloseConsole() {
     FreeConsole();
     fclose(stdout);
 }
-
+#endif
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -37,8 +41,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 	connect(ui->textEdit, SIGNAL(textChanged()), this, SLOT(onTextChanged()));
-  
+
+#ifdef __WIN32
     OpenConsole();
+#endif
 }
 
 
@@ -46,7 +52,9 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+#ifdef __WIN32
     CloseConsole();
+#endif
 }
 
 void MainWindow::handleSelectionChanged(const QItemSelection& selection) {

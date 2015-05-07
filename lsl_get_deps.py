@@ -54,50 +54,50 @@ def unstrip_special_case(src, dst):
 
 # dictionaries defining behavior
 
-op_sys =  ["win32", "win64", "OSX", "linux32", "linux64"] # which os to unstrip -- win32 is the only one fully supported
+op_sys =  ["win32", "win64", "OSX", "linux"] # which os to unstrip -- win32 is the only one fully supported
 
 # which apps are to be stripped/unstripped
 apps = [
-    "AMTIForcePlate",
-    "AudioCaptureWin",
-    "BAlert", # note -- App doesn't run on my computer because I am missing a certain 'SiUSBXp.dll' -- consider providing this? -- fixed: by downloading said .dll and copying into C:\Windows\System32
-    "BioSemi",
-    "BrainProducts/ActiChamp",
-    "BrainProducts/BrainAmpSeries",
-    "BrainProducts/BrainVisionRDA",
-    "EGIAmpServer",
-    "EmbarcaderoXE/bin", 
-    "EmbarcaderoXE/GazeStream", 
-    "Enobio", # note -- enobio.dll is missing from my computer -- it seems this is proprietary - supposedly the user will own it?
-    "EyeLink", # note -- EyeLink has a number of dependencies in the pylink folder, but they are all rather small, so we will not bother to stip/unstrip them
+    #"AMTIForcePlate",
+    #"AudioCaptureWin",
+    #"BAlert", # note -- App doesn't run on my computer because I am missing a certain 'SiUSBXp.dll' -- consider providing this? -- fixed: by downloading said .dll and copying into C:\Windows\System32
+    #"BioSemi",
+    #"BrainProducts/ActiChamp",
+    #"BrainProducts/BrainAmpSeries",
+    #"BrainProducts/BrainVisionRDA",
+    #"EGIAmpServer",
+    #"EmbarcaderoXE/bin", 
+    #"EmbarcaderoXE/GazeStream", 
+    #"Enobio", # note -- enobio.dll is missing from my computer -- it seems this is proprietary - supposedly the user will own it?
+    #"EyeLink", # note -- EyeLink has a number of dependencies in the pylink folder, but they are all rather small, so we will not bother to stip/unstrip them
     # also, Eyelink depends on an outdated version of pylsl -- this needs to be tested with the new version
-    "g.Tec/g.HIamp",
-    "g.Tec/g.USBamp",
-    "Keyboard",
-    "KinectMocap/KinectMocap", # note -- kinect10.dll is missing from my computer -- fixed: one must install kinect runtime or the appropriate SDK
-    "LabRecorder/src", 
-    "LabRecorder/src/pylsl",
-
-    "MATLABViewer", 
-
-    "MINDO",
-    "Mouse",
-    "MQTT", # note -- ask Christian about this -- at least a special case
-    "MQTT/mqtt2lsl/Release",
-    "MQTT/lsl2mqtt/Release",
-    "Neuroscan",
-    "Optitrack/OptiTrack-v1.4",
-    "Optitrack/OptiTrack-v2.2",
-    "PhaseSpace",
-    "PupilPro", 
-    "ReceiveVideo", # note -- ask Christian about this, I'm not convinved of how this actually works or what it does
-    "SerialPort",
-    "SMIEyetracker/etc", # note -- this needs some adjusting -- lots of allegro library dependencies, but I'm not sure we need them all...
-    "StaticInfo",
-    "Tobii",
-    "Wiimote/Wiimote", # note -- discovered some build problems when reorganizing the build directory -- consult with Christian
-
-    "XDFBrowser"
+    #"g.Tec/g.HIamp",
+    #"g.Tec/g.USBamp",
+    #"Keyboard",
+    #"KinectMocap/KinectMocap", # note -- kinect10.dll is missing from my computer -- fixed: one must install kinect runtime or the appropriate SDK
+    #"LabRecorder/src", 
+    #"LabRecorder/src/pylsl",
+    #"MATLABViewer", 
+    #"MINDO",
+    #"Mouse",
+    #"MQTT", # note -- ask Christian about this -- at least a special case
+    #"MQTT/mqtt2lsl/Release",
+    #"MQTT/lsl2mqtt/Release",
+    #"Neuroscan",
+    #"Optitrack/OptiTrack-v1.4",
+    #"Optitrack/OptiTrack-v2.2",
+    #"PhaseSpace",
+    #"PupilPro", 
+    #"ReceiveVideo", # note -- ask Christian about this, I'm not convinved of how this actually works or what it does
+    #"SerialPort",
+    "SMIEyetracker", 
+    "SMIEyetracker/iViewNG-SDK", 
+    "SMIEyetracker/iViewX-SDK", 
+    "SMIEyetracker/Legacy-SDK", 
+    #"StaticInfo",
+    #"Tobii",
+    #"Wiimote/Wiimote", # note -- discovered some build problems when reorganizing the build directory -- consult with Christian
+    #"XDFBrowser"
     
 
 ] 
@@ -127,8 +127,7 @@ apps_d={
         'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll", "/liblsl/bin/liblsl32-debug.dll"],
         'win64':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl64.dll", "/liblsl/bin/liblsl64-debug.dll"],
         'OSX':["/liblsl/bin/liblsl32.dylib",  "/liblsl/bin/liblsl64.dylib"], 
-        'linux32':["/liblsl/bin/liblsl32.so"],
-        'linux64':["/liblsl/bin/liblsl64.so"]
+        'linux':["/liblsl/bin/liblsl32.so", "/liblsl/bin/liblsl64.so"]
     },
 
     'BrainProducts/BrainAmpSeries':{
@@ -139,13 +138,6 @@ apps_d={
         'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
     },
 
-    'ClickMe':{ 
-        'win32':["/external_libs/Qt/QtNetwork4.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll", "/liblsl/bin/liblsl32-debug.dll"],
-        'OSX':["/liblsl/bin/liblsl32.dylib",  "/liblsl/bin/liblsl64.dylib"], 
-        'linux32':["/liblsl/bin/liblsl32.so"],
-        'linux64':["/liblsl/bin/liblsl64.so"]
-    },
-    
     'EGIAmpServer':{
         'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
     },
@@ -160,7 +152,7 @@ apps_d={
     },
 
     'Enobio':{
-        'win32':["/external_libs/Enobio, EnobioDLL.lib", "/external_libs/Enobio/EnobioDLL.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/Enobio/EnobioDLL.lib", "/external_libs/Enobio/EnobioDLL.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
     },
 
     'EyeLink':{
@@ -230,8 +222,7 @@ apps_d={
         'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll", "/liblsl/bin/liblsl32-debug.dll"],
         'win64':["/external/zmq/libzmq-v90-mt-4_0_4.dll", "/external/zmq/libzmq-v90-mt-gd-4_0_4.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl64.dll", "/liblsl/bin/liblsl64-debug.dll"],
         'OSX':["/liblsl/bin/liblsl32.dylib",  "/liblsl/bin/liblsl64.dylib"], 
-        'linux32':["/liblsl/bin/liblsl32.so"],
-        'linux64':["/liblsl/bin/liblsl64.so"]
+        'linux':["/liblsl/bin/liblsl32.so", "/liblsl/bin/liblsl64.so"],
     },
 
    'ReceiveVideo':{
@@ -239,10 +230,22 @@ apps_d={
    },
 
     'SerialPort':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"] 
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll"] 
     },
 
-    'SMIEyetracker/etc':{}, # come back to this one
+    'SMIEyetracker':{}, # just the special case where we grab the allegro-5.0.10-mscv-9.0 dir
+   
+    'SMIEyetracker/iViewNG-SDK':{
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll" , "/liblsl/bin/liblsl32.dll", "/external_libs/OpenCV/opencv_core220.dll", "/external_libs/OpenCV/opencv_core220.lib", "/external_libs/OpenCV/opencv_imgproc220.dll", "/external_libs/OpenCV/opencv_imgproc220.lib"]
+    }, 
+    
+    'SMIEyetracker/iViewX-SDK':{
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll" , "/liblsl/bin/liblsl32.dll", "/external_libs/allegro/allegro-5.0.10-monolith-md.dll"]
+    }, 
+    
+    'SMIEyetracker/Legacy-SDK':{
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll" , "/liblsl/bin/liblsl32.dll"]
+    }, 
 
     'StaticInfo':{
         'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"] 
@@ -258,7 +261,10 @@ apps_d={
 
     'XDFBrowser':{
         'win32':["/external_libs/Qt/QtNetwork4.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/external_libs/Qt/QtNetworkd4.dll", "/external_libs/Qt/QtCored4.dll", "/external_libs/Qt/QtGuid4.dll", "/liblsl/bin/liblsl32.dll"],
-        'win64':["/external_libs/Qt/QtNetwork4.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/external_libs/Qt/QtNetworkd4.dll", "/external_libs/Qt/QtCored4.dll", "/external_libs/Qt/QtGuid4.dll", "/liblsl/bin/liblsl64.dll"]
+        'win64':["/external_libs/Qt/QtNetwork4.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/external_libs/Qt/QtNetworkd4.dll", "/external_libs/Qt/QtCored4.dll", "/external_libs/Qt/QtGuid4.dll", "/liblsl/bin/liblsl64.dll"],
+        'OSX':["/liblsl/bin/liblsl32.dylib",  "/liblsl/bin/liblsl64.dylib"], 
+        'linux':["/liblsl/bin/liblsl32.so", "/liblsl/bin/liblsl64.so"],
+
     }
     
 }
@@ -311,8 +317,10 @@ def unstrip(which, which_d, where, arg_op_sys):
             unstrip_special_case(bin_addr+"/external_libs/MQTT/libmosquitto.zip", where+i+"/lsl2mqtt/libmosquitto.zip");
             unstrip_special_case(bin_addr+"/external_libs/MQTT/libmosquitto.zip", where+i+"/mqtt2lsl/libmosquitto.zip");
 
+        if i == "SMIEyetracker":
+            unstrip_special_case(bin_addr+"/external_libs/allegro-5.0.10-msvc-9.0.zip", where+i+"/allegro-5.0.10-msvc-9.0.zip");
        
-    if i == "PupilPro":
+        if i == "PupilPro":
             unstrip_special_case(bin_addr+"/external_libs/zmq.zip", where+i+"/zmq.zip");
 
 
@@ -395,6 +403,14 @@ def strip_apps():
                 print(apps_dir+i+"/lsl2mqtt/liblsl")
                 shutil.rmtree(apps_dir+i+"/mqtt2lsl/libmosquitto")
 
+            except WindowsError as detail: # TODO find out the OS so that we handle this exception correctly
+                print("WindowsError", detail)
+
+        if i == "SMIEyetracker":
+            try:
+                print("Attempting to remove the directory:")
+                print(apps_dir+i+"/allegro-5.0.10-msvc-9.0")
+                shutil.rmtree(apps_dir+i+"/allegro-5.0.10-msvc-9.0")
             except WindowsError as detail: # TODO find out the OS so that we handle this exception correctly
                 print("WindowsError", detail)
 
