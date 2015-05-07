@@ -108,7 +108,7 @@ external_libs/
 # Compiled Object files
 *.slo
 *.lo
-
+*.o
 *.obj
 
 # Precompiled Headers
