@@ -4,7 +4,7 @@ The **lab streaming layer** (LSL) is a system for the unified collection of meas
 
 The **LSL distribution** consists of:
   * The core transport library (liblsl) and its language interfaces (C, C++, Python, Java, C#, MATLAB). The library is general-purpose and cross-platform (Win/Linux/MacOS, 32/64) and forms the heart of the project.
-  * A suite of tools built on top of the library, including a [recording program](LabRecorder.md), [online viewers](ViewingStreamsInMatlab.md), [importers](ImportingRecordingsInMatlab.md), and apps that make data from a range of [acquisition hardware](SupportedDevices.md) available on the lab network (for example audio, EEG, or motion capture).
+  * A suite of tools built on top of the library, including a [recording program](https://github.com/sccn/labstreaminglayer/wiki/LabRecorder.wiki), [online viewers](https://github.com/sccn/labstreaminglayer/wiki/ViewingStreamsInMatlab.wiki), [importers](https://github.com/sccn/labstreaminglayer/wiki/ImportingRecordingsInMatlab.wiki), and apps that make data from a range of [acquisition hardware](https://github.com/sccn/labstreaminglayer/wiki/SupportedDevices.wiki) available on the lab network (for example audio, EEG, or motion capture).
 
 There is an intro lecture/demo on LSL [here](http://www.youtube.com/watch?v=Y1at7yrcFW0) (part of an online course on EEG-based brain-computer interfaces).
 
@@ -38,7 +38,7 @@ The built-in time synchronization is designed after the widely deployed Network 
 The transport API itself does not endorse or provide a particular file format, but the provided recording program (`LabRecorder`) and Python/C++ library (`RecorderLib`) record into the XDF file format (Extensible Data Format, hosted at http://code.google.com/p/xdf). XDF was designed concurrently with the lab streaming layer and supports the full feature set of LSL (including multi-stream container files, per-stream arbitrarily large XML headers, all sample formats as well as time-synchronization information).
 
 # Coding Guides
-The distribution includes a range of code examples in C, C++, Python, MATLAB, Java, and C# including some very simple sender and receiver programs, as well as some fairly extensive demo apps. This page includes just some simple teasers. See ExampleCode for a broader overview of example programs, API documentation link, and general programming tips, tricks, and frequently asked questions.
+The distribution includes a range of code examples in C, C++, Python, MATLAB, Java, and C# including some very simple sender and receiver programs, as well as some fairly extensive demo apps. This page includes just some simple teasers. See [ExampleCode](https://github.com/sccn/labstreaminglayer/wiki/ExampleCode.wiki) for a broader overview of example programs, API documentation link, and general programming tips, tricks, and frequently asked questions.
 
 ## Sending Random Data in C++
 ```
