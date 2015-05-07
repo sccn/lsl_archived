@@ -87,20 +87,18 @@ wiiuse.lib
 wiiuse.dll
 
 # lsl directories to ignore all the time
-BioSemi/DLL/
-EmbarcaderoXE/shared/
-EmbarcaderoXE/shared/4.4.0-msvc/	
-EmbarcaderoXE/shared/4.4.0-msvc/bin/
-EmbarcaderoXE/shared/4.4.0-msvc/lib/	
-MATLABViewer/liblsl-Matlab/
-MQTT/lsl2mqtt/liblsl/
-MQTT/lsl2mqtt/libmosquitto/
-MQTT/mqtt2lsl/liblsl/
-MQTT/mqtt2lsl/libmosquitto/
-SMIEyetracker/allegro-5.0.10-msvc-9.0/
-PupilPro/zmq/
+Apps/BioSemi/DLL/
+Apps/EmbarcaderoXE/shared/
+Apps/MATLABViewer/liblsl-Matlab/
+Apps/MQTT/lsl2mqtt/liblsl/
+Apps/MQTT/lsl2mqtt/libmosquitto/
+Apps/MQTT/mqtt2lsl/liblsl/
+Apps/MQTT/mqtt2lsl/libmosquitto/
+Apps/SMIEyetracker/allegro-5.0.10-msvc-9.0/
+Apps/PupilPro/zmq/
 external_libs/
 
+#for now...
 *liblsl-iOS*
 
 # any autosave from emacs
