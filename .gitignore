@@ -88,13 +88,16 @@ wiiuse.dll
 
 # lsl directories to ignore all the time
 BioSemi/DLL/
-EmbarcaderXE/shared/
+EmbarcaderoXE/shared/
+EmbarcaderoXE/shared/4.4.0-msvc/	
+EmbarcaderoXE/shared/4.4.0-msvc/bin/
+EmbarcaderoXE/shared/4.4.0-msvc/lib/	
 MATLABViewer/liblsl-Matlab/
 MQTT/lsl2mqtt/liblsl/
 MQTT/lsl2mqtt/libmosquitto/
 MQTT/mqtt2lsl/liblsl/
 MQTT/mqtt2lsl/libmosquitto/
-SMIEyetracker/allegro-5.0.10-msvc.9.0/
+SMIEyetracker/allegro-5.0.10-msvc-9.0/
 PupilPro/zmq/
 external_libs/
 
@@ -267,8 +270,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
 parts/
 sdist/
 var/
@@ -366,7 +367,6 @@ x64/
 x86/
 build/
 bld/
-[Bb]in/
 [Oo]bj/
 
 # Visual Studo 2015 cache/options directory
