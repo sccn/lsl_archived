@@ -21,9 +21,9 @@ install_name_tool -id "@executable_path/../Resources/liblsl64.dylib" ./liblsl64.
 install_name_tool -id "@executable_path/../Resources/liblsl32.dylib" ./liblsl32.dylib
 
 #check if the app is already build
-if [ -e "PupilPro.app" ] 
+if [ -e "$PROJECT.app" ] 
   then 
-    rm -r PupilPro.app
+    rm -r $PROJECT.app
     echo "Removing Previous Build..."
 fi 
 
@@ -39,13 +39,13 @@ $QMAKEPATH/moc mainwindow.h -o moc_mainwindow.cpp
 
 #there might be a dangling app here as well, if so remove it
 #check if the app is already build
-if [ -e "PupilPro.app" ] 
+if [ -e "$PROJECT.app" ] 
   then 
-    if [-e "PupilPro.app/Contents/MacOS/pupilpro_config.cfg"]
+    if [-e "$PROJECT.app/Contents/MacOS/pupilpro_config.cfg"]
     then
-	rm PupilPro.app/Contents/MacOS/pupilpro_config.cfg
+	rm $PROJECT.app/Contents/MacOS/pupilpro_config.cfg
     fi
-    rm -r PupilPro.app
+    rm -r $PROJECT.app
     echo "Removing Previous Build..."
 fi 
 
@@ -76,12 +76,12 @@ rm ../*.o
 rm ../Makefile
 mv ../$PROJECT.app ./
 #copy the libraries into the resources folder
-cp ../zmq/bin/mac/libzmq.4.dylib PupilPro.app/Contents/Resources/
-cp ./liblsl64.dylib PupilPro.app/Contents/Resources/
-cp ./liblsl32.dylib PupilPro.app/Contents/Resources/
+cp ../zmq/bin/mac/libzmq.4.dylib $PROJECT.app/Contents/Resources/
+cp ./liblsl64.dylib $PROJECT.app/Contents/Resources/
+cp ./liblsl32.dylib $PROJECT.app/Contents/Resources/
 
 #copy the config file
-cp ../pupilpro_config.cfg ./PupilPro.app/Contents/MacOS/
+cp ../pupilpro_config.cfg ./$PROJECT.app/Contents/MacOS/
 
 echo "done"
 
