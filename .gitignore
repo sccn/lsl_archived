@@ -16,9 +16,6 @@ cvWrapper.dll
 cvWrapper.lib
 msvcp100.dll
 msvcr100.dll
-
-
-
 opencv_calib3d243.dll
 opencv_calib3d243d.dll
 opencv_contrib243.dll
