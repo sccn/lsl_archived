@@ -86,6 +86,11 @@ tet.lib
 wiiuse.lib
 wiiuse.dll
 
+
+git-lsl-clean-files
+git-lsl-clean-dirs
+clean-files-git.sh
+
 # lsl directories to ignore all the time
 Apps/BioSemi/DLL/
 Apps/EmbarcaderoXE/shared/
