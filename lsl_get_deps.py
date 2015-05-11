@@ -65,18 +65,20 @@ apps = [
     "BrainProducts/ActiChamp",
     "BrainProducts/BrainAmpSeries",
     "BrainProducts/BrainVisionRDA",
+    "Cognionics",
     "EGIAmpServer",
     "EmbarcaderoXE/bin", 
     "EmbarcaderoXE/GazeStream", 
     "Enobio", # note -- enobio.dll is missing from my computer -- it seems this is proprietary - supposedly the user will own it?
-    "EyeLink", # note -- EyeLink has a number of dependencies in the pylink folder, but they are all rather small, so we will not bother to stip/unstrip them
-    # also, Eyelink depends on an outdated version of pylsl -- this needs to be tested with the new version
+    "EyeLink", # need to update the version of pyslsl
     "g.Tec/g.HIamp",
     "g.Tec/g.USBamp",
+    "g.Tec/g.USBamp/misc",
     "Keyboard",
     "KinectMocap/KinectMocap", # note -- kinect10.dll is missing from my computer -- fixed: one must install kinect runtime or the appropriate SDK
     "LabRecorder/src", 
     "LabRecorder/src/pylsl",
+    "LabRecorder/src/TestRecorder",
     "MATLABViewer", 
     "MINDO",
     "Mouse",
@@ -160,11 +162,15 @@ apps_d={
     },
 
     'g.Tec/g.HIamp':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/external_libs/g.Tec/g.HIamp.lib", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
     },
 
     'g.Tec/g.USBamp':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/external_libs/g.Tec/gUSBamp.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll", "/external_libs/g.Tec/gUSBamp.dll"]
+    },
+
+    'g.Tec/g.USBamp/misc':{
+        'win32':["/external_libs/g.Tec/misc/gUSBamp-for-2.0.dll", "/external_libs/g.Tec/misc/gUSBamp-for-3.0.dll"]
     },
 
    'Keyboard':{
@@ -182,6 +188,12 @@ apps_d={
 
     'LabRecorder/src/pylsl':{
         'win32':["/liblsl/bin/liblsl32.dll", "/liblsl/bin/liblsl32.dylib", "/liblsl/bin/liblsl64.dylib", "/liblsl/bin/liblsl64.so", "/liblsl-Python/pylsl.py"] # use the correct pylsl...
+    }, 
+
+    'LabRecorder/src/TestRecorder':{
+        'win32':["/liblsl/bin/liblsl32.dll"],
+        'win64':["/liblsl/bin/liblsl64.dll"],
+        'linux':["/liblsl/bin/liblsl32.so", "/liblsl/bin/liblsl64.so"],
     }, 
 
     'MATLABViewer':{}, # come back to this one ...
@@ -307,6 +319,8 @@ def unstrip(which, which_d, where, arg_op_sys):
         if i == "EmbarcaderoXE/bin":
             unstrip_special_case(bin_addr+"/external_libs/EmbarcaderoXE/shared.zip", where+i+"/../shared.zip")
 
+        if i == "EyeLink":
+            unstrip_special_case(bin_addr+"/external_libs/pylink.zip", where+i+"/pylink.zip")
 
         if i == "MATLABViewer":
             unstrip_special_case(bin_addr+"/liblsl-Matlab.zip", where+i+"/liblsl-Matlab.zip");
@@ -376,6 +390,15 @@ def strip_apps():
             try:
                 if os.path.exists(apps_dir+i+"/../shared"):
                     shutil.rmtree(apps_dir+i+"/../shared")
+            except OSError as detail: # TODO find out the OS so that we handle this exception correctly
+                print("OSError", detail)
+
+        if i == "EyeLink":
+            print("Attempting to remove the directory:")
+            print(apps_dir+i+"/pylink")
+            try:
+                if os.path.exists(apps_dir+i+"/pylink"):
+                    shutil.rmtree(apps_dir+i+"/pylink")
             except OSError as detail: # TODO find out the OS so that we handle this exception correctly
                 print("OSError", detail)
 
