@@ -126,6 +126,10 @@ linux/XDFBrowser
 *.lo
 *.o
 *.obj
+*.dll
+*.so
+*.dylib
+*.lib
 
 # Precompiled Headers
 *.gch

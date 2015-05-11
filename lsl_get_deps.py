@@ -38,13 +38,13 @@ def unstrip_special_case(src, dst):
             print(dst)
             try:
                 urllib.urlretrieve(src, dst)
-            except WindowsError as detail: # TODO find out the OS so that we handle this exception correctly
-                print("WindowsError", detail)
+            except OSError as detail: # TODO find out the OS so that we handle this exception correctly
+                print("OSError", detail)
 
             # next extract it
             print("Extracting archive:")
             print (dst)
-            unzip(dst, dst[:-3])
+            unzip(dst, dst[:-4])
 
             # finally, remove the archive
             print("Deleting archive:")
@@ -84,8 +84,8 @@ apps = [
     "MQTT/mqtt2lsl/Release",
     "MQTT/lsl2mqtt/Release",
     "Neuroscan",
-    "Optitrack/OptiTrack-v1.4",
-    "Optitrack/OptiTrack-v2.2",
+    "OptiTrack/OptiTrack-v1.4",
+    "OptiTrack/OptiTrack-v2.2",
     "PhaseSpace",
     "PupilPro", 
     "ReceiveVideo", # note -- ask Christian about this, I'm not convinved of how this actually works or what it does
@@ -206,11 +206,11 @@ apps_d={
         'win32':["/external_libs/Neuroscan/NSDevice.dll", "/external_libs/Neuroscan/NSDevice.lib", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
     },
 
-    'Optitrack/OptiTrack-v1.4':{
+    'OptiTrack/OptiTrack-v1.4':{
         'win32':["/external_libs/OptiTrack/NatNetLib.lib", "/external_libs/OptiTrack/NatNetLib.dll",  "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
     }, 
 
-    'Optitrack/OptiTrack-v2.2':{
+    'OptiTrack/OptiTrack-v2.2':{
         'win32':["/external_libs/OptiTrack/NatNetLib.lib", "/external_libs/OptiTrack/NatNetLib.dll",  "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
     }, 
 
@@ -336,8 +336,8 @@ def strip_apps():
                 print(apps_dir+i+"/"+f)
                 try:
                     os.remove(apps_dir+i+"/"+f)
-                except WindowsError as detail: # TODO find out the OS so that we handle this exception correctly
-                    print("WindowsError", detail)
+                except OSError as detail: # TODO find out the OS so that we handle this exception correctly
+                    print("OSError", detail)
                    
             # if there is a folder called OSX, go in and remove the dylibs
             if f == "OSX": # mac and linux are special
@@ -365,69 +365,80 @@ def strip_apps():
             print("Attempting to remove the directory:")
             print(apps_dir+i+"/DLL")
             try:
-                shutil.rmtree(apps_dir+i+"/DLL")
-            except WindowsError as detail: # TODO find out the OS so that we handle this exception correctly
-                print("WindowsError", detail)
+                if os.path.exists(apps_dir+i+"/DLL"):
+                    shutil.rmtree(apps_dir+i+"/DLL")
+            except OSError as detail: # TODO find out the OS so that we handle this exception correctly
+                print("OSError", detail)
             
         if i == "EmbarcaderoXE/bin":
             print("Attempting to remove the directory:")
             print(apps_dir+i+"/../shared")
             try:
-                shutil.rmtree(apps_dir+i+"/../shared")
-            except WindowsError as detail: # TODO find out the OS so that we handle this exception correctly
-                print("WindowsError", detail)
+                if os.path.exists(apps_dir+i+"/../shared"):
+                    shutil.rmtree(apps_dir+i+"/../shared")
+            except OSError as detail: # TODO find out the OS so that we handle this exception correctly
+                print("OSError", detail)
 
         if i =="MATLABViewer":
             print("Attempting to remove the directory:")
             print(apps_dir+i+"/liblsl-Matlab")
             try:
-                shutil.rmtree(apps_dir+i+"/liblsl-Matlab")
-            except WindowsError as detail: # TODO find out the OS so that we handle this exception correctly
-                print("WindowsError", detail)
+                if os.path.exists(apps_dir+i+"/liblsl-Matlab"):
+                    shutil.rmtree(apps_dir+i+"/liblsl-Matlab")
+            except OSError as detail: # TODO find out the OS so that we handle this exception correctly
+                print("OSError", detail)
                         
         if i == "MQTT":
             try:
                 print("Attempting to remove the directory:")
                 print(apps_dir+i+"/lsl2mqtt/liblsl")
-                shutil.rmtree(apps_dir+i+"/lsl2mqtt/liblsl")
+                if os.path.exists(apps_dir+i+"/lsl2mqtt/liblsl"):
+                    shutil.rmtree(apps_dir+i+"/lsl2mqtt/liblsl")
 
                 print("Attempting to remove the directory:")
                 print(apps_dir+i+"/lsl2mqtt/liblsl")
-                shutil.rmtree(apps_dir+i+"/lsl2mqtt/libmosquitto")
+                if os.path.exists(apps_dir+i+"/lsl2mqtt/libmosquitto"):
+                    shutil.rmtree(apps_dir+i+"/lsl2mqtt/libmosquitto")
 
                 print("Attempting to remove the directory:")
                 print(apps_dir+i+"/lsl2mqtt/liblsl")
-                shutil.rmtree(apps_dir+i+"/mqtt2lsl/liblsl")
+                if os.path.exists(apps_dir+i+"/mqtt2lsl/liblsl"):
+                    shutil.rmtree(apps_dir+i+"/mqtt2lsl/liblsl")
 
                 print("Attempting to remove the directory:")
                 print(apps_dir+i+"/lsl2mqtt/liblsl")
-                shutil.rmtree(apps_dir+i+"/mqtt2lsl/libmosquitto")
+                if os.path.exists(apps_dir+i+"/mqtt2lsl/libmosquitto"):
+                    shutil.rmtree(apps_dir+i+"/mqtt2lsl/libmosquitto")
 
-            except WindowsError as detail: # TODO find out the OS so that we handle this exception correctly
-                print("WindowsError", detail)
+            except OSError as detail: # TODO find out the OS so that we handle this exception correctly
+                print("OSError", detail)
 
         if i == "SMIEyetracker":
             try:
                 print("Attempting to remove the directory:")
                 print(apps_dir+i+"/allegro-5.0.10-msvc-9.0")
-                shutil.rmtree(apps_dir+i+"/allegro-5.0.10-msvc-9.0")
-            except WindowsError as detail: # TODO find out the OS so that we handle this exception correctly
-                print("WindowsError", detail)
+                if os.path.exists(apps_dir+i+"/allegro-5.0.10-msvc-9.0"):
+                    shutil.rmtree(apps_dir+i+"/allegro-5.0.10-msvc-9.0")
+            except OSError as detail: # TODO find out the OS so that we handle this exception correctly
+                print("OSError", detail)
 
         if i == "PupilPro":
             print("Attempting to remove the directory:")
             print(apps_dir+i+"/zmq")
             try:
-                shutil.rmtree(apps_dir+i+"/zmq")
-            except WindowsError as detail: # TODO find out the OS so that we handle this exception correctly
-                print("WindowsError", detail)
+                if os.path.exists(apps_dir+i+"/zmq"):
+                    shutil.rmtree(apps_dir+i+"/zmq")
+            except OSError as detail: # TODO find out the OS so that we handle this exception correctly
+                print("OSError", detail)
 
 libs = [
 
+    "liblsl-Android/libs/armeabi",
     "liblsl-Csharp",
     "liblsl-Java",
     "liblsl-Matlab/bin",
     "liblsl-Python",
+    "liblsl/bin"
 
 ]
 
@@ -435,11 +446,17 @@ std_libs = {
     'win32':["/liblsl/bin/liblsl32.dll"],
     'win64':["/liblsl/bin/liblsl64.dll"],
     'OSX':["/liblsl/bin/liblsl32.dylib", "/liblsl/bin/liblsl64.dylib"],
-    'linux32':["/liblsl/bin/liblsl32.so"],
-    'linux64':["/liblsl/bin/liblsl64.so"],
+    'linux':["/liblsl/bin/liblsl32.so", "/liblsl/bin/liblsl64.so"],
 }
 
 libs_d = {
+
+    'liblsl-Android/libs/armabi':{
+        'win32':["/external_libs/android/liblslAndroid.so"],
+        'win64':["/external_libs/android/liblslAndroid.so"],
+        'OSX':["/external_libs/android/liblslAndroid.so"],
+        'linux':["/external_libs/android/liblslAndroid.so"],
+        },
 
     'liblsl-Csharp':std_libs,
 
@@ -448,6 +465,8 @@ libs_d = {
     'liblsl-Matlab/bin':std_libs,
 
     'liblsl-Python':std_libs,
+    
+    'liblsl/bin':std_libs
 }
 
 def strip_libs():
@@ -455,19 +474,19 @@ def strip_libs():
         files = [f for f in os.listdir(libs_dir+i)] 
         
         for f in files:
-            if f[-3:] == "exe" or f[-3:]=="mac" or f[-5:] == "linux":
+            if f[-3:] == "exe" or f[-3:]=="mac" or f[-5:] == "linux" or f[-3:] == "dll" or f[-5:] == "dylib" or f[-2:] == "so" or f[-3:] == "lib":
              try:
                  os.remove(libs_dir+i+"/"+f)
-             except WindowsError as detail: # TODO find out the OS so that we handle this exception correctly
-                 print("WindowsError", detail)
+             except OSError as detail: # TODO find out the OS so that we handle this exception correctly
+                 print("OSError", detail)
 
 
 def strip_all():
     strip_apps()
-    #strip_libs()
+    strip_libs()
 
 def unstrip_all():
-    #unstrip(libs, libs_d, libs_dir, op_sys)
+    unstrip(libs, libs_d, libs_dir, op_sys)
     unstrip(apps, apps_d, apps_dir, op_sys)
     
 
