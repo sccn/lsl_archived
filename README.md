@@ -8,7 +8,11 @@ The **LSL distribution** consists of:
 
 There is an intro lecture/demo on LSL [here](http://www.youtube.com/watch?v=Y1at7yrcFW0) (part of an online course on EEG-based brain-computer interfaces).
 
-Also, hosted here is only the source code for the project. Develpers will want to clone this repo, then run 'python get_deps.py' to download all the 3rd party libraries from our ftp. Users will want to get a zip file of the complete project, with everything built and ready run, from our [ftp server](ftp://sccn.ucsd.edu/pub/LSL/labstreaminglayer-1.0.28.zip).
+Hosted here is only the source code for the project. Develpers will want to clone this repo, then run 'python get_deps.py' to download all the 3rd party libraries from our ftp. 
+
+# Download Binary Releases
+
+You can find recent releases on our [FTP site](ftp://sccn.ucsd.edu/pub/software/LSL/)
 
 # Streaming Layer API
 
