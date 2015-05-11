@@ -140,6 +140,15 @@ apps_d={
         'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
     },
 
+    'BrainProducts/BrainVisionRDA':{
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+    },
+
+    'Cognionics':{
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+    },
+
+
     'EGIAmpServer':{
         'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
     },
@@ -284,6 +293,10 @@ apps_d={
 
 def unstrip(which, which_d, where, arg_op_sys):
     
+    # don't know why this directory keeps dissapearing:
+    if os.path.exists("./Apps/EmbarcaderoXE/bin")==False:
+        os.makedirs("./Apps/EmbarcaderoXE/bin")
+
 
     for i in which: # i is which app we are unstripping
         for j in arg_op_sys: # j is which os we are unstripping
