@@ -466,8 +466,8 @@ libs = [
 ]
 
 std_libs = {
-    'win32':["/liblsl/bin/liblsl32.dll"],
-    'win64':["/liblsl/bin/liblsl64.dll"],
+    'win32':["/liblsl/bin/liblsl32.dll", "/liblsl/bin/liblsl32.lib"],
+    'win64':["/liblsl/bin/liblsl64.dll", "/liblsl/bin/liblsl64.lib"],
     'OSX':["/liblsl/bin/liblsl32.dylib", "/liblsl/bin/liblsl64.dylib"],
     'linux':["/liblsl/bin/liblsl32.so", "/liblsl/bin/liblsl64.so"],
 }
