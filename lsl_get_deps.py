@@ -296,6 +296,10 @@ def unstrip(which, which_d, where, arg_op_sys):
     # don't know why this directory keeps dissapearing:
     if os.path.exists("./Apps/EmbarcaderoXE/bin")==False:
         os.makedirs("./Apps/EmbarcaderoXE/bin")
+    if os.path.exists("./Apps/MQTT/mqtt2lsl/Release")==False:
+        os.makedirs("./Apps/MQTT/mqtt2lsl/Release")
+    if os.path.exists("./Apps/MQTT/lsl2mqtt/Release")==False:
+        os.makedirs("./Apps/MQTT/lsl2mqtt/Release")
 
 
     for i in which: # i is which app we are unstripping
