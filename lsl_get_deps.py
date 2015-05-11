@@ -313,41 +313,46 @@ def unstrip(which, which_d, where, arg_op_sys):
                             dest_path = where + i + "/linux/" + os.path.basename(t)
                     else:
                         dest_path = where + i + "/" + os.path.basename(t) 
-                    print("Attempting to copy:")
-                    print(bin_addr+t)
-                    print("...into:")
-                    print(dest_path)
-                    try:
-                        urllib.urlretrieve(bin_addr+t, dest_path)
-                        #shutil.copy(src_path, dest_path)
-                    except IOError as detail:
-                        print('File not copied. IOError: %s' %  detail)
+                    if os.path.exists(dest_path)==False:
+                        print("Attempting to copy:")
+                        print(bin_addr+t)
+                        print("...into:")
+                        print(dest_path)
+                        try:
+                            urllib.urlretrieve(bin_addr+t, dest_path)
+                            #shutil.copy(src_path, dest_path)
+                        except IOError as detail:
+                            print('File not copied. IOError: %s' %  detail)
+
             except KeyError as detail:
                 print('KeyError: %s' %  detail)
 
         # special cases
-        if i == "BioSemi":
+        if i == "BioSemi" and os.path.exists(where+i+"/DLL")==False:
             unstrip_special_case(bin_addr+"/external_libs/BioSemi/DLL.zip", where+i+"/DLL.zip")
          
-        if i == "EmbarcaderoXE/bin":
+        if i == "EmbarcaderoXE/bin" and os.path.exists(where+i+"/../shared")==False:
             unstrip_special_case(bin_addr+"/external_libs/EmbarcaderoXE/shared.zip", where+i+"/../shared.zip")
 
-        if i == "EyeLink":
+        if i == "EyeLink" and os.path.exists(where+i+"/pylink")==False:
             unstrip_special_case(bin_addr+"/external_libs/pylink.zip", where+i+"/pylink.zip")
 
-        if i == "MATLABViewer":
+        if i == "MATLABViewer" and os.path.exists(where+i+"/liblsl-Matlab")==False:
             unstrip_special_case(bin_addr+"/liblsl-Matlab.zip", where+i+"/liblsl-Matlab.zip");
 
-        if i == "MQTT":
+        if i == "MQTT" and os.path.exists(where+i+"/lsl2mqtt/liblsl")==False:
             unstrip_special_case(bin_addr+"/liblsl.zip", where+i+"/lsl2mqtt/liblsl.zip");
+        if i == "MQTT" and os.path.exists(where+i+"/mqtt2lsl/liblsl")==False:
             unstrip_special_case(bin_addr+"/liblsl.zip", where+i+"/mqtt2lsl/liblsl.zip");
+        if i == "MQTT" and os.path.exists(where+i+"/lsl2mqtt/libmosquitto")==False:
             unstrip_special_case(bin_addr+"/external_libs/MQTT/libmosquitto.zip", where+i+"/lsl2mqtt/libmosquitto.zip");
+        if i == "MQTT" and os.path.exists(where+i+"/mqtt2lsl/libmosquitto")==False:
             unstrip_special_case(bin_addr+"/external_libs/MQTT/libmosquitto.zip", where+i+"/mqtt2lsl/libmosquitto.zip");
 
-        if i == "SMIEyetracker":
+        if i == "SMIEyetracker" and os.path.exists(where+i+"/allegro-5.0.10-msvc-9.0.zip")==False:
             unstrip_special_case(bin_addr+"/external_libs/allegro-5.0.10-msvc-9.0.zip", where+i+"/allegro-5.0.10-msvc-9.0.zip");
        
-        if i == "PupilPro":
+        if i == "PupilPro" and os.path.exists(where+i+"/zmq")==False:
             unstrip_special_case(bin_addr+"/external_libs/zmq.zip", where+i+"/zmq.zip");
 
 
