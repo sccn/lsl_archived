@@ -106,6 +106,7 @@ external_libs/
 #for now...
 *liblsl-iOS*
 
+
 # any autosave from emacs
 *~
 
@@ -377,6 +378,8 @@ Makefile*
 
 # Build results
 [Dd]ebug/
+# an exception to the 'debug' exclusion rule
+!*/lslboost/preprocessor/debug
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
