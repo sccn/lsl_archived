@@ -74,8 +74,11 @@ apps = [
     "g.Tec/g.HIamp",
     "g.Tec/g.USBamp",
     "g.Tec/g.USBamp/misc",
+    "GameController",
     "Keyboard",
     "KinectMocap/KinectMocap", # note -- kinect10.dll is missing from my computer -- fixed: one must install kinect runtime or the appropriate SDK
+    "KinectMocap/KinectMocap/amd64",
+    "KinectMocap/KinectMocap/x86", 
     "LabRecorder/src", 
     "LabRecorder/src/pylsl",
     "LabRecorder/src/TestRecorder",
@@ -182,13 +185,26 @@ apps_d={
         'win32':["/external_libs/g.Tec/misc/gUSBamp-for-2.0.dll", "/external_libs/g.Tec/misc/gUSBamp-for-3.0.dll"]
     },
 
+    'GameController':{
+        'win32':["/external_libs/GameController/dxguid.lib", "/external_libs/GameController/dinput8.lib", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+    },
+
    'Keyboard':{
         'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
     },
 
    'KinectMocap/KinectMocap':{
-        'win32':["/external_libs/Kinect/Microsoft.Kinect.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/Kinect/Microsoft.Kinect.dll", "/external_libs/Kinect/amd64/Kinect10.lib", "/external_libs/Kinect/x86/Kinect10.lib", "/liblsl/bin/liblsl32.dll"]
     },
+
+    'KinectMocap/KinectMocap/amd64':{
+        'win32':["/external_libs/Kinect/amd64/Kinect10.lib"]
+    },
+
+    'KinectMocap/KinectMocap/x86':{
+        'win32':["/external_libs/Kinect/x86/Kinect10.lib"]
+    },
+
 
     # this program is structured very differently, so it breaks from the mold
     'LabRecorder/src':{
