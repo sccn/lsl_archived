@@ -71,6 +71,8 @@ apps = [
     "EmbarcaderoXE/GazeStream", 
     "Enobio", # note -- enobio.dll is missing from my computer -- it seems this is proprietary - supposedly the user will own it?
     "EyeLink", # need to update the version of pyslsl
+    "EyeTribe",
+    #"EyeTribe/lib", # this is for a single .a library -- don't know what is going on there, so I exclude it...
     "g.Tec/g.HIamp",
     "g.Tec/g.USBamp",
     "g.Tec/g.USBamp/misc",
@@ -172,6 +174,14 @@ apps_d={
     'EyeLink':{
         'win32':["/liblsl/bin/liblsl32.dll"]
     },
+
+    'EyeTribe':{
+        'win32':["/liblsl/bin/liblsl32.dll"]
+    },
+
+ #   'EyeTribe/lib':{
+ #       'win32':["/external_libs/EyeTrib/libGazeApiLib.a"]
+ #   },
 
     'g.Tec/g.HIamp':{
         'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
@@ -498,7 +508,7 @@ libs = [
     "liblsl-Csharp",
     "liblsl-Java",
     "liblsl-Matlab/bin",
-    "liblsl-Python",
+    "liblsl-Python/pylsl",
     "liblsl/bin"
 
 ]
@@ -525,7 +535,7 @@ libs_d = {
 
     'liblsl-Matlab/bin':std_libs,
 
-    'liblsl-Python':std_libs,
+    'liblsl-Python/pylsl':std_libs,
     
     'liblsl/bin':std_libs
 }
