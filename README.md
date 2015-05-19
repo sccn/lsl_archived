@@ -12,7 +12,7 @@ Hosted here is only the source code for the project. Develpers will want to clon
 
 # Download Binary Releases
 
-You can find recent releases on our [FTP site](ftp://sccn.ucsd.edu/pub/software/LSL/)
+You can find recent releases on our FTP site : ftp://sccn.ucsd.edu/pub/software/LSL/
 
 # Streaming Layer API
 
