@@ -326,6 +326,9 @@ def unstrip(which, which_d, where, arg_op_sys):
         os.makedirs("./Apps/MQTT/mqtt2lsl/Release")
     if os.path.exists("./Apps/MQTT/lsl2mqtt/Release")==False:
         os.makedirs("./Apps/MQTT/lsl2mqtt/Release")
+    if os.path.exists("./Apps/g.Tec/g.USBamp/misc")==False:
+        os.makedirs("./Apps/g.Tec/g.USBamp/misc")
+
 
 
     for i in which: # i is which app we are unstripping
