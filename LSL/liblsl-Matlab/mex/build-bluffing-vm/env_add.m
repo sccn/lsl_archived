@@ -1,1 +1,0 @@
-any(cellfun(@exist,{'lsl_create_outlet', 'lsl_loadlib_'})==3)
