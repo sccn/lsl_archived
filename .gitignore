@@ -115,6 +115,7 @@ external_libs/
 *.app/
 *-mac
 *-linux
+*mex*
 
 # unfortunately, in the case of linux, since there is no extension, we must name it
 linux/PupilPro
