@@ -84,6 +84,7 @@ apps = [
     "LabRecorder/src", 
     "LabRecorder/src/pylsl",
     "LabRecorder/src/TestRecorder",
+    "MATLABImporter",
     "MATLABViewer", 
     "MINDO",
     "Mouse",
@@ -231,6 +232,14 @@ apps_d={
         'linux':["/liblsl/bin/liblsl32.so", "/liblsl/bin/liblsl64.so"],
     }, 
 
+    'MATLABImporter':{
+        'win32':["/external_libs/MATLABImporter/load_xdf_innerloop.mexw32"],
+        'win64':["/external_libs/MATLABImporter/load_xdf_innerloop.mexw64"],
+        'OSX':["/external_libs/MATLABImporter/load_xdf_innerloop.mexmaci64"],
+        'linux':["/external_libs/MATLABImporter/load_xdf_innerloop.mexa64"],
+
+    },
+
     'MATLABViewer':{}, # come back to this one ...
 
     'MINDO':{
@@ -328,6 +337,8 @@ def unstrip(which, which_d, where, arg_op_sys):
         os.makedirs("./Apps/MQTT/lsl2mqtt/Release")
     if os.path.exists("./Apps/g.Tec/g.USBamp/misc")==False:
         os.makedirs("./Apps/g.Tec/g.USBamp/misc")
+    if os.path.exists("./Apps/KinectMocap/Kinect/Mocap/x86")==False:
+        os.makedirs("./Apps/KinectMocap/Kinect/Mocap/x86")
 
 
 
@@ -371,12 +382,12 @@ def unstrip(which, which_d, where, arg_op_sys):
             unstrip_special_case(bin_addr+"/external_libs/pylink.zip", where+i+"/pylink.zip")
 
         if i == "MATLABViewer" and os.path.exists(where+i+"/liblsl-Matlab")==False:
-            unstrip_special_case(bin_addr+"/liblsl-Matlab.zip", where+i+"/liblsl-Matlab.zip");
+            unstrip_special_case(bin_addr+"/LSL-zips/liblsl-Matlab.zip", where+i+"/liblsl-Matlab.zip");
 
         if i == "MQTT" and os.path.exists(where+i+"/lsl2mqtt/liblsl")==False:
-            unstrip_special_case(bin_addr+"/liblsl.zip", where+i+"/lsl2mqtt/liblsl.zip");
+            unstrip_special_case(bin_addr+"/LSL-zips/liblsl.zip", where+i+"/lsl2mqtt/liblsl.zip");
         if i == "MQTT" and os.path.exists(where+i+"/mqtt2lsl/liblsl")==False:
-            unstrip_special_case(bin_addr+"/liblsl.zip", where+i+"/mqtt2lsl/liblsl.zip");
+            unstrip_special_case(bin_addr+"/LSL-zips/liblsl.zip", where+i+"/mqtt2lsl/liblsl.zip");
         if i == "MQTT" and os.path.exists(where+i+"/lsl2mqtt/libmosquitto")==False:
             unstrip_special_case(bin_addr+"/external_libs/MQTT/libmosquitto.zip", where+i+"/lsl2mqtt/libmosquitto.zip");
         if i == "MQTT" and os.path.exists(where+i+"/mqtt2lsl/libmosquitto")==False:
@@ -388,15 +399,53 @@ def unstrip(which, which_d, where, arg_op_sys):
         if i == "PupilPro" and os.path.exists(where+i+"/zmq")==False:
             unstrip_special_case(bin_addr+"/external_libs/zmq.zip", where+i+"/zmq.zip");
 
+        if i == "liblsl-Matlab" and os.path.exists(where+i+"/mex/build-bluffing-vm")==False:
+            unstrip_special_case(bin_addr+"/LSL-zips/mex/build-bluffing-vm.zip", where+i+"/mex/build-bluffing-vm.zip");
+
+        if i == "liblsl-Matlab" and os.path.exists(where+i+"/mex/build-client64-80.sdsc.edu")==False:
+            unstrip_special_case(bin_addr+"/LSL-zips/mex/build-client64-80.sdsc.edu.zip", where+i+"/mex/build-client64-80.sdsc.edu.zip");
+
+        if i == "liblsl-Matlab" and os.path.exists(where+i+"/mex/build-demoing")==False:
+            unstrip_special_case(bin_addr+"/LSL-zips/mex/build-demoing.zip", where+i+"/mex/build-demoing.zip");
+
+        if i == "liblsl-Matlab" and os.path.exists(where+i+"/mex/build-evolving")==False:
+            unstrip_special_case(bin_addr+"/LSL-zips/mex/build-evolving.zip", where+i+"/mex/build-evolving.zip");
+
+        if i == "liblsl-Matlab" and os.path.exists(where+i+"/mex/build-john-HP-Pavilion-dv5-Notebook-PC")==False:
+            unstrip_special_case(bin_addr+"/LSL-zips/mex/build-john-HP-Pavilion-dv5-Notebook-PC.zip", where+i+"/mex/build-john-HP-Pavilion-dv5-Notebook-PC.zip");
+
+        if i == "liblsl-Matlab" and os.path.exists(where+i+"/mex/build-Jordan")==False:
+            unstrip_special_case(bin_addr+"/LSL-zips/mex/build-Jordan.zip", where+i+"/mex/build-Jordan.zip");
+
+        if i == "liblsl-Matlab" and os.path.exists(where+i+"/mex/build-sccn-andrey-mac.ucsd.edu")==False:
+            unstrip_special_case(bin_addr+"/LSL-zips/mex/build-sccn-andrey-mac.ucsd.edu.zip", where+i+"/mex/build-sccn-andrey-mac.ucsd.edu.zip");
+
+        if i == "liblsl-Matlab" and os.path.exists(where+i+"/mex/build-seeding.ucsd.edu")==False:
+            unstrip_special_case(bin_addr+"/LSL-zips/mex/build-seeding.ucsd.edu.zip", where+i+"/mex/build-seeding.ucsd.edu.zip");
+
+        if i == "liblsl-Matlab" and os.path.exists(where+i+"/mex/build-untitled")==False:
+            unstrip_special_case(bin_addr+"/LSL-zips/mex/build-untitled.zip", where+i+"/mex/build-untitled.zip");
 
 
 def strip_apps():
+
+    if os.path.exists("./Apps/EmbarcaderoXE/bin")==False:
+        os.makedirs("./Apps/EmbarcaderoXE/bin")
+    if os.path.exists("./Apps/MQTT/mqtt2lsl/Release")==False:
+        os.makedirs("./Apps/MQTT/mqtt2lsl/Release")
+    if os.path.exists("./Apps/MQTT/lsl2mqtt/Release")==False:
+        os.makedirs("./Apps/MQTT/lsl2mqtt/Release")
+    if os.path.exists("./Apps/g.Tec/g.USBamp/misc")==False:
+        os.makedirs("./Apps/g.Tec/g.USBamp/misc")
+    if os.path.exists("./Apps/KinectMocap/Kinect/Mocap/x86")==False:
+        os.makedirs("./Apps/KinectMocap/Kinect/Mocap/x86")
+
     print("stripping apps, apparently");
     for i in apps:
         win_files = [f for f in os.listdir(apps_dir+i)] 
         # find the dlls in the root folder -- windows is king here
         for f in win_files:
-            if f[-3:] in ("dll", "lib", "bmp", "exe") or f[-5:] =="dylib" or f[-2:] == "so":
+            if f[-3:] in ("dll", "lib", "bmp", "exe") or f[-5:] =="dylib" or f[-2:] == "so" or f[-6:] == "mexa64" or f[-9:] == "mexmaci64" or f[-6:] == "mexw32" or f[-6:] == "mexw64":
                 print("Attempting to remove:")
                 print(apps_dir+i+"/"+f)
                 try:
@@ -507,12 +556,13 @@ def strip_apps():
 
 libs = [
 
-    "liblsl-Android/libs/armeabi",
-    "liblsl-Csharp",
-    "liblsl-Java",
-    "liblsl-Matlab/bin",
-    "liblsl-Python/pylsl",
-    "liblsl/bin"
+    #"liblsl-Android/libs/armeabi",
+    #"liblsl-Csharp",
+    #"liblsl-Java",
+    "liblsl-Matlab",
+    #"liblsl-Matlab/bin",
+    #"liblsl-Python/pylsl",
+    #"liblsl/bin"
 
 ]
 
@@ -543,6 +593,16 @@ libs_d = {
     'liblsl/bin':std_libs
 }
 
+def libs_special_strip(dir_name):
+    print(dir_name)
+    try:
+        if os.path.exists(dir_name):
+            shutil.rmtree(dir_name)
+    except OSError as detail: 
+        print("OSError", detail)
+
+
+
 def strip_libs():
     for i in libs:
         files = [f for f in os.listdir(libs_dir+i)] 
@@ -553,14 +613,24 @@ def strip_libs():
                  os.remove(libs_dir+i+"/"+f)
              except OSError as detail: # TODO find out the OS so that we handle this exception correctly
                  print("OSError", detail)
-
+        if i == "liblsl-Matlab":
+            print("Attempting to remove the directories:")
+            libs_special_strip(libs_dir+i+"/mex/build-bluffing-vm")
+            libs_special_strip(libs_dir+i+"/mex/build-client64-80.sdsc.edu")
+            libs_special_strip(libs_dir+i+"/mex/build-demoing")
+            libs_special_strip(libs_dir+i+"/mex/build-evolving")
+            libs_special_strip(libs_dir+i+"/mex/build-john-HP-Pavilion-dv5-Notebook-PC")
+            libs_special_strip(libs_dir+i+"/mex/build-Jordan")
+            libs_special_strip(libs_dir+i+"/mex/build-sccn-andrey-mac.ucsd.edu")
+            libs_special_strip(libs_dir+i+"/mex/build-seeding.ucsd.edu")
+            libs_special_strip(libs_dir+i+"/mex/build-untitled")
 
 def strip_all():
-    strip_apps()
+    #strip_apps()
     strip_libs()
 
 def unstrip_all():
     unstrip(libs, libs_d, libs_dir, op_sys)
-    unstrip(apps, apps_d, apps_dir, op_sys)
+    #unstrip(apps, apps_d, apps_dir, op_sys)
     
 
