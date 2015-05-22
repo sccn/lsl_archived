@@ -556,13 +556,13 @@ def strip_apps():
 
 libs = [
 
-    #"liblsl-Android/libs/armeabi",
-    #"liblsl-Csharp",
-    #"liblsl-Java",
+    "liblsl-Android/libs/armeabi",
+    "liblsl-Csharp",
+    "liblsl-Java",
     "liblsl-Matlab",
-    #"liblsl-Matlab/bin",
-    #"liblsl-Python/pylsl",
-    #"liblsl/bin"
+    "liblsl-Matlab/bin",
+    "liblsl-Python/pylsl",
+    "liblsl/bin"
 
 ]
 
@@ -626,11 +626,11 @@ def strip_libs():
             libs_special_strip(libs_dir+i+"/mex/build-untitled")
 
 def strip_all():
-    #strip_apps()
+    strip_apps()
     strip_libs()
 
 def unstrip_all():
     unstrip(libs, libs_d, libs_dir, op_sys)
-    #unstrip(apps, apps_d, apps_dir, op_sys)
+    unstrip(apps, apps_d, apps_dir, op_sys)
     
 
