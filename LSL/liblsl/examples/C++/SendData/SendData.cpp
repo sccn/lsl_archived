@@ -32,11 +32,12 @@ int main(int argc, char* argv[]) {
 
 		// add some description fields
 		info.desc().append_child_value("manufacturer", "BioSemi");
+		lsl::xml_ptr channels = info.desc().append_child("channels");
 		for (int k=0;k<8;k++)
-			info.desc().append_child("channel")
-			.append_child_value("name",channels[k])
-			.append_child_value("unit","microvolts")
-			.append_child_value("type","EEG");
+			channels.append_child("channel")
+			  .append_child_value("name",channels[k])
+			  .append_child_value("unit","microvolts")
+			  .append_child_value("type","EEG");
 
 		// make a new outlet
 		lsl::stream_outlet outlet(info);
@@ -45,7 +46,7 @@ int main(int argc, char* argv[]) {
 		cout << "Now sending data... " << endl;
 		double starttime = ((double)clock())/CLOCKS_PER_SEC;
 		for(unsigned t=0;;t++) {
-			
+
 			// wait a bit and create random data
 			while (((double)clock())/CLOCKS_PER_SEC < starttime + t*0.01);
 			float sample[8];
