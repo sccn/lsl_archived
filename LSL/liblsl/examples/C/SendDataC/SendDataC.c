@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
 	chns = lsl_append_child(desc,"channels");
 	for (c=0;c<8;c++) {
 		chn = lsl_append_child(chns,"channel");
-		lsl_append_child_value(chn,"name",channels[c]);
+		lsl_append_child_value(chn,"label",channels[c]);
 		lsl_append_child_value(chn,"unit","microvolts");
 		lsl_append_child_value(chn,"type","EEG");
 	}
