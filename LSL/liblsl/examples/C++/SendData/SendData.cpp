@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
 		lsl::xml_ptr channels = info.desc().append_child("channels");
 		for (int k=0;k<8;k++)
 			channels.append_child("channel")
-			  .append_child_value("name",channels[k])
+			  .append_child_value("label",channels[k])
 			  .append_child_value("unit","microvolts")
 			  .append_child_value("type","EEG");
 
