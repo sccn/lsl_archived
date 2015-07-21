@@ -6,9 +6,9 @@ The **LSL distribution** consists of:
   * The core transport library (liblsl) and its language interfaces (C, C++, Python, Java, C#, MATLAB). The library is general-purpose and cross-platform (Win/Linux/MacOS, 32/64) and forms the heart of the project.
   * A suite of tools built on top of the library, including a [recording program](https://github.com/sccn/labstreaminglayer/wiki/LabRecorder.wiki), [online viewers](https://github.com/sccn/labstreaminglayer/wiki/ViewingStreamsInMatlab.wiki), [importers](https://github.com/sccn/labstreaminglayer/wiki/ImportingRecordingsInMatlab.wiki), and apps that make data from a range of [acquisition hardware](https://github.com/sccn/labstreaminglayer/wiki/SupportedDevices.wiki) available on the lab network (for example audio, EEG, or motion capture).
 
-There is an intro lecture/demo on LSL [here](http://www.youtube.com/watch?v=Y1at7yrcFW0) (part of an online course on EEG-based brain-computer interfaces).
+There is an intro lecture/demo on LSL here: [http://www.youtube.com/watch?v=Y1at7yrcFW0](http://www.youtube.com/watch?v=Y1at7yrcFW0) (part of an online course on EEG-based brain-computer interfaces).
 
-You may also wish to subscribe to the LSL mailing list [here](https://mailman.ucsd.edu/mailman/listinfo/lsl-l).
+You may also wish to subscribe to the LSL mailing list here: [https://mailman.ucsd.edu/mailman/listinfo/lsl-l](https://mailman.ucsd.edu/mailman/listinfo/lsl-l).
 
 Hosted here is only the source code for the project. Develpers will want to clone this repo, then run 'python get_deps.py' to download all the 3rd party libraries from our ftp. 
 
