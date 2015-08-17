@@ -77,10 +77,10 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
 				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
-				AdditionalDependencies="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\qtmaind.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtGuid4.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtCored4.lib libowlsock.lib"
+				AdditionalDependencies="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\qtmaind.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtGuid4.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtCored4.lib"
 				OutputFile="$(OutDir)\GameController.exe"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\LSL\liblsl\bin;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib&quot;;&quot;$(BOOST_ROOT)\lib&quot;"
+				AdditionalLibraryDirectories="..\..\LSL\liblsl\bin;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib&quot;;&quot;$(BOOST_ROOT)\lib&quot;;$(DXSDK_DIR)\lib\x86"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=""
 				SubSystem="2"
@@ -106,6 +106,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="xcopy ..\..\LSL\liblsl\bin\liblsl32.dll $(TargetDir) /Y /F&#x0D;&#x0A;xcopy $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\bin\QtCored4.dll $(TargetDir) /Y /F&#x0D;&#x0A;xcopy $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\bin\QtGuid4.dll $(TargetDir) /Y /F"
 			/>
 		</Configuration>
 		<Configuration
@@ -168,7 +169,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
 				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
-				AdditionalDependencies="c:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\lib\qtmaind.lib c:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\lib\QtGuid4.lib c:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\lib\QtCored4.lib libowlsock.lib"
+				AdditionalDependencies="c:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\lib\qtmaind.lib c:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\lib\QtGuid4.lib c:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\lib\QtCored4.lib"
 				OutputFile="$(OutDir)\PhaseSpace.exe"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\LSL\liblsl\bin;c:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\lib;..\..\..\..\boost_1_47\lib"
@@ -263,7 +264,7 @@
 				OutputFile="$(OutDir)\GameController.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\LSL\liblsl\bin;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib&quot;;&quot;$(BOOST_ROOT)\lib&quot;"
+				AdditionalLibraryDirectories="..\..\LSL\liblsl\bin;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib&quot;;&quot;$(BOOST_ROOT)\lib&quot;;$(DXSDK_DIR)\lib\x86"
 				IgnoreAllDefaultLibraries="false"
 				GenerateDebugInformation="false"
 				ProgramDatabaseFile=""
@@ -290,6 +291,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="xcopy ..\..\LSL\liblsl\bin\liblsl32.dll $(TargetDir) /Y /F&#x0D;&#x0A;xcopy $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\bin\QtCore4.dll $(TargetDir) /Y /F&#x0D;&#x0A;xcopy $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\bin\QtGui4.dll $(TargetDir) /Y /F"
 			/>
 		</Configuration>
 		<Configuration
@@ -471,7 +473,27 @@
 				RelativePath="release\moc_mainwindow.cpp"
 				>
 				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="Debug|x64"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\debug\moc_mainwindow.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
