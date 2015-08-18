@@ -203,7 +203,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)"
+			OutputDirectory="release\"
 			IntermediateDirectory="release\"
 			ConfigurationType="1"
 			UseOfMFC="0"
