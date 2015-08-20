@@ -35,16 +35,24 @@ udp_server::udp_server(const stream_info_impl_p &info, io_service &io, udp proto
 * Create a new UDP server in multicast mode.
 * This server will listen on a multicast address and responds only to LSL:shortinfo requests. This is for multicast/broadcast local service discovery.
 */
-udp_server::udp_server(const stream_info_impl_p &info, io_service &io, const std::string &address, int port, int ttl): info_(info), io_(io), socket_(new udp::socket(io)), time_services_enabled_(false) {
+udp_server::udp_server(const stream_info_impl_p &info, io_service &io, const std::string &address, int port, int ttl, const std::string &listen_address): info_(info), io_(io), socket_(new udp::socket(io)), time_services_enabled_(false) {
 	ip::address addr = ip::address::from_string(address);
 	bool is_broadcast = address=="255.255.255.255";
 
 	// set up the endpoint where we listen (note: this is not yet the multicast address)
 	udp::endpoint listen_endpoint;
-	if (addr.is_v4())
-		listen_endpoint = udp::endpoint(udp::v4(), (unsigned short)port);
-	else
-		listen_endpoint = udp::endpoint(udp::v6(), (unsigned short)port);
+	if (listen_address.empty()) {
+		// pick the default endpoint
+		if (addr.is_v4())
+			listen_endpoint = udp::endpoint(udp::v4(), (unsigned short)port);
+		else
+			listen_endpoint = udp::endpoint(udp::v6(), (unsigned short)port);
+	}
+	else {
+		// choose an endpoint explicitly
+		ip::address listen_addr = ip::address::from_string(listen_address);
+		listen_endpoint = udp::endpoint(listen_addr, (unsigned short)port);
+	}
 
 	// open the socket and make sure that we can reuse the address, and bind it
 	socket_->open(listen_endpoint.protocol());

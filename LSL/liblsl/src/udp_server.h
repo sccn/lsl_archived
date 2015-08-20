@@ -39,7 +39,7 @@ namespace lsl {
 		* Create a new UDP server in multicast mode.
 		* This server will listen on a multicast address and responds only to LSL:shortinfo requests. This is for multicast/broadcast (and optionally unicast) local service discovery.
 		*/
-		udp_server(const stream_info_impl_p &info, boost::asio::io_service &io, const std::string &address, int port, int ttl);
+		udp_server(const stream_info_impl_p &info, boost::asio::io_service &io, const std::string &address, int port, int ttl, const std::string &listen_address);
 
 
 		/// Start serving UDP traffic.
