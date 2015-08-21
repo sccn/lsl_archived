@@ -99,6 +99,7 @@ void api_config::load_from_file(const std::string &filename) {
 
 		// read the [multicast] parameters
 		resolve_scope_ = pt.get("multicast.ResolveScope","site");
+		listen_address_ = pt.get("multicast.ListenAddress","");
 		std::vector<std::string> machine_group = parse_set(pt.get("multicast.MachineAddresses","{127.0.0.1, FF31:113D:6FDD:2C17:A643:FFE2:1BD1:3CD2}"));
 		std::vector<std::string> link_group = parse_set(pt.get("multicast.LinkAddresses","{255.255.255.255, 224.0.0.183, FF02:113D:6FDD:2C17:A643:FFE2:1BD1:3CD2}"));
 		std::vector<std::string> site_group = parse_set(pt.get("multicast.SiteAddresses","{239.255.172.215, FF05:113D:6FDD:2C17:A643:FFE2:1BD1:3CD2}"));
