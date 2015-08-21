@@ -93,6 +93,12 @@ namespace lsl {
 		*/
 		const std::vector<std::string> &multicast_addresses() const { return multicast_addresses_; }
 
+		/*
+		* The address of the local interface on which to listen to multicast traffic.
+		* The default is an empty string, i.e. bind to the default interface(s).
+		*/
+		const std::string &listen_address() const { return listen_address_; }
+
 		/**
 		* The TTL setting (time-to-live) for the multicast packets.
 		* This is determined according to the ResolveScope setting if not overridden by the TTLOverride setting.
@@ -185,6 +191,7 @@ namespace lsl {
 		std::string resolve_scope_;
 		std::vector<std::string> multicast_addresses_;
 		int multicast_ttl_;
+		std::string listen_address_;
 		std::vector<std::string> known_peers_;
 		std::string session_id_;
 		// tuning parameters

@@ -61,6 +61,7 @@ stream_outlet_impl::stream_outlet_impl(const stream_info_impl &info, int chunk_s
 void stream_outlet_impl::instantiate_stack(tcp tcp_protocol, udp udp_protocol) {
 	// get api_config
 	const api_config *cfg = api_config::get_instance();
+	std::string listen_address = cfg->listen_address();
 	std::vector<std::string> multicast_addrs = cfg->multicast_addresses();
 	int multicast_ttl = cfg->multicast_ttl();
 	int multicast_port = cfg->multicast_port();
@@ -76,7 +77,7 @@ void stream_outlet_impl::instantiate_stack(tcp tcp_protocol, udp udp_protocol) {
 			// use only addresses for the protocol that we're supposed to use here
 			ip::address address(ip::address::from_string(*i));
 			if (udp_protocol == udp::v4() ? address.is_v4() : address.is_v6())
-				responders_.push_back(udp_server_p(new udp_server(info_, *ios_.back(), *i, multicast_port, multicast_ttl)));
+				responders_.push_back(udp_server_p(new udp_server(info_, *ios_.back(), *i, multicast_port, multicast_ttl, listen_address)));
 		} catch(std::exception &e) {
 			std::clog << "Note (minor): could not create multicast responder for address " << *i << " (failed with: " << e.what() << ")" << std::endl;
 		}
