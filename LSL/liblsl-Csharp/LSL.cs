@@ -157,7 +157,7 @@ public class liblsl
         * To be useful to applications and automated processing systems using the recommended content types is preferred. 
         * See Table of Content Types in the documentation.
         */
-        public String type() { return Marshal.PtrToStringAnsi(dll.lsl_get_type(obj)); }
+        public string type() { return Marshal.PtrToStringAnsi(dll.lsl_get_type(obj)); }
         
         /**
         * Number of channels of the stream.
@@ -254,7 +254,13 @@ public class liblsl
         *  b) the misc elements <version>, <created_at>, <uid>, <session_id>, <v4address>, <v4data_port>, <v4service_port>, <v6address>, <v6data_port>, <v6service_port>
         *  c) the extended description element <desc> with user-defined sub-elements.
         */
-        public string as_xml() { return Marshal.PtrToStringAnsi(dll.lsl_get_xml(obj)); }
+        public string as_xml()
+        {
+            IntPtr pXml = dll.lsl_get_xml(obj);
+            string strXml = Marshal.PtrToStringAnsi(pXml);
+            dll.lsl_destroy_string(pXml);
+            return strXml;
+        }
 
 
         /**
@@ -590,8 +596,13 @@ public class liblsl
             int ec = 0;
             IntPtr[] tmp = new IntPtr[sample.Length];
             double res = dll.lsl_pull_sample_str(obj, tmp, tmp.Length, timeout, ref ec); check_error(ec);
-            for (int k = 0; k < tmp.Length; k++)
-                sample[k] = Marshal.PtrToStringAnsi(tmp[k]);
+            try {
+                for (int k = 0; k < tmp.Length; k++)
+                    sample[k] = Marshal.PtrToStringAnsi(tmp[k]);
+            } finally {
+                for (int k = 0; k < tmp.Length; k++)
+                    dll.lsl_destroy_string(tmp[k]);
+            }
             return res;
         }
 
@@ -625,10 +636,16 @@ public class liblsl
             int ec = 0;
             IntPtr[,] tmp = new IntPtr[data_buffer.GetLength(0),data_buffer.GetLength(1)];
             uint res = dll.lsl_pull_chunk_str(obj, tmp, timestamp_buffer, (uint)tmp.Length, (uint)timestamp_buffer.Length, timeout, ref ec);
-            for (int s = 0; s < tmp.GetLength(0); s++)
-                for (int c = 0; c < tmp.GetLength(1); c++)
-                    data_buffer[s,c] = Marshal.PtrToStringAnsi(tmp[s,c]);
             check_error(ec);
+            try {
+                for (int s = 0; s < tmp.GetLength(0); s++)
+                    for (int c = 0; c < tmp.GetLength(1); c++)
+                        data_buffer[s,c] = Marshal.PtrToStringAnsi(tmp[s,c]);
+            } finally {
+                for (int s = 0; s < tmp.GetLength(0); s++)
+                    for (int c = 0; c < tmp.GetLength(1); c++)
+                        dll.lsl_destroy_string(tmp[s,c]);
+            }
             return (int)res / data_buffer.GetLength(1);
         }
 

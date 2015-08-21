@@ -348,6 +348,12 @@ LIBLSL_C_API double lsl_pull_sample_str(lsl_inlet in, char **buffer, int buffer_
 		// allocate memory and copy over into buffer
 		for (unsigned k=0;k<tmp.size();k++) {
 			buffer[k] = (char*)malloc(tmp[k].size()+1);
+			if (buffer[k] == NULL) {
+				for (unsigned k2=0;k2<k;k2++)
+					free(buffer[k2]);
+				*ec = lsl_internal_error;
+				return 0.0;
+			}
 			strcpy(buffer[k],tmp[k].c_str());
 		}
 		return result;
@@ -387,8 +393,12 @@ LIBLSL_C_API double lsl_pull_sample_buf(lsl_inlet in, char **buffer, unsigned *b
 		// allocate memory and copy over into buffer
 		for (unsigned k=0;k<tmp.size();k++) {
 			buffer[k] = (char*)malloc(tmp[k].size());
-			if (buffer[k] == NULL)
-				return lsl_internal_error;
+			if (buffer[k] == NULL) {
+				for (unsigned k2=0;k2<k;k++)
+					free(buffer[k2]);
+				*ec = lsl_internal_error;
+				return 0.0;
+			}
 			buffer_lengths[k] = (unsigned)tmp[k].size();
 			memcpy(buffer[k],&tmp[k][0],tmp[k].size());
 		}
@@ -641,6 +651,12 @@ LIBLSL_C_API unsigned long lsl_pull_chunk_str(lsl_inlet in, char **data_buffer, 
 			// allocate memory and copy over into buffer
 			for (unsigned k=0;k<tmp.size();k++) {
 				data_buffer[k] = (char*)malloc(tmp[k].size()+1);
+				if (data_buffer[k] == NULL) {
+					for (unsigned k2=0;k2<k;k2++)
+						free(data_buffer[k2]);
+					*ec = lsl_internal_error;
+					return 0;
+				}
 				strcpy(data_buffer[k],tmp[k].c_str());
 			}
 			return result;
@@ -681,6 +697,12 @@ LIBLSL_C_API unsigned long lsl_pull_chunk_buf(lsl_inlet in, char **data_buffer, 
 			// allocate memory and copy over into buffer
 			for (unsigned k=0;k<tmp.size();k++) {
 				data_buffer[k] = (char*)malloc(tmp[k].size()+1);
+				if (data_buffer[k] == NULL) {
+					for (unsigned k2=0;k2<k;k++)
+						free(data_buffer[k2]);
+					*ec = lsl_internal_error;
+					return 0;
+				}
 				lengths_buffer[k] = (unsigned)tmp[k].size();
 				strcpy(data_buffer[k],tmp[k].c_str());
 			}
