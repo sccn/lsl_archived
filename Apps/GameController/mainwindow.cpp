@@ -385,7 +385,7 @@ void MainWindow::read_thread(std::string name) {
 		float sample[36] = {js.lX,js.lY,js.lZ,js.lRx,js.lRy,js.lRz,js.rglSlider[0],js.rglSlider[1],
 			js.rgdwPOV[0],js.rgdwPOV[1],js.rgdwPOV[2],js.rgdwPOV[3],js.lVX,js.lVY,js.lVZ,js.lVRx,js.lVRy,js.lVRz,
 			js.rglVSlider[0],js.rglVSlider[1],js.lAX,js.lAY,js.lAZ,js.lARx,js.lARy,js.lARz,js.rglASlider[0],
-			js.rglASlider[1],js.lFX,js.lFY,js.lFZ,js.lFRx,js.lFRy,js.lFRz,js.rglFSlider[0],js.rglFSlider[0]};
+			js.rglASlider[1],js.lFX,js.lFY,js.lFZ,js.lFRx,js.lFRy,js.lFRz,js.rglFSlider[0],js.rglFSlider[1]};
 		// scale the numbers
 		for (int k=0;k<36;k++)
 			sample[k] /= 1000.0;
