@@ -52,11 +52,13 @@ sample_p consumer_queue::pop_sample(double timeout) {
 	if (timeout <= 0.0) {
 		buffer_.pop(result);
 	} else {
-		timeout += lsl_local_clock();
-		while (!buffer_.pop(result)) {
-			if (lsl_local_clock() >= timeout)
-				throw timeout_error("The pop_sample() operation timed out.");
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+		if (!buffer_.pop(result)) {
+			timeout += lsl_local_clock();
+			do {
+				if (lsl_local_clock() >= timeout)
+					break;
+				boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+			} while (!buffer_.pop(result));
 		}
 	}
 	return result;
