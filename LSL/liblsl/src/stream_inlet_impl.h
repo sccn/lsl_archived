@@ -173,7 +173,7 @@ namespace lsl {
 		* Query the current size of the buffer, i.e. the number of samples that are buffered.
 		* Note that this value may be inaccurate and should not be relied on for program logic.
 		*/
-		std::size_t samples_available() { return (std::size_t)data_receiver_.empty(); };
+		std::size_t samples_available() { return (std::size_t)(!data_receiver_.empty()); };
 
 		/// Query whether the clock was potentially reset since the last call to was_clock_reset().
 		/// This is only interesting for applications that combine multiple time_correction values to estimate clock drift
