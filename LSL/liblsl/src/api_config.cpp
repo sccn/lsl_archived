@@ -162,6 +162,7 @@ void api_config::load_from_file(const std::string &filename) {
 		unicast_min_rtt_ = pt.get("tuning.UnicastMinRTT",0.75);
 		unicast_max_rtt_ = pt.get("tuning.UnicastMaxRTT",5.0);
 		continuous_resolve_interval_ = pt.get("tuning.ContinuousResolveInterval",0.5);
+		timer_resolution_ = pt.get("tuning.TimerResolution",1);
 		max_cached_queries_ = pt.get("tuning.MaxCachedQueries",100);
 		time_update_interval_ = pt.get("tuning.TimeUpdateInterval",2.0);
 		time_update_minprobes_ = pt.get("tuning.TimeUpdateMinProbes",6);
