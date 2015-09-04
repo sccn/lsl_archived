@@ -132,6 +132,7 @@ linux/XDFBrowser
 *.so
 *.dylib
 *.lib
+*.exp
 
 # Precompiled Headers
 *.gch

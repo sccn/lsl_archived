@@ -38,6 +38,9 @@ namespace lsl {
 	/// Obtain a local system time stamp in seconds.
 	double lsl_clock();
 
+	/// Ensure that LSL is initialized.
+	void ensure_lsl_initialized();
+
 	/// Data format of a channel (each transmitted sample holds an array of channels).
 	enum channel_format_t {
 		cf_float32 = 1,		// For up to 24-bit precision measurements in the appropriate physical unit 

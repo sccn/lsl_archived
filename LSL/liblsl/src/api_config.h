@@ -143,6 +143,8 @@ namespace lsl {
 		double unicast_max_rtt() const { return unicast_max_rtt_; }
 		/// The interval at which resolve queries are emitted for continuous/background resolve activities. This is in addition to the assumed RTT's.
 		double continuous_resolve_interval() const { return continuous_resolve_interval_; }
+		/// Desired timer resolution in ms (0 means no change). Currently only affects Windows operating systems, where values other than 1 can increase LSL transmission latency.
+		int timer_resolution() const { return timer_resolution_; }
 		/// The maximum number of most-recently-used queries that is cached.
 		int max_cached_queries() const { return max_cached_queries_; }
 		/// Interval between background time correction updates.
@@ -203,6 +205,7 @@ namespace lsl {
 		double unicast_min_rtt_;
 		double unicast_max_rtt_;
 		double continuous_resolve_interval_;
+		int timer_resolution_;
 		int max_cached_queries_;
 		double time_update_interval_;
 		int time_update_minprobes_;
