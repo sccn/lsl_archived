@@ -215,7 +215,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cbw32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)32.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\bin"
@@ -294,7 +293,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cbw32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)64.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\bin"

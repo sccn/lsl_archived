@@ -19,6 +19,7 @@ using namespace boost::asio;
 stream_outlet_impl::stream_outlet_impl(const stream_info_impl &info, int chunk_size, int max_capacity): chunk_size_(chunk_size), info_(new stream_info_impl(info)), 
 	sample_factory_(new sample::factory(info.channel_format(),info.channel_count(),info.nominal_srate()?info.nominal_srate()*api_config::get_instance()->outlet_buffer_reserve_ms()/1000:api_config::get_instance()->outlet_buffer_reserve_samples())), send_buffer_(new send_buffer(max_capacity))
 {
+	ensure_lsl_initialized();
 	const api_config *cfg = api_config::get_instance();
 
 	// instantiate IPv4 and/or IPv6 stacks (depending on settings)

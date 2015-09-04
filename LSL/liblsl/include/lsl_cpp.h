@@ -120,8 +120,9 @@ namespace lsl {
         * Core stream information is specified here. Any remaining meta-data can be added later.
         * @param name Name of the stream. Describes the device (or product series) that this stream makes available 
         *             (for use by programs, experimenters or data analysts). Cannot be empty.
-        * @param type Content type of the stream. Please see Table of Content Types in the documentation for naming recommendations.
-        *             The content type is the preferred way to find streams (as opposed to searching by name).
+		* @param type Content type of the stream. Please see https://github.com/sccn/xdf/wiki/Meta-Data (or web search for:
+		*             XDF meta-data) for pre-defined content-type names, but you can also make up your own.
+		*             The content type is the preferred way to find streams (as opposed to searching by name).
         * @param channel_count Number of channels per sample. This stays constant for the lifetime of the stream.
         * @param nominal_srate The sampling rate (in Hz) as advertised by the data source, if regular (otherwise set to IRREGULAR_RATE).
         * @param channel_format Format/type of each channel. If your channels have different formats, consider supplying 
@@ -153,7 +154,7 @@ namespace lsl {
         * The content type is a short string such as "EEG", "Gaze" which describes the content carried by the channel (if known). 
         * If a stream contains mixed content this value need not be assigned but may instead be stored in the description of channel types.
         * To be useful to applications and automated processing systems using the recommended content types is preferred. 
-        * See Table of Content Types in the documentation.
+        * Content types usually follow those pre-defined in https://github.com/sccn/xdf/wiki/Meta-Data (or web search for: XDF meta-data).
         */
         std::string type() const { return lsl_get_type(obj); }
 
@@ -218,7 +219,7 @@ namespace lsl {
         * The session id is an optional human-assigned identifier of the recording session.
         * While it is rarely used, it can be used to prevent concurrent recording activitites 
         * on the same sub-network (e.g., in multiple experiment areas) from seeing each other's streams 
-        * (assigned via a configuration file by the experimenter, see Configuration File in the docs).
+        * (assigned via a configuration file by the experimenter, see Network Connectivity in the LSL wiki).
         */
         std::string session_id() const { return lsl_get_session_id(obj); }
 
@@ -237,7 +238,8 @@ namespace lsl {
         * It is highly recommended that at least the channel labels are described here. 
         * See code examples in the documentation. Other information, such as amplifier settings, 
         * measurement units if deviating from defaults, setup information, subject information, etc., 
-        * can be specified here, as well. See Meta-Data Recommendations in the docs.
+		* can be specified here, as well. Meta-data recommendations follow the XDF file format project
+		* (github.com/sccn/xdf/wiki/Meta-Data or web search for: XDF meta-data).
         *
         * Important: if you use a stream content type for which meta-data recommendations exist, please 
         * try to lay out your meta-data in agreement with these recommendations for compatibility with other applications.
@@ -614,7 +616,7 @@ namespace lsl {
     * The network is usually the subnet specified at the local router, but may also include 
     * a multicast group of machines (given that the network supports it), or list of hostnames.
     * These details may optionally be customized by the experimenter in a configuration file 
-    * (see Configuration File in the documentation).
+    * (see Network Connectivity in the LSL wiki).
     * This is the default mechanism used by the browsing programs and the recording program.
     * @param wait_time The waiting time for the operation, in seconds, to search for streams.
     *                  Warning: If this is too short (<0.5s) only a subset (or none) of the 
