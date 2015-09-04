@@ -129,14 +129,14 @@ namespace lsl {
 				throw std::runtime_error("The number of buffer elements to send is not a multiple of the stream's channel count.");
 			if (!buffer)
 				throw std::runtime_error("The number of buffer elements to send is not a multiple of the stream's channel count.");
-			if (num_samples > 1) {
+			if (num_samples > 0) {
 				if (timestamp == 0.0)
 					timestamp = lsl_clock();
 				if (info().nominal_srate() != IRREGULAR_RATE)
 					timestamp = timestamp - (num_samples-1)/info().nominal_srate();
-				push_sample(buffer,timestamp,pushthrough && num_samples==1);
+				push_sample(buffer,timestamp,pushthrough && (num_samples==1));
 				for (std::size_t k=1; k<num_samples; k++)
-					push_sample(&buffer[k*num_chans],DEDUCED_TIMESTAMP,pushthrough && k==num_samples-1);
+					push_sample(&buffer[k*num_chans],DEDUCED_TIMESTAMP,pushthrough && (k==num_samples-1));
 			}
 		}
 
