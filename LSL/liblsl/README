@@ -29,7 +29,6 @@ Package overview:
 * The actual library binaries for all platforms are in the bin/ directory.
 * Example program source code for all languages are in the examples/ directory.
 * Pre-built example program binaries for experimenting are also in the bin/ directory.
-* Documentation is in the docs/ directory.
 * Project files for the library (Visual Studio, Xcode, Code::Blocks on Linux) and 
   solutions/workspaces for library & sample apps are in the project/ directory.
 * The library source code is in the src/ directory.
