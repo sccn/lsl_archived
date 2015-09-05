@@ -25,8 +25,8 @@ classdef lsl_streaminfo < handle
             % 	Name : Name of the stream. Describes the device (or product series) that this stream makes available
             %		   (for use by programs, experimenters or data analysts).
             %
-            %   Type : Content type of the stream. Please see Table of Content Types in the documentation 
-            %          for naming recommendations.
+            %   Type : Content type of the stream. Please see https://github.com/sccn/xdf/wiki/Meta-Data (or web
+            %          search for: XDF meta-data) for pre-defined content-type names, but you can also make up your own.
             %
             %   ChannelCount : Number of channels per sample. This stays constant for the lifetime of the stream.
             %
@@ -188,7 +188,7 @@ classdef lsl_streaminfo < handle
             % The session id is an optional human-assigned identifier of the recording session.
             % While it is rarely used, it can be used to prevent concurrent recording activitites
             % on the same sub-network (e.g., in multiple experiment areas) from seeing each other's streams
-            % (assigned via a configuration file by the experimenter, see Configuration File in the docs).
+            % (assigned via a configuration file by the experimenter, see Network Connectivity in the LSL wiki).
             
             result = lsl_get_session_id(self.LibHandle,self.InfoHandle);
         end
@@ -197,9 +197,10 @@ classdef lsl_streaminfo < handle
         function result = desc(self)
             % Get access to the extended description of the stream.
             % It is highly recommended that at least the channel labels are described here.
-            % See code examples in the documentation. Other information, such as amplifier settings,
+            % See code examples on the LSL wiki. Other information, such as amplifier settings,
             % measurement units if deviating from defaults, setup information, subject information, etc.,
-            % can be specified here, as well. See Meta-Data Recommendations in the docs.
+            % can be specified here, as well. Meta-data recommendations follow the XDF file format project
+            % (github.com/sccn/xdf/wiki/Meta-Data or web search for: XDF meta-data).
             
             result = lsl_xml_ptr(self.LibHandle,lsl_get_desc(self.LibHandle,self.InfoHandle));
         end
