@@ -26,7 +26,7 @@ namespace lsl {
 				} catch (boost::system::system_error &) { /* port occupied */ }
 			}
 		} else
-			throw std::runtime_error("All local ports were found occupied. You may have more open outlets on this machine than your PortRange setting allows (see Configuration File in the lab streaming layer API docs) or you have a problem with your network configuration.");
+			throw std::runtime_error("All local ports were found occupied. You may have more open outlets on this machine than your PortRange setting allows (see Network Connectivity in the LSL wiki) or you have a problem with your network configuration.");
 	}
     
     /// Bind to and listen at a socket (or acceptor) on a free port in the configured port range or throw an error otherwise.
@@ -48,7 +48,7 @@ namespace lsl {
 				} catch (boost::system::system_error &) { /* port occupied */ }
 			}
 		} else
-			throw std::runtime_error("All local ports were found occupied. You may have more open outlets on this machine than your PortRange setting allows (see Configuration File in the lab streaming layer API docs) or you have a problem with your network configuration.");
+			throw std::runtime_error("All local ports were found occupied. You may have more open outlets on this machine than your PortRange setting allows (see Network Connectivity in the LSL wiki) or you have a problem with your network configuration.");
 	}
     
 	/// Gracefully close a socket.

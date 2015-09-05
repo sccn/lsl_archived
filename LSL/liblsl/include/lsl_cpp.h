@@ -236,7 +236,7 @@ namespace lsl {
         /**
         * Extended description of the stream.
         * It is highly recommended that at least the channel labels are described here. 
-        * See code examples in the documentation. Other information, such as amplifier settings, 
+        * See code examples on the LSL wiki. Other information, such as amplifier settings, 
         * measurement units if deviating from defaults, setup information, subject information, etc., 
 		* can be specified here, as well. Meta-data recommendations follow the XDF file format project
 		* (github.com/sccn/xdf/wiki/Meta-Data or web search for: XDF meta-data).
