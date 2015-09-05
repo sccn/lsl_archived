@@ -310,7 +310,7 @@ class StreamInfo:
         concurrent recording activitites on the same sub-network (e.g., in 
         multiple experiment areas) from seeing each other's streams 
         (can be assigned in a configuration file read by liblsl, see also 
-        documentation on configuration files).
+        Network Connectivity in the LSL wiki).
 
         """
         return lib.lsl_get_session_id(self.obj).decode('utf-8')
@@ -325,10 +325,11 @@ class StreamInfo:
         """Extended description of the stream.
 
         It is highly recommended that at least the channel labels are described 
-        here. See code examples in the documentation. Other information, such 
+        here. See code examples on the LSL wiki. Other information, such 
         as amplifier settings, measurement units if deviating from defaults, 
         setup information, subject information, etc., can be specified here, as 
-        well. See Meta-Data Recommendations in the docs.
+        well. Meta-data recommendations follow the XDF file format project
+        (github.com/sccn/xdf/wiki/Meta-Data or web search for: XDF meta-data).
         
         Important: if you use a stream content type for which meta-data 
         recommendations exist, please try to lay out your meta-data in 
@@ -499,7 +500,7 @@ def resolve_streams(wait_time=1.0):
     router, but may also include a group of machines visible to each other via 
     multicast packets (given that the network supports it), or list of 
     hostnames. These details may optionally be customized by the experimenter 
-    in a configuration file (see configuration file in the documentation).  
+    in a configuration file (see Network Connectivity in the LSL wiki).  
     
     Keyword arguments:
     wait_time -- The waiting time for the operation, in seconds, to search for 

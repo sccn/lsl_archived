@@ -31,7 +31,7 @@ namespace lsl {
 		* Construct a new stream_info object.
 		* Here is where the core format and identity information of a stream is specified.
 		* @param name Name of the stream (usually a CamelCase word). Describes the device (or product series) that this stream makes available (for use by programs, experimenters, or data analysts).
-		* @param type Content type of the stream. There exist naming recommendations, please see Table of Content Types in the documentation.
+		* @param type Content type of the stream. Please see https://github.com/sccn/xdf/wiki/Meta-Data (or web search for: XDF meta-data) for pre-defined content-type names, but you can also make up your own.
 		* @param channel_count Number of channels in a sample. Each channel in a sample has the same format and each sample in a stream has the same number of channels.
 		* @param nominal_srate The sampling rate (in Hz) advertised by the device, if regular (otherwise set to IRREGULAR_SAMPLING).
 		* @param channel_format Format/type of each channel. If your channels have different formats, use the largest type that can hold them all (e.g., double) or consider supplying multiple streams.
@@ -167,7 +167,7 @@ namespace lsl {
 		* The session ID is an optional human-assigned identifier of the recording session; only
 		* inlets and outlets that have the same session id can be paired with each other to avoid
 		* accidentally recording from an unrelated concurrent session on the same network.
-		* The session id can be set via the configuration file (see Configuration File in the documentation).
+		* The session id can be set via the configuration file (see Network Connectivity in the LSL wiki).
 		*/
 		const std::string &session_id() const { return session_id_; }
 		void session_id(const std::string &v);

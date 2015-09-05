@@ -34,7 +34,6 @@ To get an overview of the project structure, the following tree lists the direct
   └── LSL
       ├── liblsl [*]
       │   ├── bin
-      │   ├── docs
       │   ├── examples
       │   ├── external
       │   │   ├── lslboost
