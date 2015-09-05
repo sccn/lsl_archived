@@ -6,7 +6,7 @@ function streaminfos = lsl_resolve_all(lib,timeout)
 % The network is usually the subnet specified at the local router, but may also include
 % a multicast group of machines (given that the network supports it), or list of hostnames.
 % These details may optionally be customized by the experimenter in a configuration file
-% (see Configuration File in the documentation).
+% (see Network Connectivity in the LSL wiki).
 % This is the default mechanism used by the browsing programs and the recording program.
 %
 % In:
