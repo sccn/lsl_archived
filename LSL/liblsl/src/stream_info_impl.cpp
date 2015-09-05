@@ -250,7 +250,7 @@ void stream_info_impl::uid(const std::string &v) {
 * The session ID is an optional human-assigned identifier of the recording session; only
 * inlets and outlets that have the same session id can be paired with each other to avoid
 * accidentally recording from an unrelated concurrent session on the same network.
-* The session id can be set via the configuration file (see Configuration File in the documentation).
+* The session id can be set via the configuration file (see Network Connectivity in the LSL wiki).
 */
 void stream_info_impl::session_id(const std::string &v) { 
 	session_id_ = v; 
