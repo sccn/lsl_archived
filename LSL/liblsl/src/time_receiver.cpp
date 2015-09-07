@@ -13,7 +13,9 @@ using boost::posix_time::millisec;
 /**
 * Construct a new time provider from an inlet connection
 */
-time_receiver::time_receiver(inlet_connection &conn): conn_(conn), timeoffset_(std::numeric_limits<double>::max()), was_reset_(false), cfg_(api_config::get_instance()), time_sock_(time_io_), next_estimate_(time_io_), aggregate_results_(time_io_), next_packet_(time_io_) {
+time_receiver::time_receiver(inlet_connection &conn): conn_(conn), was_reset_(false), timeoffset_(std::numeric_limits<double>::max()),
+    cfg_(api_config::get_instance()), time_sock_(time_io_), next_estimate_(time_io_), aggregate_results_(time_io_), next_packet_(time_io_)
+{
 	conn_.register_onlost(this,&timeoffset_upd_);
 	conn_.register_onrecover(this,boost::bind(&time_receiver::reset_timeoffset_on_recovery,this));
 	time_sock_.open(conn_.udp_protocol());
@@ -27,7 +29,7 @@ time_receiver::~time_receiver() {
 		time_io_.stop();
 		if (time_thread_.joinable())
 			time_thread_.join();
-	} 
+	}
 	catch(std::exception &e) {
 		std::cerr << "Unexpected error during destruction of a time_receiver: " << e.what() << std::endl;
 	}

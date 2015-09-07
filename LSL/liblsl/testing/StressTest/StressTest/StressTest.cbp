@@ -41,7 +41,7 @@
 			<Add option="-Wl,-rpath,$LD_LIBRARY_PATH:$ORIGIN/" />
 			<Add directory="../../../bin" />
 		</Linker>
-		<Unit filename="../../../external/src/system/error_code.cpp" />
+		<Unit filename="../../../external/src/system/src/error_code.cpp" />
 		<Unit filename="../StressTest.cpp" />
 		<Extensions>
 			<code_completion />

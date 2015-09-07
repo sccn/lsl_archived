@@ -22,8 +22,9 @@ using namespace boost::algorithm;
 * @param max_chunklen Optionally the maximum size, in samples, at which chunks are transmitted (the default corresponds to the chunk sizes used by the sender).
 *					  Recording applications can use a generous size here (leaving it to the network how to pack things), while real-time applications may want a finer (perhaps 1-sample) granularity.
 */
-data_receiver::data_receiver(inlet_connection &conn, int max_buflen, int max_chunklen): conn_(conn), check_thread_start_(true), closing_stream_(false), connected_(false), sample_queue_(max_buflen), 
-	sample_factory_(new sample::factory(conn.type_info().channel_format(),conn.type_info().channel_count(),conn.type_info().nominal_srate()?conn.type_info().nominal_srate()*api_config::get_instance()->inlet_buffer_reserve_ms()/1000:api_config::get_instance()->inlet_buffer_reserve_samples())), max_buflen_(max_buflen), max_chunklen_(max_chunklen) 
+data_receiver::data_receiver(inlet_connection &conn, int max_buflen, int max_chunklen): conn_(conn),
+	sample_factory_(new sample::factory(conn.type_info().channel_format(),conn.type_info().channel_count(),conn.type_info().nominal_srate()?conn.type_info().nominal_srate()*api_config::get_instance()->inlet_buffer_reserve_ms()/1000:api_config::get_instance()->inlet_buffer_reserve_samples())),
+	check_thread_start_(true), closing_stream_(false), connected_(false), sample_queue_(max_buflen), max_buflen_(max_buflen), max_chunklen_(max_chunklen)
 {
 	if (max_buflen < 0)
 		throw std::invalid_argument("The max_buflen argument must not be smaller than 0.");
@@ -190,12 +191,12 @@ void data_receiver::data_thread() {
 					// receive response parameters
 					while (server_stream.getline(buf,sizeof(buf)) && (buf[0] != '\r')) {
 						std::string hdrline(buf);
-						int colon = hdrline.find_first_of(":");
+						std::size_t colon = hdrline.find_first_of(":");
 						if (colon != std::string::npos) {
 							// extract key & value
 							std::string type = to_lower_copy(trim_copy(hdrline.substr(0,colon))), rest = to_lower_copy(trim_copy(hdrline.substr(colon+1)));
 							// strip off comments
-							int semicolon = rest.find_first_of(";");
+							std::size_t semicolon = rest.find_first_of(";");
 							if (semicolon != std::string::npos)
 								rest = rest.substr(0,semicolon);
 							// get the header information
@@ -204,7 +205,7 @@ void data_receiver::data_thread() {
 								if (use_byte_order==2134 && BOOST_BYTE_ORDER!=2134 && format_sizes[conn_.type_info().channel_format()]>=8)
 									throw std::runtime_error("The byte order conversion requested by the other party is not supported.");
 							}
-							if (type == "suppress-subnormals") 
+							if (type == "suppress-subnormals")
 								suppress_subnormals = boost::lexical_cast<bool>(rest);
 							if (type == "uid" && rest != conn_.current_uid())
 								throw lost_error("The received UID does not match the current connection's UID.");
@@ -237,7 +238,7 @@ void data_receiver::data_thread() {
 				// --- format validation ---
 				{
 					// receive and parse two subsequent test-pattern samples and check if they are formatted as expected
-					boost::scoped_ptr<sample> temp[4]; 
+					boost::scoped_ptr<sample> temp[4];
 					for (int k=0; k<4; temp[k++].reset(sample::factory::new_sample_unmanaged(conn_.type_info().channel_format(),conn_.type_info().channel_count(),0.0,false)));
 					temp[0]->assign_test_pattern(4); if (data_protocol_version >= 110) temp[1]->load_streambuf(buffer,data_protocol_version,use_byte_order,suppress_subnormals); else *inarch >> *temp[1];
 					temp[2]->assign_test_pattern(2); if (data_protocol_version >= 110) temp[3]->load_streambuf(buffer,data_protocol_version,use_byte_order,suppress_subnormals); else *inarch >> *temp[3];
@@ -258,7 +259,7 @@ void data_receiver::data_thread() {
                 double last_timestamp = 0.0;
                 double srate = conn_.current_srate();
                 for (int k=0;!conn_.lost() && !conn_.shutdown() && !closing_stream_;k++) {
-                    // allocate and fetch a new sample						
+                    // allocate and fetch a new sample
                     sample_p samp(factory->new_sample(0.0,false));
 					if (data_protocol_version >= 110) samp->load_streambuf(buffer,data_protocol_version,use_byte_order,suppress_subnormals); else *inarch >> *samp;
                     // deduce timestamp if necessary

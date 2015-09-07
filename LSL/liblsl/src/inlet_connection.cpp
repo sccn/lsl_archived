@@ -13,13 +13,13 @@ using namespace boost::asio;
 /**
 * Construct a new inlet connection.
 * @param info A resolved stream info object (as coming from one of the resolver functions).
-*			  It is possible -- but highly discouraged -- to initialize a connection with an unresolved (i.e. made-up) stream_info; in this case, 
-*			  a connection will be resolved alongside based on the provided info, but will only succeed if the channel count and channel format 
+*			  It is possible -- but highly discouraged -- to initialize a connection with an unresolved (i.e. made-up) stream_info; in this case,
+*			  a connection will be resolved alongside based on the provided info, but will only succeed if the channel count and channel format
 *		      match the one that is provided.
 * @param recover Try to silently recover lost streams that are recoverable (=those that that have a source_id set).
 *				 In all other cases (recover is false or the stream is not recoverable) a lost_error is thrown where indicated if the stream's source is lost (e.g., due to an app or computer crash).
 */
-inlet_connection::inlet_connection(const stream_info_impl &info, bool recover): type_info_(info), host_info_(info), recovery_enabled_(recover), tcp_protocol_(tcp::v4()), udp_protocol_(udp::v4()), lost_(false), shutdown_(false), last_receive_time_(lsl_clock()), active_transmissions_(0) {
+inlet_connection::inlet_connection(const stream_info_impl &info, bool recover): type_info_(info), host_info_(info), tcp_protocol_(tcp::v4()), udp_protocol_(udp::v4()), recovery_enabled_(recover), lost_(false), shutdown_(false), last_receive_time_(lsl_clock()), active_transmissions_(0) {
 	// if the given stream_info is already fully resolved...
 	if (!host_info_.v4address().empty() || !host_info_.v6address().empty()) {
 
@@ -75,7 +75,7 @@ inlet_connection::inlet_connection(const stream_info_impl &info, bool recover): 
 
 		// recovery must generally be enabled
 		recovery_enabled_ = true;
-	}	
+	}
 }
 
 /// Engage the connection and its recovery watchdog thread.
@@ -146,7 +146,7 @@ void inlet_connection::try_recover() {
 		try {
 			boost::lock_guard<boost::mutex> lock(recovery_mut_);
 			// first create the query string based on the known stream information
-			std::ostringstream query; 
+			std::ostringstream query;
 			{
 				boost::shared_lock<boost::shared_mutex> lock(host_info_mut_);
 				// construct query according to the fields that are present in the stream_info
@@ -159,7 +159,7 @@ void inlet_connection::try_recover() {
 				if (host_info_.nominal_srate() > 0)
 					query << " and nominal_srate='" << boost::lexical_cast<std::string>(host_info_.nominal_srate()) << "'";
 				if (!host_info_.source_id().empty())
-					query << " and source_id='" << host_info_.source_id() << "'";					
+					query << " and source_id='" << host_info_.source_id() << "'";
 				query << " and channel_format='" << channel_format_strings[host_info_.channel_format()] << "'";
 			}
 			// attempt a recovery
@@ -187,7 +187,7 @@ void inlet_connection::try_recover() {
 					} else {
 						// there are multiple possible streams to connect to in a recovery attempt: we warn and re-try
 						// this is because we don't want to randomly connect to the wrong source without the user knowing about it;
-						// the correct action (if this stream shall indeed have multiple instances) is to change the user code and 
+						// the correct action (if this stream shall indeed have multiple instances) is to change the user code and
 						// make its source_id unique, or remove the source_id altogether if that's not possible (therefore disabling the ability to recover)
 						std::clog << "Found multiple streams with name='" << host_info_.name() << "' and source_id='" << host_info_.source_id() << "'. Cannot recover unless all but one are closed." << std::endl;
 						continue;
@@ -215,7 +215,7 @@ void inlet_connection::watchdog_thread() {
 					try_recover();
 				}
 			}
-			// instead of sleeping we're waiting on a condition variable for the sleep duration 
+			// instead of sleeping we're waiting on a condition variable for the sleep duration
 			// so that the watchdog can be cancelled conveniently
 			{
 				boost::unique_lock<boost::mutex> lock(shutdown_mut_);
@@ -231,7 +231,7 @@ void inlet_connection::watchdog_thread() {
 void inlet_connection::try_recover_from_error() {
 	if (!shutdown_) {
 		if (!recovery_enabled_) {
-			// if the stream is irrecoverable it is now lost, 
+			// if the stream is irrecoverable it is now lost,
 			// so we need to notify the other inlet components
 			lost_ = true;
 			try {

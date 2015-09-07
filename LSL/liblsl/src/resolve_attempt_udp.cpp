@@ -19,11 +19,11 @@ using boost::posix_time::millisec;
 /**
 * Instantiate and set up a new resolve attempt.
 * @param io The io_service that will run the async operations.
-* @param protocol The protocol (either udp::v4() or udp::v6()) to use for communications; 
+* @param protocol The protocol (either udp::v4() or udp::v6()) to use for communications;
 *				  only the subset of target addresses matching this protocol will be considered.
 * @param targets A list of udp::endpoint that should be targetd by this query.
 * @param query The query string to send (usually a set of conditions on the properties of the stream info that should be searched,
-*              for example "name='BioSemi' and type='EEG'" (without the outer ""). See stream_info_impl::matches_query() for the 
+*              for example "name='BioSemi' and type='EEG'" (without the outer ""). See stream_info_impl::matches_query() for the
 *			   definition of a query.
 * @param results Reference to a container into which results are stored; potentially shared with other parallel resolve operations.
 *			     Since this is not thread-safe all operations modifying this must run on the same single-threaded IO service.
@@ -31,9 +31,9 @@ using boost::posix_time::millisec;
 * @param cancel_after The time duration after which the attempt is automatically cancelled, i.e. the receives are ended.
 * @param registry A registry where the attempt can register itself as active so it can be cancelled during shutdown.
 */
-resolve_attempt_udp::resolve_attempt_udp(io_service &io, const udp &protocol, const std::vector<udp::endpoint> &targets, const std::string &query, result_container &results, boost::mutex &results_mut, double cancel_after, cancellable_registry *registry): 
+resolve_attempt_udp::resolve_attempt_udp(io_service &io, const udp &protocol, const std::vector<udp::endpoint> &targets, const std::string &query, result_container &results, boost::mutex &results_mut, double cancel_after, cancellable_registry *registry):
 	io_(io), results_(results), results_mut_(results_mut), cancel_after_(cancel_after), cancelled_(false), is_v4_(protocol == udp::v4()), protocol_(protocol),
-	targets_(targets), unicast_socket_(io), broadcast_socket_(io), multicast_socket_(io), recv_socket_(io), query_(query), cancel_timer_(io)
+	targets_(targets), query_(query), unicast_socket_(io), broadcast_socket_(io), multicast_socket_(io), recv_socket_(io), cancel_timer_(io)
 {
 	// open the sockets that we might need
 	recv_socket_.open(protocol);
@@ -124,9 +124,9 @@ void resolve_attempt_udp::handle_receive_outcome(error_code err, std::size_t len
 						boost::lock_guard<boost::mutex> lock(results_mut_);
 						if (results_.find(uid) == results_.end())
 							results_[uid] = std::make_pair(info,lsl_clock()); // insert new result
-						else							
+						else
 							results_[uid].second = lsl_clock(); // update only the receive time
-						// ... also update the address associated with the result (but don't override the 
+						// ... also update the address associated with the result (but don't override the
 						// address of an earlier record for this stream since this would be the faster route)
 						if (remote_endpoint_.address().is_v4()) {
 							if (results_[uid].first.v4address().empty())

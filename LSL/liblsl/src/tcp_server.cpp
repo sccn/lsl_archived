@@ -133,7 +133,8 @@ void tcp_server::close_inflight_sockets() {
 
 
 /// Instantiate a new session & its socket.
-tcp_server::client_session::client_session(const tcp_server_p &serv): registered_(false), io_(serv->io_), serv_(serv), sock_(tcp_socket_p(new tcp::socket(*serv->io_))), requeststream_(&requestbuf_), use_byte_order_(0), data_protocol_version_(100) {	}
+tcp_server::client_session::client_session(const tcp_server_p &serv): registered_(false), io_(serv->io_), serv_(serv), sock_(tcp_socket_p(new tcp::socket(*serv->io_))),
+requeststream_(&requestbuf_), data_protocol_version_(100), use_byte_order_(0) {	}
 
 /**
 * Destructor. Unregisters the socket from the server & closes it.
@@ -261,12 +262,12 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 				char buf[16384] = {0};
 				while (requeststream_.getline(buf,sizeof(buf)) && (buf[0] != '\r')) {
 					std::string hdrline(buf);
-					int colon = hdrline.find_first_of(":");
+					std::size_t colon = hdrline.find_first_of(":");
 					if (colon != std::string::npos) {
 						// extract key & value
 						std::string type = to_lower_copy(trim_copy(hdrline.substr(0,colon))), rest = to_lower_copy(trim_copy(hdrline.substr(colon+1)));
 						// strip off comments
-						int semicolon = rest.find_first_of(";");
+						std::size_t semicolon = rest.find_first_of(";");
 						if (semicolon != std::string::npos)
 							rest = rest.substr(0,semicolon);
 						// get the header information
@@ -280,11 +281,11 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 							client_supports_subnormals = boost::lexical_cast<bool>(rest);
 						if (type == "value-size")
 							client_value_size = boost::lexical_cast<int>(rest);
-						if (type == "max-buffer-length") 
+						if (type == "max-buffer-length")
 							max_buffered_ = boost::lexical_cast<int>(rest);
-						if (type == "max-chunk-length") 
+						if (type == "max-chunk-length")
 							chunk_granularity_ = boost::lexical_cast<int>(rest);
-						if (type == "protocol-version") 
+						if (type == "protocol-version")
 							client_protocol_version = boost::lexical_cast<int>(rest);
 					}
 				}
@@ -300,10 +301,10 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 					data_protocol_version_ = 100;
 				if (data_protocol_version_ >= 110) {
 					// decide on the byte order if conflicting
-					if (BOOST_BYTE_ORDER != client_byte_order) {						
+					if (BOOST_BYTE_ORDER != client_byte_order) {
 						if (client_byte_order == 2134 && client_value_size>=8) {
 							// since we have no implementation for this byte order conversion let the client do it
-							use_byte_order_ = BOOST_BYTE_ORDER;	
+							use_byte_order_ = BOOST_BYTE_ORDER;
 						} else {
 							// let the faster party perform the endian conversion
 							use_byte_order_ = (client_value_size<=1 || (measure_endian_performance()>client_endian_performance)) ? client_byte_order : BOOST_BYTE_ORDER;
@@ -316,7 +317,7 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 
 				// send the response
 				std::ostream response_stream(&feedbuf_);
-				response_stream << "LSL/" << api_config::get_instance()->use_protocol_version() << " 200 OK\r\n"; 
+				response_stream << "LSL/" << api_config::get_instance()->use_protocol_version() << " 200 OK\r\n";
 				response_stream << "UID: " << serv_->info_->uid() << "\r\n";
 				response_stream << "Byte-Order: " << use_byte_order_ << "\r\n";
 				response_stream << "Suppress-Subnormals: " << client_suppress_subnormals << "\r\n";

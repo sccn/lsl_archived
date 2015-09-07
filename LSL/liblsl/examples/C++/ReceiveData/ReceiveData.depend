@@ -1,1 +1,13 @@
 # depslib dependency file v1.0
+1441443656 source:/home/christian/Devel/labstreaminglayer/LSL/liblsl/examples/C++/ReceiveData/ReceiveData.cpp
+	"../../../include/lsl_cpp.h"
+	<iostream>
+
+1441646117 /home/christian/Devel/labstreaminglayer/LSL/liblsl/include/lsl_cpp.h
+	<string>
+	<vector>
+	<stdexcept>
+	"lsl_c.h"
+
+1441643825 /home/christian/Devel/labstreaminglayer/LSL/liblsl/include/lsl_c.h
+

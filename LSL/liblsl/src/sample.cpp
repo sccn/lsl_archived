@@ -13,7 +13,7 @@ bool sample::operator==(const sample &rhs) {
 	else {
 		std::string *data = (std::string*)&data_;
 		std::string *rhsdata = (std::string*)&(rhs.data_);
-		for (std::size_t k=0; k<num_channels_; k++)
+		for (std::size_t k=0; k<(std::size_t)num_channels_; k++)
 			if (data[k] != rhsdata[k])
 				return false;
 		return true;
@@ -21,9 +21,9 @@ bool sample::operator==(const sample &rhs) {
 }
 
 /// Assign an array of string values to the sample.
-sample &sample::assign_typed(const std::string *s) { 
+sample &sample::assign_typed(const std::string *s) {
 	switch (format_) {
-		case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; *p++ = *s++); break; 
+		case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; *p++ = *s++); break;
 		case cf_float32:  for (float          *p=(float*)         &data_,*e=p+num_channels_; p<e; *p++ = boost::lexical_cast<float>(*s++)); break;
 		case cf_double64: for (double         *p=(double*)        &data_,*e=p+num_channels_; p<e; *p++ = boost::lexical_cast<double>(*s++)); break;
 		case cf_int8:     for (boost::int8_t  *p=(boost::int8_t*) &data_,*e=p+num_channels_; p<e; *p++ = boost::lexical_cast<boost::int8_t>(*s++)); break;
@@ -40,14 +40,14 @@ sample &sample::assign_typed(const std::string *s) {
 /// Retrieve an array of string values from the sample.
 sample &sample::retrieve_typed(std::string *d) {
 	switch (format_) {
-		case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; *d++ = *p++); break; 
-		case cf_float32:  for (float          *p=(float*)         &data_,*e=p+num_channels_; p<e; *d++ = boost::lexical_cast<std::string>(*p++)); break; 
-		case cf_double64: for (double         *p=(double*)        &data_,*e=p+num_channels_; p<e; *d++ = boost::lexical_cast<std::string>(*p++)); break; 
-		case cf_int8:     for (boost::int8_t  *p=(boost::int8_t*) &data_,*e=p+num_channels_; p<e; *d++ = boost::lexical_cast<std::string>(*p++)); break; 
-		case cf_int16:    for (boost::int16_t *p=(boost::int16_t*)&data_,*e=p+num_channels_; p<e; *d++ = boost::lexical_cast<std::string>(*p++)); break; 
-		case cf_int32:    for (boost::int32_t *p=(boost::int32_t*)&data_,*e=p+num_channels_; p<e; *d++ = boost::lexical_cast<std::string>(*p++)); break; 
+		case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; *d++ = *p++); break;
+		case cf_float32:  for (float          *p=(float*)         &data_,*e=p+num_channels_; p<e; *d++ = boost::lexical_cast<std::string>(*p++)); break;
+		case cf_double64: for (double         *p=(double*)        &data_,*e=p+num_channels_; p<e; *d++ = boost::lexical_cast<std::string>(*p++)); break;
+		case cf_int8:     for (boost::int8_t  *p=(boost::int8_t*) &data_,*e=p+num_channels_; p<e; *d++ = boost::lexical_cast<std::string>(*p++)); break;
+		case cf_int16:    for (boost::int16_t *p=(boost::int16_t*)&data_,*e=p+num_channels_; p<e; *d++ = boost::lexical_cast<std::string>(*p++)); break;
+		case cf_int32:    for (boost::int32_t *p=(boost::int32_t*)&data_,*e=p+num_channels_; p<e; *d++ = boost::lexical_cast<std::string>(*p++)); break;
 #ifndef BOOST_NO_INT64_T
-		case cf_int64:    for (boost::int64_t *p=(boost::int64_t*)&data_,*e=p+num_channels_; p<e; *d++ = boost::lexical_cast<std::string>(*p++)); break; 
+		case cf_int64:    for (boost::int64_t *p=(boost::int64_t*)&data_,*e=p+num_channels_; p<e; *d++ = boost::lexical_cast<std::string>(*p++)); break;
 #endif
 		default: throw std::invalid_argument("Unsupported channel format.");
 	}
@@ -56,15 +56,15 @@ sample &sample::retrieve_typed(std::string *d) {
 
 
 /// Assign a test pattern to the sample.
-sample &sample::assign_test_pattern(int offset) { 
-	pushthrough = 1; 
-	timestamp = 123456.789; 
+sample &sample::assign_test_pattern(int offset) {
+	pushthrough = 1;
+	timestamp = 123456.789;
 
 	switch (format_) {
 		case cf_float32: {
 			float *data = (float*)&data_;
 			for (int k=0; k<num_channels_; k++)
-				data[k] = ((float)k + (float)offset) * (k%2==0 ? 1 : -1);			
+				data[k] = ((float)k + (float)offset) * (k%2==0 ? 1 : -1);
 			break;
 						 }
 		case cf_double64: {
