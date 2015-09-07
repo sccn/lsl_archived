@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_STRUCT)
 #define FUSION_INCLUDE_STRUCT
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/adapted/struct.hpp>
 
 #endif

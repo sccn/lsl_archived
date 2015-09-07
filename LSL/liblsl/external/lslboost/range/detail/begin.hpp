@@ -15,9 +15,6 @@
 #include <lslboost/detail/workaround.hpp>
 #include <lslboost/range/iterator.hpp>
 #include <lslboost/range/detail/common.hpp>
-#if BOOST_WORKAROUND(BOOST_MSVC, < 1310)
-# include <lslboost/range/value_type.hpp>
-#endif
 
 namespace lslboost
 {
@@ -62,19 +59,11 @@ namespace lslboost
         template<>
         struct range_begin<array_>
         {
-        #if !BOOST_WORKAROUND(BOOST_MSVC, < 1310)
-            template< typename T, std::size_t sz >
-            static T* fun( T BOOST_RANGE_ARRAY_REF()[sz] )
-            {
-                return lslboost_range_array;
-            }
-        #else
             template<typename T>
             static BOOST_RANGE_DEDUCED_TYPENAME range_value<T>::type* fun(T& t)
             {
                 return t;
             }
-        #endif
         };
 
     } // namespace 'range_detail'

@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_AS_MAP)
 #define FUSION_INCLUDE_AS_MAP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/map/convert.hpp>
 
 #endif

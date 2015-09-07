@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_VECTOR_FWD)
 #define FUSION_INCLUDE_VECTOR_FWD
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/vector/vector_fwd.hpp>
 
 #endif

@@ -7,7 +7,7 @@
 #if !defined(FUSION_SEQUENCE_CLASS_SET_10022005_0607)
 #define FUSION_SEQUENCE_CLASS_SET_10022005_0607
 
-#include <lslboost/fusion/container/set/limits.hpp>
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/set/set.hpp>
 #include <lslboost/fusion/container/set/set_fwd.hpp>
 #include <lslboost/fusion/container/set/convert.hpp>

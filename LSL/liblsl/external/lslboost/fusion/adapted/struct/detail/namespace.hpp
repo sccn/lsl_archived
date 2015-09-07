@@ -9,6 +9,7 @@
 #ifndef BOOST_FUSION_ADAPTED_DETAIL_STRUCT_NAMESPACE_HPP
 #define BOOST_FUSION_ADAPTED_DETAIL_STRUCT_NAMESPACE_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/preprocessor/dec.hpp>
 #include <lslboost/preprocessor/control/if.hpp>
 #include <lslboost/preprocessor/seq/seq.hpp>

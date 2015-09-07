@@ -7,7 +7,9 @@
 #if !defined(BOOST_FUSION_SEQUENCE_EMPTY_IMPL_HPP_INCLUDED)
 #define BOOST_FUSION_SEQUENCE_EMPTY_IMPL_HPP_INCLUDED
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/type_traits/is_convertible.hpp>
+#include <lslboost/fusion/container/list/nil.hpp>
 
 namespace lslboost { namespace fusion
 {

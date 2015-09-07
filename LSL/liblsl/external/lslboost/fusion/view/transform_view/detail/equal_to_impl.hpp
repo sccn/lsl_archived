@@ -7,6 +7,7 @@
 #if !defined(BOOST_FUSION_TRANSFORM_VIEW_ITERATOR_20070127_0957)
 #define BOOST_FUSION_TRANSFORM_VIEW_ITERATOR_20070127_0957
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/equal_to.hpp>
 
 namespace lslboost { namespace fusion {

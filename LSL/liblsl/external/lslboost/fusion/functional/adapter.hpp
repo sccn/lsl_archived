@@ -8,6 +8,7 @@
 
 #if !defined(BOOST_FUSION_FUNCTIONAL_ADAPTER_HPP_INCLUDED)
 #define BOOST_FUSION_FUNCTIONAL_ADAPTER_HPP_INCLUDED
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/functional/adapter/fused.hpp>
 #include <lslboost/fusion/functional/adapter/fused_procedure.hpp>
 #include <lslboost/fusion/functional/adapter/fused_function_object.hpp>

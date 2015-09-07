@@ -11,16 +11,17 @@
 #ifndef BOOST_RANGE_DETAIL_COMMON_HPP
 #define BOOST_RANGE_DETAIL_COMMON_HPP
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 # pragma once
 #endif
 
 #include <lslboost/range/config.hpp>
 #include <lslboost/range/detail/sfinae.hpp>
 #include <lslboost/type_traits/is_void.hpp>
-#include <lslboost/type_traits/detail/ice_or.hpp>
+#include <lslboost/mpl/bool.hpp>
 #include <lslboost/mpl/if.hpp>
 #include <lslboost/mpl/int.hpp>
+#include <lslboost/mpl/or.hpp>
 #include <cstddef>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -70,7 +71,7 @@ namespace lslboost
             BOOST_STATIC_CONSTANT( bool, is_const_wchar_t_ptr_   = sizeof( lslboost::range_detail::is_const_wchar_t_ptr_impl( ptr ) ) == sizeof( yes_type ) );
             BOOST_STATIC_CONSTANT( bool, is_char_array_          = sizeof( lslboost::range_detail::is_char_array_impl( ptr ) ) == sizeof( yes_type ) );
             BOOST_STATIC_CONSTANT( bool, is_wchar_t_array_       = sizeof( lslboost::range_detail::is_wchar_t_array_impl( ptr ) ) == sizeof( yes_type ) );
-            BOOST_STATIC_CONSTANT( bool, is_string_              = (lslboost::type_traits::ice_or<is_const_char_ptr_, is_const_wchar_t_ptr_>::value ));
+            BOOST_STATIC_CONSTANT( bool, is_string_              = (lslboost::mpl::or_<lslboost::mpl::bool_<is_const_char_ptr_>, lslboost::mpl::bool_<is_const_wchar_t_ptr_> >::value ));
             BOOST_STATIC_CONSTANT( bool, is_array_               = lslboost::is_array<C>::value );
             
         };

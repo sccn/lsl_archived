@@ -13,7 +13,6 @@
 #include <lslboost/mpl/if.hpp>
 
 #include <lslboost/mpl/aux_/lambda_support.hpp>
-#include <lslboost/type_traits/detail/template_arity_spec.hpp>
 
 #include <lslboost/function_types/is_callable_builtin.hpp>
 #include <lslboost/function_types/components.hpp>
@@ -31,7 +30,6 @@ namespace lslboost
       BOOST_MPL_AUX_LAMBDA_SUPPORT(1,function_arity,(T)) 
     };
   }
-  BOOST_TT_AUX_TEMPLATE_ARITY_SPEC(1,function_types::function_arity)
 }
 
 #endif

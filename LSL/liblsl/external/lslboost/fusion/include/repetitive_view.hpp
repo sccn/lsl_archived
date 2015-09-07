@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_REPETETIVE_VIEW)
 #define FUSION_INCLUDE_REPETETIVE_VIEW
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/repetitive_view.hpp>
 
 #endif

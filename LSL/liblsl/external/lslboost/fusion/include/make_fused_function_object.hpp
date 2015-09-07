@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_MAKE_FUSED_FUNCTION_OBJECT)
 #define FUSION_INCLUDE_MAKE_FUSED_FUNCTION_OBJECT
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/functional/generation/make_fused_function_object.hpp>
 
 #endif

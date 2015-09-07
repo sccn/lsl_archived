@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_IN)
 #define FUSION_INCLUDE_IN
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/io/in.hpp>
 
 #endif

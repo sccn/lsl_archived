@@ -9,6 +9,8 @@
 #ifndef BOOST_TT_HAS_PRE_DECREMENT_HPP_INCLUDED
 #define BOOST_TT_HAS_PRE_DECREMENT_HPP_INCLUDED
 
+#include <lslboost/type_traits/is_array.hpp>
+
 #define BOOST_TT_TRAIT_NAME has_pre_decrement
 #define BOOST_TT_TRAIT_OP --
 #define BOOST_TT_FORBIDDEN_IF\
@@ -27,7 +29,9 @@
             ::lslboost::is_pointer< Rhs_noref >::value\
          >::value,\
          ::lslboost::is_const< Rhs_noref >::value\
-      >::value\
+      >::value,\
+      /* Arrays */ \
+      ::lslboost::is_array<Rhs_noref>::value\
    >::value
 
 

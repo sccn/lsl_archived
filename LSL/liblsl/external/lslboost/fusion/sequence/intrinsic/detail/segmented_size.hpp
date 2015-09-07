@@ -7,6 +7,7 @@
 #if !defined(BOOST_FUSION_SEGMENTED_SIZE_08112006_1141)
 #define BOOST_FUSION_SEGMENTED_SIZE_08112006_1141
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/type_traits/add_const.hpp>
 #include <lslboost/type_traits/remove_reference.hpp>
 #include <lslboost/mpl/fold.hpp>

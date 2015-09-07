@@ -11,12 +11,13 @@
 #ifndef BOOST_RANGE_REVERSE_ITERATOR_HPP
 #define BOOST_RANGE_REVERSE_ITERATOR_HPP
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 # pragma once
 #endif
 
 #include <lslboost/range/config.hpp>
 #include <lslboost/range/iterator.hpp>
+#include <lslboost/type_traits/remove_reference.hpp>
 #include <lslboost/iterator/reverse_iterator.hpp>
 
 
@@ -26,11 +27,12 @@ namespace lslboost
     // default
     //////////////////////////////////////////////////////////////////////////
     
-    template< typename C >
+    template< typename T >
     struct range_reverse_iterator
     {
         typedef reverse_iterator< 
-            BOOST_DEDUCED_TYPENAME range_iterator<C>::type > type;
+            BOOST_DEDUCED_TYPENAME range_iterator<
+                BOOST_DEDUCED_TYPENAME remove_reference<T>::type>::type > type;
     };
     
 

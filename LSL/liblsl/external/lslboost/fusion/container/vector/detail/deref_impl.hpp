@@ -7,6 +7,7 @@
 #if !defined(FUSION_DEREF_IMPL_05042005_1037)
 #define FUSION_DEREF_IMPL_05042005_1037
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/at.hpp>
 #include <lslboost/fusion/support/detail/access.hpp>
 #include <lslboost/type_traits/is_const.hpp>
@@ -25,14 +26,14 @@ namespace lslboost { namespace fusion
         struct deref_impl<vector_iterator_tag>
         {
             template <typename Iterator>
-            struct apply 
+            struct apply
             {
                 typedef typename Iterator::vector vector;
                 typedef typename Iterator::index index;
                 typedef typename mpl::at<
                     typename vector::types, index>::type
                 element;
-                
+
                 typedef typename
                     mpl::if_<
                         is_const<vector>
@@ -41,6 +42,7 @@ namespace lslboost { namespace fusion
                     >::type
                 type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Iterator const& i)
                 {

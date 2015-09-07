@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_MAP_TIE)
 #define FUSION_INCLUDE_MAP_TIE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/generation/map_tie.hpp>
 
 #endif

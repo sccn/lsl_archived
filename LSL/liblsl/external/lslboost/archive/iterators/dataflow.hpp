@@ -2,7 +2,7 @@
 #define BOOST_ARCHIVE_ITERATORS_DATAFLOW_HPP
 
 // MS compatible compilers support #pragma once
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#if defined(_MSC_VER)
 # pragma once
 #endif
 
@@ -17,8 +17,6 @@
 //  See http://www.lslboost.org for updates, documentation, and revision history.
 
 #include <lslboost/assert.hpp>
-
-#include <lslboost/config.hpp> // for BOOST_DEDUCED_TYPENAME
 
 #include <lslboost/mpl/eval_if.hpp>
 #include <lslboost/mpl/if.hpp>

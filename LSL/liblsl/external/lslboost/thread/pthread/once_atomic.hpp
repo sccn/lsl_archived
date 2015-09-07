@@ -15,7 +15,7 @@
 #include <lslboost/cstdint.hpp>
 #include <lslboost/thread/detail/move.hpp>
 #include <lslboost/thread/detail/invoke.hpp>
-#include <lslboost/detail/no_exceptions_support.hpp>
+#include <lslboost/core/no_exceptions_support.hpp>
 #include <lslboost/bind.hpp>
 #include <lslboost/atomic.hpp>
 
@@ -115,7 +115,7 @@ namespace lslboost
 #endif
 
 
-#ifndef BOOST_NO_CXX11_VARIADIC_TEMPLATES
+#if !defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES) && !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
 
   template<typename Function, class ...ArgTypes>
   inline void call_once(once_flag& flag, BOOST_THREAD_RV_REF(Function) f, BOOST_THREAD_RV_REF(ArgTypes)... args)

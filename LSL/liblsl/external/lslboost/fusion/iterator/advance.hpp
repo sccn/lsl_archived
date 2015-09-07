@@ -7,6 +7,7 @@
 #if !defined(FUSION_ADVANCE_09172005_1146)
 #define FUSION_ADVANCE_09172005_1146
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/detail/advance.hpp>
 #include <lslboost/fusion/support/category_of.hpp>
 
@@ -74,6 +75,7 @@ namespace lslboost { namespace fusion
     }
 
     template <int N, typename Iterator>
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
     inline typename result_of::advance_c<Iterator, N>::type const
     advance_c(Iterator const& i)
     {
@@ -81,6 +83,7 @@ namespace lslboost { namespace fusion
     }
 
     template<typename N, typename Iterator>
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
     inline typename result_of::advance<Iterator, N>::type const
     advance(Iterator const& i)
     {

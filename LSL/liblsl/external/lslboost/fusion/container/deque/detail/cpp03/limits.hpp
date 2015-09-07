@@ -12,7 +12,7 @@
 #error "C++03 only! This file should not have been included"
 #endif
 
-#include <lslboost/fusion/container/vector/limits.hpp>
+#include <lslboost/fusion/container/vector/detail/cpp03/limits.hpp>
 
 #if !defined(FUSION_MAX_DEQUE_SIZE)
 # define FUSION_MAX_DEQUE_SIZE FUSION_MAX_VECTOR_SIZE

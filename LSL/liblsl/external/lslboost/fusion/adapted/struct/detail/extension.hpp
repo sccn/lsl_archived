@@ -10,6 +10,7 @@
 #ifndef BOOST_FUSION_ADAPTED_STRUCT_DETAIL_EXTENSION_HPP
 #define BOOST_FUSION_ADAPTED_STRUCT_DETAIL_EXTENSION_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/category_of.hpp>
 
 namespace lslboost { namespace fusion

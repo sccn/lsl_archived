@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_GENERATION)
 #define FUSION_INCLUDE_GENERATION
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/generation.hpp>
 #include <lslboost/fusion/functional/generation.hpp>
 

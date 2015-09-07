@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_FRONT)
 #define FUSION_INCLUDE_FRONT
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/front.hpp>
 
 #endif

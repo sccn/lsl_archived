@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_END_IMPL_31122005_1237)
 #define BOOST_FUSION_END_IMPL_31122005_1237
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/adapted/mpl/mpl_iterator.hpp>
 #include <lslboost/mpl/end.hpp>
 #include <lslboost/type_traits/add_const.hpp>
@@ -32,6 +33,7 @@ namespace lslboost { namespace fusion
                 >::type iterator;
                 typedef mpl_iterator<iterator> type;
                 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Sequence)
                 {

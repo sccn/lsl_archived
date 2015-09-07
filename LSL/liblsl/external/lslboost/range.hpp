@@ -11,23 +11,13 @@
 #ifndef BOOST_RANGE_HPP_27_07_04
 #define BOOST_RANGE_HPP_27_07_04
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 # pragma once
 #endif
-
-#if _MSC_VER == 1300 // experiment
-
-#include <lslboost/range/detail/collection_traits.hpp>
-#include <lslboost/range/iterator_range.hpp>
-#include <lslboost/range/sub_range.hpp>
-
-#else
 
 #include <lslboost/range/functions.hpp>
 #include <lslboost/range/metafunctions.hpp>
 #include <lslboost/range/iterator_range.hpp>
 #include <lslboost/range/sub_range.hpp>
-
-#endif // _MSC_VER == 1300 // experiment
 
 #endif

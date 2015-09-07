@@ -7,6 +7,7 @@
 #if !defined(FUSION_TAG_OF_09232005_0845)
 #define FUSION_TAG_OF_09232005_0845
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/utility/enable_if.hpp>
 #include <lslboost/type_traits/remove_const.hpp>
 #include <lslboost/fusion/support/tag_of_fwd.hpp>

@@ -11,6 +11,7 @@
 #define BOOST_SYSTEM_CONFIG_HPP
 
 #include <lslboost/config.hpp>
+#include <lslboost/predef/platform.h>
 #include <lslboost/system/api_config.hpp>  // for BOOST_POSIX_API or BOOST_WINDOWS_API
 
 // This header implements separate compilation features as described in

@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_FUNCTIONAL)
 #define FUSION_INCLUDE_FUNCTIONAL
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/functional.hpp>
 
 #endif

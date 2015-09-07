@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_ERASE_KEY)
 #define FUSION_INCLUDE_ERASE_KEY
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/transformation/erase_key.hpp>
 
 #endif

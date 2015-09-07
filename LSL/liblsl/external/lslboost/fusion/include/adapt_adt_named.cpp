@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_ADAPT_ADT_NAMED)
 #define FUSION_INCLUDE_ADAPT_ADT_NAMED
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/adapted/adt/adapt_adt_named.hpp>
 
 #endif

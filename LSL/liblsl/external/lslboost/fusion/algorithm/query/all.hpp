@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_ALL_05052005_1238)
 #define BOOST_FUSION_ALL_05052005_1238
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/category_of.hpp>
 #include <lslboost/fusion/algorithm/query/detail/all.hpp>
 
@@ -23,6 +24,7 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence, typename F>
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
     inline bool
     all(Sequence const& seq, F f)
     {

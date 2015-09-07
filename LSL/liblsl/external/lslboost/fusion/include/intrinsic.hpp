@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_INTRINSIC)
 #define FUSION_INCLUDE_INTRINSIC
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic.hpp>
 
 #endif

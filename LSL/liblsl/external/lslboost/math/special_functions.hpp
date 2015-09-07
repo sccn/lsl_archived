@@ -1,4 +1,4 @@
-//  Copyright John Maddock 2006, 2007, 2012.
+//  Copyright John Maddock 2006, 2007, 2012, 2014.
 //  Copyright Paul A. Bristow 2006, 2007, 2012
 
 //  Use, modification and distribution are subject to the
@@ -16,7 +16,9 @@
 #include <lslboost/math/special_functions/acosh.hpp>
 #include <lslboost/math/special_functions/asinh.hpp>
 #include <lslboost/math/special_functions/atanh.hpp>
+#include <lslboost/math/special_functions/bernoulli.hpp>
 #include <lslboost/math/special_functions/bessel.hpp>
+#include <lslboost/math/special_functions/bessel_prime.hpp>
 #include <lslboost/math/special_functions/beta.hpp>
 #include <lslboost/math/special_functions/binomial.hpp>
 #include <lslboost/math/special_functions/cbrt.hpp>
@@ -25,10 +27,14 @@
 #include <lslboost/math/special_functions/ellint_1.hpp>
 #include <lslboost/math/special_functions/ellint_2.hpp>
 #include <lslboost/math/special_functions/ellint_3.hpp>
+#include <lslboost/math/special_functions/ellint_d.hpp>
+#include <lslboost/math/special_functions/jacobi_zeta.hpp>
+#include <lslboost/math/special_functions/heuman_lambda.hpp>
 #include <lslboost/math/special_functions/ellint_rc.hpp>
 #include <lslboost/math/special_functions/ellint_rd.hpp>
 #include <lslboost/math/special_functions/ellint_rf.hpp>
 #include <lslboost/math/special_functions/ellint_rj.hpp>
+#include <lslboost/math/special_functions/ellint_rg.hpp>
 #include <lslboost/math/special_functions/erf.hpp>
 #include <lslboost/math/special_functions/expint.hpp>
 #include <lslboost/math/special_functions/expm1.hpp>
@@ -45,6 +51,7 @@
 #include <lslboost/math/special_functions/math_fwd.hpp>
 #include <lslboost/math/special_functions/next.hpp>
 #include <lslboost/math/special_functions/owens_t.hpp>
+#include <lslboost/math/special_functions/polygamma.hpp>
 #include <lslboost/math/special_functions/powm1.hpp>
 #include <lslboost/math/special_functions/sign.hpp>
 #include <lslboost/math/special_functions/sin_pi.hpp>

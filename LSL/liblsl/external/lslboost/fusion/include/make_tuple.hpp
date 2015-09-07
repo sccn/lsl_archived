@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_MAKE_TUPLE)
 #define FUSION_INCLUDE_MAKE_TUPLE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/tuple/make_tuple.hpp>
 
 #endif

@@ -20,6 +20,7 @@
 #include <lslboost/spirit/home/qi/detail/attributes.hpp>
 #include <lslboost/spirit/home/support/info.hpp>
 #include <lslboost/spirit/home/support/handles_container.hpp>
+#include <lslboost/utility/enable_if.hpp>
 
 namespace lslboost { namespace spirit
 {
@@ -55,13 +56,26 @@ namespace lslboost { namespace spirit { namespace qi
 
         template <typename Iterator, typename Context
           , typename Skipper, typename Attribute>
-        bool parse(Iterator& first, Iterator const& last
+        typename disable_if<detail::is_unused_skipper<Skipper>, bool>::type
+        parse(Iterator& first, Iterator const& last
           , Context& context, Skipper const& skipper
           , Attribute& attr_) const
         {
             qi::skip_over(first, last, skipper);
             return subject.parse(first, last, context
               , detail::unused_skipper<Skipper>(skipper), attr_);
+        }
+        template <typename Iterator, typename Context
+          , typename Skipper, typename Attribute>
+        typename enable_if<detail::is_unused_skipper<Skipper>, bool>::type
+        parse(Iterator& first, Iterator const& last
+          , Context& context, Skipper const& skipper
+          , Attribute& attr_) const
+        {
+            //  no need to pre-skip if skipper is unused
+            //- qi::skip_over(first, last, skipper);
+            return subject.parse(first, last, context
+              , skipper, attr_);
         }
 
         template <typename Context>

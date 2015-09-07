@@ -7,10 +7,12 @@
 #if !defined(BOOST_FUSION_MAP_DETAIL_AT_KEY_IMPL_02042013_0821)
 #define BOOST_FUSION_MAP_DETAIL_AT_KEY_IMPL_02042013_0821
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/detail/access.hpp>
 #include <lslboost/type_traits/is_const.hpp>
 #include <lslboost/mpl/at.hpp>
 #include <lslboost/mpl/identity.hpp>
+#include <lslboost/utility/declval.hpp>
 
 namespace lslboost { namespace fusion
 {
@@ -28,9 +30,10 @@ namespace lslboost { namespace fusion
             struct apply
             {
                 typedef
-                    decltype(std::declval<Sequence>().get(mpl::identity<Key>()))
+                    decltype(lslboost::declval<Sequence>().get(mpl::identity<Key>()))
                 type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Sequence& m)
                 {
@@ -42,9 +45,10 @@ namespace lslboost { namespace fusion
             struct apply<Sequence const, Key>
             {
                 typedef
-                    decltype(std::declval<Sequence const>().get(mpl::identity<Key>()))
+                    decltype(lslboost::declval<Sequence const>().get(mpl::identity<Key>()))
                 type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Sequence const& m)
                 {

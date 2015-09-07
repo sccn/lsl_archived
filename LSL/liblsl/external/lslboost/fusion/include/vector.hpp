@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_VECTOR)
 #define FUSION_INCLUDE_VECTOR
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/vector.hpp>
 
 #endif

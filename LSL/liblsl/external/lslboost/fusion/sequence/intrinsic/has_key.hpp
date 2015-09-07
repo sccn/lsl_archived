@@ -7,6 +7,7 @@
 #if !defined(FUSION_HAS_KEY_09232005_1454)
 #define FUSION_HAS_KEY_09232005_1454
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic_fwd.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
 #include <lslboost/fusion/iterator/equal_to.hpp>
@@ -67,6 +68,7 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Key, typename Sequence>
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
     inline typename result_of::has_key<Sequence, Key>::type
     has_key(Sequence const&)
     {

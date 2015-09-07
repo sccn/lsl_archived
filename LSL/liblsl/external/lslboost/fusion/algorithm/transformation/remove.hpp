@@ -7,6 +7,7 @@
 #if !defined(FUSION_REMOVE_07162005_0818)
 #define FUSION_REMOVE_07162005_0818
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/filter_view/filter_view.hpp>
 #include <lslboost/mpl/not.hpp>
 #include <lslboost/type_traits/is_same.hpp>
@@ -23,6 +24,7 @@ namespace lslboost { namespace fusion
     }
 
     template <typename T, typename Sequence>
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
     inline typename result_of::remove<Sequence const, T>::type
     remove(Sequence const& seq)
     {

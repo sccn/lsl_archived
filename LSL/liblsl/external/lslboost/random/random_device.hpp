@@ -6,7 +6,7 @@
  * accompanying file LICENSE_1_0.txt or copy at
  * http://www.lslboost.org/LICENSE_1_0.txt)
  *
- * $Id: random_device.hpp 71018 2011-04-05 21:27:52Z steven_watanabe $
+ * $Id$
  *
  * Revision history
  *  2000-02-18  Portability fixes (thanks to Beman Dawes)
@@ -22,6 +22,7 @@
 #include <lslboost/config.hpp>
 #include <lslboost/noncopyable.hpp>
 #include <lslboost/random/detail/auto_link.hpp>
+#include <lslboost/system/config.hpp> // force autolink to find Boost.System
 
 namespace lslboost {
 namespace random {

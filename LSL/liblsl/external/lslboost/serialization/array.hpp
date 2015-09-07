@@ -6,10 +6,14 @@
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.lslboost.org/LICENSE_1_0.txt)
 
+#include <lslboost/config.hpp> // msvc 6.0 needs this for warning suppression
+
 #include <iostream>
 #include <cstddef> // std::size_t
-#include <cstddef>
-#include <lslboost/config.hpp> // msvc 6.0 needs this for warning suppression
+#ifndef BOOST_NO_CXX11_HDR_ARRAY
+#include <array>
+#endif
+
 #if defined(BOOST_NO_STDC_NAMESPACE)
 namespace std{ 
     using ::size_t; 
@@ -29,17 +33,8 @@ namespace lslboost { namespace serialization {
 
 // traits to specify whether to use  an optimized array serialization
 
-#ifdef __BORLANDC__
-// workaround for Borland compiler
-template <class Archive>
-struct use_array_optimization {
-  template <class T> struct apply : lslboost::mpl::false_ {};
-};
-
-#else
 template <class Archive>
 struct use_array_optimization : lslboost::mpl::always<lslboost::mpl::false_> {};
-#endif
 
 template<class T>
 class array :
@@ -97,9 +92,9 @@ public:
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
-      typedef BOOST_DEDUCED_TYPENAME 
+      typedef typename 
           lslboost::serialization::use_array_optimization<Archive>::template apply<
-                    BOOST_DEDUCED_TYPENAME remove_const< T >::type 
+                    typename remove_const< T >::type 
                 >::type use_optimized;
       serialize_optimized(ar,version,use_optimized());
     }
@@ -121,33 +116,39 @@ private:
 
 template<class T>
 inline
-#ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
-const
-#endif
-array< T > make_array( T* t, std::size_t s){
+const array< T > make_array( T* t, std::size_t s){
     return array< T >(t, s);
 }
 
+// implement serialization for lslboost::array
 template <class Archive, class T, std::size_t N>
 void serialize(Archive& ar, lslboost::array<T,N>& a, const unsigned int /* version */)
 {
-  ar & lslboost::serialization::make_nvp("elems",a.elems);
+    ar & lslboost::serialization::make_nvp("elems", a.elems);
 }
+
+#ifndef BOOST_NO_CXX11_HDR_ARRAY
+// implement serialization for std::array
+template <class Archive, class T, std::size_t N>
+void serialize(Archive& ar, std::array<T,N>& a, const unsigned int /* version */)
+{
+    ar & lslboost::serialization::make_nvp(
+        "elems",
+        *static_cast<T (*)[N]>(static_cast<void *>(a.data()))
+    );
+    
+}
+#endif
 
 } } // end namespace lslboost::serialization
 
-#ifdef __BORLANDC__
-// ignore optimizations for Borland
-#define BOOST_SERIALIZATION_USE_ARRAY_OPTIMIZATION(Archive)      
-#else
 #define BOOST_SERIALIZATION_USE_ARRAY_OPTIMIZATION(Archive)           \
 namespace lslboost { namespace serialization {                           \
 template <> struct use_array_optimization<Archive> {                  \
   template <class ValueType>                                          \
   struct apply : lslboost::mpl::apply1<Archive::use_array_optimization   \
-      , BOOST_DEDUCED_TYPENAME lslboost::remove_const<ValueType>::type   \
+      , typename lslboost::remove_const<ValueType>::type   \
     >::type {};                                                       \
 }; }}
-#endif // __BORLANDC__
 
 #endif //BOOST_SERIALIZATION_ARRAY_HPP

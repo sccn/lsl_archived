@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_ACCUMULATE)
 #define FUSION_INCLUDE_ACCUMULATE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/iteration/accumulate.hpp>
 
 #endif

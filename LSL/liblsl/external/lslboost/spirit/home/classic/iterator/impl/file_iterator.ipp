@@ -285,11 +285,7 @@ public:
     }
 
 private:
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
     typedef lslboost::remove_pointer<HANDLE>::type handle_t;
-#else
-    typedef void handle_t;
-#endif
 
     lslboost::shared_ptr<CharT> m_mem;
     std::size_t m_filesize;

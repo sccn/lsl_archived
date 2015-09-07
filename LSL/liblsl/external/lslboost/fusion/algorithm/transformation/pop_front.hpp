@@ -7,6 +7,7 @@
 #if !defined(FUSION_POP_FRONT_09172005_1115)
 #define FUSION_POP_FRONT_09172005_1115
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/iterator_range/iterator_range.hpp>
 #include <lslboost/fusion/sequence/intrinsic/begin.hpp>
 #include <lslboost/fusion/sequence/intrinsic/end.hpp>
@@ -19,18 +20,19 @@ namespace lslboost { namespace fusion
         template <typename Sequence>
         struct pop_front
         {
-            typedef 
+            typedef
                 iterator_range<
                     typename next<
                         typename begin<Sequence>::type
                     >::type
                   , typename end<Sequence>::type
-                > 
+                >
             type;
         };
     }
 
     template <typename Sequence>
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
     inline typename result_of::pop_front<Sequence const>::type
     pop_front(Sequence const& seq)
     {

@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_CONVERT)
 #define FUSION_INCLUDE_CONVERT
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/convert.hpp>
 
 #endif

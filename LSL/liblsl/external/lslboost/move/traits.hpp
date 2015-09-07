@@ -11,18 +11,24 @@
 
 //! \file
 
-#ifndef BOOST_MOVE_MOVE_TRAITS_HPP
-#define BOOST_MOVE_MOVE_TRAITS_HPP
+#ifndef BOOST_MOVE_TRAITS_HPP
+#define BOOST_MOVE_TRAITS_HPP
+
+#ifndef BOOST_CONFIG_HPP
+#  include <lslboost/config.hpp>
+#endif
+#
+#if defined(BOOST_HAS_PRAGMA_ONCE)
+#  pragma once
+#endif
 
 #include <lslboost/move/detail/config_begin.hpp>
-#include <lslboost/type_traits/has_trivial_destructor.hpp>
-#include <lslboost/type_traits/is_nothrow_move_constructible.hpp>
-#include <lslboost/type_traits/is_nothrow_move_assignable.hpp>
-#include <lslboost/move/detail/meta_utils.hpp>
 
 #ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
 #include <lslboost/move/core.hpp>
 #endif
+#include <lslboost/move/detail/meta_utils.hpp>
+#include <lslboost/move/detail/type_traits.hpp>
 
 namespace lslboost {
 
@@ -37,7 +43,7 @@ namespace lslboost {
 //! when inserted in containers.
 template <class T>
 struct has_trivial_destructor_after_move
-   : ::lslboost::has_trivial_destructor<T>
+   : ::lslboost::move_detail::is_trivially_destructible<T>
 {};
 
 //! By default this traits returns
@@ -46,105 +52,26 @@ struct has_trivial_destructor_after_move
 //! and assignment can specialize this trait to obtain some performance improvements.
 template <class T>
 struct has_nothrow_move
-   : public ::lslboost::move_detail::integral_constant
-      < bool
-      , lslboost::is_nothrow_move_constructible<T>::value &&
-        lslboost::is_nothrow_move_assignable<T>::value
-      >
-{};
+{
+   static const bool value = lslboost::move_detail::is_nothrow_move_constructible<T>::value &&
+                             lslboost::move_detail::is_nothrow_move_assignable<T>::value;
+};
 
 namespace move_detail {
 
-// Code from Jeffrey Lee Hellrung, many thanks
-
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   template< class T> struct forward_type { typedef T type; };
-#else // #ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   template< class T>
-   struct forward_type
-   { typedef const T &type; };
-
-   template< class T>
-   struct forward_type< lslboost::rv<T> >
-   { typedef T type; };
-#endif // #ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-
-template< class T > struct is_rvalue_reference : ::lslboost::move_detail::integral_constant<bool, false> { };
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   template< class T > struct is_rvalue_reference< T&& > : ::lslboost::move_detail::integral_constant<bool, true> { };
-#else // #ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   template< class T > struct is_rvalue_reference< lslboost::rv<T>& >
-      :  ::lslboost::move_detail::integral_constant<bool, true>
-   {};
-
-   template< class T > struct is_rvalue_reference< const lslboost::rv<T>& >
-      : ::lslboost::move_detail::integral_constant<bool, true>
-   {};
-#endif // #ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   template< class T > struct add_rvalue_reference { typedef T&& type; };
-#else // #ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   namespace detail_add_rvalue_reference
-   {
-      template< class T
-              , bool emulation = ::lslboost::has_move_emulation_enabled<T>::value
-              , bool rv        = ::lslboost::move_detail::is_rv<T>::value  >
-      struct add_rvalue_reference_impl { typedef T type; };
-
-      template< class T, bool emulation>
-      struct add_rvalue_reference_impl< T, emulation, true > { typedef T & type; };
-
-      template< class T, bool rv >
-      struct add_rvalue_reference_impl< T, true, rv > { typedef ::lslboost::rv<T>& type; };
-   } // namespace detail_add_rvalue_reference
-
-   template< class T >
-   struct add_rvalue_reference
-      : detail_add_rvalue_reference::add_rvalue_reference_impl<T>
-   { };
-
-   template< class T >
-   struct add_rvalue_reference<T &>
-   {  typedef T & type; };
-
-#endif // #ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-
-template< class T > struct remove_rvalue_reference { typedef T type; };
-
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   template< class T > struct remove_rvalue_reference< T&& >                  { typedef T type; };
-#else // #ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   template< class T > struct remove_rvalue_reference< rv<T> >                { typedef T type; };
-   template< class T > struct remove_rvalue_reference< const rv<T> >          { typedef T type; };
-   template< class T > struct remove_rvalue_reference< volatile rv<T> >       { typedef T type; };
-   template< class T > struct remove_rvalue_reference< const volatile rv<T> > { typedef T type; };
-   template< class T > struct remove_rvalue_reference< rv<T>& >               { typedef T type; };
-   template< class T > struct remove_rvalue_reference< const rv<T>& >         { typedef T type; };
-   template< class T > struct remove_rvalue_reference< volatile rv<T>& >      { typedef T type; };
-   template< class T > struct remove_rvalue_reference< const volatile rv<T>& >{ typedef T type; };
-#endif // #ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-
-template <typename T>
-typename lslboost::move_detail::add_rvalue_reference<T>::type declval();
+template <class T>
+struct is_nothrow_move_constructible_or_uncopyable
+{
+   //The standard requires is_nothrow_move_constructible for move_if_noexcept
+   //but a user (usually in C++03) might specialize has_nothrow_move which includes it
+   static const bool value = is_nothrow_move_constructible<T>::value ||
+                             has_nothrow_move<T>::value ||
+                            !is_copy_constructible<T>::value;
+};
 
 }  //move_detail {
-
-// Ideas from Boost.Move review, Jeffrey Lee Hellrung:
-//
-//- TypeTraits metafunctions is_lvalue_reference, add_lvalue_reference, and remove_lvalue_reference ?
-//  Perhaps add_reference and remove_reference can be modified so that they behave wrt emulated rvalue
-//  references the same as wrt real rvalue references, i.e., add_reference< rv<T>& > -> T& rather than
-//  rv<T>& (since T&& & -> T&).
-//
-//- Add'l TypeTraits has_[trivial_]move_{constructor,assign}...?
-//
-//- An as_lvalue(T& x) function, which amounts to an identity operation in C++0x, but strips emulated
-//  rvalue references in C++03.  This may be necessary to prevent "accidental moves".
-
-
 }  //namespace lslboost {
 
 #include <lslboost/move/detail/config_end.hpp>
 
-#endif //#ifndef BOOST_MOVE_MOVE_TRAITS_HPP
+#endif //#ifndef BOOST_MOVE_TRAITS_HPP

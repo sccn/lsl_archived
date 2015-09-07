@@ -7,6 +7,7 @@
 #if !defined(FUSION_EMPTY_10022005_1619)
 #define FUSION_EMPTY_10022005_1619
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/empty.hpp>
 #include <lslboost/fusion/sequence/intrinsic/empty.hpp>
 

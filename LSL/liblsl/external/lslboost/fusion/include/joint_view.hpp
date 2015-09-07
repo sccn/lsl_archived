@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_JOINT_VIEW)
 #define FUSION_INCLUDE_JOINT_VIEW
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/joint_view.hpp>
 
 #endif

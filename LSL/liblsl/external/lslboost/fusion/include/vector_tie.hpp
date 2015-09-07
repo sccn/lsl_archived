@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_VECTOR_TIE)
 #define FUSION_INCLUDE_VECTOR_TIE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/generation/vector_tie.hpp>
 
 #endif

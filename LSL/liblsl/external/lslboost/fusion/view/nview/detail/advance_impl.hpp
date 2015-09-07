@@ -8,10 +8,11 @@
 #if !defined(BOOST_FUSION_NVIEW_ADVANCE_IMPL_SEP_24_2009_0212PM)
 #define BOOST_FUSION_NVIEW_ADVANCE_IMPL_SEP_24_2009_0212PM
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/advance.hpp>
 #include <lslboost/fusion/iterator/advance.hpp>
 
-namespace lslboost { namespace fusion 
+namespace lslboost { namespace fusion
 {
     struct nview_iterator_tag;
 
@@ -35,6 +36,7 @@ namespace lslboost { namespace fusion
                 typedef nview_iterator<sequence_type, 
                     typename mpl::advance<iterator_type, Dist>::type> type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Iterator const& i)
                 {

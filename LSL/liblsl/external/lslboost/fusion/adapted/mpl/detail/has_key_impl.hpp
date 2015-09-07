@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_HAS_KEY_IMPL_31122005_1647)
 #define BOOST_FUSION_HAS_KEY_IMPL_31122005_1647
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/has_key.hpp>
 
 namespace lslboost { namespace fusion 

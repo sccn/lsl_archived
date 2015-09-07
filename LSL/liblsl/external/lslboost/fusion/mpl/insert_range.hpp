@@ -7,6 +7,7 @@
 #if !defined(FUSION_INSERT_RANGE_10022005_1838)
 #define FUSION_INSERT_RANGE_10022005_1838
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/insert_range.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
 #include <lslboost/fusion/algorithm/transformation/insert_range.hpp>

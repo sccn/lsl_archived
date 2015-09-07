@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_SINGLE_VIEW_VALUE_OF_IMPL_05052005_0324)
 #define BOOST_FUSION_SINGLE_VIEW_VALUE_OF_IMPL_05052005_0324
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/int.hpp>
 #include <lslboost/mpl/assert.hpp>
 #include <lslboost/mpl/equal_to.hpp>

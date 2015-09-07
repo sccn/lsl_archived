@@ -6,11 +6,11 @@
 #if !defined(BOOST_FUNCTIONAL_HASH_DETAIL_HASH_FLOAT_HEADER)
 #define BOOST_FUNCTIONAL_HASH_DETAIL_HASH_FLOAT_HEADER
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
-# pragma once
+#include <lslboost/config.hpp>
+#if defined(BOOST_HAS_PRAGMA_ONCE)
+#pragma once
 #endif
 
-#include <lslboost/config.hpp>
 #include <lslboost/functional/hash/detail/float_functions.hpp>
 #include <lslboost/functional/hash/detail/limits.hpp>
 #include <lslboost/utility/enable_if.hpp>
@@ -68,7 +68,7 @@ namespace lslboost
             std::size_t seed = 0;
 
             if (length >= sizeof(std::size_t)) {
-                seed = *(std::size_t*) ptr;
+                std::memcpy(&seed, ptr, sizeof(std::size_t));
                 length -= sizeof(std::size_t);
                 ptr += sizeof(std::size_t);
 

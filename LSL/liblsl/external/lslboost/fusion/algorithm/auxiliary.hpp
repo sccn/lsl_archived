@@ -7,6 +7,10 @@
 #if !defined(FUSION_ALGORITHM_AUXILIARY_02192011_0907)
 #define FUSION_ALGORITHM_AUXILIARY_02192011_0907
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/auxiliary/copy.hpp>
+#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
+#include <lslboost/fusion/algorithm/auxiliary/move.hpp>
+#endif
 
 #endif

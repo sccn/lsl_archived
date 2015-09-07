@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_VALUE_AT_IMPL_31122005_1621)
 #define BOOST_FUSION_VALUE_AT_IMPL_31122005_1621
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/at.hpp>
 
 namespace lslboost { namespace fusion 

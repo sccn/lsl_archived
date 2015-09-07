@@ -7,6 +7,7 @@
 #if !defined(BOOST_FUSION_SIZE_IMPL_09242011_1744)
 #define BOOST_FUSION_SIZE_IMPL_09242011_1744
 
+#include <lslboost/fusion/support/config.hpp>
 #include <tuple>
 #include <lslboost/mpl/int.hpp>
 #include <lslboost/type_traits/remove_const.hpp>

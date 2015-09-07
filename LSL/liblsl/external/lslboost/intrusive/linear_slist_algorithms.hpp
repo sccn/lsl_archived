@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //
 // (C) Copyright Olaf Krzikalla 2004-2006.
-// (C) Copyright Ion Gaztanaga  2006-2013
+// (C) Copyright Ion Gaztanaga  2006-2014
 //
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
@@ -17,9 +17,13 @@
 #include <lslboost/intrusive/detail/config_begin.hpp>
 #include <lslboost/intrusive/intrusive_fwd.hpp>
 #include <lslboost/intrusive/detail/common_slist_algorithms.hpp>
-#include <lslboost/intrusive/detail/utilities.hpp>
+#include <lslboost/intrusive/detail/algo_type.hpp>
 #include <cstddef>
-#include <utility>
+#include <lslboost/intrusive/detail/minimal_pair_header.hpp>   //std::pair
+
+#if defined(BOOST_HAS_PRAGMA_ONCE)
+#  pragma once
+#endif
 
 namespace lslboost {
 namespace intrusive {

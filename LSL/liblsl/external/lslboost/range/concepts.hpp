@@ -23,6 +23,7 @@
 #include <lslboost/range/iterator.hpp>
 #include <lslboost/range/value_type.hpp>
 #include <lslboost/range/detail/misc_concept.hpp>
+#include <lslboost/type_traits/remove_reference.hpp>
 
 /*!
  * \file
@@ -63,6 +64,7 @@ namespace lslboost {
 #ifndef BOOST_RANGE_ENABLE_CONCEPT_ASSERT
 
 // List broken compiler versions here:
+#ifndef __clang__
     #ifdef __GNUC__
         // GNUC 4.2 has strange issues correctly detecting compliance with the Concepts
         // hence the least disruptive approach is to turn-off the concept checking for
@@ -71,6 +73,14 @@ namespace lslboost {
             #define BOOST_RANGE_ENABLE_CONCEPT_ASSERT 0
         #endif
     #endif
+
+    #ifdef __GCCXML__
+        // GCC XML, unsurprisingly, has the same issues
+        #if __GCCXML_GNUC__ == 4 && __GCCXML_GNUC_MINOR__ == 2
+            #define BOOST_RANGE_ENABLE_CONCEPT_ASSERT 0
+        #endif
+    #endif
+#endif
 
     #ifdef __BORLANDC__
         #define BOOST_RANGE_ENABLE_CONCEPT_ASSERT 0
@@ -253,41 +263,51 @@ namespace lslboost {
     struct SinglePassRangeConcept
     {
 #if BOOST_RANGE_ENABLE_CONCEPT_ASSERT
-         typedef BOOST_DEDUCED_TYPENAME range_iterator<T const>::type  const_iterator;
-         typedef BOOST_DEDUCED_TYPENAME range_iterator<T>::type        iterator;
+        // A few compilers don't like the rvalue reference T types so just
+        // remove it.
+        typedef BOOST_DEDUCED_TYPENAME remove_reference<T>::type Rng;
 
-         BOOST_RANGE_CONCEPT_ASSERT((range_detail::SinglePassIteratorConcept<iterator>));
-         BOOST_RANGE_CONCEPT_ASSERT((range_detail::SinglePassIteratorConcept<const_iterator>));
+        typedef BOOST_DEDUCED_TYPENAME range_iterator<
+            Rng const
+        >::type const_iterator;
 
-         BOOST_CONCEPT_USAGE(SinglePassRangeConcept)
-         {
+        typedef BOOST_DEDUCED_TYPENAME range_iterator<Rng>::type iterator;
+
+        BOOST_RANGE_CONCEPT_ASSERT((
+                range_detail::SinglePassIteratorConcept<iterator>));
+
+        BOOST_RANGE_CONCEPT_ASSERT((
+                range_detail::SinglePassIteratorConcept<const_iterator>));
+
+        BOOST_CONCEPT_USAGE(SinglePassRangeConcept)
+        {
             // This has been modified from assigning to this->i
             // (where i was a member variable) to improve
             // compatibility with Boost.Lambda
             iterator i1 = lslboost::begin(*m_range);
             iterator i2 = lslboost::end(*m_range);
 
-            ignore_unused_variable_warning(i1);
-            ignore_unused_variable_warning(i2);
+            lslboost::ignore_unused_variable_warning(i1);
+            lslboost::ignore_unused_variable_warning(i2);
 
             const_constraints(*m_range);
         }
 
     private:
-        void const_constraints(const T& const_range)
+        void const_constraints(const Rng& const_range)
         {
             const_iterator ci1 = lslboost::begin(const_range);
             const_iterator ci2 = lslboost::end(const_range);
 
-            ignore_unused_variable_warning(ci1);
-            ignore_unused_variable_warning(ci2);
+            lslboost::ignore_unused_variable_warning(ci1);
+            lslboost::ignore_unused_variable_warning(ci2);
         }
 
        // Rationale:
        // The type of m_range is T* rather than T because it allows
        // T to be an abstract class. The other obvious alternative of
        // T& produces a warning on some compilers.
-       T* m_range;
+       Rng* m_range;
 #endif
     };
 
@@ -301,11 +321,11 @@ namespace lslboost {
 #endif
     };
 
-    template<class Range>
+    template<class T>
     struct WriteableRangeConcept
     {
 #if BOOST_RANGE_ENABLE_CONCEPT_ASSERT
-        typedef BOOST_DEDUCED_TYPENAME range_iterator<Range>::type iterator;
+        typedef BOOST_DEDUCED_TYPENAME range_iterator<T>::type iterator;
 
         BOOST_CONCEPT_USAGE(WriteableRangeConcept)
         {
@@ -313,7 +333,7 @@ namespace lslboost {
         }
     private:
         iterator i;
-        BOOST_DEDUCED_TYPENAME range_value<Range>::type v;
+        BOOST_DEDUCED_TYPENAME range_value<T>::type v;
 #endif
     };
 

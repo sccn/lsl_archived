@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_COPY)
 #define FUSION_INCLUDE_COPY
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/auxiliary/copy.hpp>
 
 #endif

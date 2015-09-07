@@ -2,7 +2,7 @@
 // spawn.hpp
 // ~~~~~~~~~
 //
-// Copyright (c) 2003-2013 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2015 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <lslboost/asio/detail/config.hpp>
-#include <lslboost/coroutine/coroutine.hpp>
+#include <lslboost/coroutine/all.hpp>
 #include <lslboost/asio/detail/weak_ptr.hpp>
 #include <lslboost/asio/detail/wrapped_handler.hpp>
 #include <lslboost/asio/io_service.hpp>
@@ -58,7 +58,7 @@ public:
    */
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined callee_type;
-#elif defined(BOOST_COROUTINES_UNIDRECT) || defined(BOOST_COROUTINES_V2)
+#elif defined(BOOST_COROUTINES_UNIDIRECT) || defined(BOOST_COROUTINES_V2)
   typedef lslboost::coroutines::push_coroutine<void> callee_type;
 #else
   typedef lslboost::coroutines::coroutine<void()> callee_type;
@@ -73,7 +73,7 @@ public:
    */
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined caller_type;
-#elif defined(BOOST_COROUTINES_UNIDRECT) || defined(BOOST_COROUTINES_V2)
+#elif defined(BOOST_COROUTINES_UNIDIRECT) || defined(BOOST_COROUTINES_V2)
   typedef lslboost::coroutines::pull_coroutine<void> caller_type;
 #else
   typedef lslboost::coroutines::coroutine<void()>::caller_type caller_type;

@@ -8,6 +8,7 @@
 #if !defined(FUSION_PREV_IMPL_13122005_2110)
 #define FUSION_PREV_IMPL_13122005_2110
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/prior.hpp>
 
 namespace lslboost { namespace fusion 
@@ -38,6 +39,7 @@ namespace lslboost { namespace fusion
                 typedef typename Iterator::transform_type transform_type;
                 typedef transform_view_iterator<prior_type, transform_type> type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Iterator const& i)
                 {
@@ -60,6 +62,7 @@ namespace lslboost { namespace fusion
                 typedef typename Iterator::transform_type transform_type;
                 typedef transform_view_iterator2<prior1_type, prior2_type, transform_type> type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Iterator const& i)
                 {

@@ -10,6 +10,7 @@
 #ifndef BOOST_FUSION_ADAPTED_STRUCT_HPP
 #define BOOST_FUSION_ADAPTED_STRUCT_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/adapted/struct/adapt_assoc_struct_named.hpp>
 #include <lslboost/fusion/adapted/struct/adapt_assoc_struct.hpp>
 #include <lslboost/fusion/adapted/struct/adapt_struct_named.hpp>

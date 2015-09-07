@@ -1,5 +1,5 @@
 /*
-Copyright Redshift Software, Inc. 2008-2013
+Copyright Rene Rivera 2008-2015
 Distributed under the Boost Software License, Version 1.0.
 (See accompanying file LICENSE_1_0.txt or copy at
 http://www.lslboost.org/LICENSE_1_0.txt)
@@ -59,7 +59,7 @@ of BSD. If the above variants is detected the corresponding macro is also set.]
 #define BOOST_OS_BSD BOOST_VERSION_NUMBER_NOT_AVAILABLE
 #endif
 
-#if !BOOST_PREDEF_DETAIL_OS_DETECTED && ( \
+#if !defined(BOOST_PREDEF_DETAIL_OS_DETECTED) && ( \
     defined(BSD) || \
     defined(_SYSTYPE_BSD) \
     )
@@ -89,7 +89,15 @@ of BSD. If the above variants is detected the corresponding macro is also set.]
 
 #define BOOST_OS_BSD_NAME "BSD"
 
-#include <lslboost/predef/detail/test.h>
-BOOST_PREDEF_DECLARE_TEST(BOOST_OS_BSD,BOOST_OS_BSD_NAME)
+#else
+
+#include <lslboost/predef/os/bsd/bsdi.h>
+#include <lslboost/predef/os/bsd/dragonfly.h>
+#include <lslboost/predef/os/bsd/free.h>
+#include <lslboost/predef/os/bsd/open.h>
+#include <lslboost/predef/os/bsd/net.h>
 
 #endif
+
+#include <lslboost/predef/detail/test.h>
+BOOST_PREDEF_DECLARE_TEST(BOOST_OS_BSD,BOOST_OS_BSD_NAME)

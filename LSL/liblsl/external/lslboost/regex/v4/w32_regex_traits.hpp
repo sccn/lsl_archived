@@ -399,7 +399,6 @@ typename w32_regex_traits_implementation<charT>::string_type
          return pos->second;
    }
 #if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)\
-               && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)\
                && !BOOST_WORKAROUND(__BORLANDC__, <= 0x0551)
    std::string name(p1, p2);
 #else
@@ -410,7 +409,6 @@ typename w32_regex_traits_implementation<charT>::string_type
 #endif
    name = lookup_default_collate_name(name);
 #if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)\
-               && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)\
                && !BOOST_WORKAROUND(__BORLANDC__, <= 0x0551)
    if(name.size())
       return string_type(name.begin(), name.end());
@@ -552,7 +550,7 @@ typename w32_regex_traits_implementation<charT>::char_class_type
 
 
 template <class charT>
-lslboost::shared_ptr<const w32_regex_traits_implementation<charT> > create_w32_regex_traits(::lslboost::re_detail::lcid_type l BOOST_APPEND_EXPLICIT_TEMPLATE_TYPE(charT))
+lslboost::shared_ptr<const w32_regex_traits_implementation<charT> > create_w32_regex_traits(::lslboost::re_detail::lcid_type l)
 {
    // TODO: create a cache for previously constructed objects.
    return lslboost::object_cache< ::lslboost::re_detail::lcid_type, w32_regex_traits_implementation<charT> >::get(l, 5);

@@ -7,6 +7,7 @@
 #if !defined(FUSION_VALUE_OF_05052005_1126)
 #define FUSION_VALUE_OF_05052005_1126
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/iterator_base.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
 

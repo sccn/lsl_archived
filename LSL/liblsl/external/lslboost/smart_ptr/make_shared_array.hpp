@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Glen Joseph Fernandes
+ * Copyright (c) 2012-2014 Glen Joseph Fernandes
  * glenfe at live dot com
  *
  * Distributed under the Boost Software License,
@@ -9,238 +9,149 @@
 #ifndef BOOST_SMART_PTR_MAKE_SHARED_ARRAY_HPP
 #define BOOST_SMART_PTR_MAKE_SHARED_ARRAY_HPP
 
-#include <lslboost/smart_ptr/shared_ptr.hpp>
-#include <lslboost/smart_ptr/detail/array_deleter.hpp>
-#include <lslboost/smart_ptr/detail/array_traits.hpp>
-#include <lslboost/smart_ptr/detail/make_array_helper.hpp>
+#include <lslboost/smart_ptr/detail/array_count_impl.hpp>
 #include <lslboost/smart_ptr/detail/sp_if_array.hpp>
-#if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
-#include <initializer_list>
-#endif
 
 namespace lslboost {
-    template<typename T>
+    template<class T>
     inline typename lslboost::detail::sp_if_array<T>::type
     make_shared(std::size_t size) {
         typedef typename lslboost::detail::array_inner<T>::type T1;
         typedef typename lslboost::detail::array_base<T1>::type T2;
+        typedef lslboost::detail::ms_allocator<T> A1;
+        typedef lslboost::detail::ms_in_allocator_tag D1;
+        std::size_t n1 = size * lslboost::detail::array_total<T1>::size;
         T1* p1 = 0;
         T2* p2 = 0;
-        std::size_t n1 = size * lslboost::detail::array_total<T1>::size;
-        lslboost::detail::make_array_helper<T2[]> a1(n1, &p2);
-        lslboost::detail::array_deleter<T2[]> d1(n1);
-        lslboost::shared_ptr<T> s1(p1, d1, a1);
-        typedef lslboost::detail::array_deleter<T2[]>* D2;
+        D1 d1;
+        A1 a1(size, &p2);
+        shared_ptr<T> s1(p1, d1, a1);
+        A1* a2 = static_cast<A1*>(s1._internal_get_untyped_deleter());
+        a2->set(0);
+        lslboost::detail::ms_init(p2, n1);
+        a2->set(p2);
         p1 = reinterpret_cast<T1*>(p2);
-        D2 d2 = static_cast<D2>(s1._internal_get_untyped_deleter());
-        d2->init(p2);
-        return lslboost::shared_ptr<T>(s1, p1);
+        return shared_ptr<T>(s1, p1);
     }
-#if !defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES) && !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
-    template<typename T, typename... Args>
-    inline typename lslboost::detail::sp_if_array<T>::type
-    make_shared(std::size_t size, Args&&... args) {
-        typedef typename lslboost::detail::array_inner<T>::type T1;
-        typedef typename lslboost::detail::array_base<T1>::type T2;
-        T1* p1 = 0;
-        T2* p2 = 0;
-        std::size_t n1 = size * lslboost::detail::array_total<T1>::size;
-        lslboost::detail::make_array_helper<T2[]> a1(n1, &p2);
-        lslboost::detail::array_deleter<T2[]> d1(n1);
-        lslboost::shared_ptr<T> s1(p1, d1, a1);
-        typedef lslboost::detail::array_deleter<T2[]>* D2;
-        p1 = reinterpret_cast<T1*>(p2);
-        D2 d2 = static_cast<D2>(s1._internal_get_untyped_deleter());
-        d2->init(p2, lslboost::detail::sp_forward<Args>(args)...);
-        return lslboost::shared_ptr<T>(s1, p1);
-    }
-    template<typename T, typename... Args>
+
+    template<class T>
     inline typename lslboost::detail::sp_if_size_array<T>::type
-    make_shared(Args&&... args) {
+    make_shared() {
         typedef typename lslboost::detail::array_inner<T>::type T1;
         typedef typename lslboost::detail::array_base<T1>::type T2;
+        typedef lslboost::detail::ms_allocator<T> A1;
+        typedef lslboost::detail::ms_in_allocator_tag D1;
         enum {
             N = lslboost::detail::array_total<T>::size
         };
         T1* p1 = 0;
         T2* p2 = 0;
-        lslboost::detail::make_array_helper<T2[N]> a1(&p2);
-        lslboost::detail::array_deleter<T2[N]> d1;
-        lslboost::shared_ptr<T> s1(p1, d1, a1);
-        typedef lslboost::detail::array_deleter<T2[N]>* D2;
+        D1 d1;
+        A1 a1(&p2);
+        shared_ptr<T> s1(p1, d1, a1);
+        A1* a2 = static_cast<A1*>(s1._internal_get_untyped_deleter());
+        a2->set(0);
+        lslboost::detail::ms_init(p2, N);
+        a2->set(p2);
         p1 = reinterpret_cast<T1*>(p2);
-        D2 d2 = static_cast<D2>(s1._internal_get_untyped_deleter());
-        d2->init(p2, lslboost::detail::sp_forward<Args>(args)...);
-        return lslboost::shared_ptr<T>(s1, p1);
+        return shared_ptr<T>(s1, p1);
     }
-#endif
-#if !defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX)
-    template<typename T>
-    inline typename lslboost::detail::sp_if_size_array<T>::type
-    make_shared(const T& list) {
-        typedef typename lslboost::detail::array_inner<T>::type T1;
-        typedef typename lslboost::detail::array_base<T1>::type T2;
-        typedef const T2 T3;
-        enum {
-            N = lslboost::detail::array_total<T>::size
-        };
-        T1* p1 = 0;
-        T2* p2 = 0;
-        T3* p3 = 0;
-        lslboost::detail::make_array_helper<T2[N]> a1(&p2);
-        lslboost::detail::array_deleter<T2[N]> d1;
-        lslboost::shared_ptr<T> s1(p1, d1, a1);
-        typedef lslboost::detail::array_deleter<T2[N]>* D2;
-        p3 = reinterpret_cast<T3*>(list);
-        p1 = reinterpret_cast<T1*>(p2);
-        D2 d2 = static_cast<D2>(s1._internal_get_untyped_deleter());
-        d2->init_list(p2, p3);
-        return lslboost::shared_ptr<T>(s1, p1);
-    }
-    template<typename T>
+
+    template<class T>
     inline typename lslboost::detail::sp_if_array<T>::type
     make_shared(std::size_t size,
-        const typename lslboost::detail::array_inner<T>::type& list) {
+        const typename lslboost::detail::array_inner<T>::type& value) {
         typedef typename lslboost::detail::array_inner<T>::type T1;
         typedef typename lslboost::detail::array_base<T1>::type T2;
         typedef const T2 T3;
+        typedef lslboost::detail::ms_allocator<T> A1;
+        typedef lslboost::detail::ms_in_allocator_tag D1;
         enum {
             M = lslboost::detail::array_total<T1>::size
         };
+        std::size_t n1 = M * size;
         T1* p1 = 0;
         T2* p2 = 0;
-        T3* p3 = 0;
-        std::size_t n1 = M * size;
-        lslboost::detail::make_array_helper<T2[]> a1(n1, &p2);
-        lslboost::detail::array_deleter<T2[]> d1(n1);
-        lslboost::shared_ptr<T> s1(p1, d1, a1);
-        typedef lslboost::detail::array_deleter<T2[]>* D2;
-        p3 = reinterpret_cast<T3*>(list);
+        T3* p3 = reinterpret_cast<T3*>(&value);
+        D1 d1;
+        A1 a1(size, &p2);
+        shared_ptr<T> s1(p1, d1, a1);
+        A1* a2 = static_cast<A1*>(s1._internal_get_untyped_deleter());
+        a2->set(0);
+        lslboost::detail::ms_init<T2, M>(p2, n1, p3);
+        a2->set(p2);
         p1 = reinterpret_cast<T1*>(p2);
-        D2 d2 = static_cast<D2>(s1._internal_get_untyped_deleter());
-        d2->template init_list<M>(p2, p3);
-        return lslboost::shared_ptr<T>(s1, p1);
+        return shared_ptr<T>(s1, p1);
     }
-    template<typename T>
+
+    template<class T>
     inline typename lslboost::detail::sp_if_size_array<T>::type
-    make_shared(const typename lslboost::detail::array_inner<T>::type& list) {
+    make_shared(const typename lslboost::detail::array_inner<T>::type& value) {
         typedef typename lslboost::detail::array_inner<T>::type T1;
         typedef typename lslboost::detail::array_base<T1>::type T2;
         typedef const T2 T3;
+        typedef lslboost::detail::ms_allocator<T> A1;
+        typedef lslboost::detail::ms_in_allocator_tag D1;
         enum {
             M = lslboost::detail::array_total<T1>::size,
             N = lslboost::detail::array_total<T>::size
         };
         T1* p1 = 0;
         T2* p2 = 0;
-        T3* p3 = 0;
-        lslboost::detail::make_array_helper<T2[N]> a1(&p2);
-        lslboost::detail::array_deleter<T2[N]> d1;
-        lslboost::shared_ptr<T> s1(p1, d1, a1);
-        typedef lslboost::detail::array_deleter<T2[N]>* D2;
-        p3 = reinterpret_cast<T3*>(list);
+        T3* p3 = reinterpret_cast<T3*>(&value);
+        D1 d1;
+        A1 a1(&p2);
+        shared_ptr<T> s1(p1, d1, a1);
+        A1* a2 = static_cast<A1*>(s1._internal_get_untyped_deleter());
+        a2->set(0);
+        lslboost::detail::ms_init<T2, M>(p2, N, p3);
+        a2->set(p2);
         p1 = reinterpret_cast<T1*>(p2);
-        D2 d2 = static_cast<D2>(s1._internal_get_untyped_deleter());
-        d2->template init_list<M>(p2, p3);
-        return lslboost::shared_ptr<T>(s1, p1);
+        return shared_ptr<T>(s1, p1);
     }
-#if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
-    template<typename T>
-    inline typename lslboost::detail::sp_if_array<T>::type
-    make_shared(std::initializer_list<typename lslboost::detail::array_inner<T>::type> list) {
-        typedef typename lslboost::detail::array_inner<T>::type T1;
-        typedef typename lslboost::detail::array_base<T1>::type T2;
-        typedef const T2 T3;
-        T1* p1 = 0;
-        T2* p2 = 0;
-        T3* p3 = 0;
-        std::size_t n1 = list.size() * lslboost::detail::array_total<T1>::size;
-        lslboost::detail::make_array_helper<T2[]> a1(n1, &p2);
-        lslboost::detail::array_deleter<T2[]> d1(n1);
-        lslboost::shared_ptr<T> s1(p1, d1, a1);
-        typedef lslboost::detail::array_deleter<T2[]>* D2;
-        p3 = reinterpret_cast<T3*>(list.begin());
-        p1 = reinterpret_cast<T1*>(p2);
-        D2 d2 = static_cast<D2>(s1._internal_get_untyped_deleter());
-        d2->init_list(p2, p3);
-        return lslboost::shared_ptr<T>(s1, p1);
-    }
-#endif
-#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
-    template<typename T>
-    inline typename lslboost::detail::sp_if_array<T>::type
-    make_shared(std::size_t size,
-        typename lslboost::detail::array_base<T>::type&& value) {
-        typedef typename lslboost::detail::array_inner<T>::type T1;
-        typedef typename lslboost::detail::array_base<T1>::type T2;
-        T1* p1 = 0;
-        T2* p2 = 0;
-        std::size_t n1 = size * lslboost::detail::array_total<T1>::size;
-        lslboost::detail::make_array_helper<T2[]> a1(n1, &p2);
-        lslboost::detail::array_deleter<T2[]> d1(n1);
-        lslboost::shared_ptr<T> s1(p1, d1, a1);
-        typedef lslboost::detail::array_deleter<T2[]>* D2;
-        p1 = reinterpret_cast<T1*>(p2);
-        D2 d2 = static_cast<D2>(s1._internal_get_untyped_deleter());
-        d2->init(p2, lslboost::detail::sp_forward<T2>(value));
-        return lslboost::shared_ptr<T>(s1, p1);
-    }
-    template<typename T>
-    inline typename lslboost::detail::sp_if_size_array<T>::type
-    make_shared(typename lslboost::detail::array_base<T>::type&& value) {
-        typedef typename lslboost::detail::array_inner<T>::type T1;
-        typedef typename lslboost::detail::array_base<T1>::type T2;
-        enum {
-            N = lslboost::detail::array_total<T>::size
-        };
-        T1* p1 = 0;
-        T2* p2 = 0;
-        lslboost::detail::make_array_helper<T2[N]> a1(&p2);
-        lslboost::detail::array_deleter<T2[N]> d1;
-        lslboost::shared_ptr<T> s1(p1, d1, a1);
-        typedef lslboost::detail::array_deleter<T2[N]>* D2;
-        p1 = reinterpret_cast<T1*>(p2);
-        D2 d2 = static_cast<D2>(s1._internal_get_untyped_deleter());
-        d2->init(p2, lslboost::detail::sp_forward<T2>(value));
-        return lslboost::shared_ptr<T>(s1, p1);
-    }
-#endif
-#endif
-    template<typename T>
+
+    template<class T>
     inline typename lslboost::detail::sp_if_array<T>::type
     make_shared_noinit(std::size_t size) {
         typedef typename lslboost::detail::array_inner<T>::type T1;
         typedef typename lslboost::detail::array_base<T1>::type T2;
+        typedef lslboost::detail::ms_allocator<T> A1;
+        typedef lslboost::detail::ms_in_allocator_tag D1;
+        std::size_t n1 = size * lslboost::detail::array_total<T1>::size;
         T1* p1 = 0;
         T2* p2 = 0;
-        std::size_t n1 = size * lslboost::detail::array_total<T1>::size;
-        lslboost::detail::make_array_helper<T2[]> a1(n1, &p2);
-        lslboost::detail::array_deleter<T2[]> d1(n1);
-        lslboost::shared_ptr<T> s1(p1, d1, a1);
-        typedef lslboost::detail::array_deleter<T2[]>* D2;
+        D1 d1;
+        A1 a1(size, &p2);
+        shared_ptr<T> s1(p1, d1, a1);
+        A1* a2 = static_cast<A1*>(s1._internal_get_untyped_deleter());
+        a2->set(0);
+        lslboost::detail::ms_noinit(p2, n1);
+        a2->set(p2);
         p1 = reinterpret_cast<T1*>(p2);
-        D2 d2 = static_cast<D2>(s1._internal_get_untyped_deleter());
-        d2->noinit(p2);
-        return lslboost::shared_ptr<T>(s1, p1);
+        return shared_ptr<T>(s1, p1);
     }
-    template<typename T>
+
+    template<class T>
     inline typename lslboost::detail::sp_if_size_array<T>::type
     make_shared_noinit() {
         typedef typename lslboost::detail::array_inner<T>::type T1;
         typedef typename lslboost::detail::array_base<T1>::type T2;
+        typedef lslboost::detail::ms_allocator<T> A1;
+        typedef lslboost::detail::ms_in_allocator_tag D1;
         enum {
             N = lslboost::detail::array_total<T>::size
         };
         T1* p1 = 0;
         T2* p2 = 0;
-        lslboost::detail::make_array_helper<T2[N]> a1(&p2);
-        lslboost::detail::array_deleter<T2[N]> d1;
-        lslboost::shared_ptr<T> s1(p1, d1, a1);
-        typedef lslboost::detail::array_deleter<T2[N]>* D2;
+        D1 d1;
+        A1 a1(&p2);
+        shared_ptr<T> s1(p1, d1, a1);
+        A1* a2 = static_cast<A1*>(s1._internal_get_untyped_deleter());
+        a2->set(0);
+        lslboost::detail::ms_noinit(p2, N);
+        a2->set(p2);
         p1 = reinterpret_cast<T1*>(p2);
-        D2 d2 = static_cast<D2>(s1._internal_get_untyped_deleter());
-        d2->noinit(p2);
-        return lslboost::shared_ptr<T>(s1, p1);
+        return shared_ptr<T>(s1, p1);
     }
 }
 

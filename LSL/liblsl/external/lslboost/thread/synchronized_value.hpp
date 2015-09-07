@@ -17,7 +17,7 @@
 #include <lslboost/thread/lock_algorithms.hpp>
 #include <lslboost/thread/lock_factories.hpp>
 #include <lslboost/thread/strict_lock.hpp>
-#include <lslboost/utility/swap.hpp>
+#include <lslboost/core/swap.hpp>
 #include <lslboost/utility/declval.hpp>
 //#include <lslboost/type_traits.hpp>
 //#include <lslboost/thread/detail/is_nothrow_default_constructible.hpp>
@@ -472,8 +472,8 @@ namespace lslboost
      */
     synchronized_value(BOOST_THREAD_RV_REF(synchronized_value) other)
     {
-      strict_lock<mutex_type> lk(other.mtx_);
-      value_= lslboost::move(other.value_);
+      strict_lock<mutex_type> lk(BOOST_THREAD_RV(other).mtx_);
+      value_= lslboost::move(BOOST_THREAD_RV(other).value_);
     }
 
     // mutation

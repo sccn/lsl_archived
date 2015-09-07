@@ -1,33 +1,19 @@
 /*=============================================================================
-    Copyright (c) 2001-2011 Joel de Guzman
+    Copyright (c) 2014 Kohei Takahashi
 
-    Distributed under the Boost Software License, Version 1.0. (See accompanying 
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
 ==============================================================================*/
-#if !defined(FUSION_VALUE_AT_IMPL_05052005_0232)
-#define FUSION_VALUE_AT_IMPL_05052005_0232
+#ifndef FUSION_VALUE_AT_IMPL_16122014_1641
+#define FUSION_VALUE_AT_IMPL_16122014_1641
 
-#include <lslboost/mpl/at.hpp>
+#include <lslboost/config.hpp>
+#include <lslboost/fusion/support/config.hpp>
 
-namespace lslboost { namespace fusion
-{
-    struct vector_tag;
-
-    namespace extension
-    {
-        template <typename Tag>
-        struct value_at_impl;
-
-        template <>
-        struct value_at_impl<vector_tag>
-        {
-            template <typename Sequence, typename N>
-            struct apply 
-            {
-                typedef typename mpl::at<typename Sequence::types, N>::type type;
-            };
-        };
-    }
-}}
+///////////////////////////////////////////////////////////////////////////////
+// Without variadics, we will use the PP version
+///////////////////////////////////////////////////////////////////////////////
+# include <lslboost/fusion/container/vector/detail/cpp03/value_at_impl.hpp>
 
 #endif
+

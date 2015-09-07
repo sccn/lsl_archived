@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_ITERATOR_RANGE_VALUE_AT_IMPL_HPP_INCLUDED)
 #define BOOST_FUSION_ITERATOR_RANGE_VALUE_AT_IMPL_HPP_INCLUDED
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/advance.hpp>
 #include <lslboost/fusion/iterator/value_of.hpp>
 

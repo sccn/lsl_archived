@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_CONS)
 #define FUSION_INCLUDE_CONS
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/list/cons.hpp>
 
 #endif

@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_NONE_07062005_1128)
 #define BOOST_FUSION_NONE_07062005_1128
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/query/any.hpp>
 
 namespace lslboost { namespace fusion
@@ -22,6 +23,7 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence, typename F>
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
     inline bool
     none(Sequence const& seq, F f)
     {

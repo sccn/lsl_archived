@@ -9,6 +9,7 @@
 #if !defined(BOOST_FUSION_FUNCTIONAL_GENERATION_HPP_INCLUDED)
 #define BOOST_FUSION_FUNCTIONAL_GENERATION_HPP_INCLUDED
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/functional/generation/make_fused.hpp>
 #include <lslboost/fusion/functional/generation/make_fused_procedure.hpp>
 #include <lslboost/fusion/functional/generation/make_fused_function_object.hpp>

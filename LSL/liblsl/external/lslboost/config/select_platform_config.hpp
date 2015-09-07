@@ -41,6 +41,10 @@
 // win32:
 #  define BOOST_PLATFORM_CONFIG "lslboost/config/platform/win32.hpp"
 
+#elif defined(__HAIKU__)
+// Haiku
+#  define BOOST_PLATFORM_CONFIG "lslboost/config/platform/haiku.hpp"
+
 #elif defined(__BEOS__)
 // BeOS
 #  define BOOST_PLATFORM_CONFIG "lslboost/config/platform/beos.hpp"
@@ -101,5 +105,29 @@
 
 #endif
 
+#if 0
+//
+// This section allows dependency scanners to find all the files we *might* include:
+//
+#  include "lslboost/config/platform/linux.hpp"
+#  include "lslboost/config/platform/bsd.hpp"
+#  include "lslboost/config/platform/solaris.hpp"
+#  include "lslboost/config/platform/irix.hpp"
+#  include "lslboost/config/platform/hpux.hpp"
+#  include "lslboost/config/platform/cygwin.hpp"
+#  include "lslboost/config/platform/win32.hpp"
+#  include "lslboost/config/platform/beos.hpp"
+#  include "lslboost/config/platform/macos.hpp"
+#  include "lslboost/config/platform/aix.hpp"
+#  include "lslboost/config/platform/amigaos.hpp"
+#  include "lslboost/config/platform/qnxnto.hpp"
+#  include "lslboost/config/platform/vxworks.hpp"
+#  include "lslboost/config/platform/symbian.hpp" 
+#  include "lslboost/config/platform/cray.hpp" 
+#  include "lslboost/config/platform/vms.hpp" 
+#  include <lslboost/config/posix_features.hpp>
 
+
+
+#endif
 

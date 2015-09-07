@@ -20,7 +20,11 @@
 #include <lslboost/type_traits/remove_const.hpp>
 
 #include <lslboost/array.hpp>
-#include <lslboost/tr1/tr1/unordered_map>
+#ifdef BOOST_NO_CXX11_HDR_UNORDERED_MAP
+#include <lslboost/unordered_map.hpp>
+#else
+#include <unordered_map>
+#endif
 
 #include <lslboost/algorithm/searching/detail/debugging.hpp>
 
@@ -35,7 +39,11 @@ namespace lslboost { namespace algorithm { namespace detail {
     template<typename key_type, typename value_type>
     class skip_table<key_type, value_type, false> {
     private:
-        typedef std::tr1::unordered_map<key_type, value_type> skip_map;
+#ifdef BOOST_NO_CXX11_HDR_UNORDERED_MAP
+        typedef lslboost::unordered_map<key_type, value_type> skip_map;
+#else
+        typedef std::unordered_map<key_type, value_type> skip_map;
+#endif
         const value_type k_default_value;
         skip_map skip_;
         

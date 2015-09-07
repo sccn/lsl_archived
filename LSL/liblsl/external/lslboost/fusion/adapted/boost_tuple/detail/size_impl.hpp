@@ -7,6 +7,7 @@
 #if !defined(BOOST_FUSION_SIZE_IMPL_09272006_0724)
 #define BOOST_FUSION_SIZE_IMPL_09272006_0724
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/tuple/tuple.hpp>
 #include <lslboost/mpl/int.hpp>
 

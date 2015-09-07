@@ -8,6 +8,7 @@
 #if !defined(FUSION_DETAIL_IS_MPL_SEQUENCE_29122006_1105)
 #define FUSION_DETAIL_IS_MPL_SEQUENCE_29122006_1105
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/sequence_base.hpp>
 #include <lslboost/mpl/is_sequence.hpp>
 #include <lslboost/mpl/and.hpp>

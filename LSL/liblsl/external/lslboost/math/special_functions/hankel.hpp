@@ -7,6 +7,7 @@
 #ifndef BOOST_MATH_HANKEL_HPP
 #define BOOST_MATH_HANKEL_HPP
 
+#include <lslboost/math/special_functions/math_fwd.hpp>
 #include <lslboost/math/special_functions/bessel.hpp>
 
 namespace lslboost{ namespace math{

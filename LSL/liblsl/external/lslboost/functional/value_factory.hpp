@@ -15,7 +15,6 @@
 
 #     include <new>
 #     include <lslboost/pointee.hpp>
-#     include <lslboost/none_t.hpp>
 #     include <lslboost/get_pointer.hpp>
 #     include <lslboost/non_type.hpp>
 #     include <lslboost/type_traits/remove_cv.hpp>

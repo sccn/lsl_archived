@@ -32,5 +32,6 @@
 # include <lslboost/preprocessor/stringize.hpp>
 # include <lslboost/preprocessor/tuple.hpp>
 # include <lslboost/preprocessor/variadic.hpp>
+# include <lslboost/preprocessor/wstringize.hpp>
 #
 # endif

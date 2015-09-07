@@ -7,6 +7,7 @@
 #if !defined(FUSION_DEREF_IMPL_07162005_0137)
 #define FUSION_DEREF_IMPL_07162005_0137
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/detail/adapt_deref_traits.hpp>
 
 namespace lslboost { namespace fusion

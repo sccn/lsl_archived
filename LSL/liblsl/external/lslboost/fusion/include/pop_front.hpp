@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_POP_FRONT)
 #define FUSION_INCLUDE_POP_FRONT
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/transformation/pop_front.hpp>
 
 #endif

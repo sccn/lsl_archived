@@ -34,12 +34,10 @@ set (Boost_FILES  # Platform-independent sources
   src/serialization/src/extended_type_info_typeid.cpp
   src/serialization/src/polymorphic_iarchive.cpp
   src/serialization/src/polymorphic_oarchive.cpp
-  src/serialization/src/shared_ptr_helper.cpp
   src/serialization/src/stl_port.cpp
   src/serialization/src/utf8_codecvt_facet.cpp
   src/serialization/src/void_cast.cpp
   src/system/src/error_code.cpp
-  src/system/src/local_free_on_destruction.hpp
   src/thread/src/tss_null.cpp
 )
 if (UNIX)

@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_CONTAINER_MAP_DETAIL_DEREF_IMPL_HPP
 #define BOOST_FUSION_CONTAINER_MAP_DETAIL_DEREF_IMPL_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/at.hpp>
 #include <lslboost/type_traits/is_const.hpp>
 
@@ -33,6 +34,7 @@ namespace lslboost { namespace fusion { namespace extension
                 >::type
             type;
 
+            BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             static type
             call(It const& it)
             {

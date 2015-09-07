@@ -14,7 +14,9 @@
 #
 # include <lslboost/preprocessor/punctuation/comma.hpp>
 # include <lslboost/preprocessor/punctuation/comma_if.hpp>
+# include <lslboost/preprocessor/punctuation/is_begin_parens.hpp>
 # include <lslboost/preprocessor/punctuation/paren.hpp>
 # include <lslboost/preprocessor/punctuation/paren_if.hpp>
+# include <lslboost/preprocessor/punctuation/remove_parens.hpp>
 #
 # endif

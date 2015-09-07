@@ -5,8 +5,9 @@
     file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
 ==============================================================================*/
 #if !defined(FUSION_SEQUENCE_10022005_0559)
-#define FUSION_ITERATOR_10022005_0559
+#define FUSION_SEQUENCE_10022005_0559
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/sequence_facade.hpp>
 #include <lslboost/fusion/sequence/comparison.hpp>
 #include <lslboost/fusion/sequence/intrinsic.hpp>

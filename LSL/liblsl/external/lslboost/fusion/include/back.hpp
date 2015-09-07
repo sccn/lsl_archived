@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_BACK)
 #define FUSION_INCLUDE_BACK
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/back.hpp>
 
 #endif

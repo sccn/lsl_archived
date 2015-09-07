@@ -7,6 +7,7 @@
 #if !defined(FUSION_COPY_02162011_2308)
 #define FUSION_COPY_02162011_2308
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/begin.hpp>
 #include <lslboost/fusion/sequence/intrinsic/end.hpp>
 #include <lslboost/fusion/sequence/intrinsic/size.hpp>
@@ -15,7 +16,7 @@
 #include <lslboost/config.hpp>
 #include <lslboost/static_assert.hpp>
 #include <lslboost/utility/enable_if.hpp>
-#include <lslboost/type_traits/ice.hpp>
+#include <lslboost/mpl/and.hpp>
 
 #if defined (BOOST_MSVC)
 #  pragma warning(push)
@@ -33,12 +34,14 @@ namespace lslboost { namespace fusion
             typedef typename result_of::end<Seq2>::type end2_type;
 
             template <typename I1, typename I2>
+            BOOST_CXX14_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             static void
             call(I1 const&, I2 const&, mpl::true_)
             {
             }
 
             template <typename I1, typename I2>
+            BOOST_CXX14_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             static void
             call(I1 const& src, I2 const& dest, mpl::false_)
             {
@@ -47,6 +50,7 @@ namespace lslboost { namespace fusion
             }
 
             template <typename I1, typename I2>
+            BOOST_CXX14_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             static void
             call(I1 const& src, I2 const& dest)
             {
@@ -56,16 +60,19 @@ namespace lslboost { namespace fusion
         };
     }
 
+    namespace result_of
+    {
+        template <typename Seq1, typename Seq2>
+        struct copy
+            : enable_if<mpl::and_<
+                  traits::is_sequence<Seq1>,
+                  traits::is_sequence<Seq2>
+              > > {};
+    }
+
     template <typename Seq1, typename Seq2>
-    inline
-    typename
-        enable_if_c<
-            type_traits::ice_and<
-                traits::is_sequence<Seq1>::value
-              , traits::is_sequence<Seq2>::value
-            >::value,
-            void
-        >::type
+    BOOST_CXX14_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+    inline typename result_of::copy<Seq1 const, Seq2>::type
     copy(Seq1 const& src, Seq2& dest)
     {
         BOOST_STATIC_ASSERT(

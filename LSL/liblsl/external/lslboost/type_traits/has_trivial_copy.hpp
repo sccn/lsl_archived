@@ -17,6 +17,10 @@
 #include <lslboost/type_traits/detail/ice_or.hpp>
 #include <lslboost/type_traits/detail/ice_not.hpp>
 
+#ifdef __clang__
+#include <lslboost/type_traits/is_copy_constructible.hpp>
+#endif
+
 // should be the last #include
 #include <lslboost/type_traits/detail/bool_trait_def.hpp>
 
@@ -28,7 +32,11 @@ template <typename T>
 struct has_trivial_copy_impl
 {
 #ifdef BOOST_HAS_TRIVIAL_COPY
+#  ifdef __clang__
+   BOOST_STATIC_CONSTANT(bool, value = BOOST_HAS_TRIVIAL_COPY(T) && lslboost::is_copy_constructible<T>::value);
+#  else
    BOOST_STATIC_CONSTANT(bool, value = BOOST_HAS_TRIVIAL_COPY(T));
+#  endif
 #else
    BOOST_STATIC_CONSTANT(bool, value =
       (::lslboost::type_traits::ice_and<
@@ -37,6 +45,16 @@ struct has_trivial_copy_impl
       >::value));
 #endif
 };
+
+#ifdef __clang__
+
+template <typename T, std::size_t N>
+struct has_trivial_copy_impl<T[N]>
+{
+   static const bool value = has_trivial_copy_impl<T>::value;
+};
+
+#endif
 
 } // namespace detail
 

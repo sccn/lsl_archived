@@ -63,7 +63,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cbw32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)32-debug.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\bin"
@@ -139,7 +138,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cbw32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)64-debug.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\bin"

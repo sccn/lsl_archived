@@ -14,7 +14,7 @@
 #include <lslboost/range/value_type.hpp>
 #include <lslboost/range/iterator_range_core.hpp>
 #include <lslboost/range/any_range.hpp>
-#include <lslboost/cast.hpp>
+#include <lslboost/range/concepts.hpp>
 
 namespace lslboost
 {
@@ -56,6 +56,9 @@ namespace lslboost
                       , Buffer
                     >)
         {
+            BOOST_RANGE_CONCEPT_ASSERT((
+                SinglePassRangeConcept<SinglePassRange>));
+
             typedef typename any_range_type_generator<
                 SinglePassRange
               , Value
@@ -92,6 +95,9 @@ namespace lslboost
                           , Buffer
                     >)
         {
+            BOOST_RANGE_CONCEPT_ASSERT((
+                SinglePassRangeConcept<const SinglePassRange>));
+
             typedef typename any_range_type_generator<
                 const SinglePassRange
               , Value
@@ -129,6 +135,9 @@ namespace lslboost
                     > = type_erased<>()
                 )
         {
+            BOOST_RANGE_CONCEPT_ASSERT((
+                SinglePassRangeConcept<SinglePassRange>));
+
             typedef typename any_range_type_generator<
                 SinglePassRange
               , Value
@@ -167,6 +176,9 @@ namespace lslboost
                     > = type_erased<>()
                 )
         {
+            BOOST_RANGE_CONCEPT_ASSERT((
+                SinglePassRangeConcept<const SinglePassRange>));
+
             typedef typename any_range_type_generator<
                 const SinglePassRange
               , Value

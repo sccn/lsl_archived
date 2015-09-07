@@ -7,6 +7,7 @@
 #if !defined(FUSION_AT_C_08252008_0308)
 #define FUSION_AT_C_08252008_0308
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/at.hpp>
 
 #endif

@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_TUPLE_TIE)
 #define FUSION_INCLUDE_TUPLE_TIE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/tuple/tuple_tie.hpp>
 
 #endif

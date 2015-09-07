@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_VIEW_JOINT_VIEW_DETAIL_KEY_OF_IMPL_HPP
 #define BOOST_FUSION_VIEW_JOINT_VIEW_DETAIL_KEY_OF_IMPL_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/key_of.hpp>
 
 namespace lslboost { namespace fusion { namespace extension

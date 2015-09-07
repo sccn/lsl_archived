@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_PAIR)
 #define FUSION_INCLUDE_PAIR
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/pair.hpp>
 
 #endif

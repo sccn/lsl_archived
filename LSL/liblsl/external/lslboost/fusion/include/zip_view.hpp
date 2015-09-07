@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_ZIP_VIEW)
 #define FUSION_INCLUDE_ZIP_VIEW
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/zip_view.hpp>
 
 #endif

@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_INCLUDE_DEREF_DATA_HPP
 #define BOOST_FUSION_INCLUDE_DEREF_DATA_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/deref_data.hpp>
 
 #endif

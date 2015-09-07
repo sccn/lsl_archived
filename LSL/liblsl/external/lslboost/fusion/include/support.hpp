@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_SUPPORT)
 #define FUSION_INCLUDE_SUPPORT
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support.hpp>
 
 #endif

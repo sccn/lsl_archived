@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_IS_SEQUENCE_IMPL_27122005_1648)
 #define BOOST_FUSION_IS_SEQUENCE_IMPL_27122005_1648
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/bool.hpp>
 
 namespace lslboost { namespace fusion {

@@ -19,14 +19,14 @@
 
 #include <lslboost/chrono/config.hpp>
 
-#include <lslboost/interprocess/smart_ptr/unique_ptr.hpp>
+#include <lslboost/move/unique_ptr.hpp>
 #include <ios>
 #include <exception>
 #include <stdlib.h>
 #include <lslboost/throw_exception.hpp>
 
 namespace lslboost {
-    using interprocess::unique_ptr;
+    using movelib::unique_ptr;
 
 namespace chrono {
 namespace chrono_detail {

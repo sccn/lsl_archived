@@ -7,6 +7,7 @@
 #if !defined(FUSION_SIZE_10022005_1617)
 #define FUSION_SIZE_10022005_1617
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/size.hpp>
 #include <lslboost/fusion/sequence/intrinsic/size.hpp>
 

@@ -17,11 +17,11 @@
 
 #include <lslboost/range/iterator_range_core.hpp>
 #include <lslboost/range/value_type.hpp>
+#include <lslboost/range/iterator.hpp>
 #include <lslboost/iterator/counting_iterator.hpp>
 
 namespace lslboost
 {
-
     template<class Value>
     inline iterator_range<counting_iterator<Value> >
     counting_range(Value first, Value last)
@@ -33,29 +33,39 @@ namespace lslboost
     }
 
     template<class Range>
-    inline iterator_range<counting_iterator<BOOST_DEDUCED_TYPENAME range_value<const Range>::type> >
+    inline iterator_range<
+        counting_iterator<
+            BOOST_DEDUCED_TYPENAME range_iterator<const Range>::type
+        >
+    >
     counting_range(const Range& rng)
     {
-        typedef counting_iterator<BOOST_DEDUCED_TYPENAME range_value<const Range>::type> counting_iterator_t;
+        typedef counting_iterator<
+            BOOST_DEDUCED_TYPENAME range_iterator<const Range>::type
+        > counting_iterator_t;
+
         typedef iterator_range<counting_iterator_t> result_t;
-        return lslboost::empty(rng)
-            ? result_t()
-            : result_t(
-                counting_iterator_t(*lslboost::begin(rng)),
-                counting_iterator_t(*lslboost::prior(lslboost::end(rng))));
+
+        return result_t(counting_iterator_t(lslboost::begin(rng)),
+                        counting_iterator_t(lslboost::end(rng)));
     }
 
     template<class Range>
-    inline iterator_range<counting_iterator<BOOST_DEDUCED_TYPENAME range_value<Range>::type> >
+    inline iterator_range<
+        counting_iterator<
+            BOOST_DEDUCED_TYPENAME range_iterator<Range>::type
+        >
+    >
     counting_range(Range& rng)
     {
-        typedef counting_iterator<BOOST_DEDUCED_TYPENAME range_value<Range>::type> counting_iterator_t;
+        typedef counting_iterator<
+            BOOST_DEDUCED_TYPENAME range_iterator<Range>::type
+        > counting_iterator_t;
+
         typedef iterator_range<counting_iterator_t> result_t;
-        return lslboost::empty(rng)
-            ? result_t()
-            : result_t(
-                counting_iterator_t(*lslboost::begin(rng)),
-                counting_iterator_t(*lslboost::prior(lslboost::end(rng))));
+
+        return result_t(counting_iterator_t(lslboost::begin(rng)),
+                        counting_iterator_t(lslboost::end(rng)));
     }
 } // namespace lslboost
 

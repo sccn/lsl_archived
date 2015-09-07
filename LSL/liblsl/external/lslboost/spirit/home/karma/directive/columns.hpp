@@ -25,6 +25,7 @@
 #include <lslboost/spirit/home/support/info.hpp>
 #include <lslboost/fusion/include/at.hpp>
 #include <lslboost/fusion/include/vector.hpp>
+#include <lslboost/integer_traits.hpp>
 
 namespace lslboost { namespace spirit
 {

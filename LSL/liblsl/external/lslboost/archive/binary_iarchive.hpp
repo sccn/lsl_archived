@@ -2,7 +2,7 @@
 #define BOOST_ARCHIVE_BINARY_IARCHIVE_HPP
 
 // MS compatible compilers support #pragma once
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#if defined(_MSC_VER)
 # pragma once
 #endif
 
@@ -25,57 +25,18 @@
 #  pragma warning(disable : 4511 4512)
 #endif
 
-namespace lslboost { 
-namespace archive {
-
-// do not derive from the classes below.  If you want to extend this functionality
-// via inhertance, derived from text_iarchive_impl instead.  This will
-// preserve correct static polymorphism.
-
-// same as binary_iarchive below - without the shared_ptr_helper
-class naked_binary_iarchive : 
-    public binary_iarchive_impl<
-        lslboost::archive::naked_binary_iarchive, 
-        std::istream::char_type, 
-        std::istream::traits_type
-    >
-{
-public:
-    naked_binary_iarchive(std::istream & is, unsigned int flags = 0) :
-        binary_iarchive_impl<
-            naked_binary_iarchive, std::istream::char_type, std::istream::traits_type
-        >(is, flags)
-    {}
-    naked_binary_iarchive(std::streambuf & bsb, unsigned int flags = 0) :
-        binary_iarchive_impl<
-            naked_binary_iarchive, std::istream::char_type, std::istream::traits_type
-        >(bsb, flags)
-    {}
-};
-
-} // namespace archive
-} // namespace lslboost
-
-// note special treatment of shared_ptr. This type needs a special
-// structure associated with every archive.  We created a "mix-in"
-// class to provide this functionality.  Since shared_ptr holds a
-// special esteem in the lslboost library - we included it here by default.
-#include <lslboost/archive/shared_ptr_helper.hpp>
-
-namespace lslboost { 
+namespace lslboost {
 namespace archive {
 
 // do not derive from this class.  If you want to extend this functionality
 // via inhertance, derived from binary_iarchive_impl instead.  This will
 // preserve correct static polymorphism.
-class binary_iarchive : 
+class BOOST_SYMBOL_VISIBLE binary_iarchive :
     public binary_iarchive_impl<
         lslboost::archive::binary_iarchive, 
         std::istream::char_type, 
         std::istream::traits_type
-    >,
-    public detail::shared_ptr_helper
-{
+    >{
 public:
     binary_iarchive(std::istream & is, unsigned int flags = 0) :
         binary_iarchive_impl<

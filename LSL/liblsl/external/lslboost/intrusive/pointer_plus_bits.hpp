@@ -13,8 +13,14 @@
 #ifndef BOOST_INTRUSIVE_POINTER_PLUS_BITS_HPP
 #define BOOST_INTRUSIVE_POINTER_PLUS_BITS_HPP
 
+#include <lslboost/intrusive/detail/config_begin.hpp>
+#include <lslboost/intrusive/intrusive_fwd.hpp>
 #include <lslboost/intrusive/detail/mpl.hpp> //ls_zeros
 #include <lslboost/intrusive/detail/assert.hpp> //BOOST_INTRUSIVE_INVARIANT_ASSERT
+
+#if defined(BOOST_HAS_PRAGMA_ONCE)
+#  pragma once
+#endif
 
 namespace lslboost {
 namespace intrusive {
@@ -82,5 +88,7 @@ struct pointer_plus_bits<T*, NumBits>
 
 } //namespace intrusive
 } //namespace lslboost
+
+#include <lslboost/intrusive/detail/config_end.hpp>
 
 #endif //BOOST_INTRUSIVE_POINTER_PLUS_BITS_HPP

@@ -36,6 +36,17 @@ struct is_virtual_base_of_impl
 template<typename Base, typename Derived>
 struct is_virtual_base_of_impl<Base, Derived, mpl::true_>
 {
+   union max_align
+   {
+      unsigned u;
+      unsigned long ul;
+      void* v;
+      double d;
+      long double ld;
+#ifndef BOOST_NO_LONG_LONG
+      long long ll;
+#endif
+   };
 #ifdef __BORLANDC__
     struct lslboost_type_traits_internal_struct_X : public virtual Derived, public virtual Base 
     {
@@ -43,6 +54,7 @@ struct is_virtual_base_of_impl<Base, Derived, mpl::true_>
        lslboost_type_traits_internal_struct_X(const lslboost_type_traits_internal_struct_X&);
        lslboost_type_traits_internal_struct_X& operator=(const lslboost_type_traits_internal_struct_X&);
        ~lslboost_type_traits_internal_struct_X()throw();
+       max_align data[4];
     };
     struct lslboost_type_traits_internal_struct_Y : public virtual Derived 
     {
@@ -50,6 +62,7 @@ struct is_virtual_base_of_impl<Base, Derived, mpl::true_>
        lslboost_type_traits_internal_struct_Y(const lslboost_type_traits_internal_struct_Y&);
        lslboost_type_traits_internal_struct_Y& operator=(const lslboost_type_traits_internal_struct_Y&);
        ~lslboost_type_traits_internal_struct_Y()throw();
+       max_align data[4];
     };
 #else
     struct lslboost_type_traits_internal_struct_X : public Derived, virtual Base 
@@ -58,6 +71,7 @@ struct is_virtual_base_of_impl<Base, Derived, mpl::true_>
        lslboost_type_traits_internal_struct_X(const lslboost_type_traits_internal_struct_X&);
        lslboost_type_traits_internal_struct_X& operator=(const lslboost_type_traits_internal_struct_X&);
        ~lslboost_type_traits_internal_struct_X()throw();
+       max_align data[16];
     };
     struct lslboost_type_traits_internal_struct_Y : public Derived 
     {
@@ -65,6 +79,7 @@ struct is_virtual_base_of_impl<Base, Derived, mpl::true_>
        lslboost_type_traits_internal_struct_Y(const lslboost_type_traits_internal_struct_Y&);
        lslboost_type_traits_internal_struct_Y& operator=(const lslboost_type_traits_internal_struct_Y&);
        ~lslboost_type_traits_internal_struct_Y()throw();
+       max_align data[16];
     };
 #endif
     BOOST_STATIC_CONSTANT(bool, value = (sizeof(lslboost_type_traits_internal_struct_X)==sizeof(lslboost_type_traits_internal_struct_Y)));
@@ -91,11 +106,9 @@ BOOST_TT_AUX_BOOL_TRAIT_DEF2(
        , (::lslboost::detail::is_virtual_base_of_impl2<Base,Derived>::value) 
 )
 
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 BOOST_TT_AUX_BOOL_TRAIT_PARTIAL_SPEC2_2(typename Base,typename Derived,is_virtual_base_of,Base&,Derived,false)
 BOOST_TT_AUX_BOOL_TRAIT_PARTIAL_SPEC2_2(typename Base,typename Derived,is_virtual_base_of,Base,Derived&,false)
 BOOST_TT_AUX_BOOL_TRAIT_PARTIAL_SPEC2_2(typename Base,typename Derived,is_virtual_base_of,Base&,Derived&,false)
-#endif
 
 } // namespace lslboost
 

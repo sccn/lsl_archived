@@ -1,5 +1,5 @@
 /*
-Copyright Redshift Software, Inc. 2008-2013
+Copyright Rene Rivera 2008-2015
 Distributed under the Boost Software License, Version 1.0.
 (See accompanying file LICENSE_1_0.txt or copy at
 http://www.lslboost.org/LICENSE_1_0.txt)
@@ -29,18 +29,28 @@ Version number available as major, minor, and patch.
 #define BOOST_COMP_SYSC BOOST_VERSION_NUMBER_NOT_AVAILABLE
 
 #if defined(__SYSC__)
-#   undef BOOST_COMP_SYSC
-#   define BOOST_COMP_SYSC BOOST_PREDEF_MAKE_10_VRRPP(__SYSC_VER__)
+#   define BOOST_COMP_SYSC_DETECTION BOOST_PREDEF_MAKE_10_VRRPP(__SYSC_VER__)
 #endif
 
-#if BOOST_COMP_SYSC
+#ifdef BOOST_COMP_SYSC_DETECTION
+#   if defined(BOOST_PREDEF_DETAIL_COMP_DETECTED)
+#       define BOOST_COMP_SYSC_EMULATED BOOST_COMP_SYSC_DETECTION
+#   else
+#       undef BOOST_COMP_SYSC
+#       define BOOST_COMP_SYSC BOOST_COMP_SYSC_DETECTION
+#   endif
 #   define BOOST_COMP_SYSC_AVAILABLE
+#   include <lslboost/predef/detail/comp_detected.h>
 #endif
 
 #define BOOST_COMP_SYSC_NAME "Dignus Systems/C++"
 
+#endif
+
 #include <lslboost/predef/detail/test.h>
 BOOST_PREDEF_DECLARE_TEST(BOOST_COMP_SYSC,BOOST_COMP_SYSC_NAME)
 
-
+#ifdef BOOST_COMP_SYSC_EMULATED
+#include <lslboost/predef/detail/test.h>
+BOOST_PREDEF_DECLARE_TEST(BOOST_COMP_SYSC_EMULATED,BOOST_COMP_SYSC_NAME)
 #endif

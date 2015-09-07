@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include <lslboost/assert.hpp>
 #include <lslboost/throw_exception.hpp>
-#include <lslboost/detail/no_exceptions_support.hpp>
+#include <lslboost/core/no_exceptions_support.hpp>
 
 #if defined( BOOST_USE_WINDOWS_H )
 # include <windows.h>

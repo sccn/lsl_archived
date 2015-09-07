@@ -15,6 +15,7 @@
 #include <lslboost/spirit/home/qi/auto.hpp>
 #include <lslboost/spirit/home/qi/auxiliary.hpp>
 #include <lslboost/spirit/home/qi/char.hpp>
+#include <lslboost/spirit/home/qi/copy.hpp>
 #include <lslboost/spirit/home/qi/binary.hpp>
 #include <lslboost/spirit/home/qi/directive.hpp>
 #include <lslboost/spirit/home/qi/nonterminal.hpp>

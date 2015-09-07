@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_ADAPTED_30122005_1420)
 #define BOOST_FUSION_ADAPTED_30122005_1420
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/adapted/adt.hpp>
 #include <lslboost/fusion/adapted/array.hpp>
 #include <lslboost/fusion/adapted/lslboost_array.hpp>

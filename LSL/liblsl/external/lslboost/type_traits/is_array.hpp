@@ -16,10 +16,6 @@
 
 #include <lslboost/type_traits/config.hpp>
 
-#ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-#   include <lslboost/type_traits/detail/yes_no_type.hpp>
-#   include <lslboost/type_traits/detail/wrap.hpp>
-#endif
 
 #include <cstddef>
 
@@ -30,7 +26,7 @@ namespace lslboost {
 
 #if defined( __CODEGEARC__ )
 BOOST_TT_AUX_BOOL_TRAIT_DEF1(is_array,T,__is_array(T))
-#elif !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+#else
 BOOST_TT_AUX_BOOL_TRAIT_DEF1(is_array,T,false)
 #if !defined(BOOST_NO_ARRAY_TYPE_SPECIALIZATIONS)
 BOOST_TT_AUX_BOOL_TRAIT_PARTIAL_SPEC1_2(typename T,std::size_t N,is_array,T[N],true)
@@ -45,44 +41,7 @@ BOOST_TT_AUX_BOOL_TRAIT_PARTIAL_SPEC1_1(typename T,is_array,T const volatile[],t
 #endif
 #endif
 
-#else // BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-
-namespace detail {
-
-using ::lslboost::type_traits::yes_type;
-using ::lslboost::type_traits::no_type;
-using ::lslboost::type_traits::wrap;
-
-template< typename T > T(* is_array_tester1(wrap<T>) )(wrap<T>);
-char BOOST_TT_DECL is_array_tester1(...);
-
-template< typename T> no_type is_array_tester2(T(*)(wrap<T>));
-yes_type BOOST_TT_DECL is_array_tester2(...);
-
-template< typename T >
-struct is_array_impl
-{ 
-    BOOST_STATIC_CONSTANT(bool, value = 
-        sizeof(::lslboost::detail::is_array_tester2(
-            ::lslboost::detail::is_array_tester1(
-                ::lslboost::type_traits::wrap<T>()
-                )
-        )) == 1
-    );
-};
-
-#ifndef BOOST_NO_CV_VOID_SPECIALIZATIONS
-BOOST_TT_AUX_BOOL_TRAIT_IMPL_SPEC1(is_array,void,false)
-BOOST_TT_AUX_BOOL_TRAIT_IMPL_SPEC1(is_array,void const,false)
-BOOST_TT_AUX_BOOL_TRAIT_IMPL_SPEC1(is_array,void volatile,false)
-BOOST_TT_AUX_BOOL_TRAIT_IMPL_SPEC1(is_array,void const volatile,false)
 #endif
-
-} // namespace detail
-
-BOOST_TT_AUX_BOOL_TRAIT_DEF1(is_array,T,::lslboost::detail::is_array_impl<T>::value)
-
-#endif // BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 
 } // namespace lslboost
 

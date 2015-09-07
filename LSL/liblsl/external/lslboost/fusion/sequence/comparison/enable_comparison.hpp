@@ -7,6 +7,7 @@
 #if !defined(FUSION_ENABLE_COMPARISON_09232005_1958)
 #define FUSION_ENABLE_COMPARISON_09232005_1958
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/or.hpp>
 #include <lslboost/mpl/and.hpp>
 #include <lslboost/mpl/not.hpp>

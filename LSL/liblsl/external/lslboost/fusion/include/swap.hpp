@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_SWAP)
 #define FUSION_INCLUDE_SWAP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/swap.hpp>
 
 #endif

@@ -7,6 +7,7 @@
 #if !defined(FUSION_ALGORITHM_10022005_0549)
 #define FUSION_ALGORITHM_10022005_0549
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/iteration.hpp>
 #include <lslboost/fusion/algorithm/query.hpp>
 #include <lslboost/fusion/algorithm/transformation.hpp>

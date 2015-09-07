@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_EMPTY_IMPL_31122005_1554)
 #define BOOST_FUSION_EMPTY_IMPL_31122005_1554
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/empty.hpp>
 
 namespace lslboost { namespace fusion

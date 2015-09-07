@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_DEQUE_AT_IMPL_09122006_2017)
 #define BOOST_FUSION_DEQUE_AT_IMPL_09122006_2017
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/deque/detail/keyed_element.hpp>
 
 #include <lslboost/mpl/eval_if.hpp>
@@ -53,6 +54,7 @@ namespace lslboost { namespace fusion
                     >::type
                 type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type call(Sequence& seq)
                 {
                     return seq.get(adjusted_index());

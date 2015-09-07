@@ -8,6 +8,7 @@
 #if !defined(FUSION_CONVERT_20061213_2207)
 #define FUSION_CONVERT_20061213_2207
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/deque/detail/convert_impl.hpp>
 #include <lslboost/fusion/container/deque/deque.hpp>
 
@@ -38,6 +39,7 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence>
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
     inline typename result_of::as_deque<Sequence>::type
     as_deque(Sequence& seq)
     {
@@ -46,6 +48,7 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence>
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
     inline typename result_of::as_deque<Sequence const>::type
     as_deque(Sequence const& seq)
     {

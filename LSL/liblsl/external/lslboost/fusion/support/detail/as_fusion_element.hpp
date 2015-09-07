@@ -8,7 +8,12 @@
 #if !defined(FUSION_AS_FUSION_ELEMENT_05052005_0338)
 #define FUSION_AS_FUSION_ELEMENT_05052005_0338
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/ref.hpp>
+
+#ifndef BOOST_NO_CXX11_HDR_FUNCTIONAL
+#include <functional>
+#endif
 
 namespace lslboost { namespace fusion { namespace detail
 {
@@ -23,6 +28,14 @@ namespace lslboost { namespace fusion { namespace detail
     {
         typedef T& type;
     };
+
+#ifndef BOOST_NO_CXX11_HDR_FUNCTIONAL
+    template <typename T>
+    struct as_fusion_element<std::reference_wrapper<T> >
+    {
+        typedef T& type;
+    };
+#endif
 
     template <typename T, int N>
     struct as_fusion_element<T[N]>

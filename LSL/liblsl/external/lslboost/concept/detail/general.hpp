@@ -4,6 +4,7 @@
 #ifndef BOOST_CONCEPT_DETAIL_GENERAL_DWA2006429_HPP
 # define BOOST_CONCEPT_DETAIL_GENERAL_DWA2006429_HPP
 
+# include <lslboost/config.hpp>
 # include <lslboost/preprocessor/cat.hpp>
 # include <lslboost/concept/detail/backward_compatibility.hpp>
 
@@ -68,7 +69,8 @@ struct requirement_<void(*)(Model)>
 #  define BOOST_CONCEPT_ASSERT_FN( ModelFnPtr )             \
     typedef ::lslboost::concepts::detail::instantiate<          \
     &::lslboost::concepts::requirement_<ModelFnPtr>::failed>    \
-      BOOST_PP_CAT(lslboost_concept_check,__LINE__)
+      BOOST_PP_CAT(lslboost_concept_check,__LINE__)             \
+      BOOST_ATTRIBUTE_UNUSED
 
 }}
 

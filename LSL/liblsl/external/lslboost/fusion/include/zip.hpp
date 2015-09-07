@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_ZIP)
 #define FUSION_INCLUDE_ZIP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/transformation/zip.hpp>
 
 #endif

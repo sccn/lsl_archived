@@ -9,6 +9,7 @@
 #if !defined(FUSION_ANY_05052005_1230)
 #define FUSION_ANY_05052005_1230
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/category_of.hpp>
 #include <lslboost/fusion/algorithm/query/detail/any.hpp>
 
@@ -24,6 +25,7 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence, typename F>
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
     inline bool
     any(Sequence const& seq, F f)
     {

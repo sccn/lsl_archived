@@ -2,7 +2,7 @@
 #define BOOST_ARCHIVE_ITERATORS_WCHAR_FROM_MB_HPP
 
 // MS compatible compilers support #pragma once
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#if defined(_MSC_VER)
 # pragma once
 #endif
 
@@ -21,7 +21,7 @@
 #include <cstddef> // size_t
 #include <cstdlib> // mblen
 
-#include <lslboost/config.hpp> // for BOOST_DEDUCED_TYPENAME
+#include <lslboost/config.hpp>
 #if defined(BOOST_NO_STDC_NAMESPACE)
 namespace std{ 
     using ::mblen; 
@@ -30,7 +30,6 @@ namespace std{
 #endif
 
 #include <lslboost/serialization/throw_exception.hpp>
-#include <lslboost/serialization/pfto.hpp>
 
 #include <lslboost/iterator/iterator_adaptor.hpp>
 #include <lslboost/archive/iterators/dataflow_exception.hpp>
@@ -53,7 +52,7 @@ class wchar_from_mb
     >
 {
     friend class lslboost::iterator_core_access;
-    typedef BOOST_DEDUCED_TYPENAME lslboost::iterator_adaptor<
+    typedef typename lslboost::iterator_adaptor<
         wchar_from_mb<Base>, 
         Base, 
         wchar_t,
@@ -89,8 +88,8 @@ class wchar_from_mb
 public:
     // make composible buy using templated constructor
     template<class T>
-    wchar_from_mb(BOOST_PFTO_WRAPPER(T) start) : 
-        super_t(Base(BOOST_MAKE_PFTO_WRAPPER(static_cast< T >(start)))),
+    wchar_from_mb(T start) : 
+        super_t(Base(static_cast< T >(start))),
         m_full(false)
     {}
     // intel 7.1 doesn't like default copy constructor

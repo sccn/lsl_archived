@@ -10,9 +10,6 @@
 #include <lslboost/assert.hpp>
 #include <lslboost/checked_delete.hpp>
 #include <lslboost/integer_traits.hpp>
-#ifdef BOOST_NO_CXX11_DELETED_FUNCTIONS
-#include <lslboost/noncopyable.hpp>
-#endif
 #include <lslboost/static_assert.hpp>
 #include <lslboost/tuple/tuple.hpp>
 #include <lslboost/type_traits/has_trivial_assign.hpp>
@@ -23,6 +20,10 @@
 #include <lslboost/lockfree/detail/freelist.hpp>
 #include <lslboost/lockfree/detail/parameter.hpp>
 #include <lslboost/lockfree/detail/tagged_ptr.hpp>
+
+#ifdef BOOST_HAS_PRAGMA_ONCE
+#pragma once
+#endif
 
 namespace lslboost    {
 namespace lockfree {
@@ -66,9 +67,6 @@ template <typename T,
 template <typename T, ...Options>
 #endif
 class stack
-#ifdef BOOST_NO_CXX11_DELETED_FUNCTIONS
-    : lslboost::noncopyable
-#endif
 {
 private:
 #ifndef BOOST_DOXYGEN_INVOKED
@@ -112,11 +110,8 @@ private:
 
 #endif
 
-#ifndef BOOST_NO_CXX11_DELETED_FUNCTIONS
-    stack(stack const &) = delete;
-    stack(stack &&)      = delete;
-    const stack& operator=( const stack& ) = delete;
-#endif
+    BOOST_DELETED_FUNCTION(stack(stack const&))
+    BOOST_DELETED_FUNCTION(stack& operator= (stack const&))
 
 public:
     typedef T value_type;

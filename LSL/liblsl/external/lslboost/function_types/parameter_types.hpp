@@ -13,7 +13,6 @@
 #include <lslboost/mpl/if.hpp>
 
 #include <lslboost/mpl/aux_/lambda_support.hpp>
-#include <lslboost/type_traits/detail/template_arity_spec.hpp>
 
 #include <lslboost/mpl/pop_front.hpp>
 
@@ -48,7 +47,6 @@ namespace lslboost
       BOOST_MPL_AUX_LAMBDA_SUPPORT(2,parameter_types,(T,ClassTypeTransform)) 
     };
   }
-  BOOST_TT_AUX_TEMPLATE_ARITY_SPEC(2,function_types::parameter_types)
 }
 
 #endif

@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_ITERATOR)
 #define FUSION_INCLUDE_ITERATOR
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator.hpp>
 
 #endif

@@ -12,7 +12,13 @@
 #define BOOST_LAMBDA_OPERATOR_RETURN_TYPE_TRAITS_HPP
 
 #include "lslboost/lambda/detail/is_instance_of.hpp"
-#include "lslboost/type_traits/same_traits.hpp"
+#include "lslboost/type_traits/is_same.hpp"
+#include "lslboost/type_traits/is_pointer.hpp"
+#include "lslboost/type_traits/is_float.hpp"
+#include "lslboost/type_traits/is_convertible.hpp"
+#include "lslboost/type_traits/remove_pointer.hpp"
+#include "lslboost/type_traits/remove_const.hpp"
+#include "lslboost/type_traits/remove_reference.hpp"
 
 #include "lslboost/indirect_reference.hpp"
 #include "lslboost/detail/container_fwd.hpp"
@@ -536,36 +542,6 @@ struct return_type_2<bitwise_action<Act>, A, B>
 
 namespace detail {
 
-#ifdef BOOST_NO_TEMPLATED_STREAMS
-
-template<class A, class B>
-struct leftshift_type {
-
-  typedef typename detail::IF<
-    lslboost::is_convertible<
-      typename lslboost::remove_reference<A>::type*,
-      std::ostream*
-    >::value,
-    std::ostream&, 
-    typename detail::remove_reference_and_cv<A>::type
-  >::RET type;
-};
-
-template<class A, class B>
-struct rightshift_type {
-
-  typedef typename detail::IF<
-
-    lslboost::is_convertible<
-      typename lslboost::remove_reference<A>::type*,
-      std::istream*
-    >::value, 
-    std::istream&,
-    typename detail::remove_reference_and_cv<A>::type
-  >::RET type;
-};
-
-#else
 
 template <class T> struct get_ostream_type {
   typedef std::basic_ostream<typename T::char_type, 
@@ -602,7 +578,6 @@ public:
 };
 
 
-#endif
 
 } // end detail
 

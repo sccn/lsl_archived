@@ -14,9 +14,20 @@
 # define BOOST_PREPROCESSOR_ARRAY_TO_TUPLE_HPP
 #
 # include <lslboost/preprocessor/array/data.hpp>
+# include <lslboost/preprocessor/array/size.hpp>
+# include <lslboost/preprocessor/control/if.hpp>
 #
 # /* BOOST_PP_ARRAY_TO_TUPLE */
 #
-# define BOOST_PP_ARRAY_TO_TUPLE BOOST_PP_ARRAY_DATA
+#    define BOOST_PP_ARRAY_TO_TUPLE(array) \
+		BOOST_PP_IF \
+			( \
+			BOOST_PP_ARRAY_SIZE(array), \
+			BOOST_PP_ARRAY_DATA, \
+			BOOST_PP_ARRAY_TO_TUPLE_EMPTY \
+			) \
+		(array) \
+/**/
+#    define BOOST_PP_ARRAY_TO_TUPLE_EMPTY(array)
 #
 # endif

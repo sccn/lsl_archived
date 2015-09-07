@@ -8,6 +8,8 @@
 #ifndef BOOST_FUSION_ALGORITHM_ITERATION_REVERSE_ITER_FOLD_HPP
 #define BOOST_FUSION_ALGORITHM_ITERATION_REVERSE_ITER_FOLD_HPP
 
+#include <lslboost/fusion/support/config.hpp>
+#include <lslboost/fusion/support/detail/result_of.hpp>
 #include <lslboost/fusion/algorithm/iteration/reverse_iter_fold_fwd.hpp>
 #include <lslboost/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/begin.hpp>

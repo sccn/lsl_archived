@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_CONTAINER_SET_DETAIL_VALUE_OF_DATA_IMPL_HPP
 #define BOOST_FUSION_CONTAINER_SET_DETAIL_VALUE_OF_DATA_IMPL_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/set/detail/value_of_data_impl.hpp>
 
 namespace lslboost { namespace fusion { namespace extension

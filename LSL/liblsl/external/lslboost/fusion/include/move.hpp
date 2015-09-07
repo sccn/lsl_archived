@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_MOVE)
 #define FUSION_INCLUDE_MOVE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/auxiliary/move.hpp>
 
 #endif

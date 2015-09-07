@@ -7,7 +7,7 @@
  *
  * See http://www.lslboost.org/libs/random for documentation.
  *
- * $Id: random.hpp 71018 2011-04-05 21:27:52Z steven_watanabe $
+ * $Id$
  *
  * Revision history
  *  2000-02-18  portability fixes (thanks to Beman Dawes)
@@ -67,6 +67,7 @@
 #include <lslboost/random/geometric_distribution.hpp>
 #include <lslboost/random/lognormal_distribution.hpp>
 #include <lslboost/random/negative_binomial_distribution.hpp>
+#include <lslboost/random/non_central_chi_squared_distribution.hpp>
 #include <lslboost/random/normal_distribution.hpp>
 #include <lslboost/random/piecewise_constant_distribution.hpp>
 #include <lslboost/random/piecewise_linear_distribution.hpp>

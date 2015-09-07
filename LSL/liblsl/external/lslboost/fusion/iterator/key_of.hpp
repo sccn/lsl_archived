@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_ITERATOR_KEY_OF_HPP
 #define BOOST_FUSION_ITERATOR_KEY_OF_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
 
 namespace lslboost { namespace fusion

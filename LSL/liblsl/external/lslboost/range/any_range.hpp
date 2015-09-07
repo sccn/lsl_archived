@@ -19,7 +19,6 @@
 #include <lslboost/range/reference.hpp>
 #include <lslboost/range/value_type.hpp>
 #include <lslboost/range/iterator_range_core.hpp>
-#include <lslboost/cast.hpp>
 
 namespace lslboost
 {
@@ -75,8 +74,8 @@ namespace lslboost
         template<
             class Value
           , class Traversal
-          , class Reference
-          , class Difference
+          , class Reference = Value&
+          , class Difference = std::ptrdiff_t
           , class Buffer = use_default
         >
         class any_range

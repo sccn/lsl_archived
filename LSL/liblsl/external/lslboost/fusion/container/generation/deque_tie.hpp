@@ -7,6 +7,7 @@
 #if !defined(FUSION_DEQUE_TIE_01272013_1401)
 #define FUSION_DEQUE_TIE_01272013_1401
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/deque/deque.hpp>
 
 #if !defined(BOOST_FUSION_HAS_VARIADIC_DEQUE)
@@ -27,12 +28,13 @@ namespace lslboost { namespace fusion
     {
         template <typename ...T>
         struct deque_tie
-    {
+        {
             typedef deque<T&...> type;
         };
     }
 
     template <typename ...T>
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
     inline deque<T&...>
     deque_tie(T&... arg)
     {

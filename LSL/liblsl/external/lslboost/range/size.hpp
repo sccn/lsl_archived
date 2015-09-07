@@ -11,7 +11,7 @@
 #ifndef BOOST_RANGE_SIZE_HPP
 #define BOOST_RANGE_SIZE_HPP
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 # pragma once
 #endif
 
@@ -19,31 +19,55 @@
 #include <lslboost/range/begin.hpp>
 #include <lslboost/range/end.hpp>
 #include <lslboost/range/size_type.hpp>
+#include <lslboost/range/detail/has_member_size.hpp>
 #include <lslboost/assert.hpp>
+#include <lslboost/cstdint.hpp>
+#include <lslboost/utility.hpp>
 
 namespace lslboost
 {
     namespace range_detail
     {
+
         template<class SinglePassRange>
-        inline BOOST_DEDUCED_TYPENAME range_size<const SinglePassRange>::type
+        inline typename ::lslboost::enable_if<
+            has_member_size<SinglePassRange>,
+            typename range_size<const SinglePassRange>::type
+        >::type
         range_calculate_size(const SinglePassRange& rng)
         {
-            BOOST_ASSERT( (lslboost::end(rng) - lslboost::begin(rng)) >= 0 &&
-                          "reachability invariant broken!" );
-            return lslboost::end(rng) - lslboost::begin(rng);
+            return rng.size();
+        }
+
+        template<class SinglePassRange>
+        inline typename disable_if<
+            has_member_size<SinglePassRange>,
+            typename range_size<const SinglePassRange>::type
+        >::type
+        range_calculate_size(const SinglePassRange& rng)
+        {
+            return std::distance(lslboost::begin(rng), lslboost::end(rng));
         }
     }
 
     template<class SinglePassRange>
-    inline BOOST_DEDUCED_TYPENAME range_size<const SinglePassRange>::type
+    inline typename range_size<const SinglePassRange>::type
     size(const SinglePassRange& rng)
     {
+// Very strange things happen on some compilers that have the range concept
+// asserts disabled. This preprocessor condition is clearly redundant on a
+// working compiler but is vital for at least some compilers such as clang 4.2
+// but only on the Mac!
+#if BOOST_RANGE_ENABLE_CONCEPT_ASSERT == 1
+        BOOST_RANGE_CONCEPT_ASSERT((lslboost::SinglePassRangeConcept<SinglePassRange>));
+#endif
+
 #if !BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564)) && \
     !BOOST_WORKAROUND(__GNUC__, < 3) \
     /**/
         using namespace range_detail;
 #endif
+
         return range_calculate_size(rng);
     }
 

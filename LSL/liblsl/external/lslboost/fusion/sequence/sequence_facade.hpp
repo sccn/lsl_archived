@@ -7,6 +7,7 @@
 #if !defined(FUSION_SEQUENCE_FACADE_09252006_1044)
 #define FUSION_SEQUENCE_FACADE_09252006_1044
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/sequence_base.hpp>
 #include <lslboost/mpl/bool.hpp>
 

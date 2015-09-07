@@ -168,7 +168,7 @@ namespace lslboost
         typedef lslboost::iterator_range<
             BOOST_DEDUCED_TYPENAME range_iterator<SinglePassRange>::type > type;
 
-        static type pack(BOOST_DEDUCED_TYPENAME range_iterator<SinglePassRange>::type found,
+        static type pack(BOOST_DEDUCED_TYPENAME range_iterator<SinglePassRange>::type,
                          SinglePassRange& rng)
         {
             return type(lslboost::begin(rng), lslboost::end(rng));

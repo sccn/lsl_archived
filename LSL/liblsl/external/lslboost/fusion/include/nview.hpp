@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_NVIEW)
 #define FUSION_INCLUDE_NVIEW
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/nview.hpp>
 
 #endif

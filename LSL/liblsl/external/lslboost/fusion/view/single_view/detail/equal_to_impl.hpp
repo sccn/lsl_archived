@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_SINGLE_VIEW_ITERATOR_JUL_07_2011_1348PM)
 #define BOOST_FUSION_SINGLE_VIEW_ITERATOR_JUL_07_2011_1348PM
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/assert.hpp>
 #include <lslboost/mpl/equal_to.hpp>
 #include <lslboost/type_traits/is_same.hpp>

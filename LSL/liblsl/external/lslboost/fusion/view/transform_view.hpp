@@ -7,6 +7,7 @@
 #if !defined(FUSION_SEQUENCE_VIEW_TRANSFORM_VIEW_10022005_0612)
 #define FUSION_SEQUENCE_VIEW_TRANSFORM_VIEW_10022005_0612
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/transform_view/transform_view.hpp>
 #include <lslboost/fusion/view/transform_view/transform_view_iterator.hpp>
 

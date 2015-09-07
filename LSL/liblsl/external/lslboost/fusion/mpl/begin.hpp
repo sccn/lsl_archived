@@ -7,6 +7,7 @@
 #if !defined(FUSION_BEGIN_10022005_1620)
 #define FUSION_BEGIN_10022005_1620
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/begin_end.hpp>
 #include <lslboost/fusion/sequence/intrinsic/begin.hpp>
 #include <lslboost/fusion/adapted/mpl/detail/begin_impl.hpp>

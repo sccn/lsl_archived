@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_TAG_OF)
 #define FUSION_INCLUDE_TAG_OF
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
 
 #endif

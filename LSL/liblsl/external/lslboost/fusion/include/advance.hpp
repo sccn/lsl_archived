@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_ADVANCE)
 #define FUSION_INCLUDE_ADVANCE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/advance.hpp>
 
 #endif

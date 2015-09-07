@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_SIZE)
 #define FUSION_INCLUDE_SIZE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/size.hpp>
 
 #endif

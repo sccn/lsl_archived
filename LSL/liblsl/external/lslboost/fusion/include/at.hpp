@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_AT)
 #define FUSION_INCLUDE_AT
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/at.hpp>
 
 #endif

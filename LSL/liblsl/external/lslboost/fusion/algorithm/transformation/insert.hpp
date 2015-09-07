@@ -7,6 +7,7 @@
 #if !defined(FUSION_INSERT_07222005_0730)
 #define FUSION_INSERT_07222005_0730
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/detail/as_fusion_element.hpp>
 #include <lslboost/fusion/iterator/mpl/convert_iterator.hpp>
 #include <lslboost/fusion/container/vector/vector10.hpp>
@@ -40,8 +41,8 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence, typename Position, typename T>
-    inline 
-    typename
+    BOOST_CXX14_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+    inline typename
         lazy_enable_if<
             traits::is_sequence<Sequence>
           , result_of::insert<Sequence const, Position, T>

@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_CLEAR)
 #define FUSION_INCLUDE_CLEAR
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/transformation/clear.hpp>
 
 #endif

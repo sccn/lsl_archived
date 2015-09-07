@@ -53,6 +53,7 @@
 # include <lslboost/python/pointee.hpp>
 # include <lslboost/python/pure_virtual.hpp>
 # include <lslboost/python/ptr.hpp>
+# include <lslboost/python/raw_function.hpp>
 # include <lslboost/python/reference_existing_object.hpp>
 # include <lslboost/python/register_ptr_to_python.hpp>
 # include <lslboost/python/return_arg.hpp>
@@ -61,7 +62,9 @@
 # include <lslboost/python/return_value_policy.hpp>
 # include <lslboost/python/scope.hpp>
 # include <lslboost/python/self.hpp>
+# include <lslboost/python/slice.hpp>
 # include <lslboost/python/slice_nil.hpp>
+# include <lslboost/python/stl_iterator.hpp>
 # include <lslboost/python/str.hpp>
 # include <lslboost/python/to_python_converter.hpp>
 # include <lslboost/python/to_python_indirect.hpp>

@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_VIEW_REVERSE_VIEW_DETAIL_AT_IMPL_HPP
 #define BOOST_FUSION_VIEW_REVERSE_VIEW_DETAIL_AT_IMPL_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/at.hpp>
 #include <lslboost/mpl/minus.hpp>
 #include <lslboost/mpl/int.hpp>
@@ -29,6 +30,7 @@ namespace lslboost { namespace fusion { namespace extension
                 result_of::at<typename Seq::seq_type, real_n>::type
             type;
 
+            BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             static type
             call(Seq& seq)
             {

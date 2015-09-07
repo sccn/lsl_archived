@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_VALUE_AT_IMPL_20061101_0745)
 #define BOOST_FUSION_VALUE_AT_IMPL_20061101_0745
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/apply.hpp>
 #include <lslboost/fusion/view/transform_view/detail/apply_transform_result.hpp>
 #include <lslboost/fusion/sequence/intrinsic/value_at.hpp>

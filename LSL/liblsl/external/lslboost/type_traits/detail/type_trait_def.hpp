@@ -8,8 +8,8 @@
 // http://www.lslboost.org/LICENSE_1_0.txt)
 
 // $Source$
-// $Date: 2011-04-25 05:26:48 -0700 (Mon, 25 Apr 2011) $
-// $Revision: 71481 $
+// $Date$
+// $Revision$
 
 #include <lslboost/type_traits/detail/template_arity_spec.hpp>
 #include <lslboost/mpl/aux_/lambda_support.hpp>

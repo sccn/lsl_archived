@@ -12,11 +12,11 @@
 //
 //  Copyright (c) 2002 Peter Dimov and Multi Media Ltd.
 //
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE_1_0.txt or copy at
-// http://www.lslboost.org/LICENSE_1_0.txt)
+//  Distributed under the Boost Software License, Version 1.0.
+//  See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.lslboost.org/LICENSE_1_0.txt
 //
-//  http://www.lslboost.org/libs/utility/current_function.html
+//  http://www.lslboost.org/libs/assert/current_function.html
 //
 
 namespace lslboost
@@ -52,6 +52,10 @@ inline void current_function_helper()
 
 # define BOOST_CURRENT_FUNCTION __func__
 
+#elif defined(__cplusplus) && (__cplusplus >= 201103)
+
+# define BOOST_CURRENT_FUNCTION __func__
+
 #else
 
 # define BOOST_CURRENT_FUNCTION "(unknown)"
@@ -65,4 +69,3 @@ inline void current_function_helper()
 } // namespace lslboost
 
 #endif // #ifndef BOOST_CURRENT_FUNCTION_HPP_INCLUDED
-

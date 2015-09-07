@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_SINGLE_VIEW)
 #define FUSION_INCLUDE_SINGLE_VIEW
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/single_view.hpp>
 
 #endif

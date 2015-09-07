@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_NVIEW_VALUE_AT_IMPL_SEP_24_2009_0234PM)
 #define BOOST_FUSION_NVIEW_VALUE_AT_IMPL_SEP_24_2009_0234PM
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/value_at.hpp>
 
 namespace lslboost { namespace fusion 

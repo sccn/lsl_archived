@@ -7,6 +7,7 @@
 #if !defined(FUSION_IS_ITERATOR_05062005_1219)
 #define FUSION_IS_ITERATOR_05062005_1219
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/type_traits/is_base_of.hpp>
 
 namespace lslboost { namespace fusion

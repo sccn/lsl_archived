@@ -10,6 +10,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 #include <lslboost/spirit/home/classic/namespace.hpp>
+#include <lslboost/thread/lock_types.hpp>
 #if !defined(BOOST_SPIRIT_COMPOSITE_HPP)
 #include <lslboost/spirit/home/classic/core/composite.hpp>
 #endif
@@ -51,7 +52,7 @@ BOOST_SPIRIT_CLASSIC_NAMESPACE_BEGIN
         typename parser_result<self_t, ScannerT>::type
         parse(ScannerT const &scan) const
         {
-            typedef typename  mutex_t::scoped_lock scoped_lock_t;
+            typedef lslboost::unique_lock<mutex_t> scoped_lock_t;
             scoped_lock_t lock(mutex);
             return this->subject().parse(scan);
         }

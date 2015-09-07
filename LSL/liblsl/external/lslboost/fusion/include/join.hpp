@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_JOIN)
 #define FUSION_INCLUDE_JOIN
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/transformation/join.hpp>
 
 #endif

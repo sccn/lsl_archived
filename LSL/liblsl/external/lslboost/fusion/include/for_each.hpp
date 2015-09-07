@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_FOR_EACH)
 #define FUSION_INCLUDE_FOR_EACH
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/iteration/for_each.hpp>
 
 #endif

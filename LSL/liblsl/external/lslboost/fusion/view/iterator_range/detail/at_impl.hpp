@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_ITERATOR_RANGE_AT_IMPL_HPP_INCLUDED)
 #define BOOST_FUSION_ITERATOR_RANGE_AT_IMPL_HPP_INCLUDED
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/advance.hpp>
 #include <lslboost/fusion/iterator/deref.hpp>
 
@@ -30,6 +31,7 @@ namespace lslboost { namespace fusion
                 typedef typename result_of::advance<begin_type,N>::type pos;
                 typedef typename result_of::deref<pos>::type type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Seq& s)
                 {

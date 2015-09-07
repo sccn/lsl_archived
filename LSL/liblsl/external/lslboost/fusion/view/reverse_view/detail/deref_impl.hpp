@@ -7,6 +7,7 @@
 #if !defined(FUSION_DEREF_IMPL_07202005_0851)
 #define FUSION_DEREF_IMPL_07202005_0851
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/deref.hpp>
 #include <lslboost/fusion/iterator/prior.hpp>
 
@@ -33,6 +34,7 @@ namespace lslboost { namespace fusion
                     >::type
                 type;
     
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Iterator const& i)
                 {

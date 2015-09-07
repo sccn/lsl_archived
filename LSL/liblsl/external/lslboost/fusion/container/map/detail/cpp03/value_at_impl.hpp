@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_MAP_DETAIL_VALUE_AT_IMPL_HPP)
 #define BOOST_FUSION_MAP_DETAIL_VALUE_AT_IMPL_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/at.hpp>
 
 namespace lslboost { namespace fusion
@@ -23,7 +24,7 @@ namespace lslboost { namespace fusion
         struct value_at_impl<map_tag>
         {
             template <typename Sequence, typename N>
-            struct apply 
+            struct apply
             {
                 typedef typename mpl::at<typename Sequence::storage_type::types, N>::type type;
             };

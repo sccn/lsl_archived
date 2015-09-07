@@ -7,6 +7,7 @@
 #if !defined(FUSION_ALGORITHM_QUERY_10022005_0549)
 #define FUSION_ALGORITHM_QUERY_10022005_0549
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/query/all.hpp>
 #include <lslboost/fusion/algorithm/query/any.hpp>
 #include <lslboost/fusion/algorithm/query/count.hpp>

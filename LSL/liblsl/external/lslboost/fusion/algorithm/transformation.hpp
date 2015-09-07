@@ -7,6 +7,7 @@
 #if !defined(FUSION_ALGORITHM_TRANSFORMATION_10022005_0551)
 #define FUSION_ALGORITHM_TRANSFORMATION_10022005_0551
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/transformation/clear.hpp>
 #include <lslboost/fusion/algorithm/transformation/erase.hpp>
 #include <lslboost/fusion/algorithm/transformation/erase_key.hpp>
@@ -25,6 +26,7 @@
 #include <lslboost/fusion/algorithm/transformation/replace_if.hpp>
 #include <lslboost/fusion/algorithm/transformation/reverse.hpp>
 #include <lslboost/fusion/algorithm/transformation/transform.hpp>
-#include <lslboost/fusion/algorithm/transformation/zip.hpp> 
+#include <lslboost/fusion/algorithm/transformation/zip.hpp>
+#include <lslboost/fusion/algorithm/transformation/flatten.hpp>
 
 #endif

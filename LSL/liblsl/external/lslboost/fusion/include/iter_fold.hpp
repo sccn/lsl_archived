@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_INCLUDE_ITER_FOLD_HPP
 #define BOOST_FUSION_INCLUDE_ITER_FOLD_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/iteration/iter_fold.hpp>
 
 #endif

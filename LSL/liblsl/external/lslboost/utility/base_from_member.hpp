@@ -148,6 +148,19 @@ protected:
 
 };  // lslboost::base_from_member
 
+template < typename MemberType, int UniqueID >
+class base_from_member<MemberType&, UniqueID>
+{
+protected:
+    MemberType& member;
+
+    explicit BOOST_CONSTEXPR base_from_member( MemberType& x )
+        BOOST_NOEXCEPT
+        : member( x )
+        {}
+
+};  // lslboost::base_from_member
+
 }  // namespace lslboost
 
 

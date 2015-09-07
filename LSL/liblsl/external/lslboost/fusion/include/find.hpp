@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_FIND)
 #define FUSION_INCLUDE_FIND
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/query/find.hpp>
 
 #endif

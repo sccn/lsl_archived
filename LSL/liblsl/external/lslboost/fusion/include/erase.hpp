@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_ERASE)
 #define FUSION_INCLUDE_ERASE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/transformation/erase.hpp>
 
 #endif

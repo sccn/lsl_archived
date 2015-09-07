@@ -40,13 +40,14 @@ basic_serializer_map::type_info_pointer_compare::operator()(
     return *lhs < *rhs;
 }
 
-BOOST_ARCHIVE_DECL(bool) 
+BOOST_ARCHIVE_DECL bool
 basic_serializer_map::insert(const basic_serializer * bs){
     // attempt to insert serializer into it's map
-    const std::pair<map_type::iterator, bool> result =
-        m_map.insert(bs);
     // the following is commented out - rather than being just
     // deleted as a reminder not to try this.
+
+    // const std::pair<map_type::iterator, bool> result =
+        m_map.insert(bs);
 
     // At first it seemed like a good idea.  It enforced the
     // idea that a type be exported from at most one code module
@@ -71,7 +72,7 @@ basic_serializer_map::insert(const basic_serializer * bs){
     return true;
 }
 
-BOOST_ARCHIVE_DECL(void) 
+BOOST_ARCHIVE_DECL void 
 basic_serializer_map::erase(const basic_serializer * bs){
     map_type::iterator it = m_map.begin();
     map_type::iterator it_end = m_map.end();
@@ -91,7 +92,7 @@ basic_serializer_map::erase(const basic_serializer * bs){
     //if(*it == bs)
     //    m_map.erase(it);
 }
-BOOST_ARCHIVE_DECL(const basic_serializer *)
+BOOST_ARCHIVE_DECL const basic_serializer *
 basic_serializer_map::find(
     const lslboost::serialization::extended_type_info & eti
 ) const {

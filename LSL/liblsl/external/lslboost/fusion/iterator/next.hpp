@@ -7,6 +7,7 @@
 #if !defined(FUSION_NEXT_05042005_1101)
 #define FUSION_NEXT_05042005_1101
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
 
 namespace lslboost { namespace fusion
@@ -53,7 +54,8 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Iterator>
-    typename result_of::next<Iterator>::type const
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+    inline typename result_of::next<Iterator>::type const
     next(Iterator const& i)
     {
         return result_of::next<Iterator>::call(i);

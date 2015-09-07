@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_ITERATOR_DEREF_DATA_HPP
 #define BOOST_FUSION_ITERATOR_DEREF_DATA_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
 
 namespace lslboost { namespace fusion
@@ -39,7 +40,8 @@ namespace lslboost { namespace fusion
     }
 
     template <typename It>
-    typename result_of::deref_data<It>::type
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+    inline typename result_of::deref_data<It>::type
     deref_data(It const& it)
     {
         return result_of::deref_data<It>::call(it);

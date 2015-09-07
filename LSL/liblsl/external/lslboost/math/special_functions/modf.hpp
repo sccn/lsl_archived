@@ -10,6 +10,7 @@
 #pragma once
 #endif
 
+#include <lslboost/math/special_functions/math_fwd.hpp>
 #include <lslboost/math/tools/config.hpp>
 #include <lslboost/math/special_functions/trunc.hpp>
 

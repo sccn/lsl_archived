@@ -15,6 +15,7 @@
 
 #ifdef BOOST_SPIRIT_THREADSAFE
 #include <lslboost/thread/mutex.hpp>
+#include <lslboost/thread/lock_types.hpp>
 #include <lslboost/thread/once.hpp>
 #endif
 
@@ -99,7 +100,7 @@ BOOST_SPIRIT_CLASSIC_NAMESPACE_BEGIN
         object_with_id_base_supply<IdT>::acquire()
         {
 #ifdef BOOST_SPIRIT_THREADSAFE
-            lslboost::mutex::scoped_lock lock(mutex);
+            lslboost::unique_lock<lslboost::mutex> lock(mutex);
 #endif
             if (free_ids.size())
             {
@@ -121,7 +122,7 @@ BOOST_SPIRIT_CLASSIC_NAMESPACE_BEGIN
         object_with_id_base_supply<IdT>::release(IdT id)
         {
 #ifdef BOOST_SPIRIT_THREADSAFE
-            lslboost::mutex::scoped_lock lock(mutex);
+            lslboost::unique_lock<lslboost::mutex> lock(mutex);
 #endif
             if (max_id == id)
                 max_id--;
@@ -136,10 +137,14 @@ BOOST_SPIRIT_CLASSIC_NAMESPACE_BEGIN
         {
             {
 #ifdef BOOST_SPIRIT_THREADSAFE
+#ifndef BOOST_THREAD_PROVIDES_ONCE_CXX11
                 static lslboost::once_flag been_here = BOOST_ONCE_INIT;
+#else
+                static lslboost::once_flag been_here;
+#endif
                 lslboost::call_once(been_here, mutex_init);
                 lslboost::mutex &mutex = mutex_instance();
-                lslboost::mutex::scoped_lock lock(mutex);
+                lslboost::unique_lock<lslboost::mutex> lock(mutex);
 #endif
                 static lslboost::shared_ptr<object_with_id_base_supply<IdT> >
                     static_supply;

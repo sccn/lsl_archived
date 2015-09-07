@@ -7,6 +7,7 @@
 #if !defined(BOOST_FUSION_SEGMENTED_END_HPP_INCLUDED)
 #define BOOST_FUSION_SEGMENTED_END_HPP_INCLUDED
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/detail/segmented_end_impl.hpp>
 #include <lslboost/fusion/iterator/segmented_iterator.hpp>
 #include <lslboost/fusion/container/list/cons.hpp>
@@ -27,6 +28,7 @@ namespace lslboost { namespace fusion { namespace detail
             >
         type;
 
+        BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
         static type call(Sequence & seq)
         {
             return type(

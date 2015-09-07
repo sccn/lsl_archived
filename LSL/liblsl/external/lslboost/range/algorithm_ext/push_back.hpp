@@ -15,6 +15,7 @@
 #include <lslboost/range/difference_type.hpp>
 #include <lslboost/range/begin.hpp>
 #include <lslboost/range/end.hpp>
+#include <lslboost/range/detail/implementation_help.hpp>
 #include <lslboost/assert.hpp>
 
 namespace lslboost
@@ -27,8 +28,8 @@ inline Container& push_back( Container& on, const Range& from )
 {
     BOOST_RANGE_CONCEPT_ASSERT(( SinglePassRangeConcept<Container> ));
     BOOST_RANGE_CONCEPT_ASSERT(( SinglePassRangeConcept<const Range> ));
-    BOOST_ASSERT( (void*)&on != (void*)&from &&
-                  "cannot copy from a container to itself" );
+    BOOST_ASSERT_MSG(!range_detail::is_same_object(on, from),
+        "cannot copy from a container to itself");
     on.insert( on.end(), lslboost::begin(from), lslboost::end(from) );
     return on;
 }

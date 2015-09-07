@@ -19,6 +19,7 @@
 #include <lslboost/spirit/home/qi/parser.hpp>
 #include <lslboost/spirit/home/support/common_terminals.hpp>
 #include <lslboost/spirit/home/support/info.hpp>
+#include <lslboost/spirit/home/support/detail/is_spirit_tag.hpp>
 #include <lslboost/mpl/assert.hpp>
 #include <lslboost/type_traits/is_same.hpp>
 
@@ -28,7 +29,10 @@ namespace lslboost { namespace spirit
     {
         template <typename T, unsigned Radix, unsigned MinDigits
                 , int MaxDigits>
-        struct int_parser {};
+        struct int_parser 
+        {
+            BOOST_SPIRIT_IS_TAG()
+        };
     }
 
     namespace qi

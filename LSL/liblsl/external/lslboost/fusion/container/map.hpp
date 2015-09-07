@@ -7,6 +7,7 @@
 #if !defined(FUSION_SEQUENCE_CLASS_MAP_10022005_0606)
 #define FUSION_SEQUENCE_CLASS_MAP_10022005_0606
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/map/map.hpp>
 #include <lslboost/fusion/container/map/map_fwd.hpp>
 #include <lslboost/fusion/container/map/convert.hpp>

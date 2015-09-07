@@ -2,7 +2,7 @@
 #define BOOST_ARCHIVE_DETAIL_INTERFACE_IARCHIVE_HPP
 
 // MS compatible compilers support #pragma once
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#if defined(_MSC_VER)
 # pragma once
 #endif
 
@@ -20,6 +20,7 @@
 #include <lslboost/mpl/bool.hpp>
 #include <lslboost/archive/detail/auto_link_archive.hpp>
 #include <lslboost/archive/detail/iserializer.hpp>
+#include <lslboost/archive/detail/helper_collection.hpp>
 #include <lslboost/serialization/singleton.hpp>
 #include <lslboost/archive/detail/abi_prefix.hpp> // must be the last header
 
@@ -27,7 +28,7 @@ namespace lslboost {
 namespace archive {
 namespace detail {
 
-class BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY()) basic_pointer_iserializer;
+class basic_pointer_iserializer;
 
 template<class Archive>
 class interface_iarchive 
@@ -55,9 +56,16 @@ public:
         this->This()->register_basic_serializer(bpis.get_basic_serializer());
         return & bpis;
     }
+    template<class Helper>
+    Helper &
+    get_helper(void * const id = 0){
+        helper_collection & hc = this->This()->get_helper_collection();
+        return hc.template find_helper<Helper>(id);
+    }
+    
     template<class T>
     Archive & operator>>(T & t){
-        this->This()->load_override(t, 0);
+        this->This()->load_override(t);
         return * this->This();
     }
 

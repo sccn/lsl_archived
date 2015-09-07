@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_VALUE_OF)
 #define FUSION_INCLUDE_VALUE_OF
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/value_of.hpp>
 
 #endif

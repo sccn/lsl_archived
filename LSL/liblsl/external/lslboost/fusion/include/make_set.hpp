@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_MAKE_SET)
 #define FUSION_INCLUDE_MAKE_SET
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/generation/make_set.hpp>
 
 #endif

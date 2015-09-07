@@ -7,6 +7,7 @@
 #if !defined(FUSION_SEQUENCE_VIEW_10022005_0620)
 #define FUSION_SEQUENCE_VIEW_10022005_0620
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/filter_view.hpp>
 #include <lslboost/fusion/view/iterator_range.hpp>
 #include <lslboost/fusion/view/joint_view.hpp>
@@ -15,5 +16,6 @@
 #include <lslboost/fusion/view/reverse_view.hpp>
 #include <lslboost/fusion/view/transform_view.hpp>
 #include <lslboost/fusion/view/zip_view.hpp>
+#include <lslboost/fusion/view/flatten_view.hpp>
 
 #endif

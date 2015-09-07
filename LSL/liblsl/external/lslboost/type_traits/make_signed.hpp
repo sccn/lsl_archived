@@ -37,11 +37,9 @@ struct make_signed_imp
 {
    BOOST_STATIC_ASSERT(
       (::lslboost::type_traits::ice_or< ::lslboost::is_integral<T>::value, ::lslboost::is_enum<T>::value>::value));
-#if !BOOST_WORKAROUND(BOOST_MSVC, <=1300)
    BOOST_STATIC_ASSERT(
       (::lslboost::type_traits::ice_not< ::lslboost::is_same<
          typename remove_cv<T>::type, bool>::value>::value));
-#endif
 
    typedef typename remove_cv<T>::type t_no_cv;
    typedef typename mpl::if_c<

@@ -14,6 +14,7 @@
 #
 # include <lslboost/preprocessor/control/iif.hpp>
 # include <lslboost/preprocessor/facilities/empty.hpp>
+# include <lslboost/preprocessor/facilities/identity.hpp>
 # include <lslboost/preprocessor/facilities/is_1.hpp>
 # include <lslboost/preprocessor/facilities/is_empty.hpp>
 #
@@ -22,7 +23,7 @@
 # define BOOST_PP_IS_EMPTY_OR_1(x) \
     BOOST_PP_IIF( \
         BOOST_PP_IS_EMPTY(x BOOST_PP_EMPTY()), \
-        1 BOOST_PP_EMPTY, \
+        BOOST_PP_IDENTITY(1), \
         BOOST_PP_IS_1 \
     )(x) \
     /**/

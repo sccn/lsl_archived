@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_NEXT)
 #define FUSION_INCLUDE_NEXT
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/next.hpp>
 
 #endif

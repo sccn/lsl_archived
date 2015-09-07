@@ -7,6 +7,7 @@
 #if !defined(BOOST_FUSION_IS_VIEW_IMPL_09272006_0725)
 #define BOOST_FUSION_IS_VIEW_IMPL_09272006_0725
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/bool.hpp>
 
 namespace lslboost { namespace fusion 

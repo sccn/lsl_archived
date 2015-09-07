@@ -2,7 +2,7 @@
     Copyright (c) 2001-2011 Joel de Guzman
     Copyright (c) 2001-2011 Hartmut Kaiser
     Copyright (c) 2011 Jan Frederick Eick
-    Copyright (c) 2011 Christopher Jefferson 
+    Copyright (c) 2011 Christopher Jefferson
     Copyright (c) 2006 Stephen Nutt
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -19,6 +19,7 @@
 #include <lslboost/spirit/home/support/unused.hpp>
 #include <lslboost/spirit/home/qi/detail/attributes.hpp>
 #include <lslboost/spirit/home/support/char_encoding/ascii.hpp>
+#include <lslboost/spirit/home/support/numeric_traits.hpp>
 #include <lslboost/preprocessor/repetition/repeat.hpp>
 #include <lslboost/preprocessor/iteration/local.hpp>
 #include <lslboost/preprocessor/comparison/less.hpp>
@@ -30,6 +31,11 @@
 #include <lslboost/mpl/bool.hpp>
 #include <lslboost/mpl/and.hpp>
 #include <lslboost/limits.hpp>
+
+#if defined(BOOST_MSVC)
+# pragma warning(push)
+# pragma warning(disable: 4127) // conditional expression is constant
+#endif
 
 #if !defined(SPIRIT_NUMERICS_LOOP_UNROLL)
 # define SPIRIT_NUMERICS_LOOP_UNROLL 3
@@ -131,6 +137,7 @@ namespace lslboost { namespace spirit { namespace qi { namespace detail
             // Ensure n *= Radix will not overflow
             static T const max = (std::numeric_limits<T>::max)();
             static T const val = max / Radix;
+
             if (n > val)
                 return false;
 
@@ -180,7 +187,7 @@ namespace lslboost { namespace spirit { namespace qi { namespace detail
     ///////////////////////////////////////////////////////////////////////////
     //  Common code for extract_int::parse specializations
     ///////////////////////////////////////////////////////////////////////////
-    template <unsigned Radix, typename Accumulator, int MaxDigits>
+    template <unsigned Radix, typename Accumulator, int MaxDigits, bool AlwaysCheckOverflow>
     struct int_extractor
     {
         template <typename Char, typename T>
@@ -190,7 +197,7 @@ namespace lslboost { namespace spirit { namespace qi { namespace detail
             static std::size_t const
                 overflow_free = digits_traits<T, Radix>::value - 1;
 
-            if (count < overflow_free)
+            if (!AlwaysCheckOverflow && (count < overflow_free))
             {
                 Accumulator::add(n, ch, mpl::false_());
             }
@@ -227,7 +234,7 @@ namespace lslboost { namespace spirit { namespace qi { namespace detail
                     (   (MaxDigits < 0)
                     ||  (MaxDigits > digits_traits<T, Radix>::value)
                     )
-                  && std::numeric_limits<T>::is_modulo
+                  && traits::check_overflow<T>::value
                 >()
             );
         }
@@ -266,8 +273,15 @@ namespace lslboost { namespace spirit { namespace qi { namespace detail
             || it == last)                                                    \
             break;                                                            \
         ch = *it;                                                             \
-        if (!radix_check::is_valid(ch) || !extractor::call(ch, count, val))   \
+        if (!radix_check::is_valid(ch))                                       \
             break;                                                            \
+        if (!extractor::call(ch, count, val))                                 \
+        {                                                                     \
+            if (IgnoreOverflowDigits)                                         \
+                first = it;                                                   \
+            traits::assign_to(val, attr);                                     \
+            return IgnoreOverflowDigits;                                      \
+        }                                                                     \
         ++it;                                                                 \
         ++count;                                                              \
     /**/
@@ -276,6 +290,7 @@ namespace lslboost { namespace spirit { namespace qi { namespace detail
         typename T, unsigned Radix, unsigned MinDigits, int MaxDigits
       , typename Accumulator = positive_accumulator<Radix>
       , bool Accumulate = false
+      , bool IgnoreOverflowDigits = false
     >
     struct extract_int
     {
@@ -291,7 +306,7 @@ namespace lslboost { namespace spirit { namespace qi { namespace detail
           , Attribute& attr)
         {
             typedef radix_traits<Radix> radix_check;
-            typedef int_extractor<Radix, Accumulator, MaxDigits> extractor;
+            typedef int_extractor<Radix, Accumulator, MaxDigits, Accumulate> extractor;
             typedef typename
                 lslboost::detail::iterator_traits<Iterator>::value_type
             char_type;
@@ -369,7 +384,10 @@ namespace lslboost { namespace spirit { namespace qi { namespace detail
         if (!radix_check::is_valid(ch))                                       \
             break;                                                            \
         if (!extractor::call(ch, count, val))                                 \
+        {                                                                     \
+            traits::assign_to(val, attr);                                     \
             return false;                                                     \
+        }                                                                     \
         ++it;                                                                 \
         ++count;                                                              \
     /**/
@@ -389,7 +407,7 @@ namespace lslboost { namespace spirit { namespace qi { namespace detail
           , Attribute& attr)
         {
             typedef radix_traits<Radix> radix_check;
-            typedef int_extractor<Radix, Accumulator, -1> extractor;
+            typedef int_extractor<Radix, Accumulator, -1, Accumulate> extractor;
             typedef typename
                 lslboost::detail::iterator_traits<Iterator>::value_type
             char_type;
@@ -431,7 +449,7 @@ namespace lslboost { namespace spirit { namespace qi { namespace detail
                 return true;
             }
 
-            count = 0;
+            // count = 0; $$$ verify: I think this is wrong $$$
             ++it;
             while (true)
             {
@@ -501,5 +519,9 @@ namespace lslboost { namespace spirit { namespace qi { namespace detail
         }
     };
 }}}}
+
+#if defined(BOOST_MSVC)
+# pragma warning(pop)
+#endif
 
 #endif

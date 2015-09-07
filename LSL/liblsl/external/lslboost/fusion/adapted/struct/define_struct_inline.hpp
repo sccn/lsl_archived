@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_ADAPTED_STRUCT_DEFINE_STRUCT_INLINE_HPP
 #define BOOST_FUSION_ADAPTED_STRUCT_DEFINE_STRUCT_INLINE_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/adapted/struct/adapt_struct.hpp>
 #include <lslboost/fusion/adapted/struct/detail/define_struct_inline.hpp>
 

@@ -9,10 +9,6 @@
 #ifndef BOOST_PARALLEL_GLOBAL_INDEX_MAP_HPP
 #define BOOST_PARALLEL_GLOBAL_INDEX_MAP_HPP
 
-#ifndef BOOST_GRAPH_USE_MPI
-#error "Parallel BGL files should not be included unless <lslboost/graph/use_mpi.hpp> has been included"
-#endif
-
 #include <lslboost/property_map/property_map.hpp>
 #include <vector>
 #include <lslboost/shared_ptr.hpp>

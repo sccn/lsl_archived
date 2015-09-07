@@ -7,7 +7,7 @@
  *
  * See http://www.lslboost.org for most recent version including documentation.
  *
- * $Id: seed.hpp 71018 2011-04-05 21:27:52Z steven_watanabe $
+ * $Id$
  */
 
 #ifndef BOOST_RANDOM_DETAIL_SEED_HPP
@@ -21,6 +21,7 @@
 
 #include <lslboost/utility/enable_if.hpp>
 #include <lslboost/type_traits/is_arithmetic.hpp>
+#include <lslboost/mpl/bool.hpp>
 
 namespace lslboost {
 namespace random {

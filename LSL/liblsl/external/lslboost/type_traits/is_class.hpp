@@ -93,7 +93,6 @@ struct is_class_impl
 template <typename T>
 struct is_class_impl
 {
-#   ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
     BOOST_STATIC_CONSTANT(bool, value =
     (::lslboost::type_traits::ice_and<
         ::lslboost::type_traits::ice_not< ::lslboost::is_union<T>::value >::value,
@@ -103,16 +102,6 @@ struct is_class_impl
         ::lslboost::type_traits::ice_not< ::lslboost::is_void<T>::value >::value,
         ::lslboost::type_traits::ice_not< ::lslboost::is_function<T>::value >::value
         >::value));
-#   else
-    BOOST_STATIC_CONSTANT(bool, value =
-    (::lslboost::type_traits::ice_and<
-        ::lslboost::type_traits::ice_not< ::lslboost::is_union<T>::value >::value,
-        ::lslboost::type_traits::ice_not< ::lslboost::is_scalar<T>::value >::value,
-        ::lslboost::type_traits::ice_not< ::lslboost::is_array<T>::value >::value,
-        ::lslboost::type_traits::ice_not< ::lslboost::is_reference<T>::value>::value,
-        ::lslboost::type_traits::ice_not< ::lslboost::is_void<T>::value >::value
-        >::value));
-#   endif
 };
 
 # endif // BOOST_TT_HAS_CONFORMING_IS_CLASS_IMPLEMENTATION

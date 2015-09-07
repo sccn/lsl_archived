@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_REPETITIVE_VIEW_HPP_INCLUDED)
 #define BOOST_FUSION_REPETITIVE_VIEW_HPP_INCLUDED
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/repetitive_view/repetitive_view.hpp>
 #include <lslboost/fusion/view/repetitive_view/repetitive_view_iterator.hpp>
 

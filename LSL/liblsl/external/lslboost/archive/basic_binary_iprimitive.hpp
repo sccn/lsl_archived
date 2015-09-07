@@ -2,7 +2,7 @@
 #define BOOST_ARCHIVE_BINARY_IPRIMITIVE_HPP
 
 // MS compatible compilers support #pragma once
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#if defined(_MSC_VER)
 # pragma once
 #endif
 
@@ -49,22 +49,25 @@ namespace std{
 #include <lslboost/integer.hpp>
 #include <lslboost/integer_traits.hpp>
 
-#include <lslboost/archive/basic_streambuf_locale_saver.hpp>
-#include <lslboost/archive/archive_exception.hpp>
 #include <lslboost/mpl/placeholders.hpp>
 #include <lslboost/serialization/is_bitwise_serializable.hpp>
 #include <lslboost/serialization/array.hpp>
+
+#include <lslboost/archive/basic_streambuf_locale_saver.hpp>
+#include <lslboost/archive/archive_exception.hpp>
 #include <lslboost/archive/detail/auto_link_archive.hpp>
 #include <lslboost/archive/detail/abi_prefix.hpp> // must be the last header
 
 namespace lslboost { 
 namespace archive {
 
+template<class Ch>
+class codecvt_null;
+
 /////////////////////////////////////////////////////////////////////////////
 // class binary_iarchive - read serialized objects from a input binary stream
 template<class Archive, class Elem, class Tr>
-class basic_binary_iprimitive
-{
+class BOOST_SYMBOL_VISIBLE basic_binary_iprimitive {
 #ifndef BOOST_NO_MEMBER_TEMPLATE_FRIENDS
     friend class load_access;
 protected:
@@ -78,6 +81,7 @@ public:
     }
 
     #ifndef BOOST_NO_STD_LOCALE
+    lslboost::scoped_ptr<codecvt_null<Elem> > codecvt_facet;
     lslboost::scoped_ptr<std::locale> archive_locale;
     basic_streambuf_locale_saver<Elem, Tr> locale_saver;
     #endif
@@ -98,25 +102,25 @@ public:
         BOOST_ASSERT(0 == i || 1 == i);
         (void)i; // warning suppression for release builds.
     }
-    BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL void
     load(std::string &s);
     #ifndef BOOST_NO_STD_WSTRING
-    BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL void
     load(std::wstring &ws);
     #endif
-    BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL void
     load(char * t);
-    BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL void
     load(wchar_t * t);
 
-    BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL void
     init();
-    BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY()) 
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL 
     basic_binary_iprimitive(
         std::basic_streambuf<Elem, Tr> & sb, 
         bool no_codecvt
     );
-    BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY()) 
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL 
     ~basic_binary_iprimitive();
 public:
     // we provide an optimized load for all fundamental types
@@ -126,7 +130,7 @@ public:
         template <class T>  
         #if defined(BOOST_NO_DEPENDENT_NESTED_DERIVATIONS)  
             struct apply {  
-                typedef BOOST_DEDUCED_TYPENAME lslboost::serialization::is_bitwise_serializable< T >::type type;  
+                typedef typename lslboost::serialization::is_bitwise_serializable< T >::type type;  
             };
         #else
             struct apply : public lslboost::serialization::is_bitwise_serializable< T > {};  
@@ -178,7 +182,7 @@ basic_binary_iprimitive<Archive, Elem, Tr>::load_binary(
             lslboost::serialization::throw_exception(
                 archive_exception(archive_exception::input_stream_error)
             );
-        std::memcpy(static_cast<char*>(address) + (count - s), &t, s);
+        std::memcpy(static_cast<char*>(address) + (count - s), &t, static_cast<std::size_t>(s));
     }
 }
 

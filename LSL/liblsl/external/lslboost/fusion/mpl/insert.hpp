@@ -7,6 +7,7 @@
 #if !defined(FUSION_INSERT_10022005_1837)
 #define FUSION_INSERT_10022005_1837
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/insert.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
 #include <lslboost/fusion/algorithm/transformation/insert.hpp>

@@ -4,9 +4,10 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.lslboost.org/LICENSE_1_0.txt)
 // (C) Copyright 2007-2010 Anthony Williams
-// (C) Copyright 20011-2012 Vicente J. Botet Escriba
+// (C) Copyright 2011-2012 Vicente J. Botet Escriba
 
 #include <lslboost/thread/detail/config.hpp>
+#include <lslboost/predef/platform.h>
 
 #include <lslboost/thread/exceptions.hpp>
 #ifndef BOOST_NO_IOSTREAM
@@ -24,12 +25,12 @@
 #include <lslboost/assert.hpp>
 #include <list>
 #include <algorithm>
-#include <lslboost/ref.hpp>
+#include <lslboost/core/ref.hpp>
 #include <lslboost/cstdint.hpp>
 #include <lslboost/bind.hpp>
 #include <stdlib.h>
 #include <memory>
-#include <lslboost/utility/enable_if.hpp>
+#include <lslboost/core/enable_if.hpp>
 #include <lslboost/type_traits/remove_reference.hpp>
 #include <lslboost/io/ios_state.hpp>
 #include <lslboost/type_traits/is_same.hpp>
@@ -64,11 +65,9 @@ namespace lslboost
       {
       public:
           BOOST_THREAD_NO_COPYABLE(thread_data)
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
             thread_data(BOOST_THREAD_RV_REF(F) f_, BOOST_THREAD_RV_REF(ArgTypes)... args_):
               fp(lslboost::forward<F>(f_), lslboost::forward<ArgTypes>(args_)...)
             {}
-#endif
           template <std::size_t ...Indices>
           void run2(tuple_indices<Indices...>)
           {
@@ -174,7 +173,7 @@ namespace lslboost
     private:
         bool start_thread_noexcept();
         bool start_thread_noexcept(const attributes& attr);
-    public:
+    //public:
         void start_thread()
         {
           if (!start_thread_noexcept())
@@ -293,7 +292,8 @@ namespace lslboost
         template <class F>
         explicit thread(F f
         , typename disable_if_c<
-            lslboost::thread_detail::is_convertible<F&,BOOST_THREAD_RV_REF(F)>::value
+        lslboost::thread_detail::is_rv<F>::value // todo ass a thread_detail::is_rv
+        //lslboost::thread_detail::is_convertible<F&,BOOST_THREAD_RV_REF(F)>::value
             //|| is_same<typename decay<F>::type, thread>::value
            , dummy* >::type=0
         ):
@@ -303,7 +303,8 @@ namespace lslboost
         }
         template <class F>
         thread(attributes const& attrs, F f
-        , typename disable_if<lslboost::thread_detail::is_convertible<F&,BOOST_THREAD_RV_REF(F) >, dummy* >::type=0
+            , typename disable_if<lslboost::thread_detail::is_rv<F>, dummy* >::type=0
+            //, typename disable_if<lslboost::thread_detail::is_convertible<F&,BOOST_THREAD_RV_REF(F) >, dummy* >::type=0
         ):
             thread_info(make_thread_info(f))
         {
@@ -334,7 +335,7 @@ namespace lslboost
             start_thread(attrs);
         }
 #endif
-        thread(BOOST_THREAD_RV_REF(thread) x)
+        thread(BOOST_THREAD_RV_REF(thread) x) BOOST_NOEXCEPT
         {
             thread_info=BOOST_THREAD_RV(x).thread_info;
             BOOST_THREAD_RV(x).thread_info.reset();
@@ -466,11 +467,20 @@ namespace lslboost
         inline void join();
 
 #ifdef BOOST_THREAD_USES_CHRONO
+#if defined(BOOST_THREAD_PLATFORM_WIN32)
+        template <class Rep, class Period>
+        bool try_join_for(const chrono::duration<Rep, Period>& rel_time)
+        {
+          chrono::milliseconds rel_time2= chrono::ceil<chrono::milliseconds>(rel_time);
+          return do_try_join_until(rel_time2.count());
+        }
+#else
         template <class Rep, class Period>
         bool try_join_for(const chrono::duration<Rep, Period>& rel_time)
         {
           return try_join_until(chrono::steady_clock::now() + rel_time);
         }
+#endif
         template <class Clock, class Duration>
         bool try_join_until(const chrono::time_point<Clock, Duration>& t)
         {
@@ -546,6 +556,7 @@ namespace lslboost
         void detach();
 
         static unsigned hardware_concurrency() BOOST_NOEXCEPT;
+        static unsigned physical_concurrency() BOOST_NOEXCEPT;
 
 #define BOOST_THREAD_DEFINES_THREAD_NATIVE_HANDLE
         typedef detail::thread_data_base::native_handle_type native_handle_type;
@@ -749,10 +760,10 @@ namespace lslboost
 #endif
     void thread::join() {
         if (this_thread::get_id() == get_id())
-          lslboost::throw_exception(thread_resource_error(system::errc::resource_deadlock_would_occur, "lslboost thread: trying joining itself"));
+          lslboost::throw_exception(thread_resource_error(static_cast<int>(system::errc::resource_deadlock_would_occur), "lslboost thread: trying joining itself"));
 
         BOOST_THREAD_VERIFY_PRECONDITION( join_noexcept(),
-            thread_resource_error(system::errc::invalid_argument, "lslboost thread: thread not joinable")
+            thread_resource_error(static_cast<int>(system::errc::invalid_argument), "lslboost thread: thread not joinable")
         );
     }
 
@@ -763,7 +774,7 @@ namespace lslboost
 #endif
     {
         if (this_thread::get_id() == get_id())
-          lslboost::throw_exception(thread_resource_error(system::errc::resource_deadlock_would_occur, "lslboost thread: trying joining itself"));
+          lslboost::throw_exception(thread_resource_error(static_cast<int>(system::errc::resource_deadlock_would_occur), "lslboost thread: trying joining itself"));
         bool res;
         if (do_try_join_until_noexcept(timeout, res))
         {
@@ -772,7 +783,7 @@ namespace lslboost
         else
         {
           BOOST_THREAD_THROW_ELSE_RETURN(
-            (thread_resource_error(system::errc::invalid_argument, "lslboost thread: thread not joinable")),
+            (thread_resource_error(static_cast<int>(system::errc::invalid_argument), "lslboost thread: thread not joinable")),
             false
           );
         }

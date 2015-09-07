@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_ADAPTED_ARRAY_VALUE_OF_IMPL_HPP
 #define BOOST_FUSION_ADAPTED_ARRAY_VALUE_OF_IMPL_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/type_traits/remove_extent.hpp>
 
 namespace lslboost { namespace fusion { namespace extension

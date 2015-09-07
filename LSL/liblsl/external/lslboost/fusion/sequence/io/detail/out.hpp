@@ -9,6 +9,7 @@
 #if !defined(FUSION_OUT_05052005_0121)
 #define FUSION_OUT_05052005_0121
 
+#include <lslboost/fusion/support/config.hpp>
 #include <ostream>
 #include <lslboost/fusion/sequence/io/detail/manip.hpp>
 

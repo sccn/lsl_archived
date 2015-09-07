@@ -9,6 +9,7 @@
 #if !defined(FUSION_NVIEW_SEP_23_2009_1107PM)
 #define FUSION_NVIEW_SEP_23_2009_1107PM
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/nview/nview.hpp>
 #include <lslboost/fusion/view/nview/nview_iterator.hpp>
 

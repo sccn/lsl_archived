@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_CATEGORY_OF_IMPL_20060217_2141)
 #define BOOST_FUSION_CATEGORY_OF_IMPL_20060217_2141
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/detail/mpl_iterator_category.hpp>
 #include <lslboost/mpl/begin_end.hpp>
 #include <lslboost/mpl/is_sequence.hpp>

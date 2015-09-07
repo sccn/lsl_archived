@@ -19,7 +19,7 @@
 
 #include <lslboost/config.hpp>
 #include <lslboost/detail/workaround.hpp>
-#include <lslboost/detail/endian.hpp>
+#include <lslboost/predef/other/endian.h>
 #include <lslboost/mpl/limits/string.hpp>
 #include <lslboost/mpl/if.hpp>
 #include <lslboost/mpl/char.hpp>
@@ -59,7 +59,7 @@ namespace lslboost { namespace mpl
     #define BOOST_MPL_MULTICHAR_LENGTH(c)                                                           \
       (std::size_t)((c<CHAR_MIN) ? 4 : ((c>0xffffff)+(c>0xffff)+(c>0xff)+1))
 
-    #if defined(BOOST_LITTLE_ENDIAN) && defined(__SUNPRO_CC)
+    #if defined(BOOST_ENDIAN_LITTLE_BYTE) && defined(__SUNPRO_CC)
 
         #define BOOST_MPL_MULTICHAR_AT(c,i)                                                         \
           (char)(0xff&((unsigned)(c)>>(8*(std::size_t)(i))))

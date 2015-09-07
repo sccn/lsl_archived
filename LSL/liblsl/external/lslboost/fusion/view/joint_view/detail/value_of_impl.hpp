@@ -7,6 +7,7 @@
 #if !defined(FUSION_VALUE_IMPL_07162005_0132)
 #define FUSION_VALUE_IMPL_07162005_0132
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/detail/adapt_value_traits.hpp>
 
 namespace lslboost { namespace fusion

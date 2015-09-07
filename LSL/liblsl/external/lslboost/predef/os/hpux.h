@@ -1,5 +1,5 @@
 /*
-Copyright Redshift Software, Inc. 2008-2013
+Copyright Rene Rivera 2008-2015
 Distributed under the Boost Software License, Version 1.0.
 (See accompanying file LICENSE_1_0.txt or copy at
 http://www.lslboost.org/LICENSE_1_0.txt)
@@ -27,7 +27,7 @@ http://www.lslboost.org/LICENSE_1_0.txt)
 
 #define BOOST_OS_HPUX BOOST_VERSION_NUMBER_NOT_AVAILABLE
 
-#if !BOOST_PREDEF_DETAIL_OS_DETECTED && ( \
+#if !defined(BOOST_PREDEF_DETAIL_OS_DETECTED) && ( \
     defined(hpux) || defined(_hpux) || defined(__hpux) \
     )
 #   undef BOOST_OS_HPUX
@@ -41,8 +41,7 @@ http://www.lslboost.org/LICENSE_1_0.txt)
 
 #define BOOST_OS_HPUX_NAME "HP-UX"
 
+#endif
+
 #include <lslboost/predef/detail/test.h>
 BOOST_PREDEF_DECLARE_TEST(BOOST_OS_HPUX,BOOST_OS_HPUX_NAME)
-
-
-#endif

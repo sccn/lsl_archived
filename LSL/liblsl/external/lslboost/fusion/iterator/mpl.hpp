@@ -7,6 +7,7 @@
 #if !defined(FUSION_ITERATOR_MPL_10022005_0557)
 #define FUSION_ITERATOR_MPL_10022005_0557
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/mpl/convert_iterator.hpp>
 #include <lslboost/fusion/iterator/mpl/fusion_iterator.hpp>
 

@@ -7,6 +7,7 @@
 #if !defined(BOOST_FUSION_NVIEW_ITERATOR_SEP_23_2009_0948PM)
 #define BOOST_FUSION_NVIEW_ITERATOR_SEP_23_2009_0948PM
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/iterator_base.hpp>
 #include <lslboost/fusion/support/category_of.hpp>
 #include <lslboost/fusion/sequence/intrinsic/begin.hpp>
@@ -41,6 +42,7 @@ namespace lslboost { namespace fusion
         typedef Sequence sequence_type;
         typedef mpl_iterator<Pos> first_type;
 
+        BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
         explicit nview_iterator(Sequence& in_seq)
           : seq(in_seq) {}
 
@@ -52,6 +54,15 @@ namespace lslboost { namespace fusion
     };
 
 }}
+
+#ifdef BOOST_FUSION_WORKAROUND_FOR_LWG_2408
+namespace std
+{
+    template <typename Sequence, typename Pos>
+    struct iterator_traits< ::lslboost::fusion::nview_iterator<Sequence, Pos> >
+    { };
+}
+#endif
 
 #endif
 

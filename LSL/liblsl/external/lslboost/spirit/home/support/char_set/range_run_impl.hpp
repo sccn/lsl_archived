@@ -13,7 +13,6 @@
 
 #include <lslboost/spirit/home/support/char_set/range_functions.hpp>
 #include <lslboost/assert.hpp>
-#include <lslboost/integer_traits.hpp>
 #include <algorithm>
 
 namespace lslboost { namespace spirit { namespace support { namespace detail
@@ -25,9 +24,6 @@ namespace lslboost { namespace spirit { namespace support { namespace detail
         // if *iter intersects with, or is adjacent to, 'range'...
         if (can_merge(*iter, range))
         {
-            typedef typename Range::value_type value_type;
-            typedef integer_traits<value_type> integer_traits;
-
             // merge range and *iter
             merge(*iter, range);
 

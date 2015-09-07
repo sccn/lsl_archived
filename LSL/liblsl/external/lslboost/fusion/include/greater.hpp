@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_NOT_GREATER)
 #define FUSION_INCLUDE_NOT_GREATER
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/comparison/greater.hpp>
 
 #endif

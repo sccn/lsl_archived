@@ -7,6 +7,7 @@
 #if !defined(FUSION_ITERATOR_10022005_0559)
 #define FUSION_ITERATOR_10022005_0559
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/iterator_facade.hpp>
 #include <lslboost/fusion/iterator/iterator_adapter.hpp>
 #include <lslboost/fusion/iterator/segmented_iterator.hpp>

@@ -8,6 +8,7 @@
 #if !defined(FUSION_BEGIN_IMPL_07172005_0824)
 #define FUSION_BEGIN_IMPL_07172005_0824
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/if.hpp>
 #include <lslboost/type_traits/is_const.hpp>
 
@@ -35,7 +36,8 @@ namespace lslboost { namespace fusion
             struct apply
             {
                 typedef cons_iterator<Sequence> type;
-    
+
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Sequence& t)
                 {

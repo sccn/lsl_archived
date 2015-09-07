@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_SET)
 #define FUSION_INCLUDE_SET
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/set.hpp>
 
 #endif

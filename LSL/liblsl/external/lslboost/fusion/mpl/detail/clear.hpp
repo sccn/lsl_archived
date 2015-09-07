@@ -7,6 +7,7 @@
 #if !defined(FUSION_CLEAR_10022005_1442)
 #define FUSION_CLEAR_10022005_1442
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/vector/vector_fwd.hpp>
 #include <lslboost/fusion/container/list/list_fwd.hpp>
 #include <lslboost/fusion/container/map/map_fwd.hpp>

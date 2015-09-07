@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_BEGIN)
 #define FUSION_INCLUDE_BEGIN
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/begin.hpp>
 
 #endif

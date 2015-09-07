@@ -14,9 +14,17 @@
 #ifndef BOOST_MOVE_ALGORITHM_HPP
 #define BOOST_MOVE_ALGORITHM_HPP
 
+#ifndef BOOST_CONFIG_HPP
+#  include <lslboost/config.hpp>
+#endif
+#
+#if defined(BOOST_HAS_PRAGMA_ONCE)
+#  pragma once
+#endif
+
 #include <lslboost/move/detail/config_begin.hpp>
 
-#include <lslboost/move/utility.hpp>
+#include <lslboost/move/utility_core.hpp>
 #include <lslboost/move/iterator.hpp>
 #include <lslboost/detail/no_exceptions_support.hpp>
 
@@ -271,4 +279,4 @@ inline F copy_or_move(I f, I l, F r
 
 #include <lslboost/move/detail/config_end.hpp>
 
-#endif //#ifndef BOOST_MOVE_MOVE_HPP
+#endif //#ifndef BOOST_MOVE_ALGORITHM_HPP

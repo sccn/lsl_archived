@@ -7,6 +7,7 @@
 #if !defined(FUSION_SEQUENCE_INTRINSIC_10022005_0618)
 #define FUSION_SEQUENCE_INTRINSIC_10022005_0618
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/at.hpp>
 #include <lslboost/fusion/sequence/intrinsic/back.hpp>
 #include <lslboost/fusion/sequence/intrinsic/begin.hpp>
@@ -19,5 +20,6 @@
 #include <lslboost/fusion/sequence/intrinsic/value_at.hpp>
 #include <lslboost/fusion/sequence/intrinsic/at_key.hpp>
 #include <lslboost/fusion/sequence/intrinsic/value_at_key.hpp>
+#include <lslboost/fusion/sequence/intrinsic/swap.hpp>
 
 #endif

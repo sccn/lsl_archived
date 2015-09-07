@@ -7,14 +7,22 @@
 #if !defined(FUSION_ITERATOR_ADAPTER_08112011_0942)
 #define FUSION_ITERATOR_ADAPTER_08112011_0942
 
-#include <lslboost/fusion/iterator/detail/advance.hpp>
+#include <lslboost/fusion/support/config.hpp>
+#include <lslboost/fusion/support/category_of.hpp>
+#include <lslboost/fusion/iterator/advance.hpp>
+#include <lslboost/fusion/iterator/deref.hpp>
+#include <lslboost/fusion/iterator/distance.hpp>
+#include <lslboost/fusion/iterator/equal_to.hpp>
 #include <lslboost/fusion/iterator/iterator_facade.hpp>
+#include <lslboost/fusion/iterator/next.hpp>
+#include <lslboost/fusion/iterator/prior.hpp>
+#include <lslboost/fusion/iterator/value_of.hpp>
 #include <lslboost/type_traits/remove_const.hpp>
 
 namespace lslboost { namespace fusion
 {
     template <typename Derived_, typename Iterator_,
-        typename Category = typename Iterator_::category>
+        typename Category = typename traits::category_of<Iterator_>::type>
     struct iterator_adapter
         : iterator_facade<Derived_, Category>
     {
@@ -23,6 +31,7 @@ namespace lslboost { namespace fusion
         iterator_base_type;
         iterator_base_type iterator_base;
 
+        BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
         iterator_adapter(iterator_base_type const& iterator_base_)
             : iterator_base(iterator_base_) {}
 
@@ -45,6 +54,7 @@ namespace lslboost { namespace fusion
                 >::type>::type
             type;
 
+            BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             static type
             call(Iterator const& it)
             {
@@ -79,6 +89,7 @@ namespace lslboost { namespace fusion
                 >::type
             type;
 
+            BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             static type
             call(Iterator const& it)
             {
@@ -96,6 +107,7 @@ namespace lslboost { namespace fusion
                 >::type>::type
             type;
 
+            BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             static type
             call(Iterator const& i)
             {
@@ -113,6 +125,7 @@ namespace lslboost { namespace fusion
                 >::type>::type
             type;
 
+            BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             static type
             call(Iterator const& i)
             {
@@ -121,5 +134,14 @@ namespace lslboost { namespace fusion
         };
     };
 }}
+
+#ifdef BOOST_FUSION_WORKAROUND_FOR_LWG_2408
+namespace std
+{
+    template <typename Derived, typename Iterator, typename Category>
+    struct iterator_traits< ::lslboost::fusion::iterator_adapter<Derived, Iterator, Category> >
+    { };
+}
+#endif
 
 #endif

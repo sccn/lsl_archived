@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_ITERATOR_RANGE)
 #define FUSION_INCLUDE_ITERATOR_RANGE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/iterator_range.hpp>
 
 #endif

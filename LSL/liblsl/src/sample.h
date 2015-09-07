@@ -12,7 +12,7 @@
 #include <boost/atomic.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/serialization/split_member.hpp>
-#include "endian/conversion.hpp"
+#include <boost/endian/conversion.hpp>
 #include "common.h"
 
 namespace lsl {
@@ -183,9 +183,7 @@ namespace lsl {
 					case cf_int8:     for (boost::int8_t  *p=(boost::int8_t*) &data_,*e=p+num_channels_; p<e; *p++ = (boost::int8_t)*s++); break; 
 					case cf_int16:    for (boost::int16_t *p=(boost::int16_t*)&data_,*e=p+num_channels_; p<e; *p++ = (boost::int16_t)*s++); break; 
 					case cf_int32:    for (boost::int32_t *p=(boost::int32_t*)&data_,*e=p+num_channels_; p<e; *p++ = (boost::int32_t)*s++); break; 
-#ifndef BOOST_NO_INT64_T
 					case cf_int64:    for (boost::int64_t *p=(boost::int64_t*)&data_,*e=p+num_channels_; p<e; *p++ = (boost::int64_t)*s++); break; 
-#endif
 					case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; *p++ = boost::lexical_cast<std::string>(*s++)); break; 
 					default: throw std::invalid_argument("Unsupported channel format.");
 				}
@@ -204,9 +202,7 @@ namespace lsl {
 					case cf_int8:     for (boost::int8_t  *p=(boost::int8_t*) &data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
 					case cf_int16:    for (boost::int16_t *p=(boost::int16_t*)&data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
 					case cf_int32:    for (boost::int32_t *p=(boost::int32_t*)&data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
-#ifndef BOOST_NO_INT64_T
 					case cf_int64:    for (boost::int64_t *p=(boost::int64_t*)&data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
-#endif
 					case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; *d++ = boost::lexical_cast<T>(*p++)); break; 
 					default: throw std::invalid_argument("Unsupported channel format.");
 				}
@@ -257,7 +253,7 @@ namespace lsl {
 		/// Save a value to a stream buffer with correct endian treatment.
 		template<class StreamBuf, typename T> static void save_value(StreamBuf &sb, const T &v, int use_byte_order) {
 			if (sizeof(T)>1 && use_byte_order != BOOST_BYTE_ORDER) {
-				T temp = lslboost::endian::reverse_value(v);
+				T temp = boost::endian::endian_reverse(v);
 				save_raw(sb,&temp,sizeof(temp));
 			} else
 				save_raw(sb,&v,sizeof(v));
@@ -267,7 +263,7 @@ namespace lsl {
 		template<class StreamBuf, typename T> static void load_value(StreamBuf &sb, T &v, int use_byte_order) {
 			load_raw(sb,&v,sizeof(v));
 			if (use_byte_order != BOOST_BYTE_ORDER)
-				lslboost::endian::reverse(v);
+				boost::endian::endian_reverse_inplace(v);
 		}
 
 		/// Load a value from a stream buffer; specialization of the above.
@@ -280,7 +276,7 @@ namespace lsl {
 				save_value(sb,TAG_DEDUCED_TIMESTAMP,use_byte_order);
 			} else {
 				save_value(sb,TAG_TRANSMITTED_TIMESTAMP,use_byte_order);
-				save_value(sb,timestamp,use_byte_order);
+				save_value(sb,*(const boost::uint64_t*)&timestamp,use_byte_order);
 			}
 			// write channel data
 			if (format_ == cf_string) {
@@ -294,13 +290,8 @@ namespace lsl {
 							save_value(sb,(boost::uint8_t)sizeof(boost::uint32_t),use_byte_order);
 							save_value(sb,(boost::uint32_t)p->size(),use_byte_order);
 						} else {
-#ifndef BOOST_NO_INT64_T
 							save_value(sb,(boost::uint8_t)sizeof(boost::uint64_t),use_byte_order);
 							save_value(sb,(boost::uint64_t)p->size(),use_byte_order);
-#else
-							save_value(sb,(boost::uint8_t)sizeof(std::size_t),use_byte_order);
-							save_value(sb,(std::size_t)p->size(),use_byte_order);
-#endif
 						}
 					}
 					// write string contents
@@ -328,7 +319,7 @@ namespace lsl {
 				timestamp = DEDUCED_TIMESTAMP;
 			} else {
 				// read the time stamp
-				load_value(sb,timestamp,use_byte_order);
+				load_value(sb,*(boost::uint64_t*)&timestamp,use_byte_order);
 			}
 			// read channel data
 			if (format_ == cf_string) {
@@ -340,11 +331,7 @@ namespace lsl {
 						case sizeof(boost::uint8_t):  { boost::uint8_t tmp;  load_value(sb,tmp,use_byte_order); len = tmp; }; break; 
 						case sizeof(boost::uint16_t): { boost::uint16_t tmp; load_value(sb,tmp,use_byte_order); len = tmp; }; break; 
 						case sizeof(boost::uint32_t): { boost::uint32_t tmp; load_value(sb,tmp,use_byte_order); len = tmp; }; break; 
-#ifndef BOOST_NO_INT64_T
 						case sizeof(boost::uint64_t): { boost::uint64_t tmp; load_value(sb,tmp,use_byte_order); len = tmp; }; break;
-#else
-						case 8: throw std::runtime_error("This platform does not support strings of 64-bit length.");
-#endif
 						default: throw std::runtime_error("Stream contents corrupted (invalid varlen int).");
 					}
 					// read string contents
@@ -363,11 +350,9 @@ namespace lsl {
 							if (*p && ((*p & UINT32_C(0x7fffffff)) <= UINT32_C(0x007fffff)))
 								*p &= UINT32_C(0x80000000);
 					} else {
-#ifndef BOOST_NO_INT64_T
 						for (boost::uint64_t *p=(boost::uint64_t*)&data_,*e=p+num_channels_; p<e; p++)
 							if (*p && ((*p & UINT64_C(0x7fffffffffffffff)) <= UINT64_C(0x000fffffffffffff)))
 								*p &= UINT64_C(0x8000000000000000);
-#endif
 					}
 				}
 			}
@@ -377,13 +362,9 @@ namespace lsl {
 		void convert_endian(void *data) const {
 			switch (format_sizes[format_]) {
 				case 1: break;
-				case sizeof(boost::int16_t): for (boost::int16_t *p=(boost::int16_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
-				case sizeof(boost::int32_t): for (boost::int32_t *p=(boost::int32_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
-#ifndef BOOST_NO_INT64_T
-				case sizeof(boost::int64_t): for (boost::int64_t *p=(boost::int64_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
-#else
-				case sizeof(double): for (double *p=(double*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
-#endif
+				case sizeof(boost::int16_t): for (boost::int16_t *p=(boost::int16_t*)data,*e=p+num_channels_; p<e; boost::endian::endian_reverse_inplace(*p++)); break;
+				case sizeof(boost::int32_t): for (boost::int32_t *p=(boost::int32_t*)data,*e=p+num_channels_; p<e; boost::endian::endian_reverse_inplace(*p++)); break;
+				case sizeof(boost::int64_t): for (boost::int64_t *p=(boost::int64_t*)data,*e=p+num_channels_; p<e; boost::endian::endian_reverse_inplace(*p++)); break;
 				default: throw std::runtime_error("Unsupported channel format for endian conversion.");
 			}
 		}
@@ -424,9 +405,7 @@ namespace lsl {
 				case cf_int8:     for (boost::int8_t  *p=(boost::int8_t*) &data_,*e=p+num_channels_; p<e; ar & *p++); break;
 				case cf_int16:    for (boost::int16_t *p=(boost::int16_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
 				case cf_int32:    for (boost::int32_t *p=(boost::int32_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
-#ifndef BOOST_NO_INT64_T
 				case cf_int64:    for (boost::int64_t *p=(boost::int64_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
-#endif
 				default: throw std::runtime_error("Unsupported channel format.");
 			}
 		}

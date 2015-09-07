@@ -10,7 +10,6 @@
 #define BOOST_FT_IS_CALLABLE_BUILTIN_HPP_INCLUDED
 
 #include <lslboost/mpl/aux_/lambda_support.hpp>
-#include <lslboost/type_traits/detail/template_arity_spec.hpp>
 
 #include <lslboost/function_types/components.hpp>
 
@@ -28,7 +27,6 @@ namespace lslboost
       BOOST_MPL_AUX_LAMBDA_SUPPORT(2,is_callable_builtin,(T,Tag))
     };
   }
-  BOOST_TT_AUX_TEMPLATE_ARITY_SPEC(2,function_types::is_callable_builtin)
 }
 
 #endif

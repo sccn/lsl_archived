@@ -8,6 +8,7 @@
 #if !defined(FUSION_CONVERT_IMPL_09232005_1341)
 #define FUSION_CONVERT_IMPL_09232005_1341
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/set/detail/as_set.hpp>
 #include <lslboost/fusion/container/set/set.hpp>
 #include <lslboost/fusion/sequence/intrinsic/begin.hpp>
@@ -33,6 +34,7 @@ namespace lslboost { namespace fusion
                     template apply<typename result_of::begin<Sequence>::type>::type
                 type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type call(Sequence& seq)
                 {
                     return gen::call(fusion::begin(seq));

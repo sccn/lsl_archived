@@ -7,6 +7,7 @@
 #if !defined(FUSION_CONVERT_09232005_1341)
 #define FUSION_CONVERT_09232005_1341
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/set/detail/as_set.hpp>
 #include <lslboost/fusion/container/set/detail/convert_impl.hpp>
 #include <lslboost/fusion/container/set/set.hpp>
@@ -28,6 +29,7 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence>
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
     inline typename result_of::as_set<Sequence>::type
     as_set(Sequence& seq)
     {
@@ -36,6 +38,7 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence>
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
     inline typename result_of::as_set<Sequence const>::type
     as_set(Sequence const& seq)
     {

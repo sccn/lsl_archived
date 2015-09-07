@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_DEREF)
 #define FUSION_INCLUDE_DEREF
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/deref.hpp>
 
 #endif

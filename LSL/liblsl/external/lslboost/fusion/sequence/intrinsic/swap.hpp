@@ -8,24 +8,27 @@
 #if !defined(BOOST_FUSION_SWAP_20070501_1956)
 #define BOOST_FUSION_SWAP_20070501_1956
 
+#include <lslboost/fusion/support/config.hpp>
 #include <algorithm>
 
 #include <lslboost/fusion/support/is_sequence.hpp>
 #include <lslboost/fusion/view/zip_view.hpp>
 #include <lslboost/fusion/algorithm/iteration/for_each.hpp>
-#include <lslboost/utility/enable_if.hpp>
 #include <lslboost/fusion/sequence/intrinsic/front.hpp>
 #include <lslboost/fusion/sequence/intrinsic/back.hpp>
+#include <lslboost/core/enable_if.hpp>
 #include <lslboost/mpl/and.hpp>
 
 namespace lslboost { namespace fusion {
+
     namespace result_of
     {
         template<typename Seq1, typename Seq2>
         struct swap
-        {
-            typedef void type;
-        };
+            : enable_if<mpl::and_<
+                  traits::is_sequence<Seq1>,
+                  traits::is_sequence<Seq2>
+              > > {};
     }
 
     namespace detail
@@ -39,6 +42,7 @@ namespace lslboost { namespace fusion {
             };
 
             template<typename Elem>
+            BOOST_CXX14_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             void operator()(Elem const& e) const
             {
                 using std::swap;
@@ -48,7 +52,8 @@ namespace lslboost { namespace fusion {
     }
 
     template<typename Seq1, typename Seq2>
-    typename enable_if<mpl::and_<traits::is_sequence<Seq1>, traits::is_sequence<Seq2> >, void>::type 
+    BOOST_CXX14_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+    inline typename result_of::swap<Seq1, Seq2>::type
     swap(Seq1& lhs, Seq2& rhs)
     {
         typedef vector<Seq1&, Seq2&> references;

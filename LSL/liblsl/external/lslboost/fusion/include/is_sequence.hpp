@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_IS_SEQUENCE)
 #define FUSION_INCLUDE_IS_SEQUENCE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/is_sequence.hpp>
 
 #endif

@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_FUSED_PROCEDURE)
 #define FUSION_INCLUDE_FUSED_PROCEDURE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/functional/adapter/fused_procedure.hpp>
 
 #endif

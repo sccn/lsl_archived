@@ -7,6 +7,7 @@
 #if !defined(FUSION_CLEAR_10022005_1817)
 #define FUSION_CLEAR_10022005_1817
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/clear.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
 #include <lslboost/fusion/mpl/detail/clear.hpp>

@@ -7,6 +7,7 @@
 #if !defined(FUSION_STD_TUPLE_ITERATOR_09112011_1905)
 #define FUSION_STD_TUPLE_ITERATOR_09112011_1905
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/iterator_facade.hpp>
 #include <lslboost/type_traits/is_const.hpp>
 #include <lslboost/type_traits/remove_const.hpp>
@@ -35,6 +36,7 @@ namespace lslboost { namespace fusion
             typename add_const<Tuple>::type, Index>
         identity;
 
+        BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
         explicit std_tuple_iterator(Tuple& tuple)
           : tuple(tuple) {}
 
@@ -57,6 +59,7 @@ namespace lslboost { namespace fusion
                 >::type
             type;
 
+            BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             static type
             call(Iterator const& iter)
             {
@@ -71,6 +74,7 @@ namespace lslboost { namespace fusion
             typedef typename Iterator::tuple_type tuple_type;
             typedef std_tuple_iterator<tuple_type, index+N::value> type;
 
+            BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             static type
             call(Iterator const& i)
             {
@@ -93,6 +97,7 @@ namespace lslboost { namespace fusion
         {
             typedef mpl::int_<Last::index-First::index> type;
 
+            BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             static type
             call(First const&, Last const&)
             {
@@ -101,6 +106,15 @@ namespace lslboost { namespace fusion
         };
     };
 }}
+
+#ifdef BOOST_FUSION_WORKAROUND_FOR_LWG_2408
+namespace std
+{
+    template <typename Tuple, int Index>
+    struct iterator_traits< ::lslboost::fusion::std_tuple_iterator<Tuple, Index> >
+    { };
+}
+#endif
 
 #endif
 

@@ -8,11 +8,5 @@
 =============================================================================*/
 #ifndef BOOST_SPIRIT_INCLUDE_PHOENIX
 #define BOOST_SPIRIT_INCLUDE_PHOENIX
-
-#ifndef BOOST_SPIRIT_USE_PHOENIX_V3
-#include <lslboost/spirit/home/phoenix.hpp>
-#else
 #include <lslboost/phoenix.hpp>
-#endif
-
 #endif

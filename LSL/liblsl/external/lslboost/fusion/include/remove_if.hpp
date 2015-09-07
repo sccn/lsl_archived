@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_REMOVE_IF)
 #define FUSION_INCLUDE_REMOVE_IF
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/transformation/remove_if.hpp>
 
 #endif

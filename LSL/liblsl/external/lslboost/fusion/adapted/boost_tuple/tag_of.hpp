@@ -7,6 +7,7 @@
 #if !defined(BOOST_FUSION_TAG_OF_09262006_1900)
 #define BOOST_FUSION_TAG_OF_09262006_1900
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/tag_of_fwd.hpp>
 
 namespace lslboost { namespace tuples

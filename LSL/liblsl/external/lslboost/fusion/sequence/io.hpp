@@ -7,6 +7,7 @@
 #if !defined(FUSION_SEQUENCE_IO_10032005_0836)
 #define FUSION_SEQUENCE_IO_10032005_0836
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/io/in.hpp>
 #include <lslboost/fusion/sequence/io/out.hpp>
 

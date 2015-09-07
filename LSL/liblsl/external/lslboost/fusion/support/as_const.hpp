@@ -7,6 +7,9 @@
 #ifndef BOOST_FUSION_SUPPORT_AS_CONST_HPP
 #define BOOST_FUSION_SUPPORT_AS_CONST_HPP
 
+#include <lslboost/config.hpp>
+#include <lslboost/fusion/support/config.hpp>
+
 namespace lslboost { namespace fusion { namespace extension
 {
     // A customization point that allows certain wrappers around
@@ -16,7 +19,8 @@ namespace lslboost { namespace fusion { namespace extension
     // such contexts with calls to this function. Users can
     // specialize this function for their own wrappers.
     template <typename T>
-    const T& as_const(const T& obj)
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+    inline const T& as_const(const T& obj) BOOST_NOEXCEPT
     {
         return obj;
     }

@@ -7,7 +7,7 @@
  *
  * See http://www.lslboost.org for most recent version including documentation.
  *
- * $Id: uniform_smallint.hpp 71018 2011-04-05 21:27:52Z steven_watanabe $
+ * $Id$
  *
  * Revision history
  *  2001-04-08  added min<max assertion (N. Becker)
@@ -28,6 +28,7 @@
 #include <lslboost/random/detail/signed_unsigned_tools.hpp>
 #include <lslboost/random/uniform_01.hpp>
 #include <lslboost/detail/workaround.hpp>
+#include <lslboost/mpl/bool.hpp>
 
 namespace lslboost {
 namespace random {

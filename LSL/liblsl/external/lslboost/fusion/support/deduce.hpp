@@ -9,7 +9,12 @@
 #if !defined(BOOST_FUSION_SUPPORT_DEDUCE_HPP_INCLUDED)
 #define BOOST_FUSION_SUPPORT_DEDUCE_HPP_INCLUDED
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/ref.hpp>
+
+#ifndef BOOST_NO_CXX11_HDR_FUNCTIONAL
+#include <functional>
+#endif
 
 namespace lslboost { namespace fusion { namespace traits
 {
@@ -84,6 +89,21 @@ namespace lslboost { namespace fusion { namespace traits
     {
         typedef T& type;
     };
+
+    // Also unwrap C++11 std::ref if available (referencee cv is deduced)
+#ifndef BOOST_NO_CXX11_HDR_FUNCTIONAL
+    template <typename T>
+    struct deduce<std::reference_wrapper<T> &>
+    {
+        typedef T& type;
+    };
+
+    template <typename T>
+    struct deduce<std::reference_wrapper<T> const &>
+    {
+        typedef T& type;
+    };
+#endif
 
     // Keep references on arrays, even if const
 

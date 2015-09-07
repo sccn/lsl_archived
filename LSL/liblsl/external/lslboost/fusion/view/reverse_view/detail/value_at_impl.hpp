@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_VIEW_REVERSE_VIEW_DETAIL_VALUE_AT_IMPL_HPP
 #define BOOST_FUSION_VIEW_REVERSE_VIEW_DETAIL_VALUE_AT_IMPL_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/value_at.hpp>
 #include <lslboost/mpl/minus.hpp>
 #include <lslboost/mpl/int.hpp>

@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_TUPLE_FWD)
 #define FUSION_INCLUDE_TUPLE_FWD
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/tuple/tuple_fwd.hpp>
 
 #endif

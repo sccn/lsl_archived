@@ -7,6 +7,9 @@
 #if !defined(FUSION_ITERATOR_BASE_05042005_1008)
 #define FUSION_ITERATOR_BASE_05042005_1008
 
+#include <lslboost/config.hpp>
+#include <lslboost/fusion/support/config.hpp>
+
 namespace lslboost { namespace fusion
 {
     struct iterator_root {};
@@ -14,14 +17,16 @@ namespace lslboost { namespace fusion
     template <typename Iterator>
     struct iterator_base : iterator_root
     {
+        BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
         Iterator const&
-        cast() const
+        cast() const BOOST_NOEXCEPT
         {
             return static_cast<Iterator const&>(*this);
         }
 
+        BOOST_CXX14_CONSTEXPR BOOST_FUSION_GPU_ENABLED
         Iterator&
-        cast()
+        cast() BOOST_NOEXCEPT
         {
             return static_cast<Iterator&>(*this);
         }

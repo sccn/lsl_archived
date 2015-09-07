@@ -8,12 +8,5 @@
 =============================================================================*/
 #ifndef BOOST_SPIRIT_INCLUDE_PHOENIX_CORE
 #define BOOST_SPIRIT_INCLUDE_PHOENIX_CORE
-
-#ifndef BOOST_SPIRIT_USE_PHOENIX_V3
-#define BOOST_PHOENIX_DEFINE_CUSTOM_TERMINAL(A,B,C,D)
-#include <lslboost/spirit/home/phoenix/core.hpp>
-#else
 #include <lslboost/phoenix/core.hpp>
-#endif
-
 #endif

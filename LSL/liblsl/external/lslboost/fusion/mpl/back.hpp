@@ -7,6 +7,7 @@
 #if !defined(FUSION_BACK_10022005_1620)
 #define FUSION_BACK_10022005_1620
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/back.hpp>
 #include <lslboost/fusion/sequence/intrinsic/end.hpp>
 #include <lslboost/fusion/iterator/prior.hpp>

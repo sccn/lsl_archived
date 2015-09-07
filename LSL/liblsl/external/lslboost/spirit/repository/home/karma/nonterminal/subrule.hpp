@@ -207,7 +207,7 @@ namespace lslboost { namespace spirit { namespace repository { namespace karma
             // trying to use a subrule which has inherited attributes,
             // without passing values for them.
             context_type context(*this
-              , traits::pre_transform<karma::domain, subrule_attr_type>(
+              , traits::pre_transform<spirit::karma::domain, subrule_attr_type>(
                       make_attribute::call(attr)));
 
             return def.binder(sink, context, delimiter);
@@ -242,7 +242,7 @@ namespace lslboost { namespace spirit { namespace repository { namespace karma
             // trying to use a subrule which has inherited attributes,
             // passing values of incompatible types for them.
             context_type context(*this
-              , traits::pre_transform<karma::domain, subrule_attr_type>(
+              , traits::pre_transform<spirit::karma::domain, subrule_attr_type>(
                         make_attribute::call(attr)), params, caller_context);
 
             return def.binder(sink, context, delimiter);
@@ -414,7 +414,11 @@ namespace lslboost { namespace spirit { namespace repository { namespace karma
 
             // create Defs map with only one entry: (ID -> def)
             typedef typename
+#ifndef BOOST_FUSION_HAS_VARIADIC_MAP
                 fusion::result_of::make_map<id_type, def_type>::type
+#else
+                fusion::result_of::make_map<id_type>::template apply<def_type>::type
+#endif
             defs_type;
 
             typedef subrule_group<defs_type> type;

@@ -7,10 +7,12 @@
 #if !defined(BOOST_FUSION_MAP_DETAIL_VALUE_AT_KEY_IMPL_02042013_0821)
 #define BOOST_FUSION_MAP_DETAIL_VALUE_AT_KEY_IMPL_02042013_0821
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/detail/access.hpp>
 #include <lslboost/type_traits/is_const.hpp>
 #include <lslboost/mpl/at.hpp>
 #include <lslboost/mpl/identity.hpp>
+#include <lslboost/utility/declval.hpp>
 
 namespace lslboost { namespace fusion
 {
@@ -28,7 +30,7 @@ namespace lslboost { namespace fusion
             struct apply
             {
                 typedef
-                    decltype(std::declval<Sequence>().get_val(mpl::identity<Key>()))
+                    decltype(lslboost::declval<Sequence>().get_val(mpl::identity<Key>()))
                 type;
             };
         };

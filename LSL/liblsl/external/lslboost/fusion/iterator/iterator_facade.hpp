@@ -7,12 +7,14 @@
 #if !defined(FUSION_ITERATOR_FACADE_09252006_1011)
 #define FUSION_ITERATOR_FACADE_09252006_1011
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/iterator_base.hpp>
 #include <lslboost/fusion/iterator/detail/advance.hpp>
 #include <lslboost/fusion/iterator/detail/distance.hpp>
 #include <lslboost/fusion/support/category_of.hpp>
 #include <lslboost/type_traits/is_same.hpp>
 #include <lslboost/mpl/assert.hpp>
+#include <lslboost/mpl/if.hpp>
 
 namespace lslboost { namespace fusion
 {
@@ -53,5 +55,14 @@ namespace lslboost { namespace fusion
         {};
     };
 }}
+
+#ifdef BOOST_FUSION_WORKAROUND_FOR_LWG_2408
+namespace std
+{
+    template <typename Derived, typename Category>
+    struct iterator_traits< ::lslboost::fusion::iterator_facade<Derived, Category> >
+    { };
+}
+#endif
 
 #endif

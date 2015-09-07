@@ -8,7 +8,7 @@
 #  */
 #
 # /* Revised by Paul Mensonides (2002) */
-# /* Revised by Edward Diener (2011) */
+# /* Revised by Edward Diener (2011,2013) */
 #
 # /* See http://www.lslboost.org for most recent version. */
 #
@@ -18,7 +18,14 @@
 # include <lslboost/preprocessor/tuple/eat.hpp>
 # include <lslboost/preprocessor/tuple/elem.hpp>
 # include <lslboost/preprocessor/tuple/enum.hpp>
+# include <lslboost/preprocessor/tuple/insert.hpp>
+# include <lslboost/preprocessor/tuple/pop_back.hpp>
+# include <lslboost/preprocessor/tuple/pop_front.hpp>
+# include <lslboost/preprocessor/tuple/push_back.hpp>
+# include <lslboost/preprocessor/tuple/push_front.hpp>
 # include <lslboost/preprocessor/tuple/rem.hpp>
+# include <lslboost/preprocessor/tuple/remove.hpp>
+# include <lslboost/preprocessor/tuple/replace.hpp>
 # include <lslboost/preprocessor/tuple/reverse.hpp>
 # include <lslboost/preprocessor/tuple/size.hpp>
 # include <lslboost/preprocessor/tuple/to_array.hpp>

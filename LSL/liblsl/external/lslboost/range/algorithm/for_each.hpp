@@ -32,7 +32,7 @@ namespace lslboost
             template<typename Iterator, typename UnaryFunction>
             inline UnaryFunction
             for_each_impl(Iterator first, Iterator last, UnaryFunction fun,
-                          typename enable_if<
+                          typename ::lslboost::enable_if<
                             is_reference_wrapper<UnaryFunction>,
                             void
                           >::type* = 0)

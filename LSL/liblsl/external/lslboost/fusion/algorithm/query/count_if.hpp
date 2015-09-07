@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_COUNT_IF_09162005_0137)
 #define BOOST_FUSION_COUNT_IF_09162005_0137
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/query/detail/count_if.hpp>
 #include <lslboost/fusion/support/category_of.hpp>
 #include <lslboost/fusion/support/is_sequence.hpp>
@@ -25,8 +26,8 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence, typename F>
-    inline 
-    typename
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+    inline typename
         enable_if<
             traits::is_sequence<Sequence>
           , int

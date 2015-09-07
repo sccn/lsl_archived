@@ -7,9 +7,11 @@
 #if !defined(FUSION_TUPLE_10032005_0806)
 #define FUSION_TUPLE_10032005_0806
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/tuple/tuple.hpp>
 #include <lslboost/fusion/tuple/make_tuple.hpp>
 #include <lslboost/fusion/tuple/tuple_tie.hpp>
 #include <lslboost/fusion/container/generation/ignore.hpp>
 
 #endif
+

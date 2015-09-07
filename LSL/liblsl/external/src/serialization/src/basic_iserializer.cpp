@@ -17,7 +17,7 @@ namespace lslboost {
 namespace archive {
 namespace detail {
 
-BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) 
+BOOST_ARCHIVE_DECL 
 basic_iserializer::basic_iserializer(
     const lslboost::serialization::extended_type_info & eti
 ) :
@@ -25,7 +25,7 @@ basic_iserializer::basic_iserializer(
     m_bpis(NULL)
 {}
 
-BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) 
+BOOST_ARCHIVE_DECL 
 basic_iserializer::~basic_iserializer(){}
 
 } // namespace detail

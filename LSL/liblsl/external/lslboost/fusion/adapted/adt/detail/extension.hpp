@@ -10,25 +10,27 @@
 #ifndef BOOST_FUSION_ADAPTED_ADT_DETAIL_EXTENSION_HPP
 #define BOOST_FUSION_ADAPTED_ADT_DETAIL_EXTENSION_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/type_traits/remove_const.hpp>
 #include <lslboost/type_traits/remove_reference.hpp>
 #include <lslboost/fusion/support/as_const.hpp>
 #include <lslboost/fusion/adapted/struct/detail/extension.hpp>
 
 namespace lslboost { namespace fusion
-{ 
+{
     namespace detail
     {
-    template <typename T, typename Dummy>
-    struct get_identity
-      : remove_const<typename remove_reference<T>::type>
-    {};
+        template <typename T, typename Dummy>
+        struct get_identity
+          : remove_const<typename remove_reference<T>::type>
+        {};
     }
-    
+
     namespace extension
     {
         // Overload as_const() to unwrap adt_attribute_proxy.
         template <typename T, int N, bool Const>
+        BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
         typename adt_attribute_proxy<T, N, Const>::type as_const(const adt_attribute_proxy<T, N, Const>& proxy)
         {
             return proxy.get();

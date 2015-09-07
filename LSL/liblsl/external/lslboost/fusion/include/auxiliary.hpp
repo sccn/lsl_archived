@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_AUXILIARY)
 #define FUSION_INCLUDE_AUXILIARY
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/auxiliary.hpp>
 
 #endif

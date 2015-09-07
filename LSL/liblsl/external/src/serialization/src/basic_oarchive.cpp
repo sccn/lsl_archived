@@ -331,6 +331,12 @@ basic_oarchive_impl::save_pointer(
                     // makes a copy when passing a non-const to a const.  This
                     // is permitted by the standard but rarely seen in practice
                     const class_name_type cn(key);
+                    if(cn.size() > (BOOST_SERIALIZATION_MAX_KEY_SIZE - 1))
+                        lslboost::serialization::throw_exception(
+                            lslboost::archive::archive_exception(
+                                lslboost::archive::archive_exception::
+                                    invalid_class_name)
+                            );
                     // write out the external class identifier
                     ar.vsave(cn);
                 }
@@ -404,18 +410,16 @@ namespace lslboost {
 namespace archive {
 namespace detail {
 
-BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) 
+BOOST_ARCHIVE_DECL 
 basic_oarchive::basic_oarchive(unsigned int flags)
     : pimpl(new basic_oarchive_impl(flags))
 {}
 
-BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) 
+BOOST_ARCHIVE_DECL 
 basic_oarchive::~basic_oarchive()
-{
-    delete pimpl;
-}
+{}
 
-BOOST_ARCHIVE_DECL(void) 
+BOOST_ARCHIVE_DECL void 
 basic_oarchive::save_object(
     const void *x, 
     const basic_oserializer & bos
@@ -423,7 +427,7 @@ basic_oarchive::save_object(
     pimpl->save_object(*this, x, bos);
 }
 
-BOOST_ARCHIVE_DECL(void) 
+BOOST_ARCHIVE_DECL void 
 basic_oarchive::save_pointer(
     const void * t, 
     const basic_pointer_oserializer * bpos_ptr
@@ -431,22 +435,22 @@ basic_oarchive::save_pointer(
     pimpl->save_pointer(*this, t, bpos_ptr);
 }
 
-BOOST_ARCHIVE_DECL(void) 
+BOOST_ARCHIVE_DECL void 
 basic_oarchive::register_basic_serializer(const basic_oserializer & bos){
     pimpl->register_type(bos);
 }
 
-BOOST_ARCHIVE_DECL(library_version_type)
+BOOST_ARCHIVE_DECL library_version_type
 basic_oarchive::get_library_version() const{
     return BOOST_ARCHIVE_VERSION();
 }
 
-BOOST_ARCHIVE_DECL(unsigned int)
+BOOST_ARCHIVE_DECL unsigned int
 basic_oarchive::get_flags() const{
     return pimpl->m_flags;
 }
 
-BOOST_ARCHIVE_DECL(void) 
+BOOST_ARCHIVE_DECL void 
 basic_oarchive::end_preamble(){
 }
 

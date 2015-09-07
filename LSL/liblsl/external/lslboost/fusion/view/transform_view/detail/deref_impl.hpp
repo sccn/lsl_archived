@@ -7,6 +7,7 @@
 #if !defined(FUSION_DEREF_IMPL_07162005_1026)
 #define FUSION_DEREF_IMPL_07162005_1026
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/apply.hpp>
 #include <lslboost/fusion/iterator/deref.hpp>
 #include <lslboost/fusion/iterator/value_of.hpp>
@@ -36,6 +37,7 @@ namespace lslboost { namespace fusion
                 typedef detail::apply_transform_result<typename Iterator::transform_type> transform_type;
                 typedef typename mpl::apply<transform_type, value_type>::type type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Iterator const& i)
                 {
@@ -61,6 +63,7 @@ namespace lslboost { namespace fusion
                 typedef detail::apply_transform_result<typename Iterator::transform_type> transform_type;
                 typedef typename mpl::apply<transform_type, value1_type, value2_type>::type type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Iterator const& i)
                 {

@@ -7,6 +7,7 @@
 #if !defined(FUSION_POP_FRONT_10022005_1800)
 #define FUSION_POP_FRONT_10022005_1800
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/pop_front.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
 #include <lslboost/fusion/algorithm/transformation/pop_front.hpp>

@@ -8,6 +8,7 @@
 #ifndef BOOST_BOOST_FUSION_SUPPORT_PP_ROUND_HPP
 #define BOOST_BOOST_FUSION_SUPPORT_PP_ROUND_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/preprocessor/cat.hpp>
 #include <lslboost/preprocessor/comparison/less.hpp>
 #include <lslboost/preprocessor/control/if.hpp>

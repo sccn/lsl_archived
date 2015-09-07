@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_MAP_FWD)
 #define FUSION_INCLUDE_MAP_FWD
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/map/map_fwd.hpp>
 
 #endif

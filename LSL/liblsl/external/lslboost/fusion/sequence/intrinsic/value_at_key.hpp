@@ -8,11 +8,17 @@
 #if !defined(FUSION_VALUE_AT_KEY_05052005_0229)
 #define FUSION_VALUE_AT_KEY_05052005_0229
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/int.hpp>
+#include <lslboost/mpl/empty_base.hpp>
+#include <lslboost/mpl/if.hpp>
+#include <lslboost/mpl/or.hpp>
 #include <lslboost/fusion/sequence/intrinsic_fwd.hpp>
+#include <lslboost/fusion/sequence/intrinsic/has_key.hpp>
 #include <lslboost/fusion/iterator/value_of_data.hpp>
 #include <lslboost/fusion/algorithm/query/find.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
+#include <lslboost/fusion/support/category_of.hpp>
 
 namespace lslboost { namespace fusion
 {
@@ -51,13 +57,27 @@ namespace lslboost { namespace fusion
         template <>
         struct value_at_key_impl<std_pair_tag>;
     }
-    
+
+    namespace detail
+    {
+        template <typename Sequence, typename N, typename Tag>
+        struct value_at_key_impl
+            : mpl::if_<
+                  mpl::or_<
+                      typename extension::has_key_impl<Tag>::template apply<Sequence, N>
+                    , traits::is_unbounded<Sequence>
+                  >
+                , typename extension::value_at_key_impl<Tag>::template apply<Sequence, N>
+                , mpl::empty_base
+              >::type
+        {};
+    }
+
     namespace result_of
     {
         template <typename Sequence, typename N>
         struct value_at_key
-            : extension::value_at_key_impl<typename detail::tag_of<Sequence>::type>::
-                template apply<Sequence, N>
+            : detail::value_at_key_impl<Sequence, N, typename detail::tag_of<Sequence>::type>
         {};
     }
 }}

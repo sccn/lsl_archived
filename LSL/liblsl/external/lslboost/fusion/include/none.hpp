@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_NONE)
 #define FUSION_INCLUDE_NONE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/query/none.hpp>
 
 #endif

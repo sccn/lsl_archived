@@ -8,6 +8,7 @@
 #if !defined(FUSION_ADVANCE_IMPL_20061024_2021)
 #define FUSION_ADVANCE_IMPL_20061024_2021
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/zip_view/zip_view_iterator_fwd.hpp>
 #include <lslboost/fusion/iterator/advance.hpp>
 #include <lslboost/fusion/algorithm/transformation/transform.hpp>
@@ -33,6 +34,7 @@ namespace lslboost { namespace fusion {
             };
 
             template<typename It>
+            BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             typename result<poly_advance(It)>::type
             operator()(const It& it) const
             {
@@ -55,6 +57,7 @@ namespace lslboost { namespace fusion {
                 typedef zip_view_iterator<
                     typename result_of::transform<typename It::iterators, detail::poly_advance<N> >::type> type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(It const& it)
                 {

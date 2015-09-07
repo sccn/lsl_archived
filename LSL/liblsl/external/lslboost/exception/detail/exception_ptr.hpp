@@ -21,9 +21,9 @@
 #include <lslboost/exception/diagnostic_information.hpp>
 #include <lslboost/exception/detail/type_info.hpp>
 #include <lslboost/exception/detail/clone_current_exception.hpp>
-//#ifndef BOOST_NO_RTTI
-//#include <lslboost/units/detail/utility.hpp>
-//#endif
+#ifndef BOOST_NO_RTTI
+#include <lslboost/core/demangle.hpp>
+#endif
 #include <lslboost/shared_ptr.hpp>
 #include <stdexcept>
 #include <new>
@@ -34,7 +34,7 @@ namespace
 lslboost
     {
     class exception_ptr;
-    BOOST_ATTRIBUTE_NORETURN void rethrow_exception( exception_ptr const & );
+    BOOST_NORETURN void rethrow_exception( exception_ptr const & );
     exception_ptr current_exception();
 
     class
@@ -92,7 +92,7 @@ lslboost
     std::string
     to_string( original_exception_type const & x )
         {
-        return /*units::detail::demangle*/(x.value()->name());
+        return core::demangle(x.value()->name());
         }
 #endif
 
@@ -454,7 +454,7 @@ lslboost
         return ret;
         }
 
-    BOOST_ATTRIBUTE_NORETURN
+    BOOST_NORETURN
     inline
     void
     rethrow_exception( exception_ptr const & p )

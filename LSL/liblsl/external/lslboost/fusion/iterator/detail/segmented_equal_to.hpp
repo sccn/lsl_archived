@@ -7,6 +7,7 @@
 #if !defined(BOOST_FUSION_SEGMENTED_ITERATOR_EQUAL_TO_HPP_INCLUDED)
 #define BOOST_FUSION_SEGMENTED_ITERATOR_EQUAL_TO_HPP_INCLUDED
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/and.hpp>
 #include <lslboost/mpl/bool.hpp>
 #include <lslboost/fusion/iterator/equal_to.hpp>

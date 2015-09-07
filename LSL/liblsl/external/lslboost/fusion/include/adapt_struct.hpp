@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_INCLUDE_ADAPT_STRUCT_HPP
 #define BOOST_FUSION_INCLUDE_ADAPT_STRUCT_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/adapted/struct/adapt_struct.hpp>
 
 #endif

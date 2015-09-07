@@ -7,6 +7,7 @@
 #if !defined(BOOST_FUSION_BOOST_TUPLE_09272006_0732)
 #define BOOST_FUSION_BOOST_TUPLE_09272006_0732
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/adapted/lslboost_tuple/tag_of.hpp>
 #include <lslboost/fusion/adapted/lslboost_tuple/detail/is_view_impl.hpp>
 #include <lslboost/fusion/adapted/lslboost_tuple/detail/is_sequence_impl.hpp>
@@ -16,5 +17,7 @@
 #include <lslboost/fusion/adapted/lslboost_tuple/detail/size_impl.hpp>
 #include <lslboost/fusion/adapted/lslboost_tuple/detail/at_impl.hpp>
 #include <lslboost/fusion/adapted/lslboost_tuple/detail/value_at_impl.hpp>
+#include <lslboost/fusion/adapted/lslboost_tuple/detail/convert_impl.hpp>
+#include <lslboost/fusion/adapted/lslboost_tuple/mpl/clear.hpp>
 
 #endif

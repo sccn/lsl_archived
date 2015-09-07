@@ -10,6 +10,7 @@
 #ifndef BOOST_FUSION_ADAPTED_STD_PAIR_HPP
 #define BOOST_FUSION_ADAPTED_STD_PAIR_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/adapted/struct/adapt_struct.hpp>
 #include <utility>
 

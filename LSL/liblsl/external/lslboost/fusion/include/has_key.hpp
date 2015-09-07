@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_HAS_KEY)
 #define FUSION_INCLUDE_HAS_KEY
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/has_key.hpp>
 
 #endif

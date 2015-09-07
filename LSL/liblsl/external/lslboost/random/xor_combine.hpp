@@ -7,7 +7,7 @@
  *
  * See http://www.lslboost.org for most recent version including documentation.
  *
- * $Id: xor_combine.hpp 71018 2011-04-05 21:27:52Z steven_watanabe $
+ * $Id$
  *
  */
 
@@ -24,6 +24,7 @@
 #include <lslboost/random/detail/config.hpp>
 #include <lslboost/random/detail/seed.hpp>
 #include <lslboost/random/detail/seed_impl.hpp>
+#include <lslboost/random/detail/operators.hpp>
 
 namespace lslboost {
 namespace random {

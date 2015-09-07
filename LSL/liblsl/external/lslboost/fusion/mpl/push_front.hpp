@@ -7,6 +7,7 @@
 #if !defined(FUSION_PUSH_FRONT_10022005_1720)
 #define FUSION_PUSH_FRONT_10022005_1720
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/push_front.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
 #include <lslboost/fusion/algorithm/transformation/push_front.hpp>

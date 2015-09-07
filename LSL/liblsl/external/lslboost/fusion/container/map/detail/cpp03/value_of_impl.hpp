@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_CONTAINER_MAP_DETAIL_VALUE_OF_IMPL_HPP
 #define BOOST_FUSION_CONTAINER_MAP_DETAIL_VALUE_OF_IMPL_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/intrinsic/value_at.hpp>
 #include <lslboost/type_traits/is_const.hpp>
 

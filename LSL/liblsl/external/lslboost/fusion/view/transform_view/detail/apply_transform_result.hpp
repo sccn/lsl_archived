@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_APPLY_TRANSFORM_RESULT_02092006_1936)
 #define BOOST_FUSION_APPLY_TRANSFORM_RESULT_02092006_1936
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/utility/result_of.hpp>
 
 namespace lslboost { namespace fusion

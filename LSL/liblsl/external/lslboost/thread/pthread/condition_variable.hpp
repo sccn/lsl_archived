@@ -160,7 +160,7 @@ namespace lslboost
             if(res2)
             {
                 BOOST_VERIFY(!pthread_mutex_destroy(&internal_mutex));
-                lslboost::throw_exception(thread_resource_error(res, "lslboost::condition_variable_any::condition_variable_any() failed in pthread_cond_init"));
+                lslboost::throw_exception(thread_resource_error(res2, "lslboost::condition_variable_any::condition_variable_any() failed in pthread_cond_init"));
             }
         }
         ~condition_variable_any()

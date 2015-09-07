@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_VOID)
 #define FUSION_INCLUDE_VOID
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/void.hpp>
 
 #endif

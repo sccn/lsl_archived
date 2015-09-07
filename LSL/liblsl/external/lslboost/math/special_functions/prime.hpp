@@ -11,6 +11,7 @@
 #include <lslboost/array.hpp>
 #include <lslboost/cstdint.hpp>
 #include <lslboost/math/policies/error_handling.hpp>
+#include <lslboost/math/special_functions/math_fwd.hpp>
 
 namespace lslboost{ namespace math{
 

@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_FOLD)
 #define FUSION_INCLUDE_FOLD
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/iteration/fold.hpp>
 
 #endif

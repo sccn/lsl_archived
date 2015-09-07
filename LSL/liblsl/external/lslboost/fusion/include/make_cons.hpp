@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_MAKE_CONS)
 #define FUSION_INCLUDE_MAKE_CONS
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/generation/make_cons.hpp>
 
 #endif

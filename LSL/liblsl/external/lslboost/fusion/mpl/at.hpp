@@ -7,6 +7,7 @@
 #if !defined(FUSION_AT_10022005_1616)
 #define FUSION_AT_10022005_1616
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/at.hpp>
 #include <lslboost/fusion/sequence/intrinsic/value_at.hpp>
 

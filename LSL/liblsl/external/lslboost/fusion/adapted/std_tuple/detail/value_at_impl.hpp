@@ -7,6 +7,7 @@
 #if !defined(BOOST_FUSION_VALUE_AT_IMPL_09242011_1744)
 #define BOOST_FUSION_VALUE_AT_IMPL_09242011_1744
 
+#include <lslboost/fusion/support/config.hpp>
 #include <tuple>
 
 namespace lslboost { namespace fusion

@@ -5,7 +5,7 @@
 //
 //  See http://www.lslboost.org/libs/utility for most recent version including documentation.
 
-//  See lslboost/detail/call_traits.hpp and lslboost/detail/ob_call_traits.hpp
+//  See lslboost/detail/call_traits.hpp
 //  for full copyright notices.
 
 #ifndef BOOST_CALL_TRAITS_HPP
@@ -15,10 +15,6 @@
 #include <lslboost/config.hpp>
 #endif
 
-#ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-#include <lslboost/detail/ob_call_traits.hpp>
-#else
 #include <lslboost/detail/call_traits.hpp>
-#endif
 
 #endif // BOOST_CALL_TRAITS_HPP

@@ -7,6 +7,7 @@
 #if !defined(FUSION_ERASE_KEY_10022005_1907)
 #define FUSION_ERASE_KEY_10022005_1907
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/erase_key.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
 #include <lslboost/fusion/algorithm/transformation/erase_key.hpp>

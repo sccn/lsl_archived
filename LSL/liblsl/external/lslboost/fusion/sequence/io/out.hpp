@@ -9,6 +9,7 @@
 #if !defined(BOOST_OUT_05042005_0120)
 #define BOOST_OUT_05042005_0120
 
+#include <lslboost/fusion/support/config.hpp>
 #include <ostream>
 #include <lslboost/fusion/sequence/io/detail/out.hpp>
 #include <lslboost/fusion/support/is_sequence.hpp>

@@ -75,7 +75,13 @@ namespace lslboost
                 BOOST_VERIFY(detail::win32::ReleaseSemaphore(semaphores[unlock_sem],old_state.shared_waiting + (old_state.exclusive_waiting?1:0),0)!=0);
             }
         }
-
+        void release_shared_waiters(state_data old_state)
+        {
+            if(old_state.shared_waiting || old_state.exclusive_waiting)
+            {
+                BOOST_VERIFY(detail::win32::ReleaseSemaphore(semaphores[unlock_sem],old_state.shared_waiting + (old_state.exclusive_waiting?1:0),0)!=0);
+            }
+        }
 
     public:
         BOOST_THREAD_NO_COPYABLE(shared_mutex)
@@ -184,7 +190,7 @@ namespace lslboost
                     return true;
                 }
 
-                unsigned long const res=detail::win32::WaitForSingleObject(semaphores[unlock_sem],::lslboost::detail::get_milliseconds_until(wait_until));
+                unsigned long const res=detail::win32::WaitForSingleObjectEx(semaphores[unlock_sem],::lslboost::detail::get_milliseconds_until(wait_until), 0);
                 if(res==detail::win32::timeout)
                 {
                     for(;;)
@@ -289,8 +295,8 @@ namespace lslboost
             unsigned long res;
             if (tp>n) {
               chrono::milliseconds rel_time= chrono::ceil<chrono::milliseconds>(tp-n);
-              res=detail::win32::WaitForSingleObject(semaphores[unlock_sem],
-                static_cast<unsigned long>(rel_time.count()));
+              res=detail::win32::WaitForSingleObjectEx(semaphores[unlock_sem],
+                static_cast<unsigned long>(rel_time.count()), 0);
             } else {
               res=detail::win32::timeout;
             }
@@ -466,7 +472,7 @@ namespace lslboost
                 #else
                 const bool wait_all = false;
                 #endif
-                unsigned long const wait_res=detail::win32::WaitForMultipleObjects(2,semaphores,wait_all,::lslboost::detail::get_milliseconds_until(wait_until));
+                unsigned long const wait_res=detail::win32::WaitForMultipleObjectsEx(2,semaphores,wait_all,::lslboost::detail::get_milliseconds_until(wait_until), 0);
                 if(wait_res==detail::win32::timeout)
                 {
                     for(;;)
@@ -578,8 +584,8 @@ namespace lslboost
             unsigned long wait_res;
             if (tp>n) {
               chrono::milliseconds rel_time= chrono::ceil<chrono::milliseconds>(tp-chrono::system_clock::now());
-              wait_res=detail::win32::WaitForMultipleObjects(2,semaphores,wait_all,
-                  static_cast<unsigned long>(rel_time.count()));
+              wait_res=detail::win32::WaitForMultipleObjectsEx(2,semaphores,wait_all,
+                  static_cast<unsigned long>(rel_time.count()), 0);
             } else {
               wait_res=detail::win32::timeout;
             }
@@ -690,7 +696,7 @@ namespace lslboost
                     return;
                 }
 
-                BOOST_VERIFY(!detail::win32::WaitForSingleObject(semaphores[unlock_sem],detail::win32::infinite));
+                BOOST_VERIFY(!detail::win32::WaitForSingleObjectEx(semaphores[unlock_sem],detail::win32::infinite, 0));
             }
         }
 
@@ -750,6 +756,9 @@ namespace lslboost
                     {
                         release_waiters(old_state);
                     }
+                    else {
+                        release_shared_waiters(old_state);
+                    }
                     // #7720
                     //else {
                     //    release_waiters(old_state);
@@ -779,7 +788,7 @@ namespace lslboost
                 {
                     if(!last_reader)
                     {
-                        BOOST_VERIFY(!detail::win32::WaitForSingleObject(upgrade_sem,detail::win32::infinite));
+                        BOOST_VERIFY(!detail::win32::WaitForSingleObjectEx(upgrade_sem,detail::win32::infinite, 0));
                     }
                     break;
                 }

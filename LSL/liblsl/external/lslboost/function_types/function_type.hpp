@@ -22,7 +22,6 @@ namespace lslboost
       BOOST_MPL_AUX_LAMBDA_SUPPORT(2,function_type,(Types,Tag))
     };
   }
-  BOOST_TT_AUX_TEMPLATE_ARITY_SPEC(2,function_types::function_type)
 }
 
 #endif

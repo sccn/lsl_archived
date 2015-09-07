@@ -7,6 +7,7 @@
 #if !defined(FUSION_VALUE_OF_IMPL_07162005_1030)
 #define FUSION_VALUE_OF_IMPL_07162005_1030
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/apply.hpp>
 #include <lslboost/fusion/iterator/value_of.hpp>
 #include <lslboost/fusion/view/transform_view/detail/apply_transform_result.hpp>

@@ -97,7 +97,9 @@
 #include <boost/archive/basic_binary_oarchive.hpp>
 
 
-#if BOOST_VERSION >= 103500
+#if BOOST_VERSION >= 105800
+#include <boost/serialization/shared_ptr_helper.hpp>
+#elif BOOST_VERSION >= 103500
 #include <boost/archive/shared_ptr_helper.hpp>
 #endif
 

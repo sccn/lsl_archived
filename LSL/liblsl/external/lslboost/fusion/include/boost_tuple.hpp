@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_BOOST_TUPLE)
 #define FUSION_INCLUDE_BOOST_TUPLE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/adapted/lslboost_tuple.hpp>
 
 #endif

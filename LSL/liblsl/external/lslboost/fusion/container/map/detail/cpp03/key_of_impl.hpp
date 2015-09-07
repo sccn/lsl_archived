@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_CONTAINER_MAP_DETAIL_KEY_OF_IMPL_HPP
 #define BOOST_FUSION_CONTAINER_MAP_DETAIL_KEY_OF_IMPL_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/map/detail/cpp03/value_of_impl.hpp>
 
 namespace lslboost { namespace fusion { namespace extension

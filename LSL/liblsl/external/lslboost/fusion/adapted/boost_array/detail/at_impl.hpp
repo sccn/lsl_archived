@@ -8,12 +8,13 @@
 #if !defined(BOOST_FUSION_AT_IMPL_27122005_1241)
 #define BOOST_FUSION_AT_IMPL_27122005_1241
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/type_traits/is_const.hpp>
 
 #include <lslboost/mpl/if.hpp>
 
 namespace lslboost { namespace fusion {
-    
+
     struct lslboost_array_tag;
 
     namespace extension
@@ -32,6 +33,7 @@ namespace lslboost { namespace fusion {
                     typename Sequence::const_reference, 
                     typename Sequence::reference>::type type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Sequence& seq)
                 {

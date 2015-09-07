@@ -12,6 +12,7 @@
 #define BOOST_TT_IS_NOTHROW_MOVE_CONSTRUCTIBLE_HPP_INCLUDED
 
 #include <lslboost/config.hpp>
+#include <lslboost/type_traits/intrinsics.hpp>
 #include <lslboost/type_traits/has_trivial_move_constructor.hpp>
 #include <lslboost/type_traits/has_nothrow_copy.hpp>
 #include <lslboost/type_traits/is_array.hpp>
@@ -28,7 +29,25 @@ namespace lslboost {
 
 namespace detail{
 
-#ifndef BOOST_NO_CXX11_NOEXCEPT
+#ifdef BOOST_IS_NOTHROW_MOVE_CONSTRUCT
+
+template <class T>
+struct is_nothrow_move_constructible_imp{
+   BOOST_STATIC_CONSTANT(bool, value = BOOST_IS_NOTHROW_MOVE_CONSTRUCT(T));
+};
+
+template <class T>
+struct is_nothrow_move_constructible_imp<volatile T> : public ::lslboost::false_type {};
+template <class T>
+struct is_nothrow_move_constructible_imp<const volatile T> : public ::lslboost::false_type{};
+template <class T>
+struct is_nothrow_move_constructible_imp<T&> : public ::lslboost::false_type{};
+#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
+template <class T>
+struct is_nothrow_move_constructible_imp<T&&> : public ::lslboost::false_type{};
+#endif
+
+#elif !defined(BOOST_NO_CXX11_NOEXCEPT) && !defined(BOOST_NO_SFINAE_EXPR)
 
 template <class T, class Enable = void>
 struct false_or_cpp11_noexcept_move_constructible: public ::lslboost::false_type {};
@@ -42,13 +61,19 @@ struct false_or_cpp11_noexcept_move_constructible <
 
 template <class T>
 struct is_nothrow_move_constructible_imp{
-   BOOST_STATIC_CONSTANT(bool, value = 
-        (::lslboost::type_traits::ice_and<
-            ::lslboost::type_traits::ice_not< ::lslboost::is_volatile<T>::value >::value,
-            ::lslboost::type_traits::ice_not< ::lslboost::is_reference<T>::value >::value,
-            ::lslboost::detail::false_or_cpp11_noexcept_move_constructible<T>::value
-        >::value));
+   BOOST_STATIC_CONSTANT(bool, value = ::lslboost::detail::false_or_cpp11_noexcept_move_constructible<T>::value);
 };
+
+template <class T>
+struct is_nothrow_move_constructible_imp<volatile T> : public ::lslboost::false_type {};
+template <class T>
+struct is_nothrow_move_constructible_imp<const volatile T> : public ::lslboost::false_type{};
+template <class T>
+struct is_nothrow_move_constructible_imp<T&> : public ::lslboost::false_type{};
+#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
+template <class T>
+struct is_nothrow_move_constructible_imp<T&&> : public ::lslboost::false_type{};
+#endif
 
 #else
 

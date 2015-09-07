@@ -7,6 +7,7 @@
 #if !defined(BOOST_FUSION_BEGIN_IMPL_09272006_0719)
 #define BOOST_FUSION_BEGIN_IMPL_09272006_0719
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/adapted/lslboost_tuple/lslboost_tuple_iterator.hpp>
 
 namespace lslboost { namespace fusion 
@@ -26,6 +27,7 @@ namespace lslboost { namespace fusion
             {
                 typedef lslboost_tuple_iterator<Sequence> type;
     
+                BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Sequence& v)
                 {

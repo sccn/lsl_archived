@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_ALGORITHM)
 #define FUSION_INCLUDE_ALGORITHM
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm.hpp>
 
 #endif

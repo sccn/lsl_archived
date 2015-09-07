@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_SIZE_IMPL_31122005_1508)
 #define BOOST_FUSION_SIZE_IMPL_31122005_1508
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/size.hpp>
 
 namespace lslboost { namespace fusion 

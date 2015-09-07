@@ -7,6 +7,7 @@
 #if !defined(FUSION_SEQUENCE_FILTER_VIEW_HPP)
 #define FUSION_SEQUENCE_FILTER_VIEW_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/detail/access.hpp>
 #include <lslboost/fusion/support/sequence_base.hpp>
 #include <lslboost/fusion/support/is_view.hpp>
@@ -45,11 +46,14 @@ namespace lslboost { namespace fusion
         typedef typename result_of::end<Sequence>::type last_type;
         typedef Pred pred_type;
 
+        BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
         filter_view(Sequence& in_seq)
             : seq(in_seq)
         {}
 
+        BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
         first_type first() const { return fusion::begin(seq); }
+        BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
         last_type last() const { return fusion::end(seq); }
         typename mpl::if_<traits::is_view<Sequence>, Sequence, Sequence&>::type seq;
 

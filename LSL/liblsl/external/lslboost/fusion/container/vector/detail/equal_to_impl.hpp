@@ -7,6 +7,7 @@
 #if !defined(FUSION_EQUAL_TO_IMPL_05052005_1215)
 #define FUSION_EQUAL_TO_IMPL_05052005_1215
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/type_traits/is_same.hpp>
 #include <lslboost/mpl/equal_to.hpp>
 #include <lslboost/mpl/and.hpp>
@@ -24,7 +25,7 @@ namespace lslboost { namespace fusion
         struct equal_to_impl<vector_iterator_tag>
         {
             template <typename I1, typename I2>
-            struct apply             
+            struct apply
                 : is_same<
                     typename I1::identity
                   , typename I2::identity

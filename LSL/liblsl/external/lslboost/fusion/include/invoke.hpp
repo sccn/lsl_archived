@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_INVOKE)
 #define FUSION_INCLUDE_INVOKE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/functional/invocation/invoke.hpp>
 
 #endif

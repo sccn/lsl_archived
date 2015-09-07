@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_DEQUE_VALUE_AT_IMPL_08122006_0756)
 #define BOOST_FUSION_DEQUE_VALUE_AT_IMPL_08122006_0756
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/deque/detail/keyed_element.hpp>
 
 #include <lslboost/mpl/equal_to.hpp>

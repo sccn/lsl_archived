@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_VIEW)
 #define FUSION_INCLUDE_VIEW
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view.hpp>
 
 #endif

@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_DISTANCE)
 #define FUSION_INCLUDE_DISTANCE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/distance.hpp>
 
 #endif

@@ -16,12 +16,8 @@
 #include <lslboost/chrono/duration.hpp>
 #include <lslboost/chrono/time_point.hpp>
 #include <lslboost/assert.hpp>
-#ifdef BOOST_NO_CXX11_HDR_FUNCTIONAL
-#include <lslboost/function.hpp>
-#else
-#include <functional>
-#endif
-//#include <lslboost/thread/latch.hpp>
+//#include <lslboost/thread/detail/nullary_function.hpp>
+#include <lslboost/thread/csbl/functional.hpp>
 
 #include <lslboost/config/abi_prefix.hpp>
 
@@ -37,11 +33,8 @@ namespace lslboost
   {
   public:
     /// the implementation defined completion function type
-#ifdef BOOST_NO_CXX11_HDR_FUNCTIONAL
-    typedef function<void()> completion_function;
-#else
-    typedef std::function<void()> completion_function;
-#endif
+    //typedef detail::nullary_function<void()> completion_function;
+    typedef csbl::function<void()> completion_function;
     /// noop completion function factory
     static completion_function noop()
     {

@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_END_IMPL_27122005_1120)
 #define BOOST_FUSION_END_IMPL_27122005_1120
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/adapted/lslboost_array/array_iterator.hpp>
 
 namespace lslboost { namespace fusion {
@@ -23,10 +24,11 @@ namespace lslboost { namespace fusion {
         struct end_impl<lslboost_array_tag>
         {
             template <typename Sequence>
-            struct apply 
+            struct apply
             {
                 typedef array_iterator<Sequence, Sequence::static_size> type;
-    
+
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Sequence& v)
                 {

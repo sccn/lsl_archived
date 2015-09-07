@@ -14,15 +14,9 @@
 #include <lslboost/config.hpp> // BOOST_MSVC
 #include <lslboost/detail/workaround.hpp>
 
-#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
-# include <lslboost/range/detail/vc6/end.hpp>
-#else
-# include <lslboost/range/detail/implementation_help.hpp>
-# include <lslboost/range/iterator.hpp>
-# include <lslboost/range/detail/common.hpp>
-# if BOOST_WORKAROUND(BOOST_MSVC, < 1310)
-#  include <lslboost/range/detail/remove_extent.hpp>
-# endif
+#include <lslboost/range/detail/implementation_help.hpp>
+#include <lslboost/range/iterator.hpp>
+#include <lslboost/range/detail/common.hpp>
 
 namespace lslboost
 {
@@ -68,19 +62,11 @@ namespace lslboost
         template<>
         struct range_end<array_>
         {
-        #if !BOOST_WORKAROUND(BOOST_MSVC, < 1310)
-            template< typename T, std::size_t sz >
-            static T* fun( T BOOST_RANGE_ARRAY_REF()[sz] )
-            {
-                return lslboost::range_detail::array_end( lslboost_range_array );
-            }
-        #else
             template<typename T>
             static BOOST_RANGE_DEDUCED_TYPENAME remove_extent<T>::type* fun(T& t)
             {
                 return t + remove_extent<T>::size;
             }
-        #endif
         };
 
     } // namespace 'range_detail'
@@ -97,5 +83,4 @@ namespace lslboost
 
 } // namespace 'lslboost'
 
-# endif // VC6
 #endif

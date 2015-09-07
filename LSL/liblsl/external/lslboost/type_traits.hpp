@@ -51,6 +51,7 @@
 #include "lslboost/type_traits/is_const.hpp"
 #include "lslboost/type_traits/is_convertible.hpp"
 #include "lslboost/type_traits/is_copy_constructible.hpp"
+#include "lslboost/type_traits/is_copy_assignable.hpp"
 #include "lslboost/type_traits/is_empty.hpp"
 #include "lslboost/type_traits/is_enum.hpp"
 #include "lslboost/type_traits/is_float.hpp"

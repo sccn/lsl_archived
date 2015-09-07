@@ -7,6 +7,7 @@
 #if !defined(FUSION_END_10022005_1619)
 #define FUSION_END_10022005_1619
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/begin_end.hpp>
 #include <lslboost/fusion/sequence/intrinsic/end.hpp>
 #include <lslboost/fusion/adapted/mpl/detail/end_impl.hpp>

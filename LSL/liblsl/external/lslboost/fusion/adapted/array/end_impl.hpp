@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_ADAPTED_ARRAY_END_IMPL_HPP
 #define BOOST_FUSION_ADAPTED_ARRAY_END_IMPL_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/basic_iterator.hpp>
 #include <lslboost/type_traits/rank.hpp>
 #include <lslboost/type_traits/extent.hpp>
@@ -32,6 +33,7 @@ namespace lslboost { namespace fusion { namespace extension
                 >
             type;
 
+            BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             static type
             call(Seq& seq)
             {

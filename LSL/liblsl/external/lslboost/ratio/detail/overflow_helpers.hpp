@@ -40,7 +40,7 @@ time2_demo contained this comment:
 #include <limits>
 #include <lslboost/cstdint.hpp>
 #include <lslboost/type_traits/integral_constant.hpp>
-#include <lslboost/utility/enable_if.hpp>
+#include <lslboost/core/enable_if.hpp>
 #include <lslboost/integer_traits.hpp>
 
 //

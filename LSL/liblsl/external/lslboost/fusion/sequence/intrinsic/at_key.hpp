@@ -8,12 +8,18 @@
 #if !defined(BOOST_FUSION_AT_KEY_20060304_1755)
 #define BOOST_FUSION_AT_KEY_20060304_1755
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/type_traits/is_const.hpp>
 #include <lslboost/fusion/sequence/intrinsic_fwd.hpp>
+#include <lslboost/fusion/sequence/intrinsic/has_key.hpp>
 #include <lslboost/fusion/algorithm/query/find.hpp>
 #include <lslboost/fusion/iterator/deref_data.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
+#include <lslboost/fusion/support/category_of.hpp>
 #include <lslboost/fusion/support/detail/access.hpp>
+#include <lslboost/mpl/empty_base.hpp>
+#include <lslboost/mpl/if.hpp>
+#include <lslboost/mpl/or.hpp>
 
 namespace lslboost { namespace fusion
 {
@@ -37,6 +43,7 @@ namespace lslboost { namespace fusion
                     >::type
                 type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Seq& seq)
                 {
@@ -62,16 +69,31 @@ namespace lslboost { namespace fusion
         struct at_key_impl<std_pair_tag>;
     }
 
+    namespace detail
+    {
+        template <typename Sequence, typename Key, typename Tag>
+        struct at_key_impl
+            : mpl::if_<
+                  mpl::or_<
+                      typename extension::has_key_impl<Tag>::template apply<Sequence, Key>
+                    , traits::is_unbounded<Sequence>
+                  >
+                , typename extension::at_key_impl<Tag>::template apply<Sequence, Key>
+                , mpl::empty_base
+              >::type
+        {};
+    }
+
     namespace result_of
     {
         template <typename Sequence, typename Key>
         struct at_key
-            : extension::at_key_impl<typename detail::tag_of<Sequence>::type>::
-                template apply<Sequence, Key>
+            : detail::at_key_impl<Sequence, Key, typename detail::tag_of<Sequence>::type>
         {};
     }
 
     template <typename Key, typename Sequence>
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
     inline typename 
         lazy_disable_if<
             is_const<Sequence>
@@ -83,6 +105,7 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Key, typename Sequence>
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
     inline typename result_of::at_key<Sequence const, Key>::type
     at_key(Sequence const& seq)
     {

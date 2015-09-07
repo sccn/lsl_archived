@@ -1,5 +1,5 @@
+#include <boost/endian/conversion.hpp>
 #include "socket_utils.h"
-#include "endian/conversion.hpp"
 #include "common.h"
 
 
@@ -13,6 +13,6 @@ double lsl::measure_endian_performance() {
 	double data=12335.5, t_end=lsl_clock() + measure_duration;
 	double k;
 	for (k=0; ((int)k & 0xFF) != 0 || lsl_clock()<t_end; k++)
-		lslboost::endian::reverse_value(data);
+		boost::endian::endian_reverse_inplace(*(boost::uint64_t*)&data);
 	return k;
 }

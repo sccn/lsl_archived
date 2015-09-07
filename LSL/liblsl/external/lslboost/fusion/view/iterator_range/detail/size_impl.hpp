@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_ITERATOR_RANGE_SIZE_IMPL_HPP_INCLUDED)
 #define BOOST_FUSION_ITERATOR_RANGE_SIZE_IMPL_HPP_INCLUDED
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/distance.hpp>
 
 namespace lslboost { namespace fusion

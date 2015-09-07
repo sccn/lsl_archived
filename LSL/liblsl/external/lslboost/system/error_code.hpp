@@ -14,7 +14,6 @@
 #include <lslboost/system/config.hpp>
 #include <lslboost/cstdint.hpp>
 #include <lslboost/assert.hpp>
-#include <lslboost/operators.hpp>
 #include <lslboost/noncopyable.hpp>
 #include <lslboost/utility/enable_if.hpp>
 #include <ostream>
@@ -513,7 +512,7 @@ namespace lslboost
 #include <lslboost/config/abi_suffix.hpp> // pops abi_prefix.hpp pragmas
 
 # ifdef BOOST_ERROR_CODE_HEADER_ONLY
-#   include <lslboost/../libs/system/src/error_code.cpp>
+#   include <lslboost/system/detail/error_code.ipp>
 # endif
 
 #endif // BOOST_ERROR_CODE_HPP

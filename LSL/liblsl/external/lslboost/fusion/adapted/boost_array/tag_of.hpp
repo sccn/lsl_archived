@@ -8,6 +8,7 @@
 #if !defined(FUSION_SEQUENCE_TAG_OF_27122005_1030)
 #define FUSION_SEQUENCE_TAG_OF_27122005_1030
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/tag_of_fwd.hpp>
 
 #include <cstddef>

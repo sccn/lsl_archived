@@ -10,12 +10,6 @@
 
 namespace lslboost { namespace concepts { 
 
-# if BOOST_WORKAROUND(__GNUC__, == 2)
-
-#  define BOOST_CONCEPT_USAGE(model) ~model()
-
-# else 
-
 template <class Model>
 struct usage_requirements
 {
@@ -36,8 +30,6 @@ struct usage_requirements
       ~model()
 
 #  endif
-
-# endif 
 
 }} // namespace lslboost::concepts
 

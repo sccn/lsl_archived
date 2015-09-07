@@ -15,6 +15,7 @@
 #include <lslboost/range/adaptor/adjacent_filtered.hpp>
 #include <lslboost/range/adaptor/copied.hpp>
 #include <lslboost/range/adaptor/filtered.hpp>
+#include <lslboost/range/adaptor/formatted.hpp>
 #include <lslboost/range/adaptor/indexed.hpp>
 #include <lslboost/range/adaptor/indirected.hpp>
 #include <lslboost/range/adaptor/map.hpp>

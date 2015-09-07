@@ -8,6 +8,7 @@
 #if !defined(FUSION_END_IMPL_20060123_2208)
 #define FUSION_END_IMPL_20060123_2208
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/zip_view/zip_view_iterator_fwd.hpp>
 #include <lslboost/fusion/sequence/intrinsic/end.hpp>
 #include <lslboost/fusion/sequence/intrinsic/begin.hpp>
@@ -54,6 +55,7 @@ namespace lslboost { namespace fusion {
             };
 
             template<typename Seq>
+            BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             typename result<endpoints(Seq&)>::type
             operator()(Seq& seq) const
             {
@@ -61,12 +63,14 @@ namespace lslboost { namespace fusion {
             }
 
             template<typename Seq>
+            BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             typename result<endpoints(Seq const&)>::type
             operator()(Seq const& seq) const
             {
                 return fusion::advance<M>(fusion::begin(seq));
             }
 
+            BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             unused_type operator()(unused_type const&) const
             {
                 return unused_type();
@@ -89,6 +93,7 @@ namespace lslboost { namespace fusion {
                     typename result_of::transform<typename Sequence::sequences, detail::endpoints<typename Sequence::size> >::type,
                     typename Sequence::category> type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Sequence& sequence)
                 {

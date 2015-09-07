@@ -82,7 +82,6 @@ namespace lslboost { namespace spirit { namespace lex
 }}}
 
 ///////////////////////////////////////////////////////////////////////////////
-#ifdef BOOST_SPIRIT_USE_PHOENIX_V3
 
 BOOST_PHOENIX_DEFINE_EXPRESSION(
     (lslboost)(spirit)(lex)(value_setter)
@@ -245,7 +244,5 @@ namespace lslboost { namespace phoenix
         >
     {};
 }}
-
-#endif // BOOST_SPIRIT_USE_PHOENIX_V3
 
 #endif

@@ -81,7 +81,7 @@ namespace lslboost
 
                     do
                     {
-                        unsigned const retval(win32::WaitForSingleObject(sem, ::lslboost::detail::win32::infinite));
+                        unsigned const retval(win32::WaitForSingleObjectEx(sem, ::lslboost::detail::win32::infinite,0));
                         BOOST_VERIFY(0 == retval || ::lslboost::detail::win32::wait_abandoned == retval);
 //                        BOOST_VERIFY(win32::WaitForSingleObject(
 //                                         sem,::lslboost::detail::win32::infinite)==0);
@@ -142,7 +142,7 @@ namespace lslboost
 
                     do
                     {
-                        if(win32::WaitForSingleObject(sem,::lslboost::detail::get_milliseconds_until(wait_until))!=0)
+                        if(win32::WaitForSingleObjectEx(sem,::lslboost::detail::get_milliseconds_until(wait_until),0)!=0)
                         {
                             BOOST_INTERLOCKED_DECREMENT(&active_count);
                             return false;
@@ -203,9 +203,14 @@ namespace lslboost
 
                   do
                   {
-                      chrono::milliseconds rel_time= chrono::ceil<chrono::milliseconds>(tp-chrono::system_clock::now());
+                      chrono::time_point<chrono::system_clock, chrono::system_clock::duration> now = chrono::system_clock::now();
+                      if (tp<=now) {
+                        BOOST_INTERLOCKED_DECREMENT(&active_count);
+                        return false;
+                      }
+                      chrono::milliseconds rel_time= chrono::ceil<chrono::milliseconds>(tp-now);
 
-                      if(win32::WaitForSingleObject(sem,static_cast<unsigned long>(rel_time.count()))!=0)
+                      if(win32::WaitForSingleObjectEx(sem,static_cast<unsigned long>(rel_time.count()),0)!=0)
                       {
                           BOOST_INTERLOCKED_DECREMENT(&active_count);
                           return false;

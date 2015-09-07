@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_INCLUDE_UNFUSED_HPP
 #define BOOST_FUSION_INCLUDE_UNFUSED_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/functional/adapter/unfused.hpp>
 
 #endif

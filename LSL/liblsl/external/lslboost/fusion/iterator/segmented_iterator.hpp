@@ -7,6 +7,7 @@
 #if !defined(BOOST_FUSION_SEGMENTED_ITERATOR_HPP_INCLUDED)
 #define BOOST_FUSION_SEGMENTED_ITERATOR_HPP_INCLUDED
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/detail/segmented_iterator.hpp>
 #include <lslboost/fusion/iterator/detail/segmented_next_impl.hpp>
 #include <lslboost/fusion/sequence/intrinsic/begin.hpp>

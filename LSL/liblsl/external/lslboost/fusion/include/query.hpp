@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_QUERY)
 #define FUSION_INCLUDE_QUERY
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/query.hpp>
 
 #endif

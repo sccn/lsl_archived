@@ -7,6 +7,7 @@
 #if !defined(FUSION_POP_BACK_10022005_1801)
 #define FUSION_POP_BACK_10022005_1801
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/pop_back.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
 #include <lslboost/fusion/algorithm/transformation/pop_back.hpp>

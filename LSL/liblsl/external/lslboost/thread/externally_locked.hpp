@@ -18,7 +18,7 @@
 #include <lslboost/static_assert.hpp>
 #include <lslboost/type_traits/is_same.hpp>
 #include <lslboost/throw_exception.hpp>
-#include <lslboost/utility/swap.hpp>
+#include <lslboost/core/swap.hpp>
 
 #include <lslboost/config/abi_prefix.hpp>
 
@@ -97,7 +97,7 @@ namespace lslboost
     /// move assignment
     externally_locked& operator=(BOOST_THREAD_RV_REF(externally_locked) rhs) // BOOST_NOEXCEPT
     {
-      obj_=move(rhs.obj_);
+      obj_=move(BOOST_THREAD_RV(rhs).obj_);
       mtx_=rhs.mtx_;
       return *this;
     }

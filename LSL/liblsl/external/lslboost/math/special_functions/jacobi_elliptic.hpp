@@ -10,6 +10,7 @@
 #include <lslboost/math/tools/precision.hpp>
 #include <lslboost/math/tools/promotion.hpp>
 #include <lslboost/math/policies/error_handling.hpp>
+#include <lslboost/math/special_functions/math_fwd.hpp>
 
 namespace lslboost{ namespace math{
 

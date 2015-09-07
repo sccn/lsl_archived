@@ -7,6 +7,7 @@
 #if !defined(FUSION_VALUE_AT_IMPL_07172005_0952)
 #define FUSION_VALUE_AT_IMPL_07172005_0952
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/detail/access.hpp>
 #include <lslboost/type_traits/is_const.hpp>
 #include <lslboost/mpl/eval_if.hpp>
@@ -25,9 +26,9 @@ namespace lslboost { namespace fusion
         struct value_at_impl<cons_tag>
         {
             template <typename Sequence, typename N>
-            struct apply 
+            struct apply
             {
-                typedef typename 
+                typedef typename
                     mpl::eval_if<
                         mpl::bool_<N::value == 0>
                       , mpl::identity<typename Sequence::car_type>

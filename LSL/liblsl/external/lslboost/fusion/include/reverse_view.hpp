@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_REVERSE_VIEW)
 #define FUSION_INCLUDE_REVERSE_VIEW
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/reverse_view.hpp>
 
 #endif

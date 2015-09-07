@@ -7,6 +7,7 @@
 #if !defined(FUSION_BEGIN_IMPL_07162005_0115)
 #define FUSION_BEGIN_IMPL_07162005_0115
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/equal_to.hpp>
 #include <lslboost/mpl/if.hpp>
 
@@ -42,18 +43,21 @@ namespace lslboost { namespace fusion
                     >::type
                 type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Sequence& s, mpl::true_)
                 {
                     return s.concat();
                 }
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Sequence& s, mpl::false_)
                 {
                     return type(s.first(), s.concat());
                 }
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Sequence& s)
                 {

@@ -2,7 +2,7 @@
 #define BOOST_SERIALIZATION_LIST_HPP
 
 // MS compatible compilers support #pragma once
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#if defined(_MSC_VER)
 # pragma once
 #endif
 
@@ -22,7 +22,14 @@
 
 #include <lslboost/serialization/collections_save_imp.hpp>
 #include <lslboost/serialization/collections_load_imp.hpp>
+
+#include <lslboost/archive/detail/basic_iarchive.hpp>
+#include <lslboost/serialization/access.hpp>
+#include <lslboost/serialization/nvp.hpp>
+#include <lslboost/serialization/collection_size_type.hpp>
+#include <lslboost/serialization/item_version_type.hpp>
 #include <lslboost/serialization/split_free.hpp>
+#include <lslboost/serialization/detail/stack_constructor.hpp>
 
 namespace lslboost { 
 namespace serialization {
@@ -45,15 +52,17 @@ inline void load(
     std::list<U, Allocator> &t,
     const unsigned int /* file_version */
 ){
-    lslboost::serialization::stl::load_collection<
-        Archive,
-        std::list<U, Allocator>,
-        lslboost::serialization::stl::archive_input_seq<
-            Archive, 
-            std::list<U, Allocator> 
-        >,
-        lslboost::serialization::stl::no_reserve_imp<std::list<U, Allocator> >
-    >(ar, t);
+    const lslboost::archive::library_version_type library_version(
+        ar.get_library_version()
+    );
+    // retrieve number of elements
+    item_version_type item_version(0);
+    collection_size_type count;
+    ar >> BOOST_SERIALIZATION_NVP(count);
+    if(lslboost::archive::library_version_type(3) < library_version){
+        ar >> BOOST_SERIALIZATION_NVP(item_version);
+    }
+    stl::collection_load_impl(ar, t, count, item_version);
 }
 
 // split non-intrusive serialization function member into separate

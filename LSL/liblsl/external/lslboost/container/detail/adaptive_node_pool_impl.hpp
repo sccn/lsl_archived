@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //
-// (C) Copyright Ion Gaztanaga 2005-2012. Distributed under the Boost
+// (C) Copyright Ion Gaztanaga 2005-2013. Distributed under the Boost
 // Software License, Version 1.0. (See accompanying file
 // LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
 //
@@ -11,25 +11,36 @@
 #ifndef BOOST_CONTAINER_DETAIL_ADAPTIVE_NODE_POOL_IMPL_HPP
 #define BOOST_CONTAINER_DETAIL_ADAPTIVE_NODE_POOL_IMPL_HPP
 
-#if defined(_MSC_VER)
+#ifndef BOOST_CONFIG_HPP
+#  include <lslboost/config.hpp>
+#endif
+
+#if defined(BOOST_HAS_PRAGMA_ONCE)
 #  pragma once
 #endif
 
-#include "config_begin.hpp"
-#include <lslboost/container/container_fwd.hpp>
+#include <lslboost/container/detail/config_begin.hpp>
 #include <lslboost/container/detail/workaround.hpp>
-#include <lslboost/container/detail/utilities.hpp>
+
+// container
+#include <lslboost/container/container_fwd.hpp>
+#include <lslboost/container/throw_exception.hpp>
+// container/detail
+#include <lslboost/container/detail/pool_common.hpp>
+#include <lslboost/container/detail/iterator.hpp>
+#include <lslboost/container/detail/iterator_to_raw_pointer.hpp>
+#include <lslboost/container/detail/math_functions.hpp>
+#include <lslboost/container/detail/mpl.hpp>
+#include <lslboost/container/detail/to_raw_pointer.hpp>
+#include <lslboost/container/detail/type_traits.hpp>
+// intrusive
 #include <lslboost/intrusive/pointer_traits.hpp>
 #include <lslboost/intrusive/set.hpp>
 #include <lslboost/intrusive/list.hpp>
 #include <lslboost/intrusive/slist.hpp>
-#include <lslboost/container/detail/type_traits.hpp>
-#include <lslboost/container/detail/math_functions.hpp>
-#include <lslboost/container/detail/mpl.hpp>
-#include <lslboost/container/detail/pool_common.hpp>
-#include <lslboost/container/throw_exception.hpp>
+// other
 #include <lslboost/assert.hpp>
-#include <lslboost/detail/no_exceptions_support.hpp>
+#include <lslboost/core/no_exceptions_support.hpp>
 #include <cstddef>
 
 namespace lslboost {
@@ -481,7 +492,7 @@ class private_adaptive_node_pool_impl
          free_nodes_iterator itf(nodes.begin()), itbf(itbb);
          size_type splice_node_count = size_type(-1);
          while(itf != ite){
-            void *pElem = container_detail::to_raw_pointer(&*itf);
+            void *pElem = container_detail::to_raw_pointer(container_detail::iterator_to_raw_pointer(itf));
             block_info_t &block_info = *this->priv_block_from_node(pElem);
             BOOST_ASSERT(block_info.free_nodes.size() < m_real_num_node);
             ++splice_node_count;
@@ -638,7 +649,7 @@ class private_adaptive_node_pool_impl
 
       {  //We iterate through the block tree to free the memory
          const_block_iterator it(m_block_container.begin());
-   
+
          if(it != itend){
             for(++it; it != itend; ++it){
                const_block_iterator prev(it);

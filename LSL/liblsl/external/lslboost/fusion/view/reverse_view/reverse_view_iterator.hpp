@@ -7,6 +7,7 @@
 #if !defined(FUSION_REVERSE_VIEW_ITERATOR_07202005_0835)
 #define FUSION_REVERSE_VIEW_ITERATOR_07202005_0835
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/iterator_base.hpp>
 #include <lslboost/fusion/support/category_of.hpp>
 #include <lslboost/fusion/iterator/mpl/convert_iterator.hpp>
@@ -41,6 +42,7 @@ namespace lslboost { namespace fusion
                 bidirectional_traversal_tag
               , category>::value));
 
+        BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
         reverse_view_iterator(First const& in_first)
             : first(converter::call(in_first)) {}
 
@@ -51,6 +53,15 @@ namespace lslboost { namespace fusion
         reverse_view_iterator& operator= (reverse_view_iterator const&);
     };
 }}
+
+#ifdef BOOST_FUSION_WORKAROUND_FOR_LWG_2408
+namespace std
+{
+    template <typename First>
+    struct iterator_traits< ::lslboost::fusion::reverse_view_iterator<First> >
+    { };
+}
+#endif
 
 #endif
 

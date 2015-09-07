@@ -7,6 +7,7 @@
 #if !defined(BOOST_FUSION_ITERATOR_RANGE_IS_SEGMENTED_HPP_INCLUDED)
 #define BOOST_FUSION_ITERATOR_RANGE_IS_SEGMENTED_HPP_INCLUDED
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/assert.hpp>
 #include <lslboost/mpl/bool.hpp>
 

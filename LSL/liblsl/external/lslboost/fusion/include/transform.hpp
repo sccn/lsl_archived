@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_TRANSFORM)
 #define FUSION_INCLUDE_TRANSFORM
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/transformation/transform.hpp>
 
 #endif

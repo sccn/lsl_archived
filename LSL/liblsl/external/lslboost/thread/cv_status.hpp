@@ -9,7 +9,7 @@
 #ifndef BOOST_THREAD_CV_STATUS_HPP
 #define BOOST_THREAD_CV_STATUS_HPP
 
-#include <lslboost/detail/scoped_enum_emulation.hpp>
+#include <lslboost/core/scoped_enum.hpp>
 
 namespace lslboost
 {

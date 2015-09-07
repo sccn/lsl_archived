@@ -72,12 +72,84 @@ public:
     {
     }
 
+    template<class A> explicit sp_ms_deleter( A const & ) BOOST_NOEXCEPT : initialized_( false )
+    {
+    }
+
     // optimization: do not copy storage_
     sp_ms_deleter( sp_ms_deleter const & ) BOOST_NOEXCEPT : initialized_( false )
     {
     }
 
     ~sp_ms_deleter()
+    {
+        destroy();
+    }
+
+    void operator()( T * )
+    {
+        destroy();
+    }
+
+    static void operator_fn( T* ) // operator() can't be static
+    {
+    }
+
+    void * address() BOOST_NOEXCEPT
+    {
+        return storage_.data_;
+    }
+
+    void set_initialized() BOOST_NOEXCEPT
+    {
+        initialized_ = true;
+    }
+};
+
+template< class T, class A > class sp_as_deleter
+{
+private:
+
+    typedef typename sp_aligned_storage< sizeof( T ), ::lslboost::alignment_of< T >::value >::type storage_type;
+
+    storage_type storage_;
+    A a_;
+    bool initialized_;
+
+private:
+
+    void destroy()
+    {
+        if( initialized_ )
+        {
+            T * p = reinterpret_cast< T* >( storage_.data_ );
+
+#if !defined( BOOST_NO_CXX11_ALLOCATOR )
+
+            std::allocator_traits<A>::destroy( a_, p );
+
+#else
+
+            p->~T();
+
+#endif
+
+            initialized_ = false;
+        }
+    }
+
+public:
+
+    sp_as_deleter( A const & a ) BOOST_NOEXCEPT : a_( a ), initialized_( false )
+    {
+    }
+
+    // optimization: do not copy storage_
+    sp_as_deleter( sp_as_deleter const & r ) BOOST_NOEXCEPT : a_( r.a_), initialized_( false )
+    {
+    }
+
+    ~sp_as_deleter()
     {
         destroy();
     }
@@ -131,26 +203,7 @@ template< class T, std::size_t N > struct sp_if_not_array< T[N] >
 # define BOOST_SP_MSD( T ) lslboost::detail::sp_ms_deleter< T >()
 #endif
 
-// Zero-argument versions
-//
-// Used even when variadic templates are available because of the new T() vs new T issue
-
-template< class T > typename lslboost::detail::sp_if_not_array< T >::type make_shared()
-{
-    lslboost::shared_ptr< T > pt( static_cast< T* >( 0 ), BOOST_SP_MSD( T ) );
-
-    lslboost::detail::sp_ms_deleter< T > * pd = static_cast<lslboost::detail::sp_ms_deleter< T > *>( pt._internal_get_untyped_deleter() );
-
-    void * pv = pd->address();
-
-    ::new( pv ) T();
-    pd->set_initialized();
-
-    T * pt2 = static_cast< T* >( pv );
-
-    lslboost::detail::sp_enable_shared_from_this( &pt, pt2, pt2 );
-    return lslboost::shared_ptr< T >( pt, pt2 );
-}
+// _noinit versions
 
 template< class T > typename lslboost::detail::sp_if_not_array< T >::type make_shared_noinit()
 {
@@ -161,23 +214,6 @@ template< class T > typename lslboost::detail::sp_if_not_array< T >::type make_s
     void * pv = pd->address();
 
     ::new( pv ) T;
-    pd->set_initialized();
-
-    T * pt2 = static_cast< T* >( pv );
-
-    lslboost::detail::sp_enable_shared_from_this( &pt, pt2, pt2 );
-    return lslboost::shared_ptr< T >( pt, pt2 );
-}
-
-template< class T, class A > typename lslboost::detail::sp_if_not_array< T >::type allocate_shared( A const & a )
-{
-    lslboost::shared_ptr< T > pt( static_cast< T* >( 0 ), BOOST_SP_MSD( T ), a );
-
-    lslboost::detail::sp_ms_deleter< T > * pd = static_cast<lslboost::detail::sp_ms_deleter< T > *>( pt._internal_get_untyped_deleter() );
-
-    void * pv = pd->address();
-
-    ::new( pv ) T();
     pd->set_initialized();
 
     T * pt2 = static_cast< T* >( pv );
@@ -207,7 +243,7 @@ template< class T, class A > typename lslboost::detail::sp_if_not_array< T >::ty
 
 // Variadic templates, rvalue reference
 
-template< class T, class Arg1, class... Args > typename lslboost::detail::sp_if_not_array< T >::type make_shared( Arg1 && arg1, Args && ... args )
+template< class T, class... Args > typename lslboost::detail::sp_if_not_array< T >::type make_shared( Args && ... args )
 {
     lslboost::shared_ptr< T > pt( static_cast< T* >( 0 ), BOOST_SP_MSD( T ) );
 
@@ -215,7 +251,7 @@ template< class T, class Arg1, class... Args > typename lslboost::detail::sp_if_
 
     void * pv = pd->address();
 
-    ::new( pv ) T( lslboost::detail::sp_forward<Arg1>( arg1 ), lslboost::detail::sp_forward<Args>( args )... );
+    ::new( pv ) T( lslboost::detail::sp_forward<Args>( args )... );
     pd->set_initialized();
 
     T * pt2 = static_cast< T* >( pv );
@@ -224,7 +260,68 @@ template< class T, class Arg1, class... Args > typename lslboost::detail::sp_if_
     return lslboost::shared_ptr< T >( pt, pt2 );
 }
 
-template< class T, class A, class Arg1, class... Args > typename lslboost::detail::sp_if_not_array< T >::type allocate_shared( A const & a, Arg1 && arg1, Args && ... args )
+template< class T, class A, class... Args > typename lslboost::detail::sp_if_not_array< T >::type allocate_shared( A const & a, Args && ... args )
+{
+#if !defined( BOOST_NO_CXX11_ALLOCATOR )
+
+    typedef typename std::allocator_traits<A>::template rebind_alloc<T> A2;
+    A2 a2( a );
+
+    typedef lslboost::detail::sp_as_deleter< T, A2 > D;
+
+    lslboost::shared_ptr< T > pt( static_cast< T* >( 0 ), lslboost::detail::sp_inplace_tag<D>(), a2 );
+
+#else
+
+    typedef lslboost::detail::sp_ms_deleter< T > D;
+
+    lslboost::shared_ptr< T > pt( static_cast< T* >( 0 ), lslboost::detail::sp_inplace_tag<D>(), a );
+
+#endif
+
+    D * pd = static_cast< D* >( pt._internal_get_untyped_deleter() );
+    void * pv = pd->address();
+
+#if !defined( BOOST_NO_CXX11_ALLOCATOR )
+
+    std::allocator_traits<A2>::construct( a2, static_cast< T* >( pv ), lslboost::detail::sp_forward<Args>( args )... );
+
+#else
+
+    ::new( pv ) T( lslboost::detail::sp_forward<Args>( args )... );
+
+#endif
+
+    pd->set_initialized();
+
+    T * pt2 = static_cast< T* >( pv );
+
+    lslboost::detail::sp_enable_shared_from_this( &pt, pt2, pt2 );
+    return lslboost::shared_ptr< T >( pt, pt2 );
+}
+
+#else // !defined( BOOST_NO_CXX11_VARIADIC_TEMPLATES ) && !defined( BOOST_NO_CXX11_RVALUE_REFERENCES )
+
+// Common zero-argument versions
+
+template< class T > typename lslboost::detail::sp_if_not_array< T >::type make_shared()
+{
+    lslboost::shared_ptr< T > pt( static_cast< T* >( 0 ), BOOST_SP_MSD( T ) );
+
+    lslboost::detail::sp_ms_deleter< T > * pd = static_cast<lslboost::detail::sp_ms_deleter< T > *>( pt._internal_get_untyped_deleter() );
+
+    void * pv = pd->address();
+
+    ::new( pv ) T();
+    pd->set_initialized();
+
+    T * pt2 = static_cast< T* >( pv );
+
+    lslboost::detail::sp_enable_shared_from_this( &pt, pt2, pt2 );
+    return lslboost::shared_ptr< T >( pt, pt2 );
+}
+
+template< class T, class A > typename lslboost::detail::sp_if_not_array< T >::type allocate_shared( A const & a )
 {
     lslboost::shared_ptr< T > pt( static_cast< T* >( 0 ), BOOST_SP_MSD( T ), a );
 
@@ -232,7 +329,7 @@ template< class T, class A, class Arg1, class... Args > typename lslboost::detai
 
     void * pv = pd->address();
 
-    ::new( pv ) T( lslboost::detail::sp_forward<Arg1>( arg1 ), lslboost::detail::sp_forward<Args>( args )... );
+    ::new( pv ) T();
     pd->set_initialized();
 
     T * pt2 = static_cast< T* >( pv );
@@ -241,7 +338,7 @@ template< class T, class A, class Arg1, class... Args > typename lslboost::detai
     return lslboost::shared_ptr< T >( pt, pt2 );
 }
 
-#elif !defined( BOOST_NO_CXX11_RVALUE_REFERENCES )
+#if !defined( BOOST_NO_CXX11_RVALUE_REFERENCES )
 
 // For example MSVC 10.0
 
@@ -695,7 +792,7 @@ typename lslboost::detail::sp_if_not_array< T >::type allocate_shared( A const &
     return lslboost::shared_ptr< T >( pt, pt2 );
 }
 
-#else
+#else // !defined( BOOST_NO_CXX11_RVALUE_REFERENCES )
 
 // C++03 version
 
@@ -1023,7 +1120,9 @@ typename lslboost::detail::sp_if_not_array< T >::type allocate_shared( A const &
     return lslboost::shared_ptr< T >( pt, pt2 );
 }
 
-#endif
+#endif // !defined( BOOST_NO_CXX11_RVALUE_REFERENCES )
+
+#endif // !defined( BOOST_NO_CXX11_VARIADIC_TEMPLATES ) && !defined( BOOST_NO_CXX11_RVALUE_REFERENCES )
 
 #undef BOOST_SP_MSD
 

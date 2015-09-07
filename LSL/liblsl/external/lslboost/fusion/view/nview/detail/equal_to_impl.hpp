@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_NVIEW_ITERATOR_SEP_24_2009_0329PM)
 #define BOOST_FUSION_NVIEW_ITERATOR_SEP_24_2009_0329PM
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/equal_to.hpp>
 
 namespace lslboost { namespace fusion 

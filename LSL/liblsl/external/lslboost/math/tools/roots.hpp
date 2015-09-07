@@ -109,13 +109,13 @@ std::pair<T, T> bisect(F f, T min, T max, Tol tol, lslboost::uintmax_t& max_iter
    static const char* function = "lslboost::math::tools::bisect<%1%>";
    if(min >= max)
    {
-      policies::raise_evaluation_error(function, 
-         "Arguments in wrong order in lslboost::math::tools::bisect (first arg=%1%)", min, pol);
+      return lslboost::math::detail::pair_from_single(policies::raise_evaluation_error(function,
+         "Arguments in wrong order in lslboost::math::tools::bisect (first arg=%1%)", min, pol));
    }
    if(fmin * fmax >= 0)
    {
-      policies::raise_evaluation_error(function, 
-         "No change of sign in lslboost::math::tools::bisect, either there is no root to find, or there are multiple roots in the interval (f(min) = %1%).", fmin, pol);
+      return lslboost::math::detail::pair_from_single(policies::raise_evaluation_error(function,
+         "No change of sign in lslboost::math::tools::bisect, either there is no root to find, or there are multiple roots in the interval (f(min) = %1%).", fmin, pol));
    }
 
    //
@@ -302,7 +302,7 @@ T halley_iterate(F f, T guess, T min, T max, int digits, lslboost::uintmax_t& ma
       
       if(0 == f0)
          break;
-      if((f1 == 0) && (f2 == 0))
+      if(f1 == 0)
       {
          // Oops zero derivative!!!
 #ifdef BOOST_MATH_INSTRUMENT

@@ -24,7 +24,6 @@
 
 #include <lslboost/mpl/plus.hpp>
 #include <lslboost/mpl/int.hpp>
-#include <lslboost/mpl/print.hpp>
 
 #define FUSION_VOID(z, n, _) void_
 
@@ -68,11 +67,13 @@ namespace lslboost { namespace fusion { namespace detail
     {
         typedef nil_keyed_element type;
 
+        BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
         static type construct()
         {
             return type();
         }
 
+        BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
         static type forward_()
         {
             return type();

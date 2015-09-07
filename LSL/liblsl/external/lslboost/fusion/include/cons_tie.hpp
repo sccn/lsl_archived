@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_CONS_TIE)
 #define FUSION_INCLUDE_CONS_TIE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/generation/cons_tie.hpp>
 
 #endif

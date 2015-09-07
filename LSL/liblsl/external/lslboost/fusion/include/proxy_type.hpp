@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_INCLUDE_PROXY_TYPE_HPP
 #define BOOST_FUSION_INCLUDE_PROXY_TYPE_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/adapted/struct/detail/proxy_type.hpp>
 
 #endif

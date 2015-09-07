@@ -7,6 +7,7 @@
 #if !defined(BOOST_FUSION_MAP_BEGIN_IMPL_02042013_0857)
 #define BOOST_FUSION_MAP_BEGIN_IMPL_02042013_0857
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/map/map_iterator.hpp>
 
 namespace lslboost { namespace fusion
@@ -26,6 +27,7 @@ namespace lslboost { namespace fusion
             {
                 typedef map_iterator<Sequence, 0> type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type call(Sequence& seq)
                 {
                     return type(seq);

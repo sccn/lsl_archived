@@ -11,9 +11,9 @@
 //
 // See http://www.lslboost.org/libs/mpl for documentation.
 
-// $Id: inserter_algorithm.hpp 55648 2009-08-18 05:16:53Z agurtovoy $
-// $Date: 2009-08-17 22:16:53 -0700 (Mon, 17 Aug 2009) $
-// $Revision: 55648 $
+// $Id$
+// $Date$
+// $Revision$
 
 #include <lslboost/mpl/back_inserter.hpp>
 #include <lslboost/mpl/front_inserter.hpp>

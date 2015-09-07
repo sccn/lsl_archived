@@ -7,8 +7,7 @@
 
 # include <lslboost/detail/workaround.hpp>
 
-# if !BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564)) \
-  && !BOOST_WORKAROUND(__GNUC__, < 3)
+# if !BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
 #  include <lslboost/mpl/insert.hpp>
 #  include <lslboost/mpl/set/set0.hpp>
 #  include <lslboost/mpl/has_key.hpp>

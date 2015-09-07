@@ -8,5 +8,5 @@
 =============================================================================*/
 #ifndef BOOST_SPIRIT_INCLUDE_PHOENIX_VERSION
 #define BOOST_SPIRIT_INCLUDE_PHOENIX_VERSION
-#include <lslboost/spirit/home/phoenix/version.hpp>
+#include <lslboost/phoenix/version.hpp>
 #endif

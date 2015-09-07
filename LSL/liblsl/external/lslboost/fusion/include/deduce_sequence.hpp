@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_DEDUCE_SEQUENCE)
 #define FUSION_INCLUDE_DEDUCE_SEQUENCE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/deduce_sequence.hpp>
 
 #endif

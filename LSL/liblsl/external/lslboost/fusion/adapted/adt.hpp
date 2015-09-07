@@ -10,6 +10,7 @@
 #ifndef BOOST_FUSION_ADAPTED_ADT_HPP
 #define BOOST_FUSION_ADAPTED_ADT_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/adapted/adt/adapt_assoc_adt_named.hpp>
 #include <lslboost/fusion/adapted/adt/adapt_assoc_adt.hpp>
 #include <lslboost/fusion/adapted/adt/adapt_adt_named.hpp>

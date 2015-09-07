@@ -8,10 +8,8 @@
 #if !defined(BOOST_FUSION_DEQUE_END_IMPL_09122006_2034)
 #define BOOST_FUSION_DEQUE_END_IMPL_09122006_2034
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/deque/deque_iterator.hpp>
-
-#include <lslboost/mpl/equal_to.hpp>
-#include <lslboost/mpl/if.hpp>
 
 namespace lslboost { namespace fusion
 {
@@ -28,14 +26,11 @@ namespace lslboost { namespace fusion
             template<typename Sequence>
             struct apply
             {
-                typedef typename
-                    mpl::if_c<
-                        (Sequence::next_down::value == Sequence::next_up::value)
-                      , deque_iterator<Sequence, 0>
-                      , deque_iterator<Sequence, Sequence::next_up::value>
-                    >::type
+                typedef
+                    deque_iterator<Sequence, Sequence::next_up::value>
                 type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type call(Sequence& seq)
                 {
                     return type(seq);

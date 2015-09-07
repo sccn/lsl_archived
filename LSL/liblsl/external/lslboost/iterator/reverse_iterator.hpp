@@ -11,8 +11,8 @@
 #include <lslboost/iterator.hpp>
 #include <lslboost/iterator/iterator_adaptor.hpp>
 
-namespace lslboost
-{
+namespace lslboost {
+namespace iterators {
 
   //
   //
@@ -28,7 +28,7 @@ namespace lslboost
    public:
       reverse_iterator() {}
 
-      explicit reverse_iterator(Iterator x) 
+      explicit reverse_iterator(Iterator x)
           : super_t(x) {}
 
       template<class OtherIterator>
@@ -41,7 +41,7 @@ namespace lslboost
 
    private:
       typename super_t::reference dereference() const { return *lslboost::prior(this->base()); }
-    
+
       void increment() { --this->base_reference(); }
       void decrement() { ++this->base_reference(); }
 
@@ -59,10 +59,15 @@ namespace lslboost
   };
 
   template <class BidirectionalIterator>
-  reverse_iterator<BidirectionalIterator> make_reverse_iterator(BidirectionalIterator x)
+  inline reverse_iterator<BidirectionalIterator> make_reverse_iterator(BidirectionalIterator x)
   {
       return reverse_iterator<BidirectionalIterator>(x);
   }
+
+} // namespace iterators
+
+using iterators::reverse_iterator;
+using iterators::make_reverse_iterator;
 
 } // namespace lslboost
 

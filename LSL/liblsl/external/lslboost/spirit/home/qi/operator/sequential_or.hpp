@@ -16,6 +16,7 @@
 #include <lslboost/spirit/home/qi/detail/attributes.hpp>
 #include <lslboost/spirit/home/support/detail/what_function.hpp>
 #include <lslboost/spirit/home/support/algorithm/any_if_ns.hpp>
+#include <lslboost/spirit/home/support/handles_container.hpp>
 #include <lslboost/fusion/include/as_vector.hpp>
 #include <lslboost/fusion/include/for_each.hpp>
 

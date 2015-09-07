@@ -7,7 +7,9 @@
 #if !defined(BOOST_FUSION_MAP_DETAIL_VALUE_AT_IMPL_02042013_0821)
 #define BOOST_FUSION_MAP_DETAIL_VALUE_AT_IMPL_02042013_0821
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/at.hpp>
+#include <lslboost/utility/declval.hpp>
 
 namespace lslboost { namespace fusion
 {
@@ -26,7 +28,7 @@ namespace lslboost { namespace fusion
             {
                 typedef mpl::int_<N::value> index;
                 typedef
-                    decltype(std::declval<Sequence>().get_val(index()))
+                    decltype(lslboost::declval<Sequence>().get_val(index()))
                 type;
             };
         };

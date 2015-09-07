@@ -4,7 +4,9 @@
 #ifndef ANY_CONVERSION_EATER_DWA20031117_HPP
 # define ANY_CONVERSION_EATER_DWA20031117_HPP
 
-namespace lslboost { namespace detail {
+namespace lslboost {
+namespace iterators {
+namespace detail {
 
 // This type can be used in traits to "eat" up the one user-defined
 // implicit conversion allowed.
@@ -14,6 +16,6 @@ struct any_conversion_eater
     any_conversion_eater(T const&);
 };
 
-}} // namespace lslboost::detail
+}}} // namespace lslboost::iterators::detail
 
 #endif // ANY_CONVERSION_EATER_DWA20031117_HPP

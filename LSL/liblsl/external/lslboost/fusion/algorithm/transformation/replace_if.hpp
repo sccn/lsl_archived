@@ -7,6 +7,7 @@
 #if !defined(FUSION_REPLACE_IF_08182005_0939)
 #define FUSION_REPLACE_IF_08182005_0939
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/transform_view/transform_view.hpp>
 #include <lslboost/fusion/algorithm/transformation/detail/replace_if.hpp>
 #include <lslboost/fusion/support/is_sequence.hpp>
@@ -25,8 +26,8 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence, typename F, typename T>
-    inline 
-    typename 
+    BOOST_CXX14_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+    inline typename
         enable_if<
             traits::is_sequence<Sequence>
           , typename result_of::replace_if<Sequence const, F, T>::type

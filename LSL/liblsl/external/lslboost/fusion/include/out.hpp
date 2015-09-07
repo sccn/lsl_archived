@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_OUT)
 #define FUSION_INCLUDE_OUT
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/io/out.hpp>
 
 #endif

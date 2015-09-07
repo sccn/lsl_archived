@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_ADAPTER)
 #define FUSION_INCLUDE_ADAPTER
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/functional/adapter.hpp>
 
 #endif

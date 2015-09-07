@@ -7,6 +7,7 @@
 #if !defined(FUSION_SIZE_IMPL_09232005_1058)
 #define FUSION_SIZE_IMPL_09232005_1058
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/distance.hpp>
 #include <lslboost/fusion/sequence/intrinsic/begin.hpp>
 #include <lslboost/fusion/sequence/intrinsic/end.hpp>

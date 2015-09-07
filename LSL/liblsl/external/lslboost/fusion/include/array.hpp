@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_ARRAY)
 #define FUSION_INCLUDE_ARRAY
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/adapted/array.hpp>
 
 #endif

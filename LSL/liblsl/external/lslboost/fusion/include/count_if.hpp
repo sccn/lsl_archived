@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_COUNT_IF)
 #define FUSION_INCLUDE_COUNT_IF
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/query/count_if.hpp>
 
 #endif

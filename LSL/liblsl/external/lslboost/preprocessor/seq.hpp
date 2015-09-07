@@ -39,5 +39,6 @@
 # include <lslboost/preprocessor/seq/to_list.hpp>
 # include <lslboost/preprocessor/seq/to_tuple.hpp>
 # include <lslboost/preprocessor/seq/transform.hpp>
+# include <lslboost/preprocessor/seq/variadic_seq_to_seq.hpp>
 #
 # endif

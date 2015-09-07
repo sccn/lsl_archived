@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_INCLUDE_KEY_OF_HPP
 #define BOOST_FUSION_INCLUDE_KEY_OF_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/key_of.hpp>
 
 #endif

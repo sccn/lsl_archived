@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_UNFUSED_TYPED)
 #define FUSION_INCLUDE_UNFUSED_TYPED
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/functional/adapter/unfused_typed.hpp>
 
 #endif

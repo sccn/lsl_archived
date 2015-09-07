@@ -7,6 +7,7 @@
 #if !defined(FUSION_ALGORITHM_ITERATION_10022005_0549)
 #define FUSION_ALGORITHM_ITERATION_10022005_0549
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/iteration/accumulate.hpp>
 #include <lslboost/fusion/algorithm/iteration/fold.hpp>
 #include <lslboost/fusion/algorithm/iteration/for_each.hpp>

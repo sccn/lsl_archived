@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_CATEGORY_OF)
 #define FUSION_INCLUDE_CATEGORY_OF
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/support/category_of.hpp>
 
 #endif

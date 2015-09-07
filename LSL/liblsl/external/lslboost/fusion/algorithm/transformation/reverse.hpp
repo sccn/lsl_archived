@@ -7,6 +7,7 @@
 #if !defined(FUSION_REVERSE_07212005_1230)
 #define FUSION_REVERSE_07212005_1230
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/view/reverse_view/reverse_view.hpp>
 #include <lslboost/fusion/support/is_sequence.hpp>
 #include <lslboost/utility/enable_if.hpp>
@@ -23,8 +24,8 @@ namespace lslboost { namespace fusion
     }
 
     template <typename Sequence>
-    inline 
-    typename
+    BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+    inline typename
         enable_if<
             traits::is_sequence<Sequence>
           , reverse_view<Sequence const>

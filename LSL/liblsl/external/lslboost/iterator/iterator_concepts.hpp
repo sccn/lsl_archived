@@ -56,7 +56,7 @@ namespace lslboost_concepts
   private:
       Iterator i;
   };
-  
+
   template <
       typename Iterator
     , typename ValueType = BOOST_DEDUCED_TYPENAME lslboost::detail::iterator_traits<Iterator>::value_type
@@ -78,7 +78,7 @@ namespace lslboost_concepts
     , typename ValueType = BOOST_DEDUCED_TYPENAME lslboost::detail::iterator_traits<Iterator>::value_type
   >
   struct WritableIteratorConcept : WritableIterator<Iterator,ValueType> {};
-  
+
   BOOST_concept(SwappableIterator,(Iterator))
   {
       BOOST_CONCEPT_USAGE(SwappableIterator)
@@ -93,7 +93,7 @@ namespace lslboost_concepts
   BOOST_concept(LvalueIterator,(Iterator))
   {
       typedef typename lslboost::detail::iterator_traits<Iterator>::value_type value_type;
-      
+
       BOOST_CONCEPT_USAGE(LvalueIterator)
       {
         value_type& r = const_cast<value_type&>(*i);
@@ -103,7 +103,7 @@ namespace lslboost_concepts
       Iterator i;
   };
 
-  
+
   //===========================================================================
   // Iterator Traversal Concepts
 
@@ -145,7 +145,7 @@ namespace lslboost_concepts
     , lslboost::DefaultConstructible<Iterator>
   {
       typedef typename lslboost::detail::iterator_traits<Iterator>::difference_type difference_type;
-      
+
       BOOST_MPL_ASSERT((lslboost::is_integral<difference_type>));
       BOOST_MPL_ASSERT_RELATION(std::numeric_limits<difference_type>::is_signed, ==, true);
 
@@ -155,7 +155,7 @@ namespace lslboost_concepts
            , lslboost::forward_traversal_tag
           > ));
   };
-  
+
   BOOST_concept(BidirectionalTraversal,(Iterator))
     : ForwardTraversal<Iterator>
   {
@@ -192,14 +192,14 @@ namespace lslboost_concepts
           i = i - n;
           n = i - j;
       }
-      
+
    private:
       typename BidirectionalTraversal<Iterator>::difference_type n;
       Iterator i, j;
   };
 
   //===========================================================================
-  // Iterator Interoperability 
+  // Iterator Interoperability
 
   namespace detail
   {
@@ -248,19 +248,10 @@ namespace lslboost_concepts
   BOOST_concept(InteroperableIterator,(Iterator)(ConstIterator))
   {
    private:
-      typedef typename lslboost::detail::pure_traversal_tag<
-          typename lslboost::iterator_traversal<
-              Iterator
-          >::type
-      >::type traversal_category;
+      typedef typename lslboost::iterators::pure_iterator_traversal<Iterator>::type traversal_category;
+      typedef typename lslboost::iterators::pure_iterator_traversal<ConstIterator>::type const_traversal_category;
 
-      typedef typename lslboost::detail::pure_traversal_tag<
-          typename lslboost::iterator_traversal<
-              ConstIterator
-          >::type
-      >::type const_traversal_category;
-      
-  public:
+   public:
       BOOST_CONCEPT_ASSERT((SinglePassIterator<Iterator>));
       BOOST_CONCEPT_ASSERT((SinglePassIterator<ConstIterator>));
 
@@ -271,7 +262,7 @@ namespace lslboost_concepts
 
           ci = i;
       }
-      
+
    private:
       Iterator      i;
       ConstIterator ci;

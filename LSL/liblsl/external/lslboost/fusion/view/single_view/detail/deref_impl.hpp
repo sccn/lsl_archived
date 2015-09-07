@@ -8,6 +8,7 @@
 #if !defined(BOOST_FUSION_SINGLE_VIEW_DEREF_IMPL_05052005_0258)
 #define BOOST_FUSION_SINGLE_VIEW_DEREF_IMPL_05052005_0258
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/int.hpp>
 #include <lslboost/mpl/assert.hpp>
 #include <lslboost/mpl/equal_to.hpp>
@@ -30,6 +31,7 @@ namespace lslboost { namespace fusion
                 BOOST_MPL_ASSERT((mpl::equal_to<typename Iterator::position, mpl::int_<0> >));
                 typedef typename Iterator::value_type type;
     
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Iterator const& i)
                 {

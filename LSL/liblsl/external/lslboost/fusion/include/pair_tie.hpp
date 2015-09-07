@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_PAIR_TIE)
 #define FUSION_INCLUDE_PAIR_TIE
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/generation/pair_tie.hpp>
 
 #endif

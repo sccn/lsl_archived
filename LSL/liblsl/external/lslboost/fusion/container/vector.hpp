@@ -7,7 +7,8 @@
 #if !defined(FUSION_SEQUENCE_CLASS_VECTOR_10022005_0602)
 #define FUSION_SEQUENCE_CLASS_VECTOR_10022005_0602
 
-#include <lslboost/fusion/container/vector/limits.hpp>
+#include <lslboost/fusion/support/config.hpp>
+#include <lslboost/fusion/container/vector/detail/cpp03/limits.hpp>
 
 #include <lslboost/fusion/container/vector/vector10.hpp>
 #if (FUSION_MAX_VECTOR_SIZE > 10)

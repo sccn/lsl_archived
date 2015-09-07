@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_CONTAINER_MAP_DETAIL_DEREF_DATA_IMPL_HPP
 #define BOOST_FUSION_CONTAINER_MAP_DETAIL_DEREF_DATA_IMPL_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/value_of.hpp>
 #include <lslboost/fusion/iterator/deref.hpp>
 #include <lslboost/fusion/support/detail/access.hpp>
@@ -35,6 +36,7 @@ namespace lslboost { namespace fusion { namespace extension
                 >::type
             type;
 
+            BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             static type
             call(It const& it)
             {

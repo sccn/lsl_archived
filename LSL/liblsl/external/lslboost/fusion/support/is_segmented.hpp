@@ -7,6 +7,7 @@
 #if !defined(FUSION_IS_SEGMENTED_03202006_0015)
 #define FUSION_IS_SEGMENTED_03202006_0015
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/bool.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
 

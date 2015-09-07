@@ -7,6 +7,7 @@
 #if !defined(FUSION_ADAPT_DEREF_TRAITS_05062005_0900)
 #define FUSION_ADAPT_DEREF_TRAITS_05062005_0900
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/deref.hpp>
 
 namespace lslboost { namespace fusion { namespace detail
@@ -20,6 +21,7 @@ namespace lslboost { namespace fusion { namespace detail
                 result_of::deref<typename Iterator::first_type>::type
             type;
 
+            BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
             static type
             call(Iterator const& i)
             {

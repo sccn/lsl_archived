@@ -8,6 +8,7 @@
 #ifndef BOOST_FUSION_ADAPTED_ARRAY_SIZE_IMPL_HPP
 #define BOOST_FUSION_ADAPTED_ARRAY_SIZE_IMPL_HPP
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/type_traits/rank.hpp>
 #include <lslboost/type_traits/extent.hpp>
 

@@ -7,6 +7,7 @@
 #if !defined(FUSION_PUSH_BACK_10022005_1647)
 #define FUSION_PUSH_BACK_10022005_1647
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/push_back.hpp>
 #include <lslboost/fusion/support/tag_of.hpp>
 #include <lslboost/fusion/algorithm/transformation/push_back.hpp>

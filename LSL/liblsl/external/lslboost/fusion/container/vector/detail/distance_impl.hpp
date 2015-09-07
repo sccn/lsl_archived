@@ -7,6 +7,7 @@
 #if !defined(FUSION_DISTANCE_IMPL_09172005_0751)
 #define FUSION_DISTANCE_IMPL_09172005_0751
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/mpl/minus.hpp>
 
 namespace lslboost { namespace fusion
@@ -23,7 +24,8 @@ namespace lslboost { namespace fusion
         {
             template <typename First, typename Last>
             struct apply : mpl::minus<typename Last::index, typename First::index>
-            {    
+            {
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static typename mpl::minus<
                     typename Last::index, typename First::index>::type
                 call(First const&, Last const&)

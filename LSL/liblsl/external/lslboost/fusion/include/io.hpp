@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_IO)
 #define FUSION_INCLUDE_IO
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/io.hpp>
 
 #endif

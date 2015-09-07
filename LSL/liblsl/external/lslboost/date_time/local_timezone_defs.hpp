@@ -6,7 +6,7 @@
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE_1_0.txt or http://www.lslboost.org/LICENSE_1_0.txt)
  * Author: Jeff Garland 
- * $Date: 2008-11-13 12:10:23 -0800 (Thu, 13 Nov 2008) $
+ * $Date$
  */
 
 #include "lslboost/date_time/dst_rules.hpp"

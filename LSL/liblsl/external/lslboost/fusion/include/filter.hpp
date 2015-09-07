@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_FILTER)
 #define FUSION_INCLUDE_FILTER
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/transformation/filter.hpp>
 
 #endif

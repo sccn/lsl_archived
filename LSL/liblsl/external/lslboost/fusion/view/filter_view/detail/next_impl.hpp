@@ -7,6 +7,7 @@
 #if !defined(FUSION_NEXT_IMPL_06052005_0900)
 #define FUSION_NEXT_IMPL_06052005_0900
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/algorithm/query/detail/find_if.hpp>
 #include <lslboost/fusion/iterator/value_of.hpp>
 #include <lslboost/mpl/eval_if.hpp>
@@ -62,6 +63,7 @@ namespace lslboost { namespace fusion
                     category, typename filter::type, last_type, pred_type>
                 type;
 
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type
                 call(Iterator const& i)
                 {

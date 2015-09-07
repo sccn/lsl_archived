@@ -7,6 +7,7 @@
 #if !defined(BOOST_FUSION_TAG_OF_09112011_1842)
 #define BOOST_FUSION_TAG_OF_09112011_1842
 
+#include <lslboost/fusion/support/config.hpp>
 #include <tuple>
 #include <lslboost/fusion/support/tag_of_fwd.hpp>
 

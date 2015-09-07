@@ -419,7 +419,11 @@ private:
     closure_frame_holder_ref(holder_t* holder_ = 0)
     {
 #ifdef PHOENIX_THREADSAFE
+#ifndef BOOST_THREAD_PROVIDES_ONCE_CXX11
         static lslboost::once_flag been_here = BOOST_ONCE_INIT;
+#else
+        static lslboost::once_flag been_here;
+#endif
         lslboost::call_once(been_here, tsp_frame_instance_init);
         lslboost::thread_specific_ptr<holder_t*> &tsp_frame = tsp_frame_instance();
         if (!tsp_frame.get())

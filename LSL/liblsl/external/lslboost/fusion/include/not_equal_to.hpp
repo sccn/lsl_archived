@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_NOT_EQUAL_TO)
 #define FUSION_INCLUDE_NOT_EQUAL_TO
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/iterator/equal_to.hpp>
 #include <lslboost/fusion/sequence/comparison/not_equal_to.hpp>
 

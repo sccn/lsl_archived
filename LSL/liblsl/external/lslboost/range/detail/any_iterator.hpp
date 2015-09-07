@@ -10,7 +10,6 @@
 #ifndef BOOST_RANGE_DETAIL_ANY_ITERATOR_HPP_INCLUDED
 #define BOOST_RANGE_DETAIL_ANY_ITERATOR_HPP_INCLUDED
 
-#include <lslboost/cast.hpp>
 #include <lslboost/mpl/and.hpp>
 #include <lslboost/mpl/or.hpp>
 #include <lslboost/mpl/not.hpp>
@@ -115,6 +114,8 @@ namespace lslboost
         };
     } // namespace range_detail
 
+    namespace iterators
+    {
     namespace detail
     {
         // Rationale:
@@ -246,8 +247,8 @@ namespace lslboost
             any_iterator_type stored_iterator;
         };
 
-
-    }
+    } //namespace detail
+    } //namespace iterators
 
     namespace range_detail
     {
@@ -356,7 +357,7 @@ namespace lslboost
                                 OtherDifference,
                                 Buffer
                             >& other,
-                         typename enable_if<
+                         typename ::lslboost::enable_if<
                             typename mpl::and_<
                                 typename is_mutable_reference<OtherReference>::type,
                                 typename is_const_reference<Reference>::type
@@ -387,7 +388,7 @@ namespace lslboost
                               , OtherDifference
                               , Buffer
                             >& other,
-                         typename enable_if<
+                         typename ::lslboost::enable_if<
                             typename mpl::or_<
                                 typename mpl::and_<
                                     typename is_mutable_reference<OtherReference>::type,
@@ -423,7 +424,7 @@ namespace lslboost
                               , OtherDifference
                               , Buffer
                             >& other,
-                        typename enable_if<
+                        typename ::lslboost::enable_if<
                             typename is_convertible_to_value_as_reference<
                                         OtherReference
                                       , Reference

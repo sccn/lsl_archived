@@ -778,7 +778,7 @@ extern LIBLSL_C_API unsigned lsl_samples_available(lsl_inlet in);
 
 /**
 * Query whether the clock was potentially reset since the last call to was_clock_reset().
-* This is rarely-used function is only needed for applications that combine multiple time_correction 
+* This rarely-used function is only needed for applications that combine multiple time_correction 
 * values to estimate precise clock drift if they should tolerate cases where the source machine was 
 * hot-swapped or restarted.
 */

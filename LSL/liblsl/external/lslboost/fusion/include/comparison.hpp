@@ -7,6 +7,7 @@
 #if !defined(FUSION_INCLUDE_COMPARISON)
 #define FUSION_INCLUDE_COMPARISON
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/sequence/comparison.hpp>
 
 #endif

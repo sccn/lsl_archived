@@ -8,6 +8,7 @@
 #if !defined(FUSION_CONVERT_IMPL_20061213_2207)
 #define FUSION_CONVERT_IMPL_20061213_2207
 
+#include <lslboost/fusion/support/config.hpp>
 #include <lslboost/fusion/container/deque/convert.hpp>
 #include <lslboost/fusion/container/deque/deque.hpp>
 #include <lslboost/fusion/sequence/intrinsic/begin.hpp>
@@ -36,6 +37,8 @@ namespace lslboost { namespace fusion
             {
                 typedef result_of::as_deque<Sequence> gen;
                 typedef typename gen::type type;
+
+                BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
                 static type call(Sequence& seq)
                 {
                     return gen::call(seq);

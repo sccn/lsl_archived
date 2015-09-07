@@ -15,10 +15,13 @@
 
 #     include <new>
 #     include <lslboost/pointee.hpp>
-#     include <lslboost/none_t.hpp>
 #     include <lslboost/get_pointer.hpp>
 #     include <lslboost/non_type.hpp>
 #     include <lslboost/type_traits/remove_cv.hpp>
+
+#     if defined(BOOST_FUNCTIONAL_FACTORY_SUPPORT_NONE_T)
+#       include <lslboost/none_t.hpp>
+#     endif
 
 #     ifndef BOOST_FUNCTIONAL_FACTORY_MAX_ARITY
 #       define BOOST_FUNCTIONAL_FACTORY_MAX_ARITY 10
@@ -35,14 +38,20 @@ namespace lslboost
         factory_passes_alloc_to_smart_pointer
     };
 
+#if defined(BOOST_FUNCTIONAL_FACTORY_SUPPORT_NONE_T)
     template< typename Pointer, class Allocator = lslboost::none_t,
         factory_alloc_propagation AP = factory_alloc_for_pointee_and_deleter >
     class factory;
+#else
+    template< typename Pointer, class Allocator = void,
+        factory_alloc_propagation AP = factory_alloc_for_pointee_and_deleter >
+    class factory;
+#endif
 
     //----- ---- --- -- - -  -   -
 
     template< typename Pointer, factory_alloc_propagation AP >
-    class factory<Pointer, lslboost::none_t, AP> 
+    class factory<Pointer, void, AP>
     {
       public:
         typedef typename lslboost::remove_cv<Pointer>::type result_type;
@@ -55,6 +64,13 @@ namespace lslboost
 #     define BOOST_PP_ITERATION_LIMITS (0,BOOST_FUNCTIONAL_FACTORY_MAX_ARITY)
 #     include BOOST_PP_ITERATE()
     };
+
+#if defined(BOOST_FUNCTIONAL_FACTORY_SUPPORT_NONE_T)
+    template< typename Pointer, factory_alloc_propagation AP >
+    class factory<Pointer, lslboost::none_t, AP>
+        : public factory<Pointer, void, AP>
+    {};
+#endif
 
     template< class Pointer, class Allocator, factory_alloc_propagation AP >
     class factory
