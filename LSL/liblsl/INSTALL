@@ -41,12 +41,16 @@ To get an overview of the project structure, the following tree lists the direct
       │   ├── include
       │   ├── project
       │   ├── src
+      │   │   ├── legacy
       │   │   ├── portable_archive
       │   │   └── pugixml
       │   └── testing
+      ├── liblsl-Android
+      ├── liblsl-Csharp
+      ├── liblsl-Generic
+      ├── liblsl-Java
       ├── liblsl-Matlab
-      ├── liblsl-Python
-	  └── liblsl-Java
+	  └── liblsl-Python
 	  
 To build liblsl, we are primarily interested in the directory labstreaminglayer/LSL/liblsl (marked with [*] in the tree above). Therefore, we will denote this directory as $LIBLSL_ROOT in this manual.
 
@@ -59,7 +63,7 @@ Tested platforms:
 * Windows 7 (32bit,64bit)
 
 Prerequisites:
-* Visual Studio Express 2008, 2010, or 2012
+* Visual Studio Express 2008, 2010, 2012, or 2013
 * cmake
 
 Build process:
@@ -134,7 +138,7 @@ Build process:
 * Once the build finishes, the library (liblsl.so) can be found in $LIBLSL_ROOT/build/src
 
 Alternative using hand-made project files:
-* Tested with Code::Blocks 10.05 on Ubuntu (64bit)
+* Tested with Code::Blocks 10.05 and 13.12 on Ubuntu (64bit)
 * Note that use of these project files will be deprecated in the future in favor of a unified cross-platform CMake build.
 * Open the Code::Blocks workspace $LIBLSL_ROOT/project/code.blocks
 * Click Build
