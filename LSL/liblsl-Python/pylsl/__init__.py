@@ -8,4 +8,3 @@ from .pylsl import IRREGULAR_RATE, DEDUCED_TIMESTAMP, FOREVER, cf_float32,\
     stream_info, stream_outlet, stream_inlet, xml_element,\
     timeout_error, lost_error, vectorf, vectord, vectorl,\
     vectori, vectors, vectorc, vectorstr, resolve_stream
-    

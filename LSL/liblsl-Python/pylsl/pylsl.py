@@ -1076,19 +1076,18 @@ class InternalError(RuntimeError):
 
 def handle_error(errcode):
     """Error handler function. Translates an error code into an exception."""
-    if type(errcode) is c_int:
-        errcode = errcode.value
-    if errcode == 0:
+    ec = errcode.value if type(errcode) is c_int else errcode
+    if ec == 0:
         pass  # no error
-    elif errcode == -1:
+    elif ec == -1:
         raise TimeoutError("the operation failed due to a timeout.")
-    elif errcode == -2:
+    elif ec == -2:
         raise LostError("the stream has been lost.")
-    elif errcode == -3:
+    elif ec == -3:
         raise InvalidArgumentError("an argument was incorrectly specified.")
-    elif errcode == -4:
+    elif ec == -4:
         raise InternalError("an internal error has occurred.")
-    elif errcode < 0: 
+    elif ec < 0:
         raise RuntimeError("an unknown error has occurred.")
 
 
@@ -1127,18 +1126,20 @@ def resolve_stream(*args):
 # === Module Initialization Code ===
 # ==================================
 
-# find and load library
-os_name = platform.system()
-bitness = 8 * struct.calcsize("P")
-if os_name in ['Windows', 'Microsoft']:
-    libname = 'liblsl32.dll' if bitness == 32 else 'liblsl64.dll'
-elif os_name == 'Darwin':
-    libname = 'liblsl32.dylib' if bitness == 32 else 'liblsl64.dylib'
-elif os_name == 'Linux':
-    libname = 'liblsl32.so' if bitness == 32 else 'liblsl64.so'
-else:
-    raise RuntimeError("unrecognized operating system:", os_name)
-libpath = os.path.join(os.path.dirname(__file__), libname)
+libpath = ''  # can override path to library for debugging
+if not libpath:
+    # find and load library
+    os_name = platform.system()
+    bitness = 8 * struct.calcsize("P")
+    if os_name in ['Windows', 'Microsoft']:
+        libname = 'liblsl32.dll' if bitness == 32 else 'liblsl64.dll'
+    elif os_name == 'Darwin':
+        libname = 'liblsl32.dylib' if bitness == 32 else 'liblsl64.dylib'
+    elif os_name == 'Linux':
+        libname = 'liblsl32.so' if bitness == 32 else 'liblsl64.so'
+    else:
+        raise RuntimeError("unrecognized operating system:", os_name)
+    libpath = os.path.join(os.path.dirname(__file__), libname)
 if not os.path.isfile(libpath):
     libpath = util.find_library(libname)
 if not libpath:
@@ -1211,8 +1212,7 @@ try:
     lib.lsl_create_continuous_resolver_bypred.restype = c_void_p
     lib.lsl_create_continuous_resolver_byprop.restype = c_void_p
 except:
-    print("pylsl: ContinuousResolver not (fully) available in your liblsl "
-          "version.")
+    print("pylsl: ContinuousResolver not available in your liblsl version.")
         
 # set up some type maps
 string2fmt = {'float32': cf_float32, 'double64': cf_double64,
