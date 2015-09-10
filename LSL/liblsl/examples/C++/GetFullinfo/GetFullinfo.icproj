@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="14.0"
+	Name="GetFullinfo"
+	ProjectGUID="{A4E3E492-9497-4AF3-BBD4-35E6D26A9906}"
+	VCNestedProjectGUID="{13AF96E6-33A7-4347-9515-6CAB56896898}"
+	VCNestedProjectFileName="GetFullinfo.vcproj"
+	>
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

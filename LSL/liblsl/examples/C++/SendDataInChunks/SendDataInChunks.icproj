@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="14.0"
+	Name="SendDataInChunks"
+	ProjectGUID="{BB33BA72-20CC-4A7D-B9E4-7B7C3720D65A}"
+	VCNestedProjectGUID="{DF1CBFF5-7FEF-4BF0-A9D0-952340D2D9A8}"
+	VCNestedProjectFileName="SendDataInChunks.vcproj"
+	>
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

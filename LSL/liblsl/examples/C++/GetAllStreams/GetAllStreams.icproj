@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="14.0"
+	Name="GetAllStreams"
+	ProjectGUID="{98F8C669-D6D1-4DA5-A418-1F8ECF78966B}"
+	VCNestedProjectGUID="{792DCFD7-E7EA-44EB-8A0E-71519DAB5346}"
+	VCNestedProjectFileName="GetAllStreams.vcproj"
+	>
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

@@ -179,7 +179,7 @@
 				);
 				OBJROOT = "$(SRCROOT)/../../../examples/C++/$(PROJECT_NAME)/build";
 				PRODUCT_NAME = "$(TARGET_NAME)-mac";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx10.9;
 				SYMROOT = "$(SRCROOT)/../../../bin";
 				VALID_ARCHS = x86_64;
 			};
@@ -196,7 +196,7 @@
 				);
 				OBJROOT = "$(SRCROOT)/../../../examples/C++/$(PROJECT_NAME)/build";
 				PRODUCT_NAME = "$(TARGET_NAME)-mac";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx10.9;
 				SYMROOT = "$(SRCROOT)/../../../bin";
 				VALID_ARCHS = x86_64;
 			};

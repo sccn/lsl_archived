@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="14.0"
+	Name="ReceiveDataInChunks"
+	ProjectGUID="{01946BC0-4BF6-4C79-BB56-D8DC142465CD}"
+	VCNestedProjectGUID="{82658CE6-10F0-49B4-BEA2-AEB0132BB62A}"
+	VCNestedProjectFileName="ReceiveDataInChunks.vcproj"
+	>
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

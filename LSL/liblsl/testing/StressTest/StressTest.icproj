@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="14.0"
+	Name="StressTest"
+	ProjectGUID="{6C6FA90B-0F84-46B3-9D74-A0F2248E0E3E}"
+	VCNestedProjectGUID="{3E7C2E18-2728-4FD5-AA37-A9D2F823611C}"
+	VCNestedProjectFileName="StressTest.vcproj"
+	>
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

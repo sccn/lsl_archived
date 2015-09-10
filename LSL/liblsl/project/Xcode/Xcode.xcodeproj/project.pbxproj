@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXContainerItemProxy section */
+		30E76D361B9FACD000EE9DBA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA35E2791513D00B003F3939 /* SendStringMarkers.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA35E26C1513D00B003F3939;
+			remoteInfo = SendStringMarkers;
+		};
 		AA1103E51513AC8E006FD0CF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AA1103E11513AC8D006FD0CF /* SendData.xcodeproj */;
@@ -117,6 +124,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		30E76D271B9FACD000EE9DBA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				30E76D371B9FACD000EE9DBA /* SendStringMarkers-mac */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		AA1103E21513AC8D006FD0CF /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -297,6 +312,10 @@
 					ProjectRef = AA35E2351513CEEE003F3939 /* SendDataSimple.xcodeproj */;
 				},
 				{
+					ProductGroup = 30E76D271B9FACD000EE9DBA /* Products */;
+					ProjectRef = AA35E2791513D00B003F3939 /* SendStringMarkers.xcodeproj */;
+				},
+				{
 					ProductGroup = AA6FC01A15B9EB5C0048161D /* Products */;
 					ProjectRef = AA6FC01915B9EB5C0048161D /* StressTest.xcodeproj */;
 				},
@@ -308,6 +327,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		30E76D371B9FACD000EE9DBA /* SendStringMarkers-mac */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "SendStringMarkers-mac";
+			remoteRef = 30E76D361B9FACD000EE9DBA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		AA1103E61513AC8E006FD0CF /* SendData-mac */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";

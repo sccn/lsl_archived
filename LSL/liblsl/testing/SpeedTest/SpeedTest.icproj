@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="14.0"
+	Name="SpeedTest"
+	ProjectGUID="{D751DB6F-A975-4E46-B3C4-F829ECE7F8DE}"
+	VCNestedProjectGUID="{13976433-8151-4C16-A2D6-5B29E77B932F}"
+	VCNestedProjectFileName="SpeedTest.vcproj"
+	>
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

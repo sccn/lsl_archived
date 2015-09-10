@@ -178,7 +178,7 @@
 					"\"$(SRCROOT)/../../../bin\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)-mac";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx10.9;
 				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
@@ -192,7 +192,7 @@
 					"\"$(SRCROOT)/../../../bin\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)-mac";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx10.9;
 				VALID_ARCHS = x86_64;
 			};
 			name = Release;

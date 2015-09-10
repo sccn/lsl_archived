@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="14.0"
+	Name="SendStringMarkers"
+	ProjectGUID="{58A9960B-783A-4A24-B3DC-7DBC7024D113}"
+	VCNestedProjectGUID="{5354EE8B-1461-49F9-933C-32E4ED09F82C}"
+	VCNestedProjectFileName="SendStringMarkers.vcproj"
+	>
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="14.0"
+	Name="HandleMetaData"
+	ProjectGUID="{34D1B5E9-32BB-4294-B86C-D36FF78329D2}"
+	VCNestedProjectGUID="{8C7D68B0-6618-46A4-A892-FD0A63EB9D70}"
+	VCNestedProjectFileName="HandleMetaData.vcproj"
+	>
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

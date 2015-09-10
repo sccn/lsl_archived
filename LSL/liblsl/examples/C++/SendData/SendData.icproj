@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="14.0"
+	Name="SendData"
+	ProjectGUID="{6C16404E-A0D2-449A-A984-9AAFFCB00B8F}"
+	VCNestedProjectGUID="{A3B96C1D-FCAD-4706-A0AC-14F8A0D54064}"
+	VCNestedProjectFileName="SendData.vcproj"
+	>
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="14.0"
+	Name="ReceiveData"
+	ProjectGUID="{FDD13A6E-F628-4C5C-91BA-24F781CC5727}"
+	VCNestedProjectGUID="{27090FA9-FC8D-403C-9835-805A87992AF6}"
+	VCNestedProjectFileName="ReceiveData.vcproj"
+	>
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="14.0"
+	Name="ReceiveStringMarkersC"
+	ProjectGUID="{5E70CEC2-AB09-41C2-8EDA-A7F5C5A44E9D}"
+	VCNestedProjectGUID="{F900E3A0-83DC-4507-A0C4-9F2D06286027}"
+	VCNestedProjectFileName="ReceiveStringMarkersC.vcproj"
+	>
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="14.0"
+	Name="GetTimeCorrection"
+	ProjectGUID="{D735D087-89AA-43AB-8BD3-844D322C3EDC}"
+	VCNestedProjectGUID="{06770695-295A-4DAF-95D1-9E2EC8D8301B}"
+	VCNestedProjectFileName="GetTimeCorrection.vcproj"
+	>
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

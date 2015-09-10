@@ -179,7 +179,7 @@
 				);
 				OBJROOT = "$(SRCROOT)/../../../examples/C++/$(PROJECT_NAME)/build";
 				PRODUCT_NAME = "$(TARGET_NAME)-mac";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx10.9;
 				SYMROOT = "$(SRCROOT)/../../../bin";
 			};
 			name = Debug;
@@ -195,7 +195,7 @@
 				);
 				OBJROOT = "$(SRCROOT)/../../../examples/C++/$(PROJECT_NAME)/build";
 				PRODUCT_NAME = "$(TARGET_NAME)-mac";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx10.9;
 				SYMROOT = "$(SRCROOT)/../../../bin";
 			};
 			name = Release;
