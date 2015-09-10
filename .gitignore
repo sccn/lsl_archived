@@ -102,6 +102,7 @@ Apps/MQTT/mqtt2lsl/libmosquitto/
 Apps/SMIEyetracker/allegro-5.0.10-msvc-9.0/
 Apps/PupilPro/zmq/
 external_libs/
+dependencies/
 
 #for now...
 *liblsl-iOS*
