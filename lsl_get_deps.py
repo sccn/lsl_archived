@@ -10,6 +10,8 @@ bin_dir = cur_dir+"/LSL/liblsl"
 apps_dir = cur_dir+"/Apps/"
 libs_dir = cur_dir+"/LSL/"
 extern_dir = cur_dir+"/external_libs/"
+cur_ver = "1.11" # current lsl version
+cur_lsl = "/liblsl-"+cur_ver+"/"
 
 # utilities for zipping/unzipping archives
 def zip(src, dst):
@@ -120,7 +122,7 @@ apps_d={
     },
 
     'AudioCaptureWin':{
-        'win32':["/external_libs/Qt/QtNetwork4.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll", "/liblsl/bin/liblsl32-debug.dll"]
+        'win32':["/external_libs/Qt/QtNetwork4.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll", cur_lsl+"bin/liblsl32-debug.dll"]
     },
 
     'BAlert':{
@@ -128,35 +130,35 @@ apps_d={
     },
 
     'BrainProducts/ActiChamp':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll",  "/external_libs/ActiChamp/ActiChamp_x86.dll", "/external_libs/ActiChamp/ActiChamp_x86.lib", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll",  "/external_libs/ActiChamp/ActiChamp_x86.dll", "/external_libs/ActiChamp/ActiChamp_x86.lib", cur_lsl+"bin/liblsl32.dll"]
     },
 
     'BioSemi':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll", "/liblsl/bin/liblsl32-debug.dll"],
-        'win64':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl64.dll", "/liblsl/bin/liblsl64-debug.dll"],
-        'OSX':["/liblsl/bin/liblsl32.dylib",  "/liblsl/bin/liblsl64.dylib"], 
-        'linux':["/liblsl/bin/liblsl32.so", "/liblsl/bin/liblsl64.so"]
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll", cur_lsl+"bin/liblsl32-debug.dll"],
+        'win64':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl64.dll", cur_lsl+"bin/liblsl64-debug.dll"],
+        'OSX':[cur_lsl+"bin/liblsl32.dylib",  cur_lsl+"bin/liblsl64.dylib"], 
+        'linux':[cur_lsl+"bin/liblsl32.so", cur_lsl+"bin/liblsl64.so"]
     },
 
     'BrainProducts/BrainAmpSeries':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll"]
     },
 
     'BrainProducts/BrainAmpSeries':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll"]
     },
 
     'BrainProducts/BrainVisionRDA':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll"]
     },
 
     'Cognionics':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll"]
     },
 
 
     'EGIAmpServer':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll"]
     },
 
 # TODO : EmbarcaderoXE
@@ -169,15 +171,15 @@ apps_d={
     },
 
     'Enobio':{
-        'win32':["/external_libs/Enobio/EnobioDLL.lib", "/external_libs/Enobio/EnobioDLL.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/Enobio/EnobioDLL.lib", "/external_libs/Enobio/EnobioDLL.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll"]
     },
 
     'EyeLink':{
-        'win32':["/liblsl/bin/liblsl32.dll"]
+        'win32':[cur_lsl+"bin/liblsl32.dll"]
     },
 
     'EyeTribe':{
-        'win32':["/liblsl/bin/liblsl32.dll"]
+        'win32':[cur_lsl+"bin/liblsl32.dll"]
     },
 
  #   'EyeTribe/lib':{
@@ -185,11 +187,11 @@ apps_d={
  #   },
 
     'g.Tec/g.HIamp':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll"]
     },
 
     'g.Tec/g.USBamp':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll", "/external_libs/g.Tec/gUSBamp.dll"]
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll", "/external_libs/g.Tec/gUSBamp.dll"]
     },
 
     'g.Tec/g.USBamp/misc':{
@@ -197,15 +199,15 @@ apps_d={
     },
 
     'GameController':{
-        'win32':["/external_libs/GameController/dxguid.lib", "/external_libs/GameController/dinput8.lib", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/GameController/dxguid.lib", "/external_libs/GameController/dinput8.lib", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll"]
     },
 
    'Keyboard':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll"]
     },
 
    'KinectMocap/KinectMocap':{
-        'win32':["/external_libs/Kinect/Microsoft.Kinect.dll", "/external_libs/Kinect/amd64/Kinect10.lib", "/external_libs/Kinect/x86/Kinect10.lib", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/Kinect/Microsoft.Kinect.dll", "/external_libs/Kinect/amd64/Kinect10.lib", "/external_libs/Kinect/x86/Kinect10.lib", cur_lsl+"bin/liblsl32.dll"]
     },
 
     'KinectMocap/KinectMocap/amd64':{
@@ -223,13 +225,13 @@ apps_d={
     }, 
 
     'LabRecorder/src/pylsl':{
-        'win32':["/liblsl/bin/liblsl32.dll", "/liblsl/bin/liblsl32.dylib", "/liblsl/bin/liblsl64.dylib", "/liblsl/bin/liblsl64.so", "/liblsl-Python/pylsl.py"] # use the correct pylsl...
+        'win32':[cur_lsl+"bin/liblsl32.dll", cur_lsl+"bin/liblsl32.dylib", cur_lsl+"bin/liblsl64.dylib", cur_lsl+"bin/liblsl64.so", "/liblsl-Python/pylsl.py"] # use the correct pylsl...
     }, 
 
     'LabRecorder/src/TestRecorder':{
-        'win32':["/liblsl/bin/liblsl32.dll"],
-        'win64':["/liblsl/bin/liblsl64.dll"],
-        'linux':["/liblsl/bin/liblsl32.so", "/liblsl/bin/liblsl64.so"],
+        'win32':[cur_lsl+"bin/liblsl32.dll"],
+        'win64':[cur_lsl+"bin/liblsl64.dll"],
+        'linux':[cur_lsl+"bin/liblsl32.so", cur_lsl+"bin/liblsl64.so"],
     }, 
 
     'MATLABImporter':{
@@ -243,46 +245,46 @@ apps_d={
     'MATLABViewer':{}, # come back to this one ...
 
     'MINDO':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"] 
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll"] 
     },
 
     'Mouse':{
-        'win32':["/external_libs/Qt/QtNetwork4.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll", "/liblsl/bin/liblsl32-debug.dll"]
+        'win32':["/external_libs/Qt/QtNetwork4.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll", cur_lsl+"bin/liblsl32-debug.dll"]
     },
 
     'MQTT':{}, # empty
     'MQTT/mqtt2lsl/Release':{
-        'win32':["/external_libs/MQTT/libmosquitto/mosquitto.dll", "/external_libs/MQTT/libmosquitto/mosquittopp.dll", "/external_libs/MQTT/pthreadVC.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/MQTT/libmosquitto/mosquitto.dll", "/external_libs/MQTT/libmosquitto/mosquittopp.dll", "/external_libs/MQTT/pthreadVC.dll", cur_lsl+"bin/liblsl32.dll"]
     },
     'MQTT/lsl2mqtt/Release':{
-        'win32':["/external_libs/MQTT/libmosquitto/mosquitto.dll", "/external_libs/MQTT/libmosquitto/mosquittopp.dll", "/external_libs/MQTT/pthreadVC.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/MQTT/libmosquitto/mosquitto.dll", "/external_libs/MQTT/libmosquitto/mosquittopp.dll", "/external_libs/MQTT/pthreadVC.dll", cur_lsl+"bin/liblsl32.dll"]
     }, 
     
     'Neuroscan':{
-        'win32':["/external_libs/Neuroscan/NSDevice.dll", "/external_libs/Neuroscan/NSDevice.lib", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/Neuroscan/NSDevice.dll", "/external_libs/Neuroscan/NSDevice.lib", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll"]
     },
 
     'OptiTrack/OptiTrack-v1.4':{
-        'win32':["/external_libs/OptiTrack/NatNetLib.lib", "/external_libs/OptiTrack/NatNetLib.dll",  "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/OptiTrack/NatNetLib.lib", "/external_libs/OptiTrack/NatNetLib.dll",  "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll"]
     }, 
 
     'OptiTrack/OptiTrack-v2.2':{
-        'win32':["/external_libs/OptiTrack/NatNetLib.lib", "/external_libs/OptiTrack/NatNetLib.dll",  "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/OptiTrack/NatNetLib.lib", "/external_libs/OptiTrack/NatNetLib.dll",  "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll"]
     }, 
 
     'PhaseSpace':{
-        'win32':["/external_libs/PhaseSpace/libowlsock.lib", "/external_libs/PhaseSpace/libowlsock.dll",  "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/PhaseSpace/libowlsock.lib", "/external_libs/PhaseSpace/libowlsock.dll",  "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll"]
     }, 
 
     'PupilPro':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll", "/liblsl/bin/liblsl32-debug.dll"],
-        'win64':["/external/zmq/libzmq-v90-mt-4_0_4.dll", "/external/zmq/libzmq-v90-mt-gd-4_0_4.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl64.dll", "/liblsl/bin/liblsl64-debug.dll"],
-        'OSX':["/liblsl/bin/liblsl32.dylib",  "/liblsl/bin/liblsl64.dylib"], 
-        'linux':["/liblsl/bin/liblsl32.so", "/liblsl/bin/liblsl64.so"],
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll", cur_lsl+"bin/liblsl32-debug.dll"],
+        'win64':["/external/zmq/libzmq-v90-mt-4_0_4.dll", "/external/zmq/libzmq-v90-mt-gd-4_0_4.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl64.dll", cur_lsl+"bin/liblsl64-debug.dll"],
+        'OSX':[cur_lsl+"bin/liblsl32.dylib",  cur_lsl+"bin/liblsl64.dylib"], 
+        'linux':[cur_lsl+"bin/liblsl32.so", cur_lsl+"bin/liblsl64.so"],
     },
 
    'ReceiveVideo':{
-            'win32':["/external_libs/OpenCV/opencv_core220.dll", "/external_libs/OpenCV/opencv_core220.lib", "/external_libs/OpenCV/opencv_highgui220.dll", "/external_libs/OpenCV/opencv_highgui220.lib", "/external_libs/OpenCV/opencv_imgproc220.dll", "/external_libs/OpenCV/opencv_imgproc220.lib", "/liblsl/bin/liblsl32.dll", "/liblsl/bin/liblsl32.lib"]
+            'win32':["/external_libs/OpenCV/opencv_core220.dll", "/external_libs/OpenCV/opencv_core220.lib", "/external_libs/OpenCV/opencv_highgui220.dll", "/external_libs/OpenCV/opencv_highgui220.lib", "/external_libs/OpenCV/opencv_imgproc220.dll", "/external_libs/OpenCV/opencv_imgproc220.lib", cur_lsl+"bin/liblsl32.dll", cur_lsl+"bin/liblsl32.lib"]
    },
 
     'SerialPort':{
@@ -292,34 +294,34 @@ apps_d={
     'SMIEyetracker':{}, # just the special case where we grab the allegro-5.0.10-mscv-9.0 dir
    
     'SMIEyetracker/iViewNG-SDK':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll" , "/liblsl/bin/liblsl32.dll", "/external_libs/OpenCV/opencv_core220.dll", "/external_libs/OpenCV/opencv_core220.lib", "/external_libs/OpenCV/opencv_imgproc220.dll", "/external_libs/OpenCV/opencv_imgproc220.lib"]
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll" , cur_lsl+"bin/liblsl32.dll", "/external_libs/OpenCV/opencv_core220.dll", "/external_libs/OpenCV/opencv_core220.lib", "/external_libs/OpenCV/opencv_imgproc220.dll", "/external_libs/OpenCV/opencv_imgproc220.lib"]
     }, 
     
     'SMIEyetracker/iViewX-SDK':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll" , "/liblsl/bin/liblsl32.dll", "/external_libs/allegro/allegro-5.0.10-monolith-md.dll"]
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll" , cur_lsl+"bin/liblsl32.dll", "/external_libs/allegro/allegro-5.0.10-monolith-md.dll"]
     }, 
     
     'SMIEyetracker/Legacy-SDK':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll" , "/liblsl/bin/liblsl32.dll"]
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll" , cur_lsl+"bin/liblsl32.dll"]
     }, 
 
     'StaticInfo':{
-        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"] 
+        'win32':["/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll"] 
     },
 
     'Tobii':{
-        'win32':["/external_libs/Tobii/ttime.dll", "/external_libs/Tobii/ttime.lib", "/external_libs/Tobii/tet.dll", "/external_libs/Tobii/tet.lib", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/liblsl/bin/liblsl32.dll"] 
+        'win32':["/external_libs/Tobii/ttime.dll", "/external_libs/Tobii/ttime.lib", "/external_libs/Tobii/tet.dll", "/external_libs/Tobii/tet.lib", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", cur_lsl+"bin/liblsl32.dll"] 
     },
     
     'Wiimote/Wiimote':{
-        'win32':["/liblsl/bin/liblsl32.dll", "/liblsl/bin/liblsl32.lib", "/external_libs/Wiimote/wiiuse.lib", "/external_libs/Wiimote/wiiuse.dll"]
+        'win32':[cur_lsl+"bin/liblsl32.dll", cur_lsl+"bin/liblsl32.lib", "/external_libs/Wiimote/wiiuse.lib", "/external_libs/Wiimote/wiiuse.dll"]
     }, # come back to this one
 
     'XDFBrowser':{
-        'win32':["/external_libs/Qt/QtNetwork4.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/external_libs/Qt/QtNetworkd4.dll", "/external_libs/Qt/QtCored4.dll", "/external_libs/Qt/QtGuid4.dll", "/liblsl/bin/liblsl32.dll"],
-        'win64':["/external_libs/Qt/QtNetwork4.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/external_libs/Qt/QtNetworkd4.dll", "/external_libs/Qt/QtCored4.dll", "/external_libs/Qt/QtGuid4.dll", "/liblsl/bin/liblsl64.dll"],
-        'OSX':["/liblsl/bin/liblsl32.dylib",  "/liblsl/bin/liblsl64.dylib"], 
-        'linux':["/liblsl/bin/liblsl32.so", "/liblsl/bin/liblsl64.so"],
+        'win32':["/external_libs/Qt/QtNetwork4.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/external_libs/Qt/QtNetworkd4.dll", "/external_libs/Qt/QtCored4.dll", "/external_libs/Qt/QtGuid4.dll", cur_lsl+"bin/liblsl32.dll"],
+        'win64':["/external_libs/Qt/QtNetwork4.dll", "/external_libs/Qt/QtCore4.dll", "/external_libs/Qt/QtGui4.dll", "/external_libs/Qt/QtNetworkd4.dll", "/external_libs/Qt/QtCored4.dll", "/external_libs/Qt/QtGuid4.dll", cur_lsl+"bin/liblsl64.dll"],
+        'OSX':[cur_lsl+"bin/liblsl32.dylib",  cur_lsl+"bin/liblsl64.dylib"], 
+        'linux':[cur_lsl+"bin/liblsl32.so", cur_lsl+"bin/liblsl64.so"],
 
     }
     
@@ -382,12 +384,12 @@ def unstrip(which, which_d, where, arg_op_sys):
             unstrip_special_case(bin_addr+"/external_libs/pylink.zip", where+i+"/pylink.zip")
 
         if i == "MATLABViewer" and os.path.exists(where+i+"/liblsl-Matlab")==False:
-            unstrip_special_case(bin_addr+"/LSL-zips/liblsl-Matlab.zip", where+i+"/liblsl-Matlab.zip");
+            unstrip_special_case(bin_addr+"/LSL-zips/liblsl-Matlab-"+cur_ver+"-unstrip.zip",where+i+"/liblsl-Matlab.zip");
 
         if i == "MQTT" and os.path.exists(where+i+"/lsl2mqtt/liblsl")==False:
-            unstrip_special_case(bin_addr+"/LSL-zips/liblsl.zip", where+i+"/lsl2mqtt/liblsl.zip");
+            unstrip_special_case(bin_addr+"/LSL-zips/liblsl-"+cur_ver+"-mqtt-unstrip.zip", where+i+"/lsl2mqtt/liblsl.zip");
         if i == "MQTT" and os.path.exists(where+i+"/mqtt2lsl/liblsl")==False:
-            unstrip_special_case(bin_addr+"/LSL-zips/liblsl.zip", where+i+"/mqtt2lsl/liblsl.zip");
+            unstrip_special_case(bin_addr+"/LSL-zips/liblsl-"+cur_ver+"-mqtt-unstrip.zip", where+i+"/mqtt2lsl/liblsl.zip");
         if i == "MQTT" and os.path.exists(where+i+"/lsl2mqtt/libmosquitto")==False:
             unstrip_special_case(bin_addr+"/external_libs/MQTT/libmosquitto.zip", where+i+"/lsl2mqtt/libmosquitto.zip");
         if i == "MQTT" and os.path.exists(where+i+"/mqtt2lsl/libmosquitto")==False:
@@ -567,10 +569,10 @@ libs = [
 ]
 
 std_libs = {
-    'win32':["/liblsl/bin/liblsl32.dll", "/liblsl/bin/liblsl32.lib"],
-    'win64':["/liblsl/bin/liblsl64.dll", "/liblsl/bin/liblsl64.lib"],
-    'OSX':["/liblsl/bin/liblsl32.dylib", "/liblsl/bin/liblsl64.dylib"],
-    'linux':["/liblsl/bin/liblsl32.so", "/liblsl/bin/liblsl64.so"],
+    'win32':[ cur_lsl+"bin/liblsl32.dll", cur_lsl+"bin/liblsl32.lib", cur_lsl+"bin/liblsl32-debug.dll", cur_lsl+"bin/liblsl32-debug.lib"],
+    'win64':[ cur_lsl+"bin/liblsl64.dll", cur_lsl+"bin/liblsl64.lib", cur_lsl+"bin/liblsl64-debug.dll", cur_lsl+"bin/liblsl64-debug.lib"],
+    'OSX':[ cur_lsl+"bin/liblsl32.dylib", cur_lsl+"bin/liblsl64.dylib", cur_lsl+"bin/liblsl32-debug.dylib", cur_lsl+"bin/liblsl64-debug.dylib"],
+    'linux':[ cur_lsl+"bin/liblsl32.so", cur_lsl+"bin/liblsl64.so", cur_lsl+"bin/liblsl32-debug.so", cur_lsl+"bin/liblsl64-debug.so"],
 }
 
 libs_d = {
