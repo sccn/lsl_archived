@@ -43,7 +43,7 @@ def unzip(src, dst):
 op_sys = ["win32", "win64", "OSX", "linux"]  # which os to unstrip -- win32 is the only one fully supported
 
 libs = [
-    "liblsl-Android/libs/armeabi",
+    "liblsl-Android/libs/arm/e/abi",
     "liblsl-Csharp",
     "liblsl-Java",
     "liblsl-Matlab",
@@ -80,7 +80,7 @@ std_libs = {
 }
 
 libs_d = {
-    'liblsl-Android/libs/armabi': {
+    'liblsl-Android/libs/arm/e/abi': {
         'win32': ["/external_libs/android/liblslAndroid.so"],
         'win64': ["/external_libs/android/liblslAndroid.so"],
         'OSX': ["/external_libs/android/liblslAndroid.so"],
@@ -763,7 +763,10 @@ def strip(which, which_d, where, arg_op_sys):
                     try:
                         os.remove(doomed_path)
                     except OSError as detail:  # TODO detect OS, handle error
-                        print("OSError", detail)
+                        if detail.errno == 2:
+                            pass  # Suppress message that file is not there.
+                        else:
+                            print("OSError", detail)
             except KeyError as detail:
                 print('KeyError: %s' % detail)
         # special cases
@@ -783,11 +786,13 @@ def strip(which, which_d, where, arg_op_sys):
 def strip_all():
     strip(libs, libs_d, libs_dir, op_sys)
     strip(apps, apps_d, apps_dir, op_sys)
-#    try:
-#        print("Attempting to remove "+cache_dir)
-#        os.remove(cache_dir)
-#    except OSError as detail:  # TODO detect OS, handle error
-#        print("OSError", detail)
+    # The only reason you would strip is if you need newer binaries and plan
+    # to unstrip again, so go ahead and delete the local (old?) files.
+    try:
+        print("Attempting to remove "+cache_dir)
+        os.remove(cache_dir)
+    except OSError as detail:  # TODO detect OS, handle error
+        print("OSError", detail)
 
 
 def unstrip_all():
