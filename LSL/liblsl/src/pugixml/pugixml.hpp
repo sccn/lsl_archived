@@ -19,7 +19,7 @@
 #ifndef PUGIXML_NO_STL
 namespace std
 {
-	struct bidirectional_iterator_tag;
+	//struct bidirectional_iterator_tag;
 
 #ifdef __SUNPRO_CC
 	// Sun C++ compiler has a bug which forces template argument names in forward declarations to be the same as in actual definitions
