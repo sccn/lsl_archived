@@ -103,10 +103,6 @@ Apps/SMIEyetracker/allegro-5.0.10-msvc-9.0/
 Apps/PupilPro/zmq/
 external_libs/
 
-#for now...
-*liblsl-iOS*
-
-
 # any autosave from emacs
 *~
 
@@ -339,6 +335,9 @@ docs/_build/
 
 *.la
 *.lai
+
+*.framework
+*.framework/*
 
 
 # Qt-es
