@@ -18,7 +18,7 @@ info.desc().append_child_value("manufacturer", "BioSemi")
 channels = info.desc().append_child("channels")
 for c in ["C3", "C4", "Cz", "FPz", "POz", "CPz", "O1", "O2"]:
     channels.append_child("channel")\
-        .append_child_value("name", c)\
+        .append_child_value("label", c)\
         .append_child_value("unit", "microvolts")\
         .append_child_value("type", "EEG")
 
