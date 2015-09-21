@@ -1,0 +1,1 @@
+ const unsigned char liblsl_iOSTestsVersionString[] __attribute__ ((used)) = "@(#)PROGRAM:liblsl-iOSTests  PROJECT:liblsl-iOS-1" "\n"; const double liblsl_iOSTestsVersionNumber __attribute__ ((used)) = (double)1.;

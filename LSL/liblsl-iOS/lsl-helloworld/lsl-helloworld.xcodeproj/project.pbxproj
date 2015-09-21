@@ -1,0 +1,368 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		300D517A1BAA00A8003E2EC5 /* boost.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DC99E50D1AD75143006CEDDB /* boost.a */; };
+		307D6E941ADC4AD000964709 /* TerminalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 307D6E931ADC4AD000964709 /* TerminalViewController.m */; };
+		309CAD6D1ADD9AAE00886E8D /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 309CAD6C1ADD9AAE00886E8D /* CoreMotion.framework */; };
+		30DAA7DB1AE9780E0001908E /* MultipeerConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30DAA7DA1AE9780E0001908E /* MultipeerConnectivity.framework */; };
+		30DAA7DE1AE979330001908E /* MCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 30DAA7DD1AE979330001908E /* MCManager.m */; };
+		30F408FD1AD887550049E4D8 /* InletsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 30F408FC1AD887550049E4D8 /* InletsTableViewController.m */; };
+		DC99E4E81AD75084006CEDDB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DC99E4E71AD75084006CEDDB /* main.m */; };
+		DC99E4EB1AD75084006CEDDB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DC99E4EA1AD75084006CEDDB /* AppDelegate.m */; };
+		DC99E4EE1AD75084006CEDDB /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC99E4ED1AD75084006CEDDB /* ViewController.m */; };
+		DC99E4F11AD75084006CEDDB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DC99E4EF1AD75084006CEDDB /* Main.storyboard */; };
+		DC99E4F31AD75084006CEDDB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC99E4F21AD75084006CEDDB /* Images.xcassets */; };
+		DC99E4F61AD75084006CEDDB /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = DC99E4F41AD75084006CEDDB /* LaunchScreen.xib */; };
+		DC99E50C1AD7512B006CEDDB /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DC99E50B1AD7512B006CEDDB /* libc++.dylib */; };
+		DC99E5101AD7514C006CEDDB /* liblsl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC99E50F1AD7514C006CEDDB /* liblsl.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		307D6E921ADC4AD000964709 /* TerminalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TerminalViewController.h; sourceTree = "<group>"; };
+		307D6E931ADC4AD000964709 /* TerminalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TerminalViewController.m; sourceTree = "<group>"; };
+		309CAD6C1ADD9AAE00886E8D /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		30DAA7DA1AE9780E0001908E /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
+		30DAA7DC1AE979330001908E /* MCManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MCManager.h; path = ../MCManager.h; sourceTree = "<group>"; };
+		30DAA7DD1AE979330001908E /* MCManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MCManager.m; path = ../MCManager.m; sourceTree = "<group>"; };
+		30F408FB1AD887550049E4D8 /* InletsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InletsTableViewController.h; sourceTree = "<group>"; };
+		30F408FC1AD887550049E4D8 /* InletsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InletsTableViewController.m; sourceTree = "<group>"; };
+		DC99E4E21AD75084006CEDDB /* lsl-helloworld.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "lsl-helloworld.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC99E4E61AD75084006CEDDB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DC99E4E71AD75084006CEDDB /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		DC99E4E91AD75084006CEDDB /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		DC99E4EA1AD75084006CEDDB /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		DC99E4EC1AD75084006CEDDB /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		DC99E4ED1AD75084006CEDDB /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		DC99E4F01AD75084006CEDDB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		DC99E4F21AD75084006CEDDB /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		DC99E4F51AD75084006CEDDB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		DC99E50B1AD7512B006CEDDB /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
+		DC99E50D1AD75143006CEDDB /* boost.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = boost.a; path = ../iOSboost/boost/ios/boost.a; sourceTree = "<group>"; };
+		DC99E50F1AD7514C006CEDDB /* liblsl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = liblsl.framework; path = "../Debug-universal/liblsl.framework"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DC99E4DF1AD75084006CEDDB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30DAA7DB1AE9780E0001908E /* MultipeerConnectivity.framework in Frameworks */,
+				309CAD6D1ADD9AAE00886E8D /* CoreMotion.framework in Frameworks */,
+				DC99E5101AD7514C006CEDDB /* liblsl.framework in Frameworks */,
+				300D517A1BAA00A8003E2EC5 /* boost.a in Frameworks */,
+				DC99E50C1AD7512B006CEDDB /* libc++.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DC99E4D91AD75083006CEDDB = {
+			isa = PBXGroup;
+			children = (
+				30DAA7DA1AE9780E0001908E /* MultipeerConnectivity.framework */,
+				309CAD6C1ADD9AAE00886E8D /* CoreMotion.framework */,
+				DC99E50F1AD7514C006CEDDB /* liblsl.framework */,
+				DC99E50D1AD75143006CEDDB /* boost.a */,
+				DC99E50B1AD7512B006CEDDB /* libc++.dylib */,
+				DC99E4E41AD75084006CEDDB /* lsl-helloworld */,
+				DC99E4E31AD75084006CEDDB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DC99E4E31AD75084006CEDDB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DC99E4E21AD75084006CEDDB /* lsl-helloworld.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DC99E4E41AD75084006CEDDB /* lsl-helloworld */ = {
+			isa = PBXGroup;
+			children = (
+				30F408FB1AD887550049E4D8 /* InletsTableViewController.h */,
+				30DAA7DC1AE979330001908E /* MCManager.h */,
+				30DAA7DD1AE979330001908E /* MCManager.m */,
+				30F408FC1AD887550049E4D8 /* InletsTableViewController.m */,
+				DC99E4E91AD75084006CEDDB /* AppDelegate.h */,
+				DC99E4EA1AD75084006CEDDB /* AppDelegate.m */,
+				DC99E4EC1AD75084006CEDDB /* ViewController.h */,
+				DC99E4ED1AD75084006CEDDB /* ViewController.m */,
+				DC99E4EF1AD75084006CEDDB /* Main.storyboard */,
+				307D6E921ADC4AD000964709 /* TerminalViewController.h */,
+				307D6E931ADC4AD000964709 /* TerminalViewController.m */,
+				DC99E4F21AD75084006CEDDB /* Images.xcassets */,
+				DC99E4F41AD75084006CEDDB /* LaunchScreen.xib */,
+				DC99E4E51AD75084006CEDDB /* Supporting Files */,
+			);
+			path = "lsl-helloworld";
+			sourceTree = "<group>";
+		};
+		DC99E4E51AD75084006CEDDB /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				DC99E4E61AD75084006CEDDB /* Info.plist */,
+				DC99E4E71AD75084006CEDDB /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DC99E4E11AD75084006CEDDB /* lsl-helloworld */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DC99E5051AD75084006CEDDB /* Build configuration list for PBXNativeTarget "lsl-helloworld" */;
+			buildPhases = (
+				DC99E4DE1AD75084006CEDDB /* Sources */,
+				DC99E4DF1AD75084006CEDDB /* Frameworks */,
+				DC99E4E01AD75084006CEDDB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "lsl-helloworld";
+			productName = "lsl-helloworld";
+			productReference = DC99E4E21AD75084006CEDDB /* lsl-helloworld.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DC99E4DA1AD75083006CEDDB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0620;
+				ORGANIZATIONNAME = SCCN;
+				TargetAttributes = {
+					DC99E4E11AD75084006CEDDB = {
+						CreatedOnToolsVersion = 6.2;
+					};
+				};
+			};
+			buildConfigurationList = DC99E4DD1AD75083006CEDDB /* Build configuration list for PBXProject "lsl-helloworld" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = DC99E4D91AD75083006CEDDB;
+			productRefGroup = DC99E4E31AD75084006CEDDB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DC99E4E11AD75084006CEDDB /* lsl-helloworld */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DC99E4E01AD75084006CEDDB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DC99E4F11AD75084006CEDDB /* Main.storyboard in Resources */,
+				DC99E4F61AD75084006CEDDB /* LaunchScreen.xib in Resources */,
+				DC99E4F31AD75084006CEDDB /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DC99E4DE1AD75084006CEDDB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30F408FD1AD887550049E4D8 /* InletsTableViewController.m in Sources */,
+				30DAA7DE1AE979330001908E /* MCManager.m in Sources */,
+				307D6E941ADC4AD000964709 /* TerminalViewController.m in Sources */,
+				DC99E4EE1AD75084006CEDDB /* ViewController.m in Sources */,
+				DC99E4EB1AD75084006CEDDB /* AppDelegate.m in Sources */,
+				DC99E4E81AD75084006CEDDB /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		DC99E4EF1AD75084006CEDDB /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DC99E4F01AD75084006CEDDB /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		DC99E4F41AD75084006CEDDB /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DC99E4F51AD75084006CEDDB /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		DC99E5031AD75084006CEDDB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DC99E5041AD75084006CEDDB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		DC99E5061AD75084006CEDDB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../Debug-universal",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../Debug-universal/liblsl.framework",
+				);
+				INFOPLIST_FILE = "lsl-helloworld/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../iOSboost/boost/ios",
+					"/Volumes/projects/dmedine/git-lsl-tst2/labstreaminglayer/LSL/liblsl-iOS/iOSboost/boost/ios",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		DC99E5071AD75084006CEDDB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../Debug-universal",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../Debug-universal/liblsl.framework",
+				);
+				INFOPLIST_FILE = "lsl-helloworld/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../iOSboost/boost/ios",
+					"/Volumes/projects/dmedine/git-lsl-tst2/labstreaminglayer/LSL/liblsl-iOS/iOSboost/boost/ios",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DC99E4DD1AD75083006CEDDB /* Build configuration list for PBXProject "lsl-helloworld" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DC99E5031AD75084006CEDDB /* Debug */,
+				DC99E5041AD75084006CEDDB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DC99E5051AD75084006CEDDB /* Build configuration list for PBXNativeTarget "lsl-helloworld" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DC99E5061AD75084006CEDDB /* Debug */,
+				DC99E5071AD75084006CEDDB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DC99E4DA1AD75083006CEDDB /* Project object */;
+}

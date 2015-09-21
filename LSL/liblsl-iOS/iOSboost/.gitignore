@@ -1,0 +1,37 @@
+
+.DS_Store
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+
+# Do no ignore the debug folder
+!*/debug/
+!*/debug/*
+.DS_Store
+
+libs/boost/lib/.DS_Store
+
+*.pbxuser
+*.perspective
+*.perspectivev3
+*.xccheckout
+
+*.mode1v3
+*.mode2v3
+
+xcuserdata/
+
+*.app
+
+
+*.bz2

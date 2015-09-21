@@ -1,0 +1,28 @@
+{
+  'version': 0,
+  'case-sensitive': 'false',
+  'roots': [
+    {
+      'type': 'directory',
+      'name': "/Volumes/projects/dmedine/hg-labstreaminglayer/LSL/liblsl-iOS/Debug-iphoneos/liblsl.framework/Headers",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "liblsl-Swift.h",
+          'external-contents': "/Volumes/projects/dmedine/hg-labstreaminglayer/LSL/liblsl-iOS/Debug-iphoneos/liblsl.framework/Headers/liblsl-Swift.h"
+        }
+      ]
+    },
+    {
+      'type': 'directory',
+      'name': "/Volumes/projects/dmedine/hg-labstreaminglayer/LSL/liblsl-iOS/Debug-iphoneos/liblsl.framework/Modules",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "module.modulemap",
+          'external-contents': "/Volumes/projects/dmedine/hg-labstreaminglayer/LSL/liblsl-iOS/Debug-iphoneos/liblsl.framework/Modules/module.modulemap"
+        }
+      ]
+    }
+  ]
+}
