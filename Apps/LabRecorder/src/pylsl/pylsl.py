@@ -984,7 +984,6 @@ if not libpath:
     raise Exception("The library " + libname + " was not found. Please make "
         "sure that it is on the search path (e.g., in the same folder as "
         "pylsl.py).")
-print libpath
 lib = CDLL(libpath)
     
 
@@ -1042,13 +1041,13 @@ try:
     lib.lsl_pull_chunk_str.restype = c_long
     lib.lsl_pull_chunk_buf.restype = c_long
 except:
-    print "pylsl: Chunk transfer functions not available in your liblsl version."
+    print("pylsl: Chunk transfer functions not available in your liblsl version.")
 try:
     lib.lsl_create_continuous_resolver.restype = c_void_p
     lib.lsl_create_continuous_resolver_bypred.restype = c_void_p
     lib.lsl_create_continuous_resolver_byprop.restype = c_void_p
 except:
-    print "pylsl: ContinuousResolver not (fully) available in your liblsl version."
+    print("pylsl: ContinuousResolver not (fully) available in your liblsl version.")
         
 # set up some type maps
 string2fmt = {'float32':cf_float32, 'double64':cf_double64, 'string':cf_string, 

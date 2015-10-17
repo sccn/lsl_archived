@@ -1,43 +1,67 @@
-import sys, os, socket, time, ctypes
+import sys
+import os
+import time
+import platform
+import struct
 from optparse import OptionParser
-import platform, struct
 from ctypes.util import find_library
 from ctypes import CDLL, c_void_p
 
+try:
+    # noinspection PyUnresolvedReferences
+    from PySide.QtCore import *
+    # noinspection PyUnresolvedReferences
+    from PySide.QtGui import *
+except ImportError:
+    # noinspection PyUnresolvedReferences
+    from PyQt4.QtCore import *
+    # noinspection PyUnresolvedReferences
+    from PyQt4.QtGui import *
+
+# load included pylsl version; note: because there is a second library being
+# loaded (RecorderLib) which receives pointers to data structures of pylsl,
+# the liblsl versions of the two must match (that's why pylsl is included here)
+# a better solution in the future would be to pass in the necessary information
+#  as strings
 import pylsl.pylsl as pylsl
 
-# find and load library
-os_name = platform.system()
-bitness = 8 * struct.calcsize("P")
-if os_name in ['Windows','Microsoft']:
-    libname = 'RecorderLib32.dll' if bitness == 32 else 'RecorderLib64.dll'
-elif os_name == 'Darwin':
-    libname = 'RecorderLib32.dylib' if bitness == 32 else 'RecorderLib64.dylib'
-elif os_name == 'Linux':
-    libname = 'RecorderLib32.so' if bitness == 32 else 'RecorderLib64.so'
-else:
-    raise Exception("Unrecognized operating system:", os_name)
-libpath = os.path.dirname(os.path.abspath(__file__)) + os.sep + libname
-if not os.path.isfile(libpath):
-    libpath = find_library(libname)
-if not libpath:
-    raise Exception("The library " + libname + " was not found. Please make "
-        "sure that it is on the search path (e.g., in the same folder as "
-        "LabRecorder.py).")
-recorder_lib = CDLL(libpath)
-recorder_lib.rl_start_recording.restype = c_void_p
-
-
-from PySide.QtCore import *
-from PySide.QtGui import *
+# find and load RecorderLib library
+try:
+    os_name = platform.system()
+    bitness = 8 * struct.calcsize("P")
+    if os_name in ['Windows', 'Microsoft']:
+        libname = ('RecorderLib32.dll' if bitness == 32
+                   else 'RecorderLib64.dll')
+    elif os_name == 'Darwin':
+        libname = ('RecorderLib32.dylib' if bitness == 32
+                   else 'RecorderLib64.dylib')
+    elif os_name == 'Linux':
+        libname = ('RecorderLib32.so' if bitness == 32
+                   else 'RecorderLib64.so')
+    else:
+        raise Exception("Unrecognized operating system:", os_name)
+    libpath = os.path.dirname(os.path.abspath(__file__)) + os.sep + libname
+    if not os.path.isfile(libpath):
+        libpath = find_library(libname)
+    if not libpath:
+        raise Exception("The library " + libname + " was not found. Please "
+                        "make sure that it is on the search path (e.g., in the "
+                        "same folder as LabRecorder.py).")
+    recorder_lib = CDLL(libpath)
+    recorder_lib.rl_start_recording.restype = c_void_p
+except Exception as e:
+    print("Could not import RecorderLib: %s" % e)
+    recorder_lib = None
 
 from ui_LabRecorder import Ui_MainWindow
 
 
+# noinspection PyShadowingNames,PyCallByClass,PyTypeChecker
 class MainWindow(QMainWindow, Ui_MainWindow):
-    def __init__(self,options,parent=None):
+    # noinspection PyUnresolvedReferences
+    def __init__(self, options, parent=None):
         """ Start up the main application. """
-        super(MainWindow,self).__init__(parent)
+        super(MainWindow, self).__init__(parent)
         self.setupUi(self)
         
         # run the startup action
@@ -58,26 +82,51 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.timer = QTimer()
         self.timer.timeout.connect(self.statusUpdate)
         self.timer.start(1000)
-                
+
+        # config variables
+        self.StorageLocation = ""
+        self.RequiredStreams = []
+        self.SessionBlocks = []
+        self.ExtraChecks = {}
+        self.EnableScriptedActions = False
+        self.ExperimentNumber = 1
+
+        # application state
+        self.SelectedBlock = None
+        self.ResolvedStreams = []
+        self.CurrentlyRecording = False
+        self.ResolvedNames = []
+        self.MissingStreams = []
+        self.ActualFileName = ''
+        self.CurrentRecording = None
+        self.StartTime = 0
+
     def browseConfigDialog(self):
         """ Open a file browser to select the config file to load.""" 
         # browse for an existing configuration file
-        fileName = QFileDialog.getOpenFileName(self,"Load configuration", "", "Configuration Files (*.cfg)")
+        fileName = QFileDialog.getOpenFileName(self, "Load configuration", "",
+                                               "Configuration Files (*.cfg)")
         if fileName[0]:
             self.loadConfig(fileName[0])
         
     def browseLocationDialog(self):
         """ Open a file browser to select the storage location."""
         # browse for a (usually new) storage location
-        fileName = QFileDialog.getSaveFileName(self,"Save recordings as...", "untitled.xdf", "XDF recordings (*.xdf);;XDF compressed recordings (*.xdfz)")
+        fileName = QFileDialog.getSaveFileName(self, "Save recordings as...",
+                                               "untitled.xdf",
+                                               "XDF recordings (*.xdf);;XDF "
+                                               "compressed recordings (*.xdfz)")
         if fileName[0]:
             self.StorageLocation = fileName[0]
             self.locationEdit.setText(fileName[0])
     
-    def closeEvent(self,ev):
-        """ Make sure that the user cannot close the program while a recording is running. """
+    def closeEvent(self, ev):
+        """ Make sure that the user cannot close the program
+        while a recording is running. """
         if self.CurrentlyRecording:
             ev.ignore()
+        else:
+            exit(0)
 
     def statusUpdate(self):
         """ Update the status-bar message while recording. """
@@ -85,19 +134,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             elapsed = int(time.time() - self.StartTime)
             hours, remainder = divmod(elapsed, 3600)
             minutes, seconds = divmod(remainder, 60)
-            self.statusBar().showMessage("Recording ({0:02d}:{1:02d}:{2:02d}; {3:d}kb)...".format(hours, minutes, seconds, int(os.path.getsize(self.ActualFileName)/1000)))
+            fmtstr = "Recording ({0:02d}:{1:02d}:{2:02d}; {3:d}kb)..."
+            msg = fmtstr.format(hours, minutes, seconds,
+                                int(os.path.getsize(self.ActualFileName)/1000))
+            self.statusBar().showMessage(msg)
 
-    def startup(self,options):
+    def startup(self, options):
         """ Perform (non-GUI) startup actions. """
         # load the initial configuration file 
         self.loadConfig(options.config_file)        
         self.CurrentlyRecording = False
         
-        
-    def loadConfig(self,filename):
+    def loadConfig(self, filename):
         """ Load a configuration file. """
         
-        print "loading config file",filename,"..."
+        print("loading config file %s..." % filename)
+        # noinspection PyUnresolvedReferences
+        import socket  # assumed to be present in the config file
+
         # apply built-in defaults        
         self.StorageLocation = "" 
         self.RequiredStreams = []
@@ -105,14 +159,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ExtraChecks = {}
         self.EnableScriptedActions = False
         # override selectively 
-        execfile(filename,globals(),self.__dict__)
+        # noinspection PyBroadException
+        try:
+            # noinspection PyUnresolvedReferences
+            execfile(filename, globals(), self.__dict__)  # Python 2.x
+        except:
+            with open(filename, 'rb') as f:
+                code = compile(f.read(), filename, 'exec')
+                exec(code, globals(), self.__dict__)
 
         if self.EnableScriptedActions:
             self.on_init(self)
         
         # do some minimal checking & fixes
         if not len(self.StorageLocation):
-            self.StorageLocation = "C:\\Recordings\\CurrentStudy\\exp%n\\untitled.xdf"
+            self.StorageLocation = "C:\\Recordings\\CurrentStudy\\exp%n\\" \
+                                   "untitled.xdf"
         if not len(self.SessionBlocks):
             self.SessionBlocks = ["default"] 
 
@@ -126,11 +188,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # if the %b is in the path under consideration... 
             if '%b' in abspath:
                 # substitute it by the first block
-                abspath.replace('%b',self.SessionBlocks[0])
+                abspath.replace('%b', self.SessionBlocks[0])
             self.ExperimentNumber = 9999
-            # find the lowest number for which the file or directory does not yet exist
-            for n in range(1,9999):
-                if not os.path.exists(abspath.replace('%n',str(n))):
+            # find the lowest number for which the file or directory does
+            # not yet exist
+            for n in range(1, 9999):
+                if not os.path.exists(abspath.replace('%n', str(n))):
                     self.ExperimentNumber = n
                     break
         else:
@@ -150,7 +213,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # refresh the streams...
         self.refreshStreams()
 
-
     def refreshStreams(self):
         """ Refresh the stream list. """
         # get all streams on the lab network
@@ -158,40 +220,49 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # sort them by UID to get a reproducible order
         self.ResolvedStreams.sort(key=lambda x: x.uid())
         # get their names
-        self.ResolvedNames = [];
+        self.ResolvedNames = []
         for k in range(len(self.ResolvedStreams)):
-            self.ResolvedNames.append(self.ResolvedStreams[k].name() + ' (' + self.ResolvedStreams[k].hostname() +')')
+            streamname = (self.ResolvedStreams[k].name().decode('utf-8') + ' ('
+                          + self.ResolvedStreams[k].hostname().decode('utf-8')
+                          + ')')
+            self.ResolvedNames.append(streamname)
         # find those that are required but missing
-        missing = [n for n in self.RequiredStreams if (n not in self.ResolvedNames)]
+        missing = [n for n in self.RequiredStreams
+                   if (n not in self.ResolvedNames)]
         self.MissingStreams = missing
         allnames = []
         allnames += self.ResolvedNames
         allnames += missing
         # update the listbox contents
         good_brush = QBrush()
-        good_brush.setColor(QColor(0,128,0))
+        good_brush.setColor(QColor(0, 128, 0))
         bad_brush = QBrush()
-        bad_brush.setColor(QColor(255,0,0))
+        bad_brush.setColor(QColor(255, 0, 0))
         
         # keep track of the UIDs of the streams that were unchecked before
         previously_unchecked = []
         for i in range(self.streamList.count()):
             item = self.streamList.item(i)
-            if item.checkState() == Qt.Unchecked and item.stream_uid is not None:
+            if (item.checkState() == Qt.Unchecked and
+                    item.stream_uid is not None):
                 previously_unchecked.append(item.stream_uid)
 
         self.streamList.clear()
         for k in range(len(allnames)):
             n = allnames[k]
-            item = QListWidgetItem(n,self.streamList) 
+            item = QListWidgetItem(n, self.streamList)
             item.setForeground(bad_brush if n in missing else good_brush)
             item.setFlags(item.flags() & Qt.ItemIsUserCheckable)
             if k < len(self.ResolvedStreams):
                 item.stream_uid = self.ResolvedStreams[k].uid()
             else:
                 item.stream_uid = None
-            # check what's required (or all otherwise default), EXCEPT for what was specifically unchecked before...
-            item.setCheckState(Qt.Checked if ((n in self.RequiredStreams) or len(self.RequiredStreams)==0) and not (item.stream_uid in previously_unchecked) else Qt.Unchecked)
+            # check what's required (or all otherwise default),
+            # EXCEPT for what was specifically unchecked before...
+            ischecked = (((n in self.RequiredStreams) or
+                          len(self.RequiredStreams) == 0) and
+                         not (item.stream_uid in previously_unchecked))
+            item.setCheckState(Qt.Checked if ischecked else Qt.Unchecked)
             self.streamList.addItem(item)
 
     def startRecording(self):
@@ -199,86 +270,112 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not self.CurrentlyRecording:
             # automatically refresh the streams
             self.refreshStreams()
-            
+
             # determine whether all checked streams are actually present
             for i in range(self.streamList.count()):
                 item = self.streamList.item(i)
-                if item.checkState() == Qt.Checked and item.text() in self.MissingStreams:
+                if (item.checkState() == Qt.Checked and
+                        item.text() in self.MissingStreams):
                     msgBox = QMessageBox()
-                    msgBox.setText("At least one of the streams that you checked seems to be offline.")
-                    msgBox.setInformativeText("Do you want to start recording anyway?")
+                    msgBox.setText("At least one of the streams that you "
+                                   "checked seems to be offline.")
+                    msgBox.setInformativeText("Do you want to start recording "
+                                              "anyway?")
                     msgBox.setIcon(QMessageBox.Warning)
-                    msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
+                    msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No
+                                              | QMessageBox.Cancel)
                     msgBox.setDefaultButton(QMessageBox.No)
                     if not (msgBox.exec_() == QMessageBox.Yes):
                         return
-                    break;            
-            
+                    break
+
             # determine the selected experiment number
             self.ExperimentNumber = self.experimentNumberSpin.value()
             # determine the selected block name
             # if self.SelectedBlock is None:
-            # and invoke the selection action if not yet done (e.g. just started up)
+            # and invoke the selection action if not yet done
+            # (e.g. just started up)
             self.blockSelected(self.blockList.currentItem())
             # invoke scripted action
             if self.enableScriptedActionsCheck.checkState():
                 try:
-                    self.on_startrecord(self,self.SelectedBlock,self.ExperimentNumber)
+                    self.on_startrecord(self, self.SelectedBlock,
+                                        self.ExperimentNumber)
                 except Exception as e:
                     msgBox = QMessageBox()
-                    msgBox.setText("The scripted action associated with starting the recording failed with error " + str(e))
-                    msgBox.setInformativeText("Do you want to start recording anyway?")
+                    msgBox.setText("The scripted action associated with "
+                                   "starting the recording "
+                                   "failed with error " + str(e))
+                    msgBox.setInformativeText("Do you want to start recording "
+                                              "anyway?")
                     msgBox.setIcon(QMessageBox.Warning)
-                    msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
+                    msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No
+                                              | QMessageBox.Cancel)
                     msgBox.setDefaultButton(QMessageBox.No)
                     if not (msgBox.exec_() == QMessageBox.Yes):
                         return
 
             # figure out file name
-            filename = os.path.abspath(self.locationEdit.text()).replace('%n',str(self.ExperimentNumber)).replace('%b',self.SelectedBlock)
+
+            filename = os.path.abspath(self.locationEdit.text())
+            filename = filename.replace('%n', str(self.ExperimentNumber))
+            filename = filename.replace('%b', self.SelectedBlock)
             self.ActualFileName = filename
-        
+
             # rename existing file if necesary
             if os.path.exists(filename):
                 # figure out new version of the filename
                 lastdot = filename.rfind(".")
-                # find the lowest number for which we can rename this to *_oldN.xdf 
-                for n in range(1,9999):
-                    rename_to = filename[:lastdot] + "_old" + str(n) + filename[lastdot:]
+                # find the lowest number for which we can rename
+                # this to *_oldN.xdf
+                for n in range(1, 9999):
+                    rename_to = (filename[:lastdot] + "_old" + str(n) +
+                                 filename[lastdot:])
                     if not os.path.exists(rename_to):
+                        # noinspection PyBroadException
                         try:
                             os.rename(filename, rename_to)
                         except:
-                            QMessageBox.information(self,"Permissions issue", "Can not rename the file " + filename + " to " + rename_to + ". Please check your permissions.", QMessageBox.OK)
+                            msg = "Can not rename the file %s to %s. Please " \
+                                  "check your permissions." % (filename,
+                                                               rename_to)
+                            QMessageBox.information(self, "Permissions issue",
+                                                    msg, QMessageBox.OK)
                             return
                         break
-        
+
             # make directories if necessary
             targetdir = os.path.split(filename)[0]
+            # noinspection PyBroadException
             try:
                 if not os.path.exists(targetdir):
                     os.makedirs(targetdir)
             except:
-                QMessageBox.information(self,"Permissions issue", "Can not create the directory " + targetdir + ". Please check your permissions.", QMessageBox.Ok)
+                msg = "Can not create the directory %s . Please check your " \
+                      "permissions." % targetdir
+                QMessageBox.information(self, "Permissions issue", msg,
+                                        QMessageBox.Ok)
                 return
-                
-            # create parameters to the recording function...
 
+            # create parameters to the recording function...
             into_streams = []
-            into_watchfor = [] 
+            into_watchfor = []
             for i in range(self.streamList.count()):
-                item = self.streamList.item(i)                
+                item = self.streamList.item(i)
                 if item.checkState() == Qt.Checked:
                     if item.text() in self.MissingStreams:
                         name_and_host = item.text()[:-1].split(' (')
-                        into_watchfor.append("name='" + name_and_host[0] + "' and hostname='" +  name_and_host[1] + "'")
+                        into_watchfor.append("name='" + name_and_host[0] +
+                                             "' and hostname='" +
+                                             name_and_host[1] + "'")
                     elif item.text() in self.ResolvedNames:
                         into_streams.append(self.ResolvedStreams[i])
-            
+
             # determine the streams to record from...
             stream_array = c_void_p*len(into_streams)
-            #streams = [c_void_p(s.handle()) for s in into_streams]
+            # streams = [c_void_p(s.handle()) for s in into_streams]
             streams = [c_void_p(s.obj) for s in into_streams]
+            # noinspection PyCallingNonCallable
             streams = stream_array(*streams)
 
             # watchfor
@@ -289,31 +386,41 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 watchfor = watchfor + into_watchfor[i].encode("utf-8")
 
             # start recording
-            self.CurrentRecording = recorder_lib.rl_start_recording(filename.encode("utf-8"),streams,len(into_streams),watchfor,1)
-            self.StartTime = time.time()            
+            args = (filename.encode("utf-8"), streams, len(into_streams),
+                    watchfor, 1)
+            self.CurrentRecording = recorder_lib.rl_start_recording(*args)
+            self.StartTime = time.time()
             self.CurrentlyRecording = True
             self.stopButton.setEnabled(True)
             self.startButton.setEnabled(False)
             
         else:
-            QMessageBox.information(self,"Already recording", "The recording is already running.", QMessageBox.Ok)
-    
-    
+            QMessageBox.information(self, "Already recording",
+                                    "The recording is already running.",
+                                    QMessageBox.Ok)
+
     def stopRecording(self):
         """ Stop an ongoing recording. """        
         if not self.CurrentlyRecording:
-            QMessageBox.information(self,"Not recording", "There is no ongoing recording.", QMessageBox.Ok)
+            QMessageBox.information(self, "Not recording",
+                                    "There is no ongoing recording.",
+                                    QMessageBox.Ok)
         else:
             # invoke scripted action...
             if self.enableScriptedActionsCheck.checkState():
                 try:
-                    self.on_stoprecord(self,self.SelectedBlock,self.ExperimentNumber)
+                    self.on_stoprecord(self, self.SelectedBlock,
+                                       self.ExperimentNumber)
                 except Exception as e:
                     msgBox = QMessageBox()
-                    msgBox.setText("The scripted action associated with stopping the recording failed with error " + str(e))
-                    msgBox.setInformativeText("Do you want to stop the recording anyway?")
+                    msgBox.setText("The scripted action associated with "
+                                   "stopping the recording failed "
+                                   "with error " + str(e))
+                    msgBox.setInformativeText("Do you want to stop the "
+                                              "recording anyway?")
                     msgBox.setIcon(QMessageBox.Warning)                    
-                    msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
+                    msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No
+                                              | QMessageBox.Cancel)
                     msgBox.setDefaultButton(QMessageBox.No)
                     if not (msgBox.exec_() == QMessageBox.Yes):
                         return
@@ -327,31 +434,37 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.stopButton.setEnabled(False)
                 self.statusBar().showMessage("Stopped.")
         
-    def blockSelected(self,item):
+    def blockSelected(self, item):
         """ Handle selection of a new block. """
         if self.CurrentlyRecording:
-            QMessageBox.information(self,"Still recording", "Please stop recording before switching blocks.", QMessageBox.Ok)
+            QMessageBox.information(self, "Still recording",
+                                    "Please stop recording before "
+                                    "switching blocks.", QMessageBox.Ok)
         else:            
             self.SelectedBlock = item.text()
             if self.enableScriptedActionsCheck.checkState():
                 try:
-                    self.on_selectblock(self,self.SelectedBlock)
+                    self.on_selectblock(self, self.SelectedBlock)
                 except Exception as e:
-                    QMessageBox.information(self,"Script issue", "Note: The scripted action associated with selecting a block failed with error " + str(e), QMessageBox.Ok)
+                    QMessageBox.information(self, "Script issue",
+                                            "Note: The  scripted action "
+                                            "associated with selecting a block "
+                                            "failed with error " + str(e),
+                                            QMessageBox.Ok)
 
-    def streamClicked(self,item):
+    # noinspection PyMethodMayBeStatic
+    def streamClicked(self, item):
         if item.checkState():
             item.setCheckState(Qt.Unchecked)
         else:
             item.setCheckState(Qt.Checked)
 
-
-
 # parse commandline arguments
 parser = OptionParser()
-parser.add_option("-c", "--config", dest="config_file", default="default_config.cfg", 
+parser.add_option("-c", "--config", dest="config_file",
+                  default="default_config.cfg",
                   help="The configuration file to load.")
-(options,args) = parser.parse_args()
+(options, args) = parser.parse_args()
 
 # start GUI parts
 app = QApplication(sys.argv)

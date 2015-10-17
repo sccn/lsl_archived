@@ -7,7 +7,11 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide import QtCore, QtGui
+try:
+    from PySide import QtCore, QtGui
+except:
+    from PyQt4 import QtCore, QtGui
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
