@@ -1,5 +1,9 @@
 import shutil
 import urllib
+try:
+    import urllib.request  # Python 3.x
+except:
+    pass
 
 import zipfile
 import os
@@ -27,8 +31,8 @@ def zip(src, dst):
         for filename in files:
             absname = os.path.abspath(os.path.join(dirname, filename))
             arcname = absname[len(abs_src) + 1:]
-            print 'zipping %s as %s' % (os.path.join(dirname, filename),
-                                        arcname)
+            print('zipping %s as %s' % (os.path.join(dirname, filename),
+                                        arcname))
             zf.write(absname, arcname)
     zf.close()
 
@@ -672,7 +676,10 @@ def dl_file(src, dst):
         print("...into:")
         print(dst)
         try:
-            urllib.urlretrieve(src, dst)
+            if hasattr(urllib,'urlretrieve'):
+                urllib.urlretrieve(src, dst)
+            else:
+                urllib.request.urlretrieve(src, dst)
         except IOError as detail:
             print('File not copied. IOError: %s' % detail)
 
