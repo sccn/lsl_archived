@@ -10,8 +10,8 @@ QMAKEPATH="/lib64/qt4/bin"
 # add extra paths and libraries here
 # these should be relative to the directory ../ (the one above this one
 includepath="../../LSL/liblsl/include/"
-libpath="-Llinux/ -L./ -L./zmq/bin"
-libs="-llsl64 -lboost_thread -lQtGui -lQtNetwork -lQtCore -lzmq"
+libpath="-L./linux -L./ -L./zmq/zmq/bin"
+libs="-llsl64 -lboost_thread -lboost_chrono -lboost_system -lQtGui -lQtNetwork -lQtCore -lzmq"
 
 # the runpath is different -- it should be relative to ./ (this directory)
 rpath="'-Wl,-rpath=../zmq/bin/linux'"

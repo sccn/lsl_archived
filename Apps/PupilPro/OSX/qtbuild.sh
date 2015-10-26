@@ -9,12 +9,12 @@ QMAKEPATH="/usr/local/bin"
 
 #add extra paths and libraries here
 includepath="../../LSL/liblsl/include /usr/local/include"
-libpath="-L./OSX -L/opt/local/lib -L/usr/local/lib -L./ -L./zmq/bin/mac"
+libpath="-L./OSX -L/opt/local/lib -L/usr/local/lib -L./ -L./zmq/zmq/bin/mac"
 libs="-llsl64 -lboost_thread-mt -lboost_system-mt -lboost_chrono-mt -lzmq"
 
 echo "adjusting runtime library paths"
 #make sure that libzmq.4.dylib has the right rpath
-install_name_tool -id "@executable_path/../Resources/libzmq.4.so" ../zmq/bin/mac/libzmq.4.dylib
+install_name_tool -id "@executable_path/../Resources/libzmq.4.so" ../zmq/zmq/bin/mac/libzmq.4.dylib
 
 #do the same for the local copy of liblsl 
 install_name_tool -id "@executable_path/../Resources/liblsl64.dylib" ./liblsl64.dylib
@@ -76,9 +76,11 @@ rm ../*.o
 rm ../Makefile
 mv ../$PROJECT.app ./
 #copy the libraries into the resources folder
-cp ../zmq/bin/mac/libzmq.4.dylib $PROJECT.app/Contents/Resources/
+cp ../zmq/zmq/bin/mac/libzmq.4.dylib $PROJECT.app/Contents/Resources/
 cp ./liblsl64.dylib $PROJECT.app/Contents/Resources/
 cp ./liblsl32.dylib $PROJECT.app/Contents/Resources/
+
+install_name_tool -change /usr/local/lib/libzmq.4.dylib @executable_path/../Resources/libzmq.4.dylib $PROJECT.app/Contents/MacOS/$PROJECT
 
 #copy the config file
 cp ../pupilpro_config.cfg ./$PROJECT.app/Contents/MacOS/
