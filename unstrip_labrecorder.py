@@ -1,4 +1,4 @@
-# example showing prcdedure for unstripping just one app
+# example prcdedure for unstripping just one app
 import lsl_get_deps as lgd
 import os
 
