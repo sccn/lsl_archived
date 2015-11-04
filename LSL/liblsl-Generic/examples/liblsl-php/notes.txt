@@ -1,0 +1,50 @@
+These notes detail an unsuccesful attempt to compile this extension on windows. If anybody wants to try again, let us know if you make any progress.
+
+
+downloaded php source and compile versions 5.6.14 from http://windows.php.net/download#php-5.6
+combined the two directories 
+added necessary environment variables
+
+renamed file C:\php-src\zend\zend_config.w32.h to etc.\zend_config.h
+copied etc.\win32\build\config.w32.h.in to etc.\main\config.w32.h
+
+put preprocessor options:
+ZEND_DEBUG=0
+ZTS=1
+ZEND_WIN32
+PHP_WIN32
+thanks to http://blog.slickedit.com/2007/09/creating-a-php-5-extension-with-visual-c-2005/ 
+
+modified etc.\main\config.w32.h, commenting out last 4 lines:
+//#ifndef _WIN64
+//# define _USE_32BIT_TIME_T 1
+//#endif
+//#define HAVE_STDLIB_H 1
+thanks to https://jojokahanding.wordpress.com/2014/05/26/writing-php-extensions-for-windowsbuilding-a-compile-environment/
+
+built project in visual studio, created a working extension, but could not load liblsl32.dll
+
+
+loosely followed method shown here:
+http://blog.benoitblanchon.fr/build-php-extension-on-windows/
+
+had to drop the lsl-php project folder into the C:\php-6.14\ext folder in order for buildconf to recognize it and create the --enable-liblsl flag
+
+got flex and bison binaries and added their paths to C:\Program Files(x86)\Microsoft Visual Studio 9.0\common7\Tools\vsvars.bat on line 25 @ set PATH=<paths to programs>
+
+at this point ran configure --disable-all --enable-cli --enable-liblsl, got fatal error code from bison
+
+had to also instal libntl-0.1.4.4 (bison dependency), found this and another dependency in gnu-make (downloaded it and added to Path):
+http://gnuwin32.sourceforge.net/downlinks/make-dep-zip.php
+
+then, missing regex2.dll:
+http://gnuwin32.sourceforge.net/packages/regex.htm
+
+getting closer -- now it builds a bunch of php stuff
+hangs on stdint.h not found -- turns out its in VS 10, but not 9. I had both, so I moved the file from 
+C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include to C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\include, but you can also download it:
+http://msinttypes.googlecode.com/svn/trunk/stdint.h
+
+gobs of errors related to ext\standard\info.c -- looks as if VS 9.0 only works up to php5.4, reverting to this version
+
+build works, but liblsl is not building -- the libraries (liblsl64.lib) are not found
