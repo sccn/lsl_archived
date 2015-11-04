@@ -6,7 +6,7 @@ You may want to consult this tutorial on building php extensions (provided the l
 http://www.sitepoint.com/install-php-extensions-source/
 If the link is stale, there are many good tutorials on the web.
 
-First, you will have to move the appropriate lsl binary for a linux build (i.e. liblsl64.so) into the folder 'libs'.
+First, you will have to create a folder called 'libs' and copy the appropriate lsl binary for a linux build (i.e. liblsl64.so) into this folder.
 
 Next, download the php source code into a local working directory. From the command line:
 
