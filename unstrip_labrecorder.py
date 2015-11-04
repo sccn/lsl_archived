@@ -3,7 +3,7 @@ import lsl_get_deps as lgd
 import os
 
 # define the current operating system we want
-op_sys = ["win32"]  # which os to unstrip -- win32 is the only one fully supported
+op_sys = ["win32","win64", "OSX", "linux"]  # which os to unstrip -- win32 is the only one fully supported
 
 # which apps are to be stripped/unstripped
 apps = [
