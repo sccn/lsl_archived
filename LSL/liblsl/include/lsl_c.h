@@ -298,7 +298,7 @@ extern LIBLSL_C_API void lsl_destroy_string(char *s);
 *                  May in some cases also be constructed from device settings.
 * @return A newly created streaminfo handle or NULL in the event that an error occurred.
 */
-extern LIBLSL_C_API lsl_streaminfo lsl_create_streaminfo(char *name, char *type, int channel_count, double nominal_srate, lsl_channel_format_t channel_format, char *source_id);
+extern LIBLSL_C_API lsl_streaminfo lsl_create_streaminfo(const char *name, const char *type, int channel_count, double nominal_srate, lsl_channel_format_t channel_format, const char *source_id);
 
 /**
 * Destroy a previously created streaminfo object.
