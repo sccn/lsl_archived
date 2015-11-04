@@ -1,0 +1,47 @@
+Instructions for compiling and installing this php extension for Linux.
+
+The wrapper files for this extension were created with swig simply by following the instructions in ../../AUTOGENERATE HOWTO.txt
+
+You may want to consult this tutorial on building php extensions (provided the linke isn't stale):
+http://www.sitepoint.com/install-php-extensions-source/
+If the link is stale, there are many good tutorials on the web.
+
+First, you will have to move the appropriate lsl binary for a linux build (i.e. liblsl64.so) into the folder 'libs'.
+
+Next, download the php source code into a local working directory. From the command line:
+
+> wget http://be2.php.net/distributions/php-5.5.12.tar.bz2
+> tar xvjf php-5.5.12.tar.bz2
+> cd php-5.5.12
+
+You will need php installed on your system, of course, as well as the php development tools:
+Ubuntu:
+> sudo apt-get install php5-dev php5-mysql gcc libpcre3-dev
+
+Fedora:
+> sudo yum install php-devel php-mysqlnd gcc libtool
+
+RHEL:
+> sudo yum install php-devel php-mysql gcc libtool
+
+Suse:
+> yast2 -i php5-pear php5-devel php5-mysql gcc
+
+Now, copy this directory into your <path to>/php-5.5.12/ext folder and cd into that directory
+> cd <path to>/php-5.5.12/ext/liblsl-php
+
+Now it is time to configure and build the extension.
+> phpize
+> .configure --enable-liblsl-php
+> make
+> sudo make install
+
+To enable the extension, you will have to copy the newly minted modules/liblsl.so into php's extension search path and create and ini file to handle it.
+> cd /etc/php5/mods-available
+> sudo touch liblsl.ini
+> echo "extension=liblsl.so" | sudo tee -a liblsl.ini
+
+Now enable the extension
+> sudo php5enmod liblsl
+
+You can test that everything is working by going back to the liblsl-php directory and running the example script 'tst_liblsl.php'. It should print out the current version of lsl.
