@@ -53,6 +53,7 @@ private:
 	std::string setup_name;
 	std::string server_name;
 	bool stream_per_rigid;
+	bool stop_;
 
     boost::shared_ptr<boost::thread> reader_thread_;
 
