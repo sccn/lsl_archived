@@ -49,8 +49,10 @@ void MainWindow::save_config_dialog() {
 }
 
 void MainWindow::closeEvent(QCloseEvent *ev) {
-	if (reader_thread_)
+	if (reader_thread_) {
 		ev->ignore();
+		QMessageBox::warning(this,"Warning","Link still active.",QMessageBox::Ok);
+	}
 }
 
 void MainWindow::load_config(const std::string &filename) {
@@ -124,6 +126,7 @@ void MainWindow::link_phasespace() {
 	if (reader_thread_) {
 		// === perform unlink action ===
 		try {
+			stop_ = true;
 			reader_thread_->interrupt();
 			reader_thread_->join();
 			reader_thread_.reset();
@@ -142,7 +145,12 @@ void MainWindow::link_phasespace() {
 		ui->linkButton->setText("Link");
 	} else {
 		// === perform link action ===
-
+		
+		// added by DEM 11/2/2015 -- needed for changing no camera exception into simple warning
+		// check if the server name has a : in it, i.e. is from an owl emulator
+		int f = 0;
+		if(server_name.find(":")) f=1;
+		
 		// try to extract the marker & body descriptions from the UI
 		try {
 			boost::algorithm::split(marker_names,ui->markerNames->toPlainText().toStdString(),boost::algorithm::is_any_of("\n"));
@@ -185,6 +193,7 @@ void MainWindow::link_phasespace() {
 			boost::posix_time::ptime start = boost::posix_time::second_clock::universal_time();
 
 			// get the camera setup
+			
 			while (true) {
 				int num_cameras = owlGetCameras(&cameras[0],cameras.size());
 				if (num_cameras < 0)
@@ -195,7 +204,12 @@ void MainWindow::link_phasespace() {
 				} else
 					boost::this_thread::yield();
 				if ((boost::posix_time::second_clock::universal_time() - start).total_seconds() > max_waiting_time)
-					throw std::runtime_error("Could not query the camera setup -- note that the PhaseSpace master program should be running.");
+					if(f==1) {
+						QMessageBox::warning(this,"Warning","No Camera Information in Owl Emulator.",QMessageBox::Ok);
+						break;
+					}
+					else	
+						throw std::runtime_error("Could not query the camera setup -- note that the PhaseSpace master program should be running.");
 			}
 
 			// get the number and ID's of defined markers...
@@ -252,6 +266,7 @@ void MainWindow::link_phasespace() {
 
 			// start the reader thread
 			stream_per_rigid = ui->rigidStreams->checkState() == Qt::Checked;
+			stop_ = false;
 			reader_thread_.reset(new boost::thread(&MainWindow::read_thread,this,srate,interpolation,cameras,markers,rigids));
 
 		} catch (std::exception &e) {
@@ -464,7 +479,7 @@ void MainWindow::read_thread(float srate, int interpolation, std::vector<OWLCame
 	std::vector<float> rigid_sample(8);
 	unsigned char buffer[1024]; // for comm data
 
-	while (true) {
+	while (!stop_) {
 		// spin until we get the number of markers that we're looking for...
 		while (owlGetMarkers(&tmp_markers[0],tmp_markers.size()) < markers.size())
 			boost::this_thread::yield();
