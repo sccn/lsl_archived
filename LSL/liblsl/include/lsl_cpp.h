@@ -307,7 +307,7 @@ namespace lsl {
         * @param max_buffered Optionally the maximum amount of data to buffer (in seconds if there is a nominal 
         *                     sampling rate, otherwise x100 in samples). The default is 6 minutes of data. 
         */
-        stream_outlet(const stream_info &info, int chunk_size=0, int max_buffered=360): obj(lsl_create_outlet(info.handle(),chunk_size,max_buffered)), channel_count(info.channel_count()) {}
+        stream_outlet(const stream_info &info, int chunk_size=0, int max_buffered=360): channel_count(info.channel_count()), obj(lsl_create_outlet(info.handle(),chunk_size,max_buffered)) {}
 
 
         // ========================================
@@ -576,7 +576,7 @@ namespace lsl {
         * Wait until some consumer shows up (without wasting resources).
         * @return True if the wait was successful, false if the timeout expired.
         */
-        bool wait_for_consumers(double timeout) { lsl_wait_for_consumers(obj,timeout); }
+        bool wait_for_consumers(double timeout) { return lsl_wait_for_consumers(obj,timeout); }
 
         /**
         * Retrieve the stream info provided by this outlet.
@@ -684,7 +684,7 @@ namespace lsl {
         *                In all other cases (recover is false or the stream is not recoverable) functions may throw a 
         *                lost_error if the stream's source is lost (e.g., due to an app or computer crash).
         */
-        stream_inlet(const stream_info &info, int max_buflen=360, int max_chunklen=0, bool recover=true): obj(lsl_create_inlet(info.handle(),max_buflen,max_chunklen,recover)), channel_count(info.channel_count()) {}
+        stream_inlet(const stream_info &info, int max_buflen=360, int max_chunklen=0, bool recover=true): channel_count(info.channel_count()), obj(lsl_create_inlet(info.handle(),max_buflen,max_chunklen,recover)) {}
 
         /** 
         * Destructor.
@@ -915,6 +915,7 @@ namespace lsl {
                 }
                 return num;
             };
+            return 0;
         }
 
         /**
