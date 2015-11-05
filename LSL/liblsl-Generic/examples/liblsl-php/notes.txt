@@ -48,3 +48,12 @@ http://msinttypes.googlecode.com/svn/trunk/stdint.h
 gobs of errors related to ext\standard\info.c -- looks as if VS 9.0 only works up to php5.4, reverting to this version
 
 build works, but liblsl is not building -- the libraries (liblsl64.lib) are not found
+
+tried the command line procedure outlined here:
+http://blog.benoitblanchon.fr/build-php-extension-on-windows/
+but was stuck on trying to find a configure.w32 equivalent to
+PHP_ADD_LIBRARY_WITH_PATH(lsl64, ./libs, LIBLSL_SHARED_LIBADD)
+Stuck!
+
+Compiled on linux and functioning, following this guide:
+http://www.sitepoint.com/install-php-extensions-source/
