@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Lab Streaming Layer (LSL) by sccn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Lab Streaming Layer (LSL)</h1>
+      <h2 class="project-tagline">Multi-modal time-synched data transmission over local network</h2>
+      <a href="https://github.com/sccn/labstreaminglayer" class="btn">View on GitHub</a>
+      <a href="https://github.com/sccn/labstreaminglayer/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/sccn/labstreaminglayer/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="summary" class="anchor" href="#summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary</h1>
+
+<p>The <strong>lab streaming layer</strong> (LSL) is a system for the unified collection of measurement time series in research experiments that handles both the networking, time-synchronization, (near-) real-time access as well as optionally the centralized collection, viewing and disk recording of the data.</p>
+
+<p>The <strong>LSL distribution</strong> consists of:</p>
+
+<ul>
+<li>The core transport library (liblsl) and its language interfaces (C, C++, Python, Java, C#, MATLAB). The library is general-purpose and cross-platform (Win/Linux/MacOS, 32/64) and forms the heart of the project.</li>
+<li>A suite of tools built on top of the library, including a <a href="https://github.com/sccn/labstreaminglayer/wiki/LabRecorder.wiki">recording program</a>, <a href="https://github.com/sccn/labstreaminglayer/wiki/ViewingStreamsInMatlab.wiki">online viewers</a>, <a href="https://github.com/sccn/labstreaminglayer/wiki/ImportingRecordingsInMatlab.wiki">importers</a>, and apps that make data from a range of <a href="https://github.com/sccn/labstreaminglayer/wiki/SupportedDevices.wiki">acquisition hardware</a> available on the lab network (for example audio, EEG, or motion capture).</li>
+</ul>
+
+<p>There is an intro lecture/demo on LSL here: <a href="http://www.youtube.com/watch?v=Y1at7yrcFW0">http://www.youtube.com/watch?v=Y1at7yrcFW0</a> (part of an online course on EEG-based brain-computer interfaces).</p>
+
+<p>You may also wish to subscribe to the LSL mailing list here: <a href="https://mailman.ucsd.edu/mailman/listinfo/lsl-l">https://mailman.ucsd.edu/mailman/listinfo/lsl-l</a>.</p>
+
+<p>Hosted here is only the source code for the project. Develpers will want to clone this repo, then run 'python get_deps.py' to download all the 3rd party libraries from our ftp. </p>
+
+<h1>
+<a id="download-binary-releases" class="anchor" href="#download-binary-releases" aria-hidden="true"><span class="octicon octicon-link"></span></a>Download Binary Releases</h1>
+
+<p>You can find recent releases on our FTP site : ftp://sccn.ucsd.edu/pub/software/LSL/</p>
+
+<h1>
+<a id="streaming-layer-api" class="anchor" href="#streaming-layer-api" aria-hidden="true"><span class="octicon octicon-link"></span></a>Streaming Layer API</h1>
+
+<p>The liblsl library provides the following <strong>abstractions</strong> for use by client programs:</p>
+
+<ul>
+<li><p><strong>Stream Outlets</strong>: for making time series data streams available on the lab network. The data is pushed sample-by-sample or chunk-by-chunk into the outlet, and can consist of single- or multichannel data, regular or irregular sampling rate, with uniform value types (integers, floats, doubles, strings). Streams can have arbitrary XML meta-data (akin to a file header). By creating an outlet the stream is made visible to a collection of computers (defined by the network settings/layout) where one can subscribe to it by creating an inlet.</p></li>
+<li><p><strong>Resolve functions</strong>: these allow to resolve streams that are present on the lab network according to content-based queries (for example, by name, content-type, or queries on the meta-data). The service discovery features do not depend on external services such as zeroconf and are meant to drastically simplify the data collection network setup.</p></li>
+<li><p><strong>Stream Inlets</strong>: for receiving time series data from a connected outlet. Allows to retrieve samples from the provider (in-order, with reliable transmission, optional type conversion and optional failure recovery). Besides the samples, the meta-data can be obtained (as XML blob or alternatively through a small built-in DOM interface).</p></li>
+<li><p><strong>Built-in clock</strong>: Allows to time-stamp the transmitted samples so that they can be mutually synchronized. See Time Synchronization.</p></li>
+</ul>
+
+<h1>
+<a id="reliability" class="anchor" href="#reliability" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reliability</h1>
+
+<p>The following reliability features are implemented by the library (transparently):</p>
+
+<ul>
+<li><p>Transport inherits the reliability of TCP, is message-oriented (partitioned into samples) and type safe.</p></li>
+<li><p>The library provides automatic failure recovery from application or computer crashes to minimize data loss (optional); this makes it possible to replace a computer in the middle of a recording without having to restart the data collection.</p></li>
+<li><p>Data is buffered both at the sender and receiver side (with configurable and arbitrarily large buffers) to tolerate intermittent network failures.</p></li>
+<li><p>Transmission is type safe, and supports type conversions as necessary.</p></li>
+</ul>
+
+<h1>
+<a id="time-synchronization" class="anchor" href="#time-synchronization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Time Synchronization</h1>
+
+<p>The lab streaming layer comes with a built-in synchronized time facility for all recorded data which is designed to achieve sub-millisecond accuracy on a local network of computers. This facility serves to provide out-of-the-box support for synchronized data collection but does not preclude the use of user-supplied alternative timestamps, for example from commercial timing middleware or high-quality clocks.</p>
+
+<p>The built-in time synchronization is designed after the widely deployed Network Time Protocol (NTP) and implemented in the LSL library. This feature is explained in more detail in the TimeSynchronization section.</p>
+
+<h1>
+<a id="file-format" class="anchor" href="#file-format" aria-hidden="true"><span class="octicon octicon-link"></span></a>File Format</h1>
+
+<p>The transport API itself does not endorse or provide a particular file format, but the provided recording program (<code>LabRecorder</code>) and Python/C++ library (<code>RecorderLib</code>) record into the XDF file format (Extensible Data Format, hosted at <a href="http://code.google.com/p/xdf">http://code.google.com/p/xdf</a>). XDF was designed concurrently with the lab streaming layer and supports the full feature set of LSL (including multi-stream container files, per-stream arbitrarily large XML headers, all sample formats as well as time-synchronization information).</p>
+
+<h1>
+<a id="coding-guides" class="anchor" href="#coding-guides" aria-hidden="true"><span class="octicon octicon-link"></span></a>Coding Guides</h1>
+
+<p>The distribution includes a range of code examples in C, C++, Python, MATLAB, Java, and C# including some very simple sender and receiver programs, as well as some fairly extensive demo apps. This page includes just some simple teasers. See <a href="https://github.com/sccn/labstreaminglayer/wiki/ExampleCode.wiki">ExampleCode</a> for a broader overview of example programs, API documentation link, and general programming tips, tricks, and frequently asked questions.</p>
+
+<h2>
+<a id="sending-random-data-in-c" class="anchor" href="#sending-random-data-in-c" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sending Random Data in C++</h2>
+
+<pre><code>#include "lsl_cpp.h"
+#include &lt;stdlib.h&gt;
+using namespace lsl;
+
+/**
+ * This is an example of how a simple data stream can be offered on the network. 
+ * Here, the stream is named SimpleStream, has content-type EEG, and 128 channels.
+ * The transmitted samples contain random numbers (and the sampling rate is irregular 
+ * and effectively bounded by the speed at which the program can push out samples).
+ */
+
+int main(int argc, char* argv[]) {
+
+    // make a new stream_info (128ch) and open an outlet with it
+    stream_info info("SimpleStream","EEG",128);
+    stream_outlet outlet(info);
+
+    // send data forever
+    float sample[128];
+    while(true) {
+        // generate random data
+        for (int c=0;c&lt;128;c++)
+            sample[c] = (rand()%1500)/500.0-1.5;
+        // send it
+        outlet.push_sample(sample);
+    }
+
+    return 0;
+}
+</code></pre>
+
+<h2>
+<a id="receiving-data-in-c" class="anchor" href="#receiving-data-in-c" aria-hidden="true"><span class="octicon octicon-link"></span></a>Receiving Data in C++</h2>
+
+<pre><code>#include "lsl_cpp.h"
+
+/**
+ * This is a minimal example that demonstrates how a multi-channel stream (here 128ch) 
+ * of a particular name (here: SimpleStream) can be resolved into an inlet, and how the 
+ * raw sample data &amp; time stamps are pulled from the inlet. This example does not 
+ * display the obtained data.
+ */
+
+int main(int argc, char* argv[]) {
+    using namespace lsl;
+
+    // resolve the stream of interest &amp; make an inlet to get data from the first result
+    std::vector&lt;stream_info&gt; results = resolve_stream("name","SimpleStream");
+    stream_inlet inlet(results[0]);
+
+    // receive data &amp; time stamps forever (not displaying them here)
+    float sample[128];
+    while (true)
+        double ts = inlet.pull_sample(&amp;sample[0],128);
+
+    return 0;
+}
+</code></pre>
+
+<h1>
+<a id="acknowledgements" class="anchor" href="#acknowledgements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Acknowledgements</h1>
+
+<p>The original version of this software was written at the <a href="http://sccn.ucsd.edu/people/">Swartz Center for Computational Neuroscience</a>, UCSD. This work was funded by the Army Research Laboratory under Cooperative Agreement Number W911NF-10-2-0022 as well as through NINDS grant 3R01NS047293-06S1.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/sccn/labstreaminglayer">Lab Streaming Layer (LSL)</a> is maintained by <a href="https://github.com/sccn">sccn</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
