@@ -91,17 +91,21 @@
 		<Unit filename="../../../src/api_config.h" />
 		<Unit filename="../../../src/cancellable_streambuf.h" />
 		<Unit filename="../../../src/cancellation.h" />
+		<Unit filename="../../../src/common.cpp" />
+		<Unit filename="../../../src/common.h" />
 		<Unit filename="../../../src/consumer_queue.cpp" />
 		<Unit filename="../../../src/consumer_queue.h" />
-		<Unit filename="../../../src/continuous_resolver.cpp" />
 		<Unit filename="../../../src/data_receiver.cpp" />
 		<Unit filename="../../../src/data_receiver.h" />
 		<Unit filename="../../../src/dllmain.cpp" />
-		<Unit filename="../../../src/freefuncs.cpp" />
+		<Unit filename="../../../src/endian/conversion.hpp" />
+		<Unit filename="../../../src/endian/detail/intrinsic.hpp" />
 		<Unit filename="../../../src/info_receiver.cpp" />
 		<Unit filename="../../../src/info_receiver.h" />
 		<Unit filename="../../../src/inlet_connection.cpp" />
 		<Unit filename="../../../src/inlet_connection.h" />
+		<Unit filename="../../../src/legacy/legacy_abi.cpp" />
+		<Unit filename="../../../src/legacy/legacy_abi.h" />
 		<Unit filename="../../../src/lsl_continuous_resolver_c.cpp" />
 		<Unit filename="../../../src/lsl_freefuncs_c.cpp" />
 		<Unit filename="../../../src/lsl_inlet_c.cpp" />
@@ -119,16 +123,15 @@
 		<Unit filename="../../../src/resolve_burst_udp.h" />
 		<Unit filename="../../../src/resolver_impl.cpp" />
 		<Unit filename="../../../src/resolver_impl.h" />
+		<Unit filename="../../../src/sample.cpp" />
 		<Unit filename="../../../src/sample.h" />
 		<Unit filename="../../../src/send_buffer.cpp" />
 		<Unit filename="../../../src/send_buffer.h" />
+		<Unit filename="../../../src/socket_utils.cpp" />
 		<Unit filename="../../../src/socket_utils.h" />
-		<Unit filename="../../../src/stream_info.cpp" />
 		<Unit filename="../../../src/stream_info_impl.cpp" />
 		<Unit filename="../../../src/stream_info_impl.h" />
-		<Unit filename="../../../src/stream_inlet.cpp" />
 		<Unit filename="../../../src/stream_inlet_impl.h" />
-		<Unit filename="../../../src/stream_outlet.cpp" />
 		<Unit filename="../../../src/stream_outlet_impl.cpp" />
 		<Unit filename="../../../src/stream_outlet_impl.h" />
 		<Unit filename="../../../src/tcp_server.cpp" />
@@ -138,7 +141,6 @@
 		<Unit filename="../../../src/udp_server.cpp" />
 		<Unit filename="../../../src/udp_server.h" />
 		<Unit filename="../../../src/version.h" />
-		<Unit filename="../../../src/xml_element.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
