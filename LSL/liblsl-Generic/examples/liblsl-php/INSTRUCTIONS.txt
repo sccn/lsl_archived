@@ -32,7 +32,7 @@ Now, copy this directory into your <path to>/php-5.5.12/ext folder and cd into t
 
 Now it is time to configure and build the extension.
 > phpize
-> .configure --enable-liblsl-php
+> ./configure
 > make
 > sudo make install
 
