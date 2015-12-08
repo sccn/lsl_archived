@@ -7,7 +7,7 @@ if (PHP_LIBLSL != "no") {
 	if (CHECK_LIB("liblsl64.lib", "liblsl", PHP_LIBLSL) &&
 			CHECK_HEADER_ADD_INCLUDE("lsl_cpp.h", "CFLAGS_LIBLSL")
 		) {
-		EXTENSION("liblsl", ".c multi.c share.c curl_file.c", true);
+		EXTENSION("liblsl", "liblsl_c_wrap.cpp", true);
 		AC_DEFINE('HAVE_LIBLSL', 1, 'Have liblsl library');
 		
 		// TODO: check for curl_version_info
