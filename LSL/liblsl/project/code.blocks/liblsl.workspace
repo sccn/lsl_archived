@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
-		<Project filename="liblsl/liblsl.cbp" active="1" />
-		<Project filename="../../examples/C++/SendData/SendData.cbp">
+		<Project filename="liblsl/liblsl.cbp" />
+		<Project filename="../../examples/C++/SendData/SendData.cbp" active="1">
 			<Depends filename="liblsl/liblsl.cbp" />
 		</Project>
 		<Project filename="../../examples/C++/ReceiveData/ReceiveData.cbp">
