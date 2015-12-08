@@ -1,3 +1,4 @@
+
 function [streams,fileheader] = load_xdf(filename,varargin)
 % Import an XDF file.
 % [Streams,FileHeader] = load_xdf(Filename, Options...)
@@ -64,6 +65,9 @@ function [streams,fileheader] = load_xdf(filename,varargin)
 %                'ClockResetMaxJitter' : Maximum tolerable jitter (in seconds of error) for clock
 %                                        reset handling. (default: 5)
 %
+%                'CorrectStreamLags' : Apply lag correction described by timing spec sheets in the file. 
+%                                      (default: true)
+%
 %                Parameters for jitter removal in the presence of data breaks:
 %
 %                'JitterBreakThresholdSeconds' : An interruption in a regularly-sampled stream of at least this
@@ -75,6 +79,12 @@ function [streams,fileheader] = load_xdf(filename,varargin)
 %                                                many samples will be considered as a potential break (if also
 %                                                the BreakThresholdSeconds is crossed) and multiple segments
 %                                                will be returned. Default: 500
+%                
+%                Parameters for streams that can drop samples:
+%
+%                'FrameRateAccuracy' : How accurate the nominal frame rate is. 
+%                                      Used for can_drop_samples == true frames to determine
+%                                      the maximum possible number of dropped frames. Default: 0.05%
 %
 % Out:
 %   Streams : cell array of structs, one for each stream; the structs have the following content:
@@ -145,7 +155,7 @@ function [streams,fileheader] = load_xdf(filename,varargin)
 %                                Contains portions of xml2struct Copyright (c) 2010, Wouter Falkena,
 %                                ASTI, TUDelft, 21-08-2010
 %
-%                                version 1.11
+%                                version 1.12
 
 % check inputs
 opts = cell2struct(varargin(2:2:end),varargin(1:2:end),2);
@@ -175,6 +185,10 @@ if ~isfield(opts,'WinsorThreshold')
     opts.WinsorThreshold = 0.0001; end
 if ~isfield(opts,'ClockResetMaxJitter')
     opts.ClockResetMaxJitter = 5; end
+if ~isfield(opts,'CorrectStreamLags')
+    opts.CorrectStreamLags = true; end
+if ~isfield(opts,'FrameRateAccuracy')
+    opts.FrameRateAccuracy = .05; end
 if ~exist(filename,'file')
     error(['The file "' filename '" does not exist.']); end
 
@@ -355,7 +369,7 @@ if opts.HandleClockSynchronization
                 disp(['No clock offsets were available for stream "' streams{k}.info.name '"']);
                 continue;
             end
-            
+ 
             % detect clock resets (e.g., computer restarts during recording) if requested
             % this is only for cases where "everything goes wrong" during recording
             % note that this is a fancy feature that is not needed for normal XDF compliance
@@ -446,55 +460,66 @@ end
 % ===========================================
 % === perform jitter removal if requested ===
 % ===========================================
-
 if opts.HandleJitterRemoval
     % jitter removal is a bonus feature that yields linearly increasing timestamps from data 
     % where samples had been time stamped with some jitter (e.g., due to operating system
     % delays)
     if opts.Verbose
         disp('  performing jitter removal...'); end
+    
+              
     for k=1:length(temp)
+        
         if ~isempty(temp(k).time_stamps) && temp(k).srate
-            % identify breaks in the data
-            diffs = diff(temp(k).time_stamps);
-            breaks_at = diffs > max(opts.JitterBreakThresholdSeconds,opts.JitterBreakThresholdSamples*temp(k).sampling_interval);
-            if any(breaks_at)
-                % turn the break mask into a cell array of [begin,end] index ranges
-                tmp = find(breaks_at)';
-                tmp = [tmp tmp+1]';
-                tmp = [1 tmp(:)' length(breaks_at)];
-                ranges = num2cell(reshape(tmp,2,[])',2);
-                if opts.Verbose
-                    disp(['  found ' num2str(nnz(breaks_at)) ' data breaks in stream ' streams{k}.info.name '.']); end
-            else
-                ranges = {[1,length(temp(k).time_stamps)]};
-            end
             
-            % process each segment separately
-            segments = repmat(struct(),1,length(ranges));
-            for r=1:length(ranges)
-                range = ranges{r};
-                segments(r).num_samples = range(2)-range(1)+1;
-                segments(r).index_range = range;
-                if segments(r).num_samples > 0
-                    indices = segments(r).index_range(1):segments(r).index_range(2);
-                    % regress out the jitter
-                    mapping = temp(k).time_stamps(indices) / [ones(1,length(indices)); indices];
-                    temp(k).time_stamps(indices) = mapping(1) + mapping(2) * indices;
+   
+            if isfield(streams{k}.info.desc, 'synchronization') && ... 
+                isfield(streams{k}.info.desc.synchronization, 'can_drop_samples') && ...
+                strcmp(streams{k}.info.desc.synchronization.can_drop_samples, 'true')        
+                temp(k).time_stamps = droppedFramesCorrection(temp(k).time_stamps,temp(k).srate, opts.FrameRateAccuracy);            
+           else
+            
+                % identify breaks in the data
+                diffs = diff(temp(k).time_stamps);
+                breaks_at = diffs > max(opts.JitterBreakThresholdSeconds,opts.JitterBreakThresholdSamples*temp(k).sampling_interval);
+                if any(breaks_at)
+                    % turn the break mask into a cell array of [begin,end] index ranges
+                    tmp = find(breaks_at)';
+                    tmp = [tmp tmp+1]';
+                    tmp = [1 tmp(:)' length(breaks_at)];
+                    ranges = num2cell(reshape(tmp,2,[])',2);
+                    if opts.Verbose
+                        disp(['  found ' num2str(nnz(breaks_at)) ' data breaks in stream ' streams{k}.info.name '.']); end
+                else
+                    ranges = {[1,length(temp(k).time_stamps)]};
                 end
-                % calculate some other meta-data about the segments
-                segments(r).t_begin = temp(k).time_stamps(range(1));
-                segments(r).t_end = temp(k).time_stamps(range(2));
-                segments(r).duration = segments(r).t_end - segments(r).t_begin;
-                segments(r).effective_srate = segments(r).num_samples / segments(r).duration;
+
+                % process each segment separately
+                segments = repmat(struct(),1,length(ranges));
+                for r=1:length(ranges)
+                    range = ranges{r};
+                    segments(r).num_samples = range(2)-range(1)+1;
+                    segments(r).index_range = range;
+                    if segments(r).num_samples > 0
+                        indices = segments(r).index_range(1):segments(r).index_range(2);
+                        % regress out the jitter
+                        mapping = temp(k).time_stamps(indices) / [ones(1,length(indices)); indices];
+                        temp(k).time_stamps(indices) = mapping(1) + mapping(2) * indices;
+                    end
+                    % calculate some other meta-data about the segments
+                    segments(r).t_begin = temp(k).time_stamps(range(1));
+                    segments(r).t_end = temp(k).time_stamps(range(2));
+                    segments(r).duration = segments(r).t_end - segments(r).t_begin;
+                    segments(r).effective_srate = segments(r).num_samples / segments(r).duration;
+                end
+
+                % calculate the weighted mean sampling rate over all segments
+                temp(k).effective_rate = sum(bsxfun(@times,[segments.effective_srate],[segments.num_samples]/sum([segments.num_samples])));            
+
+                % transfer the information into the output structs
+                streams{k}.info.effective_srate = temp(k).effective_rate;
+                streams{k}.segments = segments;
             end
-            
-            % calculate the weighted mean sampling rate over all segments
-            temp(k).effective_rate = sum(bsxfun(@times,[segments.effective_srate],[segments.num_samples]/sum([segments.num_samples])));            
-            
-            % transfer the information into the output structs
-            streams{k}.info.effective_srate = temp(k).effective_rate;
-            streams{k}.segments = segments;
         end
     end
 else
@@ -505,9 +530,17 @@ end
 
 % copy the information into the output
 for k=1:length(temp)
+    offset_mean = 0;
+    if opts.CorrectStreamLags && ...
+        isfield(streams{k}.info.desc, 'synchronization') && ... 
+        isfield(streams{k}.info.desc.synchronization, 'offset_mean')
+                offset_mean = str2num(streams{k}.info.desc.synchronization.offset_mean);        
+    end
     streams{k}.time_series = temp(k).time_series;
-    streams{k}.time_stamps = temp(k).time_stamps;
+    streams{k}.time_stamps = temp(k).time_stamps - offset_mean;
 end
+
+
 end
 
 
@@ -797,3 +830,101 @@ tmp = sprintf('%i,',idx);
 eval(['C{' tmp(1:end-1) '} = [];']);
 end
 
+%function written by Matthew Grivich to handle case where frame rate is
+%consistent but with dropped events, like a video camera.
+function frameTimesModeled = droppedFramesCorrection(frameTimes, nominalFrameRate, frameRateAccuracy)
+
+  %  figure
+  %  plot(frameTimes(1:end-1), frameTimes(2:end)-frameTimes(1:end-1));
+  %  xlabel('Frame Time (s)');
+  %  ylabel('Frame Interval (s)');
+  
+    
+
+    nFrames = length(frameTimes); %nFrames shown, does not included dropped.
+    
+    %calculates the maximum conceivable number of dropped frames, given the
+    %nominal frame rate and the expected frame rate accuracy.
+    maxDropped = round((frameTimes(end)-frameTimes(1))*nominalFrameRate*(1+frameRateAccuracy) - nFrames);
+    stds = zeros(0, 1); %initialize array of zero length
+    for iteration = 1:maxDropped
+        interval = (frameTimes(end)-frameTimes(1))/(nFrames-1+iteration-1);
+   %     fprintf('frequency: %1.20f\n',1/interval);
+        frameNumbers = zeros(1,length(frameTimes));
+
+        for i=1:length(frameNumbers)
+
+            frameNumbers(i) =  round((frameTimes(i)-frameTimes(1))/interval)+1;
+
+        end
+        %remove zero frame intervals
+        for i=length(frameNumbers)-1:-1:1
+            if(frameNumbers(i) == frameNumbers(i+1))
+                frameNumbers(i) = frameNumbers(i) -1;
+            end
+        end
+
+    
+        pf = polyfit(frameNumbers, frameTimes,1);
+        %text(0,.0004, sprintf('interval: %1.20f\n', interval));
+    %    fprintf('interval after fit: %1.20f\n',pf(1));
+
+        frameTimesModeled = polyval(pf,frameNumbers);
+  %     plot(stds)
+      %  plot(frameTimesModeled, frameTimesModeled - frameTimes);
+  %      text(0,.02, sprintf('dropped: %d\n', iteration-1));
+  %      xlabel('Frame Time (s)')
+  %      ylabel('Frame Time Modeled - Frame Time (s)');
+  %     pause(0.001);
+
+        stds(iteration) = std(frameTimesModeled-frameTimes);
+        %if (mean(stds) - min(stds))/std(stds) > 10
+        %    break;
+        %end
+
+
+    end
+
+ %   figure
+ %   plot(stds);
+    dropped = find(stds==min(stds)) - 1;
+
+    interval = (frameTimes(end)-frameTimes(1))/(nFrames-1+dropped);
+   % fprintf('interval: %1.20f\n',interval);
+    frameNumbers = zeros(1,length(frameTimes));
+    
+    %Find closest frame.
+    for i=1:length(frameNumbers)
+        frameNumbers(i) =  round((frameTimes(i)-frameTimes(1))/interval)+1;
+    end
+    %remove zero frame intervals
+    for i=length(frameNumbers)-1:-1:1
+        if(frameNumbers(i) >= frameNumbers(i+1))
+            frameNumbers(i) = frameNumbers(i+1) -1;
+        end
+    end
+
+
+    pf = polyfit(frameNumbers, frameTimes,1);
+    %text(0,.0004, sprintf('interval: %1.20f\n', interval));
+%    fprintf('interval after fit: %1.20f\n',pf(1));
+
+    frameTimesModeled = polyval(pf,frameNumbers);
+%figure     
+%        plot(frameTimesModeled, smooth(frameTimesModeled - frameTimes,21));
+%        xlabel('Frame Time (s)')
+%        ylabel('Frame Time Modeled - Frame Time (s)');
+ %      pause(0.5);
+      
+    
+%    fprintf('Interval: %1.20f\n',pf(1));
+%    fprintf('Dropped Frames: %d\n', dropped);
+    
+
+   % figure
+   % plot(frameTimes(1:end-1), pf(1)*(frameNumbers(2:end)-frameNumbers(1:end-1)));
+   % xlabel('Frame Time (s)');
+   % ylabel('Frame Interval (s)');
+ 
+
+end
