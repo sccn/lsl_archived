@@ -48,7 +48,7 @@ void run_outlet(string name, string type, int numchan, lsl::channel_format_t fmt
 		// initialize data to send
 		vector<T> sample,chunk;
 		init_sample(numchan,sample);
-		init_sample((int)numchan*(chunk_len*srate/1000*5),chunk);
+		init_sample((int)(numchan*(chunk_len*srate/1000*5)),chunk);
 
 		// send in bursts
 		double start_time = lsl::local_clock();
