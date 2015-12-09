@@ -576,7 +576,7 @@ namespace lsl {
         * Wait until some consumer shows up (without wasting resources).
         * @return True if the wait was successful, false if the timeout expired.
         */
-        bool wait_for_consumers(double timeout) { return lsl_wait_for_consumers(obj,timeout); }
+        bool wait_for_consumers(double timeout) { return lsl_wait_for_consumers(obj,timeout) != 0; }
 
         /**
         * Retrieve the stream info provided by this outlet.
