@@ -29,7 +29,7 @@ template<class T>
 void init_sample(int numchan, vector<T> &sample) {
 	sample.resize(numchan);
 	for (int c=0;c<numchan;c++)
-		sample[c] = 17.3;
+		sample[c] = 17.3f;
 }
 
 // run an outlet
@@ -48,13 +48,13 @@ void run_outlet(string name, string type, int numchan, lsl::channel_format_t fmt
 		// initialize data to send
 		vector<T> sample,chunk;
 		init_sample(numchan,sample);
-		init_sample(numchan*(chunk_len*srate/1000*5),chunk);
+		init_sample((int)numchan*(chunk_len*srate/1000*5),chunk);
 
 		// send in bursts
 		double start_time = lsl::local_clock();
 		for (int target,diff,written=0;written<max_samples && !stop_outlet;written+=diff) {
 			boost::this_thread::sleep(boost::posix_time::milliseconds(chunk_len));
-			target = floor((lsl::local_clock()-start_time)*srate);
+			target = (int)floor((lsl::local_clock()-start_time)*srate);
 			int num_elements = std::min((std::size_t)((target-written)*numchan),chunk.size());
 			outlet.push_chunk_multiplexed(&chunk[0],num_elements);
 			diff = num_elements/numchan;
