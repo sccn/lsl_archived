@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
 	while(true) {
 		// generate random data
 		for (int c=0;c<128;c++)
-			sample[c] = (rand()%1500)/500.0-1.5;
+			sample[c] = (rand()%1500)/500.0f-1.5f;
 		// send it
 		outlet.push_sample(sample);
 	}
