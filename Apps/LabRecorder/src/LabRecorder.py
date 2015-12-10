@@ -278,7 +278,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # determine the streams to record from...
             stream_array = c_void_p*len(into_streams)
             #streams = [c_void_p(s.handle()) for s in into_streams]
-            streams = [c_void_p(s.obj) for s in into_streams]
+            #streams = [c_void_p(s.obj) for s in into_streams]
+            streams = [s.obj for s in into_streams]   
             streams = stream_array(*streams)
 
             # watchfor
