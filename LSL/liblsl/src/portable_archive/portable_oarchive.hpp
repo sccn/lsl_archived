@@ -396,11 +396,7 @@ namespace eos {
 			BOOST_STATIC_ASSERT(sizeof(bits) == sizeof(T));
 			BOOST_STATIC_ASSERT(std::numeric_limits<T>::is_iec559);
             
-#ifdef ANDROID
-            switch (fpclassify(t)) {       // fp::fpclassify does not work on Android for some reason
-#else
 			switch (fp::fpclassify(t)) {
-#endif
 			case FP_NAN: bits = traits::exponent | traits::mantissa; break;
 			case FP_INFINITE: bits = traits::exponent | (t<0) * traits::sign; break;
 			case FP_SUBNORMAL: assert(std::numeric_limits<T>::has_denorm); // pass

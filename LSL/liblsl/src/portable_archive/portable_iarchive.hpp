@@ -410,15 +410,9 @@ namespace eos {
 			// if you end here your floating point type does not support 
 			// denormalized numbers. this might be the case even though 
 			// your type conforms to IEC 559 (and thus to IEEE 754)
-#ifdef ANDROID
-			if (std::numeric_limits<T>::has_denorm == std::denorm_absent
-				&& fpclassify(t) == (int) FP_SUBNORMAL) // fp::fpclassify does not work on Android for some reason
-				throw portable_archive_exception(t);
-#else
 			if (std::numeric_limits<T>::has_denorm == std::denorm_absent
 				&& fp::fpclassify(t) == (int) FP_SUBNORMAL) // GCC4
 				throw portable_archive_exception(t);
-#endif
 		}
 
 		// in boost 1.44 version_type was splitted into library_version_type and
