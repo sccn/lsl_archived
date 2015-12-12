@@ -25,10 +25,6 @@
 #include <vector>
 #include <utility>
 
-#if defined(__ANDROID__)
-#include <asm/page.h> // http://code.google.com/p/android/issues/detail?id=39983
-#endif
-
 #include <pthread.h>
 #include <unistd.h>
 

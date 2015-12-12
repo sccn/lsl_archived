@@ -271,7 +271,7 @@ namespace lsl {
         lsl_streaminfo handle() const { return obj; }
 
         /// Default contructor.
-        stream_info(): obj(lsl_create_streaminfo("untitled","",0,0,(lsl_channel_format_t)cf_undefined,"")) {}
+		stream_info() : obj(lsl_create_streaminfo((char *)"untitled", (char *)"", 0, 0, (lsl_channel_format_t)cf_undefined, (char *)"")) {}
 
         /// Copy constructor.
         stream_info(const stream_info &rhs): obj(lsl_copy_streaminfo((lsl_streaminfo)rhs.obj)) {}
