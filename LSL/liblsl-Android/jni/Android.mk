@@ -35,18 +35,4 @@ LOCAL_CPP_FEATURES := rtti exceptions
 LOCAL_CPP_EXTENSION := .cxx .cpp
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../liblsl/include $(LOCAL_PATH)/../../liblsl/external
 
-LOCAL_CFLAGS += -fpermissive
-LOCAL_CFLAGS += -DBOOST_ALL_NO_LIB
-
-#LOCAL_CFLAGS += -D__GLIBC__
-#LOCAL_CFLAGS += -D_GLIBCXX__PTHREADS
-#LOCAL_CFLAGS += -D_REENTRANT
-#LOCAL_CFLAGS += -DBOOST_ALL_NO_LIB
-#LOCAL_CFLAGS += -mthumb
-
-
-
-
-LOCAL_LDFLAGS += -z muldefs
-
 include $(BUILD_SHARED_LIBRARY)
