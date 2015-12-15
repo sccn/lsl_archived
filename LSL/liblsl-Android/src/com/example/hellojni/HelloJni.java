@@ -18,7 +18,7 @@ package com.example.hellojni;
 import android.app.Activity;
 import android.widget.TextView;
 import android.os.Bundle;
-import lslAndroid;
+import com.example.hellojni.lslAndroid;
 
 public class HelloJni extends Activity
 {
