@@ -11,7 +11,7 @@ These instructions assume that you have installed Android CodeWorks 1R3, by NVid
 2) After you are done with this, run ndk_build.cmd in this folder to rebuild liblslAndroid.so.
 
 >cd LSL\liblsl-Android
->c:\nbs\external\lsl\LSL\trunk\LSL\liblsl-Android>c:\NVPACK\android-ndk-r10e\ndk-build
+>c:\NVPACK\android-ndk-r10e\ndk-build
 
 3) You can now deploy the app to an attached Android device.
 
