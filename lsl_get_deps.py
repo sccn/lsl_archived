@@ -378,6 +378,8 @@ apps_d = {
         'win32': [
             "/external_libs/LabRecorder/src/RecorderLib32.lib",
             "/external_libs/LabRecorder/src/RecorderLib32.dll",
+            "/external_libs/LabRecorder/src/RecorderLib64.lib",
+            "/external_libs/LabRecorder/src/RecorderLib64.dll",
             "/external_libs/LabRecorder/src/RecorderLib64.dylib",
             "/external_libs/LabRecorder/src/RecorderLib64.so"]
     },
@@ -387,6 +389,7 @@ apps_d = {
             cur_lsl+"bin/liblsl32.dll",
             cur_lsl+"bin/liblsl32.dylib",
             cur_lsl+"bin/liblsl64.dylib",
+            cur_lsl+"bin/liblsl32.so",
             cur_lsl+"bin/liblsl64.so",
             "/liblsl-Python/pylsl.py"]  # use the correct pylsl...
     },
