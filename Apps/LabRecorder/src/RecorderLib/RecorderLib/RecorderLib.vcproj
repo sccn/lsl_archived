@@ -217,7 +217,7 @@
 				AdditionalDependencies="$(PYTHON_LIB)"
 				OutputFile="$(OutDir)\$(ProjectName)32.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../../../../LSL/liblsl/bin;&quot;$(BOOST_ROOT)/lib&quot;"
+				AdditionalLibraryDirectories="../../../../../LSL/liblsl/bin;&quot;$(BOOST_ROOT)/stage/lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -293,10 +293,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="$(PYTHON_LIB)"
+				AdditionalDependencies="C:\Python27-64\libs\python27.lib"
 				OutputFile="$(OutDir)\$(ProjectName)64.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../../../../LSL/liblsl/bin;&quot;$(BOOST_ROOT)/lib64&quot;"
+				AdditionalLibraryDirectories="../../../../../LSL/liblsl/bin;&quot;$(BOOST_ROOT)/stage/lib64&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -375,7 +375,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\RecorderLib_wrap.c"
+				RelativePath=".\RecorderLib_wrap.cpp"
 				>
 			</File>
 		</Filter>
