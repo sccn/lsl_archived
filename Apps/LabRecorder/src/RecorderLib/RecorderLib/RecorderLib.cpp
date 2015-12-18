@@ -6,7 +6,7 @@
 #endif
 
 #include "RecorderLib.h"
-#include "../../../../../LSL/liblsl/include/lsl_c.h"
+#include "lsl_c.h"
 #include "recording.h"
 #include <boost/algorithm/string.hpp>
 
