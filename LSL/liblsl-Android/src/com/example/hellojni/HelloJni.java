@@ -1,28 +1,19 @@
-/*
- * Copyright (C) 2009 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 package com.example.hellojni;
 
 import android.app.Activity;
 import android.widget.TextView;
 import android.os.Bundle;
-import com.example.hellojni.lslAndroid;
+import android.os.AsyncTask;
+import com.example.hellojni.*;
 
 public class HelloJni extends Activity
 {
     private static lslAndroid lsl;
+	
+	private static TextView tv;
+	
+	private String markertypes[] = { "Test", "Blah", "Marker", "XXX", "Testtest", "Test-1-2-3" };
     
     /** Called when the activity is first created. */
     @Override
@@ -30,20 +21,45 @@ public class HelloJni extends Activity
     {
         super.onCreate(savedInstanceState);
 
-        /* Create a TextView and set its content.
-         * the text is retrieved by calling a native
-         * function.
-         */
-        TextView  tv = new TextView(this);
-        tv.setText( "The LSL clock reads: " + Double.toString(lsl.local_clock()) );
-        setContentView(tv);
+		tv = new TextView(this);
+		tv.setText( "Attempting to send LSL markers: ");
+		setContentView(tv);
+		
+
+		AsyncTask.execute(new Runnable() {
+			public void run() {
+				java.util.Random rand = new java.util.Random();
+				vectorstr sample = new vectorstr(1);
+				stream_info info = new stream_info("MyEventStream", "Markers", 1, lsl.getIRREGULAR_RATE() , channel_format_t.cf_string , "myuniquesourceid23443");
+				stream_outlet outlet = new stream_outlet(info);
+				
+				// send random marker strings
+				while (true) {
+					// wait for a random period of time
+					double endtime = ((double)lsl.local_clock()) + (Math.abs(rand.nextInt()) % 1000) / 1000.0;
+					while (((double)lsl.local_clock()) < endtime);
+					// and choose the marker to send
+					final String mrk = markertypes[Math.abs(rand.nextInt()) % markertypes.length];
+
+					runOnUiThread(new Runnable(){
+						@Override
+						public void run(){
+							tv.setText("Now sending: " + mrk);
+						}
+					});
+					
+					sample.set(0,mrk);
+					try{
+					Thread.sleep(100);
+					} catch (Exception ex) {}
+					outlet.push_sample(sample);
+				}
+			}
+		});
+		
+       
     }
 
-    /* this is used to load the 'lslAndroid' library on application
-     * startup. The library has already been unpacked into
-     * /data/data/com.example.hellojni/lib/liblslAndroid.so at
-     * installation time by the package manager.
-     */
     static {
         System.loadLibrary("lslAndroid");
     }
