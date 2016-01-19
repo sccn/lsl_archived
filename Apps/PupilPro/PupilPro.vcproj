@@ -49,7 +49,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="-Zm200 -w34100 -w34189 "
 				Optimization="4"
-				AdditionalIncludeDirectories="&quot;Z:\hg-labstreaminglayer\LSL\liblsl\include&quot;;&quot;$(SolutionDir)\zmq\include&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\QtCore&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\QtNetwork&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\QtGui&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include&quot;;..\..\LSL\liblsl\bin;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\ActiveQt&quot;;release;.;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\mkspecs\default&quot;;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\zmq\zmq\include&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\QtCore&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\QtNetwork&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\QtGui&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include&quot;;..\..\LSL\liblsl\bin;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\ActiveQt&quot;;release;.;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\mkspecs\default&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="_WINDOWS;UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_HAVE_MMX;QT_HAVE_3DNOW;QT_HAVE_SSE;QT_HAVE_MMXEXT;QT_HAVE_SSE2;QT_THREAD_SUPPORT;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0"
 				GeneratePreprocessedFile="0"
 				ExceptionHandling="1"
@@ -232,7 +232,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="-Zm200 -w34100 -w34189"
 				Optimization="4"
-				AdditionalIncludeDirectories="&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\QtCore&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\QtNetwork&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\QtGui&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include&quot;;..\..\LSL\liblsl\bin;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\ActiveQt&quot;;release;.;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\mkspecs\default&quot;;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\zmq\zmq\include&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\QtCore&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\QtNetwork&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\QtGui&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include&quot;;..\..\LSL\liblsl\bin;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\ActiveQt&quot;;release;.;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\mkspecs\default&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="_WINDOWS,UNICODE,WIN32,QT_LARGEFILE_SUPPORT,QT_DLL,QT_NO_DEBUG,QT_GUI_LIB,QT_CORE_LIB,QT_HAVE_MMX,QT_HAVE_3DNOW,QT_HAVE_SSE,QT_HAVE_MMXEXT,QT_HAVE_SSE2,QT_THREAD_SUPPORT,NDEBUG;_CRT_SECURE_NO_WARNINGS"
 				GeneratePreprocessedFile="0"
 				ExceptionHandling="1"
@@ -472,26 +472,6 @@
 			UniqueIdentifier="{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}"
 			>
 			<File
-				RelativePath="release\moc_mainwindow.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="debug\moc_mainwindow.cpp"
 				>
 				<FileConfiguration
@@ -504,6 +484,26 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|x64"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="release\moc_mainwindow.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64"
 					ExcludedFromBuild="true"
 					>
 					<Tool
