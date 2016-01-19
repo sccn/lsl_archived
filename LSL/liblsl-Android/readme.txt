@@ -1,4 +1,4 @@
-This is a minimal Android setup with LSL, using a minimal, text based android build chain. There is also a Visual Studio based build chain available at liblsl/project/android-vs2013. The Visual Studio option is more polished. However, the text based build chain demonstrates how to generate java swig wrappers. The Visual Studio option assumes that you will be writing an app that has as little Java as possible. There is nothing preventing these two options from being combined except time and desire.
+This is a minimal Android setup with LSL, using a minimal, text based android build chain. There is also a Visual Studio based build chain available at liblsl/project/android-vs2013. The Visual Studio option is more polished. However, the text based build chain demonstrates how to generate and use java swig wrappers. The Visual Studio option assumes that you will be writing an app that has as little Java as possible. There is nothing preventing these two options from being combined except time and desire.
 
 These instructions assume that you have installed Android CodeWorks 1R3, by NVidia, but only so that the Android ndk has the expected contents and location. It is possible to get the Android ndk from elsewhere, but the paths below may change somewhat.
 
@@ -20,9 +20,8 @@ These instructions assume that you have installed Android CodeWorks 1R3, by NVid
 >cd LSL\liblsl-Android
 >c:\nvpack\apache-ant-1.8.2\bin\ant debug install
 >cd LSL\liblsl-Android\bin
->adb install -r HelloJni-debug.apk
 
-The HelloJni app should appear on your device. When selected, it displays the LSL time.
+The HelloJni app should appear on your device. When selected, it opens a string marker stream and sends simulated data.
 
 4) liblsl-Android/src/ also includes the file lslAndroid.py. Note that the Python interface expects the .so file to be called _lslAndroid.so (and likes to reside in the same directory as the .py file).
 
