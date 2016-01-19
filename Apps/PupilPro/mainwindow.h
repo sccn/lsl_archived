@@ -13,10 +13,10 @@
 #include <QtCore/QFile>
 
 // LSL
-#include "lsl_cpp.h"
-//#include "../../LSL/liblsl/include/lsl_cpp.h"
-#include "lsl_c.h"
-//#include "../../LSL/liblsl/include/lsl_c.h"
+//#include "lsl_cpp.h"
+#include "../../LSL/liblsl/include/lsl_cpp.h"
+//#include "lsl_c.h"
+#include "../../LSL/liblsl/include/lsl_c.h"
 //for writing to file
 #include <stdio.h>
 #include "zmq_client.h"
