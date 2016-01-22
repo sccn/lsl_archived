@@ -41,7 +41,7 @@ The following reliability features are implemented by the library (transparently
 # Time Synchronization
 The lab streaming layer comes with a built-in synchronized time facility for all recorded data which is designed to achieve sub-millisecond accuracy on a local network of computers. This facility serves to provide out-of-the-box support for synchronized data collection but does not preclude the use of user-supplied alternative timestamps, for example from commercial timing middleware or high-quality clocks.
 
-The built-in time synchronization is designed after the widely deployed Network Time Protocol (NTP) and implemented in the LSL library. This feature is explained in more detail in the TimeSynchronization section.
+The built-in time synchronization is designed after the widely deployed Network Time Protocol (NTP) and implemented in the LSL library. This feature is explained in more detail in the [TimeSynchronization](https://github.com/sccn/labstreaminglayer/wiki/TimeSynchronization.wiki) section.
 # File Format
 The transport API itself does not endorse or provide a particular file format, but the provided recording program (`LabRecorder`) and Python/C++ library (`RecorderLib`) record into the XDF file format (Extensible Data Format, hosted at http://code.google.com/p/xdf). XDF was designed concurrently with the lab streaming layer and supports the full feature set of LSL (including multi-stream container files, per-stream arbitrarily large XML headers, all sample formats as well as time-synchronization information).
 
