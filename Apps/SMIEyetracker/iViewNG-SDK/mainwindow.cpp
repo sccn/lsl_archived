@@ -431,12 +431,22 @@ void MainWindow::link() {
 	if (linked_) {
 		// === perform unlink action ===
 		try {
+			
+			std::string serverAddress = ui->serverAddress->text().toStdString();
+				
+
 			// shut down the iView connections
 			CALL_API(iView_CreateTicket(&gTicketUnsubscription));
 			CALL_API(iView_UnsubscribeDataStream(gTicketUnsubscription,IVIEWDATASTREAM_GAZE_INFORMATION));
+			
+			if (serverAddress == "(launch process)")
+			{
 			CALL_API(iView_CreateTicket(&gTicketStopAcquisition));
 			CALL_API(iView_StopDataAcquisition(gTicketStopAcquisition));
-			iView_Sleep(2000);
+			}
+			
+			
+			iView_Sleep(100);
 			if (gTicketConnect) CALL_API(iView_ReleaseTicket(&gTicketConnect));
 			if (gTicketAddLicense) CALL_API(iView_ReleaseTicket(&gTicketAddLicense));
 			if (gTicketGetServerTime) CALL_API(iView_ReleaseTicket(&gTicketGetServerTime));
@@ -446,8 +456,20 @@ void MainWindow::link() {
 			if (gTicketSubscriptionGaze) CALL_API(iView_ReleaseTicket(&gTicketSubscriptionGaze));
 			if (gTicketUnsubscription) CALL_API(iView_ReleaseTicket(&gTicketUnsubscription));
 			if (gTicketStopAcquisition) CALL_API(iView_ReleaseTicket(&gTicketStopAcquisition));
-			CALL_API(iView_ShutdownServer(15000));
-			CALL_API(iView_Shutdown());
+
+			if (serverAddress == "(launch process)")
+			{
+				ui->label_17->setText("attempt to shut down own server...");
+				CALL_API(iView_ShutdownServer(15000));
+				CALL_API(iView_Shutdown());
+				ui->label_17->setText("own server is shut down...");
+			}
+			else
+			{
+				ui->label_17->setText("attempt to shut down iViewNG API...");
+				CALL_API(iView_Shutdown());
+				ui->label_17->setText("iViewNG API is shut down...");
+			}
 			// reset the LSL outlets
 			outletGaze_.reset();
 			outletLeftImage_.reset();
@@ -533,13 +555,18 @@ void MainWindow::link() {
 				licenseKey = "";
 
 			// initalize API & get license version
+			ui->label_17->setText("attempt to initialize iViewNG API...");
 			CALL_API(iView_Init(IVIEWSDK_IVNG));
+			ui->label_17->setText("initialized iViewNG API...");
 			iViewVersion lib_version;
 			iView_GetLibraryVersion(&lib_version);
 
+			ui->label_17->setText("attempt to start server...");
 			// start server
 			if (IVIEW_SERVERADRRESS_SHAREDMEMORY == ivServer.connectionType)
 				CALL_API(iView_StartServer(NULL,L"--mode etg"));
+
+			ui->label_17->setText("server started...");
 
 			// set up callback function
 			CALL_API(iView_SetCallback(MyCallback));
@@ -787,6 +814,7 @@ void MainWindow::link() {
 		}
 		catch(std::exception &e) {
 			// reset the outlets again...
+			CALL_API(iView_Shutdown());
 			outletGaze_.reset();
 			outletLeftImage_.reset();
 			outletRightImage_.reset();
