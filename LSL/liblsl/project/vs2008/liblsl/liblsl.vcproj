@@ -513,6 +513,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\time_postprocessor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\time_postprocessor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\time_receiver.cpp"
 				>
 			</File>

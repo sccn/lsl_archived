@@ -2,6 +2,7 @@
 #define STREAM_INLET_IMPL_H
 
 
+#include<boost/bind.hpp>
 #include "data_receiver.h"
 #include "time_receiver.h"
 #include "common.h"
@@ -32,7 +33,8 @@ namespace lsl {
 		*				 In all other cases (recover is false or the stream is not recoverable) a lost_error is thrown where 
 		*				 indicated if the stream's source is lost (e.g., due to an app or computer crash).
 		*/
-		stream_inlet_impl(const stream_info_impl &info, int max_buflen=360, int max_chunklen=0, bool recover=true): conn_(info,recover), info_receiver_(conn_), time_receiver_(conn_), data_receiver_(conn_,max_buflen,max_chunklen) {
+		stream_inlet_impl(const stream_info_impl &info, int max_buflen=360, int max_chunklen=0, bool recover=true): conn_(info,recover), info_receiver_(conn_), time_receiver_(conn_), data_receiver_(conn_,max_buflen,max_chunklen), 
+			postprocessor_(boost::bind(&time_receiver::time_correction,time_receiver_,5), boost::bind(&inlet_connection::current_srate,conn_)) {
 			ensure_lsl_initialized();
 			conn_.engage();
 		}
@@ -153,6 +155,16 @@ namespace lsl {
 		double time_correction(double timeout=2) { return time_receiver_.time_correction(timeout); }
 
 		/**
+		* Set post-processing flags to use. By default, the inlet performs NO post-processing and returns the 
+		* ground-truth time stamps, which can then be manually synchronized using time_correction(), and then 
+		* smoothed/dejittered if desired. This function allows automating these two and possibly more operations.
+		* Warning: when you enable this, you will no longer receive or be able to recover the original time stamps.
+		* @param flags An integer that is the result of bitwise OR'ing one or more options from processing_options_t 
+		*        together (e.g., post_clocksync|post_dejitter); the default is to enable all options.
+		*/
+		void set_postprocessing(unsigned flags=post_ALL);
+
+		/**
 		* Open a new data stream.
 		* All samples pushed in at the other end from this moment onwards will be queued and
 		* eventually be delivered in response to pull_sample() or pull_chunk() calls.
@@ -176,10 +188,22 @@ namespace lsl {
 		*/
 		std::size_t samples_available() { return (std::size_t)(!data_receiver_.empty()); };
 
-		/// Query whether the clock was potentially reset since the last call to was_clock_reset().
-		/// This is only interesting for applications that combine multiple time_correction values to estimate clock drift
-		/// and which should tolerate (rare) cases where the source machine was hot-swapped or restarted.
+		/** Query whether the clock was potentially reset since the last call to was_clock_reset().
+		* This is only interesting for applications that combine multiple time_correction values to estimate clock drift
+		* and which should tolerate (rare) cases where the source machine was hot-swapped or restarted.
+		*/
 		bool was_clock_reset() { return time_receiver_.was_reset(); }
+
+		/**
+		* Override the half-time (forget factor) of the time-stamp smoothing.
+		* The default is 30 seconds unless a different value is set in the config file.
+		* Using a longer window will yield lower jitter in the time stamps, but very
+		* long windows (>2 minutes) will not track rapid changes in the true clock rate
+		* (e.g., due to room temperature changes); a rule of thumb is that an n second 
+		* window will be able to track changes happening within 10*n seconds or longer.
+		*/
+		void smoothing_halftime(float value);
+
 	private:
 		// the inlet connection
 		inlet_connection conn_;
@@ -188,6 +212,9 @@ namespace lsl {
 		info_receiver info_receiver_;
 		time_receiver time_receiver_;
 		data_receiver data_receiver_;
+
+		// class for post-processing time stamps
+		time_postprocessor postprocessor_;
 	};
 
 }

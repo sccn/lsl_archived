@@ -53,7 +53,8 @@ sample_p consumer_queue::pop_sample(double timeout) {
 		buffer_.pop(result);
 	} else {
 		if (!buffer_.pop(result)) {
-			timeout += lsl_local_clock();
+			// turn timeout into the a point in time at which we give up
+			timeout += lsl_local_clock(); 
 			do {
 				if (lsl_local_clock() >= timeout)
 					break;
