@@ -8,6 +8,7 @@
 #include "common.h"
 #include "inlet_connection.h"
 #include "info_receiver.h"
+#include "time_postprocessor.h"
 
 
 namespace lsl {
