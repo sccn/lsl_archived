@@ -15,9 +15,9 @@ double time_postprocessor::process_timestamp(double value) {
 	// --- clock synchronization ---
 	if (options_ & post_clocksync) {
 		// update last correction value if needed (we do this every 100 samples and at most once per second)
-		if ((fmod(samples_seen_,100.0) == 0.0) && lsl_clock() > (last_query_time_ + 1.0)) {
+		if ((fmod(samples_seen_,100.0) == 0.0) && lsl_clock() > next_query_time_) {
 			last_offset_ = query_correction_();
-			last_query_time_ = lsl_clock();
+			next_query_time_ = lsl_clock()+1.0;
 		}
 		// perform clock synchronization; this is done by adding the last-measured clock offset value
 		// (typically this is used to map the value from the sender's clock to our local clock)
@@ -31,17 +31,25 @@ double time_postprocessor::process_timestamp(double value) {
 			double srate = query_srate_();
 			smoothing_applicable_ = (srate > 0.0);
 			if (smoothing_applicable_) {
-				// linear regression model coefficients
+				// linear regression model coefficients (intercept, slope)
 				w0_ = 0.0;
 				w1_ = 1.0/srate;
-				// inverse covariance matrix
-				P00_ = 1.0e10;
-				P01_ = 0.0;
-				P10_ = 0.0;
-				P11_ = 1.0e10;
-				// forget factor lambda in RLS calculation
-				lam_ = pow(2.0, (-1.0/(srate*halftime_)));
+				// forget factor lambda in RLS calculation & its inverse
+				lam_ = pow(2.0, -1.0/(srate*halftime_));
 				il_ = 1.0/lam_;
+				// inverse covariance matrix of predictors u
+				P00_ = P01_ = P10_ = P11_ = 0.0;
+				for (double lam=lam_, n=0; lam>0.1; lam*=lam_, n-=1) {
+					P00_ += lam;
+					P01_ += lam*n;
+					P11_ += lam*n*n;
+				}
+				P10_ = P01_; // symmetric
+				// invert it 
+				double det = 1.0/(P00_*P11_ - P10_*P01_);
+				std::swap(P00_, P11_);
+				P00_ *= det; P11_ *= det;
+				P10_ *= -det; P01_ *= -det;
 				// numeric baseline
 				baseline_value_ = value;
 			}
@@ -51,7 +59,7 @@ double time_postprocessor::process_timestamp(double value) {
 			value -= baseline_value_;
 
 			// RLS update
-			double u1 = samples_seen_+1;			// u = np.matrix([[1.0], [samples_seen+1]])
+			double u1 = samples_seen_;				// u = np.matrix([[1.0], [samples_seen]])
 			double pi0 = P00_ + u1*P10_;			// pi = u.T * P
 			double pi1 = P01_ + u1*P11_;			// ... (ct'd)
 			double al = value - w0_ - w1_ * u1;		// al = value - w.T * u
@@ -76,4 +84,5 @@ double time_postprocessor::process_timestamp(double value) {
 
 	samples_seen_ += 1.0;
 	last_value_ = value;
+	return value;
 }

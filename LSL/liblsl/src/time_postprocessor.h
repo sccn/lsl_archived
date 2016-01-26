@@ -20,7 +20,7 @@ namespace lsl {
 		/// returns the time-correction offset for the current data point.
 		time_postprocessor(int x=0) {}
 		time_postprocessor(const postproc_callback_t &query_correction, const postproc_callback_t &query_srate): query_correction_(query_correction), query_srate_(query_srate), 
-			last_query_time_(0.0), last_offset_(0.0), samples_seen_(0.0), options_(post_none), halftime_(api_config::get_instance()->smoothing_halftime()), smoothing_initialized_(false),
+			next_query_time_(0.0), last_offset_(0.0), samples_seen_(0.0), options_(post_none), halftime_(api_config::get_instance()->smoothing_halftime()), smoothing_initialized_(false),
 			last_value_(-std::numeric_limits<double>::infinity())
 		{}
 
@@ -48,17 +48,18 @@ namespace lsl {
 		void smoothing_halftime(float value) { halftime_ = value; }
 
 	private:
-		// machinery for obtaining time corrections
-		postproc_callback_t query_correction_;	// a callback function that returns the current time-correction offset
-		double last_query_time_;				// the last time when we queried the time-correction offset
-		double last_offset_;					// last queried correction offset
 		double samples_seen_;					// number of samples seen so far
-		
+
 		// configuration parameters
 		postproc_callback_t query_srate_;		// a callback function that returns the current nominal sampling rate
 		unsigned options_;						// current processing options
 		float halftime_;						// smoothing half-time
 
+		// handling of time corrections
+		postproc_callback_t query_correction_;	// a callback function that returns the current time-correction offset
+		double next_query_time_;				// the next time when we query the time-correction offset
+		double last_offset_;					// last queried correction offset
+		
 		// runtime parameters for smoothing
 		double baseline_value_;					// first observed time-stamp value, used as a baseline to improve numerics
 		double w0_, w1_;						// linear regression model coefficients		

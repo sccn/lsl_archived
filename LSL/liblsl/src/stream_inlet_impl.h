@@ -85,13 +85,13 @@ namespace lsl {
 		*		   To remap this time stamp to the local clock, add the value returned by .time_correction() to it.
 		*		   This is only necessary if the clocks of the source and destination machine are not synchronized to high enough precision.
 		*/
-		double pull_sample(float *buffer, int buffer_elements, double timeout=FOREVER) { return data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout); }
-		double pull_sample(double *buffer, int buffer_elements, double timeout=FOREVER) { return data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout); }
-		double pull_sample(long *buffer, int buffer_elements, double timeout=FOREVER) { return data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout); }
-		double pull_sample(int *buffer, int buffer_elements, double timeout=FOREVER) { return data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout); }
-		double pull_sample(short *buffer, int buffer_elements, double timeout=FOREVER) { return data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout); }
-		double pull_sample(char *buffer, int buffer_elements, double timeout=FOREVER) { return data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout); }
-		double pull_sample(std::string *buffer, int buffer_elements, double timeout=FOREVER) { return data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout); }
+		double pull_sample(float *buffer, int buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
+		double pull_sample(double *buffer, int buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
+		double pull_sample(long *buffer, int buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
+		double pull_sample(int *buffer, int buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
+		double pull_sample(short *buffer, int buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
+		double pull_sample(char *buffer, int buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
+		double pull_sample(std::string *buffer, int buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
 
 		/**
 		* Pull a sample from the inlet and read it into a pointer to raw data.
@@ -103,7 +103,7 @@ namespace lsl {
 		*		   To remap this time stamp to the local clock, add the value returned by .time_correction() to it.
 		*		   This is only necessary if the clocks of the source and destination machine are not synchronized to high enough precision.
 		*/
-		double pull_numeric_raw(void *sample, int buffer_bytes, double timeout=FOREVER) { return data_receiver_.pull_sample_untyped(sample,buffer_bytes,timeout); }
+		double pull_numeric_raw(void *sample, int buffer_bytes, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_untyped(sample,buffer_bytes,timeout)); }
 
 		/**
 		* Pull a chunk of data from the inlet.
@@ -207,6 +207,9 @@ namespace lsl {
 		void smoothing_halftime(float value) { postprocessor_.smoothing_halftime(value); }
 
 	private:
+		/// post-process a time stamp
+		double postprocess(double stamp) { return stamp ? postprocessor_.process_timestamp(stamp) : stamp; }
+
 		// the inlet connection
 		inlet_connection conn_;
 
@@ -222,4 +225,3 @@ namespace lsl {
 }
 
 #endif
-
