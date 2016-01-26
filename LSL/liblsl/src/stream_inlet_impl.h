@@ -34,8 +34,9 @@ namespace lsl {
 		*				 In all other cases (recover is false or the stream is not recoverable) a lost_error is thrown where 
 		*				 indicated if the stream's source is lost (e.g., due to an app or computer crash).
 		*/
-		stream_inlet_impl(const stream_info_impl &info, int max_buflen=360, int max_chunklen=0, bool recover=true): conn_(info,recover), info_receiver_(conn_), time_receiver_(conn_), data_receiver_(conn_,max_buflen,max_chunklen), 
-			postprocessor_(boost::bind(&time_receiver::time_correction,time_receiver_,5), boost::bind(&inlet_connection::current_srate,conn_)) {
+		stream_inlet_impl(const stream_info_impl &info, int max_buflen=360, int max_chunklen=0, bool recover=true): conn_(info,recover), info_receiver_(conn_), time_receiver_(conn_), data_receiver_(conn_,max_buflen,max_chunklen),
+			postprocessor_(boost::bind(&time_receiver::time_correction,&time_receiver_,5), boost::bind(&inlet_connection::current_srate,&conn_)) 
+		{
 			ensure_lsl_initialized();
 			conn_.engage();
 		}
@@ -163,7 +164,7 @@ namespace lsl {
 		* @param flags An integer that is the result of bitwise OR'ing one or more options from processing_options_t 
 		*        together (e.g., post_clocksync|post_dejitter); the default is to enable all options.
 		*/
-		void set_postprocessing(unsigned flags=post_ALL);
+		void set_postprocessing(unsigned flags=post_ALL) { postprocessor_.set_options(flags); }
 
 		/**
 		* Open a new data stream.
@@ -203,7 +204,7 @@ namespace lsl {
 		* (e.g., due to room temperature changes); a rule of thumb is that an n second 
 		* window will be able to track changes happening within 10*n seconds or longer.
 		*/
-		void smoothing_halftime(float value);
+		void smoothing_halftime(float value) { postprocessor_.smoothing_halftime(value); }
 
 	private:
 		// the inlet connection

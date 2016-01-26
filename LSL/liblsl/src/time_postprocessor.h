@@ -1,26 +1,12 @@
 #ifndef TIME_POSTPROCESSOR_H
 #define TIME_POSTPROCESSOR_H
 
-
 #include <boost/function.hpp>
 #include "api_config.h"
+#include "common.h"
+
 
 namespace lsl {
-
-	/**
-	* Processing options for the time_postprocessor. 
-	*/
-	enum processing_options_t {
-		post_none = 0,		// No automatic post-processing; return the ground-truth time stamps for manual post-processing
-							// (this is the default behavior of the inlet).
-		post_clocksync = 1, // Perform automatic clock synchronization; equivalent to manually adding the time_correction() value
-							// to the received time stamps.
-		post_dejitter = 2,	// Remove jitter from time stamps. This will apply a smoothing algorithm to the received time stamps;
-							// the smoothing needs to see a minimum number of samples (1-2 minutes) until the remaining jitter 
-							// is consistently below 1ms.
-		post_monotonize = 4,	// force the time-stamps to be monotonically ascending (only makes sense if timestamps are dejittered)
-		post_ALL = 1|2|4		// The combination of all possible post-processing options.
-	};
 
 	/// A callback function that allows the post-process to query time-correction values
 	/// when it needs them.
@@ -32,6 +18,7 @@ namespace lsl {
 	public:
 		/// Construct a new time post-processor given a callback function that 
 		/// returns the time-correction offset for the current data point.
+		time_postprocessor(int x=0) {}
 		time_postprocessor(const postproc_callback_t &query_correction, const postproc_callback_t &query_srate): query_correction_(query_correction), query_srate_(query_srate), 
 			last_query_time_(0.0), last_offset_(0.0), samples_seen_(0.0), options_(post_none), halftime_(api_config::get_instance()->smoothing_halftime()), smoothing_initialized_(false),
 			last_value_(-std::numeric_limits<double>::infinity())
