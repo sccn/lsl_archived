@@ -2,7 +2,7 @@
 #define TIME_POSTPROCESSOR_H
 
 #include <boost/function.hpp>
-#include "api_config.h"
+#include <boost/thread.hpp>
 #include "common.h"
 
 
@@ -18,12 +18,7 @@ namespace lsl {
 	public:
 		/// Construct a new time post-processor given a callback function that 
 		/// returns the time-correction offset for the current data point.
-		time_postprocessor(int x=0) {}
-		time_postprocessor(const postproc_callback_t &query_correction, const postproc_callback_t &query_srate): query_correction_(query_correction), query_srate_(query_srate), 
-			next_query_time_(0.0), last_offset_(0.0), samples_seen_(0.0), options_(post_none), halftime_(api_config::get_instance()->smoothing_halftime()), smoothing_initialized_(false),
-			last_value_(-std::numeric_limits<double>::infinity())
-		{}
-
+		time_postprocessor(const postproc_callback_t &query_correction, const postproc_callback_t &query_srate);
 
 		/**
 		* Set post-processing options to use. By default, this class performs NO post-processing and returns the 
@@ -34,7 +29,7 @@ namespace lsl {
 		*/
 		void set_options(unsigned options=post_ALL) { options_ = options; }
 
-		/// Post-process the given time-stamp and return the new time-stamp.
+		/// Post-process the given time stamp and return the new time-stamp.
 		double process_timestamp(double value);
 
 		/**
@@ -48,6 +43,9 @@ namespace lsl {
 		void smoothing_halftime(float value) { halftime_ = value; }
 
 	private:
+		// Internal function to process a time stamp.
+		double process_internal(double value); 
+
 		double samples_seen_;					// number of samples seen so far
 
 		// configuration parameters
@@ -70,6 +68,9 @@ namespace lsl {
 
 		// runtime parameters for monotonize
 		double last_value_;						// last observed time-stamp value, to force monotonically increasing stamps
+
+		// mutex for thread safety
+		boost::mutex processing_mut_;			// a mutex that protects the runtime data structures
 	};
 
 

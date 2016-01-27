@@ -118,8 +118,9 @@ typedef enum {
 	proc_dejitter = 2,		/* Remove jitter from time stamps. This will apply a smoothing algorithm to the received time stamps; */
 							/* the smoothing needs to see a minimum number of samples (1-2 minutes) until the remaining jitter */
 							/* is consistently below 1ms. */
-	proc_monotonize = 4,	/* force the time-stamps to be monotonically ascending (only makes sense if timestamps are dejittered) */
-	proc_ALL = 1|2|4		/* The combination of all possible post-processing options. */
+	proc_monotonize = 4,	/* Force the time-stamps to be monotonically ascending (only makes sense if timestamps are dejittered). */
+	proc_threadsafe = 8,    /* Post-processing is thread-safe (same inlet can be read from by multiple threads); uses somewhat more CPU. */
+	proc_ALL = 1|2|4|8		/* The combination of all possible post-processing options. */
 } processing_options_t;
 
 /**

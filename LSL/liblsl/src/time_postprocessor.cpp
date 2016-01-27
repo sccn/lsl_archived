@@ -7,11 +7,25 @@
 
 using namespace lsl;
 
-/**
-* Post-process the given time-stamp and return the new time-stamp.
-*/
-double time_postprocessor::process_timestamp(double value) {
 
+/// Construct a new time post-processor.
+time_postprocessor::time_postprocessor(const postproc_callback_t &query_correction, const postproc_callback_t &query_srate): query_correction_(query_correction), query_srate_(query_srate), 
+	next_query_time_(0.0), last_offset_(0.0), samples_seen_(0.0), options_(post_none), halftime_(api_config::get_instance()->smoothing_halftime()), smoothing_initialized_(false),
+	last_value_(-std::numeric_limits<double>::infinity())
+{
+}
+
+/// Post-process the given time-stamp and return the new time-stamp.
+
+double time_postprocessor::process_timestamp(double value) {
+	if (options_ & post_threadsafe) {
+		boost::lock_guard<boost::mutex> lock(processing_mut_);
+		return process_internal(value);
+	} else
+		return process_internal(value);
+}
+
+double time_postprocessor::process_internal(double value) {
 	// --- clock synchronization ---
 	if (options_ & post_clocksync) {
 		// update last correction value if needed (we do this every 100 samples and at most once per second)
