@@ -25,14 +25,14 @@ public:
 	/// Construct a new time post-processor given a callback function that 
 	/// returns the time-correction offset for the current data point.
 	time_postprocessor(double nominal_rate): 
-		nominal_rate_(nominal_rate), next_query_time_(0.0), last_offset_(0.0), samples_seen_(0.0), options_(post_none), halftime_(30.0), smoothing_initialized_(false),
+		nominal_rate_(nominal_rate), next_query_time_(0.0), last_offset_(0.0), samples_seen_(0.0), options_(post_none), halftime_(90.0), smoothing_initialized_(false),
 		last_value_(-std::numeric_limits<double>::infinity())
 	{
 	}
 
 	// dummy implementations
 	double query_correction_() { return 0.0; }
-	double query_srate_() { return 1000.0; }
+	double query_srate_() { return nominal_rate_; }
 	double lsl_clock() { return 0.0; }
 
 	/**
@@ -168,8 +168,8 @@ private:
 };
 
 const char* const datapath = "C:\\Synched\\Misc\\JitterRemovalTestBuffers\\TestBuffer\\";
-const int rates[] = {200,400,600,800,1000,2000,3000,4000,5000};
-const int n_chunks = 20;
+const int rates[] = {50,100,200,500,1000,2000}; //,2000,3000,4000,5000};
+const int n_chunks = 30;
 
 void main() {
 	for (int k=0; k<sizeof(rates)/sizeof(rates[0]); k++) {
@@ -189,7 +189,7 @@ void main() {
 			std::ifstream jittered_stream(jittered_data.c_str(), std::ifstream::binary);
 			std::ofstream estimated_stream(estimated_data.c_str(), std::ofstream::binary | std::ofstream::trunc);
 			time_postprocessor processor(rate);
-			processor.set_options(post_ALL & ~post_threadsafe);
+			processor.set_options(post_ALL & ~post_threadsafe & ~post_clocksync);
 			while (true) {
 				// read new sample, process, also get ground truth
 				double jittered_value = 0.0; jittered_stream.read((char*)&jittered_value, sizeof(jittered_value));
