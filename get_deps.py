@@ -1,2 +1,2 @@
-import lsl_get_deps
-lsl_get_deps.unstrip_all()
+import deps_worker
+deps_worker.unstrip_all()
