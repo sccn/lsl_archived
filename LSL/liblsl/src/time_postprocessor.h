@@ -32,14 +32,7 @@ namespace lsl {
 		/// Post-process the given time stamp and return the new time-stamp.
 		double process_timestamp(double value);
 
-		/**
-		* Override the half-time (forget factor) of the time-stamp smoothing.
-		* The default is 30 seconds unless a different value is set in the config file.
-		* Using a longer window will yield lower jitter in the time stamps, but very
-		* long windows (>2 minutes) will not track rapid changes in the true clock rate
-		* (e.g., due to room temperature changes); a rule of thumb is that an n second 
-		* window will be able to track changes happening within 10*n seconds or longer.
-		*/
+		/// Override the half-time (forget factor) of the time-stamp smoothing.
 		void smoothing_halftime(float value) { halftime_ = value; }
 
 	private:

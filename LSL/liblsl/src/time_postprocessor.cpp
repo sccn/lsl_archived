@@ -51,19 +51,8 @@ double time_postprocessor::process_internal(double value) {
 				// forget factor lambda in RLS calculation & its inverse
 				lam_ = pow(2.0, -1.0/(srate*halftime_));
 				il_ = 1.0/lam_;
-				// inverse covariance matrix of predictors u
-				P00_ = P01_ = P10_ = P11_ = 0.0;
-				for (double lam=lam_, n=0; lam>0.1; lam*=lam_, n-=1) {
-					P00_ += lam;
-					P01_ += lam*n;
-					P11_ += lam*n*n;
-				}
-				P10_ = P01_; // symmetric
-				// invert it 
-				double det = 1.0/(P00_*P11_ - P10_*P01_);
-				std::swap(P00_, P11_);
-				P00_ *= det; P11_ *= det;
-				P10_ *= -det; P01_ *= -det;
+					// inverse autocovariance matrix of predictors u
+					P00_ = P11_ = 1e-2; P01_ = P10_ = 0.0;
 				// numeric baseline
 				baseline_value_ = value;
 			}
@@ -76,7 +65,7 @@ double time_postprocessor::process_internal(double value) {
 			double u1 = samples_seen_;				// u = np.matrix([[1.0], [samples_seen]])
 			double pi0 = P00_ + u1*P10_;			// pi = u.T * P
 			double pi1 = P01_ + u1*P11_;			// ... (ct'd)
-			double al = value - w0_ - w1_ * u1;		// al = value - w.T * u
+			double al = value - w0_ - w1_ * u1;		// al = value - w.T * u (prediction error)
 			double gam = lam_ + pi0 + pi1 * u1;		// gam = lam + pi * u
 			P00_ = il_ * (P00_ - ((pi0*pi0)/gam));  // Pp = k * pi; P = il * (P - Pp)
 			P01_ = il_ * (P01_ - ((pi0*pi1)/gam));	// ...
