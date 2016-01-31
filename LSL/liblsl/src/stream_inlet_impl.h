@@ -35,7 +35,9 @@ namespace lsl {
 		*				 indicated if the stream's source is lost (e.g., due to an app or computer crash).
 		*/
 		stream_inlet_impl(const stream_info_impl &info, int max_buflen=360, int max_chunklen=0, bool recover=true): conn_(info,recover), info_receiver_(conn_), time_receiver_(conn_), data_receiver_(conn_,max_buflen,max_chunklen),
-			postprocessor_(boost::bind(&time_receiver::time_correction,&time_receiver_,5), boost::bind(&inlet_connection::current_srate,&conn_)) 
+			postprocessor_(boost::bind(&time_receiver::time_correction,&time_receiver_,5), 
+			boost::bind(&inlet_connection::current_srate,&conn_),
+			boost::bind(&time_receiver::was_reset,&time_receiver_)) 
 		{
 			ensure_lsl_initialized();
 			conn_.engage();

@@ -9,9 +9,10 @@ using namespace lsl;
 
 
 /// Construct a new time post-processor.
-time_postprocessor::time_postprocessor(const postproc_callback_t &query_correction, const postproc_callback_t &query_srate): query_correction_(query_correction), query_srate_(query_srate), 
-	next_query_time_(0.0), last_offset_(0.0), samples_seen_(0.0), options_(post_none), halftime_(api_config::get_instance()->smoothing_halftime()), smoothing_initialized_(false),
-	last_value_(-std::numeric_limits<double>::infinity())
+time_postprocessor::time_postprocessor(const postproc_callback_t &query_correction, const postproc_callback_t &query_srate, const reset_callback_t &query_reset): 
+	query_correction_(query_correction), query_srate_(query_srate), query_reset_(query_reset), next_query_time_(0.0),  
+	last_offset_(0.0), samples_seen_(0.0), options_(post_none), halftime_(api_config::get_instance()->smoothing_halftime()), 
+	smoothing_initialized_(false), last_value_(-std::numeric_limits<double>::infinity())
 {
 }
 
@@ -28,10 +29,17 @@ double time_postprocessor::process_timestamp(double value) {
 double time_postprocessor::process_internal(double value) {
 	// --- clock synchronization ---
 	if (options_ & post_clocksync) {
-		// update last correction value if needed (we do this every 100 samples and at most once per second)
-		if ((fmod(samples_seen_,100.0) == 0.0) && lsl_clock() > next_query_time_) {
+		// update last correction value if needed (we do this every 50 samples and at most twice per second)
+		if ((fmod(samples_seen_,50.0) == 0.0) && lsl_clock() > next_query_time_) {
 			last_offset_ = query_correction_();
-			next_query_time_ = lsl_clock()+1.0;
+			if (query_reset_()) {
+				// reset state to unitialized
+				last_offset_ = query_correction_();
+				last_value_ = -std::numeric_limits<double>::infinity();
+				samples_seen_ = 0;
+				smoothing_initialized_ = false;
+			}
+			next_query_time_ = lsl_clock()+0.5;
 		}
 		// perform clock synchronization; this is done by adding the last-measured clock offset value
 		// (typically this is used to map the value from the sender's clock to our local clock)
@@ -51,8 +59,8 @@ double time_postprocessor::process_internal(double value) {
 				// forget factor lambda in RLS calculation & its inverse
 				lam_ = pow(2.0, -1.0/(srate*halftime_));
 				il_ = 1.0/lam_;
-					// inverse autocovariance matrix of predictors u
-					P00_ = P11_ = 1e-2; P01_ = P10_ = 0.0;
+				// inverse autocovariance matrix of predictors u
+				P00_ = P11_ = 1e10; P01_ = P10_ = 0.0;
 				// numeric baseline
 				baseline_value_ = value;
 			}

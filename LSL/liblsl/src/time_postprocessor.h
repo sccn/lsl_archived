@@ -11,14 +11,15 @@ namespace lsl {
 	/// A callback function that allows the post-process to query time-correction values
 	/// when it needs them.
 	typedef boost::function<double()> postproc_callback_t;
+	typedef boost::function<bool()> reset_callback_t;
 
 
 	/// Internal class of an inlet that is responsible for post-processing time stamps.
 	class time_postprocessor {
 	public:
-		/// Construct a new time post-processor given a callback function that 
-		/// returns the time-correction offset for the current data point.
-		time_postprocessor(const postproc_callback_t &query_correction, const postproc_callback_t &query_srate);
+		/// Construct a new time post-processor given some callback functions.
+		time_postprocessor(const postproc_callback_t &query_correction, const postproc_callback_t &query_srate,
+			const reset_callback_t &query_reset);
 
 		/**
 		* Set post-processing options to use. By default, this class performs NO post-processing and returns the 
@@ -48,6 +49,7 @@ namespace lsl {
 
 		// handling of time corrections
 		postproc_callback_t query_correction_;	// a callback function that returns the current time-correction offset
+		reset_callback_t query_reset_;			// a callback function that returns whether the clock was reset
 		double next_query_time_;				// the next time when we query the time-correction offset
 		double last_offset_;					// last queried correction offset
 		

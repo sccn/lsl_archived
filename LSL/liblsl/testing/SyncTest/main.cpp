@@ -93,7 +93,7 @@ private:
 					lam_ = pow(2.0, -1.0/(srate*halftime_));
 					il_ = 1.0/lam_;
 					// inverse autocovariance matrix of predictors u
-					P00_ = P11_ = 1e-2; P01_ = P10_ = 0.0;
+					P00_ = P11_ = 1e10; P01_ = P10_ = 0.0;
 					// numeric baseline
 					baseline_value_ = value;
 				}
