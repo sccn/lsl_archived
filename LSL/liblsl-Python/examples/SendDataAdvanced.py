@@ -1,8 +1,8 @@
 """Example program to demonstrate how to send a multi-channel time-series
 with proper meta-data to LSL."""
 
-import random
 import time
+from random import random as rand
 
 from pylsl import StreamInfo, StreamOutlet, local_clock
 
@@ -17,9 +17,9 @@ info = StreamInfo('BioSemi', 'EEG', 8, 100, 'float32', 'myuid2424')
 info.desc().append_child_value("manufacturer", "BioSemi")
 channels = info.desc().append_child("channels")
 for c in ["C3", "C4", "Cz", "FPz", "POz", "CPz", "O1", "O2"]:
-    channels.append_child("channel")\
-        .append_child_value("label", c)\
-        .append_child_value("unit", "microvolts")\
+    channels.append_child("channel") \
+        .append_child_value("label", c) \
+        .append_child_value("unit", "microvolts") \
         .append_child_value("type", "EEG")
 
 # next make an outlet; we set the transmission chunk size to 32 samples and
@@ -30,9 +30,7 @@ print("now sending data...")
 while True:
     # make a new random 8-channel sample; this is converted into a
     # pylsl.vectorf (the data type that is expected by push_sample)
-    mysample = [random.random(), random.random(), random.random(),
-                random.random(), random.random(), random.random(),
-                random.random(), random.random()]
+    mysample = [rand(), rand(), rand(), rand(), rand(), rand(), rand(), rand()]
     # get a time stamp in seconds (we pretend that our samples are actually
     # 125ms old, e.g., as if coming from some external hardware)
     stamp = local_clock()-0.125
