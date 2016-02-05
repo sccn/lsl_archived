@@ -15,7 +15,7 @@ char *channels[] = {"C3","C4","Cz","FPz","POz","CPz","O1","O2"};
 int main(int argc, char* argv[]) {
 	int t,c;					/* time point and channel index */
 	lsl_streaminfo info;		/* out stream declaration object */
-	lsl_xml_ptr desc, chn;		/* some xml element pointers */ 
+	lsl_xml_ptr desc, chn, chns;/* some xml element pointers */ 
 	lsl_outlet outlet;			/* stream outlet */
 	double starttime;			/* used for send timing */
 	float cursample[8];			/* the current sample */
@@ -24,11 +24,13 @@ int main(int argc, char* argv[]) {
 	info = lsl_create_streaminfo("BioSemi","EEG",8,100,cft_float32,"325wqer4354");
 
 	/* add some meta-data fields to it */
+	/* (for more standard fields, see https://github.com/sccn/xdf/wiki/Meta-Data) */
 	desc = lsl_get_desc(info);
 	lsl_append_child_value(desc,"manufacturer","BioSemi");
+	chns = lsl_append_child(desc,"channels");
 	for (c=0;c<8;c++) {
-		chn = lsl_append_child(desc,"channel");
-		lsl_append_child_value(chn,"name",channels[c]);
+		chn = lsl_append_child(chns,"channel");
+		lsl_append_child_value(chn,"label",channels[c]);
 		lsl_append_child_value(chn,"unit","microvolts");
 		lsl_append_child_value(chn,"type","EEG");
 	}

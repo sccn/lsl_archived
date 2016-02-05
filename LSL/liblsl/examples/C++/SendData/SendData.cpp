@@ -32,9 +32,10 @@ int main(int argc, char* argv[]) {
 
 		// add some description fields
 		info.desc().append_child_value("manufacturer", "BioSemi");
+		lsl::xml_element chns = info.desc().append_child("channels");
 		for (int k=0;k<8;k++)
-			info.desc().append_child("channel")
-			.append_child_value("name",channels[k])
+			chns.append_child("channel")
+			.append_child_value("label",channels[k])
 			.append_child_value("unit","microvolts")
 			.append_child_value("type","EEG");
 
