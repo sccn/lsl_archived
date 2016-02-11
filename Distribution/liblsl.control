@@ -1,0 +1,7 @@
+Section: contrib/libs
+Maintainer: Giso Grimm <g.grimm@hoertech.de>
+Description: Lab streaming layer API.
+  The lab streaming layer is a simple all-in-one approach to streaming
+  experiment data between applications in a lab, e.g. instrument time series,
+  event markers, audio, and so on.
+Homepage: https://github.com/sccn/labstreaminglayer/
