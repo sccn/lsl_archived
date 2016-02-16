@@ -1,2 +1,2 @@
-"../LSL/liblsl/build/src/liblsl.so","usr/lib/"
-"../LSL/liblsl/LICENSE","usr/share/doc/liblsl/"
+"../../build/src/liblsl.so","usr/lib/"
+"../../LICENSE","usr/share/doc/liblsl/"

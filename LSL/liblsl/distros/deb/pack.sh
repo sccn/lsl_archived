@@ -8,9 +8,9 @@ VERSION=$VERSION_MAJOR.$VERSION_MINOR
 echo building debian packages for version $VERSION
 
 # first build liblsl:
-mkdir -p ../LSL/liblsl/build
-(cd ../LSL/liblsl/build && cmake ..)
-make -C ../LSL/liblsl/build
+mkdir -p ../../build
+(cd ../../build && cmake ..)
+make -C ../../build
 
 ./mkdeb liblsl.csv $VERSION
 ./mkdeb liblsl-dev.csv $VERSION
