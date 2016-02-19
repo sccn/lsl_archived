@@ -1,4 +1,8 @@
 ## 
+# linux distro
+*.deb
+
+## 
 # lsl external libraries to ignore all the time
 QtCore4.dll
 QtGui4.dll
