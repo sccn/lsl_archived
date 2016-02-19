@@ -1,0 +1,59 @@
+#!/bin/sh
+# Redistribute the files in the distribution to the linux file system
+CSV="$1"
+VERSION="$2"
+ARCH="$3"
+if test -z "${VERSION}"; then
+    echo "Usage: mkdeb file.csv VERSION [ARCH]"
+    exit 1
+fi
+PACKAGE=`echo "${CSV}"|sed -e 's/^.*\///1' -e 's/\.csv//1'|tr '[:upper:]' '[:lower:]'`
+PACKAGEBASE=`echo "${CSV}"|sed -e 's/\.csv//1'`
+rm -Rf debian
+mkdir -p debian/DEBIAN
+#cat "${CSV}" | sed -e 's/\",\"/\" \"debian\//g' -e 's/"//g' -e 's/^/..\//1' -e 's/[^[:blank:]]* //1' | sort -u | xargs -l1 mkdir -p
+#cat "${CSV}" | sed -e 's/\",\"/\" \"debian\//g' -e 's/^/..\//1' | xargs -l1 cp || exit 1
+cat "${CSV}" | sed -e 's/\",\"/\" \"debian\//g' -e 's/"//g' -e 's/[^[:blank:]]* //1' | sort -u | xargs -l1 mkdir -p
+cat "${CSV}" | sed -e 's/\",\"/\" \"debian\//g' | xargs -l1 cp || exit 1
+
+# All files in the distribution should be readable by everyone
+chmod -R a+r debian
+
+#
+## Discover information for this distribution
+#
+distname="${PACKAGE}"
+version="${VERSION}"
+if test -z "${ARCH}"; then
+    ARCH=$(uname -m | sed -e s/i686/i386/ -e s/x86_/amd/)
+    echo "Architecture ${ARCH} detected."
+fi
+packagename=$(echo "$distname" | sed -e "s/_/-/g")
+#packageversion="$version"-$(date +%Y%m%d)
+packageversion="$version"
+deb_depends="Depends: "`cat "${PACKAGEBASE}.dep"|sed -e "s/(VERSION)/(=${VERSION})/g"`
+deb_provides="Provides: ${PACKAGE}"
+inst_size=`du debian|tail -1|sed -e 's/\([0-9]*\).*/\1/1'`
+
+cat <<EndOfControl | sed -e '/^[[:alnum:]]*:[[:blank:]]*$/ d'> debian/DEBIAN/control
+Package: $packagename
+Version: $packageversion
+Priority: optional
+Architecture: $ARCH
+$deb_depends
+$deb_provides
+Installed-Size: $inst_size
+EndOfControl
+cat "${PACKAGEBASE}.control" >> debian/DEBIAN/control
+
+test -e "${PACKAGEBASE}.conffiles" && cat "${PACKAGEBASE}.conffiles" > debian/DEBIAN/conffiles
+
+fakeroot=/usr/bin/fakeroot
+test -x $fakeroot || fakeroot=""
+$fakeroot dpkg-deb --build debian
+mv debian.deb "$packagename"_"$packageversion"_"${ARCH}".deb
+rm -Rf debian
+
+# Local Variables:
+# mode: shell-script
+# End:
