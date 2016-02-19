@@ -138,6 +138,9 @@
     <ClInclude Include="..\..\..\src\legacy\legacy_abi.h">
       <Filter>Source\legacy</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\time_postprocessor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\lsl_continuous_resolver_c.cpp">
@@ -325,6 +328,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\legacy\legacy_abi.cpp">
       <Filter>Source\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\time_postprocessor.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

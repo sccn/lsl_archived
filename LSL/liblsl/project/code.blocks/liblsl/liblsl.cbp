@@ -136,6 +136,8 @@
 		<Unit filename="../../../src/stream_outlet_impl.h" />
 		<Unit filename="../../../src/tcp_server.cpp" />
 		<Unit filename="../../../src/tcp_server.h" />
+		<Unit filename="../../../src/time_postprocessor.cpp" />
+		<Unit filename="../../../src/time_postprocessor.h" />
 		<Unit filename="../../../src/time_receiver.cpp" />
 		<Unit filename="../../../src/time_receiver.h" />
 		<Unit filename="../../../src/udp_server.cpp" />

@@ -229,6 +229,7 @@
     <ClInclude Include="..\..\..\src\stream_inlet_impl.h" />
     <ClInclude Include="..\..\..\src\stream_outlet_impl.h" />
     <ClInclude Include="..\..\..\src\tcp_server.h" />
+    <ClInclude Include="..\..\..\src\time_postprocessor.h" />
     <ClInclude Include="..\..\..\src\time_receiver.h" />
     <ClInclude Include="..\..\..\src\udp_server.h" />
   </ItemGroup>
@@ -293,6 +294,7 @@
     <ClCompile Include="..\..\..\src\stream_info_impl.cpp" />
     <ClCompile Include="..\..\..\src\stream_outlet_impl.cpp" />
     <ClCompile Include="..\..\..\src\tcp_server.cpp" />
+    <ClCompile Include="..\..\..\src\time_postprocessor.cpp" />
     <ClCompile Include="..\..\..\src\time_receiver.cpp" />
     <ClCompile Include="..\..\..\src\udp_server.cpp" />
   </ItemGroup>

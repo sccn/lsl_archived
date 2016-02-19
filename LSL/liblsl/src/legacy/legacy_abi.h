@@ -513,7 +513,7 @@ namespace lsl {
 
 		/**
 		* Retrieve an estimated time correction offset for the given stream.
-		* The first call to this function takes several miliseconds until a reliable first estimate is obtained.
+		* The first call to this function takes several milliseconds until a reliable first estimate is obtained.
 		* Subsequent calls are instantaneous (and rely on periodic background updates).
 		* The precision of these estimates should be below 1 ms (empirically within +/-0.2 ms).
 		* @timeout Timeout to acquire the first time-correction estimate (default: no timeout).

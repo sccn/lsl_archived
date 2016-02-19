@@ -121,7 +121,7 @@ LIBLSL_C_API void lsl_close_stream(lsl_inlet in) {
 
 /**
 * Retrieve an estimated time correction offset for the given stream.
-* The first call to this function takes several miliseconds until a reliable first estimate is obtained.
+* The first call to this function takes several milliseconds until a reliable first estimate is obtained.
 * Subsequent calls are instantaneous (and rely on periodic background updates).
 * The precision of these estimates should be below 1 ms (empirically within +/-0.2 ms).
 * @timeout Timeout to acquire the first time-correction estimate.
@@ -147,6 +147,22 @@ LIBLSL_C_API double lsl_time_correction(lsl_inlet in, double timeout, int *ec) {
 			*ec = lsl_internal_error; 
 	}
 	return 0.0;
+}
+
+/**
+* Set post-processing flags to use. 
+*/
+LIBLSL_C_API int lsl_set_postprocessing(lsl_inlet in, unsigned flags) {
+	try {
+		((stream_inlet_impl*)in)->set_postprocessing(flags);
+		return lsl_no_error;
+	}
+	catch(std::invalid_argument &) { 
+		return lsl_argument_error; 
+	}
+	catch(std::exception &) {
+		return lsl_internal_error;
+	}
 }
 
 
@@ -754,5 +770,21 @@ LIBLSL_C_API unsigned lsl_was_clock_reset(lsl_inlet in) {
 	}
 	catch(std::exception &) {
 		return 0;
+	}
+}
+
+/**
+* Override the half-time (forget factor) of the time-stamp smoothing.
+*/
+LIBLSL_C_API int lsl_smoothing_halftime(lsl_inlet in, float value) {
+	try {
+		((stream_inlet_impl*)in)->smoothing_halftime(value);
+		return lsl_no_error;
+	}
+	catch(std::invalid_argument &) { 
+		return lsl_argument_error; 
+	}
+	catch(std::exception &) {
+		return lsl_internal_error;
 	}
 }

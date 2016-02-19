@@ -22,6 +22,7 @@ set (sources
   stream_info_impl.cpp
   stream_outlet_impl.cpp
   tcp_server.cpp
+  time_postprocessor.cpp
   time_receiver.cpp
   udp_server.cpp
   pugixml/pugixml.cpp
