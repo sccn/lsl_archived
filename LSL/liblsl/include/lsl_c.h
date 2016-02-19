@@ -107,6 +107,21 @@ typedef enum {
     cft_undefined = 0   /* Can not be transmitted. */
 } lsl_channel_format_t;
 
+/**
+* Post-processing options for stream inlets. 
+*/
+typedef enum {
+	proc_none = 0,			/* No automatic post-processing; return the ground-truth time stamps for manual post-processing */
+							/* (this is the default behavior of the inlet). */
+	proc_clocksync = 1,		/* Perform automatic clock synchronization; equivalent to manually adding the time_correction() value */
+							/* to the received time stamps. */
+	proc_dejitter = 2,		/* Remove jitter from time stamps. This will apply a smoothing algorithm to the received time stamps; */
+							/* the smoothing needs to see a minimum number of samples (30-120 seconds worst-case) until the remaining */
+							/* jitter is consistently below 1ms. */
+	proc_monotonize = 4,	/* Force the time-stamps to be monotonically ascending (only makes sense if timestamps are dejittered). */
+	proc_threadsafe = 8,    /* Post-processing is thread-safe (same inlet can be read from by multiple threads); uses somewhat more CPU. */
+	proc_ALL = 1|2|4|8		/* The combination of all possible post-processing options. */
+} processing_options_t;
 
 /**
 * Possible error codes.
@@ -656,6 +671,18 @@ extern LIBLSL_C_API void lsl_close_stream(lsl_inlet in);
 */
 extern LIBLSL_C_API double lsl_time_correction(lsl_inlet in, double timeout, int *ec);
 
+/**
+* Set post-processing flags to use. By default, the inlet performs NO post-processing and returns the 
+* ground-truth time stamps, which can then be manually synchronized using time_correction(), and then 
+* smoothed/dejittered if desired. This function allows automating these two and possibly more operations.
+* Warning: when you enable this, you will no longer receive or be able to recover the original time stamps.
+* @param in The lsl_inlet object to act on.
+* @param flags An integer that is the result of bitwise OR'ing one or more options from processing_options_t 
+*        together (e.g., post_clocksync|post_dejitter); a good setting is to use post_ALL.
+* @return The error code: if nonzero, can be lsl_argument_error if an unknown flag was passed in.
+*/
+extern LIBLSL_C_API int lsl_set_postprocessing(lsl_inlet in, unsigned flags);
+
 
 /* === Pulling a sample from the inlet === */
 
@@ -783,6 +810,20 @@ extern LIBLSL_C_API unsigned lsl_samples_available(lsl_inlet in);
 * hot-swapped or restarted.
 */
 extern LIBLSL_C_API unsigned lsl_was_clock_reset(lsl_inlet in);
+
+/**
+* Override the half-time (forget factor) of the time-stamp smoothing.
+* The default is 90 seconds unless a different value is set in the config file.
+* Using a longer window will yield lower jitter in the time stamps, but longer 
+* windows will have trouble tracking changes in the clock rate (usually due to 
+* temperature changes); the default is able to track changes up to 10 
+* degrees C per minute sufficiently well.
+* @param in The lsl_inlet object to act on.
+* @param value The new value, in seconds. This is the time after which a past sample 
+*			   will be weighted by 1/2 in the exponential smoothing window.
+* @return The error code: if nonzero, can be lsl_argument_error if an unknown flag was passed in.
+*/
+extern LIBLSL_C_API int lsl_smoothing_halftime(lsl_inlet in, float value);
 
 
 

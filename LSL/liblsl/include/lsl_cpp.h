@@ -68,6 +68,21 @@ namespace lsl {
         cf_undefined = 0    // Can not be transmitted.
     };
 
+	/**
+	* Post-processing options for stream inlets. 
+	*/
+	enum processing_options_t {
+		post_none = 0,			// No automatic post-processing; return the ground-truth time stamps for manual post-processing
+								// (this is the default behavior of the inlet).
+		post_clocksync = 1,		// Perform automatic clock synchronization; equivalent to manually adding the time_correction() value
+								// to the received time stamps.
+		post_dejitter = 2,		// Remove jitter from time stamps. This will apply a smoothing algorithm to the received time stamps;
+								// the smoothing needs to see a minimum number of samples (30-120 seconds worst-case) until the remaining  
+								// jitter is consistently below 1ms.
+		post_monotonize = 4,	// Force the time-stamps to be monotonically ascending (only makes sense if timestamps are dejittered).
+		post_threadsafe = 8,    // Post-processing is thread-safe (same inlet can be read from by multiple threads); uses somewhat more CPU.
+		post_ALL = 1|2|4|8		// The combination of all possible post-processing options.
+	};
 
     /**
     * Protocol version.
@@ -722,7 +737,7 @@ namespace lsl {
 
         /**
         * Retrieve an estimated time correction offset for the given stream.
-        * The first call to this function takes several miliseconds until a reliable first estimate is obtained.
+        * The first call to this function takes several milliseconds until a reliable first estimate is obtained.
         * Subsequent calls are instantaneous (and rely on periodic background updates).
         * The precision of these estimates should be below 1 ms (empirically within +/-0.2 ms).
         * @timeout Timeout to acquire the first time-correction estimate (default: no timeout).
@@ -732,6 +747,15 @@ namespace lsl {
         */
         double time_correction(double timeout=FOREVER) { int ec=0; double res = lsl_time_correction(obj,timeout,&ec); check_error(ec); return res; }
 
+		/**
+		* Set post-processing flags to use. By default, the inlet performs NO post-processing and returns the 
+		* ground-truth time stamps, which can then be manually synchronized using time_correction(), and then 
+		* smoothed/dejittered if desired. This function allows automating these two and possibly more operations.
+		* Warning: when you enable this, you will no longer receive or be able to recover the original time stamps.
+		* @param flags An integer that is the result of bitwise OR'ing one or more options from processing_options_t 
+		*        together (e.g., post_clocksync|post_dejitter); the default is to enable all options.
+		*/
+		void set_postprocessing(unsigned flags=post_ALL) { check_error(lsl_set_postprocessing(obj,flags)); }
 
         // =======================================
         // === Pulling a sample from the inlet ===
@@ -986,6 +1010,16 @@ namespace lsl {
         * hot-swapped or restarted in between two measurements.
         */
         bool was_clock_reset() { return lsl_was_clock_reset(obj) != 0; }
+
+		/**
+		* Override the half-time (forget factor) of the time-stamp smoothing.
+		* The default is 90 seconds unless a different value is set in the config file.
+		* Using a longer window will yield lower jitter in the time stamps, but longer 
+		* windows will have trouble tracking changes in the clock rate (usually due to 
+		* temperature changes); the default is able to track changes up to 10 
+		* degrees C per minute sufficiently well.
+		*/
+		void smoothing_halftime(float value) { check_error(lsl_smoothing_halftime(obj,value)); }
     private:
         // The inlet is a non-copyable object.
         stream_inlet(const stream_inlet &rhs);

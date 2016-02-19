@@ -165,6 +165,9 @@ namespace lsl {
 		int inlet_buffer_reserve_ms() const { return inlet_buffer_reserve_ms_; }
 		/// Default pre-allocated buffer size for the inlet, in samples (irregular streams).
 		int inlet_buffer_reserve_samples() const { return inlet_buffer_reserve_samples_; }
+		/// Default halftime of the time-stamp smoothing window (if enabled), in seconds.
+		float smoothing_halftime() const { return smoothing_halftime_; }
+
 
 	private:
 		// Thread-safe initialization logic (boilerplate).
@@ -216,6 +219,7 @@ namespace lsl {
 		int outlet_buffer_reserve_samples_;
 		int inlet_buffer_reserve_ms_;
 		int inlet_buffer_reserve_samples_;
+		float smoothing_halftime_;
 	};
 }
 
