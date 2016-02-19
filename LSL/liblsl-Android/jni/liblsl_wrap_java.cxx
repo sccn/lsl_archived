@@ -381,7 +381,7 @@ SWIGINTERN void std_vector_Sl_lsl_stream_info_Sg__set(std::vector< lsl::stream_i
 extern "C" {
 #endif
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_IRREGULAR_1RATE_1get(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_IRREGULAR_1RATE_1get(JNIEnv *jenv, jclass jcls) {
   jdouble jresult = 0 ;
   double result;
   
@@ -393,7 +393,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_IRREGULAR_1RA
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_DEDUCED_1TIMESTAMP_1get(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_DEDUCED_1TIMESTAMP_1get(JNIEnv *jenv, jclass jcls) {
   jdouble jresult = 0 ;
   double result;
   
@@ -405,7 +405,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_DEDUCED_1TIME
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_FOREVER_1get(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_FOREVER_1get(JNIEnv *jenv, jclass jcls) {
   jdouble jresult = 0 ;
   double result;
   
@@ -417,7 +417,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_FOREVER_1get(
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_cf_1float32_1get(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_cf_1float32_1get(JNIEnv *jenv, jclass jcls) {
   jint jresult = 0 ;
   lsl::channel_format_t result;
   
@@ -429,7 +429,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_cf_1float32_1get
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_cf_1double64_1get(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_cf_1double64_1get(JNIEnv *jenv, jclass jcls) {
   jint jresult = 0 ;
   lsl::channel_format_t result;
   
@@ -441,7 +441,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_cf_1double64_1ge
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_cf_1string_1get(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_cf_1string_1get(JNIEnv *jenv, jclass jcls) {
   jint jresult = 0 ;
   lsl::channel_format_t result;
   
@@ -453,7 +453,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_cf_1string_1get(
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_cf_1int32_1get(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_cf_1int32_1get(JNIEnv *jenv, jclass jcls) {
   jint jresult = 0 ;
   lsl::channel_format_t result;
   
@@ -465,7 +465,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_cf_1int32_1get(J
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_cf_1int16_1get(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_cf_1int16_1get(JNIEnv *jenv, jclass jcls) {
   jint jresult = 0 ;
   lsl::channel_format_t result;
   
@@ -477,7 +477,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_cf_1int16_1get(J
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_cf_1int8_1get(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_cf_1int8_1get(JNIEnv *jenv, jclass jcls) {
   jint jresult = 0 ;
   lsl::channel_format_t result;
   
@@ -489,7 +489,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_cf_1int8_1get(JN
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_cf_1int64_1get(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_cf_1int64_1get(JNIEnv *jenv, jclass jcls) {
   jint jresult = 0 ;
   lsl::channel_format_t result;
   
@@ -501,7 +501,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_cf_1int64_1get(J
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_cf_1undefined_1get(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_cf_1undefined_1get(JNIEnv *jenv, jclass jcls) {
   jint jresult = 0 ;
   lsl::channel_format_t result;
   
@@ -513,7 +513,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_cf_1undefined_1g
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_protocol_1version(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_protocol_1version(JNIEnv *jenv, jclass jcls) {
   jint jresult = 0 ;
   int result;
   
@@ -525,7 +525,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_protocol_1versio
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_library_1version(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_library_1version(JNIEnv *jenv, jclass jcls) {
   jint jresult = 0 ;
   int result;
   
@@ -537,7 +537,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_library_1version
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_local_1clock(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_local_1clock(JNIEnv *jenv, jclass jcls) {
   jdouble jresult = 0 ;
   double result;
   
@@ -549,7 +549,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_local_1clock(
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1info_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jint jarg3, jdouble jarg4, jint jarg5, jstring jarg6) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1stream_1info_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jint jarg3, jdouble jarg4, jint jarg5, jstring jarg6) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   std::string *arg2 = 0 ;
@@ -597,7 +597,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1in
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1info_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jint jarg3, jdouble jarg4, jint jarg5) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1stream_1info_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jint jarg3, jdouble jarg4, jint jarg5) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   std::string *arg2 = 0 ;
@@ -635,7 +635,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1in
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1info_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jint jarg3, jdouble jarg4) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1stream_1info_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jint jarg3, jdouble jarg4) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   std::string *arg2 = 0 ;
@@ -671,7 +671,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1in
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1info_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jint jarg3) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1stream_1info_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jint jarg3) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   std::string *arg2 = 0 ;
@@ -705,7 +705,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1in
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1info_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1stream_1info_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   std::string *arg2 = 0 ;
@@ -737,7 +737,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1in
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1info_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1stream_1info_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   lsl_streaminfo arg1 ;
   lsl_streaminfo *argp1 ;
@@ -757,7 +757,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1in
 }
 
 
-SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1name(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jstring JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1name(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jstring jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   std::string result;
@@ -772,7 +772,7 @@ SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_
 }
 
 
-SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1type(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jstring JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1type(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jstring jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   std::string result;
@@ -787,7 +787,7 @@ SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1channel_1count(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1channel_1count(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jint jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   int result;
@@ -802,7 +802,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1ch
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1nominal_1srate(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1nominal_1srate(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jdouble jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   double result;
@@ -817,7 +817,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1channel_1format(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1channel_1format(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jint jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   lsl::channel_format_t result;
@@ -832,7 +832,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1ch
 }
 
 
-SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1source_1id(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jstring JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1source_1id(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jstring jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   std::string result;
@@ -847,7 +847,7 @@ SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1version(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1version(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jint jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   int result;
@@ -862,7 +862,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1ve
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1created_1at(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1created_1at(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jdouble jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   double result;
@@ -877,7 +877,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_
 }
 
 
-SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1uid(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jstring JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1uid(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jstring jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   std::string result;
@@ -892,7 +892,7 @@ SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_
 }
 
 
-SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1session_1id(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jstring JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1session_1id(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jstring jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   std::string result;
@@ -907,7 +907,7 @@ SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_
 }
 
 
-SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1hostname(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jstring JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1hostname(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jstring jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   std::string result;
@@ -922,7 +922,7 @@ SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1desc(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1desc(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   SwigValueWrapper< lsl::xml_element > result;
@@ -937,7 +937,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1d
 }
 
 
-SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1as_1xml(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jstring JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1as_1xml(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jstring jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   std::string result;
@@ -952,7 +952,7 @@ SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1channel_1bytes(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1channel_1bytes(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jint jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   int result;
@@ -967,7 +967,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1ch
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1sample_1bytes(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1sample_1bytes(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jint jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   int result;
@@ -982,7 +982,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1sa
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1handle(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1handle(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   lsl_streaminfo result;
@@ -997,7 +997,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1h
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1info_1_1SWIG_16(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1stream_1info_1_1SWIG_16(JNIEnv *jenv, jclass jcls) {
   jlong jresult = 0 ;
   lsl::stream_info *result = 0 ;
   
@@ -1009,7 +1009,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1in
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1info_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1stream_1info_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::stream_info *arg1 = 0 ;
   lsl::stream_info *result = 0 ;
@@ -1028,7 +1028,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1in
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1stream_1info(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_delete_1stream_1info(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
   
   (void)jenv;
@@ -1038,7 +1038,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1stream_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1from_1xml(JNIEnv *jenv, jclass jcls, jstring jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1from_1xml(JNIEnv *jenv, jclass jcls, jstring jarg1) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   lsl::stream_info result;
@@ -1060,7 +1060,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1info_1f
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1outlet_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1stream_1outlet_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3) {
   jlong jresult = 0 ;
   lsl::stream_info *arg1 = 0 ;
   int arg2 ;
@@ -1083,7 +1083,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1ou
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1outlet_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1stream_1outlet_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
   jlong jresult = 0 ;
   lsl::stream_info *arg1 = 0 ;
   int arg2 ;
@@ -1104,7 +1104,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1ou
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1outlet_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1stream_1outlet_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::stream_info *arg1 = 0 ;
   lsl::stream_outlet *result = 0 ;
@@ -1123,7 +1123,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1ou
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< float > *arg2 = 0 ;
   double arg3 ;
@@ -1145,7 +1145,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< float > *arg2 = 0 ;
   double arg3 ;
@@ -1165,7 +1165,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< float > *arg2 = 0 ;
   
@@ -1183,7 +1183,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_16(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_16(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< double > *arg2 = 0 ;
   double arg3 ;
@@ -1205,7 +1205,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< double > *arg2 = 0 ;
   double arg3 ;
@@ -1225,7 +1225,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_18(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_18(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< double > *arg2 = 0 ;
   
@@ -1243,7 +1243,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_19(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_19(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< long > *arg2 = 0 ;
   double arg3 ;
@@ -1265,7 +1265,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_110(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_110(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< long > *arg2 = 0 ;
   double arg3 ;
@@ -1285,7 +1285,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_111(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_111(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< long > *arg2 = 0 ;
   
@@ -1303,7 +1303,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_112(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_112(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< int > *arg2 = 0 ;
   double arg3 ;
@@ -1325,7 +1325,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_113(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_113(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< int > *arg2 = 0 ;
   double arg3 ;
@@ -1345,7 +1345,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_114(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_114(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< int > *arg2 = 0 ;
   
@@ -1363,7 +1363,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_115(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_115(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< short > *arg2 = 0 ;
   double arg3 ;
@@ -1385,7 +1385,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_116(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_116(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< short > *arg2 = 0 ;
   double arg3 ;
@@ -1405,7 +1405,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_117(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_117(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< short > *arg2 = 0 ;
   
@@ -1423,7 +1423,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_118(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_118(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< char > *arg2 = 0 ;
   double arg3 ;
@@ -1444,7 +1444,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_119(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_119(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< char > *arg2 = 0 ;
   double arg3 ;
@@ -1463,7 +1463,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_120(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_120(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< char > *arg2 = 0 ;
   
@@ -1480,7 +1480,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_121(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_121(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< std::string > *arg2 = 0 ;
   double arg3 ;
@@ -1502,7 +1502,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_122(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_122(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< std::string > *arg2 = 0 ;
   double arg3 ;
@@ -1522,7 +1522,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_123(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_123(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< std::string > *arg2 = 0 ;
   
@@ -1540,7 +1540,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_124(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_124(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   float *arg2 = (float *) 0 ;
   double arg3 ;
@@ -1557,7 +1557,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_125(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_125(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   float *arg2 = (float *) 0 ;
   double arg3 ;
@@ -1572,7 +1572,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_126(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_126(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   float *arg2 = (float *) 0 ;
   
@@ -1585,7 +1585,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_127(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_127(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   double *arg2 = (double *) 0 ;
   double arg3 ;
@@ -1602,7 +1602,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_128(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_128(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   double *arg2 = (double *) 0 ;
   double arg3 ;
@@ -1617,7 +1617,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_129(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_129(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   double *arg2 = (double *) 0 ;
   
@@ -1630,7 +1630,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_130(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_130(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   long *arg2 = (long *) 0 ;
   double arg3 ;
@@ -1647,7 +1647,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_131(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_131(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   long *arg2 = (long *) 0 ;
   double arg3 ;
@@ -1662,7 +1662,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_132(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_132(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   long *arg2 = (long *) 0 ;
   
@@ -1675,7 +1675,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_133(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_133(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   int *arg2 = (int *) 0 ;
   double arg3 ;
@@ -1692,7 +1692,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_134(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_134(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   int *arg2 = (int *) 0 ;
   double arg3 ;
@@ -1707,7 +1707,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_135(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_135(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   int *arg2 = (int *) 0 ;
   
@@ -1720,7 +1720,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_136(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_136(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   short *arg2 = (short *) 0 ;
   double arg3 ;
@@ -1737,7 +1737,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_137(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_137(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   short *arg2 = (short *) 0 ;
   double arg3 ;
@@ -1752,7 +1752,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_138(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_138(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   short *arg2 = (short *) 0 ;
   
@@ -1765,7 +1765,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_139(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_139(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   char *arg2 = (char *) 0 ;
   double arg3 ;
@@ -1787,7 +1787,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_140(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_140(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   char *arg2 = (char *) 0 ;
   double arg3 ;
@@ -1807,7 +1807,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_141(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_141(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   char *arg2 = (char *) 0 ;
   
@@ -1825,7 +1825,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_142(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_142(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::string *arg2 = (std::string *) 0 ;
   double arg3 ;
@@ -1842,7 +1842,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_143(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_143(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::string *arg2 = (std::string *) 0 ;
   double arg3 ;
@@ -1857,7 +1857,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_144(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1sample_1_1SWIG_144(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::string *arg2 = (std::string *) 0 ;
   
@@ -1870,7 +1870,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1numeric_1raw_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1numeric_1raw_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   void *arg2 = (void *) 0 ;
   double arg3 ;
@@ -1887,7 +1887,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1numeric_1raw_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1numeric_1raw_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   void *arg2 = (void *) 0 ;
   double arg3 ;
@@ -1902,7 +1902,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1numeric_1raw_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1numeric_1raw_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   void *arg2 = (void *) 0 ;
   
@@ -1915,7 +1915,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< float > *arg2 = 0 ;
   double arg3 ;
@@ -1937,7 +1937,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< float > *arg2 = 0 ;
   double arg3 ;
@@ -1957,7 +1957,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< float > *arg2 = 0 ;
   
@@ -1975,7 +1975,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< double > *arg2 = 0 ;
   double arg3 ;
@@ -1997,7 +1997,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< double > *arg2 = 0 ;
   double arg3 ;
@@ -2017,7 +2017,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< double > *arg2 = 0 ;
   
@@ -2035,7 +2035,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_16(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_16(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< long > *arg2 = 0 ;
   double arg3 ;
@@ -2057,7 +2057,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< long > *arg2 = 0 ;
   double arg3 ;
@@ -2077,7 +2077,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_18(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_18(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< long > *arg2 = 0 ;
   
@@ -2095,7 +2095,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_19(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_19(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< int > *arg2 = 0 ;
   double arg3 ;
@@ -2117,7 +2117,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_110(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_110(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< int > *arg2 = 0 ;
   double arg3 ;
@@ -2137,7 +2137,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_111(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_111(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< int > *arg2 = 0 ;
   
@@ -2155,7 +2155,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_112(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_112(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< short > *arg2 = 0 ;
   double arg3 ;
@@ -2177,7 +2177,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_113(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_113(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< short > *arg2 = 0 ;
   double arg3 ;
@@ -2197,7 +2197,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_114(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_114(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< short > *arg2 = 0 ;
   
@@ -2215,7 +2215,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_115(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_115(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< char > *arg2 = 0 ;
   double arg3 ;
@@ -2236,7 +2236,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_116(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_116(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< char > *arg2 = 0 ;
   double arg3 ;
@@ -2255,7 +2255,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_117(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_117(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< char > *arg2 = 0 ;
   
@@ -2272,7 +2272,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_118(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_118(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< std::string > *arg2 = 0 ;
   double arg3 ;
@@ -2294,7 +2294,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_119(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_119(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< std::string > *arg2 = 0 ;
   double arg3 ;
@@ -2314,7 +2314,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_120(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_120(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< std::string > *arg2 = 0 ;
   
@@ -2332,7 +2332,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_121(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_121(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< float > *arg2 = 0 ;
   std::vector< double > *arg3 = 0 ;
@@ -2359,7 +2359,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_122(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_122(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< float > *arg2 = 0 ;
   std::vector< double > *arg3 = 0 ;
@@ -2384,7 +2384,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_123(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_123(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< double > *arg2 = 0 ;
   std::vector< double > *arg3 = 0 ;
@@ -2411,7 +2411,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_124(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_124(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< double > *arg2 = 0 ;
   std::vector< double > *arg3 = 0 ;
@@ -2436,7 +2436,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_125(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_125(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< long > *arg2 = 0 ;
   std::vector< double > *arg3 = 0 ;
@@ -2463,7 +2463,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_126(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_126(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< long > *arg2 = 0 ;
   std::vector< double > *arg3 = 0 ;
@@ -2488,7 +2488,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_127(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_127(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< int > *arg2 = 0 ;
   std::vector< double > *arg3 = 0 ;
@@ -2515,7 +2515,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_128(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_128(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< int > *arg2 = 0 ;
   std::vector< double > *arg3 = 0 ;
@@ -2540,7 +2540,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_129(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_129(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< short > *arg2 = 0 ;
   std::vector< double > *arg3 = 0 ;
@@ -2567,7 +2567,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_130(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_130(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< short > *arg2 = 0 ;
   std::vector< double > *arg3 = 0 ;
@@ -2592,7 +2592,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_131(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jobject jarg3_, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_131(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jobject jarg3_, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< char > *arg2 = 0 ;
   std::vector< double > *arg3 = 0 ;
@@ -2618,7 +2618,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_132(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jobject jarg3_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_132(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jobject jarg3_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< char > *arg2 = 0 ;
   std::vector< double > *arg3 = 0 ;
@@ -2642,7 +2642,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_133(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_, jboolean jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_133(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_, jboolean jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< std::string > *arg2 = 0 ;
   std::vector< double > *arg3 = 0 ;
@@ -2669,7 +2669,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_134(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_134(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jlong jarg3, jobject jarg3_) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::vector< std::string > *arg2 = 0 ;
   std::vector< double > *arg3 = 0 ;
@@ -2694,7 +2694,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_135(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4, jboolean jarg5) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_135(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4, jboolean jarg5) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   float *arg2 = (float *) 0 ;
   std::size_t arg3 ;
@@ -2713,7 +2713,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_136(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_136(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   float *arg2 = (float *) 0 ;
   std::size_t arg3 ;
@@ -2730,7 +2730,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_137(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_137(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   float *arg2 = (float *) 0 ;
   std::size_t arg3 ;
@@ -2745,7 +2745,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_138(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4, jboolean jarg5) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_138(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4, jboolean jarg5) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   double *arg2 = (double *) 0 ;
   std::size_t arg3 ;
@@ -2764,7 +2764,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_139(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_139(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   double *arg2 = (double *) 0 ;
   std::size_t arg3 ;
@@ -2781,7 +2781,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_140(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_140(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   double *arg2 = (double *) 0 ;
   std::size_t arg3 ;
@@ -2796,7 +2796,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_141(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4, jboolean jarg5) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_141(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4, jboolean jarg5) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   long *arg2 = (long *) 0 ;
   std::size_t arg3 ;
@@ -2815,7 +2815,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_142(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_142(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   long *arg2 = (long *) 0 ;
   std::size_t arg3 ;
@@ -2832,7 +2832,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_143(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_143(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   long *arg2 = (long *) 0 ;
   std::size_t arg3 ;
@@ -2847,7 +2847,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_144(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4, jboolean jarg5) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_144(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4, jboolean jarg5) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   int *arg2 = (int *) 0 ;
   std::size_t arg3 ;
@@ -2866,7 +2866,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_145(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_145(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   int *arg2 = (int *) 0 ;
   std::size_t arg3 ;
@@ -2883,7 +2883,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_146(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_146(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   int *arg2 = (int *) 0 ;
   std::size_t arg3 ;
@@ -2898,7 +2898,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_147(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4, jboolean jarg5) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_147(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4, jboolean jarg5) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   short *arg2 = (short *) 0 ;
   std::size_t arg3 ;
@@ -2917,7 +2917,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_148(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_148(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   short *arg2 = (short *) 0 ;
   std::size_t arg3 ;
@@ -2934,7 +2934,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_149(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_149(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   short *arg2 = (short *) 0 ;
   std::size_t arg3 ;
@@ -2949,7 +2949,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_150(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jlong jarg3, jdouble jarg4, jboolean jarg5) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_150(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jlong jarg3, jdouble jarg4, jboolean jarg5) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   char *arg2 = (char *) 0 ;
   std::size_t arg3 ;
@@ -2973,7 +2973,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_151(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jlong jarg3, jdouble jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_151(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jlong jarg3, jdouble jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   char *arg2 = (char *) 0 ;
   std::size_t arg3 ;
@@ -2995,7 +2995,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_152(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jlong jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_152(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jlong jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   char *arg2 = (char *) 0 ;
   std::size_t arg3 ;
@@ -3015,7 +3015,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_153(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4, jboolean jarg5) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_153(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4, jboolean jarg5) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::string *arg2 = (std::string *) 0 ;
   std::size_t arg3 ;
@@ -3034,7 +3034,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_154(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_154(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::string *arg2 = (std::string *) 0 ;
   std::size_t arg3 ;
@@ -3051,7 +3051,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_155(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_155(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::string *arg2 = (std::string *) 0 ;
   std::size_t arg3 ;
@@ -3066,7 +3066,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_156(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jboolean jarg5) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_156(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jboolean jarg5) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   float *arg2 = (float *) 0 ;
   double *arg3 = (double *) 0 ;
@@ -3085,7 +3085,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_157(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_157(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   float *arg2 = (float *) 0 ;
   double *arg3 = (double *) 0 ;
@@ -3102,7 +3102,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_158(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jboolean jarg5) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_158(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jboolean jarg5) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   double *arg2 = (double *) 0 ;
   double *arg3 = (double *) 0 ;
@@ -3121,7 +3121,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_159(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_159(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   double *arg2 = (double *) 0 ;
   double *arg3 = (double *) 0 ;
@@ -3138,7 +3138,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_160(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jboolean jarg5) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_160(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jboolean jarg5) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   long *arg2 = (long *) 0 ;
   double *arg3 = (double *) 0 ;
@@ -3157,7 +3157,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_161(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_161(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   long *arg2 = (long *) 0 ;
   double *arg3 = (double *) 0 ;
@@ -3174,7 +3174,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_162(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jboolean jarg5) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_162(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jboolean jarg5) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   int *arg2 = (int *) 0 ;
   double *arg3 = (double *) 0 ;
@@ -3193,7 +3193,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_163(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_163(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   int *arg2 = (int *) 0 ;
   double *arg3 = (double *) 0 ;
@@ -3210,7 +3210,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_164(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jboolean jarg5) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_164(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jboolean jarg5) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   short *arg2 = (short *) 0 ;
   double *arg3 = (double *) 0 ;
@@ -3229,7 +3229,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_165(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_165(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   short *arg2 = (short *) 0 ;
   double *arg3 = (double *) 0 ;
@@ -3246,7 +3246,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_166(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jlong jarg3, jlong jarg4, jboolean jarg5) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_166(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jlong jarg3, jlong jarg4, jboolean jarg5) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   char *arg2 = (char *) 0 ;
   double *arg3 = (double *) 0 ;
@@ -3270,7 +3270,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_167(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jlong jarg3, jlong jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_167(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jlong jarg3, jlong jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   char *arg2 = (char *) 0 ;
   double *arg3 = (double *) 0 ;
@@ -3292,7 +3292,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_168(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jboolean jarg5) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_168(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jboolean jarg5) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::string *arg2 = (std::string *) 0 ;
   double *arg3 = (double *) 0 ;
@@ -3311,7 +3311,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_169(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1push_1chunk_1multiplexed_1_1SWIG_169(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   std::string *arg2 = (std::string *) 0 ;
   double *arg3 = (double *) 0 ;
@@ -3328,7 +3328,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1have_1consumers(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jboolean JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1have_1consumers(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jboolean jresult = 0 ;
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   bool result;
@@ -3343,7 +3343,7 @@ SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outl
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1wait_1for_1consumers(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jdouble jarg2) {
+SWIGEXPORT jboolean JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1wait_1for_1consumers(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jdouble jarg2) {
   jboolean jresult = 0 ;
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   double arg2 ;
@@ -3360,7 +3360,7 @@ SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outl
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_1info(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1outlet_1info(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   lsl::stream_info result;
@@ -3375,7 +3375,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1outlet_
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1stream_1outlet(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_delete_1stream_1outlet(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   lsl::stream_outlet *arg1 = (lsl::stream_outlet *) 0 ;
   
   (void)jenv;
@@ -3385,7 +3385,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1stream_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_resolve_1streams_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jdouble jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_resolve_1streams_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jdouble jarg1) {
   jlong jresult = 0 ;
   double arg1 ;
   std::vector< lsl::stream_info > result;
@@ -3399,7 +3399,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_resolve_1stream
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_resolve_1streams_1_1SWIG_11(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_resolve_1streams_1_1SWIG_11(JNIEnv *jenv, jclass jcls) {
   jlong jresult = 0 ;
   std::vector< lsl::stream_info > result;
   
@@ -3411,7 +3411,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_resolve_1stream
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_resolve_1stream_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jint jarg3, jdouble jarg4) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_resolve_1stream_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jint jarg3, jdouble jarg4) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   std::string *arg2 = 0 ;
@@ -3447,7 +3447,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_resolve_1stream
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_resolve_1stream_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jint jarg3) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_resolve_1stream_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jint jarg3) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   std::string *arg2 = 0 ;
@@ -3481,7 +3481,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_resolve_1stream
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_resolve_1stream_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_resolve_1stream_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   std::string *arg2 = 0 ;
@@ -3513,7 +3513,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_resolve_1stream
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_resolve_1stream_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jstring jarg1, jint jarg2, jdouble jarg3) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_resolve_1stream_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jstring jarg1, jint jarg2, jdouble jarg3) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   int arg2 ;
@@ -3539,7 +3539,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_resolve_1stream
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_resolve_1stream_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jstring jarg1, jint jarg2) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_resolve_1stream_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jstring jarg1, jint jarg2) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   int arg2 ;
@@ -3563,7 +3563,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_resolve_1stream
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_resolve_1stream_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jstring jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_resolve_1stream_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jstring jarg1) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   std::vector< lsl::stream_info > result;
@@ -3585,7 +3585,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_resolve_1stream
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_check_1error(JNIEnv *jenv, jclass jcls, jint jarg1) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_check_1error(JNIEnv *jenv, jclass jcls, jint jarg1) {
   int arg1 ;
   
   (void)jenv;
@@ -3595,7 +3595,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_check_1error(JNI
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1inlet_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3, jboolean jarg4) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1stream_1inlet_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3, jboolean jarg4) {
   jlong jresult = 0 ;
   lsl::stream_info *arg1 = 0 ;
   int arg2 ;
@@ -3620,7 +3620,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1in
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1inlet_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1stream_1inlet_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3) {
   jlong jresult = 0 ;
   lsl::stream_info *arg1 = 0 ;
   int arg2 ;
@@ -3643,7 +3643,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1in
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1inlet_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1stream_1inlet_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
   jlong jresult = 0 ;
   lsl::stream_info *arg1 = 0 ;
   int arg2 ;
@@ -3664,7 +3664,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1in
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1inlet_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1stream_1inlet_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::stream_info *arg1 = 0 ;
   lsl::stream_inlet *result = 0 ;
@@ -3683,7 +3683,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1stream_1in
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1stream_1inlet(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_delete_1stream_1inlet(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   
   (void)jenv;
@@ -3693,7 +3693,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1stream_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1info_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jdouble jarg2) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1info_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jdouble jarg2) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   double arg2 ;
@@ -3710,7 +3710,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1info_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1info_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   lsl::stream_info result;
@@ -3725,7 +3725,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1open_1stream_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jdouble jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1open_1stream_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jdouble jarg2) {
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   double arg2 ;
   
@@ -3738,7 +3738,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1o
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1open_1stream_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1open_1stream_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   
   (void)jenv;
@@ -3749,7 +3749,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1o
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1close_1stream(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1close_1stream(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   
   (void)jenv;
@@ -3760,7 +3760,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1c
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1time_1correction_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jdouble jarg2) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1time_1correction_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jdouble jarg2) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   double arg2 ;
@@ -3777,7 +3777,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1time_1correction_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1time_1correction_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   double result;
@@ -3792,7 +3792,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::vector< float > *arg2 = 0 ;
@@ -3816,7 +3816,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::vector< float > *arg2 = 0 ;
@@ -3838,7 +3838,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::vector< double > *arg2 = 0 ;
@@ -3862,7 +3862,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::vector< double > *arg2 = 0 ;
@@ -3884,7 +3884,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_16(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_16(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::vector< long > *arg2 = 0 ;
@@ -3908,7 +3908,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::vector< long > *arg2 = 0 ;
@@ -3930,7 +3930,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_18(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_18(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::vector< int > *arg2 = 0 ;
@@ -3954,7 +3954,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_19(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_19(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::vector< int > *arg2 = 0 ;
@@ -3976,7 +3976,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_110(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_110(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::vector< short > *arg2 = 0 ;
@@ -4000,7 +4000,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_111(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_111(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::vector< short > *arg2 = 0 ;
@@ -4022,7 +4022,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_112(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_112(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jdouble jarg3) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::vector< char > *arg2 = 0 ;
@@ -4045,7 +4045,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_113(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_113(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::vector< char > *arg2 = 0 ;
@@ -4066,7 +4066,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_114(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_114(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::vector< std::string > *arg2 = 0 ;
@@ -4090,7 +4090,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_115(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_115(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::vector< std::string > *arg2 = 0 ;
@@ -4112,7 +4112,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_116(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3, jdouble jarg4) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_116(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3, jdouble jarg4) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   float *arg2 = (float *) 0 ;
@@ -4133,7 +4133,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_117(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_117(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   float *arg2 = (float *) 0 ;
@@ -4152,7 +4152,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_118(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3, jdouble jarg4) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_118(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3, jdouble jarg4) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   double *arg2 = (double *) 0 ;
@@ -4173,7 +4173,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_119(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_119(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   double *arg2 = (double *) 0 ;
@@ -4192,7 +4192,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_120(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3, jdouble jarg4) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_120(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3, jdouble jarg4) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   long *arg2 = (long *) 0 ;
@@ -4213,7 +4213,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_121(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_121(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   long *arg2 = (long *) 0 ;
@@ -4232,7 +4232,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_122(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3, jdouble jarg4) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_122(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3, jdouble jarg4) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   int *arg2 = (int *) 0 ;
@@ -4253,7 +4253,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_123(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_123(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   int *arg2 = (int *) 0 ;
@@ -4272,7 +4272,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_124(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3, jdouble jarg4) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_124(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3, jdouble jarg4) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   short *arg2 = (short *) 0 ;
@@ -4293,7 +4293,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_125(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_125(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   short *arg2 = (short *) 0 ;
@@ -4312,7 +4312,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_126(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jint jarg3, jdouble jarg4) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_126(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jint jarg3, jdouble jarg4) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   char *arg2 = (char *) 0 ;
@@ -4338,7 +4338,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_127(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jint jarg3) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_127(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jint jarg3) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   char *arg2 = (char *) 0 ;
@@ -4362,7 +4362,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_128(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3, jdouble jarg4) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_128(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3, jdouble jarg4) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::string *arg2 = (std::string *) 0 ;
@@ -4383,7 +4383,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_129(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_129(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::string *arg2 = (std::string *) 0 ;
@@ -4402,7 +4402,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1numeric_1raw_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3, jdouble jarg4) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1numeric_1raw_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3, jdouble jarg4) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   void *arg2 = (void *) 0 ;
@@ -4423,7 +4423,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1numeric_1raw_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1numeric_1raw_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jint jarg3) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   void *arg2 = (void *) 0 ;
@@ -4442,7 +4442,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jdouble jarg6) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jdouble jarg6) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   float *arg2 = (float *) 0 ;
@@ -4467,7 +4467,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   float *arg2 = (float *) 0 ;
@@ -4490,7 +4490,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jdouble jarg6) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jdouble jarg6) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   double *arg2 = (double *) 0 ;
@@ -4515,7 +4515,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   double *arg2 = (double *) 0 ;
@@ -4538,7 +4538,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jdouble jarg6) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jdouble jarg6) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   long *arg2 = (long *) 0 ;
@@ -4563,7 +4563,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   long *arg2 = (long *) 0 ;
@@ -4586,7 +4586,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_16(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jdouble jarg6) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_16(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jdouble jarg6) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   int *arg2 = (int *) 0 ;
@@ -4611,7 +4611,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_17(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   int *arg2 = (int *) 0 ;
@@ -4634,7 +4634,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_18(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jdouble jarg6) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_18(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jdouble jarg6) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   short *arg2 = (short *) 0 ;
@@ -4659,7 +4659,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_19(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_19(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   short *arg2 = (short *) 0 ;
@@ -4682,7 +4682,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_110(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jdouble jarg6) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_110(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jdouble jarg6) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   char *arg2 = (char *) 0 ;
@@ -4712,7 +4712,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_111(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jlong jarg3, jlong jarg4, jlong jarg5) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_111(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jlong jarg3, jlong jarg4, jlong jarg5) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   char *arg2 = (char *) 0 ;
@@ -4740,7 +4740,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_112(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jdouble jarg6) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_112(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5, jdouble jarg6) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::string *arg2 = (std::string *) 0 ;
@@ -4765,7 +4765,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_113(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1chunk_1multiplexed_1_1SWIG_113(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jlong jarg4, jlong jarg5) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::string *arg2 = (std::string *) 0 ;
@@ -4788,7 +4788,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1samples_1available(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1samples_1available(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   std::size_t result;
@@ -4803,7 +4803,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inlet_1was_1clock_1reset(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jboolean JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1was_1clock_1reset(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jboolean jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
   bool result;
@@ -4818,7 +4818,7 @@ SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_stream_1inle
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1xml_1element(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1xml_1element(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   lsl_xml_ptr arg1 ;
   lsl_xml_ptr *argp1 ;
@@ -4838,7 +4838,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1xml_1eleme
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1first_1child(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1first_1child(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   SwigValueWrapper< lsl::xml_element > result;
@@ -4853,7 +4853,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1f
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1last_1child(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1last_1child(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   SwigValueWrapper< lsl::xml_element > result;
@@ -4868,7 +4868,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1l
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1next_1sibling_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1next_1sibling_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   SwigValueWrapper< lsl::xml_element > result;
@@ -4883,7 +4883,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1n
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1previous_1sibling_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1previous_1sibling_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   SwigValueWrapper< lsl::xml_element > result;
@@ -4898,7 +4898,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1p
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1parent(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1parent(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   SwigValueWrapper< lsl::xml_element > result;
@@ -4913,7 +4913,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1p
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1child(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1child(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
@@ -4938,7 +4938,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1c
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1next_1sibling_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1next_1sibling_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
@@ -4963,7 +4963,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1n
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1previous_1sibling_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1previous_1sibling_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
@@ -4988,7 +4988,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1p
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1empty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jboolean JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1empty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jboolean jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   bool result;
@@ -5003,7 +5003,7 @@ SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1is_1text(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jboolean JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1is_1text(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jboolean jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   bool result;
@@ -5018,7 +5018,7 @@ SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element
 }
 
 
-SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1name(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jstring JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1name(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jstring jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   char *result = 0 ;
@@ -5033,7 +5033,7 @@ SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_
 }
 
 
-SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1value(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jstring JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1value(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jstring jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   char *result = 0 ;
@@ -5048,7 +5048,7 @@ SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_
 }
 
 
-SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1child_1value_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jstring JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1child_1value_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jstring jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   char *result = 0 ;
@@ -5063,7 +5063,7 @@ SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_
 }
 
 
-SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1child_1value_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+SWIGEXPORT jstring JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1child_1value_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
   jstring jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
@@ -5088,7 +5088,7 @@ SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1append_1child_1value(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jstring jarg3) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1append_1child_1value(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jstring jarg3) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
@@ -5123,7 +5123,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1a
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1prepend_1child_1value(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jstring jarg3) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1prepend_1child_1value(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jstring jarg3) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
@@ -5158,7 +5158,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1p
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1set_1child_1value(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jstring jarg3) {
+SWIGEXPORT jboolean JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1set_1child_1value(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2, jstring jarg3) {
   jboolean jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
@@ -5193,7 +5193,7 @@ SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1set_1name(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+SWIGEXPORT jboolean JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1set_1name(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
   jboolean jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
@@ -5218,7 +5218,7 @@ SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1set_1value(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+SWIGEXPORT jboolean JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1set_1value(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
   jboolean jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
@@ -5243,7 +5243,7 @@ SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1append_1child(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1append_1child(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
@@ -5268,7 +5268,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1a
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1prepend_1child(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1prepend_1child(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
@@ -5293,7 +5293,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1p
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1append_1copy(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1append_1copy(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   lsl::xml_element *arg2 = 0 ;
@@ -5315,7 +5315,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1a
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1prepend_1copy(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1prepend_1copy(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   lsl::xml_element *arg2 = 0 ;
@@ -5337,7 +5337,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1p
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1remove_1child_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1remove_1child_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
   
@@ -5358,7 +5358,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1re
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1remove_1child_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1remove_1child_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   lsl::xml_element *arg2 = 0 ;
   
@@ -5376,7 +5376,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_xml_1element_1re
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1xml_1element(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_delete_1xml_1element(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   
   (void)jenv;
@@ -5386,7 +5386,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1xml_1ele
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1continuous_1resolver_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jdouble jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1continuous_1resolver_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jdouble jarg1) {
   jlong jresult = 0 ;
   double arg1 ;
   lsl::continuous_resolver *result = 0 ;
@@ -5400,7 +5400,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1continuous
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1continuous_1resolver_1_1SWIG_11(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1continuous_1resolver_1_1SWIG_11(JNIEnv *jenv, jclass jcls) {
   jlong jresult = 0 ;
   lsl::continuous_resolver *result = 0 ;
   
@@ -5412,7 +5412,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1continuous
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1continuous_1resolver_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jdouble jarg3) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1continuous_1resolver_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2, jdouble jarg3) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   std::string *arg2 = 0 ;
@@ -5446,7 +5446,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1continuous
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1continuous_1resolver_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1continuous_1resolver_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jstring jarg1, jstring jarg2) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   std::string *arg2 = 0 ;
@@ -5478,7 +5478,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1continuous
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1continuous_1resolver_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jstring jarg1, jdouble jarg2) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1continuous_1resolver_1_1SWIG_14(JNIEnv *jenv, jclass jcls, jstring jarg1, jdouble jarg2) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   double arg2 ;
@@ -5502,7 +5502,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1continuous
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1continuous_1resolver_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jstring jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1continuous_1resolver_1_1SWIG_15(JNIEnv *jenv, jclass jcls, jstring jarg1) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   lsl::continuous_resolver *result = 0 ;
@@ -5524,7 +5524,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1continuous
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_continuous_1resolver_1results(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_continuous_1resolver_1results(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::continuous_resolver *arg1 = (lsl::continuous_resolver *) 0 ;
   std::vector< lsl::stream_info > result;
@@ -5539,7 +5539,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_continuous_1res
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1continuous_1resolver(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_delete_1continuous_1resolver(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   lsl::continuous_resolver *arg1 = (lsl::continuous_resolver *) 0 ;
   
   (void)jenv;
@@ -5549,7 +5549,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1continuo
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1lost_1error(JNIEnv *jenv, jclass jcls, jstring jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1lost_1error(JNIEnv *jenv, jclass jcls, jstring jarg1) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   lsl::lost_error *result = 0 ;
@@ -5571,7 +5571,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1lost_1erro
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1lost_1error(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_delete_1lost_1error(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   lsl::lost_error *arg1 = (lsl::lost_error *) 0 ;
   
   (void)jenv;
@@ -5581,7 +5581,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1lost_1er
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1timeout_1error(JNIEnv *jenv, jclass jcls, jstring jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1timeout_1error(JNIEnv *jenv, jclass jcls, jstring jarg1) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
   lsl::timeout_error *result = 0 ;
@@ -5603,7 +5603,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1timeout_1e
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1timeout_1error(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_delete_1timeout_1error(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   lsl::timeout_error *arg1 = (lsl::timeout_error *) 0 ;
   
   (void)jenv;
@@ -5613,7 +5613,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1timeout_
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectorf_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1vectorf_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
   jlong jresult = 0 ;
   std::vector< float > *result = 0 ;
   
@@ -5625,7 +5625,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectorf_1_
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectorf_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1vectorf_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   std::vector< float >::size_type arg1 ;
   std::vector< float > *result = 0 ;
@@ -5639,7 +5639,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectorf_1_
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorf_1size(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorf_1size(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   std::vector< float >::size_type result;
@@ -5654,7 +5654,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorf_1size(J
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorf_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorf_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   std::vector< float >::size_type result;
@@ -5669,7 +5669,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorf_1capaci
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorf_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorf_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   std::vector< float >::size_type arg2 ;
   
@@ -5682,7 +5682,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorf_1reserve
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorf_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jboolean JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorf_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jboolean jresult = 0 ;
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   bool result;
@@ -5697,7 +5697,7 @@ SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorf_1isE
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorf_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorf_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   
   (void)jenv;
@@ -5708,7 +5708,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorf_1clear(J
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorf_1add(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jfloat jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorf_1add(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jfloat jarg2) {
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   std::vector< float >::value_type *arg2 = 0 ;
   std::vector< float >::value_type temp2 ;
@@ -5723,7 +5723,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorf_1add(JNI
 }
 
 
-SWIGEXPORT jfloat JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorf_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+SWIGEXPORT jfloat JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorf_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
   jfloat jresult = 0 ;
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   int arg2 ;
@@ -5747,7 +5747,7 @@ SWIGEXPORT jfloat JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorf_1get(J
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorf_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jfloat jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorf_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jfloat jarg3) {
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   int arg2 ;
   std::vector< float >::value_type *arg3 = 0 ;
@@ -5771,7 +5771,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorf_1set(JNI
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1vectorf(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_delete_1vectorf(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   
   (void)jenv;
@@ -5781,7 +5781,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1vectorf(
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectord_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1vectord_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
   jlong jresult = 0 ;
   std::vector< double > *result = 0 ;
   
@@ -5793,7 +5793,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectord_1_
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectord_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1vectord_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   std::vector< double >::size_type arg1 ;
   std::vector< double > *result = 0 ;
@@ -5807,7 +5807,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectord_1_
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectord_1size(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectord_1size(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   std::vector< double > *arg1 = (std::vector< double > *) 0 ;
   std::vector< double >::size_type result;
@@ -5822,7 +5822,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectord_1size(J
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectord_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectord_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   std::vector< double > *arg1 = (std::vector< double > *) 0 ;
   std::vector< double >::size_type result;
@@ -5837,7 +5837,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectord_1capaci
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectord_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectord_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   std::vector< double > *arg1 = (std::vector< double > *) 0 ;
   std::vector< double >::size_type arg2 ;
   
@@ -5850,7 +5850,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectord_1reserve
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_vectord_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jboolean JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectord_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jboolean jresult = 0 ;
   std::vector< double > *arg1 = (std::vector< double > *) 0 ;
   bool result;
@@ -5865,7 +5865,7 @@ SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_vectord_1isE
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectord_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectord_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   std::vector< double > *arg1 = (std::vector< double > *) 0 ;
   
   (void)jenv;
@@ -5876,7 +5876,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectord_1clear(J
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectord_1add(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jdouble jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectord_1add(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jdouble jarg2) {
   std::vector< double > *arg1 = (std::vector< double > *) 0 ;
   std::vector< double >::value_type *arg2 = 0 ;
   std::vector< double >::value_type temp2 ;
@@ -5891,7 +5891,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectord_1add(JNI
 }
 
 
-SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_vectord_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectord_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
   jdouble jresult = 0 ;
   std::vector< double > *arg1 = (std::vector< double > *) 0 ;
   int arg2 ;
@@ -5915,7 +5915,7 @@ SWIGEXPORT jdouble JNICALL Java_com_example_hellojni_lslAndroidJNI_vectord_1get(
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectord_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jdouble jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectord_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jdouble jarg3) {
   std::vector< double > *arg1 = (std::vector< double > *) 0 ;
   int arg2 ;
   std::vector< double >::value_type *arg3 = 0 ;
@@ -5939,7 +5939,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectord_1set(JNI
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1vectord(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_delete_1vectord(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   std::vector< double > *arg1 = (std::vector< double > *) 0 ;
   
   (void)jenv;
@@ -5949,7 +5949,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1vectord(
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectorl_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1vectorl_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
   jlong jresult = 0 ;
   std::vector< long > *result = 0 ;
   
@@ -5961,7 +5961,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectorl_1_
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectorl_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1vectorl_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   std::vector< long >::size_type arg1 ;
   std::vector< long > *result = 0 ;
@@ -5975,7 +5975,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectorl_1_
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorl_1size(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorl_1size(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   std::vector< long >::size_type result;
@@ -5990,7 +5990,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorl_1size(J
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorl_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorl_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   std::vector< long >::size_type result;
@@ -6005,7 +6005,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorl_1capaci
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorl_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorl_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   std::vector< long >::size_type arg2 ;
   
@@ -6018,7 +6018,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorl_1reserve
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorl_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jboolean JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorl_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jboolean jresult = 0 ;
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   bool result;
@@ -6033,7 +6033,7 @@ SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorl_1isE
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorl_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorl_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   
   (void)jenv;
@@ -6044,7 +6044,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorl_1clear(J
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorl_1add(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorl_1add(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   std::vector< long >::value_type *arg2 = 0 ;
   std::vector< long >::value_type temp2 ;
@@ -6059,7 +6059,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorl_1add(JNI
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorl_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorl_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
   jint jresult = 0 ;
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   int arg2 ;
@@ -6083,7 +6083,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorl_1get(JNI
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorl_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorl_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3) {
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   int arg2 ;
   std::vector< long >::value_type *arg3 = 0 ;
@@ -6107,7 +6107,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorl_1set(JNI
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1vectorl(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_delete_1vectorl(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   
   (void)jenv;
@@ -6117,7 +6117,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1vectorl(
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectori_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1vectori_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
   jlong jresult = 0 ;
   std::vector< int > *result = 0 ;
   
@@ -6129,7 +6129,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectori_1_
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectori_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1vectori_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   std::vector< int >::size_type arg1 ;
   std::vector< int > *result = 0 ;
@@ -6143,7 +6143,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectori_1_
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectori_1size(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectori_1size(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   std::vector< int >::size_type result;
@@ -6158,7 +6158,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectori_1size(J
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectori_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectori_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   std::vector< int >::size_type result;
@@ -6173,7 +6173,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectori_1capaci
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectori_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectori_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   std::vector< int >::size_type arg2 ;
   
@@ -6186,7 +6186,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectori_1reserve
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_vectori_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jboolean JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectori_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jboolean jresult = 0 ;
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   bool result;
@@ -6201,7 +6201,7 @@ SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_vectori_1isE
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectori_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectori_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   
   (void)jenv;
@@ -6212,7 +6212,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectori_1clear(J
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectori_1add(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectori_1add(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   std::vector< int >::value_type *arg2 = 0 ;
   std::vector< int >::value_type temp2 ;
@@ -6227,7 +6227,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectori_1add(JNI
 }
 
 
-SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_vectori_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectori_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
   jint jresult = 0 ;
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   int arg2 ;
@@ -6251,7 +6251,7 @@ SWIGEXPORT jint JNICALL Java_com_example_hellojni_lslAndroidJNI_vectori_1get(JNI
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectori_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectori_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jint jarg3) {
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   int arg2 ;
   std::vector< int >::value_type *arg3 = 0 ;
@@ -6275,7 +6275,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectori_1set(JNI
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1vectori(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_delete_1vectori(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   
   (void)jenv;
@@ -6285,7 +6285,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1vectori(
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectors_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1vectors_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
   jlong jresult = 0 ;
   std::vector< short > *result = 0 ;
   
@@ -6297,7 +6297,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectors_1_
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectors_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1vectors_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   std::vector< short >::size_type arg1 ;
   std::vector< short > *result = 0 ;
@@ -6311,7 +6311,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectors_1_
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectors_1size(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectors_1size(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   std::vector< short > *arg1 = (std::vector< short > *) 0 ;
   std::vector< short >::size_type result;
@@ -6326,7 +6326,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectors_1size(J
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectors_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectors_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   std::vector< short > *arg1 = (std::vector< short > *) 0 ;
   std::vector< short >::size_type result;
@@ -6341,7 +6341,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectors_1capaci
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectors_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectors_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   std::vector< short > *arg1 = (std::vector< short > *) 0 ;
   std::vector< short >::size_type arg2 ;
   
@@ -6354,7 +6354,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectors_1reserve
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_vectors_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jboolean JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectors_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jboolean jresult = 0 ;
   std::vector< short > *arg1 = (std::vector< short > *) 0 ;
   bool result;
@@ -6369,7 +6369,7 @@ SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_vectors_1isE
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectors_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectors_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   std::vector< short > *arg1 = (std::vector< short > *) 0 ;
   
   (void)jenv;
@@ -6380,7 +6380,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectors_1clear(J
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectors_1add(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jshort jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectors_1add(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jshort jarg2) {
   std::vector< short > *arg1 = (std::vector< short > *) 0 ;
   std::vector< short >::value_type *arg2 = 0 ;
   std::vector< short >::value_type temp2 ;
@@ -6395,7 +6395,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectors_1add(JNI
 }
 
 
-SWIGEXPORT jshort JNICALL Java_com_example_hellojni_lslAndroidJNI_vectors_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+SWIGEXPORT jshort JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectors_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
   jshort jresult = 0 ;
   std::vector< short > *arg1 = (std::vector< short > *) 0 ;
   int arg2 ;
@@ -6419,7 +6419,7 @@ SWIGEXPORT jshort JNICALL Java_com_example_hellojni_lslAndroidJNI_vectors_1get(J
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectors_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jshort jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectors_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jshort jarg3) {
   std::vector< short > *arg1 = (std::vector< short > *) 0 ;
   int arg2 ;
   std::vector< short >::value_type *arg3 = 0 ;
@@ -6443,7 +6443,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectors_1set(JNI
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1vectors(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_delete_1vectors(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   std::vector< short > *arg1 = (std::vector< short > *) 0 ;
   
   (void)jenv;
@@ -6453,7 +6453,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1vectors(
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectorstr_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1vectorstr_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
   jlong jresult = 0 ;
   std::vector< std::string > *result = 0 ;
   
@@ -6465,7 +6465,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectorstr_
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectorstr_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1vectorstr_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   std::vector< std::string >::size_type arg1 ;
   std::vector< std::string > *result = 0 ;
@@ -6479,7 +6479,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectorstr_
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorstr_1size(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorstr_1size(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
   std::vector< std::string >::size_type result;
@@ -6494,7 +6494,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorstr_1size
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorstr_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorstr_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
   std::vector< std::string >::size_type result;
@@ -6509,7 +6509,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorstr_1capa
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorstr_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorstr_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
   std::vector< std::string >::size_type arg2 ;
   
@@ -6522,7 +6522,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorstr_1reser
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorstr_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jboolean JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorstr_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jboolean jresult = 0 ;
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
   bool result;
@@ -6537,7 +6537,7 @@ SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorstr_1i
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorstr_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorstr_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
   
   (void)jenv;
@@ -6548,7 +6548,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorstr_1clear
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorstr_1add(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorstr_1add(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
   std::vector< std::string >::value_type *arg2 = 0 ;
   
@@ -6569,7 +6569,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorstr_1add(J
 }
 
 
-SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorstr_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+SWIGEXPORT jstring JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorstr_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
   jstring jresult = 0 ;
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
   int arg2 ;
@@ -6593,7 +6593,7 @@ SWIGEXPORT jstring JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorstr_1ge
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorstr_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jstring jarg3) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorstr_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jstring jarg3) {
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
   int arg2 ;
   std::vector< std::string >::value_type *arg3 = 0 ;
@@ -6623,7 +6623,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorstr_1set(J
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1vectorstr(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_delete_1vectorstr(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
   
   (void)jenv;
@@ -6633,7 +6633,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1vectorst
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectorinfo_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1vectorinfo_1_1SWIG_10(JNIEnv *jenv, jclass jcls) {
   jlong jresult = 0 ;
   std::vector< lsl::stream_info > *result = 0 ;
   
@@ -6645,7 +6645,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectorinfo
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectorinfo_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1vectorinfo_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   std::vector< lsl::stream_info >::size_type arg1 ;
   std::vector< lsl::stream_info > *result = 0 ;
@@ -6659,7 +6659,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_new_1vectorinfo
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorinfo_1size(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorinfo_1size(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   std::vector< lsl::stream_info > *arg1 = (std::vector< lsl::stream_info > *) 0 ;
   std::vector< lsl::stream_info >::size_type result;
@@ -6674,7 +6674,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorinfo_1siz
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorinfo_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorinfo_1capacity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   std::vector< lsl::stream_info > *arg1 = (std::vector< lsl::stream_info > *) 0 ;
   std::vector< lsl::stream_info >::size_type result;
@@ -6689,7 +6689,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorinfo_1cap
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorinfo_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorinfo_1reserve(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
   std::vector< lsl::stream_info > *arg1 = (std::vector< lsl::stream_info > *) 0 ;
   std::vector< lsl::stream_info >::size_type arg2 ;
   
@@ -6702,7 +6702,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorinfo_1rese
 }
 
 
-SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorinfo_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT jboolean JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorinfo_1isEmpty(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jboolean jresult = 0 ;
   std::vector< lsl::stream_info > *arg1 = (std::vector< lsl::stream_info > *) 0 ;
   bool result;
@@ -6717,7 +6717,7 @@ SWIGEXPORT jboolean JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorinfo_1
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorinfo_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorinfo_1clear(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   std::vector< lsl::stream_info > *arg1 = (std::vector< lsl::stream_info > *) 0 ;
   
   (void)jenv;
@@ -6728,7 +6728,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorinfo_1clea
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorinfo_1add(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorinfo_1add(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
   std::vector< lsl::stream_info > *arg1 = (std::vector< lsl::stream_info > *) 0 ;
   std::vector< lsl::stream_info >::value_type *arg2 = 0 ;
   
@@ -6746,7 +6746,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorinfo_1add(
 }
 
 
-SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorinfo_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorinfo_1get(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2) {
   jlong jresult = 0 ;
   std::vector< lsl::stream_info > *arg1 = (std::vector< lsl::stream_info > *) 0 ;
   int arg2 ;
@@ -6770,7 +6770,7 @@ SWIGEXPORT jlong JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorinfo_1get
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorinfo_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jlong jarg3, jobject jarg3_) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_vectorinfo_1set(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jint jarg2, jlong jarg3, jobject jarg3_) {
   std::vector< lsl::stream_info > *arg1 = (std::vector< lsl::stream_info > *) 0 ;
   int arg2 ;
   std::vector< lsl::stream_info >::value_type *arg3 = 0 ;
@@ -6797,7 +6797,7 @@ SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_vectorinfo_1set(
 }
 
 
-SWIGEXPORT void JNICALL Java_com_example_hellojni_lslAndroidJNI_delete_1vectorinfo(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_delete_1vectorinfo(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   std::vector< lsl::stream_info > *arg1 = (std::vector< lsl::stream_info > *) 0 ;
   
   (void)jenv;
