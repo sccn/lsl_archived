@@ -23,10 +23,7 @@
 #include <stdexcept>
 
 namespace lsl {
-    namespace {
-        #include "lsl_c.h"
-    }
-
+   #include "lsl_c.h"
 
     /**
     * Constant to indicate that a stream has variable sampling rate.
@@ -83,7 +80,7 @@ namespace lsl {
 		post_threadsafe = 8,    // Post-processing is thread-safe (same inlet can be read from by multiple threads); uses somewhat more CPU.
 		post_ALL = 1|2|4|8		// The combination of all possible post-processing options.
 	};
-
+	
     /**
     * Protocol version.
     * The major version is protocol_version() / 100;

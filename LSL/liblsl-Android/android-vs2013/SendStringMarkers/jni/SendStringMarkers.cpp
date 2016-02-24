@@ -11,7 +11,7 @@ using namespace std;
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "SendStringMarkers", __VA_ARGS__))
 
-char *markertypes[] = { "Test", "Blah", "Marker", "XXX", "Testtest", "Test-1-2-3" };
+char *markertypes[] = { (char*)"Test", (char*)"Blah", (char*)"Marker", (char*)"XXX", (char*)"Testtest", (char*)"Test-1-2-3" };
 
 void send_markers() {
 

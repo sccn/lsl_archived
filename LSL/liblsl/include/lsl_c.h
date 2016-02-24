@@ -121,7 +121,7 @@ typedef enum {
 	proc_monotonize = 4,	/* Force the time-stamps to be monotonically ascending (only makes sense if timestamps are dejittered). */
 	proc_threadsafe = 8,    /* Post-processing is thread-safe (same inlet can be read from by multiple threads); uses somewhat more CPU. */
 	proc_ALL = 1|2|4|8		/* The combination of all possible post-processing options. */
-} processing_options_t;
+} lsl_processing_options_t;
 
 /**
 * Possible error codes.
