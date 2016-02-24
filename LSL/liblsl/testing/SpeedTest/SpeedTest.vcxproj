@@ -148,7 +148,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(ProjectName)32.exe</OutputFile>
-      <AdditionalLibraryDirectories>..\..\bin; $(BOOST_ROOT)\lib32-msvc-12.0;$(BOOST_ROOT)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\bin;$(BOOST_ROOT)\lib32-msvc-12.0;$(BOOST_ROOT)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>

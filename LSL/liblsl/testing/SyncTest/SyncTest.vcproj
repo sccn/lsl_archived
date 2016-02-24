@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\DEVEL\C++\labstreaminglayer\LSL\liblsl\external\&quot;"
+				AdditionalIncludeDirectories="..\..\external"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;BOOST_THREAD_BUILD_LIB;BOOST_ALL_NO_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -115,7 +115,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;C:\DEVEL\C++\labstreaminglayer\LSL\liblsl\external\&quot;"
+				AdditionalIncludeDirectories="..\..\external"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;BOOST_THREAD_BUILD_LIB;BOOST_ALL_NO_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
