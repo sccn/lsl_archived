@@ -1,4 +1,4 @@
-Build Instructions:
+Build Instructions for Android Examples run under visual studio:
 Install Visual Studio 2013.
 Install NVIDIA Codeworks for Android 1R3 (https://developer.nvidia.com/codeworks-android)
 

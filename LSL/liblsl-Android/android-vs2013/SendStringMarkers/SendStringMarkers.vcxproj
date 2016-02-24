@@ -173,6 +173,7 @@
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <GccExceptionHandling>true</GccExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\..\liblsl\include</AdditionalIncludeDirectories>
     </ClCompile>
     <AntBuild>
       <PreBuildCommand>$(SolutionDir)add_lsl.bat $(SolutionDir) $(ProjectDir)$(IntDir)</PreBuildCommand>
@@ -186,12 +187,13 @@
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <GccExceptionHandling>true</GccExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\..\liblsl\include</AdditionalIncludeDirectories>
     </ClCompile>
     <AntBuild>
-      <PreBuildCommand>xcopy /E /Y "$(SolutionDir)..\..\bin\liblsl-android-arm-debug.so" "$(IntDir)libs\armeabi-v7a\"</PreBuildCommand>
+      <PreBuildCommand>xcopy /E /Y "$(SolutionDir)bin\liblsl-android-arm-debug.so" "$(IntDir)libs\armeabi-v7a\"</PreBuildCommand>
     </AntBuild>
     <Link>
-      <AdditionalDependencies>$(SolutionDir)..\..\bin\liblsl-android-arm-debug.so</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)\bin\liblsl-android-arm-debug.so</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AArch64-Android-NVIDIA'">
@@ -199,12 +201,13 @@
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <GccExceptionHandling>true</GccExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\..\liblsl\include</AdditionalIncludeDirectories>
     </ClCompile>
     <AntBuild>
-      <PreBuildCommand>xcopy /E /Y "$(SolutionDir)..\..\bin\liblsl-android-aarch64-debug.so" "$(IntDir)libs\arm64-v8a\"</PreBuildCommand>
+      <PreBuildCommand>xcopy /E /Y "$(SolutionDir)bin\liblsl-android-aarch64-debug.so" "$(IntDir)libs\arm64-v8a\"</PreBuildCommand>
     </AntBuild>
     <Link>
-      <AdditionalDependencies>$(SolutionDir)..\..\bin\liblsl-android-aarch64-debug.so</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)bin\liblsl-android-aarch64-debug.so</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64-Android-NVIDIA'">
@@ -212,12 +215,13 @@
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <GccExceptionHandling>true</GccExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\..\liblsl\include</AdditionalIncludeDirectories>
     </ClCompile>
     <AntBuild>
-      <PreBuildCommand>xcopy /E /Y "$(SolutionDir)..\..\bin\liblsl-android-x64-debug.so" "$(IntDir)libs\x86_64\"</PreBuildCommand>
+      <PreBuildCommand>xcopy /E /Y "$(SolutionDir)bin\liblsl-android-x64-debug.so" "$(IntDir)libs\x86_64\"</PreBuildCommand>
     </AntBuild>
     <Link>
-      <AdditionalDependencies>$(SolutionDir)..\..\bin\liblsl-android-x64-debug.so</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)bin\liblsl-android-x64-debug.so</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86-Android-NVIDIA'">
@@ -225,12 +229,13 @@
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <GccExceptionHandling>true</GccExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\..\liblsl\include</AdditionalIncludeDirectories>
     </ClCompile>
     <AntBuild>
-      <PreBuildCommand>xcopy /E /Y "$(SolutionDir)..\..\bin\liblsl-android-x86-debug.so" "$(IntDir)libs\x86\"</PreBuildCommand>
+      <PreBuildCommand>xcopy /E /Y "$(SolutionDir)bin\liblsl-android-x86-debug.so" "$(IntDir)libs\x86\"</PreBuildCommand>
     </AntBuild>
     <Link>
-      <AdditionalDependencies>$(SolutionDir)..\..\bin\liblsl-android-x86-debug.so</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)bin\liblsl-android-x86-debug.so</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Tegra-Android'">
@@ -238,6 +243,7 @@
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <GccExceptionHandling>true</GccExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\..\liblsl\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(SolutionDir)..\..\bin\liblsl-android-aarch64.so;$(SolutionDir)..\..\bin\liblsl-android-arm.so;$(SolutionDir)..\..\bin\liblsl-android-x86.so;$(SolutionDir)..\..\bin\liblsl-android-x64.so</AdditionalDependencies>
@@ -251,12 +257,13 @@
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <GccExceptionHandling>true</GccExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\..\liblsl\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(SolutionDir)..\..\bin\liblsl-android-arm.so</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)\bin\liblsl-android-arm.so</AdditionalDependencies>
     </Link>
     <AntBuild>
-      <PreBuildCommand>xcopy /E /Y "$(SolutionDir)..\..\bin\liblsl-android-arm.so" "$(IntDir)libs\armeabi-v7a\"</PreBuildCommand>
+      <PreBuildCommand>xcopy /E /Y "$(SolutionDir)bin\liblsl-android-arm.so" "$(IntDir)libs\armeabi-v7a\"</PreBuildCommand>
     </AntBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|AArch64-Android-NVIDIA'">
@@ -264,12 +271,13 @@
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <GccExceptionHandling>true</GccExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\..\liblsl\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(SolutionDir)..\..\bin\liblsl-android-aarch64.so</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)bin\liblsl-android-aarch64.so</AdditionalDependencies>
     </Link>
     <AntBuild>
-      <PreBuildCommand>xcopy /E /Y "$(SolutionDir)..\..\bin\liblsl-android-aarch64.so" "$(IntDir)libs\arm64-v8a\"</PreBuildCommand>
+      <PreBuildCommand>xcopy /E /Y "$(SolutionDir)bin\liblsl-android-aarch64.so" "$(IntDir)libs\arm64-v8a\"</PreBuildCommand>
     </AntBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64-Android-NVIDIA'">
@@ -277,12 +285,13 @@
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <GccExceptionHandling>true</GccExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\..\liblsl\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(SolutionDir)..\..\bin\liblsl-android-x64.so</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)bin\liblsl-android-x64.so</AdditionalDependencies>
     </Link>
     <AntBuild>
-      <PreBuildCommand>xcopy /E /Y "$(SolutionDir)..\..\bin\liblsl-android-x64.so" "$(IntDir)libs\x86_64\"</PreBuildCommand>
+      <PreBuildCommand>xcopy /E /Y "$(SolutionDir)bin\liblsl-android-x64.so" "$(IntDir)libs\x86_64\"</PreBuildCommand>
     </AntBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86-Android-NVIDIA'">
@@ -290,12 +299,13 @@
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <GccExceptionHandling>true</GccExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\..\liblsl\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(SolutionDir)..\..\bin\liblsl-android-x86.so</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)bin\liblsl-android-x86.so</AdditionalDependencies>
     </Link>
     <AntBuild>
-      <PreBuildCommand>xcopy /E /Y "$(SolutionDir)..\..\bin\liblsl-android-x86.so" "$(IntDir)libs\x86\"</PreBuildCommand>
+      <PreBuildCommand>xcopy /E /Y "$(SolutionDir)bin\liblsl-android-x86.so" "$(IntDir)libs\x86\"</PreBuildCommand>
     </AntBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Tegra-Android'">
@@ -303,6 +313,7 @@
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <GccExceptionHandling>true</GccExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\..\liblsl\include</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|ARM-Android-NVIDIA'">
@@ -310,6 +321,7 @@
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <GccExceptionHandling>true</GccExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\..\liblsl\include</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|AArch64-Android-NVIDIA'">
@@ -317,6 +329,7 @@
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <GccExceptionHandling>true</GccExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\..\liblsl\include</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x64-Android-NVIDIA'">
@@ -324,6 +337,7 @@
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <GccExceptionHandling>true</GccExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\..\liblsl\include</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x86-Android-NVIDIA'">
@@ -331,6 +345,7 @@
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <GccExceptionHandling>true</GccExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>..\..\..\liblsl\include</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

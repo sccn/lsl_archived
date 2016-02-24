@@ -1,4 +1,4 @@
-This is a minimal Android setup with LSL, using a text based android build chain. There is also a Visual Studio based build chain available at liblsl/project/android-vs2013. The text based build chain demonstrates how to generate and use java swig wrappers. The Visual Studio option assumes that you will be writing an app that has as little Java as possible. There is nothing preventing these two options from being combined except time and desire.
+This is a minimal Android setup with LSL, using a text based android build chain. There is also a Visual Studio based build chain available at liblsl-Android/android-vs2013. The text based build chain demonstrates how to generate and use java swig wrappers. The Visual Studio option assumes that you will be writing an app that has as little Java as possible. There is nothing preventing these two options from being combined except time and desire.
 
 These instructions assume that you have installed Android CodeWorks 1R3, by NVidia, but only so that the Android ndk has the expected contents and location. It is possible to get the Android ndk from elsewhere, but the paths below may change somewhat.
 

@@ -3,7 +3,7 @@
 **********************************/
 #include <jni.h>
 #include <android/log.h>
-#include "../../../../include/lsl_cpp.h"
+#include "lsl_cpp.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
