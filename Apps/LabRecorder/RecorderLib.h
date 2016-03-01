@@ -1,34 +1,34 @@
 #ifndef RECORDERLIB_H
 #define RECORDERLIB_H
 
-/**
-* Recorder library API.
-*/
-
-#ifdef _WIN32
-	#ifdef RECORDERLIB_EXPORTS
-		#define RECORDERLIB_API __declspec(dllexport)
-	#else
-		#ifndef _DEBUG
-			#ifdef _WIN64
-				#pragma comment (lib,"recorderlib.lib")
-			#else
-				#pragma comment (lib,"recorderlib.lib")
-			#endif
-		#else
-			#ifdef _WIN64
-				#pragma comment (lib,"recorderlib-debug.lib")
-			#else
-				#pragma comment (lib,"recorderlib-debug.lib")
-			#endif
-		#endif
-		#define RECORDERLIB_API __declspec(dllimport)
-	#endif
-	#pragma warning (disable:4275)
-#else
-    #pragma GCC visibility push(default)
-    #define RECORDERLIB_API
-#endif
+///**
+//* Recorder library API.
+//*/
+//
+//#ifdef _WIN32
+//	#ifdef RECORDERLIB_EXPORTS
+//		#define RECORDERLIB_API __declspec(dllexport)
+//	#else
+//		#ifndef _DEBUG
+//			#ifdef _WIN64
+//				#pragma comment (lib,"recorderlib.lib")
+//			#else
+//				#pragma comment (lib,"recorderlib.lib")
+//			#endif
+//		#else
+//			#ifdef _WIN64
+//				#pragma comment (lib,"recorderlib-debug.lib")
+//			#else
+//				#pragma comment (lib,"recorderlib-debug.lib")
+//			#endif
+//		#endif
+//		#define RECORDERLIB_API __declspec(dllimport)
+//	#endif
+//	#pragma warning (disable:4275)
+//#else
+//    #pragma GCC visibility push(default)
+//    #define RECORDERLIB_API
+//#endif
 
 
 #ifdef __cplusplus
@@ -59,21 +59,21 @@ typedef struct rl_recording_* rl_recording;
 * @param collect_offsets Whether to collect clock offset information (keep this set to 1 unless you record from LSL drivers that use custom mutually synchronized clocks, e.g. GPS clocks)
 * @return A handle to the recording that can be used to stop once finished.
 */
-#ifdef _WIN32
-extern RECORDERLIB_API rl_recording rl_start_recording(char *filename, void **recordfrom, unsigned num_recordfrom, char *watchfor, int collect_offsets);
-#else
-extern rl_recording rl_start_recording(char *filename, void **recordfrom, unsigned num_recordfrom, char *watchfor, int collect_offsets);
-#endif
+//#ifdef _WIN32
+//extern RECORDERLIB_API rl_recording rl_start_recording(char *filename, void **recordfrom, unsigned num_recordfrom, char *watchfor, int collect_offsets);
+//#else
+extern rl_recording rl_start_recording(char *filename, std::vector<lsl::stream_info> recordfrom, unsigned num_recordfrom, char *watchfor, int collect_offsets);
+//#endif
 
 /**
 * End a recording and close the file.
 * This stops a recording and deletes the associated recording object.
 */ 
-#ifdef _WIN32
-extern RECORDERLIB_API void rl_end_recording(rl_recording rec);
-#else
+//#ifdef _WIN32
+//extern RECORDERLIB_API void rl_end_recording(rl_recording rec);
+//#else
 extern void rl_end_recording(rl_recording rec);
-#endif
+//#endif
 
 
 #ifdef __cplusplus
