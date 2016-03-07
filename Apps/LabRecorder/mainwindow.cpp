@@ -207,7 +207,8 @@ void MainWindow::refreshStreams(void) {
 				got_one = true;
 				break;
 		}
-		if(got_one==false)
+		if(got_one==false) // TODO, check to make sure this isn't an emtpy string!
+			if(*it1!="")
 				missingStreams.push_back(*it1); // push this string onto the missing vector
 	}
 
