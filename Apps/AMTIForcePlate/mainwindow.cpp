@@ -281,7 +281,7 @@ void MainWindow::read_thread(HANDLE hPort, int comPort, int samplingRate, int nu
 			.append_child_value("type","MomentumX");
 		channels.append_child("channel")
 			.append_child_value("label",("My" + deviceTag[k]).c_str())
-			.append_child_value("type","MomentumZ");
+			.append_child_value("type","Momentumy");
 		channels.append_child("channel")
 			.append_child_value("label",("Mz" + deviceTag[k]).c_str())
 			.append_child_value("type","MomentumZ");
