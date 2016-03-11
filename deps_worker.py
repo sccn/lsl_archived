@@ -123,9 +123,7 @@ apps = [
     "KinectMocap/KinectMocap",  # note -- kinect10.dll is missing from my computer -- fixed: one must install kinect runtime or the appropriate SDK
     "KinectMocap/KinectMocap/amd64",
     "KinectMocap/KinectMocap/x86",
-    "LabRecorder/src",
-    "LabRecorder/src/pylsl",
-    "LabRecorder/src/TestRecorder",
+    "LabRecorder",
     "MATLABImporter",
     "MATLABViewer",
     "MINDO",
@@ -373,31 +371,12 @@ apps_d = {
         'win32': ["/external_libs/Kinect/x86/Kinect10.lib"]
     },
 
-    # this program is structured very differently, so it breaks from the mold
-    'LabRecorder/src': {
-        'win32': [
-            "/external_libs/LabRecorder/src/RecorderLib32.lib",
-            "/external_libs/LabRecorder/src/RecorderLib32.dll",
-            "/external_libs/LabRecorder/src/RecorderLib64.lib",
-            "/external_libs/LabRecorder/src/RecorderLib64.dll",
-            "/external_libs/LabRecorder/src/RecorderLib64.dylib",
-            "/external_libs/LabRecorder/src/RecorderLib64.so"]
-    },
 
-    'LabRecorder/src/pylsl': {
-        'win32': [
-            cur_lsl+"bin/liblsl32.dll",
-            cur_lsl+"bin/liblsl32.dylib",
-            cur_lsl+"bin/liblsl64.dylib",
-            cur_lsl+"bin/liblsl32.so",
-            cur_lsl+"bin/liblsl64.so",
-            "/liblsl-Python/pylsl.py"]  # use the correct pylsl...
-    },
-
-    'LabRecorder/src/TestRecorder': {
+    'LabRecorder': {
         'win32': [cur_lsl+"bin/liblsl32.dll"],
         'win64': [cur_lsl+"bin/liblsl64.dll"],
-        'linux': [cur_lsl+"bin/liblsl32.so", cur_lsl+"bin/liblsl64.so"],
+        'OSX': [cur_lsl+"bin/liblsl64.dylib"],
+        'linux': [cur_lsl+"bin/liblsl64.so", cur_lsl+"bin/liblsl32.so"],
     },
 
     'MATLABImporter': {
