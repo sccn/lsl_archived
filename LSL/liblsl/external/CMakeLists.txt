@@ -48,7 +48,7 @@ if (UNIX)
     src/thread/src/pthread/once.cpp
     src/thread/src/pthread/thread.cpp
   )
-  set_property (TARGET boost PROPERTY COMPILE_FLAGS "-fPIC")
+  set_property (TARGET boost PROPERTY COMPILE_FLAGS "-fPIC -std=c++0x")
 else ()  # WIN32
   add_library (boost
     ${Boost_FILES}
