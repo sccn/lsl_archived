@@ -46,6 +46,15 @@ if (BUILD_SHARED)
   else ()
     target_link_libraries (lsl ${Boost_LIBRARIES})
   endif ()
+
+  if (CMAKE_VERSION VERSION_GREATER 2.8.8)
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5)
+	set_property (TARGET lsl PROPERTY COMPILE_FLAGS " -std=c++0x" APPEND_STRING)
+      endif ()
+    endif ()
+  endif()
+
 endif (BUILD_SHARED)
 
 if (BUILD_STATIC)
@@ -58,6 +67,15 @@ if (BUILD_STATIC)
     set_target_properties (lsl-static PROPERTIES OUTPUT_NAME lsl)
     target_link_libraries (lsl-static ${Boost_LIBRARIES} rt pthread)
   endif ()
+
+  if (CMAKE_VERSION VERSION_GREATER 2.8.8)
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5)
+	set_property (TARGET lsl-static PROPERTY COMPILE_FLAGS " -std=c++0x" APPEND_STRING)
+      endif ()
+    endif ()
+  endif()
+
 endif (BUILD_STATIC)
 
 
