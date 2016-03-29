@@ -18,8 +18,18 @@
 * this header. Under Visual Studio the library is linked in automatically.
 */
 
-#ifdef _WIN32
-    #ifdef LIBLSL_EXPORTS
+#ifdef __MINGW32__
+    #ifdef LIBLSL_STATIC
+        #define LIBLSL_C_API
+    #elif defined (LIBLSL_EXPORTS)
+        #define LIBLSL_C_API __declspec(dllexport)
+    #else
+        #define LIBLSL_C_API __declspec(dllimport)
+    #endif
+#elif defined (_WIN32)
+    #ifdef LIBLSL_STATIC
+        #define LIBLSL_C_API
+    #elif defined (LIBLSL_EXPORTS)
         #define LIBLSL_C_API __declspec(dllexport)
     #else
         #ifndef _DEBUG
