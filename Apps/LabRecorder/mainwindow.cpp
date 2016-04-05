@@ -1,6 +1,9 @@
-#include "mainwindow.h"
+
 #include "ui_mainwindow.h"
+#include "mainwindow.h"
+#ifdef __WIN32
 #include <Objbase.h>
+#endif
 #include <iostream>
 #include <string>
 #include <vector>
@@ -9,13 +12,20 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/algorithm/string.hpp>
+// #include <boost/algorithm/string.hpp>
 #include <algorithm>
+
+// recording class
+#include "recording.h"
+
+// global -- can't be in header file
+recording *currentRecording;
 
 
 MainWindow::MainWindow(QWidget *parent, const std::string &config_file) :
 QMainWindow(parent),
 ui(new Ui::MainWindow) {
+
 	ui->setupUi(this);
 	QObject::connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));	
 	QObject::connect(ui->actionLoadConfig, SIGNAL(triggered()), this, SLOT(browseConfigDialog()));			
@@ -110,7 +120,8 @@ void MainWindow::load_config(const std::string &filename) {
 		// required streams
 		// ----------------------------	
 		std::string str_requiredStreams = pt.get<std::string>("RequiredStreams","");
-		boost::algorithm::split(requiredStreams,str_requiredStreams.substr(1, str_requiredStreams.size()-2),boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
+		std::string rs_substr = str_requiredStreams.substr(1, str_requiredStreams.size()-2);
+		boost::algorithm::split(requiredStreams,rs_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
 		for (int k=0;k<requiredStreams.size();k++)
 			boost::algorithm::trim_if(requiredStreams[k],boost::algorithm::is_any_of(" '\""));
 		
@@ -121,7 +132,8 @@ void MainWindow::load_config(const std::string &filename) {
 		std::vector<std::string>sessionBlocks;
 		QListWidgetItem *item;
 		std::string str_sessionBlocks = pt.get<std::string>("SessionBlocks","");
-		boost::algorithm::split(sessionBlocks,str_sessionBlocks.substr(1, str_sessionBlocks.size()-2),boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
+		std::string sb_substr = str_sessionBlocks.substr(1, str_sessionBlocks.size()-2);
+		boost::algorithm::split(sessionBlocks,sb_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
 		
 		for (int k=0;k<sessionBlocks.size();k++) {
 			boost::algorithm::trim_if(sessionBlocks[k],boost::algorithm::is_any_of(" '\""));
@@ -346,19 +358,27 @@ void MainWindow::startRecording(void) {
 		}
 
 		std::vector<std::string> watchfor;
+
 		// go through all the listed streams
+		checkedStreams.clear();
 		for(int i=0;i<ui->streamList->count();i++)
 			// check if it is checked
-			if(ui->streamList->item(i)->checkState() == Qt::Checked)
+			if(ui->streamList->item(i)->checkState() == Qt::Checked){
+
+				// if checked and not missing, add it to the checkedStreams vector
+				for(std::vector<lsl::stream_info>::iterator it=resolvedStreams.begin(); it!=resolvedStreams.end(); ++it)
+					if(ui->streamList->item(i)->text().toStdString().compare(it->name()+ " (" + it->hostname()+")")==0)
+						checkedStreams.push_back(*it);
+
 				// if it is checked and also missing, watch for it
 				if(std::find(missingStreams.begin(), missingStreams.end(), ui->streamList->item(i)->text().toStdString())!=missingStreams.end())
 					watchfor.push_back(ui->streamList->item(i)->text().toStdString());
-
+			}
 
 		for(std::vector<std::string>::iterator it=watchfor.begin(); it!=watchfor.end();++it)
 			std::cout << *it << std::endl;
 
-		currentRecording = new recording(filename, resolvedStreams, watchfor, 1);
+		currentRecording = new recording(filename, checkedStreams, watchfor, 1);
 		currentlyRecording = true;
 		ui->stopButton->setEnabled(true);
 		ui->startButton->setEnabled(false);
