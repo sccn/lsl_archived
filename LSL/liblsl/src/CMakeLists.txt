@@ -33,11 +33,15 @@ message (${Boost_LIBRARIES})
 
 if (BUILD_SHARED)
   add_library (lsl SHARED ${sources})
-  
+
   # TODO: Need to check if all flags are necessary or if some flags are missing
   if (WIN32)
     set_property (TARGET lsl PROPERTY COMPILE_DEFINITIONS BOOST_ALL_NO_LIB BOOST_THREAD_BUILD_LIB LIBLSL_EXPORTS _SCL_SECURE_NO_WARNINGS _CRT_SECURE_NO_WARNINGS)
-    target_link_libraries (lsl ${Boost_LIBRARIES})
+    if (MINGW)
+      target_link_libraries (lsl ${Boost_LIBRARIES} winmm ws2_32 wsock32)
+    else ()
+      target_link_libraries (lsl ${Boost_LIBRARIES})
+    endif ()
   elseif (APPLE)
     target_link_libraries (lsl ${Boost_LIBRARIES} pthread)
   elseif (UNIX)
@@ -46,11 +50,21 @@ if (BUILD_SHARED)
   else ()
     target_link_libraries (lsl ${Boost_LIBRARIES})
   endif ()
+
+  if (CMAKE_VERSION VERSION_GREATER 2.8.8)
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5)
+	set_property (TARGET lsl PROPERTY COMPILE_FLAGS " -std=c++0x" APPEND_STRING)
+      endif ()
+    endif ()
+  endif()
+
 endif (BUILD_SHARED)
 
 if (BUILD_STATIC)
   add_library (lsl-static STATIC ${sources})
-  
+  set_property (TARGET lsl-static PROPERTY COMPILE_DEFINITIONS LIBLSL_STATIC)
+
   # TODO: Need to check if all flags are necessary or if some flags are missing
   # TODO: Add support for other platforms
   if (UNIX)
@@ -58,6 +72,15 @@ if (BUILD_STATIC)
     set_target_properties (lsl-static PROPERTIES OUTPUT_NAME lsl)
     target_link_libraries (lsl-static ${Boost_LIBRARIES} rt pthread)
   endif ()
+
+  if (CMAKE_VERSION VERSION_GREATER 2.8.8)
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5)
+	set_property (TARGET lsl-static PROPERTY COMPILE_FLAGS " -std=c++0x" APPEND_STRING)
+      endif ()
+    endif ()
+  endif()
+
 endif (BUILD_STATIC)
 
 

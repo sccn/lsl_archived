@@ -58,3 +58,14 @@ else ()  # WIN32
   )
   set_property (TARGET boost PROPERTY COMPILE_DEFINITIONS BOOST_ALL_NO_LIB BOOST_THREAD_BUILD_LIB)
 endif (UNIX)
+
+# gcc 5 needs -std=c++0x to compile lslboost
+# CMAKE_CXX_COMPILER_VERSION is only available since CMake 2.8.8
+# If CMake version is inferior to 2.8.8, we assume gcc version is inferior to 5
+if (CMAKE_VERSION VERSION_GREATER 2.8.8)
+  if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5)
+      set_property (TARGET boost PROPERTY COMPILE_FLAGS " -std=c++0x" APPEND_STRING)
+    endif ()
+  endif ()
+endif ()
