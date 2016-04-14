@@ -1,9 +1,15 @@
 
 #include "ui_mainwindow.h"
 #include "mainwindow.h"
+
 #ifdef __WIN32
 #include <Objbase.h>
 #endif
+
+#include <sys/types.h> 
+#include <sys/stat.h>
+#include <errno.h>
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -14,6 +20,7 @@
 #include <boost/filesystem.hpp>
 // #include <boost/algorithm/string.hpp>
 #include <algorithm>
+#include <fstream>
 
 // recording class
 #include "recording.h"
@@ -53,6 +60,9 @@ void MainWindow::statusUpdate(void) {
 	int remainder;
 	int minutes;
 	int seconds;
+
+	int filesize;
+
 	std::stringstream timeString;
 	if(currentlyRecording ==true) {
 		elapsed = ((int)lsl::local_clock() - startTime);
@@ -71,6 +81,13 @@ void MainWindow::statusUpdate(void) {
 		timeString<<minutes<<":";
 		if(seconds<10)timeString<<"0";
 		timeString<<seconds<<")";
+
+		std::ifstream in(recFilename.c_str(), std::ifstream::ate | std::ifstream::binary);
+		int size = in.tellg(); 
+		timeString<<"; ";
+		timeString<<size/1000;
+		timeString<<" kb";
+
 
 		statusBar()->showMessage(QString::fromStdString(timeString.str()));
 
@@ -303,51 +320,51 @@ void MainWindow::startRecording(void) {
 
 		// determine the experiment number block
 		// scan the path for %n and %b
-		std::string filename = ui->locationEdit->text().toStdString();
+		recFilename = ui->locationEdit->text().toStdString();
 		std::string str_n("\%n");
 		std::size_t pos_n;
-		pos_n = filename.find(str_n);
+		pos_n = recFilename.find(str_n);
 		std::stringstream ss;
-		if(pos_n < filename.size()) { // check to make sure it is there
+		if(pos_n < recFilename.size()) { // check to make sure it is there
 			ss << ui->experimentNumberSpin->value();
-			filename.replace(pos_n,  2, ss.str());
+			recFilename.replace(pos_n,  2, ss.str());
 		}
 
 		std::string str_b("\%b");
 		std::size_t pos_b;
-		pos_b = filename.find(str_b);
-		if(pos_b<filename.size()) // check to make sure it is there
-			filename.replace(pos_b,  2, currentBlock);
+		pos_b = recFilename.find(str_b);
+		if(pos_b<recFilename.size()) // check to make sure it is there
+			recFilename.replace(pos_b,  2, currentBlock);
  
 		// rename existing file if necessary
 		int lastdot;
 		std::string rename_to;
-		if(boost::filesystem::exists(filename.c_str())) {
-			lastdot = filename.find_last_of(".");
+		if(boost::filesystem::exists(recFilename.c_str())) {
+			lastdot = recFilename.find_last_of(".");
 			for(int i=1;i<=9999;i++) { // search for highest _oldN
 				ss << i;
-				rename_to = filename.substr(0, lastdot) +
-					"_old"+ss.str()+filename.substr(lastdot,filename.size());
+				rename_to = recFilename.substr(0, lastdot) +
+					"_old"+ss.str()+recFilename.substr(lastdot,recFilename.size());
 				ss.str(std::string()); // flush the string stream
 
 				if(!boost::filesystem::exists(rename_to.c_str())) { // found it
 					try {
-						boost::filesystem::rename(boost::filesystem::path(filename.c_str()),
+						boost::filesystem::rename(boost::filesystem::path(recFilename.c_str()),
 							                      boost::filesystem::path(rename_to.c_str()));
 					} catch(std::exception &e) {
-						QMessageBox::information(this,"Permissions issue", ("Can not rename the file " + filename + " to " + rename_to + ". Please check your permissions.").c_str(), QMessageBox::Ok);
+						QMessageBox::information(this,"Permissions issue", ("Can not rename the file " + recFilename + " to " + rename_to + ". Please check your permissions.").c_str(), QMessageBox::Ok);
 						return;
 					}
 				break;
 				}
 			}
-			//std::cout << filename << std::endl;
+			//std::cout << recFilename << std::endl;
 			//std::cout << rename_to << std::endl;
 		}
 		std::string targetdir;
 
 		// regardless, we need to check for this one
-		targetdir = filename.substr(0,filename.find_last_of("/\\"));
+		targetdir = recFilename.substr(0,recFilename.find_last_of("/\\"));
 		try {
 			if(!boost::filesystem::exists(targetdir.c_str()))
 				boost::filesystem::create_directories(targetdir.c_str());
@@ -378,7 +395,7 @@ void MainWindow::startRecording(void) {
 		for(std::vector<std::string>::iterator it=watchfor.begin(); it!=watchfor.end();++it)
 			std::cout << *it << std::endl;
 
-		currentRecording = new recording(filename, checkedStreams, watchfor, 1);
+		currentRecording = new recording(recFilename, checkedStreams, watchfor, 1);
 		currentlyRecording = true;
 		ui->stopButton->setEnabled(true);
 		ui->startButton->setEnabled(false);
