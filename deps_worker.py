@@ -322,6 +322,7 @@ apps_d = {
         'win32': [
             "/external_libs/Qt/QtCore4.dll",
             "/external_libs/Qt/QtGui4.dll",
+            "/external_libs/g.Tec/gHIamp.lib",
             cur_lsl+"bin/liblsl32.dll"]
     },
 
@@ -788,7 +789,7 @@ def unstrip_all():
     # Only download files for this OS
     my_op_sys = op_sys  # ["win32", "win64", "OSX", "linux"]
     
-    if sys.platform == "linux" or sys.platform == "linux2":
+    if sys.platform == "linux" or sys.platform == "linux32":
         my_op_sys = ["linux"]
     elif sys.platform == "darwin":
         my_op_sys = ["OSX"]

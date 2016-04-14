@@ -125,6 +125,7 @@ namespace lsl {
     * written to disk when recording the stream (playing a similar role as a file header).
     */
     class xml_element;
+
     class stream_info {
     public:
         /**
@@ -1040,7 +1041,7 @@ namespace lsl {
     class xml_element {
     public:
         /// Constructor.
-        xml_element(lsl_xml_ptr obj) : obj(obj) {}
+        xml_element(lsl_xml_ptr obj=0) : obj(obj) {}
 
 
         // === Tree Navigation ===

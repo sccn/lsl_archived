@@ -78,7 +78,7 @@
 				ShowProgress="1"
 				OutputFile="$(OutDir)\LabRecorder.exe"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib&quot;;../../LSL/liblsl/bin/;&quot;$(BOOST_ROOT)/lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(QTSDK)\lib&quot;;../../LSL/liblsl/bin/;&quot;$(BOOST_ROOT)/lib&quot;"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=""
 				SubSystem="1"
@@ -169,7 +169,7 @@
 				OutputFile="$(OutDir)\LabRecorder.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib&quot;;../../LSL/liblsl/bin/;&quot;$(BOOST_ROOT)/lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(QTSDK)\lib&quot;;../../LSL/liblsl/bin/;&quot;$(BOOST_ROOT)/lib&quot;"
 				GenerateDebugInformation="false"
 				ProgramDatabaseFile=""
 				SubSystem="1"
@@ -240,7 +240,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="MOC mainwindow.h"
-						CommandLine="$(QTSDK)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -I&quot;$(QTSDK)\include\QtCore&quot; -I&quot;$(QTSDK)\include\QtGui&quot; -I&quot;$(QTSDK)include&quot; -I&quot;..\..\LSL\liblsl\bin&quot; -I&quot;$(QTSDK)\include\ActiveQt&quot; -I&quot;release&quot; -I&quot;.&quot; -I$(QTSDK)\mkspecs\default -D_MSC_VER=1500 -DWIN32 mainwindow.h -o release\moc_mainwindow.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTSDK)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -I&quot;$(QTSDK)\include\QtCore&quot; -I&quot;$(QTSDK)\include\QtGui&quot; -I&quot;$(QTSDK)\include&quot; -I&quot;..\..\LSL\liblsl\bin&quot; -I&quot;$(QTSDK)\include\ActiveQt&quot; -I&quot;release&quot; -I&quot;.&quot; -I$(QTSDK)\mkspecs\default -D_MSC_VER=1500 -DWIN32 mainwindow.h -o release\moc_mainwindow.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTSDK)\bin\moc.exe;mainwindow.h"
 						Outputs="release\moc_mainwindow.cpp"
 					/>
@@ -305,7 +305,7 @@
 						Name="VCCustomBuildTool"
 						Description="UIC mainwindow.ui"
 						CommandLine="$(QTSDK)\bin\uic.exe mainwindow.ui -o ui_mainwindow.h&#x0D;&#x0A;"
-						AdditionalDependencies="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\bin\uic.exe;mainwindow.ui"
+						AdditionalDependencies="$(QTSDK)\bin\uic.exe;mainwindow.ui"
 						Outputs="ui_mainwindow.h"
 					/>
 				</FileConfiguration>
@@ -316,7 +316,7 @@
 						Name="VCCustomBuildTool"
 						Description="UIC mainwindow.ui"
 						CommandLine="$(QTSDK)\bin\uic.exe mainwindow.ui -o ui_mainwindow.h&#x0D;&#x0A;"
-						AdditionalDependencies="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\bin\uic.exe;mainwindow.ui"
+						AdditionalDependencies="$(QTSDK)\bin\uic.exe;mainwindow.ui"
 						Outputs="ui_mainwindow.h"
 					/>
 				</FileConfiguration>

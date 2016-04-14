@@ -124,6 +124,7 @@ external_libs/
 # unfortunately, in the case of linux, since there is no extension, we must name it
 linux/PupilPro
 linux/XDFBrowser
+linux/LabRecorder
 
 ## C++.gitignore:
 
@@ -573,3 +574,8 @@ FakesAssemblies/
 
 # Packaging artifacts (debian packages)
 *.deb
+
+
+# exceptions:
+!gUSBamp.lib
+!gHIamp.lib
