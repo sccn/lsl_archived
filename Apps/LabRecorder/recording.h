@@ -105,70 +105,72 @@ typedef std::map<int,offset_list> offset_lists;
 */
 
 //------------------------------------------------------
-// begin append:
-//namespace detail{
-//
-//	// write an integer value in little endian
-//	// derived from portable archive code by christian.pfligersdorffer@eos.info (under boost license)
-//	template <typename T> typename boost::enable_if<boost::is_integral<T> >::type write_little_endian(std::streambuf *dst,const T &t) {
-//		T temp;
-//		endian::store_little_endian<T,sizeof(T)>(&temp,t);
-//		dst->sputn((char*)&temp,sizeof(temp));
-//	}
-//
-//	// write a floating-point value in little endian
-//	// derived from portable archive code by christian.pfligersdorffer@eos.info (under boost license)
-//	template <typename T> typename boost::enable_if<boost::is_floating_point<T> >::type write_little_endian(std::streambuf *dst,const T &t) {
-//		typedef typename fp::detail::fp_traits<T>::type traits;
-//		typename traits::bits bits;
-//		// remap to bit representation
-//		switch (fp::fpclassify(t)) {
-//		case FP_NAN: bits = traits::exponent | traits::mantissa; break;
-//		case FP_INFINITE: bits = traits::exponent | (t<0) * traits::sign; break;
-//		case FP_SUBNORMAL: assert(std::numeric_limits<T>::has_denorm);
-//		case FP_ZERO: // note that floats can be ±0.0
-//		case FP_NORMAL: traits::get_bits(t, bits); break;
-//		default: bits = 0; break;
-//		}
-//		write_little_endian(dst,bits);
-//	}
-//
-//	/* // write a variable-length integer (int8, int32, or int64) */
-//	void write_varlen_int(std::streambuf *dst, boost::uint64_t val) {
-//		if (val < 256) {
-//			dst->sputc(1);
-//			dst->sputc((boost::uint8_t)val);
-//		} else
-//			if (val <= 4294967295) {
-//				dst->sputc(4);
-//				write_little_endian(dst,(boost::uint32_t)val);
-//			} else {
-//				dst->sputc(8);
-//				write_little_endian(dst,(boost::uint64_t)val);
-//			}
-//	}
-//
-//	// store a sample's values to a stream (numeric version)
-//	template<class T> void write_sample_values(std::streambuf *dst, const std::vector<T> &sample) {
-//		// [Value1] .. [ValueN]
-//		for (std::size_t c=0;c<sample.size();c++)
-//			write_little_endian(dst,sample[c]); 
-//	}
-//
-//	// store a sample's values to a stream (string version)
-//	template<> void write_sample_values(std::streambuf *dst, const std::vector<std::string> &sample) {
-//		// [Value1] .. [ValueN]
-//		for (std::size_t c=0;c<sample.size();c++) {
-//			// [NumLengthBytes], [Length] (as varlen int)
-//			write_varlen_int(dst,sample[c].size());
-//			// [StringContent]
-//			dst->sputn(sample[c].data(),sample[c].size());
-//		}
-//	}
-//
-//}
-//
-//using namespace detail;
+//begin append:
+namespace detail{
+
+	// === writer functions ===
+	// write an integer value in little endian
+	// derived from portable archive code by christian.pfligersdorffer@eos.info (under boost license)
+	template <typename T> typename boost::enable_if<boost::is_integral<T> >::type write_little_endian(std::streambuf *dst,const T &t) {
+		T temp;
+		endian::store_little_endian<T,sizeof(T)>(&temp,t);
+		dst->sputn((char*)&temp,sizeof(temp));
+	}
+
+	// write a floating-point value in little endian
+	// derived from portable archive code by christian.pfligersdorffer@eos.info (under boost license)
+	template <typename T> typename boost::enable_if<boost::is_floating_point<T> >::type write_little_endian(std::streambuf *dst,const T &t) {
+		typedef typename fp::detail::fp_traits<T>::type traits;
+		typename traits::bits bits;
+		// remap to bit representation
+		switch (fp::fpclassify(t)) {
+			case FP_NAN: bits = traits::exponent | traits::mantissa; break;
+			case FP_INFINITE: bits = traits::exponent | (t<0) * traits::sign; break;
+			case FP_SUBNORMAL: assert(std::numeric_limits<T>::has_denorm);
+			case FP_ZERO: // note that floats can be ±0.0
+			case FP_NORMAL: traits::get_bits(t, bits); break;
+			default: bits = 0; break;
+		}
+		write_little_endian(dst,bits);
+	}
+
+	// write a variable-length integer (int8, int32, or int64)
+	inline void write_varlen_int(std::streambuf *dst, boost::uint64_t val) {
+		if (val < 256) {
+			dst->sputc(1);
+			dst->sputc((boost::uint8_t)val);
+		} else
+		if (val <= 4294967295) {
+			dst->sputc(4);
+			write_little_endian(dst,(boost::uint32_t)val);
+		} else {
+			dst->sputc(8);
+			write_little_endian(dst,(boost::uint64_t)val);
+		}
+	}
+
+	// store a sample's values to a stream (numeric version) */
+	template<class T> inline void write_sample_values(std::streambuf *dst, const std::vector<T> &sample) {
+		// [Value1] .. [ValueN] */
+		for (std::size_t c=0;c<sample.size();c++)
+			write_little_endian(dst,sample[c]);
+	}
+
+	// store a sample's values to a stream (string version)
+	template<> inline void write_sample_values(std::streambuf *dst, const std::vector<std::string> &sample) {
+	// [Value1] .. [ValueN] */
+		for (std::size_t c=0;c<sample.size();c++) {
+			// [NumLengthBytes], [Length] (as varlen int)
+			write_varlen_int(dst,sample[c].size());
+			// [StringContent] */
+			dst->sputn(sample[c].data(),sample[c].size());
+		}
+	}
+
+}
+
+using namespace detail;
+
 // end append
 
 //------------------------------------------------------
@@ -191,6 +193,9 @@ public:
 	* @param collect_offsets Whether to collect time offset measurements periodically.
 	*/
 	recording(const std::string &filename, const std::vector<lsl::stream_info> &streams, const std::vector<std::string> &watchfor, bool collect_offsets=true): offsets_enabled_(collect_offsets), unsorted_(false), shutdown_(false), streamid_(0), streaming_to_finish_(0), headers_to_finish_(0) {
+
+
+
 		// open file stream
 		std::cout << "Opening file " << filename << " ... ";
 		if (boost::iends_with(filename,".xdfz"))
@@ -235,6 +240,35 @@ public:
 	}
 
 private:
+	// the file stream
+	boost::iostreams::filtering_ostream file_;	// the file output stream
+	boost::mutex chunk_mut_;	
+	// static information
+	bool offsets_enabled_;					// whether to collect time offset information alongside with the stream contents
+	bool unsorted_;							// whether this file may contain unsorted chunks (e.g., of late streams)
+
+	// streamid allocation
+	boost::uint32_t streamid_;				// the highest streamid allocated so far
+	boost::mutex streamid_mut_;				// a mutex to protect the streamid
+
+	// phase-of-recording state (headers, streaming data, or footers)
+	bool shutdown_;							// whether we are trying to shut down
+	boost::uint32_t headers_to_finish_;		// the number of streams that still need to write their header (i.e., are not yet ready to write streaming content)
+	boost::uint32_t streaming_to_finish_;	// the number of streams that still need to finish the streaming phase (i.e., are not yet ready for writing their footer)
+	boost::condition ready_for_streaming_;	// condition variable signaling that all streams have finished writing their headers and are now ready to write streaming content
+	boost::condition ready_for_footers_;	// condition variable signaling that all streams have finished their recording jobs and are now ready to write a footer
+	boost::mutex phase_mut_;				// a mutex to protect the phase state
+
+	// data structure to collect the time offsets for every stream
+	offset_lists offset_lists_;				// the clock offset lists for each stream (to be written into the footer)
+	boost::mutex offset_mut_;				// a mutex to protect the offset lists
+
+
+
+	// data for shutdown / final joining
+	std::vector<thread_p> stream_threads_;	// the spawned stream handling threads
+	thread_p boundary_thread_;				// the spawned boundary-recording thread
+
 
 	// === recording thread functions ===
 
@@ -526,27 +560,27 @@ private:
 	}
 
 
-	// === writer functions ===
+	/* // === writer functions === */
 
-	// store a sample's values to a stream (numeric version) */
-	template<class T> void write_sample_values(std::streambuf *dst, const std::vector<T> &sample) { 
-		// [Value1] .. [ValueN] */
-		for (std::size_t c=0;c<sample.size();c++) 
-			write_little_endian(dst,sample[c]);  
-	} 
+	/* // store a sample's values to a stream (numeric version) */
+	/* template<class T> void write_sample_values(std::streambuf *dst, const std::vector<T> &sample) { */
+	/* 	// [Value1] .. [ValueN] *\/ */
+	/* 	for (std::size_t c=0;c<sample.size();c++) */
+	/* 		write_little_endian(dst,sample[c]); */
+	/* } */
 
-	// store a sample's values to a stream (string version) 
-	template<> void write_sample_values(std::streambuf *dst, const std::vector<std::string> &sample) { 
-	// [Value1] .. [ValueN] */
-		for (std::size_t c=0;c<sample.size();c++) { 
-			// [NumLengthBytes], [Length] (as varlen int) 
-			write_varlen_int(dst,sample[c].size()); 
-			// [StringContent] */
-			dst->sputn(sample[c].data(),sample[c].size()); 
-		} 
-	} 
+	/* // store a sample's values to a stream (string version) */
+	/* template<> void write_sample_values(std::streambuf *dst, const std::vector<std::string> &sample) { */
+	/* // [Value1] .. [ValueN] *\/ */
+	/* 	for (std::size_t c=0;c<sample.size();c++) { */
+	/* 		// [NumLengthBytes], [Length] (as varlen int) */
+	/* 		write_varlen_int(dst,sample[c].size()); */
+	/* 		// [StringContent] *\/ */
+	/* 		dst->sputn(sample[c].data(),sample[c].size()); */
+	/* 	} */
+	/* } */
 
-	// write a generic chunk
+ 	// write a generic chunk
 	void write_chunk(chunk_tag_t tag, const std::string &content) {
 		// lock the file stream...
 		boost::mutex::scoped_lock lock(chunk_mut_);
@@ -559,45 +593,45 @@ private:
 		file_.rdbuf()->sputn(content.data(),content.size());
 	}
 
-	// write a variable-length integer (int8, int32, or int64)
-	void write_varlen_int(std::streambuf *dst, boost::uint64_t val) { 
-		if (val < 256) { 
-			dst->sputc(1); 
-			dst->sputc((boost::uint8_t)val); 
-		} else 
-		if (val <= 4294967295) { 
-			dst->sputc(4); 
-			write_little_endian(dst,(boost::uint32_t)val); 
-		} else { 
-			dst->sputc(8); 
-			write_little_endian(dst,(boost::uint64_t)val); 
-		} 
-	} 
+	/* // write a variable-length integer (int8, int32, or int64) */
+	/* void write_varlen_int(std::streambuf *dst, boost::uint64_t val) { */
+	/* 	if (val < 256) { */
+	/* 		dst->sputc(1); */
+	/* 		dst->sputc((boost::uint8_t)val); */
+	/* 	} else */
+	/* 	if (val <= 4294967295) { */
+	/* 		dst->sputc(4); */
+	/* 		write_little_endian(dst,(boost::uint32_t)val); */
+	/* 	} else { */
+	/* 		dst->sputc(8); */
+	/* 		write_little_endian(dst,(boost::uint64_t)val); */
+	/* 	} */
+	/* } */
 
-	// write an integer value in little endian 
-	// derived from portable archive code by christian.pfligersdorffer@eos.info (under boost license) 
-	template <typename T> typename boost::enable_if<boost::is_integral<T> >::type write_little_endian(std::streambuf *dst,const T &t) { 
-		T temp; 
-		endian::store_little_endian<T,sizeof(T)>(&temp,t); 
-		dst->sputn((char*)&temp,sizeof(temp)); 
-	} 
+	/* // write an integer value in little endian */
+	/* // derived from portable archive code by christian.pfligersdorffer@eos.info (under boost license) */
+	/* template <typename T> typename boost::enable_if<boost::is_integral<T> >::type write_little_endian(std::streambuf *dst,const T &t) { */
+	/* 	T temp; */
+	/* 	endian::store_little_endian<T,sizeof(T)>(&temp,t); */
+	/* 	dst->sputn((char*)&temp,sizeof(temp)); */
+	/* } */
 
-	// write a floating-point value in little endian 
-	// derived from portable archive code by christian.pfligersdorffer@eos.info (under boost license) 
-	template <typename T> typename boost::enable_if<boost::is_floating_point<T> >::type write_little_endian(std::streambuf *dst,const T &t) { 
-		typedef typename fp::detail::fp_traits<T>::type traits; 
-		typename traits::bits bits; 
-		// remap to bit representation 
-		switch (fp::fpclassify(t)) { 
-			case FP_NAN: bits = traits::exponent | traits::mantissa; break; 
-			case FP_INFINITE: bits = traits::exponent | (t<0) * traits::sign; break; 
-			case FP_SUBNORMAL: assert(std::numeric_limits<T>::has_denorm); 
-			case FP_ZERO: // note that floats can be ±0.0 
-			case FP_NORMAL: traits::get_bits(t, bits); break; 
-			default: bits = 0; break; 
-		} 
-		write_little_endian(dst,bits); 
-	} 
+	/* // write a floating-point value in little endian */
+	/* // derived from portable archive code by christian.pfligersdorffer@eos.info (under boost license) */
+	/* template <typename T> typename boost::enable_if<boost::is_floating_point<T> >::type write_little_endian(std::streambuf *dst,const T &t) { */
+	/* 	typedef typename fp::detail::fp_traits<T>::type traits; */
+	/* 	typename traits::bits bits; */
+	/* 	// remap to bit representation */
+	/* 	switch (fp::fpclassify(t)) { */
+	/* 		case FP_NAN: bits = traits::exponent | traits::mantissa; break; */
+	/* 		case FP_INFINITE: bits = traits::exponent | (t<0) * traits::sign; break; */
+	/* 		case FP_SUBNORMAL: assert(std::numeric_limits<T>::has_denorm); */
+	/* 		case FP_ZERO: // note that floats can be ±0.0 */
+	/* 		case FP_NORMAL: traits::get_bits(t, bits); break; */
+	/* 		default: bits = 0; break; */
+	/* 	} */
+	/* 	write_little_endian(dst,bits); */
+	/* } */
 
 	// === phase registration & condition checks ===
 	// writing is coordinated across threads in three phases to keep the file chunks sorted
@@ -656,33 +690,6 @@ private:
 		return ++streamid_;
 	}
 
-	// static information
-	bool offsets_enabled_;					// whether to collect time offset information alongside with the stream contents
-	bool unsorted_;							// whether this file may contain unsorted chunks (e.g., of late streams)
-
-	// streamid allocation
-	boost::uint32_t streamid_;				// the highest streamid allocated so far
-	boost::mutex streamid_mut_;				// a mutex to protect the streamid
-
-	// phase-of-recording state (headers, streaming data, or footers)
-	bool shutdown_;							// whether we are trying to shut down
-	boost::uint32_t headers_to_finish_;		// the number of streams that still need to write their header (i.e., are not yet ready to write streaming content)
-	boost::uint32_t streaming_to_finish_;	// the number of streams that still need to finish the streaming phase (i.e., are not yet ready for writing their footer)
-	boost::condition ready_for_streaming_;	// condition variable signaling that all streams have finished writing their headers and are now ready to write streaming content
-	boost::condition ready_for_footers_;	// condition variable signaling that all streams have finished their recording jobs and are now ready to write a footer
-	boost::mutex phase_mut_;				// a mutex to protect the phase state
-
-	// data structure to collect the time offsets for every stream
-	offset_lists offset_lists_;				// the clock offset lists for each stream (to be written into the footer)
-	boost::mutex offset_mut_;				// a mutex to protect the offset lists
-
-	// the file stream
-	boost::iostreams::filtering_ostream file_;	// the file output stream
-	boost::mutex chunk_mut_;					// a mutex to make sure that chunks are written in serial order
-
-	// data for shutdown / final joining
-	std::vector<thread_p> stream_threads_;	// the spawned stream handling threads
-	thread_p boundary_thread_;				// the spawned boundary-recording thread
 };
 
 #endif

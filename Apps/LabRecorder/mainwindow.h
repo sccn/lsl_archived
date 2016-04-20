@@ -2,8 +2,8 @@
 #define MAINWINDOW_H
 
 // boost
-#include <boost/shared_ptr.hpp>
-#include <boost/thread.hpp>
+/* #include <boost/shared_ptr.hpp> */
+/* #include <boost/thread.hpp> */
 // Qt
 #include <QMainWindow>
 #include <QFileDialog>
@@ -17,8 +17,12 @@
 #include <QStatusBar>
 #include <fstream>
 
+#ifdef __WIN32
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include "windows.h"
+#endif
 
 // LSL
 #include "../../LSL/liblsl/include/lsl_cpp.h"
@@ -74,8 +78,14 @@ private:
 	std::string currentBlock;
 
 	std::vector<lsl::stream_info> resolvedStreams;
+	std::vector<lsl::stream_info> checkedStreams;
 	std::vector<std::string> requiredStreams;
 	std::vector<std::string> missingStreams;
+
+	std::string recFilename;
+	FILE *p_recFile;
+
+
 
 	// function for loading config file
 	void load_config(const std::string &filename);
