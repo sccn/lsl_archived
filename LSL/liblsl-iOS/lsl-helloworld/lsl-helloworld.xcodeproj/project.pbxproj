@@ -10,6 +10,8 @@
 		300D517A1BAA00A8003E2EC5 /* boost.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DC99E50D1AD75143006CEDDB /* boost.a */; };
 		307D6E941ADC4AD000964709 /* TerminalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 307D6E931ADC4AD000964709 /* TerminalViewController.m */; };
 		309CAD6D1ADD9AAE00886E8D /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 309CAD6C1ADD9AAE00886E8D /* CoreMotion.framework */; };
+		30AC60AD1CC980C20098433C /* liblsl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30AC60AC1CC980C20098433C /* liblsl.framework */; };
+		30AC60B51CC986D90098433C /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 30AC60B41CC986D90098433C /* libc++.dylib */; };
 		30DAA7DB1AE9780E0001908E /* MultipeerConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30DAA7DA1AE9780E0001908E /* MultipeerConnectivity.framework */; };
 		30DAA7DE1AE979330001908E /* MCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 30DAA7DD1AE979330001908E /* MCManager.m */; };
 		30F408FD1AD887550049E4D8 /* InletsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 30F408FC1AD887550049E4D8 /* InletsTableViewController.m */; };
@@ -19,14 +21,14 @@
 		DC99E4F11AD75084006CEDDB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DC99E4EF1AD75084006CEDDB /* Main.storyboard */; };
 		DC99E4F31AD75084006CEDDB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC99E4F21AD75084006CEDDB /* Images.xcassets */; };
 		DC99E4F61AD75084006CEDDB /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = DC99E4F41AD75084006CEDDB /* LaunchScreen.xib */; };
-		DC99E50C1AD7512B006CEDDB /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DC99E50B1AD7512B006CEDDB /* libc++.dylib */; };
-		DC99E5101AD7514C006CEDDB /* liblsl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC99E50F1AD7514C006CEDDB /* liblsl.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		307D6E921ADC4AD000964709 /* TerminalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TerminalViewController.h; sourceTree = "<group>"; };
 		307D6E931ADC4AD000964709 /* TerminalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TerminalViewController.m; sourceTree = "<group>"; };
 		309CAD6C1ADD9AAE00886E8D /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		30AC60AC1CC980C20098433C /* liblsl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = liblsl.framework; path = "../Release-iphoneos/liblsl.framework"; sourceTree = "<group>"; };
+		30AC60B41CC986D90098433C /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "../../../../../../../../Users/sccnuser/libc++.dylib"; sourceTree = "<group>"; };
 		30DAA7DA1AE9780E0001908E /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
 		30DAA7DC1AE979330001908E /* MCManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MCManager.h; path = ../MCManager.h; sourceTree = "<group>"; };
 		30DAA7DD1AE979330001908E /* MCManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MCManager.m; path = ../MCManager.m; sourceTree = "<group>"; };
@@ -42,9 +44,7 @@
 		DC99E4F01AD75084006CEDDB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		DC99E4F21AD75084006CEDDB /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		DC99E4F51AD75084006CEDDB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		DC99E50B1AD7512B006CEDDB /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
 		DC99E50D1AD75143006CEDDB /* boost.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = boost.a; path = ../iOSboost/boost/ios/boost.a; sourceTree = "<group>"; };
-		DC99E50F1AD7514C006CEDDB /* liblsl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = liblsl.framework; path = "../Debug-universal/liblsl.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,9 +54,9 @@
 			files = (
 				30DAA7DB1AE9780E0001908E /* MultipeerConnectivity.framework in Frameworks */,
 				309CAD6D1ADD9AAE00886E8D /* CoreMotion.framework in Frameworks */,
-				DC99E5101AD7514C006CEDDB /* liblsl.framework in Frameworks */,
+				30AC60AD1CC980C20098433C /* liblsl.framework in Frameworks */,
+				30AC60B51CC986D90098433C /* libc++.dylib in Frameworks */,
 				300D517A1BAA00A8003E2EC5 /* boost.a in Frameworks */,
-				DC99E50C1AD7512B006CEDDB /* libc++.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,11 +66,11 @@
 		DC99E4D91AD75083006CEDDB = {
 			isa = PBXGroup;
 			children = (
+				30AC60B41CC986D90098433C /* libc++.dylib */,
+				30AC60AC1CC980C20098433C /* liblsl.framework */,
 				30DAA7DA1AE9780E0001908E /* MultipeerConnectivity.framework */,
 				309CAD6C1ADD9AAE00886E8D /* CoreMotion.framework */,
-				DC99E50F1AD7514C006CEDDB /* liblsl.framework */,
 				DC99E50D1AD75143006CEDDB /* boost.a */,
-				DC99E50B1AD7512B006CEDDB /* libc++.dylib */,
 				DC99E4E41AD75084006CEDDB /* lsl-helloworld */,
 				DC99E4E31AD75084006CEDDB /* Products */,
 			);
@@ -145,6 +145,7 @@
 				TargetAttributes = {
 					DC99E4E11AD75084006CEDDB = {
 						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = 84HZK5V8F5;
 					};
 				};
 			};
@@ -297,14 +298,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../Debug-universal",
+					"$(SRCROOT)/../Debug-iphoneos",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../Debug-universal/liblsl.framework",
+					"$(SRCROOT)/../Debug-iphoneos/liblsl.framework/Headers",
 				);
 				INFOPLIST_FILE = "lsl-helloworld/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -314,6 +318,7 @@
 					"/Volumes/projects/dmedine/git-lsl-tst2/labstreaminglayer/LSL/liblsl-iOS/iOSboost/boost/ios",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -321,14 +326,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../Debug-universal",
+					"$(SRCROOT)/../Release-iphoneos",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../Debug-universal/liblsl.framework",
+					"$(SRCROOT)/../Release-universal/liblsl.framework/Headers",
 				);
 				INFOPLIST_FILE = "lsl-helloworld/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -338,6 +346,7 @@
 					"/Volumes/projects/dmedine/git-lsl-tst2/labstreaminglayer/LSL/liblsl-iOS/iOSboost/boost/ios",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
