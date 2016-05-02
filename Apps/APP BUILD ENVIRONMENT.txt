@@ -4,10 +4,34 @@ This information is only relevant if your are trying to build apps that are cons
 Essentially, you will need:
 
 Microsoft Windows:
-1) For all programs Microsoft Visual Studio (2008 Professional with Service Pack 1 preferred)
-2) A version of boost (www.boost.org); most programs were built with boost 1.47.0 or newer (some may require 1.50.0 or newer, and all expect the environment variable BOOST_ROOT to be set up to point to the install directory for your boost version).
-3) A compatible version of the Qt SDK for programs with GUIs(most have been built with Qt 4.8.1 for MSVC 2008 for 32 bit; make sure that you set the environment variable QTSDK to point to your Qt SDK directory). 
-4) A small fraction of programs is written in Python (especially the LabRecorder). To use these you need Python 2.6 or 2.7 for win32 (2.7 recommended) and the PySide GUI package for those that use GUIs (a particular version of that -- see install instructions in the LabRecorder directory). We use the PyCharm IDE for most of our Python development.
+Requirements:
+
+labstreaminglayer:
+This will only build within the full labstreaminglayer repository including the binaries typically obtained with `python get_deps.py`
+
+Visual Studio:
+Download and install [Visual Studio 2008](http://go.microsoft.com/?linkid=7729279)
+
+Qt:
+Download and install [QtSDK 4.8.6 for MSVC2008](https://download.qt.io/archive/qt/4.8/4.8.6/qt-opensource-windows-x86-vs2008-4.8.6.exe)
+Using the default install folder for Qt will put it in C:\Qt
+Add an environment variable QTSDK set to C:\Qt\4.8.6-msvc2008
+
+Boost:
+Download and install [Boost 1.59 for MSVC2008 32-bit](https://sourceforge.net/projects/boost/files/boost-binaries/1.59.0/boost_1_59_0-msvc-9.0-32.exe/download)
+Add an environment variable BOOST_ROOT set to the boost install directory (C:\local\boost_1_59_0 by default)
+Note: It should be the case that this is all you need to do in so that Windows and VisualStudio will auto-link to the appropriate boost libraries.
+
+Building:
+If, like me, you also have newer versions of MSVC installed
+then it might be impossible to load the project by double-clicking on LabRecorder.sln
+Open MSVC2008 from C:\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\IDE\VCExpress.exe
+File->Open->Project/Solution... then navigate to labstreaminglayer\Apps\LabRecorder\LabRecorder.sln
+At the top, change from "Debug" to "Release".
+Under the Build menu, click "Build Solution" (F7 shortcut key)
+
+Running:
+You will need liblsl32.dll, QtCore4.dll, and QtGui4.dll in the same folder as the executable.
 
 OSX:
 TODO
