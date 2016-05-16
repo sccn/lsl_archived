@@ -53,7 +53,9 @@ void MainWindow::listen(int sps){
     unsigned int channelCount           = sizeof(epochChannelList)/
                                           sizeof(IEE_DataChannel_t);
 	IEE_Event_t eventType;
-	double lsl_buffer[24];
+	//double lsl_buffer[24];
+ 
+	std::vector< std::vector<double> > lsl_buffer;
 
 	// connect to the headset
 
@@ -86,7 +88,7 @@ void MainWindow::listen(int sps){
 	double last_time_emo = 0;
 	double dur_lsl;
 	double dur_emo;
-
+	double now;
 	double offset;
 	double offset_timestamp;
 	bool is_first_time = true;
@@ -124,27 +126,26 @@ void MainWindow::listen(int sps){
 					// Pull data from Emotiv into emo_buffer
 					IEE_DataGetMultiChannels(hData, epochChannelList,
 						channelCount, emo_buffer, nSamplesTaken);
+					now = lsl::local_clock();
 
 					// shove it into lsl buff with correct? timestamps
 					if (is_first_time) {// first get the initial record time offset
 						offset = lsl::local_clock();
 						is_first_time = false;
 					}
+
+					lsl_buffer.resize(nSamplesTaken);
 					for (int i=0; i<nSamplesTaken; i++){
 						// fill the lsl buffer for each sample
 						for (int j=0; j<channelCount; j++) 
-							lsl_buffer[j]=emo_buffer[j][i];
-
-						// get the approximate timestamp for each sample 
-						// with an lsl offset
-						offset_timestamp = emo_buffer[20][i]+offset;
-
-						// push the sample with our approximate timestamp
-						outlet.push_sample(lsl_buffer, offset_timestamp);
-				
+							lsl_buffer[i].push_back(emo_buffer[j][i]);			
 
 					}
 				
+					outlet.push_chunk(lsl_buffer, now, true);
+					for (std::vector<std::vector<double>>::iterator it=lsl_buffer.begin(); it!=lsl_buffer.end(); ++it) 
+						it->clear();
+					lsl_buffer.clear();
 
 					dur_lsl       = lsl::local_clock()-last_time_lsl;
 					last_time_lsl = dur_lsl+last_time_lsl;
