@@ -1,0 +1,6 @@
+-added environment variable EDK_ROOT:
+C:\Program Files (x86)\Emotiv SDK Premium Edition v3.3.2
+-used these paths for additional include and library directories
+"$(EDK_ROOT)\Header Files\C++"
+"$(EDK_ROOT)\x86"
+-had to copy the edk.dll into the application directory in order to run it
