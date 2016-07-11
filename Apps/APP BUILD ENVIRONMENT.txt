@@ -20,7 +20,8 @@ Add an environment variable QTSDK set to C:\Qt\4.8.6-msvc2008
 Boost:
 Download and install [Boost 1.59 for MSVC2008 32-bit](https://sourceforge.net/projects/boost/files/boost-binaries/1.59.0/boost_1_59_0-msvc-9.0-32.exe/download)
 Add an environment variable BOOST_ROOT set to the boost install directory (C:\local\boost_1_59_0 by default)
-Note: It should be the case that this is all you need to do in so that Windows and VisualStudio will auto-link to the appropriate boost libraries.
+Note: It should be the case that this is all you need to do in so that Windows and VisualStudio will auto-link to the appropriate boost libraries, but you may need to rename the directory C:\local\boost_1_59_0\lib32-msvc-9.0 to C:\local\boost_1_59_0\lib
+
 
 Building:
 If, like me, you also have newer versions of MSVC installed
