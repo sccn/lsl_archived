@@ -15,12 +15,43 @@ The API covers two areas:
 pylsl has been tested with Python 2.7 and 3.4.
 
 """
+import os, platform, struct
+from .utils import to_bytes
 
-import os
-import platform
-import struct
-from ctypes import CDLL, util, byref, c_char_p, c_void_p, c_double, c_int, \
-    c_long, c_float, c_short, c_byte, c_longlong
+def get_lsl_libpath():
+    # find the library
+    os_name = platform.system()
+    bitness = 8 * struct.calcsize("P")
+    libname = 'lsl' + str(bitness)
+    if os_name in ['Windows', 'Microsoft']:
+        libprefix = ''
+        libname = 'lib' + libname
+        libsuffix = '.dll'
+    elif os_name == 'Darwin':
+        libprefix = 'lib'
+        libsuffix = '.dylib'
+    elif os_name == 'Linux':
+        libprefix = 'lib'
+        libsuffix = '.so'
+    else:
+        raise RuntimeError("unrecognized operating system:", os_name)
+    libpath = os.path.join(os.path.dirname(__file__), libprefix+libname+libsuffix)
+    if not os.path.isfile(libpath):
+        from ctypes import util
+        libpath = util.find_library(libprefix+libname+libsuffix)
+    if not libpath:
+        raise RuntimeError("library " + libprefix + libname + libsuffix + " was not found - make sure "
+                           "that it is on the search path (e.g., in the same "
+                           "folder as pylsl.py).")
+    return libpath
+
+try:
+    #out-of-line API
+    from ._pylsl import lib, ffi
+except ImportError:
+    #out-of-line ABI
+    from ._pylsl import ffi
+    lib = ffi.dlopen(get_lsl_libpath())
 
 __all__ = ['IRREGULAR_RATE', 'DEDUCED_TIMESTAMP', 'FOREVER', 'cf_float32',
            'cf_double64', 'cf_string', 'cf_int32', 'cf_int16', 'cf_int8',
@@ -75,6 +106,13 @@ cf_int8 = 6
 cf_int64 = 7
 # Can not be transmitted.
 cf_undefined = 0
+
+proc_none = 0
+proc_clocksync = 1
+proc_dejitter = 2
+proc_monotonize = 4
+proc_threadsafe = 5
+proc_ALL = proc_none | proc_clocksync | proc_dejitter | proc_monotonize | proc_threadsafe
 
 
 # ==========================================================
@@ -181,18 +219,17 @@ class StreamInfo:
 
         """
         if handle is not None:
-            self.obj = c_void_p(handle)
+            self.obj = handle
         else:
             if isinstance(channel_format, str):
                 channel_format = string2fmt[channel_format]
-            self.obj = lib.lsl_create_streaminfo(c_char_p(str.encode(name)),
-                                                 c_char_p(str.encode(type)),
+            self.obj = lib.lsl_create_streaminfo(to_bytes(name),
+                                                 to_bytes(type),
                                                  channel_count,
-                                                 c_double(nominal_srate),
+                                                 nominal_srate,
                                                  channel_format,
-                                                 c_char_p(str.encode(source_id)))
-            self.obj = c_void_p(self.obj)
-            if not self.obj:
+                                                 to_bytes(source_id))
+            if not self.obj or self.obj == ffi.NULL:
                 raise RuntimeError("could not create stream description "
                                    "object.")
     
@@ -217,7 +254,7 @@ class StreamInfo:
         the recording app or experimenter).
 
         """
-        return lib.lsl_get_name(self.obj).decode('utf-8')
+        return ffi.string(lib.lsl_get_name(self.obj)).decode('utf-8')
 
     def type(self):
         """Content type of the stream.
@@ -230,7 +267,7 @@ class StreamInfo:
         content types is preferred.
 
         """
-        return lib.lsl_get_type(self.obj).decode('utf-8')
+        return ffi.string(lib.lsl_get_type(self.obj)).decode('utf-8')
     
     def channel_count(self):
         """Number of channels of the stream.
@@ -275,7 +312,7 @@ class StreamInfo:
         back online.
 
         """
-        return lib.lsl_get_source_id(self.obj).decode('utf-8')
+        return ffi.string(lib.lsl_get_source_id(self.obj)).decode('utf-8')
     
     # === Hosting Information (assigned when bound to an outlet/inlet) ===
     
@@ -300,7 +337,7 @@ class StreamInfo:
         after a re-start).
 
         """
-        return lib.lsl_get_uid(self.obj).decode('utf-8')
+        return ffi.string(lib.lsl_get_uid(self.obj)).decode('utf-8')
 
     def session_id(self):
         """Session ID for the given stream.
@@ -313,11 +350,11 @@ class StreamInfo:
         Network Connectivity in the LSL wiki).
 
         """
-        return lib.lsl_get_session_id(self.obj).decode('utf-8')
+        return ffi.string(lib.lsl_get_session_id(self.obj)).decode('utf-8')
     
     def hostname(self):
         """Hostname of the providing machine."""
-        return lib.lsl_get_hostname(self.obj).decode('utf-8')
+        return ffi.string(lib.lsl_get_hostname(self.obj)).decode('utf-8')
     
     # === Data Description (can be modified) ===
     
@@ -354,7 +391,7 @@ class StreamInfo:
            sub-elements.
 
         """
-        return lib.lsl_get_xml(self.obj).decode('utf-8')
+        return ffi.string(lib.lsl_get_xml(self.obj)).decode('utf-8')
         
 
 # =====================    
@@ -388,15 +425,14 @@ class StreamOutlet:
 
         """
         self.obj = lib.lsl_create_outlet(info.obj, chunk_size, max_buffered)
-        self.obj = c_void_p(self.obj)
-        if not self.obj:
+        if not self.obj or self.obj == ffi.NULL:
             raise RuntimeError("could not create stream outlet.")
         self.channel_format = info.channel_format()
         self.channel_count = info.channel_count()
         self.do_push_sample = fmt2push_sample[self.channel_format]
         self.do_push_chunk = fmt2push_chunk[self.channel_format]
-        self.value_type = fmt2type[self.channel_format]
-        self.sample_type = self.value_type*self.channel_count
+        self.sample_size = ffi.sizeof(fmt2type[self.channel_format])
+        self._constructor_str = fmt2type[self.channel_format] + " []"
                 
     def __del__(self):
         """Destroy an outlet.
@@ -411,13 +447,15 @@ class StreamOutlet:
         except:
             pass
         
-    def push_sample(self, x, timestamp=0.0, pushthrough=True):
+    def push_sample(self, sample, timestamp=0.0, pushthrough=True):
         """Push a sample into the outlet.
 
         Each entry in the list corresponds to one channel.
 
         Keyword arguments:
-        x -- A list of values to push (one per channel).
+        sample -- A list of values to push (one per channel).
+                  If sample implements Python's buffer interface then we will
+                  push ffi.from_buffer(sample)
         timestamp -- Optionally the capture time of the sample, in agreement 
                      with local_clock(); if omitted, the current 
                      time is used. (default 0.0)
@@ -428,21 +466,30 @@ class StreamOutlet:
                        (default True)
 
         """
-        if len(x) == self.channel_count:
-            if self.channel_format == cf_string:
-                x = [v.encode('utf-8') for v in x]
-            handle_error(self.do_push_sample(self.obj, self.sample_type(*x),
-                                             c_double(timestamp),
-                                             c_int(pushthrough)))
-        else:
-            raise ValueError("length of the data must correspond to the "
-                             "stream's channel count.")
+        if sample is not None:
+            try:
+                data = ffi.from_buffer(sample)
+                if int(ffi.sizeof(data) / self.sample_size) != self.channel_count:
+                    raise ValueError("length of the data must correspond to the "
+                                     "stream's channel count.")
+            except TypeError:
+                if len(sample) != self.channel_count:
+                    raise ValueError("length of the data must correspond to the "
+                                     "stream's channel count.")
+                else:
+                    if self.channel_format == cf_string:
+                        data = [ffi.new("char[]", v.encode('utf-8')) for v in sample]
+                    else:
+                        data = ffi.new(self._constructor_str, sample)
+        handle_error(self.do_push_sample(self.obj, data,
+                                         timestamp, pushthrough))
 
-    def push_chunk(self, x, timestamp=0.0, pushthrough=True):
+    def push_chunk(self, samples, timestamp=0.0, pushthrough=True):
         """Push a list of samples into the outlet.
 
         samples -- A list of samples, either as a list of lists or a list of  
                    multiplexed values.
+                   Pass None if the outlet's _chunk_cbuff was modified elsewhere.
         timestamp -- Optionally the capture time of the most recent sample, in 
                      agreement with local_clock(); if omitted, the current 
                      time is used. The time stamps of other samples are 
@@ -454,21 +501,25 @@ class StreamOutlet:
                     precedence over the pushthrough flag. (default True)
 
         """
-        if len(x):
-            if type(x[0]) is list:
-                x = [v for sample in x for v in sample]
-            if self.channel_format == cf_string:
-                x = [v.encode('utf-8') for v in x]
-            if len(x) % self.channel_count == 0:
-                constructor = self.value_type*len(x)
-                # noinspection PyCallingNonCallable
-                handle_error(self.do_push_chunk(self.obj, constructor(*x),
-                                                c_long(len(x)),
-                                                c_double(timestamp),
-                                                c_int(pushthrough)))
+        try:
+            data = ffi.from_buffer(samples)
+            num_elements = int(ffi.sizeof(data) / self.sample_size)
+        except TypeError:
+            if len(samples):
+                if type(samples[0]) is list:
+                    samples = [v for sample in samples for v in sample]
+                if self.channel_format == cf_string:
+                    samples = [ffi.new("char[]", v.encode('utf-8')) for v in samples]
+                num_elements = len(samples)
+            if num_elements % self.channel_count == 0:
+                data = ffi.new(self._constructor_str, samples)
             else:
                 raise ValueError("each sample must have the same number of "
                                  "channels.")
+        handle_error(self.do_push_chunk(self.obj, data,
+                                        num_elements,
+                                        timestamp,
+                                        pushthrough))
                                 
     def have_consumers(self):
         """Check whether consumers are currently registered.
@@ -485,7 +536,7 @@ class StreamOutlet:
         Returns True if the wait was successful, False if the timeout expired.
 
         """
-        return bool(lib.lsl_wait_for_consumers(self.obj, c_double(timeout)))
+        return bool(lib.lsl_wait_for_consumers(self.obj, timeout))
 
  
 # =========================
@@ -513,9 +564,10 @@ def resolve_streams(wait_time=1.0):
     retrieved from the inlet.
 
     """
-    # noinspection PyCallingNonCallable
-    buffer = (c_void_p*1024)()
-    num_found = lib.lsl_resolve_all(byref(buffer), 1024, c_double(wait_time))
+    n_buffs = 128
+    buffer = ffi.new("lsl_streaminfo[]", n_buffs)
+    buffer_sz = n_buffs * ffi.sizeof("lsl_streaminfo")
+    num_found = lib.lsl_resolve_all(buffer, buffer_sz, wait_time)
     return [StreamInfo(handle=buffer[k]) for k in range(num_found)]
 
 
@@ -542,12 +594,14 @@ def resolve_byprop(prop, value, minimum=1, timeout=FOREVER):
 
     """
     # noinspection PyCallingNonCallable
-    buffer = (c_void_p*1024)()
-    num_found = lib.lsl_resolve_byprop(byref(buffer), 1024,
-                                       c_char_p(str.encode(prop)),
-                                       c_char_p(str.encode(value)),
+    n_buffs = 128
+    buffer = ffi.new("lsl_streaminfo[]", n_buffs)
+    buffer_sz = n_buffs * ffi.sizeof("lsl_streaminfo")
+    num_found = lib.lsl_resolve_byprop(buffer, buffer_sz,
+                                       to_bytes(prop),
+                                       to_bytes(value),
                                        minimum,
-                                       c_double(timeout))
+                                       timeout)
     return [StreamInfo(handle=buffer[k]) for k in range(num_found)]
 
 
@@ -573,11 +627,13 @@ def resolve_bypred(predicate, minimum=1, timeout=FOREVER):
 
     """
     # noinspection PyCallingNonCallable
-    buffer = (c_void_p*1024)()
-    num_found = lib.lsl_resolve_bypred(byref(buffer), 1024,
-                                       c_char_p(str.encode(predicate)),
+    n_buffs = 128
+    buffer = ffi.new("lsl_streaminfo[]", n_buffs)
+    buffer_sz = n_buffs * ffi.sizeof("lsl_streaminfo")
+    num_found = lib.lsl_resolve_bypred(buffer, buffer_sz,
+                                       to_bytes(predicate),
                                        minimum,
-                                       c_double(timeout))
+                                       timeout)
     return [StreamInfo(handle=buffer[k]) for k in range(num_found)]
 
     
@@ -593,7 +649,7 @@ class StreamInlet:
 
     """
     
-    def __init__(self, info, max_buflen=360, max_chunklen=0, recover=True):
+    def __init__(self, info, max_buflen=360, max_chunklen=0, recover=True, processing_flags=0):
         """Construct a new stream inlet from a resolved stream description.
         
         Keyword arguments:
@@ -630,17 +686,23 @@ class StreamInlet:
                             "got a list.")
         self.obj = lib.lsl_create_inlet(info.obj, max_buflen, max_chunklen,
                                         recover)
-        self.obj = c_void_p(self.obj)
-        if not self.obj: 
+
+        if processing_flags > 0:
+            handle_error(lib.lsl_set_postprocessing(self.obj, processing_flags))
+
+        if not self.obj or self.obj == ffi.NULL:
             raise RuntimeError("could not create stream inlet.")
         self.channel_format = info.channel_format()
         self.channel_count = info.channel_count()
         self.do_pull_sample = fmt2pull_sample[self.channel_format]
         self.do_pull_chunk = fmt2pull_chunk[self.channel_format]
-        self.value_type = fmt2type[self.channel_format]
-        self.sample_type = self.value_type*self.channel_count
-        self.sample = self.sample_type()
-        self.buffers = {}
+
+        self.sample_size = ffi.sizeof(fmt2type[self.channel_format])
+        self._sample_cbuff = ffi.new(fmt2type[self.channel_format] + " []", self.channel_count)
+        self._chunk_cbuff = ffi.new(fmt2type[self.channel_format] + " []", self.channel_count * max_chunklen)
+
+        self.ts_size = ffi.sizeof("double")
+        self.timestamp_cbuff = ffi.new("double []", max_chunklen)
 
     def __del__(self):
         """Destructor. The inlet will automatically disconnect if destroyed."""
@@ -649,7 +711,7 @@ class StreamInlet:
             lib.lsl_destroy_inlet(self.obj)
         except:
             pass
-        
+
     def info(self, timeout=FOREVER):
         """Retrieve the complete information of the given stream.
 
@@ -663,10 +725,9 @@ class StreamInlet:
         stream source has been lost).
 
         """
-        errcode = c_int()
-        result = lib.lsl_get_fullinfo(self.obj, c_double(timeout),
-                                      byref(errcode))
-        handle_error(errcode)
+        errcode = ffi.new("int *")
+        result = lib.lsl_get_fullinfo(self.obj, timeout, errcode)
+        handle_error(errcode[0])
         return StreamInfo(handle=result)
 
     def open_stream(self, timeout=FOREVER):
@@ -684,9 +745,9 @@ class StreamInlet:
         stream source has been lost).
 
         """
-        errcode = c_int()
-        lib.lsl_open_stream(self.obj, c_double(timeout), byref(errcode))
-        handle_error(errcode)
+        errcode = ffi.new("int *")
+        lib.lsl_open_stream(self.obj, timeout, errcode)
+        handle_error(errcode[0])
         
     def close_stream(self):
         """Drop the current data stream.
@@ -722,19 +783,23 @@ class StreamInlet:
         stream source has been lost).
 
         """
-        errcode = c_int()
-        result = lib.lsl_time_correction(self.obj, c_double(timeout),
-                                         byref(errcode))
-        handle_error(errcode)
+        errcode = ffi.new("int *")
+        result = lib.lsl_time_correction(self.obj, timeout, errcode)
+        handle_error(errcode[0])
         return result
         
-    def pull_sample(self, timeout=FOREVER, sample=None):
+    def pull_sample(self, timeout=FOREVER, sample=None, dest_obj=None):
         """Pull a sample from the inlet and return it.
         
         Keyword arguments:
         timeout -- The timeout for this operation, if any. (default FOREVER)
                    If this is passed as 0.0, then the function returns only a 
                    sample if one is buffered for immediate pickup.
+        dest_obj -- A python object supporting the buffer interface.
+                    If provided, ffi.from_buffer(dest_obj) will be passed
+                    to the library, thus dest_obj will be updated in place,
+                    and no samples will be returned directly.
+                    (default None)
         
         Returns a tuple (sample,timestamp) where sample is a list of channel 
         values and timestamp is the capture time of the sample on the remote 
@@ -754,23 +819,34 @@ class StreamInlet:
             timeout = sample if type(sample) is float else 0.0
         else:
             assign_to = None
-                
-        errcode = c_int()
-        timestamp = self.do_pull_sample(self.obj, byref(self.sample),
-                                        self.channel_count, c_double(timeout),
-                                        byref(errcode))
-        handle_error(errcode)
+
+        errcode = ffi.new("int *")
+
+        if dest_obj is not None:
+            timestamp = self.do_pull_sample(self.obj, ffi.from_buffer(dest_obj),
+                                            self.channel_count, timeout,
+                                            errcode)
+        else:
+            timestamp = self.do_pull_sample(self.obj, self._sample_cbuff,
+                                            self.channel_count, timeout,
+                                            errcode)
+
+        handle_error(errcode[0])
         if timestamp:
-            sample = [v for v in self.sample]
-            if self.channel_format == cf_string:
-                sample = [v.decode('utf-8') for v in sample]
-            if assign_to is not None:
-                assign_to[:] = sample
-            return sample, timestamp
+            if dest_obj is None:
+                if self.channel_format == cf_string:
+                    sample = [ffi.string(v).decode('utf-8') for v in self._sample_cbuff]
+                else:
+                    sample = ffi.unpack(self._sample_cbuff, self.channel_count)
+                if assign_to is not None:
+                    assign_to[:] = sample
+                return sample, timestamp
+            else:
+                return None, timestamp
         else:
             return None, None
         
-    def pull_chunk(self, timeout=0.0, max_samples=1024):
+    def pull_chunk(self, timeout=0.0, max_samples=1024, dest_obj=None):
         """Pull a chunk of samples from the inlet.
         
         Keyword arguments:
@@ -779,6 +855,11 @@ class StreamInlet:
                    (default 0.0)
         max_samples -- Maximum number of samples to return. (default 
                        1024)
+        dest_obj -- A python object supporting the buffer interface.
+                    If provided, ffi.from_buffer(dest_obj) will be passed
+                    to the library, thus dest_obj will be updated in place,
+                    and no samples will be returned directly.
+                    (default None)
                        
         Returns a tuple (samples,timestamps) where samples is a list of samples 
         (each itself a list of values), and timestamps is a list of time-stamps.
@@ -786,30 +867,47 @@ class StreamInlet:
         Throws a LostError if the stream source has been lost.
 
         """
-        # look up a pre-allocated buffer of appropriate length        
+
+        if ffi.sizeof(self.timestamp_cbuff) < self.ts_size*max_samples:
+            # TODO: Reshape operation instead of ffi.new?
+            self.timestamp_cbuff = ffi.new("double []", max_samples)
+
+        errcode = ffi.new("int *")
         num_channels = self.channel_count
-        max_values = max_samples*num_channels
-        if max_samples not in self.buffers:
-            # noinspection PyCallingNonCallable
-            self.buffers[max_samples] = ((self.value_type*max_values)(),
-                                         (c_double*max_samples)())
-        buffer = self.buffers[max_samples]
-        # read data into it
-        errcode = c_int()
-        # noinspection PyCallingNonCallable
-        num_elements = self.do_pull_chunk(self.obj, byref(buffer[0]),
-                                          byref(buffer[1]), max_values,
-                                          max_samples, c_double(timeout),
-                                          byref(errcode))
-        handle_error(errcode)
+        max_values = max_samples*self.channel_count
+
+        if dest_obj is not None:
+            dest_buff = ffi.from_buffer(dest_obj)
+            if ffi.sizeof(dest_buff) < self.sample_size * max_values:
+                raise ValueError("Provided buffer is too small. "
+                                 "set inlet.chunk_cbuff with a larger buffer or "
+                                 "accept a new output with return_samples=True")
+            num_elements = self.do_pull_chunk(self.obj, dest_buff,
+                                              self.timestamp_cbuff, max_values,
+                                              max_samples, timeout,
+                                              errcode)
+        else:
+            if ffi.sizeof(self._chunk_cbuff) < self.sample_size * max_values:
+                # TODO: Reshape operation instead of ffi.new?
+                self._chunk_cbuff = ffi.new(fmt2type[self.channel_format] + " []", max_values)
+            num_elements = self.do_pull_chunk(self.obj, self._chunk_cbuff,
+                                              self.timestamp_cbuff, max_values,
+                                              max_samples, timeout,
+                                              errcode)
+
+        handle_error(errcode[0])
         # return results (note: could offer a more efficient format in the 
         # future, e.g., a numpy array)
-        num_samples = num_elements/num_channels
-        samples = [[buffer[0][s*num_channels+c] for c in range(num_channels)]   
-                   for s in range(int(num_samples))]
-        if self.channel_format == cf_string:
-            samples = [[v.decode('utf-8') for v in s] for s in samples]
-        timestamps = [buffer[1][s] for s in range(int(num_samples))]
+        num_samples = int(num_elements/num_channels)
+        timestamps = ffi.unpack(self.timestamp_cbuff, num_samples)
+
+        if dest_obj is None:
+            samples = [[self._chunk_cbuff[s*num_channels+c] for c in range(num_channels)]
+                       for s in range(int(num_samples))]
+            if self.channel_format == cf_string:
+                samples = [[ffi.string(v).decode('utf-8') for v in s] for s in samples]
+        else:
+            samples = None
         return samples, timestamps
         
     def samples_available(self):
@@ -913,11 +1011,11 @@ class XMLElement:
     
     def name(self):
         """Name of the element."""
-        return lib.lsl_name(self.e).decode('utf-8')
+        return ffi.string(lib.lsl_name(self.e)).decode('utf-8')
     
     def value(self):
         """Value of the element."""
-        return lib.lsl_value(self.e).decode('utf-8')
+        return ffi.string(lib.lsl_value(self.e)).decode('utf-8')
         
     def child_value(self, name=None):
         """Get child value (value of the first child that is text).
@@ -930,7 +1028,7 @@ class XMLElement:
             res = lib.lsl_child_value(self.e)
         else:
             res = lib.lsl_child_value_n(self.e, str.encode(name))
-        return res.decode('utf-8')
+        return ffi.string(res).decode('utf-8')
 
     # === Modification ===
         
@@ -1015,18 +1113,17 @@ class ContinuousResolver:
                                  "argument or the pred argument, but not "
                                  "both.")
             self.obj = lib.lsl_create_continuous_resolver_bypred(str.encode(pred),
-                                                                 c_double(forget_after))
+                                                                 forget_after)
         elif prop is not None and value is not None:
             self.obj = lib.lsl_create_continuous_resolver_byprop(str.encode(prop),
                                                                  str.encode(value),
-                                                                 c_double(forget_after))
+                                                                 forget_after)
         elif prop is not None or value is not None:
             raise ValueError("if prop is specified, then value must be "
                              "specified, too, and vice versa.")
         else:
-            self.obj = lib.lsl_create_continuous_resolver(c_double(forget_after))
-        self.obj = c_void_p(self.obj)
-        if not self.obj:
+            self.obj = lib.lsl_create_continuous_resolver(forget_after)
+        if not self.obj or self.obj == ffi.NULL:
             raise RuntimeError("could not create continuous resolver.")
         
     def __del__(self):
@@ -1045,8 +1142,10 @@ class ContinuousResolver:
 
         """
         # noinspection PyCallingNonCallable
-        buffer = (c_void_p*1024)()
-        num_found = lib.lsl_resolver_results(self.obj, byref(buffer), 1024)
+        n_buffs = 128
+        buffer = ffi.new("lsl_streaminfo[]", n_buffs)
+        buffer_sz = n_buffs * ffi.sizeof("lsl_streaminfo")
+        num_found = lib.lsl_resolver_results(self.obj, buffer, buffer_sz)
         return [StreamInfo(handle=buffer[k]) for k in range(num_found)]
 
 
@@ -1076,8 +1175,6 @@ class InternalError(RuntimeError):
 
 def handle_error(errcode):
     """Error handler function. Translates an error code into an exception."""
-    if type(errcode) is c_int:
-        errcode = errcode.value
     if errcode == 0:
         pass  # no error
     elif errcode == -1:
@@ -1123,128 +1220,13 @@ def resolve_stream(*args):
                 return resolve_byprop(args[0], args[1], args[2])
         
 
-# ==================================
-# === Module Initialization Code ===
-# ==================================
-
-# find and load library
-os_name = platform.system()
-bitness = 8 * struct.calcsize("P")
-if os_name in ['Windows', 'Microsoft']:
-    libname = 'liblsl32.dll' if bitness == 32 else 'liblsl64.dll'
-elif os_name == 'Darwin':
-    libname = 'liblsl32.dylib' if bitness == 32 else 'liblsl64.dylib'
-elif os_name == 'Linux':
-    libname = 'liblsl32.so' if bitness == 32 else 'liblsl64.so'
-else:
-    raise RuntimeError("unrecognized operating system:", os_name)
-libpath = os.path.join(os.path.dirname(__file__), libname)
-if not os.path.isfile(libpath):
-    libpath = util.find_library(libname)
-if not libpath:
-    raise RuntimeError("library " + libname + " was not found - make sure "
-                       "that it is on the search path (e.g., in the same "
-                       "folder as pylsl.py).")
-lib = CDLL(libpath)
-
-
-# set function return types where necessary
-lib.lsl_local_clock.restype = c_double
-lib.lsl_create_streaminfo.restype = c_void_p
-lib.lsl_get_name.restype = c_char_p
-lib.lsl_get_type.restype = c_char_p
-lib.lsl_get_nominal_srate.restype = c_double
-lib.lsl_get_source_id.restype = c_char_p
-lib.lsl_get_created_at.restype = c_double
-lib.lsl_get_uid.restype = c_char_p
-lib.lsl_get_session_id.restype = c_char_p
-lib.lsl_get_hostname.restype = c_char_p
-lib.lsl_get_desc.restype = c_void_p
-lib.lsl_get_xml.restype = c_char_p
-lib.lsl_create_outlet.restype = c_void_p
-lib.lsl_create_inlet.restype = c_void_p 
-lib.lsl_get_fullinfo.restype = c_void_p
-lib.lsl_open_stream.restype = c_void_p
-lib.lsl_time_correction.restype = c_double
-lib.lsl_pull_sample_f.restype = c_double
-lib.lsl_pull_sample_d.restype = c_double
-lib.lsl_pull_sample_l.restype = c_double
-lib.lsl_pull_sample_i.restype = c_double
-lib.lsl_pull_sample_s.restype = c_double
-lib.lsl_pull_sample_c.restype = c_double
-lib.lsl_pull_sample_str.restype = c_double
-lib.lsl_pull_sample_buf.restype = c_double
-lib.lsl_first_child.restype = c_void_p
-lib.lsl_first_child.argtypes = [c_void_p, ]
-lib.lsl_last_child.restype = c_void_p
-lib.lsl_last_child.argtypes = [c_void_p, ]
-lib.lsl_next_sibling.restype = c_void_p
-lib.lsl_next_sibling.argtypes = [c_void_p, ]
-lib.lsl_previous_sibling.restype = c_void_p
-lib.lsl_previous_sibling.argtypes = [c_void_p, ]
-lib.lsl_parent.restype = c_void_p
-lib.lsl_parent.argtypes = [c_void_p, ]
-lib.lsl_child.restype = c_void_p
-lib.lsl_child.argtypes = [c_void_p, c_char_p]
-lib.lsl_next_sibling_n.restype = c_void_p
-lib.lsl_next_sibling_n.argtypes = [c_void_p, c_char_p]
-lib.lsl_previous_sibling_n.restype = c_void_p
-lib.lsl_previous_sibling_n.argtypes = [c_void_p, c_char_p]
-lib.lsl_name.restype = c_char_p
-lib.lsl_name.argtypes = [c_void_p, ]
-lib.lsl_value.restype = c_char_p
-lib.lsl_value.argtypes = [c_void_p, ]
-lib.lsl_child_value.restype = c_char_p
-lib.lsl_child_value.argtypes = [c_void_p, ]
-lib.lsl_child_value_n.restype = c_char_p
-lib.lsl_child_value_n.argtypes = [c_void_p, c_char_p]
-lib.lsl_append_child_value.restype = c_void_p
-lib.lsl_append_child_value.argtypes = [c_void_p, c_char_p, c_char_p]
-lib.lsl_prepend_child_value.restype = c_void_p
-lib.lsl_prepend_child_value.argtypes = [c_void_p, c_char_p, c_char_p]
-# Return type for lsl_set_child_value, lsl_set_name, lsl_set_value is int
-lib.lsl_set_child_value.argtypes = [c_void_p, c_char_p, c_char_p]
-lib.lsl_set_name.argtypes = [c_void_p, c_char_p]
-lib.lsl_set_value.argtypes = [c_void_p, c_char_p]
-lib.lsl_append_child.restype = c_void_p
-lib.lsl_append_child.argtypes = [c_void_p, c_char_p]
-lib.lsl_prepend_child.restype = c_void_p
-lib.lsl_prepend_child.argtypes = [c_void_p, c_char_p]
-lib.lsl_append_copy.restype = c_void_p
-lib.lsl_append_copy.argtypes = [c_void_p, c_void_p]
-lib.lsl_prepend_copy.restype = c_void_p
-lib.lsl_prepend_copy.argtypes = [c_void_p, c_void_p]
-lib.lsl_remove_child_n.argtypes = [c_void_p, c_char_p]
-lib.lsl_remove_child.argtypes = [c_void_p, c_void_p]
-# noinspection PyBroadException
-try:
-    lib.lsl_pull_chunk_f.restype = c_long
-    lib.lsl_pull_chunk_d.restype = c_long
-    lib.lsl_pull_chunk_l.restype = c_long
-    lib.lsl_pull_chunk_i.restype = c_long
-    lib.lsl_pull_chunk_s.restype = c_long
-    lib.lsl_pull_chunk_c.restype = c_long
-    lib.lsl_pull_chunk_str.restype = c_long
-    lib.lsl_pull_chunk_buf.restype = c_long
-except:
-    print("pylsl: chunk transfer functions not available in your liblsl "
-          "version.")
-# noinspection PyBroadException
-try:
-    lib.lsl_create_continuous_resolver.restype = c_void_p
-    lib.lsl_create_continuous_resolver_bypred.restype = c_void_p
-    lib.lsl_create_continuous_resolver_byprop.restype = c_void_p
-except:
-    print("pylsl: ContinuousResolver not (fully) available in your liblsl "
-          "version.")
-        
 # set up some type maps
 string2fmt = {'float32': cf_float32, 'double64': cf_double64,
               'string': cf_string, 'int32': cf_int32, 'int16': cf_int16,
               'int8': cf_int8, 'int64': cf_int64}
 fmt2string = ['undefined', 'float32', 'double64', 'string', 'int32', 'int16',
               'int8', 'int64']
-fmt2type = [[], c_float, c_double, c_char_p, c_int, c_short, c_byte, c_longlong]
+fmt2type = [[], 'float', 'double', 'char *', 'int', 'short', 'char']
 fmt2push_sample = [[], lib.lsl_push_sample_ftp, lib.lsl_push_sample_dtp,
                    lib.lsl_push_sample_strtp, lib.lsl_push_sample_itp,
                    lib.lsl_push_sample_stp, lib.lsl_push_sample_ctp, []]

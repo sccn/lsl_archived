@@ -3,6 +3,7 @@
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
+import platform
 
 here = path.abspath(path.dirname(__file__))
 
@@ -70,13 +71,16 @@ setup(
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages=find_packages(exclude=['contrib', 'docs', 'examples', 'tests*']),
+    packages=find_packages(exclude=['contrib', 'docs', 'examples', 'tests*', '_cffi_build', '_cffi_build.*']),
+
+    setup_requires=["cffi>=1.0.0"],
+    cffi_modules=["_cffi_build/pylsl_cffi.py:ffi"],
 
     # List run-time dependencies here.  These will be installed by pip when
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=[],
+    install_requires=["cffi>=1.0.0"],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
@@ -88,7 +92,7 @@ setup(
     # installed, specify them here.  If using Python 2.6 or less, then these
     # have to be included in MANIFEST.in as well.
     package_data={
-        'pylsl': ['liblsl32.dll','liblsl64.dll','liblsl32.dylib','liblsl64.dylib','liblsl32.so','liblsl64.so'],
+        'pylsl': ['liblsl32.dll','liblsl64.dll','liblsl32.dylib','liblsl64.dylib','liblsl32.so','liblsl64.so','lsl_c.h'],
     },
 
     # Although 'package_data' is the preferred approach, in some case you may

@@ -95,7 +95,7 @@ extern "C" {
 * (can be used for the chunking parameters in the inlet or the outlet).
 */
 #define LSL_NO_PREFERENCE 0
-
+//cut_before
 /**
 * Data format of a channel (each transmitted sample holds an array of channels).
 */
@@ -997,6 +997,7 @@ extern LIBLSL_C_API int lsl_resolver_results(lsl_continuous_resolver res, lsl_st
 extern LIBLSL_C_API void lsl_destroy_continuous_resolver(lsl_continuous_resolver res);
 
 
+//cut_after
 #ifdef __cplusplus
 } /* end extern "C" */
 #endif
