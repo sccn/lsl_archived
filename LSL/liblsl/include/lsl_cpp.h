@@ -815,11 +815,10 @@ namespace lsl {
                 std::vector<unsigned> result_lengths(buffer_elements); 
                 double res = lsl_pull_sample_buf(obj,&result_strings[0],&result_lengths[0],buffer_elements,timeout,&ec);
                 check_error(ec);
-                if (res)
-                    for (int k=0;k<buffer_elements;k++) {
-                        buffer[k].assign(result_strings[k],result_lengths[k]);
-                        lsl_destroy_string(result_strings[k]);
-                    }
+                for (int k=0;k<buffer_elements;k++) {
+                    buffer[k].assign(result_strings[k],result_lengths[k]);
+                    lsl_destroy_string(result_strings[k]);
+                }
                 return res; 
             } else 
                 throw std::runtime_error("Provided element count does not match the stream's channel count.");
