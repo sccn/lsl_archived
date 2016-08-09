@@ -272,7 +272,12 @@ namespace lsl {
         *  b) the misc elements <version>, <created_at>, <uid>, <session_id>, <v4address>, <v4data_port>, <v4service_port>, <v6address>, <v6data_port>, <v6service_port>
         *  c) the extended description element <desc> with user-defined sub-elements.
         */
-        std::string as_xml() const { return lsl_get_xml(obj); };
+        std::string as_xml() const {
+                char *tmp = lsl_get_xml(obj);
+                std::string result = tmp;
+                lsl_destroy_string(tmp);
+                return result;
+        }
 
         /// Number of bytes occupied by a channel (0 for string-typed channels).
         int channel_bytes() const { return lsl_get_channel_bytes(obj); }
