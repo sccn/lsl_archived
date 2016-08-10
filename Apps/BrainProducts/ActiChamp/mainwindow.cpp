@@ -489,6 +489,7 @@ const double coeffs_10000_to_1000[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1.519574e-
 	1.338956e-004, 4.260406e-019, -1.054849e-004, -1.749852e-004, -2.067444e-004, -2.043512e-004, -1.756247e-004,
 	-1.310480e-004, -8.198651e-005, -3.893685e-005, -1.003438e-005, -1.519574e-034};
 
+void Transpose(const vector<vector<double> > &in, vector<vector<double> > &out);
 
 MainWindow::MainWindow(QWidget *parent, const std::string &config_file): QMainWindow(parent),ui(new Ui::MainWindow)
 {
@@ -502,8 +503,31 @@ MainWindow::MainWindow(QWidget *parent, const std::string &config_file): QMainWi
 	QObject::connect(ui->linkButton, SIGNAL(clicked()), this, SLOT(link()));
 	QObject::connect(ui->actionLoad_Configuration, SIGNAL(triggered()), this, SLOT(load_config_dialog()));
 	QObject::connect(ui->actionSave_Configuration, SIGNAL(triggered()), this, SLOT(save_config_dialog()));
+	QObject::connect(ui->samplingRate, SIGNAL(currentIndexChanged(int)), this, SLOT(setMinChunk(int)));
 }
 
+void MainWindow::setMinChunk(int idx){
+
+	int samplingRate = sampling_rates[idx];
+	switch (samplingRate) {
+	case 125:
+		if(ui->chunkSize->value()<80)ui->chunkSize->setValue(80);
+		ui->chunkSize->setMinimum(80);
+		break;
+	case 250:
+		if(ui->chunkSize->value()<40)ui->chunkSize->setValue(40);
+		ui->chunkSize->setMinimum(40);
+		break;
+	case 500:
+		if(ui->chunkSize->value()<20)ui->chunkSize->setValue(20);
+		ui->chunkSize->setMinimum(20);
+		break;
+	case 1000:
+		if(ui->chunkSize->value()<10)ui->chunkSize->setValue(10);
+		ui->chunkSize->setMinimum(10);
+		break;
+	}
+}
 
 void MainWindow::load_config_dialog() {
 	QString sel = QFileDialog::getOpenFileName(this,"Load Configuration File","","Configuration Files (*.cfg)");
@@ -538,8 +562,9 @@ void MainWindow::load_config(const std::string &filename) {
 	try {
 		ui->deviceNumber->setValue(pt.get<int>("settings.devicenumber",0));
 		ui->channelCount->setValue(pt.get<int>("settings.channelcount",32));
-		ui->chunkSize->setValue(pt.get<int>("settings.chunksize",10));
+		ui->chunkSize->setValue(pt.get<int>("settings.chunksize",20));
 		ui->samplingRate->setCurrentIndex(pt.get<int>("settings.samplingrate",2));
+		setMinChunk(ui->samplingRate->currentIndex());
 		ui->useAUX->setCheckState(pt.get<bool>("settings.useaux",false) ? Qt::Checked : Qt::Unchecked);
 		ui->activeShield->setCheckState(pt.get<bool>("settings.activeshield",true) ? Qt::Checked : Qt::Unchecked);
 		ui->channelLabels->clear();
@@ -695,6 +720,8 @@ void MainWindow::link() {
 	}
 }
 
+bool _resample = false;
+
 // background data reader thread
 void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, int samplingRate, bool useAUX, bool activeShield, std::vector<std::string> channelLabels) {
 	HANDLE hDevice = NULL;
@@ -754,13 +781,37 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 		std::vector<std::vector<double> > send_buffer(chunkSize,std::vector<double>(channelCount));
 		std::vector<unsigned> trigger_buffer(chunkSize);
 
+		std::vector<std::vector<double>> rs_temp_in,rs_temp_out;
+
 		// allocate resampler
-		Resampler<double,double,double> *resampler = NULL;
-		switch (samplingRate) {
-			case 125: resampler = new Resampler<double,double,double>(1,80,coeffs_10000_to_125,sizeof(coeffs_10000_to_125)/sizeof(coeffs_10000_to_125[0])); break;
-			case 250: resampler = new Resampler<double,double,double>(1,40,coeffs_10000_to_250,sizeof(coeffs_10000_to_250)/sizeof(coeffs_10000_to_250[0])); break;
-			case 500: resampler = new Resampler<double,double,double>(1,20,coeffs_10000_to_500,sizeof(coeffs_10000_to_500)/sizeof(coeffs_10000_to_500[0])); break;
-			case 1000: resampler = new Resampler<double,double,double>(1,10,coeffs_10000_to_1000,sizeof(coeffs_10000_to_1000)/sizeof(coeffs_10000_to_1000[0])); break;
+		//Resampler<double,double,double> *resampler = NULL;
+		//switch (samplingRate) {
+		//	case 125: resampler = new Resampler<double,double,double>(1,80,coeffs_10000_to_125,sizeof(coeffs_10000_to_125)/sizeof(coeffs_10000_to_125[0])); break;
+		//	case 250: resampler = new Resampler<double,double,double>(1,40,coeffs_10000_to_250,sizeof(coeffs_10000_to_250)/sizeof(coeffs_10000_to_250[0])); break;
+		//	case 500: resampler = new Resampler<double,double,double>(1,20,coeffs_10000_to_500,sizeof(coeffs_10000_to_500)/sizeof(coeffs_10000_to_500[0])); break;
+		//	case 1000: resampler = new Resampler<double,double,double>(1,10,coeffs_10000_to_1000,sizeof(coeffs_10000_to_1000)/sizeof(coeffs_10000_to_1000[0])); break;
+		//}
+
+		// just for testing (Ratko)
+		if(samplingRate < 1001)
+			_resample = true;
+		
+		std::vector<Resampler<double,double,double>*> resamplers;
+		for (unsigned c=0;c<channelCount;c++) {
+			switch (samplingRate) {
+				case 125:
+					resamplers.push_back(new Resampler<double,double,double>(1,80,coeffs_10000_to_125,sizeof(coeffs_10000_to_125)/sizeof(coeffs_10000_to_125[0])));
+					break;
+				case 250:
+					resamplers.push_back(new Resampler<double,double,double>(1,40,coeffs_10000_to_250,sizeof(coeffs_10000_to_250)/sizeof(coeffs_10000_to_250[0])));
+					break;
+				case 500:
+					resamplers.push_back(new Resampler<double,double,double>(1,20,coeffs_10000_to_500,sizeof(coeffs_10000_to_500)/sizeof(coeffs_10000_to_500[0])));
+					break;
+				case 1000:
+					resamplers.push_back(new Resampler<double,double,double>(1,10,coeffs_10000_to_1000,sizeof(coeffs_10000_to_1000)/sizeof(coeffs_10000_to_1000[0])));
+					break;
+			}
 		}
 
 		// create data streaminfo and append some meta-data
@@ -871,9 +922,40 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 				}
 
 				// optionally resample
-				if (resampler) {
-					resampler->apply_multichannel(temp_buffer,send_buffer);
+				if (_resample) {
+					//resampler->apply_multichannel(temp_buffer,send_buffer);
+					//data_outlet.push_chunk(send_buffer,now);
+										
+					int insamples = temp_buffer.size();
+					int outchannels = temp_buffer[0].size();
+					int outsamples = _resample ? resamplers[0]->neededOutCount(insamples) : insamples;
+					
+
+					// copy to transposed input buffer _temp_in
+					rs_temp_in.resize(outchannels);
+					for (int c=0,e=outchannels;c<e;c++) {
+						rs_temp_in[c].resize(insamples);
+						for (int s=0,e=insamples;s<e;s++)
+							rs_temp_in[c][s] = temp_buffer[s][c];
+					}
+
+					// apply and store in output buffer _temp_out
+					rs_temp_out.resize(outchannels);
+					for (int c=0,e=outchannels;c<e;c++) {
+						rs_temp_out[c].resize(outsamples);
+						resamplers[c]->apply(&rs_temp_in[c][0],insamples,&rs_temp_out[c][0],outsamples);
+					}
+
+					// transpose back and store in out
+					send_buffer.resize(outsamples);
+					for (int s=0,e=outsamples;s<e;s++) {
+						send_buffer[s].resize(outchannels);
+						for (int c=0,e=outchannels;c<e;c++)
+							send_buffer[s][c] = rs_temp_out[c][s];
+					}
+
 					data_outlet.push_chunk(send_buffer,now);
+
 				} else {
 					data_outlet.push_chunk(temp_buffer,now);
 				}
@@ -910,3 +992,4 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 MainWindow::~MainWindow() {
 	delete ui;
 }
+
