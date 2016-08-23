@@ -127,7 +127,7 @@ namespace lsl {
 			std::size_t samples_written=0, num_chans = info().channel_count(), max_samples = data_buffer_elements/num_chans;
 			if (data_buffer_elements % num_chans != 0)
 				throw std::runtime_error("The number of buffer elements must be a multiple of the stream's channel count.");
-			if (timestamp_buffer && max_samples != timestamp_buffer_elements)
+			if (data_buffer_elements != timestamp_buffer_elements)
 				throw std::runtime_error("The timestamp buffer must hold the same number of samples as the data buffer.");
 			double end_time = timeout ? lsl_clock()+timeout : 0.0;
 			for (samples_written=0; samples_written<max_samples; samples_written++) {
