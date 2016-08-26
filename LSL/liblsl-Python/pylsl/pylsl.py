@@ -853,7 +853,7 @@ class XMLElement:
     
     def __init__(self, handle):
         """Construct new XML element from existing handle."""
-        self.e = handle
+        self.e = c_void_p(handle)
     
     # === Tree Navigation ===
     
