@@ -1,1 +1,26 @@
-* -text
+# Most files are non-windows-specific text
+# Autodetection is enabled just in case new file types are added
+* text=auto
+
+# Windows files keep their line endings
+# These probably do not need to all be crlf.  Feel free to remove if needed.
+*.bat text eol=crlf
+*.def text eol=crlf
+*.icproj text eol=crlf
+*.rc text eol=crlf
+*.sln* text eol=crlf
+*.vc*proj* text eol=crlf
+
+# Binary files should never have line endings changed
+._* binary
+.DS_Store binary
+*.bit binary
+*.ico binary
+*.gif binary
+*.lnk binary
+*.mex* binary
+*.pdf binary
+*.res binary
+*.suo* binary
+*.vpj binary
+*.vws binary
