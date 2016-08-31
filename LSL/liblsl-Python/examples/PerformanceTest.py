@@ -7,6 +7,12 @@ try:
     from pyfftw.interfaces.numpy_fft import rfft, irfft       # Performs much better than numpy's fftpack
 except ImportError:
     from numpy.fft import rfft, irfft
+try:
+    import pyqtgraph as pg
+    import sys
+    haspyqtgraph = True
+except ImportError:
+    haspyqtgraph = False
 
 # The code for pink noise generation is taken from
 # https://github.com/python-acoustics/python-acoustics/blob/master/acoustics/generator.py
@@ -153,14 +159,17 @@ class BetaInlet(object):
         while ch.name() == "channel":
             chan_xml_list.append(ch)
             ch = ch.next_sibling("channel")
-        stream_ch_names = [ch_xml.child_value("label") for ch_xml in chan_xml_list]
+        self.channel_names = [ch_xml.child_value("label") for ch_xml in chan_xml_list]
         print("Reading from inlet named {} with channels {} sending data at {} Hz".format(stream_info.name(),
-                                                                                          stream_ch_names, stream_Fs))
+                                                                                          self.channel_names, stream_Fs))
 
     def update(self):
-        chunk, timestamps = self.inlet.pull_chunk(max_samples=3276*2)
+        max_samps = 3276*2
+        data = np.nan * np.ones((max_samps, len(self.channel_names)), dtype=np.float32)
+        _, timestamps = self.inlet.pull_chunk(max_samples=max_samps, dest_obj=data)
+        data = data[:len(timestamps), :]
         print("Beta inlet retrieved {} samples.".format(len(timestamps)))
-        return timestamps, chunk
+        return data, np.asarray(timestamps)
 
 
 class MarkersGeneratorOutlet(object):
@@ -279,23 +288,50 @@ class MarkerInlet(object):
             print("Marker inlet updated with task {}".format(self.task))
 
 
+betaGen = BetaGeneratorOutlet()
+markerGen = MarkersGeneratorOutlet()
+betaIn = BetaInlet()
+markerIn = MarkerInlet()
+
+if haspyqtgraph:
+    qapp = pg.QtGui.QApplication(sys.argv)
+    qwindow = pg.plot()
+    qwindow.clear()
+    qwindow.parent().setWindowTitle("pylsl PerformanceTest")
+
+def update():
+    markerGen.update()
+    markerIn.update()
+    betaGen.update(task=markerIn.task)  # Rate-limiting step. Will time.sleep as needed.
+    signal, tvec = betaIn.update()
+
+    if haspyqtgraph:
+        plot = qwindow.getPlotItem()
+        graphs = plot.listDataItems()
+        if not graphs:
+            # create graphs
+            for i in range(signal.shape[1]):
+                plot.plot(tvec, signal[:, i])
+        else:
+            # update graphs
+            for i in range(signal.shape[1]):
+                graphs[i].setData(signal[:, i], x=tvec)
+
 if __name__ == '__main__':
     """
     python3 -m cProfile -o pylsl.cprof PerformanceTest.py
     gprof2dot -f pstats pylsl.cprof | dot -Tpng -o pylsl_prof.png
     """
-    betaGen = BetaGeneratorOutlet()
-    markerGen = MarkersGeneratorOutlet()
-
-    betaIn = BetaInlet()
-    markerIn = MarkerInlet()
-
     try:
-        while True:
-            markerGen.update()
-            markerIn.update()
-            betaGen.update(task=markerIn.task)  # Rate-limiting step. Will sleep as needed.
-            tvec, signal = betaIn.update()
+        if haspyqtgraph:
+            timer = pg.QtCore.QTimer()
+            timer.timeout.connect(update)
+            timer.start(1)  # Delay not needed because update has time.sleep
+            if (sys.flags.interactive != 1) or not hasattr(pg.QtCore, 'PYQT_VERSION'):
+                sys.exit(pg.QtGui.QApplication.instance().exec_())
+        else:
+            while True:
+                update()
 
     except KeyboardInterrupt:
         # No cleanup necessary?
