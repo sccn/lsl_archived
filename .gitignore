@@ -579,3 +579,6 @@ FakesAssemblies/
 # exceptions:
 !gUSBamp.lib
 !gHIamp.lib
+
+# stupid ds_store:
+.DS_Store
