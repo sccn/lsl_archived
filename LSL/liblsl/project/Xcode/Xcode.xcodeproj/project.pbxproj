@@ -7,6 +7,20 @@
 	objects = {
 
 /* Begin PBXContainerItemProxy section */
+		308C798E1D775ACA00F8C7CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA48E46B1512E76400DBC29F /* liblsl.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0821B51B1C6B0BB300063AA9;
+			remoteInfo = liblsl_ios;
+		};
+		308C79981D775ACA00F8C7CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA35E2791513D00B003F3939 /* SendStringMarkers.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA35E26C1513D00B003F3939;
+			remoteInfo = SendStringMarkers;
+		};
 		AA1103E51513AC8E006FD0CF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AA1103E11513AC8D006FD0CF /* SendData.xcodeproj */;
@@ -117,6 +131,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		308C79861D775ACA00F8C7CE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				308C79991D775ACA00F8C7CE /* SendStringMarkers-mac */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		AA1103E21513AC8D006FD0CF /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -221,6 +243,7 @@
 			children = (
 				AA48E4701512E76400DBC29F /* liblsl64-debug.dylib */,
 				AAE649AB157827FD009EEA4A /* liblsl32-debug.dylib */,
+				308C798F1D775ACA00F8C7CE /* libliblsl_ios.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -297,6 +320,10 @@
 					ProjectRef = AA35E2351513CEEE003F3939 /* SendDataSimple.xcodeproj */;
 				},
 				{
+					ProductGroup = 308C79861D775ACA00F8C7CE /* Products */;
+					ProjectRef = AA35E2791513D00B003F3939 /* SendStringMarkers.xcodeproj */;
+				},
+				{
 					ProductGroup = AA6FC01A15B9EB5C0048161D /* Products */;
 					ProjectRef = AA6FC01915B9EB5C0048161D /* StressTest.xcodeproj */;
 				},
@@ -308,6 +335,20 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		308C798F1D775ACA00F8C7CE /* libliblsl_ios.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libliblsl_ios.a;
+			remoteRef = 308C798E1D775ACA00F8C7CE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		308C79991D775ACA00F8C7CE /* SendStringMarkers-mac */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "SendStringMarkers-mac";
+			remoteRef = 308C79981D775ACA00F8C7CE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		AA1103E61513AC8E006FD0CF /* SendData-mac */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
