@@ -76,6 +76,14 @@ cf_int64 = 7
 # Can not be transmitted.
 cf_undefined = 0
 
+# Post processing flags
+proc_none = 0
+proc_clocksync = 1
+proc_dejitter = 2
+proc_monotonize = 4
+proc_threadsafe = 8
+proc_ALL = proc_none | proc_clocksync | proc_dejitter | proc_monotonize | proc_threadsafe
+
 
 # ==========================================================
 # === Free Functions provided by the lab streaming layer ===
@@ -593,7 +601,7 @@ class StreamInlet:
 
     """
     
-    def __init__(self, info, max_buflen=360, max_chunklen=0, recover=True):
+    def __init__(self, info, max_buflen=360, max_chunklen=0, recover=True, processing_flags=0):
         """Construct a new stream inlet from a resolved stream description.
         
         Keyword arguments:
@@ -633,6 +641,8 @@ class StreamInlet:
         self.obj = c_void_p(self.obj)
         if not self.obj: 
             raise RuntimeError("could not create stream inlet.")
+        if processing_flags > 0:
+            handle_error(lib.lsl_set_postprocessing(self.obj, processing_flags))
         self.channel_format = info.channel_format()
         self.channel_count = info.channel_count()
         self.do_pull_sample = fmt2pull_sample[self.channel_format]
