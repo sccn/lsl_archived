@@ -462,21 +462,29 @@ class StreamOutlet:
                     precedence over the pushthrough flag. (default True)
 
         """
-        if len(x):
-            if type(x[0]) is list:
-                x = [v for sample in x for v in sample]
-            if self.channel_format == cf_string:
-                x = [v.encode('utf-8') for v in x]
-            if len(x) % self.channel_count == 0:
-                constructor = self.value_type*len(x)
-                # noinspection PyCallingNonCallable
-                handle_error(self.do_push_chunk(self.obj, constructor(*x),
-                                                c_long(len(x)),
-                                                c_double(timestamp),
-                                                c_int(pushthrough)))
-            else:
-                raise ValueError("each sample must have the same number of "
-                                 "channels.")
+        try:
+            n_values = self.channel_count * len(x)
+            data_buff = (self.value_type * n_values).from_buffer(x)
+            handle_error(self.do_push_chunk(self.obj, data_buff,
+                                            c_long(n_values),
+                                            c_double(timestamp),
+                                            c_int(pushthrough)))
+        except TypeError:
+            if len(x):
+                if type(x[0]) is list:
+                    x = [v for sample in x for v in sample]
+                if self.channel_format == cf_string:
+                    x = [v.encode('utf-8') for v in x]
+                if len(x) % self.channel_count == 0:
+                    constructor = self.value_type*len(x)
+                    # noinspection PyCallingNonCallable
+                    handle_error(self.do_push_chunk(self.obj, constructor(*x),
+                                                    c_long(len(x)),
+                                                    c_double(timestamp),
+                                                    c_int(pushthrough)))
+                else:
+                    raise ValueError("each sample must have the same number of "
+                                     "channels.")
                                 
     def have_consumers(self):
         """Check whether consumers are currently registered.
@@ -780,7 +788,7 @@ class StreamInlet:
         else:
             return None, None
         
-    def pull_chunk(self, timeout=0.0, max_samples=1024):
+    def pull_chunk(self, timeout=0.0, max_samples=1024, dest_obj=None):
         """Pull a chunk of samples from the inlet.
         
         Keyword arguments:
@@ -789,6 +797,13 @@ class StreamInlet:
                    (default 0.0)
         max_samples -- Maximum number of samples to return. (default 
                        1024)
+        dest_obj -- A Python object that supports the buffer interface.
+                    If this is provided then the dest_obj will be updated in place
+                    and the samples list returned by this method will be empty.
+                    It is up to the caller to trim the buffer to the appropriate
+                    number of samples.
+                    A numpy buffer must be order='C'
+                    (default None)
                        
         Returns a tuple (samples,timestamps) where samples is a list of samples 
         (each itself a list of values), and timestamps is a list of time-stamps.
@@ -799,27 +814,36 @@ class StreamInlet:
         # look up a pre-allocated buffer of appropriate length        
         num_channels = self.channel_count
         max_values = max_samples*num_channels
+
         if max_samples not in self.buffers:
             # noinspection PyCallingNonCallable
             self.buffers[max_samples] = ((self.value_type*max_values)(),
                                          (c_double*max_samples)())
-        buffer = self.buffers[max_samples]
+        if dest_obj is not None:
+            data_buff = (self.value_type * max_values).from_buffer(dest_obj)
+        else:
+            data_buff = self.buffers[max_samples][0]
+        ts_buff = self.buffers[max_samples][1]
+
         # read data into it
         errcode = c_int()
         # noinspection PyCallingNonCallable
-        num_elements = self.do_pull_chunk(self.obj, byref(buffer[0]),
-                                          byref(buffer[1]), max_values,
+        num_elements = self.do_pull_chunk(self.obj, byref(data_buff),
+                                          byref(ts_buff), max_values,
                                           max_samples, c_double(timeout),
                                           byref(errcode))
         handle_error(errcode)
         # return results (note: could offer a more efficient format in the 
         # future, e.g., a numpy array)
         num_samples = num_elements/num_channels
-        samples = [[buffer[0][s*num_channels+c] for c in range(num_channels)]   
-                   for s in range(int(num_samples))]
-        if self.channel_format == cf_string:
-            samples = [[v.decode('utf-8') for v in s] for s in samples]
-        timestamps = [buffer[1][s] for s in range(int(num_samples))]
+        if dest_obj is None:
+            samples = [[data_buff[s*num_channels+c] for c in range(num_channels)]
+                       for s in range(int(num_samples))]
+            if self.channel_format == cf_string:
+                samples = [[v.decode('utf-8') for v in s] for s in samples]
+        else:
+            samples = None
+        timestamps = [ts_buff[s] for s in range(int(num_samples))]
         return samples, timestamps
         
     def samples_available(self):
