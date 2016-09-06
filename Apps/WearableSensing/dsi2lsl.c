@@ -125,7 +125,7 @@ void      getRandomString( char *s, const int len);
 const char * GetStringOpt( int argc, const char * argv[], const char * keyword1, const char * keyword2 );
 int         GetIntegerOpt( int argc, const char * argv[], const char * keyword1, const char * keyword2, int defaultValue );
 
-static int KeepRunning = 1;
+static volatile int KeepRunning = 1;
 void  QuitHandler(int a){ KeepRunning = 0;}
 
 #   define REPORT( fmt, x )  fprintf( stderr, #x " = " fmt "\n", ( x ) )
@@ -158,9 +158,7 @@ int main( int argc, const char * argv[] )
 	if( strcmp( DSI_GetAPIVersion(), DSI_API_VERSION ) != 0 ) fprintf( stderr, "WARNING - mismatched versioning: program was compiled with DSI.h version %s but just loaded shared library version %s. You should ensure that you are using matching versions of the API files - contact Wearable Sensing if you are missing a file.\n", DSI_API_VERSION, DSI_GetAPIVersion() );
 
   // Implements a Ctrl+C signal handler to quit the program (some terminals actually use Ctrl+Shift+C instead)
-  struct sigaction act;
-  act.sa_handler = QuitHandler;
-  sigaction(SIGINT, &act, NULL);
+  signal(SIGINT, QuitHandler);
 
   printf("'Initializing the headset\n");
   DSI_Headset h;
