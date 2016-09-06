@@ -2,7 +2,7 @@ import time
 import random
 import numpy as np
 from pylsl import StreamInfo, StreamInlet, StreamOutlet, local_clock, resolve_byprop,\
-    proc_clocksync, proc_dejitter, proc_monotonize
+    resolve_bypred, proc_clocksync, proc_dejitter, proc_monotonize
 try:
     from pyfftw.interfaces.numpy_fft import rfft, irfft       # Performs much better than numpy's fftpack
 except ImportError:
@@ -253,7 +253,7 @@ class MarkerInlet(object):
     def __init__(self):
         self.task = {'phase':'precue', 'class':1, 'target':1}
         print("Looking for stream with type Markers")
-        streams = resolve_byprop("type", "Markers")
+        streams = resolve_bypred("type='Markers'", minimum=1)
         proc_flags = 0  # Marker events are relatively rare. No need to post-process.
         self.inlet = StreamInlet(streams[0], processing_flags=proc_flags)
         # The following is an example of how to read stream info
