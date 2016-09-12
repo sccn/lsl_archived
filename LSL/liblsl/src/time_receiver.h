@@ -38,11 +38,15 @@ namespace lsl {
 		* Retrieve an estimated time correction offset for the given stream.
 		* The first call to this function takes several msec for an initial estimate, subsequent calls are instantaneous.
 		* The correction offset is periodically re-estimated in the background (once every few sec.).
+		* @remote_time Time of this measurment on remote computer
+		* @uncertainty Maximum uncertainty of this measurement (maps to round-trip-time).
 		* @timeout Timeout for first time-correction estimate.
 		* @return The time correction estimate.
 		* @throws timeout_error If the initial estimate times out.
 		*/
 		double time_correction(double timeout=2);
+		double time_correction(double *remote_time, double *uncertainty, double timeout);
+
 
 		/// Determine whether the clock was (potentially) reset since the last call to was_reset()
 		/// This can happen if the stream got lost (e.g., app crash) and the computer got restarted or swapped out
@@ -89,6 +93,8 @@ namespace lsl {
 		boost::thread time_thread_;					// updates time offset
 		bool was_reset_;							// whether the clock was reset
 		double timeoffset_;							// the current time offset (or NOT_ASSIGNED if not yet assigned)
+		double remote_time_;                        // remote computer time at the specified timeoffset_
+		double uncertainty_;                        // round trip time (a.k.a. uncertainty) at the specficied timeoffset_
 		boost::mutex timeoffset_mut_;				// mutex to protect the time offset
 		boost::condition_variable timeoffset_upd_;	// condition variable to indicate that an update for the time offset is available
 
@@ -103,6 +109,7 @@ namespace lsl {
 		deadline_timer next_packet_;				// schedules the next packet transfer
 		udp::endpoint remote_endpoint_;				// a dummy endpoint
 		estimate_list estimates_;					// a vector of time estimates collected so far during the current exchange
+		estimate_list estimate_times_;              // a vector of the local time and the remote time at a given estimate
 		int current_wave_id_;						// an id for the current wave of time packets
 	};
 

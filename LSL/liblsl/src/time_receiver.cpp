@@ -13,7 +13,9 @@ using boost::posix_time::millisec;
 /**
 * Construct a new time provider from an inlet connection
 */
-time_receiver::time_receiver(inlet_connection &conn): conn_(conn), timeoffset_(std::numeric_limits<double>::max()), was_reset_(false), cfg_(api_config::get_instance()), time_sock_(time_io_), next_estimate_(time_io_), aggregate_results_(time_io_), next_packet_(time_io_) {
+time_receiver::time_receiver(inlet_connection &conn): conn_(conn), timeoffset_(std::numeric_limits<double>::max()),
+       remote_time_(std::numeric_limits<double>::max()), uncertainty_(std::numeric_limits<double>::max()), was_reset_(false),
+	   cfg_(api_config::get_instance()), time_sock_(time_io_), next_estimate_(time_io_), aggregate_results_(time_io_), next_packet_(time_io_) {
 	conn_.register_onlost(this,&timeoffset_upd_);
 	conn_.register_onrecover(this,boost::bind(&time_receiver::reset_timeoffset_on_recovery,this));
 	time_sock_.open(conn_.udp_protocol());
@@ -43,11 +45,20 @@ time_receiver::~time_receiver() {
 * Retrieve an estimated time correction offset for the given stream.
 * The first call to this function takes several msec for an initial estimate, subsequent calls are instantaneous.
 * The correction offset is periodically re-estimated in the background (once every few sec.).
+* @remote_time Time of this measurment on remote computer
+* @uncertainty Maximum uncertainty of this measurement (maps to round-trip-time).
 * @timeout Timeout for first time-correction estimate.
 * @return The time correction estimate.
 * @throws timeout_error If the initial estimate times out.
 */
+
 double time_receiver::time_correction(double timeout) {
+    double remote_time, uncertainty;
+    return time_correction(&remote_time, &uncertainty, timeout);
+
+}
+
+double time_receiver::time_correction(double *remote_time, double *uncertainty, double timeout ) {
 	boost::unique_lock<boost::mutex> lock(timeoffset_mut_);
 	if (!timeoffset_available()) {
 		// start thread if not yet running
@@ -62,6 +73,8 @@ double time_receiver::time_correction(double timeout) {
 	}
 	if (conn_.lost())
 		throw lost_error("The stream read by this inlet has been lost. To recover, you need to re-resolve the source and re-create the inlet.");
+	*remote_time = remote_time_;
+	*uncertainty = uncertainty_;
 	return timeoffset_;
 }
 
@@ -101,6 +114,7 @@ void time_receiver::time_thread() {
 void time_receiver::start_time_estimation() {
 	// clear the estimates buffer
 	estimates_.clear();
+	estimate_times_.clear();
 	// generate a new wave id so that we don't confuse packets from earlier (or mis-guided) estimations
 	current_wave_id_ = rng_();
 	// start the packet exchange chains
@@ -168,6 +182,7 @@ void time_receiver::handle_receive_outcome(error_code err, std::size_t len) {
 				double offset = ((t1-t0) + (t2-t3)) / 2;	// averaged clock offset (other clock - my clock) with rtt bias averaged out
 				// store it
 				estimates_.push_back(std::make_pair(rtt,offset));
+				estimate_times_.push_back(std::make_pair((t3 + t0)/2.0, (t2 + t1)/2.0));   //local_time, remote_time
 			}
 		}
 	} catch(std::exception &e) {
@@ -183,16 +198,20 @@ void time_receiver::result_aggregation_scheduled(error_code err) {
 		if ((int)estimates_.size() >= cfg_->time_update_minprobes()) {
 			// take the estimate with the lowest error bound (=rtt), as in NTP
 			double best_offset=0, best_rtt=FOREVER;
+			double best_remote_time=0;
 			for (unsigned k=0;k<estimates_.size();k++) {
 				if (estimates_[k].first < best_rtt) {
 					best_rtt = estimates_[k].first;
 					best_offset = estimates_[k].second;
+					best_remote_time = estimate_times_[k].second;
 				}
 			}
 			// and notify that the result is available
 			{
 				boost::lock_guard<boost::mutex> lock(timeoffset_mut_);
+                uncertainty_ = best_rtt;
 				timeoffset_ = -best_offset;
+				remote_time_ = best_remote_time;
 			}
 			timeoffset_upd_.notify_all();
 		}
