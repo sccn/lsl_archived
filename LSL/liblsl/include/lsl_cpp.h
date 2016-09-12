@@ -756,17 +756,17 @@ namespace lsl {
         */
 		
         double time_correction(double timeout=FOREVER) { int ec=0; double res = lsl_time_correction(obj,timeout,&ec); check_error(ec); return res; }
-   		double time_correction(double *remote_time, double *uncertainty, double timeout=FOREVER) { int ec=0; double res = lsl_time_correction_ex(obj,remote_time, uncertainty, timeout,&ec); check_error(ec); return res; }
-
-		/**
-		* Set post-processing flags to use. By default, the inlet performs NO post-processing and returns the 
-		* ground-truth time stamps, which can then be manually synchronized using time_correction(), and then 
-		* smoothed/dejittered if desired. This function allows automating these two and possibly more operations.
-		* Warning: when you enable this, you will no longer receive or be able to recover the original time stamps.
-		* @param flags An integer that is the result of bitwise OR'ing one or more options from processing_options_t 
+        double time_correction(double *remote_time, double *uncertainty, double timeout=FOREVER) { int ec=0; double res = lsl_time_correction_ex(obj,remote_time, uncertainty, timeout,&ec); check_error(ec); return res; }
+        
+        /**
+        * Set post-processing flags to use. By default, the inlet performs NO post-processing and returns the 
+        * ground-truth time stamps, which can then be manually synchronized using time_correction(), and then 
+        * smoothed/dejittered if desired. This function allows automating these two and possibly more operations.
+        * Warning: when you enable this, you will no longer receive or be able to recover the original time stamps.
+        * @param flags An integer that is the result of bitwise OR'ing one or more options from processing_options_t 
 		*        together (e.g., post_clocksync|post_dejitter); the default is to enable all options.
-		*/
-		void set_postprocessing(unsigned flags=post_ALL) { check_error(lsl_set_postprocessing(obj,flags)); }
+        */
+        void set_postprocessing(unsigned flags=post_ALL) { check_error(lsl_set_postprocessing(obj,flags)); }
 
         // =======================================
         // === Pulling a sample from the inlet ===
