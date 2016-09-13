@@ -20,7 +20,7 @@ import os
 import platform
 import struct
 from ctypes import CDLL, util, byref, c_char_p, c_void_p, c_double, c_int, \
-    c_long, c_float, c_short, c_byte, c_longlong
+    c_long, c_float, c_short, c_byte, c_longlong, cast, POINTER
 
 __all__ = ['IRREGULAR_RATE', 'DEDUCED_TIMESTAMP', 'FOREVER', 'cf_float32',
            'cf_double64', 'cf_string', 'cf_int32', 'cf_int16', 'cf_int8',
@@ -596,7 +596,16 @@ def resolve_bypred(predicate, minimum=1, timeout=FOREVER):
                                        c_double(timeout))
     return [StreamInfo(handle=buffer[k]) for k in range(num_found)]
 
-    
+
+# ====================
+# === Memory functions
+# ====================
+def free_char_p_array_memory(char_p_array,num_elements):
+    pointers = cast(char_p_array, POINTER(c_void_p))
+    for p in range(num_elements):
+        if pointers[p] is not None:  # only free initialized pointers
+            lib.lsl_destroy_string(pointers[p])
+
 # ====================
 # === Stream Inlet ===
 # ====================
@@ -841,6 +850,7 @@ class StreamInlet:
                        for s in range(int(num_samples))]
             if self.channel_format == cf_string:
                 samples = [[v.decode('utf-8') for v in s] for s in samples]
+                free_char_p_array_memory(data_buff, max_values)
         else:
             samples = None
         timestamps = [ts_buff[s] for s in range(int(num_samples))]
@@ -1250,6 +1260,7 @@ lib.lsl_prepend_copy.restype = c_void_p
 lib.lsl_prepend_copy.argtypes = [c_void_p, c_void_p]
 lib.lsl_remove_child_n.argtypes = [c_void_p, c_char_p]
 lib.lsl_remove_child.argtypes = [c_void_p, c_void_p]
+lib.lsl_destroy_string.argtypes = [c_void_p]
 # noinspection PyBroadException
 try:
     lib.lsl_pull_chunk_f.restype = c_long
