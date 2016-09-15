@@ -1,0 +1,4 @@
+LIBRARY attrtester.mxe
+
+EXPORTS
+	main
