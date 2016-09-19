@@ -1,3 +1,9 @@
+/* 
+/  Thanks to Ratko Petrovich at Brain Products for /
+/  discovering and correcting the channel swapping bug /
+/  relating to the resampling routine. /
+*/
+
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
