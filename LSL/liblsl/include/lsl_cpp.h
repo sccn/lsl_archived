@@ -742,23 +742,31 @@ namespace lsl {
         * Retrieve an estimated time correction offset for the given stream.
         * The first call to this function takes several milliseconds until a reliable first estimate is obtained.
         * Subsequent calls are instantaneous (and rely on periodic background updates).
-        * The precision of these estimates should be below 1 ms (empirically within +/-0.2 ms).
+		* On a well-behaved network, the precision of these estimates should be below 1 ms (empirically it is within +/-0.2 ms).
+		* To get a measure of whether the network is well-behaved, use the extended prototype and check uncertainty (which maps to round-trip-time).
+		* 0.2 ms is typical of wired networks. 2 ms is typical of wireless networks. The number can be much higher on poor networks.
+		*
+		* @param remote_time The current time of the remote computer that was used to generate this time_correction. 
+		*    If desired, the client can fit time_correction vs remote_time to improve the real-time time_correction further.
+		* @param uncertainty. The maximum uncertainty of the given time correction.
         * @timeout Timeout to acquire the first time-correction estimate (default: no timeout).
         * @return The time correction estimate. This is the number that needs to be added to a time stamp 
         *         that was remotely generated via lsl_local_clock() to map it into the local clock domain of this machine.
         * @throws timeout_error (if the timeout expires), or lost_error (if the stream source has been lost).
         */
+		
         double time_correction(double timeout=FOREVER) { int ec=0; double res = lsl_time_correction(obj,timeout,&ec); check_error(ec); return res; }
-
-		/**
-		* Set post-processing flags to use. By default, the inlet performs NO post-processing and returns the 
-		* ground-truth time stamps, which can then be manually synchronized using time_correction(), and then 
-		* smoothed/dejittered if desired. This function allows automating these two and possibly more operations.
-		* Warning: when you enable this, you will no longer receive or be able to recover the original time stamps.
-		* @param flags An integer that is the result of bitwise OR'ing one or more options from processing_options_t 
+        double time_correction(double *remote_time, double *uncertainty, double timeout=FOREVER) { int ec=0; double res = lsl_time_correction_ex(obj,remote_time, uncertainty, timeout,&ec); check_error(ec); return res; }
+        
+        /**
+        * Set post-processing flags to use. By default, the inlet performs NO post-processing and returns the 
+        * ground-truth time stamps, which can then be manually synchronized using time_correction(), and then 
+        * smoothed/dejittered if desired. This function allows automating these two and possibly more operations.
+        * Warning: when you enable this, you will no longer receive or be able to recover the original time stamps.
+        * @param flags An integer that is the result of bitwise OR'ing one or more options from processing_options_t 
 		*        together (e.g., post_clocksync|post_dejitter); the default is to enable all options.
-		*/
-		void set_postprocessing(unsigned flags=post_ALL) { check_error(lsl_set_postprocessing(obj,flags)); }
+        */
+        void set_postprocessing(unsigned flags=post_ALL) { check_error(lsl_set_postprocessing(obj,flags)); }
 
         // =======================================
         // === Pulling a sample from the inlet ===
