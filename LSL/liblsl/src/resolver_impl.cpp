@@ -188,7 +188,7 @@ void resolver_impl::udp_unicast_burst(error_code err) {
 				attempt->begin();
 			} catch(std::exception &e) {
 				if (++failures == udp_protocols_.size())
-					std::cerr << "Could not start a multicast resolve attempt for any of the allowed protocol stacks: " << e.what() << std::endl;
+					std::cerr << "Could not start a unicast resolve attempt for any of the allowed protocol stacks: " << e.what() << std::endl;
 			}
 		}
 	}
