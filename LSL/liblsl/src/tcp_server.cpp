@@ -73,7 +73,7 @@ void tcp_server::end_serving() {
 	// issue closure of all active client session sockets; cancels the related outstanding IO jobs
 	close_inflight_sockets();
 	// also notify any transfer threads that are blocked waiting for a sample by sending them one (= a ping)
-	send_buffer_->push_sample(sample_p());
+	send_buffer_->push_sample(factory_->new_sample(lsl_clock(), true));
 }
 
 
@@ -280,11 +280,11 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 							client_supports_subnormals = boost::lexical_cast<bool>(rest);
 						if (type == "value-size")
 							client_value_size = boost::lexical_cast<int>(rest);
-						if (type == "max-buffer-length") 
+						if (type == "max-buffer-length")
 							max_buffered_ = boost::lexical_cast<int>(rest);
-						if (type == "max-chunk-length") 
+						if (type == "max-chunk-length")
 							chunk_granularity_ = boost::lexical_cast<int>(rest);
-						if (type == "protocol-version") 
+						if (type == "protocol-version")
 							client_protocol_version = boost::lexical_cast<int>(rest);
 					}
 				}
@@ -300,10 +300,10 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 					data_protocol_version_ = 100;
 				if (data_protocol_version_ >= 110) {
 					// decide on the byte order if conflicting
-					if (BOOST_BYTE_ORDER != client_byte_order) {						
+					if (BOOST_BYTE_ORDER != client_byte_order) {
 						if (client_byte_order == 2134 && client_value_size>=8) {
 							// since we have no implementation for this byte order conversion let the client do it
-							use_byte_order_ = BOOST_BYTE_ORDER;	
+							use_byte_order_ = BOOST_BYTE_ORDER;
 						} else {
 							// let the faster party perform the endian conversion
 							use_byte_order_ = (client_value_size<=1 || (measure_endian_performance()>client_endian_performance)) ? client_byte_order : BOOST_BYTE_ORDER;
@@ -316,7 +316,7 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 
 				// send the response
 				std::ostream response_stream(&feedbuf_);
-				response_stream << "LSL/" << api_config::get_instance()->use_protocol_version() << " 200 OK\r\n"; 
+				response_stream << "LSL/" << api_config::get_instance()->use_protocol_version() << " 200 OK\r\n";
 				response_stream << "UID: " << serv_->info_->uid() << "\r\n";
 				response_stream << "Byte-Order: " << use_byte_order_ << "\r\n";
 				response_stream << "Suppress-Subnormals: " << client_suppress_subnormals << "\r\n";
