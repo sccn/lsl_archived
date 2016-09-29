@@ -44,6 +44,10 @@ private slots:
     // close event (potentially disabled)
     void closeEvent(QCloseEvent *ev);
 private:
+
+	
+	void setMinChunk(int idx);
+
     // background data reader thread
 	void read_thread(int deviceNumber, int channelCount, int chunkSize, int samplingRate, bool useAUX, bool activeShield, std::vector<std::string> channelLabels);
 
