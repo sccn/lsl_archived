@@ -10,7 +10,7 @@ labstreaminglayer:
 This will only build within the full labstreaminglayer repository including the binaries typically obtained with `python get_deps.py`
 
 Visual Studio:
-Download and install [Visual Studio 2008](http://go.microsoft.com/?linkid=7729279)
+Download and install [Visual Studio 2008](https://www.microsoft.com/en-us/download/details.aspx?id=7873)
 
 Qt:
 Download and install [QtSDK 4.8.6 for MSVC2008](https://download.qt.io/archive/qt/4.8/4.8.6/qt-opensource-windows-x86-vs2008-4.8.6.exe)
