@@ -15,7 +15,7 @@ Download and install [Visual Studio 2008](https://www.microsoft.com/en-us/downlo
 Qt:
 Download and install [QtSDK 4.8.6 for MSVC2008](https://download.qt.io/archive/qt/4.8/4.8.6/qt-opensource-windows-x86-vs2008-4.8.6.exe)
 Using the default install folder for Qt will put it in C:\Qt
-Add an environment variable QTSDK set to C:\Qt\4.8.6-msvc2008
+Add an environment variable QTSDK set to C:\Qt\4.8.6-msvc2008. Note that this path may be different depending on your particular system. It is important to check that the correct path is reflected in your environment variables.
 
 Boost:
 Download and install [Boost 1.59 for MSVC2008 32-bit](https://sourceforge.net/projects/boost/files/boost-binaries/1.59.0/boost_1_59_0-msvc-9.0-32.exe/download)
