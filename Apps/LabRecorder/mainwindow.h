@@ -80,6 +80,8 @@ private:
 	std::vector<lsl::stream_info> resolvedStreams;
 	std::vector<lsl::stream_info> checkedStreams;
 	std::vector<std::string> requiredStreams;
+	std::vector<std::string> onlineSyncStreams;
+	std::map<std::string, int> syncOptionsByStreamName;
 	std::vector<std::string> missingStreams;
 
 	std::string recFilename;
