@@ -160,14 +160,14 @@ void MainWindow::load_config(const std::string &filename) {
 			
 			int val = 0;
 			for(int l=2;l<words.size();l++){
-				if(words[l].compare("post_clocksync")==0){val|=lsl::post_clocksync;std::cout<<words[l]<< " "<<val<<std::endl;}
-				if(words[l].compare("post_dejitter")==0){val|=lsl::post_dejitter;std::cout<<words[l]<< " "<<val<<std::endl;}
-				if(words[l].compare("post_monotonize")==0){val|=lsl::post_monotonize;std::cout<<words[l]<< " "<<val<<std::endl;}
-				if(words[l].compare("post_threadsafe")==0){val|=lsl::post_threadsafe;std::cout<<words[l]<< " "<<val<<std::endl;}
-				if(words[l].compare("post_ALL")==0){val=lsl::post_ALL;std::cout<<words[l]<< " "<<val<<std::endl;}	
+				if(words[l].compare("post_clocksync")==0){val|=lsl::post_clocksync;//std::cout<<words[l]<< " "<<val<<std::endl;}
+				if(words[l].compare("post_dejitter")==0){val|=lsl::post_dejitter;//std::cout<<words[l]<< " "<<val<<std::endl;}
+				if(words[l].compare("post_monotonize")==0){val|=lsl::post_monotonize;//std::cout<<words[l]<< " "<<val<<std::endl;}
+				if(words[l].compare("post_threadsafe")==0){val|=lsl::post_threadsafe;//std::cout<<words[l]<< " "<<val<<std::endl;}
+				if(words[l].compare("post_ALL")==0){val=lsl::post_ALL;//std::cout<<words[l]<< " "<<val<<std::endl;}	
 			}
 			syncOptionsByStreamName.insert(std::make_pair(key, val));
-			std::cout << "key = " << key << "." << std::endl;
+			std::cout << "key = " << key << std::endl;
 			
 			std::cout << "val = " << val << std::endl;
 
