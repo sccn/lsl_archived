@@ -1,0 +1,240 @@
+# CMake version
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+
+# Include cmake modules
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(cmake/Custom.cmake)
+
+# Set policies
+set_policy(CMP0028 NEW) # ENABLE CMP0028: Double colon in target name means ALIAS or IMPORTED target.
+set_policy(CMP0054 NEW) # ENABLE CMP0054: Only interpret if() arguments as variables or keywords when unquoted.
+set_policy(CMP0042 NEW) # ENABLE CMP0042: MACOSX_RPATH is enabled by default.
+set_policy(CMP0063 NEW) # ENABLE CMP0063: Honor visibility properties for all target types.
+
+# Meta information about the project
+set(META_PROJECT_NAME        "LabRecorder")
+set(META_PROJECT_DESCRIPTION "Record LabStreamingLayer streams to XDF data file.")
+set(META_AUTHOR_ORGANIZATION "David Medine -- SCCN")
+set(META_AUTHOR_DOMAIN       "https://github.com/sccn/labstreaminglayer/tree/master/Apps/LabRecorder")
+set(META_AUTHOR_MAINTAINER   "")
+set(META_VERSION_MAJOR       "0")
+set(META_VERSION_MINOR       "1")
+set(META_VERSION_PATCH       "0")
+set(META_VERSION             "${META_VERSION_MAJOR}.${META_VERSION_MINOR}.${META_VERSION_PATCH}")
+set(META_NAME_VERSION        "${META_PROJECT_NAME} v${META_VERSION}")
+
+# Project options
+option(OPTION_SELF_CONTAINED "Create a self-contained install with all dependencies." OFF)
+
+# Generate folders for IDE targets (e.g., VisualStudio solutions)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set(IDE_FOLDER "")
+
+# Declare project
+project(${META_PROJECT_NAME} C CXX)
+
+# Set output directories
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
+
+# Compiler settings and options
+include(cmake/CompileOptions.cmake)
+ 
+ 
+## Deployment/installation setup 
+
+# Get project name
+set(project ${META_PROJECT_NAME})
+
+# Check for system dir install
+set(SYSTEM_DIR_INSTALL FALSE)
+if("${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr" OR "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local")
+    set(SYSTEM_DIR_INSTALL TRUE)
+endif()
+
+# Installation paths
+if(UNIX AND SYSTEM_DIR_INSTALL)
+    # Install into the system (/usr/bin or /usr/local/bin)
+    set(INSTALL_ROOT      "share/${project}")       # /usr/[local]/share/<project>
+    set(INSTALL_CMAKE     "share/${project}/cmake") # /usr/[local]/share/<project>/cmake
+    set(INSTALL_EXAMPLES  "share/${project}")       # /usr/[local]/share/<project>
+    set(INSTALL_DATA      "share/${project}")       # /usr/[local]/share/<project>
+    set(INSTALL_BIN       "bin")                    # /usr/[local]/bin
+    set(INSTALL_SHARED    "lib")                    # /usr/[local]/lib
+    set(INSTALL_LIB       "lib")                    # /usr/[local]/lib
+    set(INSTALL_INCLUDE   "include")                # /usr/[local]/include
+    set(INSTALL_DOC       "share/doc/${project}")   # /usr/[local]/share/doc/<project>
+    set(INSTALL_SHORTCUTS "share/applications")     # /usr/[local]/share/applications
+    set(INSTALL_ICONS     "share/pixmaps")          # /usr/[local]/share/pixmaps
+    set(INSTALL_INIT      "/etc/init")              # /etc/init (upstart init scripts)
+else()
+    # Install into local directory
+    set(INSTALL_ROOT      ".")                      # ./
+    set(INSTALL_CMAKE     "cmake")                  # ./cmake
+    set(INSTALL_BIN       ".")                      # ./
+endif()
+
+# Set runtime path
+set(CMAKE_SKIP_BUILD_RPATH            FALSE) # Add absolute path to all dependencies for BUILD
+set(CMAKE_BUILD_WITH_INSTALL_RPATH    FALSE) # Use CMAKE_INSTALL_RPATH for INSTALL
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE) # Do NOT add path to dependencies for INSTALL
+
+if(NOT SYSTEM_DIR_INSTALL)
+    # Find libraries relative to binary
+    if(APPLE)
+        set(CMAKE_INSTALL_RPATH "@loader_path/../../../${INSTALL_LIB}")
+    else()
+        set(CMAKE_INSTALL_RPATH "$ORIGIN/${INSTALL_LIB}")       
+    endif()
+endif()
+
+
+## Target config
+
+# External dependencies
+
+# Qt
+IF (NOT CMAKE_PREFIX_PATH)
+    SET(CMAKE_PREFIX_PATH "/usr/local/Cellar/qt5/5.7.0")
+ENDIF()
+find_package(Qt5Core)
+find_package(Qt5Network)
+find_package(Qt5Gui)
+find_package(Qt5Widgets)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)  # Because the ui_mainwindow.h file.
+# Enable automoc
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(AUTOMOC_MOC_OPTIONS PROPERTIES FOLDER CMakeAutomocTargets)
+set_property(GLOBAL PROPERTY AUTOMOC_FOLDER CMakeAutomocTargets)
+# ENABLE CMP0020: Automatically link Qt executables to qtmain target on Windows.
+set_policy(CMP0020 NEW)
+
+# Boost
+IF(MSVC)
+    # Default location of pre-compiled Boost for Windows
+    # Override by adding "-DBOOST_ROOT=C:\path\to\boost\ -DBOOST_LIBRARYDIR=C:\path\to\boost\lib32-msvc-14.0\" to your cmake command
+    IF (NOT BOOST_ROOT)
+        SET(BOOST_ROOT "C:/local/boost_1_61_0/")
+        SET(BOOST_LIBRARYDIR "C:/local/boost_1_61_0/lib32-msvc-14.0/")
+    ENDIF()
+ENDIF()
+SET(Boost_DEBUG                OFF) #Switch this and next to ON for help debugging Boost problems.
+SET(Boost_DETAILED_FAILURE_MSG OFF)
+set(Boost_USE_STATIC_LIBS      ON)
+set(Boost_USE_MULTITHREADED    ON)
+set(Boost_USE_STATIC_RUNTIME   OFF)
+IF(MSVC)
+    find_package(Boost REQUIRED COMPONENTS filesystem system thread chrono system date_time atomic iostreams regex zlib)
+    # Disable asio auto linking in date-time and regex
+    add_definitions(-DBOOST_DATE_TIME_NO_LIB)
+    add_definitions(-DBOOST_REGEX_NO_LIB)
+    set(boost_plus_libs ${Boost_LIBRARIES})
+ELSE()
+    find_package(Boost REQUIRED COMPONENTS filesystem system thread chrono system date_time atomic iostreams regex)
+    find_package(zlib)
+    set(boost_plus_libs ${Boost_LIBRARIES} ${ZLIB_LIBRARIES})
+ENDIF()
+
+#LSL
+set(bitness 32)
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+  set(bitness 64)  
+endif()
+set(LSL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../LSL/liblsl)
+set(liblsl ${LSL_DIR}/bin/liblsl${bitness}.dylib)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    set(liblsl ${LSL_DIR}/bin/liblsl${bitness}.lib)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(liblsl ${LSL_DIR}/bin/liblsl${bitness}.so)
+endif()
+
+ 
+## Executable name and options
+
+# Target name
+set(target LabRecorder)
+
+# Exit here if required dependencies are not met
+if (NOT Qt5Core_FOUND)
+    message(STATUS "${target} skipped: Qt5 not found")
+    return()
+else()
+    message(STATUS "${target}")
+endif()
+
+# Sources
+set(sources
+    main.cpp
+    mainwindow.cpp
+    mainwindow.h
+    mainwindow.ui
+    recording.h
+    targetver.h
+)
+
+# Build executable
+add_executable(${target}
+    MACOSX_BUNDLE
+    ${sources}
+)
+
+# Project options
+set_target_properties(${target}
+    PROPERTIES
+    ${DEFAULT_PROJECT_OPTIONS}
+    FOLDER "${IDE_FOLDER}"
+)
+
+target_include_directories(${target}
+    PRIVATE
+    ${Boost_INCLUDE_DIRS}
+    ${LSL_DIR}/include)
+
+target_link_libraries(${target}
+    PRIVATE
+    ${DEFAULT_LIBRARIES}
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
+    Qt5::Network
+    ${boost_plus_libs}
+    ${liblsl}
+)
+
+# 
+# Compile definitions
+# 
+
+target_compile_definitions(${target}
+    PRIVATE
+    ${DEFAULT_COMPILE_DEFINITIONS}
+)
+
+# 
+# Compile options
+# 
+
+target_compile_options(${target}
+    PRIVATE
+    ${DEFAULT_COMPILE_OPTIONS}
+)
+
+# 
+# Linker options
+# 
+
+target_link_libraries(${target}
+    PRIVATE
+    ${DEFAULT_LINKER_OPTIONS}
+)
+
+# 
+# Deployment
+# 
+
+install(TARGETS ${target}
+    RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT examples
+    BUNDLE  DESTINATION ${INSTALL_BIN} COMPONENT examples
+)
