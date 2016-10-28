@@ -127,7 +127,8 @@ void MainWindow::blockSelected(QListWidgetItem *item) {
 
 void MainWindow::load_config(const std::string &filename) {
 	std::cout << "loading config file " << filename << std::endl;
-	try {
+	try
+    {
 		using boost::property_tree::ptree;
 		ptree pt;
 		read_ini(filename, pt);
@@ -139,7 +140,8 @@ void MainWindow::load_config(const std::string &filename) {
 		std::string str_requiredStreams = pt.get<std::string>("RequiredStreams","");
 		std::string rs_substr = str_requiredStreams.substr(1, str_requiredStreams.size()-2);
 		boost::algorithm::split(requiredStreams,rs_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
-		for (int k=0;k<requiredStreams.size();k++){
+		for (size_t k=0;k<requiredStreams.size();k++)
+        {
 			boost::algorithm::trim_if(requiredStreams[k],boost::algorithm::is_any_of(" '\""));
 			std::cout << requiredStreams[k] << std::endl;
 		}
@@ -149,7 +151,8 @@ void MainWindow::load_config(const std::string &filename) {
 		std::string str_onlineSyncStreams = pt.get<std::string>("OnlineSync","");
 		std::string oss_substr = str_onlineSyncStreams.substr(1, str_onlineSyncStreams.size()-2);
 		boost::algorithm::split(onlineSyncStreams,oss_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
-		for (int k=0;k<onlineSyncStreams.size();k++) {
+		for (size_t k=0;k<onlineSyncStreams.size();k++)
+        {
 			boost::algorithm::trim_if(onlineSyncStreams[k],boost::algorithm::is_any_of(" '\""));
 			std::vector<std::string>words; 
 			boost::algorithm::split(words,onlineSyncStreams[k],boost::algorithm::is_any_of(" "),boost::algorithm::token_compress_on);
@@ -159,18 +162,36 @@ void MainWindow::load_config(const std::string &filename) {
 			std::string key = std::string(words[0] + " " + words[1]);
 			
 			int val = 0;
-			for(int l=2;l<words.size();l++){
-				if(words[l].compare("post_clocksync")==0){val|=lsl::post_clocksync;//std::cout<<words[l]<< " "<<val<<std::endl;}
-				if(words[l].compare("post_dejitter")==0){val|=lsl::post_dejitter;//std::cout<<words[l]<< " "<<val<<std::endl;}
-				if(words[l].compare("post_monotonize")==0){val|=lsl::post_monotonize;//std::cout<<words[l]<< " "<<val<<std::endl;}
-				if(words[l].compare("post_threadsafe")==0){val|=lsl::post_threadsafe;//std::cout<<words[l]<< " "<<val<<std::endl;}
-				if(words[l].compare("post_ALL")==0){val=lsl::post_ALL;//std::cout<<words[l]<< " "<<val<<std::endl;}	
+			for(size_t l=2;l<words.size();l++)
+            {
+				if(words[l].compare("post_clocksync")==0)
+                {
+                    val|=lsl::post_clocksync;
+                    //std::cout<<words[l]<< " "<<val<<std::endl;
+                }
+				if(words[l].compare("post_dejitter")==0)
+                {
+                    val|=lsl::post_dejitter;
+                    //std::cout<<words[l]<< " "<<val<<std::endl;
+                }
+				if(words[l].compare("post_monotonize")==0)
+                {
+                    val|=lsl::post_monotonize;
+                    //std::cout<<words[l]<< " "<<val<<std::endl;
+                }
+				if(words[l].compare("post_threadsafe")==0)
+                {
+                    val|=lsl::post_threadsafe;//std::cout<<words[l]<< " "<<val<<std::endl;
+                }
+				if(words[l].compare("post_ALL")==0)
+                {
+                    val=lsl::post_ALL;//std::cout<<words[l]<< " "<<val<<std::endl;
+                }
 			}
 			syncOptionsByStreamName.insert(std::make_pair(key, val));
 			std::cout << "key = " << key << std::endl;
 			
 			std::cout << "val = " << val << std::endl;
-
 
 		}
 
@@ -183,11 +204,13 @@ void MainWindow::load_config(const std::string &filename) {
 		std::string sb_substr = str_sessionBlocks.substr(1, str_sessionBlocks.size()-2);
 		boost::algorithm::split(sessionBlocks,sb_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
 		
-		for (int k=0;k<sessionBlocks.size();k++) {
+		for (size_t k=0;k<sessionBlocks.size();k++)
+        {
 			boost::algorithm::trim_if(sessionBlocks[k],boost::algorithm::is_any_of(" '\""));
 			item=new QListWidgetItem(QString::fromStdString(sessionBlocks[k]), ui->blockList);
 			ui->blockList->addItem(item);
-			if(k==0) {
+			if(k==0)
+            {
 				item->setSelected(true);
 				blockSelected(item);
 			}
@@ -212,18 +235,21 @@ void MainWindow::load_config(const std::string &filename) {
 
 		int i=1;
 		
-		if(pos_n<str_path.size()) {
+		if(pos_n<str_path.size())
+        {
 			abs_path.append(str_path.begin(),str_path.begin()+pos_n);
 		
 			// find the last value fo %n in the directories			
-			for(i=1;i<10000;i++) {
+			for(i=1;i<10000;i++)
+            {
 				ss << i; // convert int to string stream
 				p=(abs_path+ss.str()).c_str(); // build the path name
-				if(!boost::filesystem::exists(p)) break; // check for it
+				if(!boost::filesystem::exists(p))
+                {
+                    break; // check for it
+                }
 				ss.str(std::string()); // flush the string stream				
 			}
-		
-			
 		}
 
 		// update gui 
