@@ -60,8 +60,7 @@ void MainWindow::statusUpdate(void) {
 	int remainder;
 	int minutes;
 	int seconds;
-
-	int filesize;
+//	int filesize;
 
 	std::stringstream timeString;
 	if(currentlyRecording ==true) {
@@ -195,7 +194,11 @@ void MainWindow::load_config(const std::string &filename) {
 		}
 
 		// get the path as a string
+		#if (win32)
 		std::string str_path = pt.get<std::string>("StorageLocation", "C:\\Recordings\\CurrentStudy\\exp%n\\untitled.xdf");
+		#else //win32
+		std::string str_path = pt.get<std::string>("StorageLocation", "exp%n/untitled.xdf");
+		#endif //win32
 		ui->locationEdit->setText(str_path.c_str());
 
 		// scan the path for %n and %b
@@ -296,7 +299,7 @@ void MainWindow::refreshStreams(void) {
 
 	std::vector<std::string> previouslyChecked;
 	QListWidgetItem *item;
-	for(unsigned i=0;i<ui->streamList->count();i++) {
+	for(int i=0;i<ui->streamList->count();i++) {
 		item=ui->streamList->item(i);
 		if(std::find(streamNames.begin(), streamNames.end(), item->text().toStdString())!=streamNames.end()) { 
 			if(item->checkState() == Qt::Checked)	

@@ -192,7 +192,19 @@ public:
 	*				  (e.g., "record from everything that's out there").
 	* @param collect_offsets Whether to collect time offset measurements periodically.
 	*/
-	recording(const std::string &filename, const std::vector<lsl::stream_info> &streams, const std::vector<std::string> &watchfor, const std::map<std::string, int> &syncOptions, bool collect_offsets=true): sync_options_by_stream_(syncOptions), offsets_enabled_(collect_offsets), unsorted_(false), shutdown_(false), streamid_(0), streaming_to_finish_(0), headers_to_finish_(0) {
+	recording(const std::string &filename,
+              const std::vector<lsl::stream_info> &streams,
+              const std::vector<std::string> &watchfor,
+              const std::map<std::string, int> &syncOptions,
+              bool collect_offsets=true):
+    offsets_enabled_(collect_offsets),
+    unsorted_(false),
+    streamid_(0),
+    shutdown_(false),
+    headers_to_finish_(0),
+    streaming_to_finish_(0),
+    sync_options_by_stream_(syncOptions)
+    {
 
 
 
@@ -246,6 +258,7 @@ private:
 	// static information
 	bool offsets_enabled_;					// whether to collect time offset information alongside with the stream contents
 	bool unsorted_;							// whether this file may contain unsorted chunks (e.g., of late streams)
+                                            // This field is unused. Should it be?
 
 	// streamid allocation
 	boost::uint32_t streamid_;				// the highest streamid allocated so far
@@ -686,7 +699,7 @@ private:
 		}
 	}
 
-	void leave_footers_phase(bool phase_locked) { /* noting to do */ }
+	void leave_footers_phase(bool phase_locked) { /* Nothing to do. Ignore warning. */ }
 
 
 	/// a condition that indicates that we're ready to write streaming content into the file
