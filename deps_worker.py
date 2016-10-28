@@ -19,7 +19,7 @@ apps_dir = os.path.join(cur_dir, "Apps")
 libs_dir = os.path.join(cur_dir, "LSL")
 cache_dir = os.path.join(cur_dir, "dependencies")
 extern_dir = os.path.join(cur_dir, "external_libs")
-cur_ver = "1.11"  # current lsl version
+cur_ver = "1.12"  # current lsl version
 cur_lsl = "/liblsl-"+cur_ver+"/"
 
 
