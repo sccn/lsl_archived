@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>452</width>
-    <height>400</height>
+    <width>130</width>
+    <height>77</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -18,24 +18,21 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>500</width>
-    <height>400</height>
+    <width>130</width>
+    <height>77</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>VideoConnector</string>
+   <string>Mouse Connector</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QPushButton" name="newVideoButton">
+     <widget class="QPushButton" name="linkButton">
       <property name="text">
-       <string>Launch New Video Panel</string>
+       <string>Link</string>
       </property>
      </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QComboBox" name="comboBox"/>
     </item>
    </layout>
   </widget>
@@ -44,7 +41,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>452</width>
+     <width>93</width>
      <height>18</height>
     </rect>
    </property>
