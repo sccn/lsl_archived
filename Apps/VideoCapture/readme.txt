@@ -1,1 +1,0 @@
-This program records all mouse movements done on the computer. It should work out of the box.

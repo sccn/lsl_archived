@@ -7,10 +7,10 @@
 #include <boost/asio.hpp>
 
 // Qt
-#include <QMainWindow>
-#include <QCloseEvent>
-#include <QMessageBox>
-#include <QHostInfo>
+#include <QtWidgets\QMainWindow>
+#include <QtGui\QCloseEvent>
+#include <QtWidgets\QMessageBox>
+#include <QtNetwork\QHostInfo>
 
 // opencv -- for webcams and such
 #include "opencv2/opencv.hpp"
