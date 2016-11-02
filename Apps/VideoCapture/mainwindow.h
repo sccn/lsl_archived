@@ -12,11 +12,17 @@
 #include <QMessageBox>
 #include <QHostInfo>
 
-// opencv
+// opencv -- for webcams and such
 #include "opencv2/opencv.hpp"
 
+// pointgrey -- for interfacing with pointgrey cameras
+
+// windows
+#ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include "mf_enumerate_cameras.h"
+#endif
 
 // LSL
 #include "../../LSL/liblsl/include/lsl_cpp.h"

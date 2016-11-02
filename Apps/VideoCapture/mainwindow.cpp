@@ -1,7 +1,17 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <Objbase.h>
+#include <iostream>
 
+
+// enumerate cameras using windows media foundation
+// TODO: the same but cross platform -- perhaps using Qt5? this requires
+// shifting the whole project to visual studio >= 2010, which is a pain...
+#ifdef _WIN32
+
+// calls to mf_enumerate_cameras go here
+
+#endif
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -10,15 +20,35 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	has_camera_ = false;
 	
+	std::vector<std::string> camera_names;
+	WmfEnumerateCameras wmf_obj;
+
+	// will print the names of all available cameras to the console and store them in the vector:
+	wmf_obj.getCameraNames(camera_names);
+
+	for (std::vector<std::string>::iterator it = camera_names.begin();
+		it != camera_names.end();
+		++it){
+		// here we would pack it into the gui, something like:
+		//ui->cameraBox->addItem(QString("%1").arg(it->c_str()));
+	}
+
+	std::vector<wmfCameraInfo> camera_infos;
+
+	// will print available formats to console and store them in the camera_infos vector:
+	// wmf_obj.getCameraInfo(camera_names[0], camera_infos);
+	// populate gui box as with the camera names
+
+
+
 	reader.open(0);
-	cv::Mat foo_frame; // get first frame to find size and type
+	cv::Mat foo_frame;       // get first frame to find size and type
 	reader>>foo_frame;
-	if(reader.isOpened()){
-			
+	if(reader.isOpened()){   // these methods return 0 if a frame hasn't been grabbed
+			                 // in the future, this is set by the GUI and exception handled
 		video_size_ = cv::Size((int) reader.get(CV_CAP_PROP_FRAME_WIDTH),
 			                   (int) reader.get(CV_CAP_PROP_FRAME_HEIGHT));
 		fps_        = reader.get(CV_CAP_PROP_FPS);
-		if(fps_ == 0)fps_=30; // don't know why this is 0 here...
 		has_camera_ = true;
 
 	}else{return;} // needs more informative error checking
@@ -30,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	// http://answers.opencv.org/question/76077/videowriter-fails-to-open-inside-thread/
 	// but this also works if the reader and writer are in the same thread (not main thread)
 	// all along
-	writer.open("foo.avi", CV_FOURCC('M', 'J', 'P', 'G'), fps_, video_size_);
+	writer.open("foo.avi", -1, fps_, video_size_);//CV_FOURCC('M', 'P', 'E', 'G'), fps_, video_size_);
 	w_stop_ = false;
 	w_thread_.reset(new boost::thread(&MainWindow::write_thread, this));
 	
@@ -68,7 +98,8 @@ void MainWindow::read_thread(void) {
 			double time_now = lsl::local_clock();
 			
 			cv::Mat frame;
-			cv::Mat frameWrite;
+			
+			
 			t_frame_data frame_data;
 
 			// impose a hard lock
@@ -137,7 +168,7 @@ void MainWindow::write_thread(void) {
 					// try to empty the frame buffer
 					while(!frame_buf_.empty()){
 						//cv::Mat frame;
-
+					
 						// try to lock the mutex
 						//boost::unique_lock<boost::timed_mutex> lock(mutex_, boost::try_to_lock);
 						// if the reader isn't busy, write some data

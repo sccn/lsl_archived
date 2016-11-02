@@ -74,7 +74,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
 				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
-				AdditionalDependencies="$(QTSDK)\lib\qtmain.lib $(QTSDK)\lib\QtGui4.lib $(QTSDK)\lib\QtCore4.lib $(QTSDK)\lib\QtNetwork4.lib opencv_core243.lib opencv_highgui243.lib"
+				AdditionalDependencies="$(QTSDK)\lib\qtmain.lib $(QTSDK)\lib\QtGui4.lib $(QTSDK)\lib\QtCore4.lib $(QTSDK)\lib\QtNetwork4.lib opencv_core243.lib opencv_highgui243.lib mfplat.lib mf.lib mfreadwrite.lib mfuuid.lib shlwapi.lib"
 				OutputFile="$(OutDir)\VideoCapture.exe"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="&quot;$(OPENCV_DIR)\build\x86\vc9\lib&quot;;&quot;$(QTSDK)\lib&quot;;../../LSL/liblsl/bin/;&quot;$(BOOST_ROOT)/lib&quot;"
@@ -164,14 +164,14 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
 				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
-				AdditionalDependencies="$(QTSDK)\lib\qtmain.lib $(QTSDK)\lib\QtGui4.lib $(QTSDK)\lib\QtCore4.lib $(QTSDK)\lib\QtNetwork4.lib opencv_core243.lib opencv_highgui243.lib"
+				AdditionalDependencies="$(QTSDK)\lib\qtmain.lib $(QTSDK)\lib\QtGui4.lib $(QTSDK)\lib\QtCore4.lib $(QTSDK)\lib\QtNetwork4.lib opencv_core243.lib opencv_highgui243.lib mfplat.lib mf.lib mfreadwrite.lib mfuuid.lib shlwapi.lib"
 				OutputFile="$(OutDir)\VideoCapture.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="&quot;$(OPENCV_DIR)\build\x86\vc9\lib&quot;;&quot;$(QTSDK)\lib&quot;;../../LSL/liblsl/bin/;&quot;$(BOOST_ROOT)/lib&quot;"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=""
-				SubSystem="2"
+				SubSystem="1"
 				LinkTimeCodeGeneration="0"
 			/>
 			<Tool
@@ -213,6 +213,10 @@
 				RelativePath="mainwindow.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\mf_enumerate_cameras.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -244,6 +248,10 @@
 						Outputs="release\moc_mainwindow.cpp"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\mf_enumerate_cameras.h"
+				>
 			</File>
 		</Filter>
 		<Filter
