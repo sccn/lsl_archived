@@ -107,7 +107,7 @@ First let's get the header includes and advance declarations out of the way:
     ///////////////////////////////////////////////////////////////////////////////
 
 #   include "DSI.h"    // Wearable Sensing DSI API header
-#   include "../../LSL/liblsl/include/lsl_c.h"  // LSL header
+#   include "lsl_c.h"  // LSL header
 
 #   include <stdio.h>   // C standard library
 #   include <string.h>  // Needed for processing strings
@@ -125,6 +125,7 @@ void      getRandomString( char *s, const int len);
 const char * GetStringOpt( int argc, const char * argv[], const char * keyword1, const char * keyword2 );
 int         GetIntegerOpt( int argc, const char * argv[], const char * keyword1, const char * keyword2, int defaultValue );
 
+float *sample;
 static volatile int KeepRunning = 1;
 void  QuitHandler(int a){ KeepRunning = 0;}
 
@@ -160,7 +161,7 @@ int main( int argc, const char * argv[] )
   // Implements a Ctrl+C signal handler to quit the program (some terminals actually use Ctrl+Shift+C instead)
   signal(SIGINT, QuitHandler);
 
-  printf("'Initializing the headset\n");
+  //printf("Initializing the headset\n");
   DSI_Headset h;
   int help, error;
   error = StartUp( argc, argv, &h, &help ); // common routine for all demos, to initialize the headset
@@ -202,7 +203,7 @@ void OnSample( DSI_Headset h, double packetOffsetTime, void * outlet)
 {
   unsigned int channelIndex;
   unsigned int numberOfChannels = DSI_Headset_GetNumberOfChannels( h );
-  float *sample = (float *)malloc( numberOfChannels * sizeof(float));
+  if (sample==NULL) sample = (float *)malloc( numberOfChannels * sizeof(float));
   for(channelIndex=0; channelIndex < numberOfChannels; channelIndex++){
     sample[channelIndex] = (float) DSI_Channel_GetSignal( DSI_Headset_GetChannelByIndex( h, channelIndex ) );
   }
@@ -312,9 +313,12 @@ lsl_outlet InitLSL(DSI_Headset h, const char * streamName)
   int samplingRate = DSI_Headset_GetSamplingRate( h );
 
   lsl_streaminfo info;         /* out stream declaration object */
-	lsl_xml_ptr desc, chn, chns; /* some xml element pointers */
+	lsl_xml_ptr desc, chn, chns, ref; /* some xml element pointers */
 	int imax = 16;
   char source_id[imax];
+  char *long_label;
+  char *short_label;
+  char *reference;
   getRandomString(source_id, imax);
 
 	/* declare a new streaminfo (name: WearableSensing, content type: EEG, number of channels, srate, float values, source id*/
@@ -328,10 +332,21 @@ lsl_outlet InitLSL(DSI_Headset h, const char * streamName)
 	for( channelIndex=0; channelIndex < numberOfChannels ; channelIndex++)
   {
     chn = lsl_append_child(chns,"channel");
-		lsl_append_child_value(chn,"label", (char*) DSI_Channel_GetString( DSI_Headset_GetChannelByIndex( h, channelIndex ) ) );
+		//lsl_append_child_value(chn,"label", (char*) DSI_Channel_GetString( DSI_Headset_GetChannelByIndex( h, channelIndex ) ) );
+    //channel_label = (char*) DSI_Channel_GetString( DSI_Headset_GetChannelByIndex( h, channelIndex ) );
+
+    long_label = (char*) DSI_Channel_GetString( DSI_Headset_GetChannelByIndex( h, channelIndex ) );
+    short_label = strtok(long_label, "-");
+    if(short_label == NULL)
+      short_label = long_label;
+    lsl_append_child_value(chn,"label", short_label);
 		lsl_append_child_value(chn,"unit","microvolts");
 		lsl_append_child_value(chn,"type","EEG");
 	}
+  reference = (char*)DSI_Headset_GetReferenceString(h);
+  ref = lsl_append_child(desc,"reference");
+  lsl_append_child_value(ref,"label", reference);
+  printf("REF: %s\n", reference);
 
 	/* make a new outlet (chunking: default, buffering: 360 seconds) */
 	return lsl_create_outlet(info,0,360);
@@ -372,7 +387,7 @@ int GlobalHelp( int argc, const char * argv[] )
             "       (and the more low-level they will tend to be)\n"
             "\n"
             "  --lsl-stream-name\n"
-            "       The namem of the LSL outlet that will be created to stream the samples\n"
+            "       The name of the LSL outlet that will be created to stream the samples\n"
             "       received from the device. If omitted, the stream will be given the name WS-default.\n"
             "\n"
         , argv[ 0 ] );
