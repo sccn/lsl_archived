@@ -1,4 +1,8 @@
 ##
+# removing outdated PupilPro app
+/PupilPro
+
+##
 # for video 
 *.avi
 *.asf
