@@ -55,8 +55,8 @@ private:
     wiimote**       mDevices;   //
     int             nDevices;
     QTimer*         m_pTimer;
-    std::vector<std::shared_ptr<lsl::stream_outlet>> m_marker_outlets;
-    std::vector<std::shared_ptr<lsl::stream_outlet>> m_data_outlets;
+    std::vector<lsl::stream_outlet*> m_marker_outlets;
+    std::vector<lsl::stream_outlet*> m_data_outlets;
     std::vector<std::vector<float>> m_data_buffers;
 };
 

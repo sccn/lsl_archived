@@ -42,8 +42,8 @@ MainWindow::handle_event(int wm_ix,
                   double timestamp)
 {
     wiimote* wm = mDevices[wm_ix];
-    std::shared_ptr<lsl::stream_outlet> marker_outlet = m_marker_outlets.at(wm_ix);
-    std::shared_ptr<lsl::stream_outlet> data_outlet = m_data_outlets.at(wm_ix);
+    lsl::stream_outlet* marker_outlet = m_marker_outlets.at(wm_ix);
+    lsl::stream_outlet* data_outlet = m_data_outlets.at(wm_ix);
     std::vector<float> data_buffer = m_data_buffers.at(wm_ix);
 
     switch (wm->event)
@@ -262,7 +262,7 @@ MainWindow::handle_event(int wm_ix,
                     case EXP_MOTION_PLUS_NUNCHUK:
                     {
                         // Wiimote with Nunchuk
-                        std::vector<float> sample =
+                        std::vector<float> nchk_sample =
                         {
                             static_cast<float>(wm->exp.nunchuk.accel.x),
                             static_cast<float>(wm->exp.nunchuk.accel.y),
@@ -278,14 +278,14 @@ MainWindow::handle_event(int wm_ix,
                             wm->exp.nunchuk.js.ang,
                             wm->exp.nunchuk.js.mag
                         };
-                        buf_it = std::copy(sample.begin(), sample.end(),
+                        buf_it = std::copy(nchk_sample.begin(), nchk_sample.end(),
                                            buf_it);
                         break;
                     }
                         
                     case EXP_CLASSIC:
                     {
-                        std::vector<float> sample =
+                        std::vector<float> clsc_sample =
                         {
                             wm->exp.classic.ljs.ang,
                             wm->exp.classic.ljs.mag,
@@ -294,7 +294,7 @@ MainWindow::handle_event(int wm_ix,
                             wm->exp.classic.l_shoulder,
                             wm->exp.classic.r_shoulder
                         };
-                        buf_it = std::copy(sample.begin(), sample.end(),
+                        buf_it = std::copy(clsc_sample.begin(), clsc_sample.end(),
                                            buf_it);
                         break;
                     }
@@ -302,13 +302,13 @@ MainWindow::handle_event(int wm_ix,
                         
                     case EXP_GUITAR_HERO_3:
                     {
-                        std::vector<float> sample =
+                        std::vector<float> gh3_sample =
                         {
                             wm->exp.gh3.js.ang,
                             wm->exp.gh3.js.mag,
                             wm->exp.gh3.whammy_bar
                         };
-                        buf_it = std::copy(sample.begin(), sample.end(),
+                        buf_it = std::copy(gh3_sample.begin(), gh3_sample.end(),
                                            buf_it);
                         break;
                     }
@@ -317,13 +317,13 @@ MainWindow::handle_event(int wm_ix,
                 if (wm->exp.type == EXP_MOTION_PLUS ||
                     wm->exp.type == EXP_MOTION_PLUS_NUNCHUK)
                 {
-                    std::vector<float> sample =
+                    std::vector<float> mp_sample =
                     {
                         wm->exp.mp.angle_rate_gyro.pitch,
                         wm->exp.mp.angle_rate_gyro.yaw,
                         wm->exp.mp.angle_rate_gyro.roll
                     };
-                    buf_it = std::copy(sample.begin(), sample.end(),
+                    buf_it = std::copy(mp_sample.begin(), mp_sample.end(),
                                        buf_it);
                 }
             }
@@ -376,7 +376,6 @@ MainWindow::~MainWindow() {
 void
 MainWindow::stream_func(){
 
-    // Enter stream loop
     if (any_wiimote_connected(mDevices, MAX_WIIMOTES)
         && wiiuse_poll(mDevices, MAX_WIIMOTES))
     {
@@ -405,7 +404,7 @@ void MainWindow::link() {
         wiiuse_cleanup(mDevices, nDevices);
         
         // Cleanup marker_outlets and data_outlets
-//        m_marker_outlets.clear();
+//		  m_marker_outlets.clear();
 //        m_data_outlets.clear();
         
         // TODO: Cleanup data_buffers
@@ -449,7 +448,7 @@ void MainWindow::link() {
                                                  lsl::cf_string,
                                                  "Wiimote_markers_" + std::to_string(wm->unid));
                     append_setup_info(wm_ix, marker_info);
-                    m_marker_outlets.push_back(std::shared_ptr<lsl::stream_outlet>(new lsl::stream_outlet(marker_info)));
+                    m_marker_outlets.push_back(new lsl::stream_outlet(marker_info));
                     
                     // Create data stream info + outlet
                     int channelCount = get_channel_count(wm_ix);
@@ -469,7 +468,7 @@ void MainWindow::link() {
                     .append_child_value("api","wiiuse")
                     .append_child_value("api_version", wiiuse_version());
                     std::cout << data_info.as_xml() << std::endl;
-                    m_data_outlets.push_back(std::shared_ptr<lsl::stream_outlet>(new lsl::stream_outlet(data_info)));
+                    m_data_outlets.push_back(new lsl::stream_outlet(data_info));
                     
                     wiiuse_motion_sensing(wm, 1);  // enable motion sensing
                     wiiuse_set_ir(wm, 1);  // enable infrared tracking
@@ -534,16 +533,16 @@ MainWindow::append_setup_info(int wm_ix, lsl::stream_info& out_info)
         case EXP_NUNCHUK:
         {
             lsl::xml_element nunchuk = setup.append_child("nunchuk");
-            lsl::xml_element accel_calib = nunchuk.append_child("accel_calib");
-            accel_calib.append_child("cal_zero")
+            lsl::xml_element nchk_accel_calib = nunchuk.append_child("accel_calib");
+			nchk_accel_calib.append_child("cal_zero")
             .append_child_value("X",std::to_string(wm->exp.nunchuk.accel_calib.cal_zero.x))
             .append_child_value("Y",std::to_string(wm->exp.nunchuk.accel_calib.cal_zero.y))
             .append_child_value("Z",std::to_string(wm->exp.nunchuk.accel_calib.cal_zero.z));
-            accel_calib.append_child("cal_g")
+			nchk_accel_calib.append_child("cal_g")
             .append_child_value("X",std::to_string(wm->exp.nunchuk.accel_calib.cal_g.x))
             .append_child_value("Y",std::to_string(wm->exp.nunchuk.accel_calib.cal_g.y))
             .append_child_value("Z",std::to_string(wm->exp.nunchuk.accel_calib.cal_g.z));
-            accel_calib.append_child_value("smoothing_alpha",std::to_string(wm->exp.nunchuk.accel_calib.st_alpha));
+			nchk_accel_calib.append_child_value("smoothing_alpha",std::to_string(wm->exp.nunchuk.accel_calib.st_alpha));
             lsl::xml_element joystick_calib = nunchuk.append_child("joystick_calib");
             joystick_calib.append_child("min")
             .append_child_value("X",std::to_string(wm->exp.nunchuk.js.min.x))

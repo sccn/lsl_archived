@@ -101,16 +101,29 @@ endif()
 
 #LSL
 set(LSL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../LSL/liblsl)
-set(liblsl ${LSL_DIR}/bin/liblsl${bitness}.dylib)
+	set(libext .dylib)
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    set(liblsl ${LSL_DIR}/bin/liblsl${bitness}.lib)
+	set(libext .lib)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set(liblsl ${LSL_DIR}/bin/liblsl${bitness}.so)
+	set(libext .so)
 endif()
+if(MSVC)
+	set(liblsl ${LSL_DIR}/bin/liblsl${bitness}${libext})
+else()
+	set(liblsl
+		debug ${LSL_DIR}/bin/liblsl${bitness}-debug${libext}
+		optimized ${LSL_DIR}/bin/liblsl${bitness}${libext})
+endif()
+
+
 
 # Qt
 IF (NOT CMAKE_PREFIX_PATH)
-    SET(CMAKE_PREFIX_PATH "/usr/local/Cellar/qt5/5.7.0")
+    IF (MSVC)
+        SET(CMAKE_PREFIX_PATH "C:\\Qt\\5.7\\msvc2015_64")
+    ELSEIF(APPLE)
+        SET(CMAKE_PREFIX_PATH "/usr/local/Cellar/qt5/5.7.0")
+    ENDIF()
 ENDIF()
 find_package(Qt5Core)
 find_package(Qt5Network)
@@ -130,8 +143,8 @@ IF(MSVC)
     # Default location of pre-compiled Boost for Windows
     # Override by adding "-DBOOST_ROOT=C:\path\to\boost\ -DBOOST_LIBRARYDIR=C:\path\to\boost\lib32-msvc-14.0\" to your cmake command
     IF (NOT BOOST_ROOT)
-        SET(BOOST_ROOT "C:/local/boost_1_61_0/")
-        SET(BOOST_LIBRARYDIR "C:/local/boost_1_61_0/lib32-msvc-14.0/")
+        SET(BOOST_ROOT "C:/local/boost_1_62_0/")
+        SET(BOOST_LIBRARYDIR "C:/local/boost_1_62_0/lib64-msvc-14.0/")
     ENDIF()
 ENDIF()
 SET(Boost_DEBUG                OFF) #Switch this and next to ON for help debugging Boost problems.
@@ -140,9 +153,8 @@ set(Boost_USE_STATIC_LIBS      ON)
 set(Boost_USE_MULTITHREADED    ON)
 set(Boost_USE_STATIC_RUNTIME   OFF)
 IF(MSVC)
-    find_package(Boost REQUIRED COMPONENTS filesystem system thread chrono system date_time atomic iostreams regex zlib)
-    # Disable asio auto linking in date-time and regex
-    add_definitions(-DBOOST_DATE_TIME_NO_LIB)
+    find_package(Boost REQUIRED)
+    # Disable asio auto linking in regex
     add_definitions(-DBOOST_REGEX_NO_LIB)
     set(boost_plus_libs ${Boost_LIBRARIES})
 ELSE()
@@ -150,26 +162,31 @@ ELSE()
 ENDIF()
 
 #Wiiuse
-set(WIIUSE_INSTALL_DIR ${CMAKE_CURRENT_LIST_DIR}/deps/local/)
+set(WIIUSE_INSTALL_DIR ${CMAKE_CURRENT_LIST_DIR}/deps/local)
 ExternalProject_Add(wiiuse
     PREFIX ${CMAKE_CURRENT_LIST_DIR}/deps/wiiuse
     INSTALL_DIR ${WIIUSE_INSTALL_DIR}
-    GIT_REPOSITORY https://github.com/rpavlik/wiiuse.git
+    GIT_REPOSITORY https://github.com/cboulay/wiiuse.git
+    GIT_TAG updates
     GIT_SHALLOW 1
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
         -DCMAKE_INCLUDE_PATH=${WIIUSE_INSTALL_DIR}/include
         -DCMAKE_LIBRARY_PATH=${WIIUSE_INSTALL_DIR}/lib
-        -DBUILD_WITH_STATIC_CRT:BOOL=ON
         -DBUILD_WIIUSE_SHARED_LIB:BOOL=OFF
         -DBUILD_EXAMPLE:BOOL=OFF
         -DBUILD_EXAMPLE_SDL:BOOL=OFF
 )
-#TODO: Windows
-#http://www.microsoft.com/whdc/devtools/ddk/default.mspx
-#WinHID
-set(WIIUSE_LIB ${WIIUSE_INSTALL_DIR}/lib/libwiiuse.a)
+
+IF(APPLE)
+    set(WIIUSE_LIB ${WIIUSE_INSTALL_DIR}/lib/libwiiuse.a)
+ELSEIF(MSVC)
+    add_definitions(-DWIIUSE_STATIC)
+    set(WIIUSE_LIB
+		debug ${WIIUSE_INSTALL_DIR}/lib/wiiuse_debug.lib
+		optimized ${WIIUSE_INSTALL_DIR}/lib/wiiuse.lib)
+ENDIF()
 
 set(PLATFORM_LIBS)
 if(APPLE)
@@ -183,6 +200,10 @@ if(APPLE)
         NAMES
         Foundation)
     list(APPEND PLATFORM_LIBS ${IOBLUETOOTH_FRAMEWORK} ${COREFOUNDATION_FRAMEWORK} ${FOUNDATION_FRAMEWORK})
+else(MSVC)
+	find_package(WinHID REQUIRED)
+	include_directories(${WINHID_INCLUDE_DIRS})
+	list(APPEND PLATFORM_LIBS ws2_32 setupapi ${WINHID_LIBRARIES})
 endif(APPLE)
  
 ## Executable name and options
@@ -270,6 +291,12 @@ target_link_libraries(${target}
 # 
 # Deployment
 # 
+if(MSVC)
+	add_custom_command(TARGET ${target} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${LSL_DIR}/bin/liblsl${bitness}.dll"
+        $<TARGET_FILE_DIR:${target}>)
+endif()
 
 #install(TARGETS ${target}
 #    RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT examples
