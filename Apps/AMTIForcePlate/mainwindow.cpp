@@ -9,6 +9,7 @@
 #include <boost/asio.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+
 // command types to send to the device
 const char cmd_start = 0x51;		// start streaming
 const char cmd_stop = 0x52;			// stop streaming
@@ -162,6 +163,7 @@ void MainWindow::link_amti() {
 			// get the UI parameters...
 			int comPort = ui->comPort->value();
 			int samplingRate = boost::lexical_cast<int>(ui->samplingRate->itemText(ui->samplingRate->currentIndex()).toStdString());
+			std::cout<<samplingRate<<std::endl;
 			int numDevices = 0;
 
 			// try to open the serial port
@@ -179,16 +181,6 @@ void MainWindow::link_amti() {
 			timeouts.WriteTotalTimeoutMultiplier = 50;
 			SetCommTimeouts(hPort,&timeouts);
 
-			// set the desired baud rate
-			DCB dcb = {0};
-			dcb.DCBlength = sizeof(DCB);
-			GetCommState(hPort,&dcb);
-			dcb.ByteSize = 8;
-			dcb.BaudRate = samplingRate == 50 ? 57600 : 115200;
-			if (!SetCommState(hPort,&dcb))
-				QMessageBox::information(this,"Note","Could not set baud rate of serial connection.",QMessageBox::Ok);
-
-			// set some reasonable buffer sizes
 			SetupComm(hPort,buffer_size,buffer_size);
 
 			// send a stop command and give it some time to settle
@@ -197,20 +189,40 @@ void MainWindow::link_amti() {
 				throw std::runtime_error("Cannot send commands to the device.");
 			boost::this_thread::sleep(boost::posix_time::millisec(100));
 
-			// set new baud rate and scan for the acknowledgement (may have to shift out the old buffer contents)
+			// set the desired baud rate on the windows serial port
+			DCB dcb = {0};
+			dcb.DCBlength = sizeof(DCB);
+			GetCommState(hPort,&dcb);
+			dcb.ByteSize = 8;
+			// this has to be 57600 to set the baud rate on the force plate
+			dcb.BaudRate = 57600; 
+			if (!SetCommState(hPort,&dcb))
+				QMessageBox::information(this,"Note","Could not set baud rate of serial connection.",QMessageBox::Ok);
+			
 			resp = 0;
 			bytes_skipped=0;
+
+			// set the baud rate on the device
 			cmd = (samplingRate==50) ? cmd_50Hz : ((samplingRate==100) ? cmd_100Hz : cmd_200Hz);
 			if (!WriteFile(hPort,(LPSTR)&cmd,1,&dwBytesWritten,NULL))
 				throw std::runtime_error("Cannot send commands to the device.");
+			
 			while (resp != cmd) {
 				// communicate baud rate
-				if ((!ReadFile(hPort,&resp,1,&dwBytesRead,NULL) || !dwBytesRead))
+				if ((!ReadFile(hPort,&resp,1,&dwBytesRead,NULL) || !dwBytesRead)
 					throw std::runtime_error("Did not receive a response from the device (after baud rate choice). Please make sure that your device is set up properly and that your COM port supports a baud rate of " + boost::lexical_cast<std::string>(dcb.BaudRate) + ".");
+		
 				if (++bytes_skipped > 2*buffer_size)
 					throw std::runtime_error("Device does not response in an expected way. Please make sure that this software is compatible with your type of force plate.");
+
 			}
 
+			// now set the baud rate on the port to the desired rate
+			dcb.BaudRate = samplingRate == 50 ? 57600 : 115200;
+			if (!SetCommState(hPort,&dcb))
+				QMessageBox::information(this,"Note","Could not set baud rate of serial connection.",QMessageBox::Ok);
+			
+			
 			// perform the auto-zero calibration and check the ack (may take up to 10 seconds)
 			cmd = cmd_autozero;
 			if (!WriteFile(hPort,(LPSTR)&cmd,1,&dwBytesWritten,NULL))
@@ -245,9 +257,11 @@ void MainWindow::link_amti() {
 			reader_thread_.reset(new boost::thread(&MainWindow::read_thread,this,hPort,comPort,samplingRate,numDevices));
 		}
 		catch(std::exception &e) {
-			if (hPort != INVALID_HANDLE_VALUE)
+			if (hPort != INVALID_HANDLE_VALUE)g
 				CloseHandle(hPort);
 			QMessageBox::critical(this,"Error",(std::string("Could not initialize the AMTI interface: ")+=e.what()).c_str(),QMessageBox::Ok);
+			// sometimes it fails, (randomly from what I've seen) so let the user know to try again, and to powercycle if no joy comes 
+			QMessageBox::warning(this,"Retry","Please try to link again. If error persists, power cycle the force plate(s) and restart the app.",QMessageBox::Ok);
 			return;
 		}
 

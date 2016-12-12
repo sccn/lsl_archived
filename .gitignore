@@ -1,3 +1,14 @@
+##
+# removing outdated PupilPro app
+/PupilPro
+
+##
+# for video 
+*.avi
+*.asf
+*.mov
+*.mp4
+
 ## 
 # linux distro
 *.deb
