@@ -376,7 +376,6 @@ MainWindow::~MainWindow() {
 void
 MainWindow::stream_func(){
 
-    std::cout << "stream_func" << std::endl;
     if (any_wiimote_connected(mDevices, MAX_WIIMOTES)
         && wiiuse_poll(mDevices, MAX_WIIMOTES))
     {
@@ -395,25 +394,21 @@ void MainWindow::link() {
     if (m_pTimer->isActive())
     {
         m_pTimer->stop();
-        std::cout << "Stopping timer..." << std::endl;
-        while(wiiuse_poll(mDevices, MAX_WIIMOTES))
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        }
         
         int wm_ix = 0;
         for (wm_ix = 0; wm_ix < nDevices; ++wm_ix) {//MAX_WIIMOTES
             wiiuse_disconnect(mDevices[wm_ix]);
         }
         
-//        // Cleanup hardware
-//        wiiuse_cleanup(mDevices, nDevices);  //causes crash in OSX
+		// Cleanup hardware
+		// wiiuse_cleanup(mDevices, nDevices);  //causes crash in OSX
         
         // Cleanup marker_outlets and data_outlets
-//		  m_marker_outlets.clear();
-//        m_data_outlets.clear();
+		// Causes crash on exit.
+		// m_marker_outlets.clear();
+		// m_data_outlets.clear();
         
-        // TODO: Cleanup data_buffers
+        // Cleanup data_buffers ?
         
         // indicate that we are now successfully unlinked
         ui->linkButton->setText("Link");

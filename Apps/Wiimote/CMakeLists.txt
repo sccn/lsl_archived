@@ -15,9 +15,9 @@ set_policy(CMP0063 NEW) # ENABLE CMP0063: Honor visibility properties for all ta
 # Meta information about the project
 set(META_PROJECT_NAME        "Wiimote")
 set(META_PROJECT_DESCRIPTION "Send Wii data streams (Wiimote, balanceboard, etc) to stream.")
-set(META_AUTHOR_ORGANIZATION "? ? -- ?")
+set(META_AUTHOR_ORGANIZATION "?")
 set(META_AUTHOR_DOMAIN       "https://github.com/sccn/labstreaminglayer/tree/master/Apps/Wiimote")
-set(META_AUTHOR_MAINTAINER   "")
+set(META_AUTHOR_MAINTAINER   "Chadwick Boulay -- chadwick<dot>boulay<at>gmail<dot>com")
 set(META_VERSION_MAJOR       "0")
 set(META_VERSION_MINOR       "1")
 set(META_VERSION_PATCH       "0")
@@ -94,6 +94,7 @@ endif()
 ## Target config
 
 # External dependencies
+
 set(bitness 32)
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
   set(bitness 64)  
@@ -101,26 +102,28 @@ endif()
 
 #LSL
 set(LSL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../LSL/liblsl)
-	set(libext .dylib)
+set(libext .dylib)
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	set(libext .lib)
+    set(libext .lib)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	set(libext .so)
+    set(libext .so)
 endif()
 if(MSVC)
-	set(liblsl ${LSL_DIR}/bin/liblsl${bitness}${libext})
+    set(liblsl ${LSL_DIR}/bin/liblsl${bitness}${libext})
 else()
-	set(liblsl
-		debug ${LSL_DIR}/bin/liblsl${bitness}-debug${libext}
-		optimized ${LSL_DIR}/bin/liblsl${bitness}${libext})
+    set(liblsl
+        debug ${LSL_DIR}/bin/liblsl${bitness}-debug${libext}
+        optimized ${LSL_DIR}/bin/liblsl${bitness}${libext})
 endif()
-
-
 
 # Qt
 IF (NOT CMAKE_PREFIX_PATH)
     IF (MSVC)
-        SET(CMAKE_PREFIX_PATH "C:\\Qt\\5.7\\msvc2015_64")
+        IF (CMAKE_SIZEOF_VOID_P EQUAL 8)
+            SET(CMAKE_PREFIX_PATH "C:\\Qt\\5.7\\msvc2015_64")
+        ELSE()
+            SET(CMAKE_PREFIX_PATH "C:\\Qt\\5.7\\msvc2015")
+        ENDIF()
     ELSEIF(APPLE)
         SET(CMAKE_PREFIX_PATH "/usr/local/Cellar/qt5/5.7.0")
     ENDIF()
@@ -137,29 +140,6 @@ set(AUTOMOC_MOC_OPTIONS PROPERTIES FOLDER CMakeAutomocTargets)
 set_property(GLOBAL PROPERTY AUTOMOC_FOLDER CMakeAutomocTargets)
 # ENABLE CMP0020: Automatically link Qt executables to qtmain target on Windows.
 set_policy(CMP0020 NEW)
-
-# Boost
-IF(MSVC)
-    # Default location of pre-compiled Boost for Windows
-    # Override by adding "-DBOOST_ROOT=C:\path\to\boost\ -DBOOST_LIBRARYDIR=C:\path\to\boost\lib32-msvc-14.0\" to your cmake command
-    IF (NOT BOOST_ROOT)
-        SET(BOOST_ROOT "C:/local/boost_1_62_0/")
-        SET(BOOST_LIBRARYDIR "C:/local/boost_1_62_0/lib64-msvc-14.0/")
-    ENDIF()
-ENDIF()
-SET(Boost_DEBUG                OFF) #Switch this and next to ON for help debugging Boost problems.
-SET(Boost_DETAILED_FAILURE_MSG OFF)
-set(Boost_USE_STATIC_LIBS      ON)
-set(Boost_USE_MULTITHREADED    ON)
-set(Boost_USE_STATIC_RUNTIME   OFF)
-IF(MSVC)
-    find_package(Boost REQUIRED)
-    # Disable asio auto linking in regex
-    add_definitions(-DBOOST_REGEX_NO_LIB)
-    set(boost_plus_libs ${Boost_LIBRARIES})
-ELSE()
-    find_package(Boost)
-ENDIF()
 
 #Wiiuse
 set(WIIUSE_INSTALL_DIR ${CMAKE_CURRENT_LIST_DIR}/deps/local)
@@ -178,16 +158,15 @@ ExternalProject_Add(wiiuse
         -DBUILD_EXAMPLE:BOOL=OFF
         -DBUILD_EXAMPLE_SDL:BOOL=OFF
 )
-
 IF(APPLE)
     set(WIIUSE_LIB ${WIIUSE_INSTALL_DIR}/lib/libwiiuse.a)
-ELSEIF(MSVC)
+ELSEIF(WIN32)
     add_definitions(-DWIIUSE_STATIC)
     set(WIIUSE_LIB
-		debug ${WIIUSE_INSTALL_DIR}/lib/wiiuse_debug.lib
-		optimized ${WIIUSE_INSTALL_DIR}/lib/wiiuse.lib)
+        debug ${WIIUSE_INSTALL_DIR}/lib/wiiuse_debug.lib
+        optimized ${WIIUSE_INSTALL_DIR}/lib/wiiuse.lib)
 ENDIF()
-
+# Platform libraries required by Wiiuse
 set(PLATFORM_LIBS)
 if(APPLE)
     find_library(IOBLUETOOTH_FRAMEWORK
@@ -200,18 +179,20 @@ if(APPLE)
         NAMES
         Foundation)
     list(APPEND PLATFORM_LIBS ${IOBLUETOOTH_FRAMEWORK} ${COREFOUNDATION_FRAMEWORK} ${FOUNDATION_FRAMEWORK})
-else(MSVC)
-	find_package(WinHID REQUIRED)
-	include_directories(${WINHID_INCLUDE_DIRS})
-	list(APPEND PLATFORM_LIBS ws2_32 setupapi ${WINHID_LIBRARIES})
+else(WIN32)
+    find_package(WinHID REQUIRED)
+    include_directories(${WINHID_INCLUDE_DIRS})
+    list(APPEND PLATFORM_LIBS ws2_32 setupapi ${WINHID_LIBRARIES})
 endif(APPLE)
- 
+
+
 ## Executable name and options
 
 # Target name
 set(target Wiimote)
 
 # Exit here if required dependencies are not met
+# TODO: Check more dependencies.
 if (NOT Qt5Core_FOUND)
     message(STATUS "${target} skipped: Qt5 not found")
     return()
@@ -229,7 +210,7 @@ set(sources
 
 # Build executable
 add_executable(${target}
-MACOSX_BUNDLE
+    MACOSX_BUNDLE
     ${sources}
 )
 
@@ -245,7 +226,6 @@ set_target_properties(${target}
 
 target_include_directories(${target}
     PRIVATE
-    ${Boost_INCLUDE_DIRS}
     ${LSL_DIR}/include
     ${WIIUSE_INSTALL_DIR}/include)
 
@@ -291,12 +271,19 @@ target_link_libraries(${target}
 # 
 # Deployment
 # 
-if(MSVC)
-	add_custom_command(TARGET ${target} POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${LSL_DIR}/bin/liblsl${bitness}.dll"
-        $<TARGET_FILE_DIR:${target}>)
-endif()
+if(WIN32)
+    add_custom_command(TARGET ${target} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${LSL_DIR}/bin/liblsl${bitness}.dll"
+            $<TARGET_FILE_DIR:${target}>)
+    get_target_property(QT5_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
+    get_filename_component(QT5_WINDEPLOYQT_EXECUTABLE ${QT5_QMAKE_EXECUTABLE} PATH)
+    set(QT5_WINDEPLOYQT_EXECUTABLE "${QT5_WINDEPLOYQT_EXECUTABLE}/windeployqt.exe")
+    add_custom_command(TARGET ${target} POST_BUILD
+        COMMAND ${QT5_WINDEPLOYQT_EXECUTABLE} --qmldir
+            ${CMAKE_SOURCE_DIR}
+            $<TARGET_FILE_DIR:${target}>)
+endif(WIN32)
 
 #install(TARGETS ${target}
 #    RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT examples
