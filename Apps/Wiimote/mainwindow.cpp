@@ -376,9 +376,11 @@ MainWindow::~MainWindow() {
 void
 MainWindow::stream_func(){
 
+    std::cout << "stream_func" << std::endl;
     if (any_wiimote_connected(mDevices, MAX_WIIMOTES)
         && wiiuse_poll(mDevices, MAX_WIIMOTES))
     {
+        
         double now = lsl::local_clock();
         int wm_ix = 0;
         for (wm_ix=0; wm_ix<nDevices; ++wm_ix) {
@@ -393,15 +395,19 @@ void MainWindow::link() {
     if (m_pTimer->isActive())
     {
         m_pTimer->stop();
+        std::cout << "Stopping timer..." << std::endl;
+        while(wiiuse_poll(mDevices, MAX_WIIMOTES))
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
         
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         int wm_ix = 0;
         for (wm_ix = 0; wm_ix < nDevices; ++wm_ix) {//MAX_WIIMOTES
             wiiuse_disconnect(mDevices[wm_ix]);
         }
         
-        // Cleanup hardware
-        wiiuse_cleanup(mDevices, nDevices);
+//        // Cleanup hardware
+//        wiiuse_cleanup(mDevices, nDevices);  //causes crash in OSX
         
         // Cleanup marker_outlets and data_outlets
 //		  m_marker_outlets.clear();
