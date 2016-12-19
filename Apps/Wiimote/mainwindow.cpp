@@ -13,14 +13,9 @@ const char* const expansion_names[] = {"None","Nunchuk","Classic","GuitarHero3",
 
 //TODO:
 // - Add "refresh" button to scan for wiimotes
-//      - delete already held devices at beginning of func.
 // - Display a selectable list of found devices
-// - Secondary thread: Keep devices alive
-
-// TODO:
-// - "start" button
-//      - kills other thread
-//      - starts new thread to build outlets, in loop polls devices and sends to streams
+// - Replace "Link"/"Unlink" with "Start"/"Stop"
+// - Enable IR and motion plus through GUI toggles, only for Wiimotes.
 
 short any_wiimote_connected(wiimote** wm, int wiimotes) {
     int i;
@@ -217,9 +212,15 @@ MainWindow::handle_event(int wm_ix,
             if (wm->exp.type == EXP_WII_BOARD) {
                 // balance board
                 struct wii_board_t* wb = (wii_board_t*)&wm->exp.wb;
-//                float total = wb->tl + wb->tr + wb->bl + wb->br;
-//                float x = ((wb->tr + wb->br) / total) * 2 - 1;
-//                float y = ((wb->tl + wb->tr) / total) * 2 - 1;
+                
+                // TODO: Only if print results button is pressed...
+                float total = wb->tl + wb->tr + wb->bl + wb->br;
+                float x = ((wb->tr + wb->br) / total) * 2 - 1;
+                float y = ((wb->tl + wb->tr) / total) * 2 - 1;
+                printf("Weight: %f kg @ (%f, %f)\n", total, x, y);
+                printf("Interpolated weight: TL:%f  TR:%f  BL:%f  BR:%f\n", wb->tl, wb->tr, wb->bl, wb->br);
+                printf("Raw: TL:%d  TR:%d  BL:%d  BR:%d\n", wb->rtl, wb->rtr, wb->rbl, wb->rbr);
+                
                 std::vector<float> sample =
                 {
                     wb->tl,
@@ -471,8 +472,8 @@ void MainWindow::link() {
                     std::cout << data_info.as_xml() << std::endl;
                     m_data_outlets.push_back(new lsl::stream_outlet(data_info));
                     
-                    wiiuse_motion_sensing(wm, 1);  // enable motion sensing
-                    wiiuse_set_ir(wm, 1);  // enable infrared tracking
+                    wiiuse_motion_sensing(wm, 0);  // disable motion sensing
+                    wiiuse_set_ir(wm, 0);  // disable infrared tracking
                     m_data_buffers.at(wm_ix).resize(channelCount);
                 }
 
