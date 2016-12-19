@@ -25,6 +25,7 @@ NOTIFY_SUB_TOPIC = 'notify.'
 PUPIL_SUB_TOPIC  = 'pupil.'
 GAZE_SUB_TOPIC   = 'gaze'
 
+
 class Pupil_LSL_Relay(Plugin):
     """Plugin to relay Pupil Capture data to LSL
 
