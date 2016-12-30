@@ -3,15 +3,12 @@
 Use this program to stream data acquired by a [Wearable Sensing](http://www.wearablesensing.com) DSI headset to the local area network (LAN) via the [LSL](https://github.com/sccn/labstreaminglayer) library.
 Below we list the build instructions (including Bluetooth troubleshooting steps) for GNU/Linux, Windows, and Mac operating systems.
 
-{tip:title=GUI layer}
-In addition, in the folder *dsi2lslgui/*, we provide a Qt GUI layer that can be deployed on top of the command line app *dsi2lsl*. After built, place *dsi2lslgui* binary in the same folder where *dsi2lsl* and all the other libraries are.
+In addition, in the folder **dsi2lslgui/**, we provide a Qt GUI layer that can be deployed on top of the command line app **dsi2lsl**. After built, place **dsi2lslgui** binary in the same folder where **dsi2lsl** and all the other libraries are.
 
 
 #Build#
 
-{note: Download Wearable Sensing's API library}
-Before we can build the project, we need to download Wearable Sensing's API library and save it in this folder. For example, we would need libDSI-Linux-x86_64.so on GNU/Linux, libDSI-Darwin-x86_64.dylib on Mac, and/or libDSI-Windows-x86_32.dll on Windows.
-{note}
+Note: Before we can build the project, we need to download Wearable Sensing's API library and save it in this folder. For example, we would need libDSI-Linux-x86_64.so on GNU/Linux, libDSI-Darwin-x86_64.dylib on Mac, and/or libDSI-Windows-x86_32.dll on Windows.
 
 ##GNU/Linux##
 
@@ -49,7 +46,6 @@ gcc -DDSI_PLATFORM=-Darwin-x86_64  -o "dsi2lsl" dsi2lsl.c  DSI_API_Loader.c -ldl
 ```bash
 ls -l tty.*
 ```
-
 for us this returned /dev/tty.DSI7-017-BluetoothSeria. We'll need this info later at run time.
 
 
@@ -69,13 +65,12 @@ gcc -DDSI_PLATFORM=-Windows-x86_32 -o "dsi2lsl.exe" dsi2lsl.c  DSI_API_Loader.c 
 
 The app runs in the same way on the three platforms. Below we illustrate the different options that can be used. With the exception of the option --help, all the others should be given in --NAME=VALUE format. Use a terminal to run the examples.
 
-{tip:title=Tip for Linux and Mac users\}
+Tip: Linux and Mac users
       1. Since the app uses the serial port to exchange data with the device, your account may need to have superuser privileges (use sudo before any command).
       2. You may need to add this folder to the system's library path, to do so use the following command
 ``` bash
 export LD_LIBRARY_PATH=/.../dsi2lsl_deploy_folder:$LD_LIBRARY_PATH
 ```
-{tip}
 
 ### --port ###
 Specify the serial port with the --port option. If not specified, the API will look for an environment variable called DSISerialPort. This example uses the serial port that the device is binded to on GNU/Linux, for other platforms see the previous section.
