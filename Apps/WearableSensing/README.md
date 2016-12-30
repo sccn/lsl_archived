@@ -8,7 +8,7 @@ In addition, in the folder **dsi2lslgui/**, we provide a Qt GUI layer that can b
 
 #Build#
 
-Note: Before we can build the project, we need to download Wearable Sensing's API library and save it in this folder. For example, we would need libDSI-Linux-x86_64.so on GNU/Linux, libDSI-Darwin-x86_64.dylib on Mac, and/or libDSI-Windows-x86_32.dll on Windows.
+**Note:** Before we can build the project, we need to download Wearable Sensing's API library and save it in this folder. For example, we would need libDSI-Linux-x86_64.so on GNU/Linux, libDSI-Darwin-x86_64.dylib on Mac, and/or libDSI-Windows-x86_32.dll on Windows.
 
 ##GNU/Linux##
 
@@ -65,7 +65,8 @@ gcc -DDSI_PLATFORM=-Windows-x86_32 -o "dsi2lsl.exe" dsi2lsl.c  DSI_API_Loader.c 
 
 The app runs in the same way on the three platforms. Below we illustrate the different options that can be used. With the exception of the option --help, all the others should be given in --NAME=VALUE format. Use a terminal to run the examples.
 
-Tip: Linux and Mac users
+**Tip for Linux and Mac users:**
+
       1. Since the app uses the serial port to exchange data with the device, your account may need to have superuser privileges (use sudo before any command).
       2. You may need to add this folder to the system's library path, to do so use the following command
 ``` bash
