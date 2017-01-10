@@ -513,6 +513,78 @@ SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_cf_1undefined_1get(
 }
 
 
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_post_1none_1get(JNIEnv *jenv, jclass jcls) {
+  jint jresult = 0 ;
+  lsl::processing_options_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (lsl::processing_options_t)lsl::post_none;
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_post_1clocksync_1get(JNIEnv *jenv, jclass jcls) {
+  jint jresult = 0 ;
+  lsl::processing_options_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (lsl::processing_options_t)lsl::post_clocksync;
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_post_1dejitter_1get(JNIEnv *jenv, jclass jcls) {
+  jint jresult = 0 ;
+  lsl::processing_options_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (lsl::processing_options_t)lsl::post_dejitter;
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_post_1monotonize_1get(JNIEnv *jenv, jclass jcls) {
+  jint jresult = 0 ;
+  lsl::processing_options_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (lsl::processing_options_t)lsl::post_monotonize;
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_post_1threadsafe_1get(JNIEnv *jenv, jclass jcls) {
+  jint jresult = 0 ;
+  lsl::processing_options_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (lsl::processing_options_t)lsl::post_threadsafe;
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_post_1ALL_1get(JNIEnv *jenv, jclass jcls) {
+  jint jresult = 0 ;
+  lsl::processing_options_t result;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (lsl::processing_options_t)lsl::post_ALL;
+  jresult = (jint)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT jint JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_protocol_1version(JNIEnv *jenv, jclass jcls) {
   jint jresult = 0 ;
   int result;
@@ -925,7 +997,7 @@ SWIGEXPORT jstring JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1ho
 SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1info_1desc(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::stream_info *arg1 = (lsl::stream_info *) 0 ;
-  SwigValueWrapper< lsl::xml_element > result;
+  lsl::xml_element result;
   
   (void)jenv;
   (void)jcls;
@@ -3792,6 +3864,70 @@ SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1t
 }
 
 
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1time_1correction_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jdouble jarg4) {
+  jdouble jresult = 0 ;
+  lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
+  double *arg2 = (double *) 0 ;
+  double *arg3 = (double *) 0 ;
+  double arg4 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(lsl::stream_inlet **)&jarg1; 
+  arg2 = *(double **)&jarg2; 
+  arg3 = *(double **)&jarg3; 
+  arg4 = (double)jarg4; 
+  result = (double)(arg1)->time_correction(arg2,arg3,arg4);
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1time_1correction_1_1SWIG_13(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3) {
+  jdouble jresult = 0 ;
+  lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
+  double *arg2 = (double *) 0 ;
+  double *arg3 = (double *) 0 ;
+  double result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(lsl::stream_inlet **)&jarg1; 
+  arg2 = *(double **)&jarg2; 
+  arg3 = *(double **)&jarg3; 
+  result = (double)(arg1)->time_correction(arg2,arg3);
+  jresult = (jdouble)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1set_1postprocessing_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+  lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
+  unsigned int arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(lsl::stream_inlet **)&jarg1; 
+  arg2 = (unsigned int)jarg2; 
+  (arg1)->set_postprocessing(arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1set_1postprocessing_1_1SWIG_11(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(lsl::stream_inlet **)&jarg1; 
+  (arg1)->set_postprocessing();
+}
+
+
 SWIGEXPORT jdouble JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1pull_1sample_1_1SWIG_12(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jdouble jarg3) {
   jdouble jresult = 0 ;
   lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
@@ -4818,7 +4954,20 @@ SWIGEXPORT jboolean JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1
 }
 
 
-SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1xml_1element(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+SWIGEXPORT void JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_stream_1inlet_1smoothing_1halftime(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jfloat jarg2) {
+  lsl::stream_inlet *arg1 = (lsl::stream_inlet *) 0 ;
+  float arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(lsl::stream_inlet **)&jarg1; 
+  arg2 = (float)jarg2; 
+  (arg1)->smoothing_halftime(arg2);
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1xml_1element_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   lsl_xml_ptr arg1 ;
   lsl_xml_ptr *argp1 ;
@@ -4838,10 +4987,22 @@ SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1xml_1element(
 }
 
 
+SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_new_1xml_1element_1_1SWIG_11(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  lsl::xml_element *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (lsl::xml_element *)new lsl::xml_element();
+  *(lsl::xml_element **)&jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1first_1child(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
-  SwigValueWrapper< lsl::xml_element > result;
+  lsl::xml_element result;
   
   (void)jenv;
   (void)jcls;
@@ -4856,7 +5017,7 @@ SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1firs
 SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1last_1child(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
-  SwigValueWrapper< lsl::xml_element > result;
+  lsl::xml_element result;
   
   (void)jenv;
   (void)jcls;
@@ -4871,7 +5032,7 @@ SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1last
 SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1next_1sibling_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
-  SwigValueWrapper< lsl::xml_element > result;
+  lsl::xml_element result;
   
   (void)jenv;
   (void)jcls;
@@ -4886,7 +5047,7 @@ SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1next
 SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1previous_1sibling_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
-  SwigValueWrapper< lsl::xml_element > result;
+  lsl::xml_element result;
   
   (void)jenv;
   (void)jcls;
@@ -4901,7 +5062,7 @@ SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1prev
 SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1parent(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
-  SwigValueWrapper< lsl::xml_element > result;
+  lsl::xml_element result;
   
   (void)jenv;
   (void)jcls;
@@ -4917,7 +5078,7 @@ SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1chil
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
-  SwigValueWrapper< lsl::xml_element > result;
+  lsl::xml_element result;
   
   (void)jenv;
   (void)jcls;
@@ -4942,7 +5103,7 @@ SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1next
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
-  SwigValueWrapper< lsl::xml_element > result;
+  lsl::xml_element result;
   
   (void)jenv;
   (void)jcls;
@@ -4967,7 +5128,7 @@ SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1prev
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
-  SwigValueWrapper< lsl::xml_element > result;
+  lsl::xml_element result;
   
   (void)jenv;
   (void)jcls;
@@ -5093,7 +5254,7 @@ SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1appe
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
   std::string *arg3 = 0 ;
-  SwigValueWrapper< lsl::xml_element > result;
+  lsl::xml_element result;
   
   (void)jenv;
   (void)jcls;
@@ -5128,7 +5289,7 @@ SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1prep
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
   std::string *arg3 = 0 ;
-  SwigValueWrapper< lsl::xml_element > result;
+  lsl::xml_element result;
   
   (void)jenv;
   (void)jcls;
@@ -5247,7 +5408,7 @@ SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1appe
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
-  SwigValueWrapper< lsl::xml_element > result;
+  lsl::xml_element result;
   
   (void)jenv;
   (void)jcls;
@@ -5272,7 +5433,7 @@ SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1prep
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   std::string *arg2 = 0 ;
-  SwigValueWrapper< lsl::xml_element > result;
+  lsl::xml_element result;
   
   (void)jenv;
   (void)jcls;
@@ -5297,7 +5458,7 @@ SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1appe
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   lsl::xml_element *arg2 = 0 ;
-  SwigValueWrapper< lsl::xml_element > result;
+  lsl::xml_element result;
   
   (void)jenv;
   (void)jcls;
@@ -5319,7 +5480,7 @@ SWIGEXPORT jlong JNICALL Java_edu_ucsd_sccn_lsl_lslAndroidJNI_xml_1element_1prep
   jlong jresult = 0 ;
   lsl::xml_element *arg1 = (lsl::xml_element *) 0 ;
   lsl::xml_element *arg2 = 0 ;
-  SwigValueWrapper< lsl::xml_element > result;
+  lsl::xml_element result;
   
   (void)jenv;
   (void)jcls;

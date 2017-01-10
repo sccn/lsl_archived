@@ -36,7 +36,11 @@ public class xml_element {
   }
 
   public xml_element(SWIGTYPE_p_lsl_xml_ptr obj) {
-    this(lslAndroidJNI.new_xml_element(SWIGTYPE_p_lsl_xml_ptr.getCPtr(obj)), true);
+    this(lslAndroidJNI.new_xml_element__SWIG_0(SWIGTYPE_p_lsl_xml_ptr.getCPtr(obj)), true);
+  }
+
+  public xml_element() {
+    this(lslAndroidJNI.new_xml_element__SWIG_1(), true);
   }
 
   public xml_element first_child() {

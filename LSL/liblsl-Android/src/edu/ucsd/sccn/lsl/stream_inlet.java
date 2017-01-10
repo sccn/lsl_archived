@@ -79,6 +79,22 @@ public class stream_inlet {
     return lslAndroidJNI.stream_inlet_time_correction__SWIG_1(swigCPtr, this);
   }
 
+  public double time_correction(SWIGTYPE_p_double remote_time, SWIGTYPE_p_double uncertainty, double timeout) {
+    return lslAndroidJNI.stream_inlet_time_correction__SWIG_2(swigCPtr, this, SWIGTYPE_p_double.getCPtr(remote_time), SWIGTYPE_p_double.getCPtr(uncertainty), timeout);
+  }
+
+  public double time_correction(SWIGTYPE_p_double remote_time, SWIGTYPE_p_double uncertainty) {
+    return lslAndroidJNI.stream_inlet_time_correction__SWIG_3(swigCPtr, this, SWIGTYPE_p_double.getCPtr(remote_time), SWIGTYPE_p_double.getCPtr(uncertainty));
+  }
+
+  public void set_postprocessing(long flags) {
+    lslAndroidJNI.stream_inlet_set_postprocessing__SWIG_0(swigCPtr, this, flags);
+  }
+
+  public void set_postprocessing() {
+    lslAndroidJNI.stream_inlet_set_postprocessing__SWIG_1(swigCPtr, this);
+  }
+
   public double pull_sample(vectorf sample, double timeout) {
     return lslAndroidJNI.stream_inlet_pull_sample__SWIG_2(swigCPtr, this, vectorf.getCPtr(sample), sample, timeout);
   }
@@ -261,6 +277,10 @@ public class stream_inlet {
 
   public boolean was_clock_reset() {
     return lslAndroidJNI.stream_inlet_was_clock_reset(swigCPtr, this);
+  }
+
+  public void smoothing_halftime(float value) {
+    lslAndroidJNI.stream_inlet_smoothing_halftime(swigCPtr, this, value);
   }
 
 }

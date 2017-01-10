@@ -20,6 +20,12 @@ public class lslAndroidJNI {
   public final static native int cf_int8_get();
   public final static native int cf_int64_get();
   public final static native int cf_undefined_get();
+  public final static native int post_none_get();
+  public final static native int post_clocksync_get();
+  public final static native int post_dejitter_get();
+  public final static native int post_monotonize_get();
+  public final static native int post_threadsafe_get();
+  public final static native int post_ALL_get();
   public final static native int protocol_version();
   public final static native int library_version();
   public final static native double local_clock();
@@ -192,6 +198,10 @@ public class lslAndroidJNI {
   public final static native void stream_inlet_close_stream(long jarg1, stream_inlet jarg1_);
   public final static native double stream_inlet_time_correction__SWIG_0(long jarg1, stream_inlet jarg1_, double jarg2);
   public final static native double stream_inlet_time_correction__SWIG_1(long jarg1, stream_inlet jarg1_);
+  public final static native double stream_inlet_time_correction__SWIG_2(long jarg1, stream_inlet jarg1_, long jarg2, long jarg3, double jarg4);
+  public final static native double stream_inlet_time_correction__SWIG_3(long jarg1, stream_inlet jarg1_, long jarg2, long jarg3);
+  public final static native void stream_inlet_set_postprocessing__SWIG_0(long jarg1, stream_inlet jarg1_, long jarg2);
+  public final static native void stream_inlet_set_postprocessing__SWIG_1(long jarg1, stream_inlet jarg1_);
   public final static native double stream_inlet_pull_sample__SWIG_2(long jarg1, stream_inlet jarg1_, long jarg2, vectorf jarg2_, double jarg3);
   public final static native double stream_inlet_pull_sample__SWIG_3(long jarg1, stream_inlet jarg1_, long jarg2, vectorf jarg2_);
   public final static native double stream_inlet_pull_sample__SWIG_4(long jarg1, stream_inlet jarg1_, long jarg2, vectord jarg2_, double jarg3);
@@ -238,7 +248,9 @@ public class lslAndroidJNI {
   public final static native long stream_inlet_pull_chunk_multiplexed__SWIG_13(long jarg1, stream_inlet jarg1_, long jarg2, long jarg3, long jarg4, long jarg5);
   public final static native long stream_inlet_samples_available(long jarg1, stream_inlet jarg1_);
   public final static native boolean stream_inlet_was_clock_reset(long jarg1, stream_inlet jarg1_);
-  public final static native long new_xml_element(long jarg1);
+  public final static native void stream_inlet_smoothing_halftime(long jarg1, stream_inlet jarg1_, float jarg2);
+  public final static native long new_xml_element__SWIG_0(long jarg1);
+  public final static native long new_xml_element__SWIG_1();
   public final static native long xml_element_first_child(long jarg1, xml_element jarg1_);
   public final static native long xml_element_last_child(long jarg1, xml_element jarg1_);
   public final static native long xml_element_next_sibling__SWIG_0(long jarg1, xml_element jarg1_);
