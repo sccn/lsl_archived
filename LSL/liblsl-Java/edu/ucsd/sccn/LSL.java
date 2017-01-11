@@ -39,6 +39,13 @@ public class LSL {
      */
     public static final double FOREVER = 32000000.0;
 
+	/**
+	 * Constant to indicate that there is no preference about how a data stream shall be chunked for transmission.
+	 * (can be used for the chunking paramters in the inlet or the outlet).
+	 */
+	public static final int NO_PREFERENCE = 0;
+
+
     /**
      * Data format of a channel (each transmitted sample holds an array of channels).
      */    
@@ -59,6 +66,33 @@ public class LSL {
                                                  *  Also, some builds of liblsl will not be able to send or receive data of this type. */
         public static final int undefined = 0;  /** Can not be transmitted. */
     }
+
+	/**
+	* Post-processing options for stream inlets. 
+	*/
+	public class ProcessingOptions {
+		public static final int proc_none = 0;			/* No automatic post-processing; return the ground-truth time stamps for manual post-processing */
+								/* (this is the default behavior of the inlet). */
+		public static final int proc_clocksync = 1;		/* Perform automatic clock synchronization; equivalent to manually adding the time_correction() value */
+								/* to the received time stamps. */
+		public static final int proc_dejitter = 2;		/* Remove jitter from time stamps. This will apply a smoothing algorithm to the received time stamps; */
+								/* the smoothing needs to see a minimum number of samples (30-120 seconds worst-case) until the remaining */
+								/* jitter is consistently below 1ms. */
+		public static final int proc_monotonize = 4;	/* Force the time-stamps to be monotonically ascending (only makes sense if timestamps are dejittered). */
+		public static final int proc_threadsafe = 8;    /* Post-processing is thread-safe (same inlet can be read from by multiple threads); uses somewhat more CPU. */
+		public static final int proc_ALL = 1|2|4|8;		/* The combination of all possible post-processing options. */
+	} 
+
+	/**
+	* Possible error codes.
+	*/
+	public class ErrorCode {
+		public static final int no_error = 0;           /* No error occurred */
+		public static final int timeout_error = -1;     /* The operation failed due to a timeout. */
+		public static final int lost_error = -2;        /* The stream has been lost. */
+		public static final int argument_error = -3;    /* An argument was incorrectly specified (e.g., wrong format or wrong length). */
+		public static final int internal_error = -4;     /* Some other internal error has happened. */
+	} 
 
     
     /**
@@ -314,23 +348,23 @@ public class LSL {
          *                   Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
          */
         public void push_sample(float[] data, double timestamp, boolean pushthrough) { inst.lsl_push_sample_ftp(obj, data, timestamp, pushthrough ? 1 : 0); }
-        public void push_sample(float[] data, double timestamp) { inst.lsl_push_sample_ftp(obj, data, timestamp, 1); }
-        public void push_sample(float[] data) { inst.lsl_push_sample_ftp(obj, data, 0.0, 1); }
+        public void push_sample(float[] data, double timestamp) { inst.lsl_push_sample_ft(obj, data, timestamp); }
+        public void push_sample(float[] data) { inst.lsl_push_sample_f(obj, data); }
         public void push_sample(double[] data, double timestamp, boolean pushthrough) { inst.lsl_push_sample_dtp(obj, data, timestamp, pushthrough ? 1 : 0); }
-        public void push_sample(double[] data, double timestamp) { inst.lsl_push_sample_dtp(obj, data, timestamp, 1); }
-        public void push_sample(double[] data) { inst.lsl_push_sample_dtp(obj, data, 0.0, 1); }
+        public void push_sample(double[] data, double timestamp) { inst.lsl_push_sample_dt(obj, data, timestamp); }
+        public void push_sample(double[] data) { inst.lsl_push_sample_d(obj, data); }
         public void push_sample(int[] data, double timestamp, boolean pushthrough) { inst.lsl_push_sample_itp(obj, data, timestamp, pushthrough ? 1 : 0); }
-        public void push_sample(int[] data, double timestamp) { inst.lsl_push_sample_itp(obj, data, timestamp, 1); }
-        public void push_sample(int[] data) { inst.lsl_push_sample_itp(obj, data, 0.0, 1); }
+        public void push_sample(int[] data, double timestamp) { inst.lsl_push_sample_it(obj, data, timestamp); }
+        public void push_sample(int[] data) { inst.lsl_push_sample_i(obj, data); }
         public void push_sample(short[] data, double timestamp, boolean pushthrough) { inst.lsl_push_sample_stp(obj, data, timestamp, pushthrough ? 1 : 0); }
-        public void push_sample(short[] data, double timestamp) { inst.lsl_push_sample_stp(obj, data, timestamp, 1); }
-        public void push_sample(short[] data) { inst.lsl_push_sample_stp(obj, data, 0.0, 1); }
+        public void push_sample(short[] data, double timestamp) { inst.lsl_push_sample_st(obj, data, timestamp); }
+        public void push_sample(short[] data) { inst.lsl_push_sample_s(obj, data); }
         public void push_sample(byte[] data, double timestamp, boolean pushthrough) { inst.lsl_push_sample_ctp(obj, data, timestamp, pushthrough ? 1 : 0); }
-        public void push_sample(byte[] data, double timestamp) { inst.lsl_push_sample_ctp(obj, data, timestamp, 1); }
-        public void push_sample(byte[] data) { inst.lsl_push_sample_ctp(obj, data, 0.0, 1); }
+        public void push_sample(byte[] data, double timestamp) { inst.lsl_push_sample_ct(obj, data, timestamp); }
+        public void push_sample(byte[] data) { inst.lsl_push_sample_c(obj, data); }
         public void push_sample(String[] data, double timestamp, boolean pushthrough) { inst.lsl_push_sample_strtp(obj, data, timestamp, pushthrough ? 1 : 0); }
-        public void push_sample(String[] data, double timestamp) { inst.lsl_push_sample_strtp(obj, data, timestamp, 1); }
-        public void push_sample(String[] data) { inst.lsl_push_sample_strtp(obj, data, 0.0, 1); }        
+        public void push_sample(String[] data, double timestamp) { inst.lsl_push_sample_strt(obj, data, timestamp); }
+        public void push_sample(String[] data) { inst.lsl_push_sample_str(obj, data); }        
                 
 
     // ===============================================================
@@ -345,24 +379,24 @@ public class LSL {
          * @param pushthrough Optionally whether to push the chunk through to the receivers instead of buffering it with subsequent samples.
          *                    Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
          */
-        public void push_chunk(float[] data, double timestamp, boolean pushthrough) { inst.lsl_push_chunk_ftp(obj, data, (long)data.length, timestamp, pushthrough ? 1 : 0); }
-        public void push_chunk(float[] data, double timestamp) { inst.lsl_push_chunk_ftp(obj, data, (long)data.length, timestamp, 1); }
-        public void push_chunk(float[] data) { inst.lsl_push_chunk_ftp(obj, data, (long)data.length, 0.0, 1); }
-        public void push_chunk(double[] data, double timestamp, boolean pushthrough) { inst.lsl_push_chunk_dtp(obj, data, (long)data.length, timestamp, pushthrough ? 1 : 0); }
-        public void push_chunk(double[] data, double timestamp) { inst.lsl_push_chunk_dtp(obj, data, (long)data.length, timestamp, 1); }
-        public void push_chunk(double[] data) { inst.lsl_push_chunk_dtp(obj, data, (long)data.length, 0.0, 1); }
-        public void push_chunk(int[] data, double timestamp, boolean pushthrough) { inst.lsl_push_chunk_itp(obj, data, (long)data.length, timestamp, pushthrough ? 1 : 0); }
-        public void push_chunk(int[] data, double timestamp) { inst.lsl_push_chunk_itp(obj, data, (long)data.length, timestamp, 1); }
-        public void push_chunk(int[] data) { inst.lsl_push_chunk_itp(obj, data, (long)data.length, 0.0, 1); }
-        public void push_chunk(short[] data, double timestamp, boolean pushthrough) { inst.lsl_push_chunk_stp(obj, data, (long)data.length, timestamp, pushthrough ? 1 : 0); }
-        public void push_chunk(short[] data, double timestamp) { inst.lsl_push_chunk_stp(obj, data, (long)data.length, timestamp, 1); }
-        public void push_chunk(short[] data) { inst.lsl_push_chunk_stp(obj, data, (long)data.length, 0.0, 1); }
-        public void push_chunk(byte[] data, double timestamp, boolean pushthrough) { inst.lsl_push_chunk_ctp(obj, data, (long)data.length, timestamp, pushthrough ? 1 : 0); }
-        public void push_chunk(byte[] data, double timestamp) { inst.lsl_push_chunk_ctp(obj, data, (long)data.length, timestamp, 1); }
-        public void push_chunk(byte[] data) { inst.lsl_push_chunk_ctp(obj, data, (long)data.length, 0.0, 1); }
-        public void push_chunk(String[] data, double timestamp, boolean pushthrough) { inst.lsl_push_chunk_strtp(obj, data, (long)data.length, timestamp, pushthrough ? 1 : 0); }
-        public void push_chunk(String[] data, double timestamp) { inst.lsl_push_chunk_strtp(obj, data, (long)data.length, timestamp, 1); }
-        public void push_chunk(String[] data) { inst.lsl_push_chunk_strtp(obj, data, (long)data.length, 0.0, 1); }
+        public void push_chunk(float[] data, double timestamp, boolean pushthrough) { inst.lsl_push_chunk_ftp(obj, data, data.length, timestamp, pushthrough ? 1 : 0); }
+        public void push_chunk(float[] data, double timestamp) { inst.lsl_push_chunk_ft(obj, data, data.length, timestamp); }
+        public void push_chunk(float[] data) { inst.lsl_push_chunk_f(obj, data, data.length); }
+        public void push_chunk(double[] data, double timestamp, boolean pushthrough) { inst.lsl_push_chunk_dtp(obj, data, data.length, timestamp, pushthrough ? 1 : 0); }
+        public void push_chunk(double[] data, double timestamp) { inst.lsl_push_chunk_dt(obj, data, data.length, timestamp); }
+        public void push_chunk(double[] data) { inst.lsl_push_chunk_d(obj, data, data.length); }
+        public void push_chunk(int[] data, double timestamp, boolean pushthrough) { inst.lsl_push_chunk_itp(obj, data, data.length, timestamp, pushthrough ? 1 : 0); }
+        public void push_chunk(int[] data, double timestamp) { inst.lsl_push_chunk_it(obj, data, data.length, timestamp); }
+        public void push_chunk(int[] data) { inst.lsl_push_chunk_i(obj, data, data.length); }
+        public void push_chunk(short[] data, double timestamp, boolean pushthrough) { inst.lsl_push_chunk_stp(obj, data, data.length, timestamp, pushthrough ? 1 : 0); }
+        public void push_chunk(short[] data, double timestamp) { inst.lsl_push_chunk_st(obj, data, data.length, timestamp); }
+        public void push_chunk(short[] data) { inst.lsl_push_chunk_s(obj, data, data.length); }
+        public void push_chunk(byte[] data, double timestamp, boolean pushthrough) { inst.lsl_push_chunk_ctp(obj, data, data.length, timestamp, pushthrough ? 1 : 0); }
+        public void push_chunk(byte[] data, double timestamp) { inst.lsl_push_chunk_ct(obj, data, data.length, timestamp); }
+        public void push_chunk(byte[] data) { inst.lsl_push_chunk_c(obj, data, data.length); }
+        public void push_chunk(String[] data, double timestamp, boolean pushthrough) { inst.lsl_push_chunk_strtp(obj, data, data.length, timestamp, pushthrough ? 1 : 0); }
+        public void push_chunk(String[] data, double timestamp) { inst.lsl_push_chunk_strt(obj, data, data.length, timestamp); }
+        public void push_chunk(String[] data) { inst.lsl_push_chunk_str(obj, data, data.length); }
 
         /**
         * Push a chunk of multiplexed samples into the outlet. One timestamp per sample is provided.
@@ -371,18 +405,18 @@ public class LSL {
         * @param pushthrough Optionally whether to push the chunk through to the receivers instead of buffering it with subsequent samples.
         *                    Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
         */
-        public void push_chunk(float[] data, double[] timestamps, boolean pushthrough) { inst.lsl_push_chunk_ftnp(obj, data, (long)data.length, timestamps, pushthrough ? 1 : 0); }
-        public void push_chunk(float[] data, double[] timestamps) { inst.lsl_push_chunk_ftnp(obj, data, (long)data.length, timestamps, 1); }
-        public void push_chunk(double[] data, double[] timestamps, boolean pushthrough) { inst.lsl_push_chunk_dtnp(obj, data, (long)data.length, timestamps, pushthrough ? 1 : 0); }
-        public void push_chunk(double[] data, double[] timestamps) { inst.lsl_push_chunk_dtnp(obj, data, (long)data.length, timestamps, 1); }
-        public void push_chunk(int[] data, double[] timestamps, boolean pushthrough) { inst.lsl_push_chunk_itnp(obj, data, (long)data.length, timestamps, pushthrough ? 1 : 0); }
-        public void push_chunk(int[] data, double[] timestamps) { inst.lsl_push_chunk_itnp(obj, data, (long)data.length, timestamps, 1); }
-        public void push_chunk(short[] data, double[] timestamps, boolean pushthrough) { inst.lsl_push_chunk_stnp(obj, data, (long)data.length, timestamps, pushthrough ? 1 : 0); }
-        public void push_chunk(short[] data, double[] timestamps) { inst.lsl_push_chunk_stnp(obj, data, (long)data.length, timestamps, 1); }
-        public void push_chunk(byte[] data, double[] timestamps, boolean pushthrough) { inst.lsl_push_chunk_ctnp(obj, data, (long)data.length, timestamps, pushthrough ? 1 : 0); }
-        public void push_chunk(byte[] data, double[] timestamps) { inst.lsl_push_chunk_ctnp(obj, data, (long)data.length, timestamps, 1); }
-        public void push_chunk(String[] data, double[] timestamps, boolean pushthrough) { inst.lsl_push_chunk_strtnp(obj, data, (long)data.length, timestamps, pushthrough ? 1 : 0); }        
-        public void push_chunk(String[] data, double[] timestamps) { inst.lsl_push_chunk_strtnp(obj, data, (long)data.length, timestamps, 1); }
+        public void push_chunk(float[] data, double[] timestamps, boolean pushthrough) { inst.lsl_push_chunk_ftnp(obj, data, data.length, timestamps, pushthrough ? 1 : 0); }
+        public void push_chunk(float[] data, double[] timestamps) { inst.lsl_push_chunk_ftn(obj, data, data.length, timestamps); }
+        public void push_chunk(double[] data, double[] timestamps, boolean pushthrough) { inst.lsl_push_chunk_dtnp(obj, data, data.length, timestamps, pushthrough ? 1 : 0); }
+        public void push_chunk(double[] data, double[] timestamps) { inst.lsl_push_chunk_dtn(obj, data, data.length, timestamps); }
+        public void push_chunk(int[] data, double[] timestamps, boolean pushthrough) { inst.lsl_push_chunk_itnp(obj, data, data.length, timestamps, pushthrough ? 1 : 0); }
+        public void push_chunk(int[] data, double[] timestamps) { inst.lsl_push_chunk_itn(obj, data, data.length, timestamps); }
+        public void push_chunk(short[] data, double[] timestamps, boolean pushthrough) { inst.lsl_push_chunk_stnp(obj, data, data.length, timestamps, pushthrough ? 1 : 0); }
+        public void push_chunk(short[] data, double[] timestamps) { inst.lsl_push_chunk_stn(obj, data, data.length, timestamps); }
+        public void push_chunk(byte[] data, double[] timestamps, boolean pushthrough) { inst.lsl_push_chunk_ctnp(obj, data, data.length, timestamps, pushthrough ? 1 : 0); }
+        public void push_chunk(byte[] data, double[] timestamps) { inst.lsl_push_chunk_ctn(obj, data, data.length, timestamps); }
+        public void push_chunk(String[] data, double[] timestamps, boolean pushthrough) { inst.lsl_push_chunk_strtnp(obj, data, data.length, timestamps, pushthrough ? 1 : 0); }        
+        public void push_chunk(String[] data, double[] timestamps) { inst.lsl_push_chunk_strtn(obj, data, data.length, timestamps); }
 
 
         // ===============================
@@ -399,7 +433,7 @@ public class LSL {
          * Wait until some consumer shows up (without wasting resources).
          * @return True if the wait was successful, false if the timeout expired.
          */
-        public boolean wait_for_consumers(double timeout) { return inst.lsl_wait_for_consumers(obj)>0; }
+        public boolean wait_for_consumers(double timeout) { return inst.lsl_wait_for_consumers(obj, timeout)>0; }
 
         /**
          * Retrieve the stream info provided by this outlet.
@@ -431,7 +465,7 @@ public class LSL {
      */
     public static StreamInfo[] resolve_streams(double wait_time)
     {
-        Pointer[] buf = new Pointer[1024]; int num = inst.lsl_resolve_all(buf, (long)buf.length, wait_time);
+        Pointer[] buf = new Pointer[1024]; int num = inst.lsl_resolve_all(buf, buf.length, wait_time);
         StreamInfo[] res = new StreamInfo[num];
         for (int k = 0; k < num; k++)
             res[k] = new StreamInfo(buf[k]);
@@ -452,7 +486,7 @@ public class LSL {
      */
     public static StreamInfo[] resolve_stream(String prop, String value, int minimum, double timeout)
     {
-        Pointer[] buf = new Pointer[1024]; int num = inst.lsl_resolve_byprop(buf, (long)buf.length, prop, value, minimum, timeout);
+        Pointer[] buf = new Pointer[1024]; int num = inst.lsl_resolve_byprop(buf, buf.length, prop, value, minimum, timeout);
         StreamInfo[] res = new StreamInfo[num];
         for (int k = 0; k < num; k++)
             res[k] = new StreamInfo(buf[k]);
@@ -474,7 +508,7 @@ public class LSL {
      */
     public static StreamInfo[] resolve_stream(String pred, int minimum, double timeout)
     {
-        Pointer[] buf = new Pointer[1024]; int num = inst.lsl_resolve_bypred(buf, (long)buf.length, pred, minimum, timeout);
+        Pointer[] buf = new Pointer[1024]; int num = inst.lsl_resolve_bypred(buf, buf.length, pred, minimum, timeout);
         StreamInfo[] res = new StreamInfo[num];
         for (int k = 0; k < num; k++)
             res[k] = new StreamInfo(buf[k]);
@@ -608,17 +642,17 @@ public class LSL {
          * @return samples_written Number of samples written to the data and timestamp buffers.
          * @throws LostException (if the stream source has been lost).
          */
-        public int pull_chunk(float[] data_buffer, double[] timestamp_buffer, double timeout) throws Exception { int[] ec = {0}; long res = inst.lsl_pull_chunk_f(obj, data_buffer, timestamp_buffer, (long)data_buffer.length, (long)timestamp_buffer.length, timeout, ec); check_error(ec); return (int)res; }        
+        public int pull_chunk(float[] data_buffer, double[] timestamp_buffer, double timeout) throws Exception { int[] ec = {0}; long res = inst.lsl_pull_chunk_f(obj, data_buffer, timestamp_buffer, data_buffer.length, timestamp_buffer.length, timeout, ec); check_error(ec); return (int)res; }        
         public int pull_chunk(float[] data_buffer, double[] timestamp_buffer) throws Exception { return pull_chunk(data_buffer, timestamp_buffer, 0.0); }
-        public int pull_chunk(double[] data_buffer, double[] timestamp_buffer, double timeout) throws Exception { int[] ec = {0}; long res = inst.lsl_pull_chunk_d(obj, data_buffer, timestamp_buffer, (long)data_buffer.length, (long)timestamp_buffer.length, timeout, ec); check_error(ec); return (int)res; }
+        public int pull_chunk(double[] data_buffer, double[] timestamp_buffer, double timeout) throws Exception { int[] ec = {0}; long res = inst.lsl_pull_chunk_d(obj, data_buffer, timestamp_buffer, data_buffer.length, timestamp_buffer.length, timeout, ec); check_error(ec); return (int)res; }
         public int pull_chunk(double[] data_buffer, double[] timestamp_buffer) throws Exception { return pull_chunk(data_buffer, timestamp_buffer, 0.0); }
-        public int pull_chunk(short[] data_buffer, double[] timestamp_buffer, double timeout) throws Exception { int[] ec = {0}; long res = inst.lsl_pull_chunk_s(obj, data_buffer, timestamp_buffer, (long)data_buffer.length, (long)timestamp_buffer.length, timeout, ec); check_error(ec); return (int)res; }
+        public int pull_chunk(short[] data_buffer, double[] timestamp_buffer, double timeout) throws Exception { int[] ec = {0}; long res = inst.lsl_pull_chunk_s(obj, data_buffer, timestamp_buffer, data_buffer.length, timestamp_buffer.length, timeout, ec); check_error(ec); return (int)res; }
         public int pull_chunk(short[] data_buffer, double[] timestamp_buffer) throws Exception { return pull_chunk(data_buffer, timestamp_buffer, 0.0); }
-        public int pull_chunk(byte[] data_buffer, double[] timestamp_buffer, double timeout) throws Exception { int[] ec = {0}; long res = inst.lsl_pull_chunk_c(obj, data_buffer, timestamp_buffer, (long)data_buffer.length, (long)timestamp_buffer.length, timeout, ec); check_error(ec); return (int)res; }
+        public int pull_chunk(byte[] data_buffer, double[] timestamp_buffer, double timeout) throws Exception { int[] ec = {0}; long res = inst.lsl_pull_chunk_c(obj, data_buffer, timestamp_buffer, data_buffer.length, timestamp_buffer.length, timeout, ec); check_error(ec); return (int)res; }
         public int pull_chunk(byte[] data_buffer, double[] timestamp_buffer) throws Exception { return pull_chunk(data_buffer, timestamp_buffer, 0.0); }
-        public int pull_chunk(int[] data_buffer, double[] timestamp_buffer, double timeout) throws Exception { int[] ec = {0}; long res = inst.lsl_pull_chunk_i(obj, data_buffer, timestamp_buffer, (long)data_buffer.length, (long)timestamp_buffer.length, timeout, ec); check_error(ec); return (int)res; }
+        public int pull_chunk(int[] data_buffer, double[] timestamp_buffer, double timeout) throws Exception { int[] ec = {0}; long res = inst.lsl_pull_chunk_i(obj, data_buffer, timestamp_buffer, data_buffer.length, timestamp_buffer.length, timeout, ec); check_error(ec); return (int)res; }
         public int pull_chunk(int[] data_buffer, double[] timestamp_buffer) throws Exception { return pull_chunk(data_buffer, timestamp_buffer, 0.0); }
-        public int pull_chunk(String[] data_buffer, double[] timestamp_buffer, double timeout) throws Exception { int[] ec = {0}; long res = inst.lsl_pull_chunk_str(obj, data_buffer, timestamp_buffer, (long)data_buffer.length, (long)timestamp_buffer.length, timeout, ec); check_error(ec); return (int)res; }
+        public int pull_chunk(String[] data_buffer, double[] timestamp_buffer, double timeout) throws Exception { int[] ec = {0}; long res = inst.lsl_pull_chunk_str(obj, data_buffer, timestamp_buffer, data_buffer.length, timestamp_buffer.length, timeout, ec); check_error(ec); return (int)res; }
         public int pull_chunk(String[] data_buffer, double[] timestamp_buffer) throws Exception { return pull_chunk(data_buffer, timestamp_buffer, 0.0); }
 
         /**
@@ -876,8 +910,14 @@ public class LSL {
         int lsl_protocol_version();
         int lsl_library_version();
         double lsl_local_clock();
+    	int lsl_resolve_all(Pointer[] buffer, int buffer_elements, double wait_time);
+        int lsl_resolve_byprop(Pointer[] buffer, int buffer_elements, String prop, String value, int minimum, double wait_time);
+        int lsl_resolve_bypred(Pointer[] buffer, int buffer_elements, String pred, int minimum, double wait_time);
+   
         Pointer lsl_create_streaminfo(String name, String type, int channel_count, double nominal_srate, int channel_format, String source_id);
         void lsl_destroy_streaminfo(Pointer info);
+		Pointer lsl_copy_streaminfo(Pointer info);
+
         String lsl_get_name(Pointer info);
         String lsl_get_type(Pointer info);
         int lsl_get_channel_count(Pointer info);
@@ -891,57 +931,129 @@ public class LSL {
         String lsl_get_hostname(Pointer info);
         Pointer lsl_get_desc(Pointer info);
         String lsl_get_xml(Pointer info);
+		int lsl_get_channel_bytes(Pointer info);
+		int lsl_get_sample_bytes(Pointer info);
+		Pointer lsl_streaminfo_from_xml(String xml);
+
         Pointer lsl_create_outlet(Pointer info, int chunk_size, int max_buffered);
         void lsl_destroy_outlet(Pointer obj);
+
+		int lsl_push_sample_f(Pointer obj, float[] data);
+		int lsl_push_sample_ft(Pointer out, float[] data, double timestamp);
         int lsl_push_sample_ftp(Pointer obj, float[] data, double timestamp, int pushthrough);
+
+		int lsl_push_sample_d(Pointer obj, double[] data);
+		int lsl_push_sample_dt(Pointer obj, double[] data, double timestamp);
         int lsl_push_sample_dtp(Pointer obj, double[] data, double timestamp, int pushthrough);
+
+		int lsl_push_sample_i(Pointer obj, int[] data);
+		int lsl_push_sample_it(Pointer obj, int[] data, double timestamp);
         int lsl_push_sample_itp(Pointer obj, int[] data, double timestamp, int pushthrough);
+
+		int lsl_push_sample_s(Pointer obj, short[] data);
+		int lsl_push_sample_st(Pointer obj, short[] data, double timestamp);
         int lsl_push_sample_stp(Pointer obj, short[] data, double timestamp, int pushthrough);
+
+		int lsl_push_sample_c(Pointer obj, byte[] data);
+		int lsl_push_sample_ct(Pointer obj, byte[] data, double timestamp);
         int lsl_push_sample_ctp(Pointer obj, byte[] data, double timestamp, int pushthrough);
+
+		int lsl_push_sample_str(Pointer obj, String[] data);
+		int lsl_push_sample_strt(Pointer obj, String[] data, double timestamp);
         int lsl_push_sample_strtp(Pointer obj, String[] data, double timestamp, int pushthrough);
+		
+		int lsl_push_sample_buf(Pointer obj, byte[][] data, int[] lengths);
+		int lsl_push_sample_buft(Pointer obj, byte[][] data, int[] lengths, double timestamp);
         int lsl_push_sample_buftp(Pointer obj, byte[][] data, int[] lengths, double timestamp, int pushthrough);
-        int lsl_push_chunk_ftp(Pointer obj, float[] data, long data_elements, double timestamp, int pushthrough);
-        int lsl_push_chunk_ftnp(Pointer obj, float[] data, long data_elements, double[] timestamps, int pushthrough);
-        int lsl_push_chunk_dtp(Pointer obj, double[] data, long data_elements, double timestamp, int pushthrough);       
-        int lsl_push_chunk_dtnp(Pointer obj, double[] data, long data_elements, double[] timestamps, int pushthrough);
-        int lsl_push_chunk_itp(Pointer obj, int[] data, long data_elements, double timestamp, int pushthrough);
-        int lsl_push_chunk_itnp(Pointer obj, int[] data, long data_elements, double[] timestamps, int pushthrough);
-        int lsl_push_chunk_stp(Pointer obj, short[] data, long data_elements, double timestamp, int pushthrough);
-        int lsl_push_chunk_stnp(Pointer obj, short[] data, long data_elements, double[] timestamps, int pushthrough);
-        int lsl_push_chunk_ctp(Pointer obj, byte[] data, long data_elements, double timestamp, int pushthrough);
-        int lsl_push_chunk_ctnp(Pointer obj, byte[] data, long data_elements, double[] timestamps, int pushthrough);
-        int lsl_push_chunk_strtp(Pointer obj, String[] data, long data_elements, double timestamp, int pushthrough);
-        int lsl_push_chunk_strtnp(Pointer obj, String[] data, long data_elements, double[] timestamps, int pushthrough);
-        int lsl_push_chunk_buftp(Pointer obj, byte[][] data, long[] lengths, long data_elements, double timestamp, int pushthrough);        
-        int lsl_push_chunk_buftnp(Pointer obj, byte[][] data, long[] lengths, long data_elements, double[] timestamps, int pushthrough);            
+
+		int lsl_push_sample_v(Pointer obj, Pointer data);
+		int lsl_push_sample_vt(Pointer obj, Pointer data, double timestamp);
+		int lsl_push_sample_vtp(Pointer obj, Pointer data, double timestamp, int pushthrough);
+
+		int lsl_push_chunk_f(Pointer obj, float[] data, int data_elements);
+		int lsl_push_chunk_ft(Pointer obj, float[] data, int data_elements, double timestamp);
+        int lsl_push_chunk_ftp(Pointer obj, float[] data, int data_elements, double timestamp, int pushthrough);
+		int lsl_push_chunk_ftn(Pointer obj, float[] data, int data_elements, double[] timestamps);
+        int lsl_push_chunk_ftnp(Pointer obj, float[] data, int data_elements, double[] timestamps, int pushthrough);
+
+		int lsl_push_chunk_d(Pointer obj, double[] data, int data_elements);
+		int lsl_push_chunk_dt(Pointer obj, double[] data, int data_elements, double timestamp);
+        int lsl_push_chunk_dtp(Pointer obj, double[] data, int data_elements, double timestamp, int pushthrough);
+		int lsl_push_chunk_dtn(Pointer obj, double[] data, int data_elements, double[] timestamps);
+        int lsl_push_chunk_dtnp(Pointer obj, double[] data, int data_elements, double[] timestamps, int pushthrough);
+
+		int lsl_push_chunk_l(Pointer obj, long[] data, int data_elements);
+		int lsl_push_chunk_lt(Pointer obj, long[] data, int data_elements, double timestamp);
+        int lsl_push_chunk_ltp(Pointer obj, long[] data, int data_elements, double timestamp, int pushthrough);
+		int lsl_push_chunk_ltn(Pointer obj, long[] data, int data_elements, double[] timestamps);
+        int lsl_push_chunk_ltnp(Pointer obj, long[] data, int data_elements, double[] timestamps, int pushthrough);
+
+
+		int lsl_push_chunk_i(Pointer obj, int[] data, int data_elements);
+		int lsl_push_chunk_it(Pointer obj, int[] data, int data_elements, double timestamp);
+        int lsl_push_chunk_itp(Pointer obj, int[] data, int data_elements, double timestamp, int pushthrough);
+		int lsl_push_chunk_itn(Pointer obj, int[] data, int data_elements, double[] timestamps);
+        int lsl_push_chunk_itnp(Pointer obj, int[] data, int data_elements, double[] timestamps, int pushthrough);
+
+		int lsl_push_chunk_s(Pointer obj, short[] data, int data_elements);
+		int lsl_push_chunk_st(Pointer obj, short[] data, int data_elements, double timestamp);
+        int lsl_push_chunk_stp(Pointer obj, short[] data, int data_elements, double timestamp, int pushthrough);
+		int lsl_push_chunk_stn(Pointer obj, short[] data, int data_elements, double[] timestamps);
+        int lsl_push_chunk_stnp(Pointer obj, short[] data, int data_elements, double[] timestamps, int pushthrough);
+
+		int lsl_push_chunk_c(Pointer obj, byte[] data, int data_elements);
+		int lsl_push_chunk_ct(Pointer obj, byte[] data, int data_elements, double timestamp);
+        int lsl_push_chunk_ctp(Pointer obj, byte[] data, int data_elements, double timestamp, int pushthrough);
+		int lsl_push_chunk_ctn(Pointer obj, byte[] data, int data_elements, double[] timestamps);
+        int lsl_push_chunk_ctnp(Pointer obj, byte[] data, int data_elements, double[] timestamps, int pushthrough);
+
+		int lsl_push_chunk_str(Pointer obj, String[] data, int data_elements);
+		int lsl_push_chunk_strt(Pointer obj, String[] data, int data_elements, double timestamp);
+        int lsl_push_chunk_strtp(Pointer obj, String[] data, int data_elements, double timestamp, int pushthrough);
+		int lsl_push_chunk_strtn(Pointer obj, String[] data, int data_elements, double[] timestamps);
+        int lsl_push_chunk_strtnp(Pointer obj, String[] data, int data_elements, double[] timestamps, int pushthrough);
+
+  		int lsl_push_chunk_buf(Pointer obj, byte[][] data, int[] lengths, int data_elements);
+		int lsl_push_chunk_buft(Pointer obj, byte[][] data, int[] lengths, int data_elements, double timestamp);
+		int lsl_push_chunk_buftp(Pointer obj, byte[][] data, int[] lengths, int data_elements, double timestamp, int pushthrough);
+		int lsl_push_chunk_buftn(Pointer obj, byte[][] data, int[] lengths, int data_elements, double[] timestamps);
+		int lsl_push_chunk_buftnp(Pointer obj, byte[][] data, int[] lengths, int data_elements, double[] timestamps, int pushthrough);
+           
         int lsl_have_consumers(Pointer obj);
-        int lsl_wait_for_consumers(Pointer obj);
+        int lsl_wait_for_consumers(Pointer obj, double timeout);
         Pointer lsl_get_info(Pointer obj);
-        int lsl_resolve_all(Pointer[] buffer, long buffer_elements, double wait_time);
-        int lsl_resolve_byprop(Pointer[] buffer, long buffer_elements, String prop, String value, int minimum, double wait_time);
-        int lsl_resolve_bypred(Pointer[] buffer, long buffer_elements, String pred, int minimum, double wait_time);
+
         Pointer lsl_create_inlet(Pointer info, int max_buflen, int max_chunklen, int recover);
         void lsl_destroy_inlet(Pointer obj);
+
         Pointer lsl_get_fullinfo(Pointer obj, double timeout, int[] ec);
         void lsl_open_stream(Pointer obj, double timeout, int[] ec);
         void lsl_close_stream(Pointer obj);
         double lsl_time_correction(Pointer obj, double timeout, int[] ec);
+		double lsl_time_correction_ex(Pointer obj, double[] remote_time, double[] uncertainty, double timeout, int[] ec);
+		int lsl_set_postprocessing(Pointer obj, int flags);
+
         double lsl_pull_sample_f(Pointer obj, float[] buffer, int buffer_elements, double timeout, int[] ec);
         double lsl_pull_sample_d(Pointer obj, double[] buffer, int buffer_elements, double timeout, int[] ec);
         double lsl_pull_sample_i(Pointer obj, int[] buffer, int buffer_elements, double timeout, int[] ec);
         double lsl_pull_sample_s(Pointer obj, short[] buffer, int buffer_elements, double timeout, int[] ec);
         double lsl_pull_sample_c(Pointer obj, byte[] buffer, int buffer_elements, double timeout, int[] ec);
         double lsl_pull_sample_str(Pointer obj, String[] buffer, int buffer_elements, double timeout, int[] ec);
-        double lsl_pull_sample_buf(Pointer obj, byte[][] buffer, long[] buffer_lengths, int buffer_elements, double timeout, int[] ec);        
-        long lsl_pull_chunk_f(Pointer obj, float[] data_buffer, double[] timestamp_buffer, long data_buffer_elements, long timestamp_buffer_elements, double timeout, int[] ec);
-        long lsl_pull_chunk_d(Pointer obj, double[] data_buffer, double[] timestamp_buffer, long data_buffer_elements, long timestamp_buffer_elements, double timeout, int[] ec);
-        long lsl_pull_chunk_i(Pointer obj, int[] data_buffer, double[] timestamp_buffer, long data_buffer_elements, long timestamp_buffer_elements, double timeout, int[] ec);
-        long lsl_pull_chunk_s(Pointer obj, short[] data_buffer, double[] timestamp_buffer, long data_buffer_elements, long timestamp_buffer_elements, double timeout, int[] ec);
-        long lsl_pull_chunk_c(Pointer obj, byte[] data_buffer, double[] timestamp_buffer, long data_buffer_elements, long timestamp_buffer_elements, double timeout, int[] ec);
-        long lsl_pull_chunk_str(Pointer obj, String[] data_buffer, double[] timestamp_buffer, long data_buffer_elements, long timestamp_buffer_elements, double timeout, int[] ec);
-        long lsl_pull_chunk_buf(Pointer obj, byte[][] data_buffer, long[] lengths_buffer, double[] timestamp_buffer, long data_buffer_elements, long timestamp_buffer_elements, double timeout, int[] ec);
-        int lsl_samples_available(Pointer obj);
+        double lsl_pull_sample_buf(Pointer obj, byte[][] buffer, int[] buffer_lengths, int buffer_elements, double timeout, int[] ec);        
+        double lsl_pull_sample_v(Pointer obj, Pointer buffer, int buffer_bytes, double timeout, int[] ec);
+
+		long lsl_pull_chunk_f(Pointer obj, float[] data_buffer, double[] timestamp_buffer, int data_buffer_elements, int timestamp_buffer_elements, double timeout, int[] ec);
+        long lsl_pull_chunk_d(Pointer obj, double[] data_buffer, double[] timestamp_buffer, int data_buffer_elements, int timestamp_buffer_elements, double timeout, int[] ec);
+        long lsl_pull_chunk_i(Pointer obj, int[] data_buffer, double[] timestamp_buffer, int data_buffer_elements, int timestamp_buffer_elements, double timeout, int[] ec);
+        long lsl_pull_chunk_s(Pointer obj, short[] data_buffer, double[] timestamp_buffer, int data_buffer_elements, int timestamp_buffer_elements, double timeout, int[] ec);
+        long lsl_pull_chunk_c(Pointer obj, byte[] data_buffer, double[] timestamp_buffer, int data_buffer_elements, int timestamp_buffer_elements, double timeout, int[] ec);
+        long lsl_pull_chunk_str(Pointer obj, String[] data_buffer, double[] timestamp_buffer, int data_buffer_elements, int timestamp_buffer_elements, double timeout, int[] ec);
+        long lsl_pull_chunk_buf(Pointer obj, byte[][] data_buffer, long[] lengths_buffer, double[] timestamp_buffer, int data_buffer_elements, int timestamp_buffer_elements, double timeout, int[] ec);
+        
+		int lsl_samples_available(Pointer obj);
         int lsl_was_clock_reset(Pointer obj);
+		int lsl_smoothing_halftime(Pointer obj, float value);
+
         Pointer lsl_first_child(Pointer e);
         Pointer lsl_last_child(Pointer e);
         Pointer lsl_next_sibling(Pointer e);
@@ -956,6 +1068,7 @@ public class LSL {
         String lsl_value(Pointer e);
         String lsl_child_value(Pointer e);
         String lsl_child_value_n(Pointer e, String name);
+
         Pointer lsl_append_child_value(Pointer e, String name, String value);
         Pointer lsl_prepend_child_value(Pointer e, String name, String value);
         int lsl_set_child_value(Pointer e, String name, String value);
@@ -967,6 +1080,7 @@ public class LSL {
         Pointer lsl_prepend_copy(Pointer e, Pointer e2);
         void lsl_remove_child_n(Pointer e, String name);
         void lsl_remove_child(Pointer e, Pointer e2);
+
         Pointer lsl_create_continuous_resolver(double forget_after);
         Pointer lsl_create_continuous_resolver_byprop(String prop, String value, double forget_after);
         Pointer lsl_create_continuous_resolver_bypred(String pred, double forget_after);
