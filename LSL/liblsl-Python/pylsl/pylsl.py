@@ -164,7 +164,7 @@ class StreamInfo:
                 experimenters or data analysts). Cannot be empty.
         type -- Content type of the stream. By convention LSL uses the content 
                 types defined in the XDF file format specification where 
-                applicable (code.google.com/p/xdf). The content type is the 
+                applicable (https://github.com/sccn/xdf). The content type is the 
                 preferred way to find streams (as opposed to searching by name).
         channel_count -- Number of channels per sample. This stays constant for 
                          the lifetime of the stream. (default 1)
