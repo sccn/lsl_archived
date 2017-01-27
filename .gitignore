@@ -25,6 +25,11 @@ BAlert.dll
 BAlert.lib
 ActiChamp_x86.dll
 ActiChamp_x86.lib
+ActiChamp_x64.dll
+ActiChamp_x64.lib
+FirstAmp32.dll
+FilterButterworth64D.lib
+FilterButterworth64R.lib
 alleg44.dll
 alleg44.lib
 cvWrapper.dll
