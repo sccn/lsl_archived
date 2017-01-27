@@ -191,6 +191,16 @@ apps_d = {
             cur_lsl+"bin/liblsl64.dll"]
     },
 
+    'BrainProducts/VAmp': {
+        'win32': [
+            "/external_libs/Qt/QtCore4.dll",
+            "/external_libs/Qt/QtGui4.dll",
+            "/external_libs/VAmp/FirstAmp32.dll",
+            "/external_libs/VAmp/FilterButterworth64D.lib",
+            "/external_libs/VAmp/FilterButterworth64R.lib",
+            cur_lsl+"bin/liblsl32.dll"]
+    },
+
     'BioSemi': {
         'win32': [
             "/external_libs/Qt/QtCore4.dll",
