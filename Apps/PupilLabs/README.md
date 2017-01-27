@@ -4,8 +4,15 @@ Plugin for _[Pupil Capture](https://github.com/pupil-labs/pupil/wiki/Pupil-Captu
 
 ## Installation
 
-1. Install the [LSL Python bindings](https://github.com/sccn/labstreaminglayer/tree/master/LSL/liblsl-Python).
-2. Add [`pupil_lsl_relay.py`](pupil_lsl_relay.py) to your [user plugin directory](https://github.com/pupil-labs/pupil/wiki/Plugin-Guide#load-your-plugin-automatically).
+1. Build the [LSL Python bindings](https://github.com/sccn/labstreaminglayer/tree/master/LSL/liblsl-Python).
+    1. Download [liblsl-Python-1.11.zip](ftp://sccn.ucsd.edu/pub/software/LSL/SDK/liblsl-Python-1.11.zip)
+    2. Extract the zip file
+    3. Execute `python setup.py build` in the extracted folder. This should generate a `build` folder.
+    4. `build` should include another folder called `lib` that includes a folder called `pylsl`.
+2. Copy the `pylsl` with all its content to the _user plugin directory*_.
+3. Copy [`pupil_lsl_relay.py`](pupil_lsl_relay.py) to the _user plugin directory*_.
+
+* Wiki link for the [user plugin directory](https://github.com/pupil-labs/pupil/wiki/Plugin-Guide#load-your-plugin-automatically)
 
 ## Usage
 
