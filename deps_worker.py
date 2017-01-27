@@ -107,6 +107,7 @@ apps = [
     "BrainProducts/ActiChamp",
     "BrainProducts/BrainAmpSeries",
     "BrainProducts/BrainVisionRDA",
+    "BrainProducts/VAmp",
     "Cognionics",
     "EGIAmpServer",
     "EmbarcaderoXE/bin",
@@ -184,7 +185,10 @@ apps_d = {
             "/external_libs/Qt/QtGui4.dll",
             "/external_libs/ActiChamp/ActiChamp_x86.dll",
             "/external_libs/ActiChamp/ActiChamp_x86.lib",
-            cur_lsl+"bin/liblsl32.dll"]
+            "/external_libs/ActiChamp/ActiChamp_x64.dll",
+            "/external_libs/ActiChamp/ActiChamp_x64.lib",
+            cur_lsl+"bin/liblsl32.dll",
+            cur_lsl+"bin/liblsl64.dll"]
     },
 
     'BioSemi': {
