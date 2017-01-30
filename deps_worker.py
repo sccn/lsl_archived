@@ -1,3 +1,13 @@
+# if this script should fail due to ftp server/client errors (i.e. 'File not copied. IOError: [Errno ftp error] 200 Switching to Binary mode.')
+# or 'Oops! Source <path> not found' (which will resul from the download error above occuring previously, 
+# you may have to copy the folders into the subdirectory 'dependencies' with filezilla or some such other application
+# the url for the server to connect to is ftp://sccn.ucsd.edu/pub/LSL/lsl-dependencies/
+# from there simply copy external_libs, liblsl-xxx, and LSL-zips into the folder <path>/labstreaminglayer/dependencies
+# the script first downloads these files into dependencies (which you may have to do by hand)
+# then it access that local copy to place binaries into the correct folders.
+# so, once the dependencies folder exists and is populated with the correct files, run the script again and it should work
+
+
 import shutil
 import urllib
 try:
@@ -108,6 +118,7 @@ apps = [
     "BrainProducts/BrainAmpSeries",
     "BrainProducts/BrainVisionRDA",
     "BrainProducts/VAmp",
+    "BrainProducts/LiveAmp",
     "Cognionics",
     "EGIAmpServer",
     "EmbarcaderoXE/bin",
@@ -201,6 +212,31 @@ apps_d = {
             cur_lsl+"bin/liblsl32.dll"]
     },
 
+    'BrainProducts/LiveAmp': {
+        'win32': [
+            "/external_libs/Qt/QtCore4.dll",
+            "/external_libs/Qt/QtGui4.dll",
+            "/external_libs/Qt/QtNetwork4.dll",
+            "/external_libs/LiveAmp/LiveAmpLib2.dll",
+            "/external_libs/LiveAmp/LiveAmpLib2.lib",
+            cur_lsl+"bin/liblsl32.dll"]
+    },
+
+    'BrainProducts/BrainAmpSeries': {
+        'win32': [
+            "/external_libs/Qt/QtCore4.dll",
+            "/external_libs/Qt/QtGui4.dll",
+            cur_lsl+"bin/liblsl32.dll"]
+    },
+
+
+    'BrainProducts/BrainVisionRDA': {
+        'win32': [
+            "/external_libs/Qt/QtCore4.dll",
+            "/external_libs/Qt/QtGui4.dll",
+            cur_lsl+"bin/liblsl32.dll"]
+    },
+
     'BioSemi': {
         'win32': [
             "/external_libs/Qt/QtCore4.dll",
@@ -218,27 +254,6 @@ apps_d = {
         'linux': [
             cur_lsl+"bin/liblsl32.so",
             cur_lsl+"bin/liblsl64.so"]
-    },
-
-    'BrainProducts/BrainAmpSeries': {
-        'win32': [
-            "/external_libs/Qt/QtCore4.dll",
-            "/external_libs/Qt/QtGui4.dll",
-            cur_lsl+"bin/liblsl32.dll"]
-    },
-
-    'BrainProducts/BrainAmpSeries': {
-        'win32': [
-            "/external_libs/Qt/QtCore4.dll",
-            "/external_libs/Qt/QtGui4.dll",
-            cur_lsl+"bin/liblsl32.dll"]
-    },
-
-    'BrainProducts/BrainVisionRDA': {
-        'win32': [
-            "/external_libs/Qt/QtCore4.dll",
-            "/external_libs/Qt/QtGui4.dll",
-            cur_lsl+"bin/liblsl32.dll"]
     },
 
     'Cognionics': {
@@ -821,5 +836,5 @@ def unstrip_all():
     unstrip(apps, apps_d, apps_dir, my_op_sys)
     
     # comment if you want to keep the dependencies folder 
-    if os.path.exists("./dependencies"):
-        shutil.rmtree("./dependencies")
+    #if os.path.exists("./dependencies"):
+    #    shutil.rmtree("./dependencies")
