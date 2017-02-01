@@ -8,7 +8,7 @@ In addition, in the folder **dsi2lslgui/**, we provide a Qt GUI layer that can b
 
 #Build#
 
-**Note:** Before we can build the project, we need to download Wearable Sensing's API library and save it in this folder. For example, we would need libDSI-Linux-x86_64.so on GNU/Linux, libDSI-Darwin-x86_64.dylib on Mac, and/or libDSI-Windows-x86_32.dll on Windows.
+**Note:** Before we can build the project, we need to [download](ftp://sccn.ucsd.edu/pub/LSL/lsl-dependencies/external_libs/libDSI/) Wearable Sensing's API library and save it in this folder. For example, we would need libDSI-Linux-x86_64.so on GNU/Linux, libDSI-Darwin-x86_64.dylib on Mac, and/or libDSI-Windows-x86_32.dll on Windows.
 
 ##GNU/Linux##
 
