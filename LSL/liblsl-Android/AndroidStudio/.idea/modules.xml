@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/AndroidStudio.iml" filepath="$PROJECT_DIR$/AndroidStudio.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ReceiveStringMarkers/ReceiveStringMarkers.iml" filepath="$PROJECT_DIR$/ReceiveStringMarkers/ReceiveStringMarkers.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SendStringMarkers/SendStringMarkers.iml" filepath="$PROJECT_DIR$/SendStringMarkers/SendStringMarkers.iml" />
+    </modules>
+  </component>
+</project>

@@ -23,11 +23,11 @@ to LSL/liblsl-Java.
 
 Build the LSL library (liblsl64.dll, for example) for your system, and copy it to LSL/liblsl-Java
 
-LSL/liblsl-Java$ javac -cp jna-4.2.2.jar edu/ucsd/sccn/LSL.java examples/SendData.java 
+LSL/liblsl-Java$ javac -cp jna-4.2.2.jar src/edu/ucsd/sccn/LSL.java src/examples/SendData.java 
 where SendData.java is the example that you are interested in.
 
-LSL/liblsl-Java$ java -Djna.nosys=true -cp "jna-4.2.2.jar:." examples.SendData (on Linux)
-LSL/liblsl-Java> java -cp "jna-4.2.1.jar;." examples.SendData (on Windows, yes the : changes to a ;)
+LSL/liblsl-Java$ java -Djna.nosys=true -cp "jna-4.2.2.jar:src" examples.SendData (on Linux)
+LSL/liblsl-Java> java -cp "jna-4.2.2.jar;src" examples.SendData (on Windows, yes the : changes to a ;)
 
 
 
