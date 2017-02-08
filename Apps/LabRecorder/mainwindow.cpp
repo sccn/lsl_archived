@@ -160,12 +160,13 @@ void MainWindow::load_config(const std::string &filename) {
 			
 			int val = 0;
 			for(int l=2;l<words.size();l++){
-				if(words[l].compare("post_clocksync")==0){val|=lsl::post_clocksync;//std::cout<<words[l]<< " "<<val<<std::endl;}
-				if(words[l].compare("post_dejitter")==0){val|=lsl::post_dejitter;//std::cout<<words[l]<< " "<<val<<std::endl;}
-				if(words[l].compare("post_monotonize")==0){val|=lsl::post_monotonize;//std::cout<<words[l]<< " "<<val<<std::endl;}
-				if(words[l].compare("post_threadsafe")==0){val|=lsl::post_threadsafe;//std::cout<<words[l]<< " "<<val<<std::endl;}
-				if(words[l].compare("post_ALL")==0){val=lsl::post_ALL;//std::cout<<words[l]<< " "<<val<<std::endl;}	
-			}
+				if(words[l].compare("post_clocksync")==0){val|=lsl::post_clocksync;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+				if(words[l].compare("post_dejitter")==0){val|=lsl::post_dejitter;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+				if(words[l].compare("post_monotonize")==0){val|=lsl::post_monotonize;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+				if(words[l].compare("post_threadsafe")==0){val|=lsl::post_threadsafe;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+				if(words[l].compare("post_ALL")==0){val=lsl::post_ALL;}//std::cout<<words[l]<< " "<<val<<std::endl;}	
+		
+				}
 			syncOptionsByStreamName.insert(std::make_pair(key, val));
 			std::cout << "key = " << key << std::endl;
 			
@@ -260,16 +261,30 @@ void MainWindow::refreshStreams(void) {
 	bool got_one;
 	std::vector<std::string>::iterator it1;
 	std::vector<std::string>::iterator it2; 
+	int cnt1 = 0;
+	int cnt2 = 0;
 	for(it1 = requiredStreams.begin(); it1!=requiredStreams.end(); ++it1) {
 		got_one = false;
+		cnt2 = 0;
+		cnt1++;
 		for(it2 = streamNames.begin(); it2!=streamNames.end(); ++it2) {
-			if(*it1 == *it2) // we have a match  
+			cnt2++;
+			if(!strcmp(it1->c_str(), it2->c_str())){//*it1 == *it2) // we have a match  
+			
+				//std::cout << cnt1 << "   " << cnt2 << std::endl;
+				//std::cout << strcmp(it1->c_str(), it2->c_str()) << std::endl;
+				//std::cout << it1->c_str() << std::endl;
+				//std::cout << it2->c_str() << std::endl;
+
 				got_one = true;
 				break;
+			}
 		}
 		if(got_one==false) // TODO, check to make sure this isn't an emtpy string!
-			if(*it1!="")
+			if(*it1!="") {
+				//std::cout << it1->c_str() << std::endl;
 				missingStreams.push_back(*it1); // push this string onto the missing vector
+			}
 	}
 
 	std::sort(missingStreams.begin(), missingStreams.end());
