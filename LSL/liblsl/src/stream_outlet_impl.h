@@ -83,12 +83,12 @@ namespace lsl {
 		* @param pushthrough Whether to push the sample through to the receivers instead of buffering it into a chunk according to network speeds.
 		*/
 		void push_numeric_raw(void *data, double timestamp=0.0, bool pushthrough=true) { 
-			if force_default_timestamps(){
+			if (force_default_timestamps()){
 				sample_p smp(sample_factory_->new_sample(timestamp == lsl_clock(), pushthrough));
-			}
+				}
 			else{
 				sample_p smp(sample_factory_->new_sample(timestamp == timestamp, pushthrough));
-			}
+				}
 			smp->assign_untyped(data);
 			send_buffer_->push_sample(smp);
 		}
