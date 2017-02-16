@@ -89,6 +89,7 @@ namespace lsl {
 			smp->assign_untyped(data);
 			send_buffer_->push_sample(smp);
 		}
+
 		//
 		// === Pushing an chunk of samples into the outlet ===
 		//
