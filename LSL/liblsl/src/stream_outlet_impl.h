@@ -84,18 +84,13 @@ namespace lsl {
 		*/
 		void push_numeric_raw(void *data, double timestamp=0.0, bool pushthrough=true) { 
 			if (bool use_lsl_stamps = lsl::api_config::get_instance()->force_default_timestamps()){
-				sample_p smp(sample_factory_->new_sample(lsl_clock(), pushthrough));
-				smp->assign_untyped(data);
-				send_buffer_->push_sample(smp);
+				timestamp = 0.0;
 			}
-			else
-			{
-				sample_p smp(sample_factory_->new_sample(timestamp, pushthrough));
-				smp->assign_untyped(data);
-				send_buffer_->push_sample(smp);
-			}
-		}
+			sample_p smp(sample_factory_->new_sample(timestamp == 0.0 ? lsl_clock() : timestamp, pushthrough));
+			smp->assign_untyped(data);
+			send_buffer_->push_sample(smp);
 
+		}
 		//
 		// === Pushing an chunk of samples into the outlet ===
 		//
@@ -181,16 +176,12 @@ namespace lsl {
 		*/
 		template<class T> void enqueue(T* data, double timestamp, bool pushthrough) { 
 			if (bool use_lsl_stamps = lsl::api_config::get_instance()->force_default_timestamps()){
-				sample_p smp(sample_factory_->new_sample(lsl_clock(), pushthrough));
-				smp->assign_typed(data);
-				send_buffer_->push_sample(smp);
-			} 
-			else
-			{
-				sample_p smp(sample_factory_->new_sample(timestamp, pushthrough));
-				smp->assign_typed(data);
-				send_buffer_->push_sample(smp);
+				timestamp = 0.0;
 			}
+			sample_p smp(sample_factory_->new_sample(timestamp == 0.0 ? lsl_clock() : timestamp, pushthrough));
+			smp->assign_typed(data);
+			send_buffer_->push_sample(smp);
+
 		}
 
 		/**
