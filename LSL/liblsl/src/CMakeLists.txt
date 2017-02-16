@@ -39,9 +39,18 @@ endif()
 if (BUILD_SHARED)
   add_library (${target} SHARED ${sources})
   target_include_directories(${target} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../external)
+  target_link_libraries (${target} ${Boost_LIBRARIES})
+  set_target_properties(${target}
+    PROPERTIES
+        VERSION ${liblsl_VERSION_MAJOR}.${liblsl_VERSION_MINOR}.${liblsl_VERSION_PATCH}
+        SOVERSION ${liblsl_VERSION_MAJOR}.0.0
+  )
 
   # TODO: Need to check if all flags are necessary or if some flags are missing
   if (WIN32)
+    if (MINGW)
+      target_link_libraries (${target} winmm ws2_32 wsock32)
+    endif ()
     set_property(
         TARGET ${target}
         PROPERTY
@@ -57,18 +66,11 @@ if (BUILD_SHARED)
             PREFIX lib
             IMPORT_PREFIX lib
     )
-    if (MINGW)
-      target_link_libraries (${target} ${Boost_LIBRARIES} winmm ws2_32 wsock32)
-    else ()
-      target_link_libraries (${target} ${Boost_LIBRARIES})
-    endif ()
   elseif (APPLE)
-    target_link_libraries (${target} ${Boost_LIBRARIES} pthread)
+    target_link_libraries (${target} pthread)
   elseif (UNIX)
     set_property (TARGET ${target} PROPERTY COMPILE_FLAGS "-fPIC -Wl,--exclude-libs,ALL")
-    target_link_libraries (${target} ${Boost_LIBRARIES} rt pthread)
-  else ()
-    target_link_libraries (${target} ${Boost_LIBRARIES})
+    target_link_libraries (${target} rt pthread)
   endif ()
 
   if (CMAKE_VERSION VERSION_GREATER 2.8.8)

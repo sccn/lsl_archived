@@ -6,6 +6,7 @@ set (liblsl_VERSION_MAJOR 1)
 set (liblsl_VERSION_MINOR 4)
 set (liblsl_VERSION_PATCH 0)
 
+cmake_policy(SET CMP0042 NEW) # ENABLE CMP0042: MACOSX_RPATH is enabled by default.
 if(NOT CMAKE_DEBUG_POSTFIX)
   set(CMAKE_DEBUG_POSTFIX -debug)
 endif()
