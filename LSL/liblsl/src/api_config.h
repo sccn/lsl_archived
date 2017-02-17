@@ -222,7 +222,6 @@ namespace lsl {
 		int inlet_buffer_reserve_samples_;
 		float smoothing_halftime_;
 		bool force_default_timestamps_;
-
 	};
 }
 
