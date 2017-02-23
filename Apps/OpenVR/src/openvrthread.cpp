@@ -227,7 +227,7 @@ bool OpenVRThread::createOutlets()
 
     // Create lsl pose stream info
     lsl::stream_info poseInfo(
-		"openvrposes", "mocap",
+		"OpenVRPoses", "MoCap",
 		nPoseChans, desiredSRate,
 		lsl::cf_float32, "_openvrposes");
     // Append device meta-data
@@ -280,7 +280,7 @@ bool OpenVRThread::pollAndPush(vr::TrackedDevicePose_t *poseBuffers)
 	bool pushedAny = false;
 
 	this->mutex.lock();
-	int desiredSRate = this->m_srate;
+//	int desiredSRate = this->m_srate;
 	std::vector<uint32_t> devInds = this->m_streamDeviceIndices;
 	this->mutex.unlock();
 
@@ -311,9 +311,10 @@ bool OpenVRThread::pollAndPush(vr::TrackedDevicePose_t *poseBuffers)
 	double poseTime = lsl::local_clock();
 	if ((poseTime - m_startTime) * m_srate > m_pushCounter)
 	{
-		this->m_vrsys->GetDeviceToAbsoluteTrackingPose((vr::ETrackingUniverseOrigin)m_originIndex, 0.0f, VR_ARRAY_COUNT(vr::k_unMaxTrackedDeviceCount) poseBuffers, vr::k_unMaxTrackedDeviceCount);
         std::vector<float> poseSample(vr::k_unMaxTrackedDeviceCount * 3 * 4);
         int deviceCountIx = 0;
+		this->m_vrsys->GetDeviceToAbsoluteTrackingPose((vr::ETrackingUniverseOrigin)m_originIndex, 0.0f, VR_ARRAY_COUNT(vr::k_unMaxTrackedDeviceCount) poseBuffers, vr::k_unMaxTrackedDeviceCount);
+        poseTime = lsl::local_clock();  // Update poseTime.
         for (auto it = devInds.begin(); it < devInds.end(); it++, deviceCountIx++)
 		{
 			if (poseBuffers[*it].bPoseIsValid && poseBuffers[*it].bDeviceIsConnected)
