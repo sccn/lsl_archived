@@ -2,7 +2,7 @@
 #include <QApplication>
 #else
 #include <QtGui/QApplication>
-#endif 
+#endif
 #include "stdafx.h"
 #include "mainwindow.h"
 #include <string>
