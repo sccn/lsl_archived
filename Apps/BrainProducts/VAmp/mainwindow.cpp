@@ -448,10 +448,10 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int samplingRat
 			HRESULT hResult = S_FALSE;
 			hResult = l_pDevice->GetData(&sa, &nMaxChannels, &samples_read, &date, &nErrorSeverity);
 
-			if(samples_read<=0){
+			if(samples_read<=0 && samplingRate <= 2000){
 				boost::this_thread::sleep(boost::posix_time::milliseconds(1));
 				continue;
-				//int foo = samples_read;
+			//	//int foo = samples_read;
 			}
 			
 			if (hResult == S_OK)
