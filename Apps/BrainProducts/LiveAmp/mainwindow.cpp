@@ -179,6 +179,7 @@ void MainWindow::link() {
 			stop_ = true;
 			reader_thread_->join();
 			reader_thread_.reset();
+			int res = SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
 		} catch(std::exception &e) {
 			QMessageBox::critical(this,"Error",(std::string("Could not stop the background processing: ")+=e.what()).c_str(),QMessageBox::Ok);
 			return;
@@ -296,9 +297,10 @@ void MainWindow::link() {
 // background data reader thread
 void MainWindow::read_thread(int chunkSize, int samplingRate, bool useAUX, bool useACC, bool useBipolar, std::vector<std::string> eegChannelLabels){
 
+	int res = SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
+
 	bool started = false;	
 	BYTE *buffer = NULL;
-
 	// for chunk storage
 	int sampleCount;
 

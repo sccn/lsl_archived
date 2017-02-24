@@ -179,6 +179,7 @@ void MainWindow::link() {
 			stop_ = true;
 			reader_thread_->join();
 			reader_thread_.reset();
+			int res = SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
 		} catch(std::exception &e) {
 			QMessageBox::critical(this,"Error",(std::string("Could not stop the background processing: ")+=e.what()).c_str(),QMessageBox::Ok);
 			return;
@@ -306,6 +307,15 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int samplingRat
 	HANDLE hDevice = NULL;
 	CDevice *l_pDevice = NULL;		// Instance of device
 	const int chunkSize = 20;       // Only available chunck size for VAmp
+	
+	
+	int res = SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
+	std::string threadId = boost::lexical_cast<std::string>(boost::this_thread::get_id());
+    unsigned long threadNumber = 0;
+    sscanf(threadId.c_str(), "%lx", &threadNumber);
+	std::cout << res << ":" <<  threadNumber << std::endl;
+
+
 	bool started = false;
 	try {
 		// try to open the device again (we're doing everything in the same thread to not confuse the driver)
@@ -451,7 +461,6 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int samplingRat
 			if(samples_read<=0 && samplingRate <= 2000){
 				boost::this_thread::sleep(boost::posix_time::milliseconds(1));
 				continue;
-			//	//int foo = samples_read;
 			}
 			
 			if (hResult == S_OK)
@@ -496,7 +505,7 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int samplingRat
 							s_mrkr.clear();
 							s_mrkr.push_back(trig_buffer[s] == prev_markerSampled ? "" : boost::lexical_cast<std::string>(trig_buffer[s]));
 							marker_buffer.at(s) = s_mrkr;
-							std::cout << "s: " << s << std::endl;
+							//std::cout << "s: " << s << std::endl;
 							prev_markerSampled = trig_buffer[s];
 						}
 
