@@ -50,6 +50,8 @@ if(NOT SYSTEM_DIR_INSTALL)
     endif()
 endif()
 
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "limited configs" FORCE)
+
 
 #########################
 # THIRD PARTY LIBRARIES #
@@ -155,6 +157,12 @@ target_link_libraries(${target}
     ${LSL_LIBRARIES}
 )
 
+if(MSVC)
+    SET_TARGET_PROPERTIES(${target}
+        PROPERTIES
+            LINK_FLAGS "/NODEFAULTLIB:\"liblsl64\""
+    )
+endif(MSVC)
 
 # 
 # Deployment
