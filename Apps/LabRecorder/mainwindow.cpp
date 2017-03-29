@@ -144,37 +144,38 @@ void MainWindow::load_config(const std::string &filename) {
 			boost::algorithm::trim_if(requiredStreams[k],boost::algorithm::is_any_of(" '\""));
 			std::cout << requiredStreams[k] << std::endl;
 		}
-		// ----------------------------
-		// online sync streams
-		// ----------------------------	
-		std::string str_onlineSyncStreams = pt.get<std::string>("OnlineSync","");
-		std::string oss_substr = str_onlineSyncStreams.substr(1, str_onlineSyncStreams.size()-2);
-		boost::algorithm::split(onlineSyncStreams,oss_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
-		for (size_t k=0;k<onlineSyncStreams.size();k++)
-        {
-			boost::algorithm::trim_if(onlineSyncStreams[k],boost::algorithm::is_any_of(" '\""));
-			std::vector<std::string>words; 
-			boost::algorithm::split(words,onlineSyncStreams[k],boost::algorithm::is_any_of(" "),boost::algorithm::token_compress_on);
+		
+		//// ----------------------------
+		//// online sync streams
+		//// ----------------------------	
+		//std::string str_onlineSyncStreams = pt.get<std::string>("OnlineSync","");
+		//std::string oss_substr = str_onlineSyncStreams.substr(1, str_onlineSyncStreams.size()-2);
+		//boost::algorithm::split(onlineSyncStreams,oss_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
+		//for (size_t k=0;k<onlineSyncStreams.size();k++)
+  //      {
+		//	boost::algorithm::trim_if(onlineSyncStreams[k],boost::algorithm::is_any_of(" '\""));
+		//	std::vector<std::string>words; 
+		//	boost::algorithm::split(words,onlineSyncStreams[k],boost::algorithm::is_any_of(" "),boost::algorithm::token_compress_on);
 
-			//boost::algorithm::trim_if(trio[2],boost::algorithm::is_any_of(" "));
-			//int val = boost::lexical_cast<int>(trio[2]);
-			std::string key = std::string(words[0] + " " + words[1]);
-			
-			int val = 0;
-			for(size_t l=2;l<words.size();l++){
-				if(words[l].compare("post_clocksync")==0){val|=lsl::post_clocksync;}//std::cout<<words[l]<< " "<<val<<std::endl;}
-				if(words[l].compare("post_dejitter")==0){val|=lsl::post_dejitter;}//std::cout<<words[l]<< " "<<val<<std::endl;}
-				if(words[l].compare("post_monotonize")==0){val|=lsl::post_monotonize;}//std::cout<<words[l]<< " "<<val<<std::endl;}
-				if(words[l].compare("post_threadsafe")==0){val|=lsl::post_threadsafe;}//std::cout<<words[l]<< " "<<val<<std::endl;}
-				if(words[l].compare("post_ALL")==0){val=lsl::post_ALL;}//std::cout<<words[l]<< " "<<val<<std::endl;}
-            }
-            
-			syncOptionsByStreamName.insert(std::make_pair(key, val));
-			std::cout << "key = " << key << std::endl;
-			
-			std::cout << "val = " << val << std::endl;
+		//	//boost::algorithm::trim_if(trio[2],boost::algorithm::is_any_of(" "));
+		//	//int val = boost::lexical_cast<int>(trio[2]);
+		//	std::string key = std::string(words[0] + " " + words[1]);
+		//	
+		//	int val = 0;
+		//	for(size_t l=2;l<words.size();l++){
+		//		if(words[l].compare("post_clocksync")==0){val|=lsl::post_clocksync;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+		//		if(words[l].compare("post_dejitter")==0){val|=lsl::post_dejitter;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+		//		if(words[l].compare("post_monotonize")==0){val|=lsl::post_monotonize;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+		//		if(words[l].compare("post_threadsafe")==0){val|=lsl::post_threadsafe;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+		//		if(words[l].compare("post_ALL")==0){val=lsl::post_ALL;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+  //          }
+  //          
+		//	syncOptionsByStreamName.insert(std::make_pair(key, val));
+		//	std::cout << "key = " << key << std::endl;
+		//	
+		//	std::cout << "val = " << val << std::endl;
 
-		}
+		//}
 
 		// ----------------------------
 		// recording location
