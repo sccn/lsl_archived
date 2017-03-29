@@ -2,14 +2,18 @@
 #include <QApplication>
 #else
 #include <QtGui/QApplication>
-#endif 
+#endif
 #include "stdafx.h"
 #include "mainwindow.h"
 #include <string>
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 
 int main(int argc, char *argv[])
 {
+
+
+
     // determine the startup config file...
     std::string config_file = "VAmp_config.cfg";
     for (int k=1;k<argc;k++)

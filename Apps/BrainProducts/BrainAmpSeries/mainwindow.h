@@ -54,6 +54,14 @@ private:
 	bool stop_;											// whether the reader thread is supposed to stop
     boost::shared_ptr<boost::thread> reader_thread_;	// our reader thread
 
+	bool g_unsampledMarkers;
+	bool g_sampledMarkers;
+	bool g_sampledMarkersEEG;
+
+	bool pullUpHiBits;
+	bool pullUpLowBits;
+	USHORT g_pull_dir;
+
     Ui::MainWindow *ui;
 };
 

@@ -573,6 +573,12 @@ void MainWindow::load_config(const std::string &filename) {
 		setMinChunk(ui->samplingRate->currentIndex());
 		ui->useAUX->setCheckState(pt.get<bool>("settings.useaux",false) ? Qt::Checked : Qt::Unchecked);
 		ui->activeShield->setCheckState(pt.get<bool>("settings.activeshield",true) ? Qt::Checked : Qt::Unchecked);
+		ui->unsampledMarkers->setCheckState(pt.get<bool>("settings.unsampledmarkers",false) ? Qt::Checked : Qt::Unchecked);	
+		ui->sampledMarkers->setCheckState(pt.get<bool>("settings.sampledmarkers",true) ? Qt::Checked : Qt::Unchecked);	
+		ui->sampledMarkersEEG->setCheckState(pt.get<bool>("settings.sampledmarkersEEG",false) ? Qt::Checked : Qt::Unchecked);
+		ui->unsampledMarkers->setCheckState(pt.get<bool>("settings.unsampledmarkers",false) ? Qt::Checked : Qt::Unchecked);	
+		ui->sampledMarkers->setCheckState(pt.get<bool>("settings.sampledmarkers",true) ? Qt::Checked : Qt::Unchecked);	
+		ui->sampledMarkersEEG->setCheckState(pt.get<bool>("settings.sampledmarkersEEG",false) ? Qt::Checked : Qt::Unchecked);
 		ui->channelLabels->clear();
 		BOOST_FOREACH(ptree::value_type &v, pt.get_child("channels.labels"))
 			ui->channelLabels->appendPlainText(v.second.data().c_str());
@@ -594,6 +600,12 @@ void MainWindow::save_config(const std::string &filename) {
 		pt.put("settings.samplingrate",ui->samplingRate->currentIndex());
 		pt.put("settings.useaux",ui->useAUX->checkState()==Qt::Checked);
 		pt.put("settings.activeshield",ui->activeShield->checkState()==Qt::Checked);
+		pt.put("settings.unsampledmarkers",ui->unsampledMarkers->checkState()==Qt::Checked);
+		pt.put("settings.sampledmarkers",ui->sampledMarkers->checkState()==Qt::Checked);
+		pt.put("settings.sampledmarkersEEG",ui->sampledMarkersEEG->checkState()==Qt::Checked);
+		pt.put("settings.unsampledmarkers",ui->unsampledMarkers->checkState()==Qt::Checked);
+		pt.put("settings.sampledmarkers",ui->sampledMarkers->checkState()==Qt::Checked);
+		pt.put("settings.sampledmarkersEEG",ui->sampledMarkersEEG->checkState()==Qt::Checked);
 		std::vector<std::string> channelLabels;
 		boost::algorithm::split(channelLabels,ui->channelLabels->toPlainText().toStdString(),boost::algorithm::is_any_of("\n"));
 		BOOST_FOREACH(std::string &v, channelLabels)
@@ -638,6 +650,11 @@ void MainWindow::link() {
 			int samplingRate = sampling_rates[ui->samplingRate->currentIndex()];
 			bool useAUX = ui->useAUX->checkState()==Qt::Checked;
 			bool activeShield = ui->activeShield->checkState()==Qt::Checked;
+
+			g_unsampledMarkers  = ui->unsampledMarkers->checkState()==Qt::Checked;
+			g_sampledMarkers    = ui->sampledMarkers->checkState()==Qt::Checked;
+			g_sampledMarkersEEG = ui->sampledMarkersEEG->checkState()==Qt::Checked;
+
 			std::vector<std::string> channelLabels;
 			boost::algorithm::split(channelLabels,ui->channelLabels->toPlainText().toStdString(),boost::algorithm::is_any_of("\n"));
 			if (channelLabels.size() != channelCount)
@@ -726,12 +743,18 @@ void MainWindow::link() {
 	}
 }
 
-bool _resample = false;
+
 
 // background data reader thread
 void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, int samplingRate, bool useAUX, bool activeShield, std::vector<std::string> channelLabels) {
 	HANDLE hDevice = NULL;
 	bool started = false;
+	bool _resample = false;
+
+	// set thread priority to high in order to ensure we don't lose data during sleep periods
+	int res = SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
+	std::string threadId = boost::lexical_cast<std::string>(boost::this_thread::get_id());
+
 	try {
 		// try to open the device again (we're doing everything in the same thread to not confuse the driver)
 		hDevice = champOpen(deviceNumber);
@@ -783,11 +806,16 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 		// reserve buffers to receive and send data
 		int buffer_bytes = chunkSize*sampleSize;
 		char *recv_buffer = new char[buffer_bytes*10];
-		std::vector<std::vector<double> > temp_buffer(chunkSize,std::vector<double>(channelCount));
-		std::vector<std::vector<double> > send_buffer(chunkSize,std::vector<double>(channelCount));
+		std::vector<std::vector<double> > temp_buffer(chunkSize,std::vector<double>(channelCount+(g_sampledMarkersEEG?1:0)));
+		std::vector<std::vector<double> > send_buffer(chunkSize,std::vector<double>(channelCount+(g_sampledMarkersEEG?1:0)));
 		std::vector<unsigned> trigger_buffer(chunkSize);
 
 		std::vector<std::vector<double>> rs_temp_in,rs_temp_out;
+
+		// containers for the marker streams
+		std::vector<std::vector<std::string>> marker_buffer(chunkSize, std::vector<std::string>(1));
+		std::vector<std::string> s_mrkr;
+		float f_mrkr;
 
 		// allocate resampler
 		//Resampler<double,double,double> *resampler = NULL;
@@ -803,7 +831,7 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 			_resample = true;
 		
 		std::vector<Resampler<double,double,double>*> resamplers;
-		for (unsigned c=0;c<channelCount;c++) {
+		for (unsigned c=0;c<channelCount+(g_sampledMarkersEEG?1:0);c++) {
 			switch (samplingRate) {
 				case 125:
 					resamplers.push_back(new Resampler<double,double,double>(1,80,coeffs_10000_to_125,sizeof(coeffs_10000_to_125)/sizeof(coeffs_10000_to_125[0])));
@@ -821,13 +849,20 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 		}
 
 		// create data streaminfo and append some meta-data
-		lsl::stream_info data_info("ActiChamp-" + boost::lexical_cast<std::string>(deviceNumber),"EEG",channelCount,samplingRate,lsl::cf_float32,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber));
+		lsl::stream_info data_info("ActiChamp-" + boost::lexical_cast<std::string>(deviceNumber),"EEG",channelCount+(g_sampledMarkersEEG?1:0),samplingRate,lsl::cf_float32,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber));
 		lsl::xml_element channels = data_info.desc().append_child("channels");
 		for (std::size_t k=0;k<channelLabels.size();k++)
 			channels.append_child("channel")
 				.append_child_value("label",channelLabels[k].c_str())
 				.append_child_value("type","EEG")
 				.append_child_value("unit","microvolts");
+		
+		if(g_sampledMarkersEEG)
+			channels.append_child("channel")
+				.append_child_value("label","triggerStream")
+				.append_child_value("type","EEG")
+				.append_child_value("unit","codes");
+
 		data_info.desc().append_child("acquisition")
 			.append_child_value("manufacturer","Brain Products")
 			.append_child_value("dll_version",boost::lexical_cast<std::string>(version.Dll).c_str())
@@ -838,22 +873,47 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 		// make a data outlet
 		lsl::stream_outlet data_outlet(data_info);
 
+
+		lsl::stream_outlet *marker_outlet;
+		if(g_unsampledMarkers) {
+			lsl::stream_info marker_info("ActiChamp-" + boost::lexical_cast<std::string>(deviceNumber) + "-Markers","Markers", 1, 0, lsl::cf_string,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber) + "_markers");
+			marker_outlet = new lsl::stream_outlet(marker_info);
+		}	
+
+		lsl::stream_outlet *s_marker_outlet;
+		if(g_sampledMarkers) {
+			lsl::stream_info s_marker_info("ActiChamp-" + boost::lexical_cast<std::string>(deviceNumber) + "-Sampled-Markers","sampledMarkers", 1, (samplingRate > 1000 ? samplingRate : 10000), lsl::cf_string,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber) + "_sampled_markers");
+			s_marker_outlet = new lsl::stream_outlet(s_marker_info);
+				// ditch the outlet if we don't need it (need to do it this way in order to trick C++ compiler into using this object conditionally)
+		}
+
 		// create marker streaminfo and outlet
-		lsl::stream_info marker_info("ActiChamp-" + boost::lexical_cast<std::string>(deviceNumber) + "-Markers","Markers",1,0,lsl::cf_string,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber) + "_markers");
-		lsl::stream_outlet marker_outlet(marker_info);
+		//lsl::stream_info marker_info("ActiChamp-" + boost::lexical_cast<std::string>(deviceNumber) + "-Markers","Markers",1,0,lsl::cf_string,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber) + "_markers");
+		//lsl::stream_outlet marker_outlet(marker_info);
 			
 		// enter transmission loop		
+
+		// for keeping track of changes to the trigger signal
 		int last_mrk = 0;
+		int prev_markerSampled = 0;
+		int prev_markerEEG = 0;
+		
 		int bytes_read, samples_read;
 		while (!stop_) {
 			// read chunk into recv_buffer
 			bytes_read = champGetDataBlocking(hDevice,recv_buffer,buffer_bytes);
 			samples_read = bytes_read/sampleSize;
+
+			if (samples_read <= 0 && samplingRate < 50000){
+				boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+				continue;
+			}
+
 			if (samples_read > 0) {
 				double now = lsl::local_clock();
 				// copy data into trigger_buffer and temp_buffer, and scale to microvolts
 				trigger_buffer.resize(samples_read);
-				temp_buffer.resize(samples_read,std::vector<double>(channelCount));
+				temp_buffer.resize(samples_read,std::vector<double>(channelCount+(g_sampledMarkersEEG?1:0)));
 				switch(sampleSize) {
 					case sizeof(t_champDataModelAux):
 						{
@@ -927,6 +987,28 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 						}
 				}
 
+				for (int s=0;s<samples_read;s++) {
+					if (g_sampledMarkersEEG) {
+						//if(trigger_buffer[s] != prev_markerEEG)
+						//	std::cout << "EEG: " << now << " " << s << " " << boost::lexical_cast<float>(trigger_buffer[s]) << std::endl;
+						f_mrkr = (trigger_buffer[s] == prev_markerEEG ? 0.0 : boost::lexical_cast<float>(trigger_buffer[s]));
+						prev_markerEEG = trigger_buffer[s];
+						temp_buffer[s][channelCount] = f_mrkr;
+					}
+			
+					if (g_sampledMarkers) {
+						s_mrkr.clear();
+						//if(trigger_buffer[s] != prev_markerSampled)
+						//	std::cout << "     smrkr: " << now << " " << s << " " << boost::lexical_cast<std::string>(trigger_buffer[s]) << std::endl;
+						s_mrkr.push_back(trigger_buffer[s] == prev_markerSampled ? "" : boost::lexical_cast<std::string>(trigger_buffer[s]));
+						marker_buffer.at(s) = s_mrkr;
+						//std::cout << "s: " << s << std::endl;
+						prev_markerSampled = trigger_buffer[s];
+					}
+				}
+				// this never gets resampled, do it now
+				if (g_sampledMarkers) s_marker_outlet->push_chunk(marker_buffer, now);
+
 				// optionally resample
 				if (_resample) {
 					//resampler->apply_multichannel(temp_buffer,send_buffer);
@@ -967,17 +1049,23 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 				}
 
 				// push markers into outlet
-				for (int s=0;s<samples_read;s++) {
-					if (int mrk=trigger_buffer[s]) {
-						if (mrk != last_mrk) {
-							std::string mrk_string = boost::lexical_cast<std::string>(mrk);
-							marker_outlet.push_sample(&mrk_string,now + (s + 1 - samples_read)/samplingRate);
-							last_mrk = mrk;
+				if(g_unsampledMarkers) {
+					for (int s=0;s<samples_read;s++) {
+						if (int mrk=trigger_buffer[s]) {
+							if (mrk != last_mrk) {
+								std::string mrk_string = boost::lexical_cast<std::string>(mrk);
+								//std::cout << "          mrkr: " << now << " " << s << " " << boost::lexical_cast<std::string>(trigger_buffer[s]) << std::endl;
+								marker_outlet->push_sample(&mrk_string,now + (s + 1 - samples_read)/samplingRate);
+								last_mrk = mrk;
+							}
 						}
 					}
 				}
 			}
 		}
+		// need to explicitly delete these objects
+		if(g_unsampledMarkers)delete(marker_outlet);
+		if(g_sampledMarkers)delete(s_marker_outlet);
 	}
 	catch(boost::thread_interrupted &) {
 		// thread was interrupted: no error

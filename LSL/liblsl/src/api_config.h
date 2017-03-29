@@ -167,7 +167,8 @@ namespace lsl {
 		int inlet_buffer_reserve_samples() const { return inlet_buffer_reserve_samples_; }
 		/// Default halftime of the time-stamp smoothing window (if enabled), in seconds.
 		float smoothing_halftime() const { return smoothing_halftime_; }
-
+		/// Override timestamps with lsl clock if True
+		bool force_default_timestamps() const { return force_default_timestamps_; }
 
 	private:
 		// Thread-safe initialization logic (boilerplate).
@@ -220,6 +221,7 @@ namespace lsl {
 		int inlet_buffer_reserve_ms_;
 		int inlet_buffer_reserve_samples_;
 		float smoothing_halftime_;
+		bool force_default_timestamps_;
 	};
 }
 

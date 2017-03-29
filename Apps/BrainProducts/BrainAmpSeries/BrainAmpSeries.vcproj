@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="BrainAmpSeries"
 	ProjectGUID="{F63650CA-477B-3725-8C9E-DF4E4A710E9C}"
+	RootNamespace="BrainAmpSeries"
 	Keyword="Qt4VSv1.0"
 	TargetFrameworkVersion="0"
 	>

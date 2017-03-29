@@ -53,18 +53,22 @@ public:
     QSpinBox *deviceNumber;
     QLabel *label_2;
     QSpinBox *channelCount;
+    QLabel *label;
+    QSpinBox *chunkSize;
     QLabel *label_3;
     QComboBox *samplingRate;
     QLabel *label_7;
     QCheckBox *useAUX;
+    QLabel *label_8;
+    QCheckBox *activeShield;
     QGroupBox *groupBox_3;
     QFormLayout *formLayout_2;
-    QLabel *label;
-    QCheckBox *unsampledMarkers;
-    QCheckBox *sampledMarkersEEG;
+    QLabel *label_5;
     QLabel *label_6;
     QCheckBox *sampledMarkers;
-    QLabel *label_5;
+    QLabel *label_9;
+    QCheckBox *sampledMarkersEEG;
+    QCheckBox *unsampledMarkers;
     QSpacerItem *verticalSpacer;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
@@ -77,7 +81,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(439, 334);
+        MainWindow->resize(360, 411);
         actionLoad_Configuration = new QAction(MainWindow);
         actionLoad_Configuration->setObjectName(QString::fromUtf8("actionLoad_Configuration"));
         actionSave_Configuration = new QAction(MainWindow);
@@ -136,33 +140,57 @@ public:
 
         channelCount = new QSpinBox(groupBox);
         channelCount->setObjectName(QString::fromUtf8("channelCount"));
-        channelCount->setMinimum(0);
+        channelCount->setMinimum(1);
         channelCount->setMaximum(256);
         channelCount->setSingleStep(1);
-        channelCount->setValue(16);
+        channelCount->setValue(32);
 
         formLayout->setWidget(1, QFormLayout::FieldRole, channelCount);
+
+        label = new QLabel(groupBox);
+        label->setObjectName(QString::fromUtf8("label"));
+
+        formLayout->setWidget(2, QFormLayout::LabelRole, label);
+
+        chunkSize = new QSpinBox(groupBox);
+        chunkSize->setObjectName(QString::fromUtf8("chunkSize"));
+        chunkSize->setMinimum(1);
+        chunkSize->setMaximum(1024);
+        chunkSize->setValue(10);
+
+        formLayout->setWidget(2, QFormLayout::FieldRole, chunkSize);
 
         label_3 = new QLabel(groupBox);
         label_3->setObjectName(QString::fromUtf8("label_3"));
 
-        formLayout->setWidget(2, QFormLayout::LabelRole, label_3);
+        formLayout->setWidget(3, QFormLayout::LabelRole, label_3);
 
         samplingRate = new QComboBox(groupBox);
         samplingRate->setObjectName(QString::fromUtf8("samplingRate"));
 
-        formLayout->setWidget(2, QFormLayout::FieldRole, samplingRate);
+        formLayout->setWidget(3, QFormLayout::FieldRole, samplingRate);
 
         label_7 = new QLabel(groupBox);
         label_7->setObjectName(QString::fromUtf8("label_7"));
 
-        formLayout->setWidget(3, QFormLayout::LabelRole, label_7);
+        formLayout->setWidget(4, QFormLayout::LabelRole, label_7);
 
         useAUX = new QCheckBox(groupBox);
         useAUX->setObjectName(QString::fromUtf8("useAUX"));
         useAUX->setChecked(false);
 
-        formLayout->setWidget(3, QFormLayout::FieldRole, useAUX);
+        formLayout->setWidget(4, QFormLayout::FieldRole, useAUX);
+
+        label_8 = new QLabel(groupBox);
+        label_8->setObjectName(QString::fromUtf8("label_8"));
+
+        formLayout->setWidget(5, QFormLayout::LabelRole, label_8);
+
+        activeShield = new QCheckBox(groupBox);
+        activeShield->setObjectName(QString::fromUtf8("activeShield"));
+        activeShield->setChecked(true);
+
+        formLayout->setWidget(5, QFormLayout::FieldRole, activeShield);
 
         groupBox_3 = new QGroupBox(groupBox);
         groupBox_3->setObjectName(QString::fromUtf8("groupBox_3"));
@@ -170,25 +198,16 @@ public:
         formLayout_2->setSpacing(6);
         formLayout_2->setContentsMargins(11, 11, 11, 11);
         formLayout_2->setObjectName(QString::fromUtf8("formLayout_2"));
-        label = new QLabel(groupBox_3);
-        label->setObjectName(QString::fromUtf8("label"));
+        formLayout_2->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+        label_5 = new QLabel(groupBox_3);
+        label_5->setObjectName(QString::fromUtf8("label_5"));
 
-        formLayout_2->setWidget(0, QFormLayout::LabelRole, label);
-
-        unsampledMarkers = new QCheckBox(groupBox_3);
-        unsampledMarkers->setObjectName(QString::fromUtf8("unsampledMarkers"));
-
-        formLayout_2->setWidget(0, QFormLayout::FieldRole, unsampledMarkers);
-
-        sampledMarkersEEG = new QCheckBox(groupBox_3);
-        sampledMarkersEEG->setObjectName(QString::fromUtf8("sampledMarkersEEG"));
-
-        formLayout_2->setWidget(2, QFormLayout::FieldRole, sampledMarkersEEG);
+        formLayout_2->setWidget(0, QFormLayout::LabelRole, label_5);
 
         label_6 = new QLabel(groupBox_3);
         label_6->setObjectName(QString::fromUtf8("label_6"));
 
-        formLayout_2->setWidget(2, QFormLayout::LabelRole, label_6);
+        formLayout_2->setWidget(1, QFormLayout::LabelRole, label_6);
 
         sampledMarkers = new QCheckBox(groupBox_3);
         sampledMarkers->setObjectName(QString::fromUtf8("sampledMarkers"));
@@ -196,13 +215,23 @@ public:
 
         formLayout_2->setWidget(1, QFormLayout::FieldRole, sampledMarkers);
 
-        label_5 = new QLabel(groupBox_3);
-        label_5->setObjectName(QString::fromUtf8("label_5"));
+        label_9 = new QLabel(groupBox_3);
+        label_9->setObjectName(QString::fromUtf8("label_9"));
 
-        formLayout_2->setWidget(1, QFormLayout::LabelRole, label_5);
+        formLayout_2->setWidget(2, QFormLayout::LabelRole, label_9);
+
+        sampledMarkersEEG = new QCheckBox(groupBox_3);
+        sampledMarkersEEG->setObjectName(QString::fromUtf8("sampledMarkersEEG"));
+
+        formLayout_2->setWidget(2, QFormLayout::FieldRole, sampledMarkersEEG);
+
+        unsampledMarkers = new QCheckBox(groupBox_3);
+        unsampledMarkers->setObjectName(QString::fromUtf8("unsampledMarkers"));
+
+        formLayout_2->setWidget(0, QFormLayout::FieldRole, unsampledMarkers);
 
 
-        formLayout->setWidget(4, QFormLayout::SpanningRole, groupBox_3);
+        formLayout->setWidget(6, QFormLayout::SpanningRole, groupBox_3);
 
 
         verticalLayout->addWidget(groupBox);
@@ -232,7 +261,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 439, 21));
+        menuBar->setGeometry(QRect(0, 0, 360, 21));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QString::fromUtf8("menuFile"));
         MainWindow->setMenuBar(menuBar);
@@ -248,7 +277,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        samplingRate->setCurrentIndex(4);
+        samplingRate->setCurrentIndex(2);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -256,28 +285,47 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "V-Amp Connector", 0, QApplication::UnicodeUTF8));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "ActiChamp Connector", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        MainWindow->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>For an explanation of trigger marker types please read 'explanation_of_trigger_marker_types.pdf'.</p></body></html>", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
         actionLoad_Configuration->setText(QApplication::translate("MainWindow", "Load Configuration", 0, QApplication::UnicodeUTF8));
         actionSave_Configuration->setText(QApplication::translate("MainWindow", "Save Configuration", 0, QApplication::UnicodeUTF8));
         actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
         actionQuit_2->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
         groupBox_2->setTitle(QApplication::translate("MainWindow", "Channel Labels", 0, QApplication::UnicodeUTF8));
-        channelLabels->setPlainText(QApplication::translate("MainWindow", "1\n"
-"2\n"
-"3\n"
-"4\n"
-"5\n"
-"6\n"
-"7\n"
-"8\n"
-"9\n"
-"10\n"
-"11\n"
-"12\n"
-"13\n"
-"14\n"
-"15\n"
-"16", 0, QApplication::UnicodeUTF8));
+        channelLabels->setPlainText(QApplication::translate("MainWindow", "Fp1\n"
+"Fp2\n"
+"F7\n"
+"F3\n"
+"Fz\n"
+"F4\n"
+"F8\n"
+"FC5\n"
+"FC1\n"
+"FC2\n"
+"FC6\n"
+"T7\n"
+"C3\n"
+"Cz\n"
+"C4\n"
+"T8\n"
+"TP9\n"
+"CP5\n"
+"CP1\n"
+"CP2\n"
+"CP6\n"
+"TP10\n"
+"P7\n"
+"P3\n"
+"Pz\n"
+"P4\n"
+"P8\n"
+"PO9\n"
+"O1\n"
+"Oz\n"
+"O2\n"
+"PO10 ", 0, QApplication::UnicodeUTF8));
         groupBox->setTitle(QApplication::translate("MainWindow", "Device Settings", 0, QApplication::UnicodeUTF8));
         label_4->setText(QApplication::translate("MainWindow", "Device Number", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
@@ -287,42 +335,50 @@ public:
 #ifndef QT_NO_TOOLTIP
         channelCount->setToolTip(QApplication::translate("MainWindow", "This must match the number of entries in the channel list", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
+        label->setText(QApplication::translate("MainWindow", "Chunk Size", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        chunkSize->setToolTip(QApplication::translate("MainWindow", "The number of samples per chunk emitted by the driver -- a small value will lead to lower overall latency but causes more CPU load", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
         label_3->setText(QApplication::translate("MainWindow", "Sampling Rate", 0, QApplication::UnicodeUTF8));
         samplingRate->clear();
         samplingRate->insertItems(0, QStringList()
-         << QApplication::translate("MainWindow", "100 (resampled)", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "125 (resampled)", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "250 (resampled)", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "500 (resampled)", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "1000 (resampled)", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "2000 (native)", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "5000 high-speed (resampled)", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "10000 high-speed (resampled)", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWindow", "20000 high speed(native)", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "10000 (native)", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "50000 (native)", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "100000 (native)", 0, QApplication::UnicodeUTF8)
         );
 #ifndef QT_NO_TOOLTIP
         samplingRate->setToolTip(QApplication::translate("MainWindow", "The sampling rate to use; higher sampling rates require more network bandwidth (and storage space if recording), particularly the very high rates of 10KHz+. The native rates are those that are natively supported by the hardware and the resampled rates are resampled in software  (using a linear-phase sinc resampler that delays the output signal by 5 samples).", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
         label_7->setText(QApplication::translate("MainWindow", "Use AUX Channels", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
-        useAUX->setToolTip(QApplication::translate("MainWindow", "If this is checked then the EEG channels will hold the two AUX signals", 0, QApplication::UnicodeUTF8));
+        useAUX->setToolTip(QApplication::translate("MainWindow", "If this is checked then the last 8 channels will hold the AUX signals; make sure to increase your channel count accordingly.", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
         useAUX->setText(QApplication::translate("MainWindow", "(check)", 0, QApplication::UnicodeUTF8));
+        label_8->setText(QApplication::translate("MainWindow", "Enable Active Shield", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        activeShield->setToolTip(QApplication::translate("MainWindow", "This will enable the active shielding of the cap; recommended.", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
+        activeShield->setText(QApplication::translate("MainWindow", "(check)", 0, QApplication::UnicodeUTF8));
         groupBox_3->setTitle(QApplication::translate("MainWindow", "LSL Trigger Output Style", 0, QApplication::UnicodeUTF8));
-        label->setText(QApplication::translate("MainWindow", "Unsampled String Markers", 0, QApplication::UnicodeUTF8));
-#ifndef QT_NO_TOOLTIP
-        unsampledMarkers->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>For an explanation of trigger marker types please read 'explanation_of_trigger_marker_types.pdf'.</p></body></html>", 0, QApplication::UnicodeUTF8));
-#endif // QT_NO_TOOLTIP
-        unsampledMarkers->setText(QApplication::translate("MainWindow", "(check)", 0, QApplication::UnicodeUTF8));
-#ifndef QT_NO_TOOLTIP
-        sampledMarkersEEG->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>For an explanation of trigger marker types please read 'explanation_of_trigger_marker_types.pdf'.</p></body></html>", 0, QApplication::UnicodeUTF8));
-#endif // QT_NO_TOOLTIP
-        sampledMarkersEEG->setText(QApplication::translate("MainWindow", "(check)", 0, QApplication::UnicodeUTF8));
-        label_6->setText(QApplication::translate("MainWindow", "Floating Point EEG Channel", 0, QApplication::UnicodeUTF8));
+        label_5->setText(QApplication::translate("MainWindow", "Unsampled String Markers", 0, QApplication::UnicodeUTF8));
+        label_6->setText(QApplication::translate("MainWindow", "Sampled String Markers", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
         sampledMarkers->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>For an explanation of trigger marker types please read 'explanation_of_trigger_marker_types.pdf'.</p></body></html>", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
         sampledMarkers->setText(QApplication::translate("MainWindow", "(check)", 0, QApplication::UnicodeUTF8));
-        label_5->setText(QApplication::translate("MainWindow", " Sampled String Markers", 0, QApplication::UnicodeUTF8));
+        label_9->setText(QApplication::translate("MainWindow", "Floating Point EEG Channel", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        sampledMarkersEEG->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>For an explanation of trigger marker types please read 'explanation_of_trigger_marker_types.pdf'.</p></body></html>", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
+        sampledMarkersEEG->setText(QApplication::translate("MainWindow", "(check)", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        unsampledMarkers->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>For an explanation of trigger marker types please read 'explanation_of_trigger_marker_types.pdf'.</p></body></html>", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
+        unsampledMarkers->setText(QApplication::translate("MainWindow", "(check)", 0, QApplication::UnicodeUTF8));
         linkButton->setText(QApplication::translate("MainWindow", "Link", 0, QApplication::UnicodeUTF8));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", 0, QApplication::UnicodeUTF8));
     } // retranslateUi

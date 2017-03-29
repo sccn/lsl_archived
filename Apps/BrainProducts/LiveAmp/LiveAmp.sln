@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LiveAmp2010", "LiveAmp2010.vcxproj", "{519985BC-76B9-4A27-A175-F16F22D7394D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LiveAmp", "LiveAmp.vcxproj", "{519985BC-76B9-4A27-A175-F16F22D7394D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
