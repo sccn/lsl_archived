@@ -161,7 +161,7 @@ void MainWindow::load_config(const std::string &filename) {
 			std::string key = std::string(words[0] + " " + words[1]);
 			
 			int val = 0;
-			for(int l=2;l<words.size();l++){
+			for(size_t l=2;l<words.size();l++){
 				if(words[l].compare("post_clocksync")==0){val|=lsl::post_clocksync;}//std::cout<<words[l]<< " "<<val<<std::endl;}
 				if(words[l].compare("post_dejitter")==0){val|=lsl::post_dejitter;}//std::cout<<words[l]<< " "<<val<<std::endl;}
 				if(words[l].compare("post_monotonize")==0){val|=lsl::post_monotonize;}//std::cout<<words[l]<< " "<<val<<std::endl;}
@@ -393,7 +393,7 @@ void MainWindow::startRecording(void) {
 			recFilename.replace(pos_b,  2, currentBlock);
  
 		// rename existing file if necessary
-		int lastdot;
+		size_t lastdot;
 		std::string rename_to;
 		if(boost::filesystem::exists(recFilename.c_str())) {
 			lastdot = recFilename.find_last_of(".");
