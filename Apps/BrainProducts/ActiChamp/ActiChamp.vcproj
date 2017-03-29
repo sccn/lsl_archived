@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="ActiChamp"
 	ProjectGUID="{F63650CA-477B-3725-8C9E-DF4E4A710E9C}"
+	RootNamespace="ActiChamp"
 	Keyword="Qt4VSv1.0"
 	TargetFrameworkVersion="0"
 	>
@@ -229,7 +230,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="-Zm200 -w34100 -w34189"
-				Optimization="2"
+				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(QTSDK)\include\QtCore&quot;;&quot;$(QTSDK)\include\QtGui&quot;;&quot;$(QTSDK)\include&quot;;&quot;$(BOOST_ROOT)&quot;;&quot;$(QTSDK)\include\ActiveQt&quot;;debug;.;&quot;$(QTSDK)\mkspecs\default&quot;;..\..\..\LSL\liblsl\include"
 				PreprocessorDefinitions="_WINDOWS;UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_DLL;QT_NO_DEBUG;QT_GUI_LIB;QT_CORE_LIB;QT_HAVE_MMX;QT_HAVE_3DNOW;QT_HAVE_SSE;QT_HAVE_MMXEXT;QT_HAVE_SSE2;QT_THREAD_SUPPORT;NDEBUG;_SCL_SECURE_NO_WARNINGS"
 				GeneratePreprocessedFile="0"
@@ -266,6 +267,7 @@
 				AdditionalLibraryDirectories="..\..\..\LSL\liblsl\bin;&quot;$(QTSDK)\lib&quot;;&quot;$(BOOST_ROOT)\lib&quot;"
 				IgnoreAllDefaultLibraries="false"
 				GenerateDebugInformation="false"
+				AssemblyDebug="2"
 				ProgramDatabaseFile=""
 				SubSystem="2"
 				LinkTimeCodeGeneration="0"
