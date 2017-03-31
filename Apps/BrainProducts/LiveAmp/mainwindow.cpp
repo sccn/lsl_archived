@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent, const std::string &config_file): QMainWi
 	QObject::connect(ui->actionSave_Configuration, SIGNAL(triggered()), this, SLOT(save_config_dialog()));
 	QObject::connect(ui->refreshDevices,SIGNAL(clicked()),this,SLOT(refresh_devices()));
 	QObject::connect(ui->deviceCb,SIGNAL(currentIndexChanged(int)),this,SLOT(choose_device(int)));
+	QObject::connect(this, SIGNAL(show_search_message()), this, SLOT(search_message()));
 
 	unsampledMarkers = false;
 	sampledMarkers = true;
@@ -84,7 +85,7 @@ void MainWindow::load_config(const std::string &filename) {
 		ui->sampledMarkersEEG->setCheckState(pt.get<bool>("settings.sampledmarkersEEG",false) ? Qt::Checked : Qt::Unchecked);	
 		ui->inTrigger->setCheckState(pt.get<bool>("settings.intrigger",true) ? Qt::Checked : Qt::Unchecked);	
 		ui->outTrigger->setCheckState(pt.get<bool>("settings.outtrigger",false) ? Qt::Checked : Qt::Unchecked);	
-		ui->digiTrigger->setCheckState(pt.get<bool>("settings.digitrigger",false) ? Qt::Checked : Qt::Unchecked);	
+		ui->jackTrigger->setCheckState(pt.get<bool>("settings.jacktrigger",false) ? Qt::Checked : Qt::Unchecked);	
 		ui->channelLabels->clear();
 		BOOST_FOREACH(ptree::value_type &v, pt.get_child("channels.labels"))
 			ui->channelLabels->appendPlainText(v.second.data().c_str());
@@ -112,7 +113,7 @@ void MainWindow::save_config(const std::string &filename) {
 		pt.put("settings.sampledmarkersEEG",ui->sampledMarkersEEG->checkState()==Qt::Checked);
 		pt.put("settings.intrigger",ui->inTrigger->checkState()==Qt::Checked);
 		pt.put("settings.outtrigger",ui->outTrigger->checkState()==Qt::Checked);
-		pt.put("settings.digitrigger",ui->digiTrigger->checkState()==Qt::Checked);
+		pt.put("settings.jacktrigger",ui->jackTrigger->checkState()==Qt::Checked);
 
 		std::vector<std::string> channelLabels;
 		boost::algorithm::split(channelLabels,ui->channelLabels->toPlainText().toStdString(),boost::algorithm::is_any_of("\n"));
@@ -130,15 +131,24 @@ void MainWindow::save_config(const std::string &filename) {
 	}
 }
 
+void MainWindow::search_message(){
+	this->setWindowTitle("Refreshing Devices...");
+	QMessageBox::information(this, "Refreshing Devices","Locating devices requires a few seconds. Click \"Ok\" to proceed.",QMessageBox::Ok);
+}
 
 void MainWindow::refresh_devices(){
 	
+	boost::thread *enumThread;
 	ampData.clear();
 
 	this->setCursor(Qt::WaitCursor);
 
-	LiveAmp::enumerate(ampData, ui->useSim->checkState());
-
+	emit search_message();
+	try{
+		LiveAmp::enumerate(ampData, ui->useSim->checkState());
+	}catch(std::exception &e) {
+		QMessageBox::critical(this,"Error",(std::string("Could not locate LiveAmp device(s): ")+=e.what()).c_str(),QMessageBox::Ok);
+	}
 	this->setCursor(Qt::ArrowCursor);
 
 	if(!live_amp_sns.empty())
@@ -159,6 +169,7 @@ void MainWindow::refresh_devices(){
 		ui->deviceCb->addItems(qsl);
 		choose_device(0);
 	}
+	this->setWindowTitle("LiveAmp Connector");
 	
 }
 
@@ -209,7 +220,7 @@ void MainWindow::link() {
 			trigger_indeces.clear();
 			if(ui->inTrigger->checkState()==Qt::Checked)trigger_indeces.push_back(0);
 			if(ui->outTrigger->checkState()==Qt::Checked)trigger_indeces.push_back(1);
-			if(ui->digiTrigger->checkState()==Qt::Checked)trigger_indeces.push_back(2);
+			if(ui->jackTrigger->checkState()==Qt::Checked)trigger_indeces.push_back(2);
 
 			unsampledMarkers  = ui->unsampledMarkers->checkState()==Qt::Checked;
 			sampledMarkers    = ui->sampledMarkers->checkState()==Qt::Checked;
@@ -239,6 +250,7 @@ void MainWindow::link() {
 			this->setCursor(Qt::WaitCursor);
 			
 			// construct
+			std::string error;
 			liveAmp = new LiveAmp(strSerialNumber, fSamplingRate, useSim, RM_NORMAL);
 
 			// change GUI
@@ -273,14 +285,13 @@ void MainWindow::link() {
 			reader_thread_.reset(new boost::thread(&MainWindow::read_thread, this, chunkSize, samplingRate, useAUX, useACC, useBipolar, eegChannelLabels));
 		
 		} catch(std::exception &e) {
-
-			// generate error message
-			std::string msg = "Could not retrieve driver error message";
+	
+		
 			int errorcode=0; 
 
 			delete liveAmp;
 
-			QMessageBox::critical(this,"Error",("Could not initialize the LiveAmp interface: "+(e.what()+(" (driver message: "+msg+")"))).c_str(),QMessageBox::Ok);
+			QMessageBox::critical(this,"Error",(std::string("Could not initialize the LiveAmp interface: ")+=e.what()).c_str(),QMessageBox::Ok);
 			ui->linkButton->setEnabled(true);
 			ui->linkButton->setText("Link");
 			this->setCursor(Qt::ArrowCursor);
@@ -495,7 +506,7 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, bool useAUX, bool 
 						for(j=0;j<triggerCount;j++){
 							if(strcmp(sampled_marker_buffer[i][j].c_str(), "")){
 								ss.clear();
-								ss << (j==0 ? "in" : (j==1 ? "out":"digi")) << "-" << sampled_marker_buffer[i][j];
+								ss << (j==0 ? "in" : (j==1 ? "out":"jack")) << "-" << sampled_marker_buffer[i][j];
 								marker_outlet->push_sample(&(ss.str()),now + (i + 1 - sampleCount)/samplingRate);
 							}
 						}
