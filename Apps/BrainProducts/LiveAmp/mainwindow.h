@@ -34,6 +34,9 @@ public:
     explicit MainWindow(QWidget *parent, const std::string &config_file);
     ~MainWindow();
     
+signals:
+	void show_search_message();
+
 private slots:
     // config file dialog ops (from main menu)
     void load_config_dialog();
@@ -51,10 +54,15 @@ private slots:
 	// if the device combo box item changes
 	void choose_device(int which);
 
+	void search_message();
+
 
 private:
+
+
     // background data reader thread
 	void read_thread(int chunkSize, int samplingRate, bool useAUX, bool useACC, bool useBipolar, std::vector<std::string> eegChannelLabels);
+	
 	
 	// container for amplifier enumeration
 	std::vector<std::pair<std::string, int>> ampData;

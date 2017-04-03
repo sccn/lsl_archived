@@ -31,30 +31,52 @@ set (sources
 
 message (${Boost_LIBRARIES})
 
+set(target lsl64)
+if (NOT (CMAKE_SIZEOF_VOID_P EQUAL 8))
+  set(target lsl32)
+endif()
+
 if (BUILD_SHARED)
-  add_library (lsl SHARED ${sources})
+  add_library (${target} SHARED ${sources})
+  target_include_directories(${target} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../external)
+  target_link_libraries (${target} ${Boost_LIBRARIES})
+  set_target_properties(${target}
+    PROPERTIES
+        VERSION ${liblsl_VERSION_MAJOR}.${liblsl_VERSION_MINOR}.${liblsl_VERSION_PATCH}
+        SOVERSION ${liblsl_VERSION_MAJOR}.0.0
+  )
 
   # TODO: Need to check if all flags are necessary or if some flags are missing
   if (WIN32)
-    set_property (TARGET lsl PROPERTY COMPILE_DEFINITIONS BOOST_ALL_NO_LIB BOOST_THREAD_BUILD_LIB LIBLSL_EXPORTS _SCL_SECURE_NO_WARNINGS _CRT_SECURE_NO_WARNINGS)
     if (MINGW)
-      target_link_libraries (lsl ${Boost_LIBRARIES} winmm ws2_32 wsock32)
-    else ()
-      target_link_libraries (lsl ${Boost_LIBRARIES})
+      target_link_libraries (${target} winmm ws2_32 wsock32)
     endif ()
+    set_property(
+        TARGET ${target}
+        PROPERTY
+            COMPILE_DEFINITIONS
+                BOOST_ALL_NO_LIB
+                BOOST_THREAD_BUILD_LIB
+                LIBLSL_EXPORTS
+                _SCL_SECURE_NO_WARNINGS
+                _CRT_SECURE_NO_WARNINGS
+    )
+    set_target_properties(${target}
+        PROPERTIES
+            PREFIX lib
+            IMPORT_PREFIX lib
+    )
   elseif (APPLE)
-    target_link_libraries (lsl ${Boost_LIBRARIES} pthread)
+    target_link_libraries (${target} pthread)
   elseif (UNIX)
-    set_property (TARGET lsl PROPERTY COMPILE_FLAGS "-fPIC -Wl,--exclude-libs,ALL")
-    target_link_libraries (lsl ${Boost_LIBRARIES} rt pthread)
-  else ()
-    target_link_libraries (lsl ${Boost_LIBRARIES})
+    set_property (TARGET ${target} PROPERTY COMPILE_FLAGS "-fPIC -Wl,--exclude-libs,ALL")
+    target_link_libraries (${target} rt pthread)
   endif ()
 
   if (CMAKE_VERSION VERSION_GREATER 2.8.8)
     if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
       if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5)
-	set_property (TARGET lsl PROPERTY COMPILE_FLAGS " -std=c++0x" APPEND_STRING)
+        set_property (TARGET ${target} PROPERTY COMPILE_FLAGS " -std=c++0x" APPEND_STRING)
       endif ()
     endif ()
   endif()
@@ -62,21 +84,30 @@ if (BUILD_SHARED)
 endif (BUILD_SHARED)
 
 if (BUILD_STATIC)
-  add_library (lsl-static STATIC ${sources})
-  set_property (TARGET lsl-static PROPERTY COMPILE_DEFINITIONS LIBLSL_STATIC)
+  add_library (${target}-static STATIC ${sources})
+  target_include_directories(${target}-static PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../external)
+  
+  set_property (TARGET ${target}-static PROPERTY COMPILE_DEFINITIONS LIBLSL_STATIC)
+  if(WIN32)
+    set_target_properties(${target}-static
+            PROPERTIES
+                PREFIX lib
+                IMPORT_PREFIX lib
+    )
+  endif()
 
   # TODO: Need to check if all flags are necessary or if some flags are missing
   # TODO: Add support for other platforms
   if (UNIX)
-    set_property (TARGET lsl-static PROPERTY COMPILE_FLAGS "-fPIC")
-    set_target_properties (lsl-static PROPERTIES OUTPUT_NAME lsl)
-    target_link_libraries (lsl-static ${Boost_LIBRARIES} rt pthread)
+    set_property (TARGET ${target}-static PROPERTY COMPILE_FLAGS "-fPIC")
+    set_target_properties (${target}-static PROPERTIES OUTPUT_NAME ${target})
+    target_link_libraries (${target}-static ${Boost_LIBRARIES} rt pthread)
   endif ()
 
   if (CMAKE_VERSION VERSION_GREATER 2.8.8)
     if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
       if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5)
-	set_property (TARGET lsl-static PROPERTY COMPILE_FLAGS " -std=c++0x" APPEND_STRING)
+        set_property (TARGET ${target}-static PROPERTY COMPILE_FLAGS " -std=c++0x" APPEND_STRING)
       endif ()
     endif ()
   endif()
