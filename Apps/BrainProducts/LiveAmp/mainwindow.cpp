@@ -8,6 +8,10 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/foreach.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <QFutureWatcher>
+#include <QtCore>
+
+
 
 #include "LiveAmp.h"
 
@@ -31,7 +35,6 @@ MainWindow::MainWindow(QWidget *parent, const std::string &config_file): QMainWi
 	QObject::connect(ui->actionSave_Configuration, SIGNAL(triggered()), this, SLOT(save_config_dialog()));
 	QObject::connect(ui->refreshDevices,SIGNAL(clicked()),this,SLOT(refresh_devices()));
 	QObject::connect(ui->deviceCb,SIGNAL(currentIndexChanged(int)),this,SLOT(choose_device(int)));
-	QObject::connect(this, SIGNAL(show_search_message()), this, SLOT(search_message()));
 
 	unsampledMarkers = false;
 	sampledMarkers = true;
@@ -83,9 +86,7 @@ void MainWindow::load_config(const std::string &filename) {
 		ui->unsampledMarkers->setCheckState(pt.get<bool>("settings.unsampledmarkers",false) ? Qt::Checked : Qt::Unchecked);	
 		ui->sampledMarkers->setCheckState(pt.get<bool>("settings.sampledmarkers",true) ? Qt::Checked : Qt::Unchecked);	
 		ui->sampledMarkersEEG->setCheckState(pt.get<bool>("settings.sampledmarkersEEG",false) ? Qt::Checked : Qt::Unchecked);	
-		ui->inTrigger->setCheckState(pt.get<bool>("settings.intrigger",true) ? Qt::Checked : Qt::Unchecked);	
-		ui->outTrigger->setCheckState(pt.get<bool>("settings.outtrigger",false) ? Qt::Checked : Qt::Unchecked);	
-		ui->jackTrigger->setCheckState(pt.get<bool>("settings.jacktrigger",false) ? Qt::Checked : Qt::Unchecked);	
+
 		ui->channelLabels->clear();
 		BOOST_FOREACH(ptree::value_type &v, pt.get_child("channels.labels"))
 			ui->channelLabels->appendPlainText(v.second.data().c_str());
@@ -111,9 +112,7 @@ void MainWindow::save_config(const std::string &filename) {
 		pt.put("settings.unsampledmarkers",ui->unsampledMarkers->checkState()==Qt::Checked);
 		pt.put("settings.sampledmarkers",ui->sampledMarkers->checkState()==Qt::Checked);
 		pt.put("settings.sampledmarkersEEG",ui->sampledMarkersEEG->checkState()==Qt::Checked);
-		pt.put("settings.intrigger",ui->inTrigger->checkState()==Qt::Checked);
-		pt.put("settings.outtrigger",ui->outTrigger->checkState()==Qt::Checked);
-		pt.put("settings.jacktrigger",ui->jackTrigger->checkState()==Qt::Checked);
+
 
 		std::vector<std::string> channelLabels;
 		boost::algorithm::split(channelLabels,ui->channelLabels->toPlainText().toStdString(),boost::algorithm::is_any_of("\n"));
@@ -131,31 +130,41 @@ void MainWindow::save_config(const std::string &filename) {
 	}
 }
 
-void MainWindow::search_message(){
-	this->setWindowTitle("Refreshing Devices...");
-	QMessageBox::information(this, "Refreshing Devices","Locating devices requires a few seconds. Click \"Ok\" to proceed.",QMessageBox::Ok);
+
+void MainWindow::wait_message(){
+
+	QMessageBox msgBox;
+	msgBox.setWindowTitle("Please Wait");
+	msgBox.setIcon(QMessageBox::Information);
+	msgBox.setText("connecting to devices");
+	msgBox.addButton(QMessageBox::Ok);
+	msgBox.exec();
 }
+
 
 void MainWindow::refresh_devices(){
 	
-	boost::thread *enumThread;
-	ampData.clear();
 
+	std::vector<std::pair<std::string, int>> ampData;
 	this->setCursor(Qt::WaitCursor);
-
-	emit search_message();
+	this->setWindowTitle("Searching for Devices...");
+	//wait_message();
+	//ampData.clear();
 	try{
 		LiveAmp::enumerate(ampData, ui->useSim->checkState());
 	}catch(std::exception &e) {
 		QMessageBox::critical(this,"Error",(std::string("Could not locate LiveAmp device(s): ")+=e.what()).c_str(),QMessageBox::Ok);
 	}
+
 	this->setCursor(Qt::ArrowCursor);
 
 	if(!live_amp_sns.empty())
 		live_amp_sns.clear();
 	// if we have liveamps, enumerate them in the gui:
+	int foo = ui->deviceCb->count();
 	if(!ampData.empty()) {
-		ui->deviceCb->clear();
+		for(int k=0;k<foo;k++)
+			ui->deviceCb->removeItem(k);
 		std::stringstream ss;
 		int i=0;
 		QStringList qsl;
@@ -167,8 +176,8 @@ void MainWindow::refresh_devices(){
 			live_amp_sns.push_back(it->first);
 		}
 		ui->deviceCb->addItems(qsl);
-		choose_device(0);
 	}
+	
 	this->setWindowTitle("LiveAmp Connector");
 	
 }
@@ -176,8 +185,8 @@ void MainWindow::refresh_devices(){
 
 // handle changes in chosen device
 void MainWindow::choose_device(int which){
-
-	ui->deviceSerialNumber->setText(QString(live_amp_sns[which].c_str()));
+	if(!live_amp_sns.empty())
+		ui->deviceSerialNumber->setText(QString(live_amp_sns[which].c_str()));
 
 }
 
@@ -206,21 +215,14 @@ void MainWindow::link() {
 			// get the UI parameters...
 			std::string serialN = ui->deviceSerialNumber->text().toStdString();
 			
-			//mChannelCount = ui->channelCount->value();
+			
 			int chunkSize = ui->chunkSize->value();
-			//mSamplingRate 
 			int samplingRate = sampling_rates[ui->samplingRate->currentIndex()];
 			
 			bool useAUX = ui->useAUX->checkState()==Qt::Checked;
 			bool useACC = ui->useACC->checkState()==Qt::Checked;
 			bool useBipolar = ui->useBipolar->checkState()==Qt::Checked;
 			bool useSim = ui->useSim->checkState()==Qt::Checked;
-
-			// query gui which trigger channles to record
-			trigger_indeces.clear();
-			if(ui->inTrigger->checkState()==Qt::Checked)trigger_indeces.push_back(0);
-			if(ui->outTrigger->checkState()==Qt::Checked)trigger_indeces.push_back(1);
-			if(ui->jackTrigger->checkState()==Qt::Checked)trigger_indeces.push_back(2);
 
 			unsampledMarkers  = ui->unsampledMarkers->checkState()==Qt::Checked;
 			sampledMarkers    = ui->sampledMarkers->checkState()==Qt::Checked;
@@ -243,6 +245,8 @@ void MainWindow::link() {
 			float fSamplingRate = (float) samplingRate;
 			std::string strSerialNumber = ui->deviceSerialNumber->text().toStdString();
 			
+			//wait_message();
+			this->setWindowTitle(QString(std::string("Connecting to "+strSerialNumber).c_str()));
 			// prepare the liveamp object
 			liveAmp = NULL;
 
@@ -257,8 +261,8 @@ void MainWindow::link() {
 			this->setCursor(Qt::ArrowCursor);
 
 			// report
-			if(liveAmp!=NULL)
-				QMessageBox::information( this,"Connected!", "Click OK to proceed",QMessageBox::Button::Ok);
+			if(liveAmp!=NULL);
+				//QMessageBox::information( this,"Connected!", "Click OK to proceed",QMessageBox::Button::Ok);
 
 			else {
 				QMessageBox::critical( this,"Error", "Could not connect to LiveAmp. Please restart the device and check connections.",QMessageBox::Button::Ok);
@@ -283,7 +287,8 @@ void MainWindow::link() {
 			// start reader thread
 			stop_ = false;
 			reader_thread_.reset(new boost::thread(&MainWindow::read_thread, this, chunkSize, samplingRate, useAUX, useACC, useBipolar, eegChannelLabels));
-		
+			
+			this->setWindowTitle("LiveAmp Connector");
 		} catch(std::exception &e) {
 	
 		
@@ -315,10 +320,6 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, bool useAUX, bool 
 	// for chunk storage
 	int sampleCount;
 
-	// number of output triggers, input is always 3
-	int triggerCount = trigger_indeces.size();
-	int inputTriggerCount = 3;
-
 	// number of eeg+aux+acc channels (nothing special to do here, just shove it into a vector of vectors for lsl push)
 	int eegAuxAccChannelCount = eegChannelLabels.size();
 	if(useAUX) eegAuxAccChannelCount += liveAmp->getAuxIndeces().size();
@@ -326,25 +327,26 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, bool useAUX, bool 
 
 	// these are just used for local loop storage
 	std::vector<float> eeg_buffer(eegAuxAccChannelCount);
-	std::vector<std::string> str_marker_buffer(triggerCount);
-	std::vector<int16_t> int_marker_buffer(triggerCount);
+	int16_t int_marker;
 
 	// this one has the enabled channels for incoming data
 	std::vector<std::vector<float>> liveamp_buffer(chunkSize,std::vector<float>(liveAmp->getEnabledChannelCnt()));
 		
-	// this one has thr full signal for lsl push
-	std::vector<std::vector<float>> eeg_aux_acc_buffer(chunkSize,std::vector<float>(eegAuxAccChannelCount + (sampledMarkersEEG ? triggerCount : 0)));
+	// this one has the full signal for lsl push
+	std::vector<std::vector<float>> eeg_aux_acc_buffer(chunkSize,std::vector<float>(eegAuxAccChannelCount + (sampledMarkersEEG ? 1 : 0)));
 
 	// declarations for sampled/unsampled trigger marker record
 	// declare this anyway, tho not always used
-	std::vector<std::vector<std::string>> sampled_marker_buffer(chunkSize, std::vector<std::string>(triggerCount));
-	std::vector<std::vector<int16_t>> unsampled_marker_buffer(chunkSize, std::vector<int16_t>(triggerCount));
+	std::vector<std::vector<std::string>> sampled_marker_buffer(chunkSize, std::vector<std::string>(1));
+	std::vector<std::string> s_mrkr;
+
+	std::vector<int16_t> unsampled_marker_buffer(chunkSize);
 
 	// for keeping track of trigger signal changes, which is all we are interested in
 	float f_mrkr;
-	std::vector<float> prev_marker_float(triggerCount);
-	for(std::vector<float>::iterator it=prev_marker_float.begin(); it!=prev_marker_float.end(); ++it)
-		*it = 0.0;
+	float prev_marker_float;
+
+
 
 	try {
 
@@ -355,7 +357,7 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, bool useAUX, bool 
 		std::vector<int>triggerIndeces = liveAmp->getTrigIndeces();
 
 		// create data streaminfo and append some meta-data
-		lsl::stream_info data_info("LiveAmpSN-" + liveAmp->getSerialNumber(),"EEG", eegAuxAccChannelCount + (sampledMarkersEEG ? triggerCount : 0), samplingRate,lsl::cf_float32,"LiveAmpSN-" + liveAmp->getSerialNumber());
+		lsl::stream_info data_info("LiveAmpSN-" + liveAmp->getSerialNumber(),"EEG", eegAuxAccChannelCount + (sampledMarkersEEG ? 1: 0), samplingRate,lsl::cf_float32,"LiveAmpSN-" + liveAmp->getSerialNumber());
 		lsl::xml_element channels = data_info.desc().append_child("channels");
 		
 		// append the eeg channel labels -- again, this is currently hard coded 
@@ -393,22 +395,23 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, bool useAUX, bool 
 		// make a data outlet
 		lsl::stream_outlet data_outlet(data_info);
 
-		// create marker streaminfo and outlet
 		lsl::stream_outlet *marker_outlet;
+		lsl::stream_outlet *s_marker_outlet;
+
+		// create marker streaminfo and outlet
 		if(unsampledMarkers) {
 			lsl::stream_info marker_info("LiveAmpSN-" + liveAmp->getSerialNumber() + "-Markers","Markers", 1, 0, lsl::cf_string,"LiveAmpSN-" + liveAmp->getSerialNumber() + "_markers");
 			marker_outlet = new lsl::stream_outlet(marker_info);
 		}	
 
 		// sampled trigger stream as string
-		lsl::stream_outlet *s_marker_outlet;
 		if(sampledMarkers) {
-			lsl::stream_info s_marker_info("LiveAmpSN-" + liveAmp->getSerialNumber() + "-Sampled-Markers","sampledMarkers", triggerCount, samplingRate, lsl::cf_string,"LiveAmpSN-" + liveAmp->getSerialNumber() + "_sampled_markers");
+			lsl::stream_info s_marker_info("LiveAmpSN-" + liveAmp->getSerialNumber() + "-Sampled-Markers","sampledMarkers", 1, samplingRate, lsl::cf_string,"LiveAmpSN-" + liveAmp->getSerialNumber() + "_sampled_markers");
 			s_marker_outlet = new lsl::stream_outlet(s_marker_info);
 			// ditch the outlet if we don't need it (need to do it this way in order to trick C++ compiler into using this object conditionally)
 		}
 			
-		// enter transmission loop		
+			
 		int last_mrk = 0;
 		int bytes_read;
 
@@ -416,10 +419,11 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, bool useAUX, bool 
 		int32_t bufferSize = (chunkSize + 10) * liveAmp->getSampleSize();
 		buffer = new BYTE[bufferSize];
 
-		sampled_marker_buffer.clear();
 		eeg_aux_acc_buffer.clear();
 
 		int64_t samples_read;
+
+		// enter transmission loop
 		while (!stop_) {
 			
 
@@ -432,7 +436,6 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, bool useAUX, bool 
 				continue;
 			}
 
-			
 			// push the data into a vector of vector of doubles (note: TODO: template-ify this so that it takes any vector type)
 			liveAmp->pushAmpData(buffer, bufferSize, samples_read, liveamp_buffer);
 	
@@ -442,52 +445,43 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, bool useAUX, bool 
 			if(sampleCount >= chunkSize){
 			
 				int k;
-				int j;
 				int i;
+
 				// transpose the data into lsl buffers
 				for (i=0;i<sampleCount;i++) {
 
 					// clear the local buffers
 					eeg_buffer.clear();
-					if(sampledMarkers || unsampledMarkers) 
-						str_marker_buffer.clear();
-	
+											
 					// first the EEG + Aux + ACC (if any)
 					for (k=0; k<eegAuxAccChannelCount; k++)	
 						eeg_buffer.push_back(liveamp_buffer[i][k]); 
 
 					// next, shove in the trigger markers if necessary
-					j = 0;					// j is which channel we are outputting
-					for (k=0;k<3;k++){		// k is which channel is inputting
 
-						// if the index of the input channel matches the index of the requested output channel...
-						if (k==trigger_indeces[j]){
+					// if the trigger is a new value, record it, else it is 0.0
+					// eegAuxAccChannelCount is always equivalent to the last channel in the liveamp_buffer
+					float mrkr_tmp = (liveamp_buffer[i][eegAuxAccChannelCount]);
+					f_mrkr = (mrkr_tmp == prev_marker_float ? -1.0 : liveamp_buffer[i][eegAuxAccChannelCount]);
+					prev_marker_float = mrkr_tmp;
+
+					// if we want the trigger in the EEG signal:
+					if(sampledMarkersEEG)
+						eeg_buffer.push_back(f_mrkr);
+
+					// if we want either type of string markers, record it as well
+					// this is not optimized because later we have to cast a string as an int
+					if(sampledMarkers || unsampledMarkers){
+						s_mrkr.clear();
+						s_mrkr.push_back(f_mrkr == -1.0 ? "" : boost::lexical_cast<std::string>(liveamp_buffer[i][eegAuxAccChannelCount]));
+						sampled_marker_buffer.push_back(s_mrkr);
 						
-							// if the trigger is a new value, record it, else it is 0.0
-							int trigger_channel = k+eegAuxAccChannelCount;
-							float mrkr_tmp = (liveamp_buffer[i][k+trigger_channel]);
-							f_mrkr = (mrkr_tmp == prev_marker_float[k] ? -1.0 : liveamp_buffer[i][k+trigger_channel]);
-							prev_marker_float[j] = mrkr_tmp;
-
-							// if we want the trigger in the EEG signal:
-							if(sampledMarkersEEG)
-								eeg_buffer.push_back(f_mrkr);
-
-							// if we want either type of string markers, record it as well
-							// this is not optimized because later we have to cast a string as an int
-							if(sampledMarkers || unsampledMarkers)
-								str_marker_buffer.push_back(f_mrkr == -1.0 ? "" : boost::lexical_cast<std::string>(liveamp_buffer[i][k+eegAuxAccChannelCount]));
-
-							// lastly, increment the local index of which channel we are outputting 
-							j++;
-						}
 					}
 
 					// now complete the signal buffer for lsl push
 					eeg_aux_acc_buffer.push_back(eeg_buffer);
 
-					// and the marker buffer
-					sampled_marker_buffer.push_back(str_marker_buffer);
+
 				}
 
 				double now = lsl::local_clock();
@@ -498,17 +492,16 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, bool useAUX, bool 
 				eeg_aux_acc_buffer.clear();
 				liveamp_buffer.clear();
 
-				// push the unsampled markers one at a time, appending the trigger channel number
-				// TODO: change this to the label of the trigger channel
+				// push the unsampled markers one at a time
 				if(unsampledMarkers) {
 					std::stringstream ss;
 					for(i=0;i<sampleCount;i++){
-						for(j=0;j<triggerCount;j++){
-							if(strcmp(sampled_marker_buffer[i][j].c_str(), "")){
-								ss.clear();
-								ss << (j==0 ? "in" : (j==1 ? "out":"jack")) << "-" << sampled_marker_buffer[i][j];
-								marker_outlet->push_sample(&(ss.str()),now + (i + 1 - sampleCount)/samplingRate);
-							}
+					
+						if(strcmp(sampled_marker_buffer[i][0].c_str(), "")){
+							ss.clear();
+							ss << sampled_marker_buffer[i][0];
+							marker_outlet->push_sample(&(ss.str()),now + (i + 1 - sampleCount)/samplingRate);
+							
 						}
 					}
 				}
@@ -517,15 +510,12 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, bool useAUX, bool 
 				if(sampledMarkers) {
 					s_marker_outlet->push_chunk(sampled_marker_buffer, now);
 					sampled_marker_buffer.clear();	
-		
 				}
 			}
 		}
-
 		// cleanup (if necessary)
 		if(unsampledMarkers)delete(marker_outlet);
 		if(sampledMarkers)delete(s_marker_outlet);
-
 	}
 	catch(boost::thread_interrupted &) {
 		// thread was interrupted: no error
@@ -546,6 +536,8 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, bool useAUX, bool 
 		// any problem closing liveamp
 		std::cerr << e.what() << std::endl;
 	}
+
+
 }
 
 
