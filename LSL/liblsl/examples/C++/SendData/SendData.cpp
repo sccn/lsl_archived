@@ -5,9 +5,6 @@
 
 using namespace std;
 
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0600
-#endif
 
 #include <stdio.h>
 #include <winsock2.h>
@@ -15,7 +12,6 @@ using namespace std;
 #include <ws2tcpip.h>
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "iphlpapi.lib")
-
 #include <string>
 
 
