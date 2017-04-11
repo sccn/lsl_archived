@@ -2,6 +2,7 @@
 #include "stream_outlet_impl.h"
 #include <boost/bind.hpp>
 
+
 // === implementation of the stream_outlet_impl class ===
 
 using namespace lsl;
@@ -82,7 +83,7 @@ std::string get_IP_fam(PIP_ADAPTER_UNICAST_ADDRESS ua)
 {
 	char buf[BUFSIZ];
 	int family = ua->Address.lpSockaddr->sa_family;
-	//printf("\t%s ",  family == AF_INET ? "IPv4":"IPv6");
+	//printf("\t%s\n ",  family == AF_INET ? "IPv4":"IPv6");
 	return family == AF_INET ? "IPv4":"IPv6";
 }
   
@@ -117,7 +118,7 @@ std::vector<std::string> net_adatpers_win32() {
 		for (ua = aa->FirstUnicastAddress; ua != NULL; ua = ua->Next) {
 			std::string address = get_address(ua);
 			std::string family = get_IP_fam(ua);
-			//std::cout << "\n\tRETURNS: " + adapter + " " + addr + " " + family<< std::endl;
+			std::cout <<family + "\t" + adapter + "\n" + address + "\n"<< std::endl;
 			myVector.push_back(address);
 		}
 	}
@@ -176,6 +177,7 @@ void stream_outlet_impl::instantiate_stack(tcp tcp_protocol, udp udp_protocol) {
 	ios_.push_back(io_service_p(new io_service()));
 	udp_servers_.push_back(udp_server_p(new udp_server(info_, *ios_.back(), udp_protocol)));
 	// create UDP multicast responders
+	/*
 	for (std::vector<std::string>::iterator i=multicast_addrs.begin(); i != multicast_addrs.end(); i++) {
 		try {
 			// use only addresses for the protocol that we're supposed to use here
@@ -186,6 +188,7 @@ void stream_outlet_impl::instantiate_stack(tcp tcp_protocol, udp udp_protocol) {
 			std::clog << "Note (minor): could not create multicast responder for address " << *i << " (failed with: " << e.what() << ")" << std::endl;
 		}
 	}
+	*/
 	// enumerate over network adapters
 	std::vector<std::string> ip_addresses = enum_adapters();
 	for (std::vector<std::string>::iterator i=ip_addresses.begin(); i != ip_addresses.end(); i++) {
@@ -198,9 +201,6 @@ void stream_outlet_impl::instantiate_stack(tcp tcp_protocol, udp udp_protocol) {
 		}
 	}
 }
-
-
-
 
 /**
 * Destructor.

@@ -55,6 +55,7 @@ udp_server::udp_server(const stream_info_impl_p &info, io_service &io, const std
 	}
 
 	// open the socket and make sure that we can reuse the address, and bind it
+	std::cout <<"Opening socket on '" + address + "'\n"<< std::endl;
 	socket_->open(listen_endpoint.protocol());
 	socket_->set_option(udp::socket::reuse_address(true));
 
