@@ -14,9 +14,6 @@
 #include <ws2tcpip.h>
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "iphlpapi.lib")
-#include <string>
-using namespace std;
-
 
 namespace lsl { 
 

@@ -2,16 +2,6 @@
 #include "stream_outlet_impl.h"
 #include <boost/bind.hpp>
 
-#include <stdio.h>
-#include <winsock2.h>
-#include <iphlpapi.h>
-#include <ws2tcpip.h>
-#include <string>
-
-#pragma comment(lib, "ws2_32.lib")
-#pragma comment(lib, "iphlpapi.lib")
-
-
 // === implementation of the stream_outlet_impl class ===
 
 using namespace lsl;
@@ -68,27 +58,27 @@ stream_outlet_impl::stream_outlet_impl(const stream_info_impl &info, int chunk_s
 /**
 / Enumerate network adapters 
 */
-string get_adapter(PIP_ADAPTER_ADDRESSES aa)
+std::string get_adapter(PIP_ADAPTER_ADDRESSES aa)
 {
 	char buf[BUFSIZ];
 	memset(buf, 0, BUFSIZ);
 	WideCharToMultiByte(CP_ACP, 0, aa->FriendlyName, wcslen(aa->FriendlyName), buf, BUFSIZ, NULL, NULL);
 	//printf("adapter_name:%s\n", buf);
-	string adapter_name = string(buf);
+	std::string adapter_name = std::string(buf);
 	return adapter_name;
 }
 
-string get_address(PIP_ADAPTER_UNICAST_ADDRESS ua)
+std::string get_address(PIP_ADAPTER_UNICAST_ADDRESS ua)
 {
 	char buf[BUFSIZ];
 	memset(buf, 0, BUFSIZ);
 	getnameinfo(ua->Address.lpSockaddr, ua->Address.iSockaddrLength, buf, sizeof(buf), NULL, 0,NI_NUMERICHOST);
 	//printf("%s\n", buf);	
-	string addr_name = string(buf);
+	std::string addr_name = std::string(buf);
 	return addr_name;
 }
 
-string get_IP_fam(PIP_ADAPTER_UNICAST_ADDRESS ua)
+std::string get_IP_fam(PIP_ADAPTER_UNICAST_ADDRESS ua)
 {
 	char buf[BUFSIZ];
 	int family = ua->Address.lpSockaddr->sa_family;
@@ -123,10 +113,10 @@ std::vector<std::string> net_adatpers_win32() {
 	}	
 	
 	for (aa = adapter_addresses; aa != NULL; aa = aa->Next) {
-		string adapter = get_adapter(aa);		
+		std::string adapter = get_adapter(aa);		
 		for (ua = aa->FirstUnicastAddress; ua != NULL; ua = ua->Next) {
-			string address = get_address(ua);
-			string family = get_IP_fam(ua);
+			std::string address = get_address(ua);
+			std::string family = get_IP_fam(ua);
 			//std::cout << "\n\tRETURNS: " + adapter + " " + addr + " " + family<< std::endl;
 			myVector.push_back(address);
 		}
