@@ -8,6 +8,14 @@
 #include "udp_server.h"
 #include "sample.h"
 
+#include <stdio.h>
+#include <winsock2.h>
+#include <iphlpapi.h>
+#include <ws2tcpip.h>
+#pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "iphlpapi.lib")
+#include <string>
+using namespace std;
 
 
 namespace lsl { 
@@ -163,10 +171,14 @@ namespace lsl {
 
 	private:
 		/**
+		/ Enumerate network adapters 
+		*/
+		std::vector<std::string> enum_adapters();
+		/**
 		* Instantiate a new server stack.
 		*/
 		void instantiate_stack(tcp tcp_protocol, udp udp_protocol);
-
+		
 		/// Run the given io_service
 		void run_io(io_service_p &ios);
 
