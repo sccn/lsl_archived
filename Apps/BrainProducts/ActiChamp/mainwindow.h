@@ -11,8 +11,8 @@
 #include <vector>
 
 // LSL API
-#define LSL_DEBUG_BINDINGS
-#include <lsl_cpp.h>
+//#define LSL_DEBUG_BINDINGS
+#include "../../../LSL/liblsl/include/lsl_cpp.h"
 
 // BrainAmp API
 #define WIN32_LEAN_AND_MEAN
@@ -43,10 +43,11 @@ private slots:
 
     // close event (potentially disabled)
     void closeEvent(QCloseEvent *ev);
-private:
 
-	
-	void setMinChunk(int idx);
+	// set the min chunk size according sampling rate
+	void setMinChunk();
+
+private:
 
     // background data reader thread
 	void read_thread(int deviceNumber, int channelCount, int chunkSize, int samplingRate, bool useAUX, bool activeShield, std::vector<std::string> channelLabels);
@@ -54,13 +55,13 @@ private:
     // raw config file IO
     void load_config(const std::string &filename);
     void save_config(const std::string &filename);
-	
-	bool stop_;											// whether the reader thread is supposed to stop
-    boost::shared_ptr<boost::thread> reader_thread_;	// our reader thread
 
 	bool g_unsampledMarkers;
 	bool g_sampledMarkers;
 	bool g_sampledMarkersEEG;
+	
+	bool stop_;											// whether the reader thread is supposed to stop
+    boost::shared_ptr<boost::thread> reader_thread_;	// our reader thread
 
     Ui::MainWindow *ui;
 };
