@@ -345,6 +345,8 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, bool useAUX, bool 
 	// for keeping track of trigger signal changes, which is all we are interested in
 	float f_mrkr;
 	float prev_marker_float;
+	float f_u_mrkr;
+	float prev_u_marker_float;
 
 
 
@@ -357,7 +359,7 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, bool useAUX, bool 
 		std::vector<int>triggerIndeces = liveAmp->getTrigIndeces();
 
 		// create data streaminfo and append some meta-data
-		lsl::stream_info data_info("LiveAmpSN-" + liveAmp->getSerialNumber(),"EEG", eegAuxAccChannelCount + (sampledMarkersEEG ? 1: 0), samplingRate,lsl::cf_float32,"LiveAmpSN-" + liveAmp->getSerialNumber());
+		lsl::stream_info data_info("LiveAmpSN-" + liveAmp->getSerialNumber(),"EEG", eegAuxAccChannelCount + (sampledMarkersEEG ? 1 : 0), samplingRate,lsl::cf_float32,"LiveAmpSN-" + liveAmp->getSerialNumber());
 		lsl::xml_element channels = data_info.desc().append_child("channels");
 		
 		// append the eeg channel labels -- again, this is currently hard coded 
@@ -490,21 +492,29 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, bool useAUX, bool 
 				data_outlet.push_chunk(eeg_aux_acc_buffer, now);
 				// clear our data buffers
 				eeg_aux_acc_buffer.clear();
-				liveamp_buffer.clear();
+
 
 				// push the unsampled markers one at a time
 				if(unsampledMarkers) {
-					std::stringstream ss;
-					for(i=0;i<sampleCount;i++){
-					
-						if(strcmp(sampled_marker_buffer[i][0].c_str(), "")){
-							ss.clear();
-							ss << sampled_marker_buffer[i][0];
-							marker_outlet->push_sample(&(ss.str()),now + (i + 1 - sampleCount)/samplingRate);
-							
+					//std::stringstream ss;
+					for(int s=0;s<sampleCount;s++){
+						f_u_mrkr = liveamp_buffer[s][eegAuxAccChannelCount];
+						//if(strcmp(sampled_marker_buffer[i][0].c_str(), "")){
+						//	ss.clear();
+						//	ss << sampled_marker_buffer[i][0];
+						//	marker_outlet->push_sample(&(ss.str()),now + (i + 1 - sampleCount)/samplingRate);
+						//	
+						//}
+						if(f_u_mrkr!=prev_u_marker_float){
+							std::string mrk_string = boost::lexical_cast<std::string>(f_u_mrkr);	
+							marker_outlet->push_sample(&mrk_string,now + (s + 1 - sampleCount)/samplingRate);
 						}
+						prev_u_marker_float = f_u_mrkr;
 					}
 				}
+
+								
+				liveamp_buffer.clear();
 
 				// push the sampled markers
 				if(sampledMarkers) {
