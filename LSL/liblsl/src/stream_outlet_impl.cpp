@@ -21,23 +21,7 @@ stream_outlet_impl::stream_outlet_impl(const stream_info_impl &info, int chunk_s
 {
 	ensure_lsl_initialized();
 	const api_config *cfg = api_config::get_instance();
-	// enumerate over network adapters
-	std::vector<std::string> ip_addresses = enum_adapters();
-	for (std::vector<std::string>::iterator i=ip_addresses.begin(); i != ip_addresses.end(); i++) {		
-		try {
-			instantiate_stack(tcp::v4(),udp::v4(),*i);
-		} catch(std::exception &e) {
-			std::cerr << "Could not instantiate IPv4 stack: " << e.what() << std::endl;
-		}
-		try {
-			instantiate_stack(tcp::v6(),udp::v6(), *i);
-		} catch(std::exception &e) {
-			std::cerr << "Could not instantiate IPv6 stack: " << e.what() << std::endl;
-		}
-	}
-	
-	
-	/*
+
 	// instantiate IPv4 and/or IPv6 stacks (depending on settings)
 	if (cfg->ipv6() == "disable")
 		instantiate_stack(tcp::v4(),udp::v4());
@@ -55,7 +39,6 @@ stream_outlet_impl::stream_outlet_impl(const stream_info_impl &info, int chunk_s
 			std::cerr << "Could not instantiate IPv6 stack: " << e.what() << std::endl;
 		}
 	}
-	*/
 	// fail if both stacks failed to instantiate
 	if (tcp_servers_.empty() || udp_servers_.empty())
 		throw std::runtime_error("Neither the IPv4 nor the IPv6 stack could be instantiated.");
@@ -180,28 +163,36 @@ std::vector<std::string> stream_outlet_impl::enum_adapters() {
 /**
 * Instantiate a new server stack.
 */
-void stream_outlet_impl::instantiate_stack(tcp tcp_protocol, udp udp_protocol, std::string listen_address) {
+void stream_outlet_impl::instantiate_stack(tcp tcp_protocol, udp udp_protocol) {
 	// get api_config
 	const api_config *cfg = api_config::get_instance();
-	//std::string listen_address = cfg->listen_address();
-	std::vector<std::string> multicast_addrs = cfg->multicast_addresses();
-	int multicast_ttl = cfg->multicast_ttl();
-	int multicast_port = cfg->multicast_port();
-	// create TCP data server
-	ios_.push_back(io_service_p(new io_service()));
-	tcp_servers_.push_back(tcp_server_p(new tcp_server(info_, ios_.back(), send_buffer_, sample_factory_, tcp_protocol, chunk_size_)));
-	// create UDP time server
-	ios_.push_back(io_service_p(new io_service()));
-	udp_servers_.push_back(udp_server_p(new udp_server(info_, *ios_.back(), udp_protocol)));
-	// create UDP multicast responders
-	for (std::vector<std::string>::iterator i=multicast_addrs.begin(); i != multicast_addrs.end(); i++) {
-		try {
-			// use only addresses for the protocol that we're supposed to use here
-			ip::address address(ip::address::from_string(*i));
-			if (udp_protocol == udp::v4() ? address.is_v4() : address.is_v6())
-				responders_.push_back(udp_server_p(new udp_server(info_, *ios_.back(), *i, multicast_port, multicast_ttl, listen_address)));
-		} catch(std::exception &e) {
-			std::clog << "Note (minor): could not create multicast responder for address " << *i << " (failed with: " << e.what() << ")" << std::endl;
+	// enumerate over network adapters
+	std::vector<std::string> ip_addresses = enum_adapters();
+	for (std::vector<std::string>::iterator i=ip_addresses.begin(); i != ip_addresses.end(); i++) {		
+		
+		ip::address address(ip::address::from_string(*i));
+
+		// std::string listen_address = cfg->listen_address();
+		std::string listen_address = *i;
+		std::vector<std::string> multicast_addrs = cfg->multicast_addresses();
+		int multicast_ttl = cfg->multicast_ttl();
+		int multicast_port = cfg->multicast_port();
+		// create TCP data server
+		ios_.push_back(io_service_p(new io_service()));
+		tcp_servers_.push_back(tcp_server_p(new tcp_server(info_, ios_.back(), send_buffer_, sample_factory_, tcp_protocol, chunk_size_, *i)));
+		// create UDP time server
+		ios_.push_back(io_service_p(new io_service()));
+		udp_servers_.push_back(udp_server_p(new udp_server(info_, *ios_.back(), *i, multicast_port, multicast_ttl, listen_address)));
+		// create UDP multicast responders
+		for (std::vector<std::string>::iterator ii=multicast_addrs.begin(); ii != multicast_addrs.end(); ii++) {
+			try {
+				// use only addresses for the protocol that we're supposed to use here
+				ip::address address(ip::address::from_string(*ii));
+				if (udp_protocol == udp::v4() ? address.is_v4() : address.is_v6())
+					responders_.push_back(udp_server_p(new udp_server(info_, *ios_.back(), *ii, multicast_port, multicast_ttl, listen_address)));
+			} catch(std::exception &e) {
+				std::clog << "Note (minor): could not create multicast responder for address " << *ii << " (failed with: " << e.what() << ")" << std::endl;
+			}
 		}
 	}
 	// enumerate over network adapters

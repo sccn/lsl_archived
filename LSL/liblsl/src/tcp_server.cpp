@@ -27,12 +27,12 @@ using namespace boost::asio;
 * @param protocol The protocol (IPv4 or IPv6) that shall be serviced by this server.
 * @param chunk_size The preferred chunk size, in samples. If 0, the pushthrough flag determines the effective chunking.
 */
-tcp_server::tcp_server(const stream_info_impl_p &info, const io_service_p &io, const send_buffer_p &sendbuf, const sample::factory_p &factory, tcp protocol, int chunk_size): chunk_size_(chunk_size), shutdown_(false), info_(info), io_(io), factory_(factory), send_buffer_(sendbuf), acceptor_(new tcp::acceptor(*io)) {
+tcp_server::tcp_server(const stream_info_impl_p &info, const io_service_p &io, const send_buffer_p &sendbuf, const sample::factory_p &factory, tcp protocol, int chunk_size, std::string listen_address): chunk_size_(chunk_size), shutdown_(false), info_(info), io_(io), factory_(factory), send_buffer_(sendbuf), acceptor_(new tcp::acceptor(*io)) {
 	// open the server connection
 	acceptor_->open(protocol);
 
 	// bind to and listen on a free port
-	int port = bind_and_listen_to_port_in_range(*acceptor_,protocol,10);
+	int port = bind_and_listen_to_port_in_range(*acceptor_,protocol,10,listen_address);
 
 	// and assign connection-dependent fields
 	// (note: this may be assigned multiple times by multiple TCPs during setup but does not matter)

@@ -30,7 +30,7 @@ namespace lsl {
 	}
     
     /// Bind to and listen at a socket (or acceptor) on a free port in the configured port range or throw an error otherwise.
-	template<class Socket, class Protocol> int bind_and_listen_to_port_in_range(Socket &sock, Protocol protocol, int backlog) {
+	template<class Socket, class Protocol> int bind_and_listen_to_port_in_range(Socket &sock, Protocol protocol, int backlog, std::string listen_address) {
 		for (int k=0,e=api_config::get_instance()->port_range(); k<e; k++) {
 			try {
 				sock.bind(typename Protocol::endpoint(protocol,(unsigned short)(k + api_config::get_instance()->base_port())));
