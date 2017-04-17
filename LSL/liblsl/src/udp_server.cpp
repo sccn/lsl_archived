@@ -17,15 +17,12 @@ using namespace boost::asio;
 * @param info The stream_info of the stream to serve (shared). After success, the appropriate service port will be assigned.
 * @param protocol The protocol stack to use (tcp::v4() or tcp::v6()).
 */
-udp_server::udp_server(const stream_info_impl_p &info, io_service &io, udp protocol, const std::string &listen_address): info_(info), io_(io), socket_(new udp::socket(io)), time_services_enabled_(true) {
-	
+udp_server::udp_server(const stream_info_impl_p &info, io_service &io, udp protocol, const std::string &listen_address): info_(info), io_(io), socket_(new udp::socket(io)), time_services_enabled_(true) {	
 	if (listen_address.empty()) {
 		// open the socket for the specified protocol
 		socket_->open(protocol);
-
 		// bind to a free port
 		int port = bind_port_in_range(*socket_,protocol);
-
 		// assign the service port field
 		if (protocol == udp::v4())
 			info_->v4service_port(port);
