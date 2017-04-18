@@ -8,12 +8,6 @@
 #include "udp_server.h"
 #include "sample.h"
 
-#include <stdio.h>
-#include <winsock2.h>
-#include <iphlpapi.h>
-#include <ws2tcpip.h>
-#pragma comment(lib, "ws2_32.lib")
-#pragma comment(lib, "iphlpapi.lib")
 
 namespace lsl { 
 
@@ -167,10 +161,6 @@ namespace lsl {
 		bool wait_for_consumers(double timeout=FOREVER);
 
 	private:
-		/**
-		/ Enumerate network adapters 
-		*/
-		std::vector<std::string> enum_adapters();
 		/**
 		* Instantiate a new server stack.
 		*/
