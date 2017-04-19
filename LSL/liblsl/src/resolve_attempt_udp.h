@@ -25,8 +25,8 @@ namespace lsl {
 	typedef boost::shared_ptr<boost::asio::deadline_timer> deadline_timer_p;
 	/// Pointer to an io_service
 	typedef boost::shared_ptr<boost::asio::io_service> io_service_p;
-
-
+	// Pointer to socket service
+	typedef boost::shared_ptr<boost::asio::ip::udp::socket> socket_p;
 	/**
 	* An asynchronous resolve attempt for a single query targeted at a set of endpoints, via UDP.
 	* A resolve attempt is an asynchronous operation submitted to an IO object, which amounts 
@@ -110,7 +110,9 @@ namespace lsl {
 		udp::endpoint remote_endpoint_; // the endpoint from which we received the last result
 		char resultbuf_[65536];			// holds a single result received from the net
 
-		// IO objects
+		// IO objects		
+		std::vector<udp::socket> broadcast_socket_s;
+		udp::socket misc_socket_;
 		udp::socket unicast_socket_;	// socket to send data over (for unicasts)
 		udp::socket broadcast_socket_;	// socket to send data over (for broadcasts)
 		udp::socket multicast_socket_;	// socket to send data over (for multicasts)

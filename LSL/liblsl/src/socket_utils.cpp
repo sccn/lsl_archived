@@ -53,9 +53,7 @@ std::vector<std::string> net_adatpers_win32() {
 	//define something for Windows (32-bit only)
 	std::vector<std::string> myVector;
 	WSAData d;
-	if (WSAStartup(MAKEWORD(2, 2), &d) != 0) {
-		return myVector;
-	}
+
 	DWORD rv, size;
 	PIP_ADAPTER_ADDRESSES adapter_addresses, aa;
 	PIP_ADAPTER_UNICAST_ADDRESS ua;
@@ -84,7 +82,6 @@ std::vector<std::string> net_adatpers_win32() {
 		}
 	}
 	free(adapter_addresses);
-	WSACleanup();
 	return myVector;
 }
 

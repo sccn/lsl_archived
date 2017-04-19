@@ -33,7 +33,9 @@ using boost::posix_time::millisec;
 */
 resolve_attempt_udp::resolve_attempt_udp(io_service &io, const udp &protocol, const std::vector<udp::endpoint> &targets, const std::string &query, result_container &results, boost::mutex &results_mut, double cancel_after, cancellable_registry *registry): 
 	io_(io), results_(results), results_mut_(results_mut), cancel_after_(cancel_after), cancelled_(false), is_v4_(protocol == udp::v4()), protocol_(protocol),
-	targets_(targets), unicast_socket_(io), broadcast_socket_(io), multicast_socket_(io), recv_socket_(io), query_(query), cancel_timer_(io)
+	targets_(targets), unicast_socket_(io), broadcast_socket_(io), multicast_socket_(io), recv_socket_(io), query_(query), cancel_timer_(io),
+	misc_socket_(io)
+	
 {
 	// open the sockets that we might need
 	recv_socket_.open(protocol);
@@ -43,6 +45,10 @@ resolve_attempt_udp::resolve_attempt_udp(io_service &io, const udp &protocol, co
 		std::cerr << "Could not bind to a port in the configured port range; using a randomly assigned one: " << e.what() << std::endl;
 	}
 	unicast_socket_.open(protocol);
+	std::vector<std::string> ip_addresses = enum_adapters();
+	//socket_p sock = misc_socket_;
+	broadcast_socket_s.push_back(socket_p(new socket_base()));
+	//ios_.push_back(io_service_p(new io_service()));
 	try {
 		broadcast_socket_.open(protocol);
 		broadcast_socket_.set_option(socket_base::broadcast(true));
@@ -156,7 +162,7 @@ void resolve_attempt_udp::send_next_query(endpoint_list::const_iterator i) {
 		// endpoint matches our active protocol?
 		if (ep.address().is_v4() == is_v4_) {
 			// select socket to use
-			udp::socket &sock = (ep.address().to_string() == "255.255.255.255") ? broadcast_socket_ : (ep.address().is_multicast() ? multicast_socket_ : unicast_socket_);
+			udp::socket &sock = (ep.address().to_string() == "255.255.255.255") ? broadcast_socket_ : (ep.address().is_multicast() ? multicast_socket_ : unicast_socket_);		
 			// and send the query over it
 			sock.async_send_to(boost::asio::buffer(query_msg_), ep,
 				boost::bind(&resolve_attempt_udp::handle_send_outcome,shared_from_this(),++i,placeholders::error));
