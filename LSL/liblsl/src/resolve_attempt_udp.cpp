@@ -9,7 +9,8 @@
 #include "resolver_impl.h"
 #include "socket_utils.h"
 
-
+#include <vector>
+using boost::asio::ip::udp;
 // === implementation of the resolver_burst_udp class ===
 
 using namespace lsl;
@@ -45,34 +46,49 @@ resolve_attempt_udp::resolve_attempt_udp(io_service &io, const udp &protocol, co
 		std::cerr << "Could not bind to a port in the configured port range; using a randomly assigned one: " << e.what() << std::endl;
 	}
 	unicast_socket_.open(protocol);
-	
-	//socket_p sock = misc_socket_;
-	//broadcast_socket_s.push_back(socket_p(new socket_base()));
-	//ios_.push_back(io_service_p(new io_service()));
-	try{
-		misc_socket_0.open(protocol);
-		misc_socket_0.set_option(socket_base::broadcast(true));
-
-		misc_socket_1.open(protocol);
-		misc_socket_1.set_option(socket_base::broadcast(true));
-
-		misc_socket_2.open(protocol);
-		misc_socket_2.set_option(socket_base::broadcast(true));
-
-		misc_socket_3.open(protocol);
-		misc_socket_3.set_option(socket_base::broadcast(true));
-
-		misc_socket_4.open(protocol);
-		misc_socket_4.set_option(socket_base::broadcast(true));
-
-		misc_socket_5.open(protocol);
-		misc_socket_5.set_option(socket_base::broadcast(true));
-		
-		std::vector<udp::socket> broadcast_socket_s {misc_socket_0, misc_socket_1};
-	} catch(std::exception &e) {
-		std::cerr << "Cannot open UDP broadcast socket for resolves: " << e.what() << std::endl;
+	// --------------------------------- //
+	std::vector<std::string> ip_addresses = enum_adapters();
+	std::vector<boost::shared_ptr<udp::socket>> broadcast_sockets (ip_addresses.size());	
+	std::vector<boost::shared_ptr<udp::socket>> unicast_sockets (ip_addresses.size());	
+	std::vector<boost::shared_ptr<udp::socket>> multicast_sockets (ip_addresses.size());	
+	for (unsigned i=0; i<ip_addresses.size(); i++){	
+		broadcast_sockets.at(i) = boost::shared_ptr<udp::socket>(new udp::socket(io));
+		unicast_sockets.at(i) = boost::shared_ptr<udp::socket>(new udp::socket(io));
+		multicast_sockets.at(i) = boost::shared_ptr<udp::socket>(new udp::socket(io));
 	}
-	
+	// open sockets, set options 
+	boost::shared_ptr<udp::socket> broadcast_sock;
+	for (unsigned i=0; i<broadcast_sockets.size(); i++){		
+		broadcast_sock = broadcast_sockets.at(i);
+		try {
+			broadcast_sock->open(protocol);
+			broadcast_sock->set_option(socket_base::broadcast(true));
+		} catch(std::exception &e) {
+			std::cerr << "Cannot open UDP broadcast socket for resolves: " << e.what() << std::endl;
+		}
+	}
+
+	boost::shared_ptr<udp::socket> unicast_sock;
+	for (unsigned i=0; i<unicast_sockets.size(); i++){		
+		unicast_sock = unicast_sockets.at(i);
+		try {
+			unicast_sock->open(protocol);
+		} catch(std::exception &e) {
+			std::cerr << "Cannot open UDP broadcast socket for resolves: " << e.what() << std::endl;
+		}
+	}
+	 
+	boost::shared_ptr<udp::socket> multicast_sock;
+	for (unsigned i=0; i<multicast_sockets.size(); i++){		
+		multicast_sock = multicast_sockets.at(i);
+		try {
+			multicast_sock->open(protocol);
+			multicast_sock->set_option(ip::multicast::hops(api_config::get_instance()->multicast_ttl()));
+		} catch(std::exception &e) {
+			std::cerr << "Cannot open UDP broadcast socket for resolves: " << e.what() << std::endl;
+		}
+	}
+
 	try {
 		broadcast_socket_.open(protocol);
 		broadcast_socket_.set_option(socket_base::broadcast(true));
@@ -194,6 +210,8 @@ void resolve_attempt_udp::send_next_query(endpoint_list::const_iterator i) {
 			sock.async_send_to(boost::asio::buffer(query_msg_), ep,
 				boost::bind(&resolve_attempt_udp::handle_send_outcome,shared_from_this(),++i,placeholders::error));
 		*/
+
+		//--------------------------------------//
 		/*
 		udp::endpoint ep(*i);
 		// endpoint matches our active protocol?
