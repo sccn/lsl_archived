@@ -112,7 +112,13 @@ namespace lsl {
 
 		// IO objects		
 		std::vector<udp::socket> broadcast_socket_s;
-		udp::socket misc_socket_;
+		udp::socket misc_socket_0;
+		udp::socket misc_socket_1;
+		udp::socket misc_socket_2;
+		udp::socket misc_socket_3;
+		udp::socket misc_socket_4;
+		udp::socket misc_socket_5;
+
 		udp::socket unicast_socket_;	// socket to send data over (for unicasts)
 		udp::socket broadcast_socket_;	// socket to send data over (for broadcasts)
 		udp::socket multicast_socket_;	// socket to send data over (for multicasts)
