@@ -34,9 +34,7 @@ using boost::posix_time::millisec;
 */
 resolve_attempt_udp::resolve_attempt_udp(io_service &io, const udp &protocol, const std::vector<udp::endpoint> &targets, const std::string &query, result_container &results, boost::mutex &results_mut, double cancel_after, cancellable_registry *registry): 
 	io_(io), results_(results), results_mut_(results_mut), cancel_after_(cancel_after), cancelled_(false), is_v4_(protocol == udp::v4()), protocol_(protocol),
-	targets_(targets), unicast_socket_(io), broadcast_socket_(io), multicast_socket_(io), recv_socket_(io), query_(query), cancel_timer_(io),
-	misc_socket_0(io), misc_socket_1(io), misc_socket_2(io), misc_socket_3(io), misc_socket_4(io), misc_socket_5(io)
-
+	targets_(targets), unicast_socket_(io), broadcast_socket_(io), multicast_socket_(io), recv_socket_(io), query_(query), cancel_timer_(io)	
 {
 	// open the sockets that we might need
 	recv_socket_.open(protocol);
@@ -45,50 +43,64 @@ resolve_attempt_udp::resolve_attempt_udp(io_service &io, const udp &protocol, co
 	} catch(std::exception &e) {
 		std::cerr << "Could not bind to a port in the configured port range; using a randomly assigned one: " << e.what() << std::endl;
 	}
-	unicast_socket_.open(protocol);
 	// --------------------------------- //
-	std::vector<std::string> ip_addresses = enum_adapters();
-	std::vector<boost::shared_ptr<udp::socket>> broadcast_sockets (ip_addresses.size());	
-	std::vector<boost::shared_ptr<udp::socket>> unicast_sockets (ip_addresses.size());	
-	std::vector<boost::shared_ptr<udp::socket>> multicast_sockets (ip_addresses.size());	
+	ip_addresses = enum_adapters();
 	for (unsigned i=0; i<ip_addresses.size(); i++){	
-		broadcast_sockets.at(i) = boost::shared_ptr<udp::socket>(new udp::socket(io));
-		unicast_sockets.at(i) = boost::shared_ptr<udp::socket>(new udp::socket(io));
-		multicast_sockets.at(i) = boost::shared_ptr<udp::socket>(new udp::socket(io));
+		broadcast_sockets.push_back(boost::shared_ptr<udp::socket>(new udp::socket(io)));
+		unicast_sockets.push_back(boost::shared_ptr<udp::socket>(new udp::socket(io)));
+		multicast_sockets.push_back(boost::shared_ptr<udp::socket>(new udp::socket(io)));
 	}
+
 	// open sockets, set options 
 	boost::shared_ptr<udp::socket> broadcast_sock;
-	for (unsigned i=0; i<broadcast_sockets.size(); i++){		
-		broadcast_sock = broadcast_sockets.at(i);
-		try {
-			broadcast_sock->open(protocol);
-			broadcast_sock->set_option(socket_base::broadcast(true));
-		} catch(std::exception &e) {
-			std::cerr << "Cannot open UDP broadcast socket for resolves: " << e.what() << std::endl;
-		}
-	}
-
 	boost::shared_ptr<udp::socket> unicast_sock;
-	for (unsigned i=0; i<unicast_sockets.size(); i++){		
-		unicast_sock = unicast_sockets.at(i);
-		try {
-			unicast_sock->open(protocol);
-		} catch(std::exception &e) {
-			std::cerr << "Cannot open UDP broadcast socket for resolves: " << e.what() << std::endl;
-		}
-	}
-	 
 	boost::shared_ptr<udp::socket> multicast_sock;
-	for (unsigned i=0; i<multicast_sockets.size(); i++){		
-		multicast_sock = multicast_sockets.at(i);
-		try {
-			multicast_sock->open(protocol);
-			multicast_sock->set_option(ip::multicast::hops(api_config::get_instance()->multicast_ttl()));
-		} catch(std::exception &e) {
-			std::cerr << "Cannot open UDP broadcast socket for resolves: " << e.what() << std::endl;
-		}
-	}
+	std::string ip_address;
+	ip::address listen_addr;
+	udp::endpoint broadcast_endpoint;
+	udp::endpoint unicast_endpoint;
+	udp::endpoint multicast_endpoint;
+	for (unsigned i=0; i<ip_addresses.size(); i++){	
+		ip_address = ip_addresses.at(i);
+		listen_addr = ip::address::from_string(ip_address);
+		
+		broadcast_endpoint = udp::endpoint(listen_addr, 0);
+		unicast_endpoint = udp::endpoint(listen_addr, 0);
+		multicast_endpoint = udp::endpoint(listen_addr, 0);
 
+		broadcast_sock = broadcast_sockets.at(i);
+		unicast_sock = unicast_sockets.at(i);
+		multicast_sock = multicast_sockets.at(i);
+		//		
+		try {
+			broadcast_sock->open(broadcast_endpoint.protocol());
+			broadcast_sock->set_option(socket_base::broadcast(true));
+			broadcast_sock->bind(broadcast_endpoint);
+			std::cout<<"Successful broadcast setup on " << "IP: "<< ip_address << "\n" <<std::endl; 
+		} catch(std::exception &e) {
+			std::cerr << "Cannot open UDP broadcast socket for resolves: " << e.what() << "\nIP: "<< ip_address << "\n" <<std::endl;
+		}
+		//
+		try{
+			unicast_sock->open(unicast_endpoint.protocol());
+			unicast_sock->bind(unicast_endpoint);
+			std::cout<<"Successful unicast setup on " << "IP: "<< ip_address << "\n" <<std::endl; 
+		} catch(std::exception &e) {
+			std::cerr << "Cannot open UDP unicast socket for resolves: " << e.what() << "\nIP: "<< ip_address << "\n" <<std::endl;
+		}
+		//
+		try{		
+			multicast_sock->open(multicast_endpoint.protocol());
+			multicast_sock->set_option(ip::multicast::hops(api_config::get_instance()->multicast_ttl()));
+			multicast_sock->bind(multicast_endpoint);
+			std::cout<<"Successful multicast setup on " << "IP: "<< ip_address << "\n" <<std::endl; 
+		} catch(std::exception &e) {
+			std::cerr << "Cannot open UDP multicast socket for resolves: " << e.what() << "\nIP: "<< ip_address << "\n" <<std::endl;
+		}
+
+	}
+	// --------------------------------- //
+	unicast_socket_.open(protocol);
 	try {
 		broadcast_socket_.open(protocol);
 		broadcast_socket_.set_option(socket_base::broadcast(true));
@@ -196,35 +208,62 @@ void resolve_attempt_udp::handle_receive_outcome(error_code err, std::size_t len
 // === send loop ===
 
 /// Thus function starts an async send operation for the given current endpoint
-void resolve_attempt_udp::send_next_query(endpoint_list::const_iterator i) {
+void resolve_attempt_udp::send_next_query(endpoint_list::const_iterator i) {	
 	if (i != targets_.end() && !cancelled_) {
 		udp::endpoint ep(*i);
-
-		std::vector<std::string> ip_addresses = enum_adapters();
-		std::cout << "ip_addresses contains " << ip_addresses.size() << " elements.\n";	
-		/*
-		//for (std::vector<std::string>::iterator i=ip_addresses.begin(); i != ip_addresses.end(); i++) {	
-			// select socket to use
-			udp::socket &sock = (ep.address().to_string() == "255.255.255.255") ? broadcast_socket_ : (ep.address().is_multicast() ? multicast_socket_ : unicast_socket_);		
-			// and send the query over it
-			sock.async_send_to(boost::asio::buffer(query_msg_), ep,
-				boost::bind(&resolve_attempt_udp::handle_send_outcome,shared_from_this(),++i,placeholders::error));
-		*/
-
-		//--------------------------------------//
-		/*
-		udp::endpoint ep(*i);
 		// endpoint matches our active protocol?
-		if (ep.address().is_v4() == is_v4_) {
-			// select socket to use
-			udp::socket &sock = (ep.address().to_string() == "255.255.255.255") ? broadcast_socket_ : (ep.address().is_multicast() ? multicast_socket_ : unicast_socket_);		
-			// and send the query over it
-			sock.async_send_to(boost::asio::buffer(query_msg_), ep,
-				boost::bind(&resolve_attempt_udp::handle_send_outcome,shared_from_this(),++i,placeholders::error));
+		if (ep.address().is_v4() == is_v4_) {			
+			boost::shared_ptr<udp::socket> sock;
+			int n;
+			for (n=0; n<ip_addresses.size(); n++){	
+				std::cout << "ip: " << ip_addresses.at(n) << std::endl;
+				std::cout << "ep address: " << ep.address().to_string()  << std::endl;
+				// select socket to use
+				//sock = (ep.address().to_string() == "255.255.255.255") ? broadcast_sockets.at(n) : (ep.address().is_multicast() ? multicast_sockets.at(n) : unicast_sockets.at(n));								
+				if (ep.address().to_string() == "255.255.255.255") {					
+					sock = broadcast_sockets.at(n);
+					std::cout << "broadcast_socket: " << sock << std::endl;
+				}else if(ep.address().is_multicast()){
+					sock = multicast_sockets.at(n);
+					std::cout << "multicast_socket: " << sock << std::endl;
+				}else{
+					sock = unicast_sockets.at(n);
+					std::cout << "unicast_socket: " << sock << std::endl;
+				}
+				try{
+					// and send the query over it
+					if (!(ip_addresses.at(n) == "2606:6000:cc14:6900::1")){
+						sock->async_send_to(boost::asio::buffer(query_msg_), ep,
+							boost::bind(&resolve_attempt_udp::handle_send_outcome,shared_from_this(),++i,placeholders::error));			
+					}
+				} catch(std::exception &e) {
+					std::cout << "Cannot async_send_to: " << e.what() << std::endl;
+				}
+				/*
+				// get endpoint info 
+				boost::asio::ip::udp::endpoint endpoint_info = sock->local_endpoint();
+				// endpoint matches our active protocol?
+				if (endpoint_info.address().is_v4() == is_v4_) {
+					std::cout << "endpoint matches our active protocol: TRUE" << sock << std::endl;
+					try{
+						// and send the query over it
+						sock->async_send_to(boost::asio::buffer(query_msg_), ep,
+							boost::bind(&resolve_attempt_udp::handle_send_outcome,shared_from_this(),++i,placeholders::error));			
+					} catch(std::exception &e) {
+						std::cerr << "Cannot async_send_to: " << e.what() << std::endl;
+					}
+				}/else{
+					// otherwise just go directly to the next query
+					std::cout << "endpoint matches our active protocol: FALSE" << sock << std::endl;
+					send_next_query(++i);
+				}
+				*/
+				std::cout << "\n"<< std::endl;
+			}
+			
 		} else
 			// otherwise just go directly to the next query
 			send_next_query(++i);
-		*/
 	}
 }
 

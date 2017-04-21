@@ -9,7 +9,6 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/thread.hpp>
 
-
 using boost::asio::ip::udp;
 using boost::asio::ip::tcp;
 using boost::system::error_code;
@@ -66,6 +65,8 @@ namespace lsl {
 		/// As the attempt instance is owned by the handler chains 
 		/// the cancellation eventually leads to the destruction of the object.
 		void cancel();
+		//
+		std::vector<std::string> ip_addresses;
 
 	private:
 		// === send and receive handlers ===
@@ -109,16 +110,12 @@ namespace lsl {
 		// data maintained/modified across handler invocations
 		udp::endpoint remote_endpoint_; // the endpoint from which we received the last result
 		char resultbuf_[65536];			// holds a single result received from the net
-
-		// IO objects		
-		std::vector<udp::socket> broadcast_socket_s;
-		udp::socket misc_socket_0;
-		udp::socket misc_socket_1;
-		udp::socket misc_socket_2;
-		udp::socket misc_socket_3;
-		udp::socket misc_socket_4;
-		udp::socket misc_socket_5;
-
+		
+		
+		// IO objects			
+		std::vector<boost::shared_ptr<udp::socket>> broadcast_sockets;	
+		std::vector<boost::shared_ptr<udp::socket>> unicast_sockets;	
+		std::vector<boost::shared_ptr<udp::socket>> multicast_sockets;
 		udp::socket unicast_socket_;	// socket to send data over (for unicasts)
 		udp::socket broadcast_socket_;	// socket to send data over (for broadcasts)
 		udp::socket multicast_socket_;	// socket to send data over (for multicasts)
