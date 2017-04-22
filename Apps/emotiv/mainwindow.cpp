@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/algorithm/string.hpp>
@@ -90,7 +92,7 @@ void MainWindow::listen(int sps){
 	double dur_emo;
 	double now;
 	double offset;
-	double offset_timestamp;
+//	double offset_timestamp;
 	bool is_first_time = true;
 	try {
 		
