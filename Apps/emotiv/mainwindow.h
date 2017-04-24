@@ -2,27 +2,10 @@
 #define MAINWINDOW_H
 
 // boost
-#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
 // Qt
 #include <QtWidgets/QMainWindow>
-#include <QtWidgets/QMessageBox>
-#include <QtWidgets/QComboBox>
-#include <QtWidgets/QFileDialog>
-#include <QtCore/QFile>
-
-// LSL
-#include "../../LSL/liblsl/include/lsl_cpp.h"
-#include "../../LSL/liblsl/include/lsl_c.h"
-//for writing to file
-#include <stdio.h>
-
-// EDK -- directories are specified in the system environment variables
-#include "Iedk.h"
-#include "IEegData.h"
-#include "IedkErrorCode.h"
-
 
 
 namespace Ui {

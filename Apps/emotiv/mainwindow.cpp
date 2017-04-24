@@ -1,5 +1,18 @@
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+
+#include <stdio.h>  //for writing to file
 #include <iostream>
 
+// Qt
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QFileDialog>
+#include <QtCore/QFile>
+#include <QCloseEvent>
+
+// Boost
+#include <boost/shared_ptr.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/algorithm/string.hpp>
@@ -9,10 +22,13 @@
 #include <boost/asio.hpp>
 #include <boost/chrono.hpp>
 
-#include <QCloseEvent>
+// LSL
+#include "lsl_cpp.h"
 
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+// Emotiv EDK
+#include "Iedk.h"
+#include "IEegData.h"
+#include "IEmoStateDLL.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -22,157 +38,170 @@
 
 void MainWindow::listen(int sps){
 
-    //std::cout<<"Welcome to the listen thread...\n";
-	QString status; 
-	float per = 1.0/(float)sps;
-	per = 1.0;
-	IEE_DataChannel_t epochChannelList[] = {
-
-		IED_COUNTER, IED_INTERPOLATED,
+	// Consts defined by us.
+    IEE_DataChannel_t epochChannelList[] = {
+		IED_COUNTER, IED_INTERPOLATED, IED_RAW_CQ,
 		IED_AF3, IED_F7, IED_F3, IED_FC5, IED_T7,
 		IED_P7, IED_O1, IED_O2, IED_P8, IED_T8,
-		IED_FC6, IED_F4, IED_F8, IED_AF4, IED_RAW_CQ,
-		IED_GYROX, IED_GYROY, IED_MARKER, IED_TIMESTAMP
-	};
-
-
+		IED_FC6, IED_F4, IED_F8, IED_AF4, 
+		IED_GYROX, IED_GYROY,
+		IED_TIMESTAMP, IED_ES_TIMESTAMP,
+		IED_MARKER, IED_SYNC_SIGNAL
+	};  // For Emotiv
 	const char *channels[] = {
-		"COUNTER",
+		"COUNTER", "INTERPOLATED", "RAW_CQ",
 		"AF3", "F7", "F3", "FC5", "T7",
 		"P7", "O1", "O2", "P8", "T8",
 		"FC6", "F4", "F8", "AF4",
-		"GYROX", "GYROY", "TIMESTAMP",
-		"FUNC_ID", "FUNC_VALUE", "MARKER", "SYNC_SIGNAL"
-	};
+		"GYROX", "GYROY",
+		"TIMESTAMP", "ES_TIMESTAMP", "MARKER", "SYNC_SIGNAL"
+	};  // For LSL
+	unsigned int channelCount = sizeof(epochChannelList) /
+		sizeof(IEE_DataChannel_t);
+	float per = 1.0;
 
-    EmoEngineEventHandle eEvent         = IEE_EmoEngineEventCreate();
-    EmoStateHandle eState               = IEE_EmoStateCreate();
+	// Internal variables used by the thread.
+	QString status;
     unsigned int datarate               = 0;
-    unsigned int userId                 = 0;
+    unsigned int userId                 = -1;
     bool readytocollect                 = false;
     int state                           = 0;	
-    unsigned int nSamplesTaken          = 0;
-    unsigned int channelCount           = sizeof(epochChannelList)/
-                                          sizeof(IEE_DataChannel_t);
-	IEE_Event_t eventType;
-	//double lsl_buffer[24];
- 
 	std::vector< std::vector<double> > lsl_buffer;
-
-	// connect to the headset
-
-	//create data streaminfo
-	lsl::stream_info info("Emotiv", "EEG",
-		channelCount, sps, lsl::cf_double64, "fooid");
-	// append some meta-data
-	info.desc().append_child_value("manufacturer", "Emotiv");
-	lsl::xml_element channels_xml = info.desc().append_child("channels");
-    for (int i=0; i<channelCount; i++)
-        {
-            channels_xml.append_child("channel")
-                .append_child_value("label", channels[i])
-                .append_child_value("unit", "uV")
-                .append_child_value("type", "EEG");  // TODO: Check units
-        }
-
-	// create lsl outlet
-	lsl::stream_outlet outlet(info);
-
-	if (IEE_EngineConnect() != EDK_OK)
-        {
-            throw std::runtime_error("Emotiv Engine start up failed.");
-        }
-
-    DataHandle hData = IEE_DataCreate();
-    IEE_DataSetBufferSizeInSec(per);
-
 	double last_time_lsl = lsl::local_clock();
 	double last_time_emo = 0;
-	double dur_lsl;
-	double dur_emo;
-	double now;
-	double offset;
-//	double offset_timestamp;
-	bool is_first_time = true;
+
+	// Connect to the Emotiv engine and create Emotiv-specific data structures.
+	if (IEE_EngineConnect() != EDK_OK)
+	{
+		throw std::runtime_error("Emotiv Engine start up failed.");
+	}
+	EmoEngineEventHandle eEvent = IEE_EmoEngineEventCreate();
+	EmoStateHandle eState = IEE_EmoStateCreate();
+	IEE_Event_t eventType;
+	DataHandle hData = IEE_DataCreate();
+	IEE_DataSetBufferSizeInSec(per);
+
+	// Create lsl outlet with channel labels in meta data.
+	lsl::stream_info info("Emotiv", "EEG",
+		channelCount, sps, lsl::cf_double64, "edk1234");
+	info.desc().append_child_value("manufacturer", "Emotiv");
+	lsl::xml_element channels_xml = info.desc().append_child("channels");
+	for (unsigned int i = 0; i<channelCount; i++)
+	{
+		channels_xml.append_child("channel")
+			.append_child_value("label", channels[i])
+			.append_child_value("unit", "uV")
+			.append_child_value("type", "EEG");  // TODO: Check units
+	}
+	lsl::stream_outlet outlet(info);
+
+	// Start the loop.
 	try {
-		
 		while(!stop_) {
-			state=IEE_EngineGetNextEvent(eEvent);
-			std::cout << "State: " << state << std::endl;
-			if(state == EDK_OK) {
-
-				eventType = IEE_EmoEngineEventGetType(eEvent);
-				if(eventType==IEE_UserAdded) {
-					IEE_EmoEngineEventGetUserId(eEvent, &userId);
-					IEE_EmoEngineEventGetEmoState(eEvent, eState);
-                    IEE_DataAcquisitionEnable(userId, true);
-					readytocollect = true;
-					status = QString("connected to : %1").arg(userId);
-					emit sendMessage(status);
-				}
-				if (readytocollect && (eventType == IEE_EmoStateUpdated)) {
-					status = QString("receiving from : %1").arg(userId);
-					emit sendMessage(status);
-
-					IEE_DataUpdateHandle(0, hData);
-					IEE_DataGetNumberOfSample(hData, &nSamplesTaken);
-					std::cout << "Updated " << nSamplesTaken << std::endl;
-
+			// First: Process raw EEG
+			if (readytocollect)
+			{
+				IEE_DataUpdateHandle(0, hData);
+				unsigned int nSamplesAvailable = 0;
+				IEE_DataGetNumberOfSample(hData, &nSamplesAvailable);
+				if (nSamplesAvailable > 0)
+				{
 					// Create the emotiv data buffer
 					double ** emo_buffer = new double*[channelCount];
-					for (int i=0; i<channelCount; i++)
+					for (unsigned int i = 0; i < channelCount; i++)
 					{
-						emo_buffer[i] = new double[nSamplesTaken];
+						emo_buffer[i] = new double[nSamplesAvailable];
 					}
 
 					// Pull data from Emotiv into emo_buffer
 					IEE_DataGetMultiChannels(hData, epochChannelList,
-						channelCount, emo_buffer, nSamplesTaken);
-					now = lsl::local_clock();
+						channelCount, emo_buffer, nSamplesAvailable);
 
-					// shove it into lsl buff with correct? timestamps
-					if (is_first_time) {// first get the initial record time offset
-						offset = lsl::local_clock();
-						is_first_time = false;
-					}
-
-					lsl_buffer.resize(nSamplesTaken);
-					for (int i=0; i<nSamplesTaken; i++){
+					lsl_buffer.resize(nSamplesAvailable);
+					for (unsigned int i = 0; i<nSamplesAvailable; i++) {
 						// fill the lsl buffer for each sample
-						for (int j=0; j<channelCount; j++) 
-							lsl_buffer[i].push_back(emo_buffer[j][i]);			
-
+						for (unsigned int j = 0; j < channelCount; j++)
+						{
+							lsl_buffer[i].push_back(emo_buffer[j][i]);
+						}
 					}
-				
-					outlet.push_chunk(lsl_buffer, now, true);
-					for (std::vector<std::vector<double>>::iterator it=lsl_buffer.begin(); it!=lsl_buffer.end(); ++it) 
-						it->clear();
-					lsl_buffer.clear();
 
-					dur_lsl       = lsl::local_clock()-last_time_lsl;
-					last_time_lsl = dur_lsl+last_time_lsl;
-					dur_emo       = emo_buffer[20][0]-last_time_emo;
-					last_time_emo = dur_emo+last_time_emo;
+					// Uncomment to print each system's timestamps. But these data are saved in the xdf file so they can be examined offline.
+					/*double now = lsl::local_clock();
+					double dur_lsl = now - last_time_lsl;
+					double dur_emo = emo_buffer[19][0] - last_time_emo;
 					std::cout << "dur_lsl : " << dur_lsl << std::endl;
 					std::cout << "dur_emo : " << dur_emo << std::endl;
+					last_time_lsl = now;
+					last_time_emo = dur_emo + last_time_emo;*/
 
+					outlet.push_chunk(lsl_buffer);
 
-					for (int i=0; i<channelCount; i++)
+					for (std::vector<std::vector<double>>::iterator it = lsl_buffer.begin(); it != lsl_buffer.end(); ++it)
+					{
+						it->clear();
+					}
+					lsl_buffer.clear();
+
+					for (unsigned int i = 0; i < channelCount; i++)
+					{
 						delete emo_buffer[i];
+					}
 					delete emo_buffer;
 				}
 			}
-				
-			else {
-				status = QString("connection to : %1 broken").arg(userId);
-				emit sendMessage(status);
+
+			// See if there are any events.
+			state = IEE_EngineGetNextEvent(eEvent);
+			if (state == EDK_OK) {
+				// new event has been retrieved
+				eventType = IEE_EmoEngineEventGetType(eEvent);
+				if (eventType && IEE_AllEvent)
+				{
+					IEE_EmoEngineEventGetEmoState(eEvent, eState);
+					//std::cout << "eventType: " << eventType << std::endl;
+				}
+				if (eventType && IEE_UserAdded) {
+					IEE_EmoEngineEventGetUserId(eEvent, &userId);
+					IEE_DataAcquisitionEnable(userId, true);
+					readytocollect = true;
+					status = QString("connected to : %1").arg(userId);
+					emit sendMessage(status);
+
+					// Configure sampling rate, etc.
+					unsigned int EPOCmode, eegRate, eegRes, memsRate, memsRes;
+					int result = IEE_GetHeadsetSettings(userId, &EPOCmode, &eegRate, &eegRes, &memsRate, &memsRes);
+					eegRate = (sps == 128) ? 0 : 1;
+					eegRes = 1;  // 16-bit
+					memsRate = 3;  // 128 Hz
+					memsRes = 2;  // 16-bit
+					result = IEE_SetHeadsetSettings(userId, EPOCmode, eegRate, eegRes, memsRate, memsRes);
+
+					unsigned long activeActions = MC_NEUTRAL && MC_RIGHT;
+					int setactiveresult = IEE_MentalCommandSetActiveActions(userId, activeActions);
+				}
+				else if (eventType && IEE_UserRemoved)
+				{
+					IEE_EmoEngineEventGetUserId(eEvent, &userId);
+					IEE_DataAcquisitionEnable(userId, false);
+					readytocollect = false;
+					//status = QString("connection to : %1 broken").arg(userId);
+					status = QString("disconnected to : %1").arg(userId);
+					emit sendMessage(status);
+				}
+				if (eventType && IEE_EmoStateUpdated)
+				{
+					//TODO
+				}
+				if (eventType && IEE_MentalCommandEvent)
+				{
+					// This always returns MC_NEUTRAL at power 0.
+					//IEE_MentalCommandAction_t command_action_type = IS_MentalCommandGetCurrentAction(eState);
+					//float action_power = IS_MentalCommandGetCurrentActionPower(eState);
+				}
 			}
-			Sleep(1000);
-				
-			
+			Sleep(25);
 		}
-			
-		
 		
     }
 	catch(boost::thread_interrupted &) {
@@ -185,7 +214,8 @@ void MainWindow::listen(int sps){
 		emit sendMessage(status);
 	}
 
-end:
+	IEE_EngineDisconnect();
+	IEE_EmoEngineEventFree(eEvent);
 	ui->linkButton->setText("Link");
 	return;
 }

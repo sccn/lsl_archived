@@ -45,11 +45,11 @@ IF (NOT BOOST_ROOT)
         SET(BOOST_LIBRARYDIR "${BOOST_ROOT}lib32-msvc-14.0/")
     endif()
 ENDIF()
-SET(Boost_DEBUG                OFF) #Switch this and next to ON for help debugging Boost problems.
-SET(Boost_DETAILED_FAILURE_MSG OFF)
+#set(Boost_DEBUG                OFF) #Switch this and next to ON for help debugging Boost problems.
+#set(Boost_DETAILED_FAILURE_MSG OFF)
 set(Boost_USE_STATIC_LIBS      ON) # only find static libs
 #set(Boost_USE_MULTITHREADED    ON)
-#set(Boost_USE_STATIC_RUNTIME   ON) #Not default. Because our app is linking against static runtime (see above).
+#set(Boost_USE_STATIC_RUNTIME   ON) #Not default. Use if app is linking against static runtime.
 # Disable asio auto linking in date-time and regex
 #add_definitions(-DBOOST_DATE_TIME_NO_LIB)
 add_definitions(-DBOOST_REGEX_NO_LIB)
