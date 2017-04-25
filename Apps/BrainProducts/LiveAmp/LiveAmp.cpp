@@ -24,7 +24,7 @@ LiveAmp::LiveAmp(std::string serialNumberIn, float samplingRateIn, bool useSim, 
 		for(int i=0;i<res;i++){	
 			int result;
 			HANDLE hndl = NULL;
-
+			
 			result = ampOpenDevice(i, &hndl);
 			if(result != AMP_OK) {
 				std::string msg = "Cannot open device: ";
@@ -66,9 +66,6 @@ LiveAmp::LiveAmp(std::string serialNumberIn, float samplingRateIn, bool useSim, 
 				if(result != AMP_OK)					
 					throw std::runtime_error(("Error getting available channel count, error code:  " + boost::lexical_cast<std::string>(result)).c_str());	
 
-
-
-				
 				break;
 			}
 
@@ -116,7 +113,7 @@ void LiveAmp::enumerate(std::vector<std::pair<std::string, int>> &ampData, bool 
 				msg.append(boost::lexical_cast<std::string>(res).c_str()); // TODO: error enumeration from liveamp driver
 				throw std::runtime_error(msg);
 			}		
-
+			
 			char sVar[20];
 			result = ampGetProperty(hndl, PG_DEVICE, i, DPROP_CHR_SerialNumber, sVar, sizeof(sVar)); 
 			if(result != AMP_OK) {
@@ -143,13 +140,13 @@ void LiveAmp::enumerate(std::vector<std::pair<std::string, int>> &ampData, bool 
 			}
 
 			// immediately close the device???
-			//result = ampCloseDevice(&hndl);
-			//if(result != AMP_OK) {
-			//	std::string msg = "Cannot close device: ";
-			//	msg.append("  error= " );
-			//	msg.append(boost::lexical_cast<std::string>(result).c_str()); // TODO: error enumeration from liveamp driver
-			//	throw std::runtime_error(msg);
-			//}
+			result = ampCloseDevice(hndl);
+			if(result != AMP_OK) {
+				std::string msg = "Cannot close device: ";
+				msg.append("  error= " );
+				msg.append(boost::lexical_cast<std::string>(result).c_str()); 
+				throw std::runtime_error(msg);
+			}
 		}
 	}
 }

@@ -5,6 +5,7 @@
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QThread>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include <string>
@@ -26,6 +27,16 @@ namespace Ui {
 class MainWindow;
 }
 
+class WaitThread : public QThread
+{
+	Q_OBJECT
+
+protected:
+	void run();
+};
+
+
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -34,8 +45,6 @@ public:
     explicit MainWindow(QWidget *parent, const std::string &config_file);
     ~MainWindow();
     
-signals:
-	void show_search_message();
 
 private slots:
     // config file dialog ops (from main menu)
@@ -51,21 +60,22 @@ private slots:
     // close event (potentially disabled)
     void closeEvent(QCloseEvent *ev);
 
+	
 	// if the device combo box item changes
 	void choose_device(int which);
-
-	void search_message();
 
 
 private:
 
+	void wait_message();
 
-    // background data reader thread
+
+	// background data reader thread
 	void read_thread(int chunkSize, int samplingRate, bool useAUX, bool useACC, bool useBipolar, std::vector<std::string> eegChannelLabels);
 	
 	
 	// container for amplifier enumeration
-	std::vector<std::pair<std::string, int>> ampData;
+	//std::vector<std::pair<std::string, int>> ampData;
 
     // raw config file IO
     void load_config(const std::string &filename);
@@ -86,7 +96,6 @@ private:
 	bool useSim;
 
 	LiveAmp *liveAmp;
-	std::vector<int> trigger_indeces;					// this is just on the LSL side, the liveamp has all 3 trigger channels enabled
 	std::vector<std::string> live_amp_sns;				// live amp serial number container
 
 	boost::shared_ptr<boost::thread> reader_thread_;	// our reader thread

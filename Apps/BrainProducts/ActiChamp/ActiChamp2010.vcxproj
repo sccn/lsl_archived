@@ -19,12 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LiveAmp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
     <ClCompile Include="moc_mainwindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ActiChamp.h" />
     <CustomBuild Include="mainwindow.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTSDK)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -I"(QTSDK)\include\QtCore" -I"(QTSDK)\include\QtGui" -I"(QTSDK)\include" -I"(BOOST_ROOT)" -I"(LSL_LIB)\include" -I"(QTSDK)\include\ActiveQt" -I"debug" -I"." -I(QTSDK)\mkspecs\default -D_MSC_VER=1500 -DWIN32 mainwindow.h -o moc_mainwindow.cpp</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MOC mainwindow.h</Message>
@@ -32,7 +32,7 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTSDK)\bin\moc.exe;mainwindow.h</AdditionalInputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTSDK)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -I"(QTSDK)\include\QtCore" -I"(QTSDK)\include\QtGui" -I"(QTSDK)\include" -I"(BOOST_ROOT)" -I"c:\DEVEL\LSL\repo\Apps\PhaseSpace\..\..\LSL\include" -I"(QTSDK)\include\ActiveQt" -I"release" -I"." -I(QTSDK)\mkspecs\default -D_MSC_VER=1500 -DWIN32 mainwindow.h -o moc_mainwindow.cpp</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MOC mainwindow.h</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">moc_mainwindow.cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\moc_mainwindow.h</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTSDK)\bin\moc.exe;mainwindow.h</AdditionalInputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QT5SDK)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -I"$(QT5SDK)\include\QtCore" -I"$(QT5SDK)\include\QtGui" -I"$(QT5SDK)\include\QyWidgets" -I"$(QT5SDK)\include\QtMultimedia" -I"$(QT5SDK)\include" -I"..\..\LSL\liblsl\include" -I"..\..\LSL\liblsl\external" -I"$(BOOST_ROOT)" -I"$(QT5SDK)\include\ActiveQt" -I"release" -I"." -I$(QT5SDK)\mkspecs\default -D_MSC_VER=1500 -DWIN32 mainwindow.h -o moc_mainwindow.cpp</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MOC mainwindow.h</Message>
@@ -43,8 +43,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\moc_mainwindow.h</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QT5SDK)\bin\moc.exe;mainwindow.h</AdditionalInputs>
     </CustomBuild>
-    <ClInclude Include="Amplifier_LIB.h" />
-    <ClInclude Include="LiveAmp.h" />
+    <ClInclude Include="Resampler.h" />
     <ClInclude Include="ui_mainwindow.h" />
   </ItemGroup>
   <ItemGroup>
@@ -72,8 +71,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{519985BC-76B9-4A27-A175-F16F22D7394D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>LiveAmp</RootNamespace>
-    <ProjectName>LiveAmp</ProjectName>
+    <RootNamespace>ActiChamp2010</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -111,21 +109,21 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>.\</OutDir>
     <IntDir>debug\</IntDir>
-    <TargetName>LiveAmpD</TargetName>
+    <TargetName>ActiChamp</TargetName>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)</OutDir>
     <IntDir>release\</IntDir>
-    <TargetName>LiveAmp</TargetName>
+    <TargetName>ActiChamp</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IntDir>debug\</IntDir>
-    <TargetName>LiveAmp.exe</TargetName>
+    <TargetName>ActiChamp.exe</TargetName>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -133,7 +131,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>release\</IntDir>
-    <TargetName>LiveAmp.exe</TargetName>
+    <TargetName>ActiChamp.exe</TargetName>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -165,9 +163,9 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OutputFile>$(OutDir)\LiveAmpD.exe</OutputFile>
-      <AdditionalLibraryDirectories>$(QTSDK)\lib;$(LSL_LIB)\bin;$(BOOST_ROOT)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(QTSDK)\lib\qtmaind.lib;$(QTSDK)\lib\QtGuid4.lib;$(QTSDK)\lib\QtCored4.lib;LiveAmpLib2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)\ActiChamp.exe</OutputFile>
+      <AdditionalLibraryDirectories>$(QTSDK)\lib;..\..\..\LSL\liblsl\bin;$(BOOST_ROOT)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(QTSDK)\lib\qtmaind.lib;$(QTSDK)\lib\QtGuid4.lib;$(QTSDK)\lib\QtCored4.lib;ActiChamp_x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <MinimumRequiredVersion>0</MinimumRequiredVersion>
       <HeapReserveSize>0</HeapReserveSize>
@@ -182,7 +180,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_QT_LARGEFILE_SUPPORT;QT_DLL;QT_NO_DEBUG;QT_GUI_LIB;QT_CORE_LIB;QT_HAVE_MMX;QT_HAVE_3DNOW;QT_HAVE_SSE;QT_HAVE_MMXEXT;QT_HAVE_SSE2;QT_THREAD_SUPPORT;_WINDOWS;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -205,12 +203,12 @@
       <ErrorReporting>Prompt</ErrorReporting>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(LSL_LIB)\bin;$(QTSDK)\lib;$(BOOST_ROOT)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(QTSDK)\lib\qtmain.lib;$(QTSDK)\lib\QtGui4.lib;$(QTSDK)\lib\QtCore4.lib;LiveAmpLib2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\LSL\liblsl\bin;$(QTSDK)\lib;$(BOOST_ROOT)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(QTSDK)\lib\qtmain.lib;$(QTSDK)\lib\QtGui4.lib;$(QTSDK)\lib\QtCore4.lib;ActiChamp_x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <MinimumRequiredVersion>0</MinimumRequiredVersion>
       <HeapReserveSize>0</HeapReserveSize>
@@ -237,7 +235,7 @@
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)\LiveAmp64.exe</OutputFile>
+      <OutputFile>$(OutDir)\debug\ActiChamp64.exe</OutputFile>
       <AdditionalLibraryDirectories>$(BOOST_ROOT)\lib64;$(QT5SDK)\lib;..\..\..\..\LSL\liblsl\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>$(QT5SDK)\lib\qtmain.lib;$(QT5SDK)\lib\Qt5Gui.lib;$(QT5SDK)\lib\Qt5Core.lib;$(QT5SDK)\lib\Qt5Widgets.lib;$(QT5SDK)\lib\Qt5Network.lib;ActiChamp_x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
