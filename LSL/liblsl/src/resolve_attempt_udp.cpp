@@ -62,9 +62,7 @@ resolve_attempt_udp::resolve_attempt_udp(io_service &io, const udp &protocol, co
 	udp::endpoint multicast_endpoint;
 	
 	int i = 0;
-	ip_address = ip_addresses.at(i);
-	listen_addr = ip::address::from_string(ip_address);
-	
+	listen_addr = ip::address::from_string("192.168.1.108");	
 	broadcast_endpoint = udp::endpoint(listen_addr, 0);
 	unicast_endpoint = udp::endpoint(listen_addr, 0);
 	multicast_endpoint = udp::endpoint(listen_addr, 0);
@@ -218,8 +216,9 @@ void resolve_attempt_udp::send_next_query(endpoint_list::const_iterator i) {
 		// endpoint matches our active protocol?
 		if (ep.address().is_v4() == is_v4_) {			
 			boost::shared_ptr<udp::socket> sock;
-			int n = 0;			
-			std::cout << "ip: " << ip_addresses.at(n) << std::endl;
+			int n = 0;
+			ip::address listen_addr = ip::address::from_string("192.168.1.108");			
+			std::cout << "ip: " << listen_addr << std::endl;
 			std::cout << "ep address: " << ep.address().to_string()  << std::endl;
 			// select socket to use
 			//sock = (ep.address().to_string() == "255.255.255.255") ? broadcast_sockets.at(n) : (ep.address().is_multicast() ? multicast_sockets.at(n) : unicast_sockets.at(n));								
@@ -235,7 +234,7 @@ void resolve_attempt_udp::send_next_query(endpoint_list::const_iterator i) {
 			}
 			try{
 				// and send the query over it
-				if (!(ip_addresses.at(n) == "2606:6000:cc14:6900::1")){
+				if (listen_addr.to_string() == "192.168.1.108"){
 					sock->async_send_to(boost::asio::buffer(query_msg_), ep,
 						boost::bind(&resolve_attempt_udp::handle_send_outcome,shared_from_this(),++i,placeholders::error));			
 				}
