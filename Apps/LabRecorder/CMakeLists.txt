@@ -37,18 +37,18 @@ project(${META_PROJECT_NAME} C CXX)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 # Set runtime path
-set(CMAKE_SKIP_BUILD_RPATH            FALSE) # Add absolute path to all dependencies for BUILD
+set(CMAKE_SKIP_BUILD_RPATH            TRUE) # Add absolute path to all dependencies for BUILD
 set(CMAKE_BUILD_WITH_INSTALL_RPATH    FALSE) # Use CMAKE_INSTALL_RPATH for INSTALL
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE) # Do NOT add path to dependencies for INSTALL
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE) # Do NOT add path to dependencies for INSTALL
 
-if(NOT SYSTEM_DIR_INSTALL)
-    # Find libraries relative to binary
-    if(APPLE)
-        set(CMAKE_INSTALL_RPATH "@loader_path/../../../${INSTALL_LIB}")
-    else()
-        set(CMAKE_INSTALL_RPATH "$ORIGIN/${INSTALL_LIB}")       
-    endif()
-endif()
+#if(NOT SYSTEM_DIR_INSTALL)
+#    # Find libraries relative to binary
+#    if(APPLE)
+#        set(CMAKE_INSTALL_RPATH "@loader_path/../../../${INSTALL_LIB}")
+#    else()
+#        set(CMAKE_INSTALL_RPATH "$ORIGIN/${INSTALL_LIB}")       
+#    endif()
+#endif()
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "limited configs" FORCE)
 
@@ -184,6 +184,19 @@ if(WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${LSL_BINARY_DEBUG}
             $<TARGET_FILE_DIR:${target}>)
+elseif(APPLE)
+    add_custom_command(TARGET ${target} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${LSL_BINARY_RELEASE}
+            $<TARGET_FILE_DIR:${target}>)
+    add_custom_command(TARGET ${target} POST_BUILD
+        COMMAND ${CMAKE_INSTALL_NAME_TOOL} -add_rpath "@executable_path/../MacOS/"
+        $<TARGET_FILE:${target}>)
+    # TODO: Figure out how to get cmake to not use the full name of the lib when linking.
+    add_custom_command(TARGET ${target} POST_BUILD
+        COMMAND ${CMAKE_INSTALL_NAME_TOOL} -change
+        "@rpath/liblsl64.1.0.0.dylib" "@rpath/liblsl64.dylib"
+        $<TARGET_FILE:${target}>)
 endif(WIN32)
 if(APPLE)
     add_custom_command(TARGET ${target} POST_BUILD
