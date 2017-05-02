@@ -37,18 +37,9 @@ project(${META_PROJECT_NAME} C CXX)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 # Set runtime path
-set(CMAKE_SKIP_BUILD_RPATH            TRUE) # Add absolute path to all dependencies for BUILD
-set(CMAKE_BUILD_WITH_INSTALL_RPATH    FALSE) # Use CMAKE_INSTALL_RPATH for INSTALL
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE) # Do NOT add path to dependencies for INSTALL
-
-#if(NOT SYSTEM_DIR_INSTALL)
-#    # Find libraries relative to binary
-#    if(APPLE)
-#        set(CMAKE_INSTALL_RPATH "@loader_path/../../../${INSTALL_LIB}")
-#    else()
-#        set(CMAKE_INSTALL_RPATH "$ORIGIN/${INSTALL_LIB}")       
-#    endif()
-#endif()
+set(CMAKE_SKIP_BUILD_RPATH            FALSE)  # If TRUE, build does not add rpath for local libs (simulates removing during INSTALL)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH    FALSE)  # If TRUE, always remove build rpath and add INSTALL rpath
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)  # If TRUE, add linker search path to target rpath on install
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "limited configs" FORCE)
 
@@ -157,6 +148,7 @@ target_link_libraries(${target}
     ${LSL_LIBRARIES}
 )
 
+# Fix a bug where building debug tries to link with non-debug lib.
 if(MSVC)
     SET_TARGET_PROPERTIES(${target}
         PROPERTIES
@@ -167,7 +159,12 @@ endif(MSVC)
 # 
 # Deployment
 # 
+set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_LIST_DIR}/dist)
+install(TARGETS ${target}
+    BUNDLE DESTINATION .
+    RUNTIME DESTINATION .)
 
+# libraries
 if(WIN32)
     get_target_property(QT5_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
     get_filename_component(QT5_WINDEPLOYQT_EXECUTABLE ${QT5_QMAKE_EXECUTABLE} PATH)
@@ -185,6 +182,19 @@ if(WIN32)
             ${LSL_BINARY_DEBUG}
             $<TARGET_FILE_DIR:${target}>)
 elseif(APPLE)
+    # #It should be enough to call fixup_bundle, but this mangles Qt somehow causing crashes on startup.
+    # #TODO: Either don't fixup Qt and rely on system Qt, or fix crash.
+    #install(CODE "
+    #    include(BundleUtilities)
+    #    set(BU_CHMOD_BUNDLE_ITEMS ON)
+    #    fixup_bundle(${CMAKE_INSTALL_PREFIX}/${target}.app \"\" \"${LSL_ROOT_DIR}/bin\")
+    #" COMPONENT Runtime)
+    # # macdeployqt somehow also mangles Qt.
+    #add_custom_command(TARGET ${target} POST_BUILD
+    #    COMMAND macdeployqt
+    #    ARGS ${CMAKE_CURRENT_BINARY_DIR}/\${CONFIGURATION}/${target}.app
+    #) # add -dmg for an image
+    # #Instead we manually copy what we need.
     add_custom_command(TARGET ${target} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${LSL_BINARY_RELEASE}
@@ -198,6 +208,8 @@ elseif(APPLE)
         "@rpath/liblsl64.1.0.0.dylib" "@rpath/liblsl64.dylib"
         $<TARGET_FILE:${target}>)
 endif(WIN32)
+
+# default config
 if(APPLE)
     add_custom_command(TARGET ${target} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
