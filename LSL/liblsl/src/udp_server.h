@@ -33,7 +33,7 @@ namespace lsl {
 		* @param info The stream_info of the stream to serve (shared). After success, the appropriate service port will be assigned.
 		* @param protocol The protocol stack to use (tcp::v4() or tcp::v6()).
 		*/
-		udp_server(const stream_info_impl_p &info, boost::asio::io_service &io, udp protocol);
+		udp_server(const stream_info_impl_p &info, boost::asio::io_service &io, udp protocol, const std::string &listen_address);
 
 		/**
 		* Create a new UDP server in multicast mode.

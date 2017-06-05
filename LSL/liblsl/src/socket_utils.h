@@ -7,6 +7,13 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
+#include <stdio.h>
+#include <winsock2.h>
+#include <iphlpapi.h>
+#include <ws2tcpip.h>
+#pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "iphlpapi.lib")
+
 namespace lsl {
     
     /// Bind a socket (or acceptor) to a free port in the configured port range or throw an error otherwise.
@@ -78,7 +85,13 @@ namespace lsl {
 
 	/// Measure the endian conversion performance of this machine.
 	double measure_endian_performance();
+	
+
 }
 
 #endif
 
+/**
+/ Enumerate network adapters 
+*/
+std::vector<std::string> enum_adapters();

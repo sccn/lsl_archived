@@ -9,7 +9,6 @@
 #include "sample.h"
 
 
-
 namespace lsl { 
 
 	/// pointer to a thread
@@ -166,7 +165,7 @@ namespace lsl {
 		* Instantiate a new server stack.
 		*/
 		void instantiate_stack(tcp tcp_protocol, udp udp_protocol);
-
+		
 		/// Run the given io_service
 		void run_io(io_service_p &ios);
 

@@ -6,6 +6,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/functional/hash.hpp>
 #include "resolver_impl.h"
+#include "socket_utils.h"
 
 
 // === implementation of the resolver_impl class ===
@@ -23,6 +24,8 @@ using boost::posix_time::millisec;
 resolver_impl::resolver_impl(): cfg_(api_config::get_instance()), cancelled_(false), expired_(false), forget_after_(FOREVER), fast_mode_(true),  
 	io_(io_service_p(new io_service())), resolve_timeout_expired_(*io_), wave_timer_(*io_), unicast_timer_(*io_) 
 {
+	// --TODO--: add IP addresses to end point lists
+	std::vector<std::string> ip_addresses = enum_adapters();	
 	// parse the multicast addresses into endpoints and store them
 	std::vector<std::string> mcast_addrs = cfg_->multicast_addresses();
 	int mcast_port = cfg_->multicast_port();

@@ -27,23 +27,48 @@ using namespace boost::asio;
 * @param protocol The protocol (IPv4 or IPv6) that shall be serviced by this server.
 * @param chunk_size The preferred chunk size, in samples. If 0, the pushthrough flag determines the effective chunking.
 */
-tcp_server::tcp_server(const stream_info_impl_p &info, const io_service_p &io, const send_buffer_p &sendbuf, const sample::factory_p &factory, tcp protocol, int chunk_size): chunk_size_(chunk_size), shutdown_(false), info_(info), io_(io), factory_(factory), send_buffer_(sendbuf), acceptor_(new tcp::acceptor(*io)) {
-	// open the server connection
-	acceptor_->open(protocol);
+tcp_server::tcp_server(const stream_info_impl_p &info, const io_service_p &io, const send_buffer_p &sendbuf, const sample::factory_p &factory, tcp protocol, int chunk_size, std::string listen_address): chunk_size_(chunk_size), shutdown_(false), info_(info), io_(io), factory_(factory), send_buffer_(sendbuf), acceptor_(new tcp::acceptor(*io)) {
+	if (listen_address.empty()) {
+		// open the server connection
+		acceptor_->open(protocol);
+		// bind to and listen on a free port
+		int port = bind_and_listen_to_port_in_range(*acceptor_,protocol,10);
+		// and assign connection-dependent fields
+		// (note: this may be assigned multiple times by multiple TCPs during setup but does not matter)
+		info_->session_id(api_config::get_instance()->session_id());
+		info_->uid(boost::uuids::to_string(boost::uuids::random_generator()()));
+		info_->created_at(lsl_clock());
+		info_->hostname(ip::host_name());
+		if (protocol == tcp::v4())
+			info_->v4data_port(port);
+		else
+			info_->v6data_port(port);
+	}else{
+		tcp::endpoint listen_endpoint;
+		// choose an endpoint explicitly
+		ip::address listen_addr = ip::address::from_string(listen_address);
+		// bind to a free port
+		listen_endpoint = tcp::endpoint(listen_addr, 0);
+		// open the socket and make sure that we can reuse the address, and bind it
+		acceptor_->open(listen_endpoint.protocol());
+		acceptor_->set_option(tcp::socket::reuse_address(true));
+		// bind to the listen endpoint
+		acceptor_->bind(listen_endpoint);	
+		boost::asio::ip::tcp::endpoint endpoint_info = acceptor_->local_endpoint();
+		// determine port used
+		unsigned short port = endpoint_info.port();	
+		// and assign connection-dependent fields
+		// (note: this may be assigned multiple times by multiple TCPs during setup but does not matter)
+		info_->session_id(api_config::get_instance()->session_id());
+		info_->uid(boost::uuids::to_string(boost::uuids::random_generator()()));
+		info_->created_at(lsl_clock());
+		info_->hostname(ip::host_name());
+		if (listen_endpoint.protocol() == tcp::v4())
+			info_->v4data_port(port);
+		else
+			info_->v6data_port(port);
+	}
 
-	// bind to and listen on a free port
-	int port = bind_and_listen_to_port_in_range(*acceptor_,protocol,10);
-
-	// and assign connection-dependent fields
-	// (note: this may be assigned multiple times by multiple TCPs during setup but does not matter)
-	info_->session_id(api_config::get_instance()->session_id());
-	info_->uid(boost::uuids::to_string(boost::uuids::random_generator()()));
-	info_->created_at(lsl_clock());
-	info_->hostname(ip::host_name());
-    if (protocol == tcp::v4())
-		info_->v4data_port(port);
-	else
-		info_->v6data_port(port);
 }
 
 

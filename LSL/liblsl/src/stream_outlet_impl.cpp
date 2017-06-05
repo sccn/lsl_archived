@@ -1,5 +1,6 @@
 #define NO_EXPLICIT_TEMPLATE_INSTANTIATION // a convention that applies when including portable_oarchive.h in multiple .cpp files.
 #include "stream_outlet_impl.h"
+#include "socket_utils.h"
 #include <boost/bind.hpp>
 
 
@@ -56,31 +57,46 @@ stream_outlet_impl::stream_outlet_impl(const stream_info_impl &info, int chunk_s
 		io_threads_.push_back(thread_p(new boost::thread(boost::bind(&stream_outlet_impl::run_io,this,ios_[k]))));
 }
 
+
 /**
 * Instantiate a new server stack.
 */
 void stream_outlet_impl::instantiate_stack(tcp tcp_protocol, udp udp_protocol) {
 	// get api_config
 	const api_config *cfg = api_config::get_instance();
-	std::string listen_address = cfg->listen_address();
-	std::vector<std::string> multicast_addrs = cfg->multicast_addresses();
-	int multicast_ttl = cfg->multicast_ttl();
-	int multicast_port = cfg->multicast_port();
-	// create TCP data server
-	ios_.push_back(io_service_p(new io_service()));
-	tcp_servers_.push_back(tcp_server_p(new tcp_server(info_, ios_.back(), send_buffer_, sample_factory_, tcp_protocol, chunk_size_)));
-	// create UDP time server
-	ios_.push_back(io_service_p(new io_service()));
-	udp_servers_.push_back(udp_server_p(new udp_server(info_, *ios_.back(), udp_protocol)));
-	// create UDP multicast responders
-	for (std::vector<std::string>::iterator i=multicast_addrs.begin(); i != multicast_addrs.end(); i++) {
-		try {
-			// use only addresses for the protocol that we're supposed to use here
-			ip::address address(ip::address::from_string(*i));
-			if (udp_protocol == udp::v4() ? address.is_v4() : address.is_v6())
-				responders_.push_back(udp_server_p(new udp_server(info_, *ios_.back(), *i, multicast_port, multicast_ttl, listen_address)));
-		} catch(std::exception &e) {
-			std::clog << "Note (minor): could not create multicast responder for address " << *i << " (failed with: " << e.what() << ")" << std::endl;
+	// enumerate over network adapters
+	// --TODO--: enumerate over all network adapters
+	// --TODO--: filter networks by some critera 
+	std::vector<std::string> ip_addresses = enum_adapters();
+	for (std::vector<std::string>::iterator i=ip_addresses.begin(); i != ip_addresses.end(); i++) {		
+		// --TODO--: determine if cfg file's listening address should be kept
+		std::string listen_address = cfg->listen_address();
+		std::vector<std::string> multicast_addrs = cfg->multicast_addresses();
+		int multicast_ttl = cfg->multicast_ttl();
+		int multicast_port = cfg->multicast_port();
+		// create TCP data server
+		ios_.push_back(io_service_p(new io_service()));
+		// --TODO--: pass IP address to TCP server
+		// --TODO--: setup listening address on TCP server
+		// --TODO--: determine if opening port with 0 is more appropiate than itering through range
+		tcp_servers_.push_back(tcp_server_p(new tcp_server(info_, ios_.back(), send_buffer_, sample_factory_, tcp_protocol, chunk_size_, *i)));
+		// create UDP time server
+		ios_.push_back(io_service_p(new io_service()));
+		// --TODO--: pass IP address to UDP server
+		// --TODO--: setup listening socket on UDP server
+		// --TODO--: determine if opening port with 0 is more appropiate than itering through range
+		udp_servers_.push_back(udp_server_p(new udp_server(info_, *ios_.back(), udp_protocol, *i)));
+		// create UDP multicast responders
+		for (std::vector<std::string>::iterator ii=multicast_addrs.begin(); ii != multicast_addrs.end(); ii++) {
+			try {
+				// use only addresses for the protocol that we're supposed to use here
+				ip::address address(ip::address::from_string(*ii));
+				if (udp_protocol == udp::v4() ? address.is_v4() : address.is_v6())
+					// --TODO--: pass IP address to UDP responder instead of cfg file's listening address
+					responders_.push_back(udp_server_p(new udp_server(info_, *ios_.back(), *ii, multicast_port, multicast_ttl, *i)));
+			} catch(std::exception &e) {
+				std::clog << "Note (minor): could not create multicast responder for address " << *ii << " (failed with: " << e.what() << ")" << std::endl;
+			}
 		}
 	}
 }
