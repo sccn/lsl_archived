@@ -1,0 +1,56 @@
+#N canvas 2121 141 1142 801 10;
+#X declare -path C:/Users/David.Medine/Devel/PdLSL/lsl_outlet;
+#X text 134 135 https://github.com/sccn/labstreaminglayer;
+#X text 499 14 change this to your own path->;
+#X text 26 158 Only string and float formats are supported since these
+are the only LSL data types that exist in Pd. Only sampling rates of
+0 are supported since this is a non-realtime extern.;
+#X text 45 5 ------------------------Notes------------------------
+;
+#X text 146 244 https://github.com/dmedine/PdLSL/issues;
+#X text 32 39 Pure Data wrapper for an LSL inlet that can connect to
+an active marker stream. Once connected \, [lsl_inlet] will continuosuly
+list for LSL markers and automatically output them. It just forwards
+the messages in Pd-ese.;
+#X text 32 100 Please see the documentation for the labstreaminglayer
+for more details about LSL:;
+#X text 21 382 Finally \, thanks to Christian Kothe for writing LSL
+and thanks to Miller Puckette for writing Pd!!!!;
+#X obj 693 16 declare -path C:/Users/David.Medine/Devel/PdLSL/lsl_outlet
+;
+#X obj 492 402 lsl_outlet;
+#X text 68 222 Please report any bugs to the issues page on github:
+;
+#X text 20 270 As is the case with the sister extern [lsl_inlet] \,
+there are a couple of python scripts that ship along with the source
+code in order to test the LSL functionality. In order for these to
+run \, your system will have to be correctly setup for python's LSL
+wrapper. I.e. you need Python2.7 installed and your PYTHONPATH environment
+variable will have to point to your copy of liblsl-Python. See LSL
+documentation for more information on this.;
+#X msg 492 108 create_outlet -name PdMarkers -type Markers -format
+cft_float32 -id 23skidoo1234;
+#X floatatom 492 438 5 0 0 0 - - -, f 5;
+#X floatatom 503 150 5 0 0 0 - - -, f 5;
+#X msg 503 173 push_f \$1;
+#X msg 524 195 foo;
+#X msg 562 195 bar;
+#X msg 507 256 push_str;
+#X obj 543 223 t b a;
+#X obj 507 289 list append;
+#X obj 507 311 list trim;
+#X msg 529 362 is_outlet_established;
+#X msg 515 335 destroy_outlet;
+#X connect 9 0 13 0;
+#X connect 12 0 9 0;
+#X connect 14 0 15 0;
+#X connect 15 0 9 0;
+#X connect 16 0 19 0;
+#X connect 17 0 19 0;
+#X connect 18 0 20 0;
+#X connect 19 0 18 0;
+#X connect 19 1 20 1;
+#X connect 20 0 21 0;
+#X connect 21 0 9 0;
+#X connect 22 0 9 0;
+#X connect 23 0 9 0;
