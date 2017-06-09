@@ -1,0 +1,108 @@
+#N canvas 535 132 1142 801 10;
+#X declare -path C:/Users/David.Medine/Devel/PdLSL/lsl_inlet~;
+#X msg 564 287 disconnect;
+#X msg 411 75 list_all;
+#X text 134 224 https://github.com/sccn/labstreaminglayer;
+#X text 499 14 change this to your own path->;
+#X text 536 99 <-connect to a prescribed item in that list;
+#X msg 460 198 list_by_property -source_id myuidw43536;
+#X text 731 230 <-calling resolve_by_property will automatically connect
+to the first outlet matching the prescribed outlet property and value
+, f 59;
+#X text 638 284 <-disconnect;
+#X text 26 247 Only string and float formats are supported since these
+are the only LSL data types that exist in Pd. Only sampling rates of
+0 are supported since this is a non-realtime extern.;
+#X text 45 5 ------------------------Notes------------------------
+;
+#X text 20 311 This extern runs a continuous background thread. Its
+structure is pretty simple \, but it is conceivable that there are
+situations in which this thread can get left dangling and either leak
+memory or hang Pd. Please report any bugs to the issues page on github:
+;
+#X text 146 387 https://github.com/dmedine/PdLSL/issues;
+#X text 32 189 Please see the documentation for the labstreaminglayer
+for more details about LSL:;
+#X text 20 413 Shipping with the source are a few extra doo-dads.;
+#X text 20 537 For Windows \, pthreadVC2.dll is needed in order for
+this code to run. I include it with the source. I compiled this as
+a 32-bit binary in Windows \, so this is the 32-bit version of the
+dll. If you want to compile and link a 64-bit version:;
+#X text 128 602 https://www.sourceware.org/pthreads-win32/;
+#X text 21 629 Finally \, thanks to Christian Kothe for writing LSL
+and thanks to Miller Puckette for writing Pd!!!!;
+#X text 495 74 <-list all available lsl outlets (doesn't hang Pd);
+#X text 682 129 <-list only the outlets of interest (this will change
+the list and hence the meaning of the indices as well---also \, this
+method hangs Pd);
+#X obj 693 16 declare -path C:/Users/David.Medine/Devel/PdLSL/lsl_inlet~
+;
+#X msg 423 100 connect_by_idx 0;
+#X obj 412 562 snapshot~;
+#X floatatom 412 584 5 0 0 0 - - -, f 5;
+#X obj 436 540 bang~;
+#X obj 503 510 butterworth~;
+#X floatatom 572 473 5 0 0 0 - - -, f 5;
+#X obj 503 708 dac~;
+#X floatatom 555 552 5 0 0 0 - - -, f 5;
+#X obj 555 571 dbtorms;
+#X msg 555 593 \$1 40;
+#X obj 555 615 line~;
+#X obj 503 631 *~;
+#X msg 438 132 list_by_property -name Biosemi;
+#X msg 459 164 list_by_property -type EEG;
+#X msg 475 233 resolve_by_property -name BioSemi;
+#X text 20 76 Pure Data wrapper for an LSL inlet that can connect to
+an active signal stream. Once connected \, [lsl_inlet~] will continuosuly
+listen to the LSL stream. This gets packed into a Pd outlet \, but
+the sampling period is left unchanged. That is to say \, if the lsl
+inlet's rate is 1/10 of the SR in Pd \, every 10 samples will be identical.
+If the sampling rate is higher than the audio rate \, all kinds of
+unwanted artifacts will be present.;
+#X obj 572 407 loadbang;
+#X text 639 710 Unkowon bugs: Gazillions of 'em \, I'm sure.;
+#X text 20 438 There are python scripts that send a random 'EEG' signal
+(one for strings and one for floats). In order for these to run \,
+your system will have to be correctly setup for python's LSL wrapper.
+I.e. you need Python2.7 installed and your PYTHONPATH environment variable
+will have to point to your copy of liblsl-Python. See LSL documentation
+for more information on this.;
+#X text 635 573 WARNING!!! This extern is still in the development
+phase. It crashes sometimes for (currently) unknown reasons. Use at
+your own risk!;
+#X msg 572 439 1500;
+#X text 594 509 <-smoothing filter \, each incoming sample is shelved.
+Basically \, this is poor-man's interpolation.;
+#X obj 503 653 hip~ 40;
+#X obj 411 322 lsl_inlet~ -nout 8 -buflen 10 -lag 1;
+#X text 638 640 Known bugs: Sometimes \, it just crashes for like no
+reason at all.;
+#X text 679 329 <-as of now there are three creation arguments. -nout
+is the number of outlets the extern should have. So far only 1 \, 2
+\, 4 \, 8 \, 16 \, and 32 are supported. I have no idea why. -buflen
+is the length (in dsp blocks) of the ring buffer that holds the samples
+as they come in. 640 is probably overkill. -lag is the length (also
+in blocks) to wait before outputing the incoming signal. If you put
+'0' here \, the lag is 1 sample. Shown here are the default values.
+;
+#X connect 0 0 43 0;
+#X connect 1 0 43 0;
+#X connect 5 0 43 0;
+#X connect 20 0 43 0;
+#X connect 21 0 22 0;
+#X connect 23 0 21 0;
+#X connect 24 0 31 0;
+#X connect 25 0 24 1;
+#X connect 27 0 28 0;
+#X connect 28 0 29 0;
+#X connect 29 0 30 0;
+#X connect 30 0 31 1;
+#X connect 31 0 42 0;
+#X connect 32 0 43 0;
+#X connect 33 0 43 0;
+#X connect 34 0 43 0;
+#X connect 36 0 40 0;
+#X connect 40 0 25 0;
+#X connect 42 0 26 0;
+#X connect 43 0 21 0;
+#X connect 43 0 24 0;
