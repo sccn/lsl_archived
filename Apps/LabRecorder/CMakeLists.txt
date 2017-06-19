@@ -95,7 +95,7 @@ IF(MSVC)
     set(boost_plus_libs ${Boost_LIBRARIES})
 ELSE()
     find_package(Boost REQUIRED COMPONENTS filesystem system thread chrono system date_time atomic iostreams regex)
-    find_package(zlib)
+    find_package(ZLIB)
     set(boost_plus_libs ${Boost_LIBRARIES} ${ZLIB_LIBRARIES})
 ENDIF()
 
