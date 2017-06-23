@@ -752,13 +752,24 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 	// set thread priority to high in order to ensure we don't lose data during sleep periods
 	int res = SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
 
+	// adjust channelCount if using aux
+	int eeg_count,aux_count;
+	if (useAUX) {
+		eeg_count = channelCount;
+		aux_count = 8;
+
+	} else {
+		eeg_count = channelCount;
+		aux_count = 0;
+	}
+
 	// hand allocated items 
 	lsl::stream_outlet *marker_outlet;
 	lsl::stream_outlet *s_marker_outlet;
 	char *recv_buffer;
 
-	std::vector<std::vector<double> > temp_buffer(chunkSize,std::vector<double>(channelCount+(g_sampledMarkersEEG?1:0)));
-	std::vector<std::vector<double> > send_buffer(chunkSize,std::vector<double>(channelCount+(g_sampledMarkersEEG?1:0)));
+	std::vector<std::vector<double> > temp_buffer(chunkSize,std::vector<double>(channelCount+(g_sampledMarkersEEG?1:0)+aux_count));
+	std::vector<std::vector<double> > send_buffer(chunkSize,std::vector<double>(channelCount+(g_sampledMarkersEEG?1:0)+aux_count));
 	std::vector<unsigned> trigger_buffer(chunkSize);
 
 	std::vector<std::vector<double>> rs_temp_in,rs_temp_out;
@@ -773,7 +784,7 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 		_resample = true;
 		
 	std::vector<Resampler<double,double,double>*> resamplers;
-	for (unsigned c=0;c<channelCount;c++) {
+	for (unsigned c=0;c<channelCount+(g_sampledMarkersEEG?1:0)+aux_count;c++) {
 		switch (samplingRate) {
 			case 125:
 				resamplers.push_back(new Resampler<double,double,double>(1,80,coeffs_10000_to_125,sizeof(coeffs_10000_to_125)/sizeof(coeffs_10000_to_125[0])));
@@ -810,14 +821,7 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 		// determine some acquisition parameters
 		float EEG_scale = properties.ResolutionEeg*1000000;
 		float AUX_scale = properties.ResolutionAux*1000000;
-		int eeg_count,aux_count;
-		if (useAUX) {
-			eeg_count = channelCount-8;
-			aux_count = 8;
-		} else {
-			eeg_count = channelCount;
-			aux_count = 0;
-		}
+
 
 		// try to get device module list
 		t_champModules modules;	
@@ -851,7 +855,7 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 		recv_buffer = new char[buffer_bytes*10];
 
 		// create data streaminfo and append some meta-data
-		lsl::stream_info data_info("ActiChamp-" + boost::lexical_cast<std::string>(deviceNumber),"EEG",channelCount+(g_sampledMarkersEEG?1:0),samplingRate,lsl::cf_float32,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber));
+		lsl::stream_info data_info("ActiChamp-" + boost::lexical_cast<std::string>(deviceNumber),"EEG",channelCount+(g_sampledMarkersEEG?1:0)+aux_count,samplingRate,lsl::cf_float32,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber));
 		lsl::xml_element channels = data_info.desc().append_child("channels");
 		for (std::size_t k=0;k<channelLabels.size();k++)
 			channels.append_child("channel")
@@ -897,7 +901,7 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 		int outsamples;
 
 		// for resizing the temporary data buffer channels
-		int channs = channelCount+(g_sampledMarkersEEG?1:0);
+		int channs = channelCount+(g_sampledMarkersEEG?1:0)+aux_count;
 
 		// enter transmission loop		
 		int bytes_read, samples_read;
@@ -917,7 +921,7 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 
 				// copy data into trigger_buffer and temp_buffer, and scale to microvolts
 				trigger_buffer.resize(samples_read);
-				temp_buffer.resize(samples_read,std::vector<double>(channelCount));
+				temp_buffer.resize(samples_read,std::vector<double>(channelCount+(g_sampledMarkersEEG?1:0)));
 				switch(sampleSize) {
 					case sizeof(t_champDataModelAux):
 						{
@@ -939,7 +943,7 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 								for (int c=0;c<eeg_count;c++)
 									temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
 								for (int c=0;c<aux_count;c++)
-									temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
+									temp_buffer[s][c+eeg_count+(g_sampledMarkersEEG?1:0)] = data[s].Aux[c] * AUX_scale;
 							}
 							break;
 						}
@@ -952,7 +956,7 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 								for (int c=0;c<eeg_count;c++)
 									temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
 								for (int c=0;c<aux_count;c++)
-									temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
+									temp_buffer[s][c+eeg_count+(g_sampledMarkersEEG?1:0)] = data[s].Aux[c] * AUX_scale;
 							}
 							break;
 						}
@@ -965,7 +969,7 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 								for (int c=0;c<eeg_count;c++)
 									temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
 								for (int c=0;c<aux_count;c++)
-									temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
+									temp_buffer[s][c+eeg_count+(g_sampledMarkersEEG?1:0)] = data[s].Aux[c] * AUX_scale;
 								}
 							break;
 						}
@@ -978,7 +982,7 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 								for (int c=0;c<eeg_count;c++)
 									temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
 								for (int c=0;c<aux_count;c++)
-									temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
+									temp_buffer[s][c+eeg_count+(g_sampledMarkersEEG?1:0)] = data[s].Aux[c] * AUX_scale;
 							}
 							break;
 						}
@@ -991,7 +995,7 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 								for (int c=0;c<eeg_count;c++)
 									temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
 								for (int c=0;c<aux_count;c++)
-									temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
+									temp_buffer[s][c+eeg_count+(g_sampledMarkersEEG?1:0)] = data[s].Aux[c] * AUX_scale;
 							}
 							break;
 						}
