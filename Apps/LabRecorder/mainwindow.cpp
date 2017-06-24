@@ -60,8 +60,7 @@ void MainWindow::statusUpdate(void) {
 	int remainder;
 	int minutes;
 	int seconds;
-
-	int filesize;
+//	int filesize;
 
 	std::stringstream timeString;
 	if(currentlyRecording ==true) {
@@ -127,7 +126,8 @@ void MainWindow::blockSelected(QListWidgetItem *item) {
 
 void MainWindow::load_config(const std::string &filename) {
 	std::cout << "loading config file " << filename << std::endl;
-	try {
+	try
+    {
 		using boost::property_tree::ptree;
 		ptree pt;
 		read_ini(filename, pt);
@@ -201,7 +201,11 @@ void MainWindow::load_config(const std::string &filename) {
 		}
 
 		// get the path as a string
+		#if (win32)
 		std::string str_path = pt.get<std::string>("StorageLocation", "C:\\Recordings\\CurrentStudy\\exp%n\\untitled.xdf");
+		#else //win32
+		std::string str_path = pt.get<std::string>("StorageLocation", "exp%n/untitled.xdf");
+		#endif //win32
 		ui->locationEdit->setText(str_path.c_str());
 
 		// scan the path for %n and %b
@@ -219,18 +223,21 @@ void MainWindow::load_config(const std::string &filename) {
 
 		int i=1;
 		
-		if(pos_n<str_path.size()) {
+		if(pos_n<str_path.size())
+        {
 			abs_path.append(str_path.begin(),str_path.begin()+pos_n);
 		
 			// find the last value fo %n in the directories			
-			for(i=1;i<10000;i++) {
+			for(i=1;i<10000;i++)
+            {
 				ss << i; // convert int to string stream
 				p=(abs_path+ss.str()).c_str(); // build the path name
-				if(!boost::filesystem::exists(p)) break; // check for it
+				if(!boost::filesystem::exists(p))
+                {
+                    break; // check for it
+                }
 				ss.str(std::string()); // flush the string stream				
 			}
-		
-			
 		}
 
 		// update gui 
@@ -302,7 +309,7 @@ void MainWindow::refreshStreams(void) {
 
 	std::vector<std::string> previouslyChecked;
 	QListWidgetItem *item;
-	for(unsigned i=0;i<ui->streamList->count();i++) {
+	for(int i=0;i<ui->streamList->count();i++) {
 		item=ui->streamList->item(i);
 		if(std::find(streamNames.begin(), streamNames.end(), item->text().toStdString())!=streamNames.end()) { 
 			if(item->checkState() == Qt::Checked)	
@@ -389,7 +396,7 @@ void MainWindow::startRecording(void) {
 			recFilename.replace(pos_b,  2, currentBlock);
  
 		// rename existing file if necessary
-		int lastdot;
+		size_t lastdot;
 		std::string rename_to;
 		if(boost::filesystem::exists(recFilename.c_str())) {
 			lastdot = recFilename.find_last_of(".");
