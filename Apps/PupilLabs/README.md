@@ -12,12 +12,12 @@ Plugin for _[Pupil Capture](https://github.com/pupil-labs/pupil/wiki/Pupil-Captu
 2. Copy the `pylsl` with all its content to the _user plugin directory*_.
 3. Copy [`pupil_lsl_relay.py`](pupil_lsl_relay.py) to the _user plugin directory*_.
 
-* Wiki link for the [user plugin directory](https://github.com/pupil-labs/pupil/wiki/Plugin-Guide#load-your-plugin-automatically)
+* Wiki link for the [user plugin directory](https://docs.pupil-labs.com/#plugin-guide)
 
 ## Usage
 
 1. Start _Pupil Capture_.
-2. [Open the _Pupil LSL Relay_ plugin](https://github.com/pupil-labs/pupil/wiki/Pupil-Capture#open-a-plugin).
+2. [Open the _Pupil LSL Relay_ plugin](https://docs.pupil-labs.com/#open-a-plugin).
 3. Optional: Deselect relaying for pupil data, gaze data, or notifications.
 4. Now the LSL outlets are ready to provide data to other inlets in the network.
 
