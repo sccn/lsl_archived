@@ -1,10 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-// boost
-/* #include <boost/shared_ptr.hpp> */
-/* #include <boost/thread.hpp> */
 // Qt
+#include "ui_mainwindow.h"
+
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QCloseEvent>
@@ -21,11 +20,10 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include "windows.h"
 #endif
 
 // LSL
-#include "../../LSL/liblsl/include/lsl_cpp.h"
+#include <lsl_cpp.h>
 
 // recording class
 #include "recording.h"

@@ -1,9 +1,3 @@
-set (Boost_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
-set (Boost_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
-set (Boost_LIBRARIES boost PARENT_SCOPE)
-
-include_directories (${Boost_INCLUDE_DIRS})
-
 set (Boost_FILES  # Platform-independent sources
   src/chrono/src/chrono.cpp
   src/filesystem/src/codecvt_error_category.cpp
@@ -43,29 +37,37 @@ set (Boost_FILES  # Platform-independent sources
   src/thread/src/tss_null.cpp
 )
 if (UNIX)
-  add_library (boost
-    ${Boost_FILES}
-    src/thread/src/pthread/once.cpp
-    src/thread/src/pthread/thread.cpp
+  list(APPEND Boost_FILES
+	src/thread/src/pthread/once.cpp
+	src/thread/src/pthread/thread.cpp
   )
-  set_property (TARGET boost PROPERTY COMPILE_FLAGS "-fPIC")
+  set(Boost_LIBRARIES pthread)
 else ()  # WIN32
-  add_library (boost
-    ${Boost_FILES}
-    src/thread/src/win32/thread.cpp
-    src/thread/src/win32/tss_dll.cpp
-    src/thread/src/win32/tss_pe.cpp
+  list(APPEND Boost_FILES
+	src/thread/src/win32/thread.cpp
+	src/thread/src/win32/tss_dll.cpp
+	src/thread/src/win32/tss_pe.cpp
   )
-  set_property (TARGET boost PROPERTY COMPILE_DEFINITIONS BOOST_ALL_NO_LIB BOOST_THREAD_BUILD_LIB)
-endif (UNIX)
+  set(Boost_LIBRARIES "")
+endif ()
+
+add_library (lslboost ${Boost_FILES})
+set_property (TARGET lslboost PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_compile_definitions(lslboost PUBLIC BOOST_ALL_NO_LIB=1 BOOST_THREAD_BUILD_LIB=1)
+target_include_directories(lslboost PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+target_link_libraries(lslboost PRIVATE ${Boost_LIBRARIES})
+set_target_properties(lslboost PROPERTIES CXX_VISIBILITY_PRESET default)
 
 # gcc 5 needs -std=c++0x to compile lslboost
-# CMAKE_CXX_COMPILER_VERSION is only available since CMake 2.8.8
-# If CMake version is inferior to 2.8.8, we assume gcc version is inferior to 5
-if (CMAKE_VERSION VERSION_GREATER 2.8.8)
-  if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5)
-      set_property (TARGET boost PROPERTY COMPILE_FLAGS " -std=c++0x" APPEND_STRING)
-    endif ()
-  endif ()
+if(NOT MSVC)
+  target_compile_definitions(lslboost PRIVATE cxx_auto_type)
 endif ()
+
+install(TARGETS lslboost EXPORT lslboostConfig
+  ARCHIVE DESTINATION LSL/lib
+  LIBRARY DESTINATION LSL/lib)
+install(DIRECTORY boost lslboost
+	DESTINATION LSL/include)
+install(EXPORT lslboostConfig
+  DESTINATION LSL/cmake)

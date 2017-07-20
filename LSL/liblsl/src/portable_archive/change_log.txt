@@ -6,6 +6,8 @@ Francois Mauger joined me recently and already added a valuable tutorial for you
 
 Changelog:
 
+07.11.2015	5.1	Small fix to get it running up to 1.59.
+
 26.06.2012	5.0	Ported to boost versions up to 1.49.
 			Added support for wstring, added tutorial by Francois Mauger.
 

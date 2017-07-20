@@ -1,0 +1,26 @@
+language: cpp
+dist: trusty # at least until xenial becomes available
+compiler: clang # 3.5 instead of GCC 4.8
+script:
+    - python -u lslbuild.py
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          packages:
+            - qt5-default
+            - libboost-thread-dev
+            - libboost-filesystem-dev
+            - libboost-serialization-dev
+            - libboost-iostreams-dev
+      before_script:
+        - CMAKE_URL="https://cmake.org/files/v3.5/cmake-3.5.2-Linux-x86_64.tar.gz"
+        - mkdir cmakebin && travis_retry wget --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmakebin
+        - export PATH=$PWD/cmakebin/bin:$PATH
+        - cmake --version; $PWD/cmakebin/bin/cmake --version
+    - os: osx
+      osx_image: xcode7.3
+      before_install:
+        - brew install qt
+        - export CMAKE_PREFIX_PATH=/usr/local/opt/qt/
