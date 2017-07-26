@@ -1,6 +1,22 @@
 # Convenience script to build LSL+Apps and package it
 # You can either run this script or check an appveyor build output for the
 # executed commands.
+# 
+# Prerequisites (LSL with bundled Boost)
+# - CMake 3.5
+# - Python 2.7
+# - 7zip
+# - Windows:
+#     - C++ compiler (tested: VS2015)
+#     - Ninja (https://ninja-build.org/)
+# - Linux
+#    - C++ compiler (clang 3.5)
+# - OS X
+#     - C++ compiler (tested: ?)
+# 
+# Optional / required for apps:
+# - Boost (+path set with -DBOOST_ROOT=path/to/boost)
+# - Qt (+path set)
 
 import os
 import os.path
@@ -9,83 +25,152 @@ import subprocess
 import sys
 
 presets = {
-	'posix': {
-		'buildprefix': '/tmp/lsl',
-		'generator': 'Unix Makefiles',
-		'Apps': ['Examples', 'LabRecorder', 'XDFBrowser'],
-		'exeext': '',
-		},
-	'nt': {
-		'buildprefix': os.path.dirname(os.path.realpath(__file__))+'/build/lsl',
-		'generator': 'Ninja',
-		'Apps': ['Examples', 'LabRecorder', 'XDFBrowser'],
-		'exeext': '.exe',
-		'cmake_conf': {
-			'BOOST_ROOT': 'C:/Libraries/boost_1_63_0/',
-		},
-	},
-	'all': {
-		'system_boost': False,
-		'lsl_static': False,
-		'variant': 'Release',
-		'lsl_sourcepath': os.path.dirname(os.path.realpath(__file__)),
-		'cmake_conf': {},
-	},
+    'apps': ['Examples', 'LabRecorder', 'XDFBrowser'],
+    'dont-build': False,
+    'dont-configure': False,
+    'dont-run-tests': False,
+    'dont-package': False,
+    'dry-run': False,
+    'interactive': False,
+    'clean-builddir': False,
+    'generator': None,  # None: let CMake decide
+    'cmake_conf': { 'CMAKE_BUILD_TYPE': 'Release'},
 }
+if os.name == 'nt':
+    presets['cmake_conf'].update({'BOOST_ROOT': 'C:/Libraries/boost_1_63_0/',
+                             })
+elif os.name == 'posix':
+    presets['cmake_conf'].update({'LSL_USE_SYSTEM_BOOST': 'On',
+                             })
 
-def mkbuilddir(conf, name):
-	dirname = conf['buildprefix'] + ['32','64'][sys.maxsize>2**32] + '_' + variant + '/' + name
-	if os.path.isdir(dirname):
-		shutil.rmtree(dirname)
-	os.makedirs(dirname)
-	print('mkdir -p '+dirname)
-	return os.path.abspath(dirname)
+class LSLBuilder:
+    def __init__(self, config):
+        self.sourcepath = os.path.dirname(os.path.realpath(__file__))
+        self.cmake_conf = config['cmake_conf']
+        self.builddir = self.sourcepath + '/build/lsl_' + self.cmake_conf['CMAKE_BUILD_TYPE'] + '/'
+        self.apps = config['apps']
+        self.interactive = conf['interactive']
+        self.dry_run = config['dry-run']
+        self.clean_builddir = config['clean-builddir']
+        self.install_prefix = self.builddir + 'lslinstall'
+        self.generator = config['generator']
+        print('Found source in ' + self.sourcepath)
+        print('building in ' + self.builddir)
 
-def call(args):
-	print('>>> ' + ' '.join(args))
-	subprocess.check_call(args)
+    def mkbuilddir(self, name, remove_if_existing=True):
+        dirname = self.builddir + name
+        exists = os.path.isdir(dirname)
+        if exists and not remove_if_existing:
+            return os.path.abspath(dirname)
+        if exists:
+            print('>>> rm -rf ' + dirname)
+            if not self.dry_run:
+                shutil.rmtree(dirname)
+        if not self.dry_run:
+            os.makedirs(dirname)
+            print('>>> mkdir -p ' + dirname)
+        return os.path.abspath(dirname)
 
-def chdir(newdir):
-	print('>>> cd ' + newdir)
-	os.chdir(newdir)
+    def call(self, args):
+        print('>>> ' + ' '.join(args))
+        if not self.dry_run:
+            subprocess.check_call(args)
 
-def lslbuild(conf):
-	cmakebool = ['Off', 'On']
-	lsl_sourcedir = os.path.dirname(os.path.realpath(__file__))
-	print('Found source in ' + lsl_sourcedir)
-	lsl_root = mkbuilddir(conf, 'lsl')
-	print('building in ' + lsl_root)
-	chdir(lsl_root)
+    def chdir(self, newdir):
+        print('>>> cd ' + newdir)
+        if not self.dry_run:
+            os.chdir(newdir)
 
-	cmake_conf = conf['cmake_conf']
-	cmake_conf['CMAKE_BUILD_TYPE'] = conf['variant']
-	conf['install_prefix'] = cmake_conf['CMAKE_INSTALL_PREFIX'] = mkbuilddir(conf, 'lslinstall')
-	cmake_conf['LSL_USE_SYSTEM_BOOST'] = cmakebool[conf['system_boost']]
-	cmake_conf['LSL_BUILD_STATIC'] = cmakebool[conf['lsl_static']]
-	for app in conf['Apps']:
-		cmake_conf['LSLAPPS_'+app] = cmakebool[True]
-	
-	cmake_exe = 'cmake'+conf['exeext']
+    def call_cmake(self, generator=None, conf={}, otherargs=[]):
+        args = ['cmake-gui'] if self.interactive else ['cmake']
+        if generator is not None:
+            args += ['-G', generator]
+        for k, v in conf.items():
+            args.append('-D' + k + '=' + v)
+        args += otherargs
+        self.call(args)
 
-	args = [cmake_exe, '-G', conf['generator']] + ['-D'+key+'='+value for key, value in cmake_conf.items()] + [conf['lsl_sourcepath']] + sys.argv[1:]
-	call(args) # generate CMake build files
-	call([cmake_exe, '--build', '.', '--target', 'install']) # build everything and install it
-	chdir(mkbuilddir(conf, 'lsloot'))
-	call([cmake_exe, '-G', conf['generator'], '-DLSL_ROOT='+cmake_conf['CMAKE_INSTALL_PREFIX']+'/LSL/', lsl_sourcedir+'/OutOfTreeTest'] + sys.argv[1:])
-	call([cmake_exe, '--build', '.'])
-	return conf
+    def configure(self):
+        cmakebool = ['Off', 'On']
+        self.mkbuilddir('', self.clean_builddir)
+        self.chdir(self.builddir)
+        self.cmake_conf['CMAKE_INSTALL_PREFIX'] = self.mkbuilddir('lslinstall', self.clean_builddir)
+        #assert (self.install_prefix == self.cmake_conf['CMAKE_INSTALL_PREFIX'])
+        for app in self.apps:
+            print('Adding ' + app + ' to the to do list')
+            self.cmake_conf['LSLAPPS_' + app] = cmakebool[True]
 
-def lslpackage(dir, conf):
-	_7z_exe = '7z' + conf['exeext']
-	chdir(conf['install_prefix'])
-	for dirname in os.listdir('.'):
-		if os.path.isdir(dirname):
-			call([_7z_exe, 'a', dirname+'.7z',dirname])
+        self.call_cmake(self.generator, self.cmake_conf, [self.sourcepath])  # generate CMake build files
 
-conf = presets['all']
-conf.update(presets[os.name])
-for variant in ['Release']:
-	conf['variant'] = variant
-	conf = lslbuild(conf)
-	#lslpackage('build/lsl64_'+variant, conf)
+    def build(self):
+        self.call_cmake(otherargs=['--build', '.', '--target', 'install'])  # build everything and install it
 
+    def run_tests(self):
+        self.chdir(self.mkbuilddir('lsloot'))
+        self.call_cmake(conf['generator'], {'LSL_ROOT': self.install_prefix + '/LSL/'},
+                        [self.sourcepath + '/OutOfTreeTest'])
+        self.call_cmake(otherargs=['--build', '.'])
+
+    def package(self):
+        self.chdir(self.sourcepath)
+        self.call(['7z', 'a', self.cmake_conf['CMAKE_BUILD_TYPE'] + '.7z', self.install_prefix])
+
+def print_conf(conf):
+    print('Configuration: ')
+    for key, value in conf.items():
+        print('\t ' + key.ljust(15) + str(value))
+    print('\n')
+
+def print_usage(conf):
+    print_conf(conf)
+    print(' --generator      set the CMake generator (see cmake -G)')
+    print(' --variant        set the build type (Debug or Release)')
+    print(' --dry-run        just print the commands, don\'t execute them')
+    print(' --interactive    launch the cmake gui before building')
+    print(' --clean-builddir remove an existing build directory')
+    print(' --help           print this message')
+    print(' -Dvar=value      set the CMake variable \'var\' to \'value\'')
+    print(' --with-App       also build \'App\'')
+    print(' --without-App    don\'t build \'App\'')
+    print(' --dont-configure don\'t run the configuration step')
+    print(' --dont-build     don\'t run the build step')
+    print(' --dont-package   don\'t create a distributable archive')
+    print('\n')
+
+if __name__ == '__main__':
+    conf = presets
+    for arg in sys.argv[1:]:
+        if arg == '-h' or arg == '--help':
+            print_usage(conf)
+            sys.exit(0)
+        if arg.startswith('-D'):
+            [key, val] = arg[2:].split('=')
+            conf['cmake_conf'][key] = val
+        elif arg.startswith('--with-'):
+            conf['apps'].append(arg[7:])
+        elif arg.startswith('--without-'):
+            conf['apps'].append(arg[7:])
+        elif arg.startswith('--'):
+            parts = arg[2:].split('=')
+            if len(parts) == 1:
+                key = parts[0]
+                value = True
+            else:
+                [key, value] = parts
+            if key not in conf:
+               print_usage(conf)
+               raise Exception('Unknown option \'' + key + '\'')
+            conf[key] = value
+        else:
+            print_usage(conf)
+            raise Exception('Invalid command line arg')
+    print_conf(conf)
+    builder = LSLBuilder(conf)
+    if not conf['dont-configure']:
+        builder.configure()
+    if not conf['dont-build']:
+        builder.build()
+    if not conf['dont-run-tests']:
+        builder.run_tests()
+    if not conf['dont-package']:
+        builder.package()
