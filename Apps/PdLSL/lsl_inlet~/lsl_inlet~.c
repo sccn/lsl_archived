@@ -1,4 +1,4 @@
-/**************** lsl_inlet ****************/
+/**************** lsl_inlet~ ***************/
 /* Written by David Medine on behalf of    */
 /* Brain Products                          */ 
 /* 15/5/2017                               */
@@ -50,11 +50,7 @@ typedef struct _lsl_inlet_tilde{
   int       upsample;               // flag to upsample or not
   int       sr_pd;                  // pd's sampling rate
   int       sr_lsl;
-  int       L;                      // sr ratio, without decimal places
-  int       pL_cnt;                 // counter for the period
-  float     rL;                     // remainder
-  int       pLplus;                 // number of upsampling periods at which L needs to be increased by 1 (1/rL)
-  int       pLplus_cnt;             // counter for when to wait
+
   
   // containers for lsl api
   lsl_inlet               lsl_inlet_obj;      // instantiation of the inlet class
@@ -69,6 +65,9 @@ typedef struct _lsl_inlet_tilde{
   // threading variables for the listen thread and associated data
   pthread_mutex_t listen_lock;
   pthread_t       tid;
+  pthread_cond_t  condition;
+  int             is_listening_;
+  int             is_resolving_;
   int             stop_;
   int             can_launch_resolver;
   
@@ -123,27 +122,37 @@ static void *lsl_listen_thread(void *in){
 
   type = lsl_get_channel_format(x->lsl_info_list[x->which]);
 
+  pthread_mutex_lock(&x->listen_lock);
   x->connected = 1;
-
   x->stop_ = 0;
+  pthread_cond_signal(&x->condition);
+  pthread_mutex_unlock(&x->listen_lock);
   post("%d", type);
-  while(x->stop_==0){
-
+  ts = 0;
+ 
+  while(1){
+    if(x->stop_==0)break;
     switch(type){
 
     case cft_float32 :
+      //ts+=.001;
       ts = lsl_pull_sample_f(x->lsl_inlet_obj, sample_f, x->nchannels, LSL_FOREVER, &ec);
       //post("%d", x->widx);
+      pthread_mutex_lock(&x->listen_lock);
+      x->is_listening_ =1;
       for(i=0;i<x->nchannels;i++){
-  	x->sig_buf[x->widx*x->nchannels+i] = (t_sample)sample_f[i];
-	//post("%f %d\n", sample_f[i], i);
+      	x->sig_buf[x->widx*x->nchannels+i] = (t_sample)sample_f[i];
+      	//post("%f %d\n", sample_f[i], i);
       }
       x->ts_buf[x->widx++] = (t_sample)ts;
-      pthread_mutex_lock(&x->listen_lock);
+
+      x->widx++;
       while(x->widx>=x->buflen)x->widx-=x->buflen;
       while(x->widx<0)x->widx++;
+      x->is_listening_ = 0;
+      pthread_cond_signal(&x->condition);
       pthread_mutex_unlock(&x->listen_lock);
-
+      //Sleep(10);
       break;
     
     case cft_double64 :
@@ -162,6 +171,55 @@ static void *lsl_listen_thread(void *in){
   t_freebytes(sample_i, sizeof(int)*x->nchannels);
   x->connected = 0;
   return NULL;
+}
+
+static t_int *lsl_inlet_tilde_perform(t_int *w){
+  
+  int i,n, rd_pt;
+  t_lsl_inlet_tilde *x = (t_lsl_inlet_tilde *)(w[1]);
+  t_sample *lcl_ts_out;
+  t_sample foo;
+  t_sample **lcl_outs = x->lcl_outs;
+  
+  
+  for(i=0;i<x->nout;i++)
+    lcl_outs[i] = (t_sample *)w[i+2];
+    //x->lcl_outs[i] = (t_sample *)w[i+2];
+  lcl_ts_out = (t_sample *)w[i+2];
+  n = w[i+3];
+    
+  //post("tilde perform: ready = %d, lag = %d, connected = %d", x->ready, x->lag, x->connected);
+  if(x->connected == 1){
+    /* if(x->ready > x->lag){ */
+    /*   x->ready = x->lag + 1; // ensure the int doesn't wrap around, there are more elegant ways to do this */
+    pthread_mutex_lock(&x->listen_lock);
+    while(n--){
+
+      pthread_cond_wait(&x->condition, &x->listen_lock);
+      rd_pt = x->widx-x->lag;
+      while(rd_pt<0)rd_pt+=x->buflen;
+
+      if(x->connected == 1){
+	for(i=0;i<x->nout;i++)
+	  if(i<x->nchannels)
+	    *lcl_outs[i]++ = x->sig_buf[rd_pt*x->nchannels+i];
+	*lcl_ts_out++ = x->ts_buf[x->ridx];
+	pthread_cond_signal(&x->condition);
+	pthread_mutex_unlock(&x->listen_lock);
+      }
+
+    }
+  }
+  else{
+    for(i=0;i<x->nout;i++)
+      if(i<x->nchannels)
+	*lcl_outs[i]++ = 0.0;
+    *lcl_ts_out++ = 0.0;
+    
+  }
+  return w+x->nout+4;
+
+  
 }
 
 
@@ -235,7 +293,11 @@ static int prop_resolve(t_lsl_inlet_tilde *x, int argc, t_atom *argv){
 
 // pd methods:
 static void lsl_inlet_disconnect(t_lsl_inlet_tilde *x){
-  
+
+  post("disconneting");
+  pthread_mutex_lock(&x->listen_lock);
+  if(x->is_listening_ == 1)
+    pthread_cond_wait(&x->condition, &x->listen_lock);
   if(x->stop_!=1){
     post("disconnecting from %s stream %s (%s)...",
 	 lsl_get_type(x->lsl_info_list[x->which]),
@@ -243,12 +305,13 @@ static void lsl_inlet_disconnect(t_lsl_inlet_tilde *x){
     	 lsl_get_source_id(x->lsl_info_list[x->which]));
     x->stop_=1;
     x->which = -1;
+
     // here we are forced to call the dreaded pthread_cancel
     // because the lsl_inlet waits forever for a new sample to come in
     // if a stream disappears before the thread exits, it will simply
     // stick waiting for a new sample and joining the thread will
     // halt pd in that state
-    pthread_cancel(x->tid);
+    //pthread_cancel(x->tid);
     // however, we manage all of our resources outside of that thread, so it's cool (I think...)
     
     if(x->lsl_inlet_obj!=NULL){
@@ -258,6 +321,8 @@ static void lsl_inlet_disconnect(t_lsl_inlet_tilde *x){
     post("...disconnected");
     x->connected = 0;
     x->ready = 0;
+
+    pthread_mutex_unlock(&x->listen_lock);
   }
 }
 
@@ -306,11 +371,11 @@ static void lsl_inlet_connect_by_idx(t_lsl_inlet_tilde *x, t_floatarg f){
 
     // prepare the upsampling factors based on the stream info
     x->sr_lsl = lsl_get_nominal_srate(x->lsl_info_list[x->which]);
-    fL = x->sr_pd/x->sr_lsl;
-    x->L = (int)fL;
-    x->rL = fL-(float)x->L;
-    // this better be an integer or else there will be regular hiccups!
-    x->pLplus = (int)(1.0/x->rL); 
+    /* fL = x->sr_pd/x->sr_lsl; */
+    /* x->L = (int)fL; */
+    /* x->rL = fL-(float)x->L; */
+    /* // this better be an integer or else there will be regular hiccups! */
+    /* x->pLplus = (int)(1.0/x->rL);  */
     
     x->lsl_inlet_obj = lsl_create_inlet(x->lsl_info_list[x->which], 300, 1, 1);
     
@@ -407,63 +472,6 @@ static void lsl_inlet_resolve_by_property(t_lsl_inlet_tilde *x, t_symbol *s, int
   x->lsl_info_list_cnt = prop_resolve(x, argc, argv);
   if(x->lsl_info_list_cnt != 0)
     lsl_inlet_connect_by_idx(x, 0);
-  
-}
-
-
-
-static t_int *lsl_inlet_tilde_perform(t_int *w){
-  
-  int i,n, rd_pt;
-  t_lsl_inlet_tilde *x = (t_lsl_inlet_tilde *)(w[1]);
-  t_sample *lcl_ts_out;
-  t_sample foo;
-  t_sample **lcl_outs = x->lcl_outs;
-  
-  
-  for(i=0;i<x->nout;i++)
-    lcl_outs[i] = (t_sample *)w[i+2];
-    //x->lcl_outs[i] = (t_sample *)w[i+2];
-  lcl_ts_out = (t_sample *)w[i+2];
-  n = w[i+3];
-    
-  //post("tilde perform: ready = %d, lag = %d, connected = %d", x->ready, x->lag, x->connected);
-  if(x->connected == 1){
-    /* if(x->ready > x->lag){ */
-    /*   x->ready = x->lag + 1; // ensure the int doesn't wrap around, there are more elegant ways to do this */
-      while(n--){
-	rd_pt = x->widx-x->lag;
-	if(rd_pt<0)rd_pt+=x->buflen;
-	for(i=0;i<x->nout;i++)
-	  //if(i<x->nchannels && x->connected==1) {
-	    //if(n==0)post("hello");
-	  *lcl_outs[i]++ = x->sig_buf[rd_pt*x->nchannels+i];
-	*lcl_ts_out++ = x->ts_buf[x->ridx];
-	    //}
-	//	  else {
-	  //*lcl_outs[i]++ = 0.0;
-	//*lcl_ts_out++ = 0.0;
-	//}
-	// check the upsampling to see if it is time to increment the read point
-	
-	/* if(++x->pL_cnt>=x->L){ */
-	/*   if(++x->pLplus_cnt >= x->pLplus) */
-	/*     x->pLplus_cnt = 0; */
-	
-	/* /\*   else{ *\/ */
-	/*     x->ridx++; */
-	/*     while(x->ridx>=x->buflen)x->ridx-=x->buflen; */
-	/*     while(x->ridx<0)x->ridx++; */
-	/*     x->pL_cnt = 0; */
-	/*   } */
-	/* } */
-      }
-      //}
-    /* x->ready+=add; */
-  }
-  
-  return w+x->nout+4;
-
   
 }
 
@@ -570,6 +578,9 @@ static void lsl_inlet_tilde_dsp(t_lsl_inlet_tilde *x, t_signal **sp){
 static void flush_lsl_buffers(t_lsl_inlet_tilde *x){
 
   int i,j;
+  pthread_mutex_lock(&x->listen_lock);
+  if(x->is_listening_ == 1)
+    pthread_cond_wait(&x->condition, &x->listen_lock);
   if(x->sig_buf!=0)memset(x->sig_buf, 0.0, x->longbuflen * sizeof(t_sample));
     /* for(i=0;i<x->buflen*x->nchannels;i++) */
     /*   x->sig_buf[i] =  0.0; */
@@ -580,12 +591,15 @@ static void flush_lsl_buffers(t_lsl_inlet_tilde *x){
   x->widx = 0;
   x->ridx = 0;
   x->ready = 0;
-  
+  pthread_mutex_unlock(&x->listen_lock);
 }
 
 static void free_lsl_buffers(t_lsl_inlet_tilde *x){
 
   int i;
+  pthread_mutex_lock(&x->listen_lock);
+  if(x->is_listening_ == 1)
+    pthread_cond_wait(&x->condition, &x->listen_lock);
   post("in the free method");
   if(x->sig_buf!=0){
     post("inside sig_buf");
@@ -593,7 +607,7 @@ static void free_lsl_buffers(t_lsl_inlet_tilde *x){
   }
   if(x->ts_buf!=0)
     t_freebytes(x->ts_buf, x->buflen * sizeof(float));
-
+  pthread_mutex_unlock(&x->listen_lock);
 }
 
 static void setup_lsl_buffers(t_lsl_inlet_tilde *x){
@@ -626,11 +640,11 @@ static void *lsl_inlet_tilde_new(t_symbol *s, int argc, t_atom *argv){
   x->ready = 0;
   x->lag = sys_getblksize();
   x->sr_pd = sys_getsr();
-  x->L=0;
-  x->rL=0.0;
-  x->pLplus = 0;
-  x->pLplus_cnt = 0;
-  x->upsample = 1;
+  /* x->L=0; */
+  /* x->rL=0.0; */
+  /* x->pLplus = 0; */
+  /* x->pLplus_cnt = 0; */
+  /* x->upsample = 1; */
 
   // parse creation args
   while (argc>0){
@@ -698,6 +712,8 @@ static void *lsl_inlet_tilde_new(t_symbol *s, int argc, t_atom *argv){
   //x->lsl_inlet_obj = NULL;
 
   x->listen_lock = PTHREAD_MUTEX_INITIALIZER;
+  x->condition = PTHREAD_COND_INITIALIZER;
+  x->is_listening_ = 0;
   x->stop_=1;
   
   return x;
@@ -710,8 +726,20 @@ static void lsl_inlet_tilde_free(t_lsl_inlet_tilde *x){
 
   int i;
   
-  destroy_info_list(x);
+  void *threadrtn;
   lsl_inlet_disconnect(x);
+    
+  pthread_mutex_lock(&x->listen_lock);
+  if(x->is_listening_==1)
+    pthread_cond_wait(&x->condition, &x->listen_lock);
+
+
+  
+  pthread_mutex_unlock(&x->listen_lock);
+  pthread_join(x->tid, &threadrtn);
+
+
+  destroy_info_list(x);
   if(x->lsl_inlet_obj!=NULL)lsl_destroy_inlet(x->lsl_inlet_obj);
 
   if(x->lcl_outs!=0)
