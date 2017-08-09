@@ -47,13 +47,15 @@ public:
     QGroupBox *groupBox_2;
     QGridLayout *gridLayout;
     QPlainTextEdit *channelLabels;
+    QCheckBox *overwriteChannelLabels;
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout_4;
     QGroupBox *groupBox;
     QFormLayout *formLayout;
     QLabel *label_4;
+    QLineEdit *deviceSerialNumber;
     QLabel *label_2;
-    QSpinBox *channelCount;
+    QSpinBox *eegChannelCount;
     QLabel *label;
     QSpinBox *chunkSize;
     QLabel *label_3;
@@ -62,9 +64,8 @@ public:
     QCheckBox *useAUX;
     QLabel *label_8;
     QCheckBox *useACC;
+    QSpinBox *bipolarChannelCount;
     QLabel *label_12;
-    QCheckBox *useBipolar;
-    QLineEdit *deviceSerialNumber;
     QPushButton *linkButton;
     QSpacerItem *verticalSpacer_2;
     QGroupBox *groupBox_3;
@@ -91,7 +92,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(409, 633);
+        MainWindow->resize(434, 574);
         actionLoad_Configuration = new QAction(MainWindow);
         actionLoad_Configuration->setObjectName(QString::fromUtf8("actionLoad_Configuration"));
         actionSave_Configuration = new QAction(MainWindow);
@@ -122,6 +123,12 @@ public:
 
         gridLayout->addWidget(channelLabels, 0, 0, 1, 1);
 
+        overwriteChannelLabels = new QCheckBox(groupBox_2);
+        overwriteChannelLabels->setObjectName(QString::fromUtf8("overwriteChannelLabels"));
+        overwriteChannelLabels->setChecked(true);
+
+        gridLayout->addWidget(overwriteChannelLabels, 1, 0, 1, 1);
+
 
         horizontalLayout_2->addWidget(groupBox_2);
 
@@ -146,24 +153,29 @@ public:
 
         formLayout->setWidget(0, QFormLayout::LabelRole, label_4);
 
+        deviceSerialNumber = new QLineEdit(groupBox);
+        deviceSerialNumber->setObjectName(QString::fromUtf8("deviceSerialNumber"));
+
+        formLayout->setWidget(2, QFormLayout::LabelRole, deviceSerialNumber);
+
         label_2 = new QLabel(groupBox);
         label_2->setObjectName(QString::fromUtf8("label_2"));
 
         formLayout->setWidget(3, QFormLayout::LabelRole, label_2);
 
-        channelCount = new QSpinBox(groupBox);
-        channelCount->setObjectName(QString::fromUtf8("channelCount"));
-        channelCount->setMinimum(1);
-        channelCount->setMaximum(256);
-        channelCount->setSingleStep(1);
-        channelCount->setValue(32);
+        eegChannelCount = new QSpinBox(groupBox);
+        eegChannelCount->setObjectName(QString::fromUtf8("eegChannelCount"));
+        eegChannelCount->setMinimum(0);
+        eegChannelCount->setMaximum(64);
+        eegChannelCount->setSingleStep(1);
+        eegChannelCount->setValue(32);
 
-        formLayout->setWidget(3, QFormLayout::FieldRole, channelCount);
+        formLayout->setWidget(3, QFormLayout::FieldRole, eegChannelCount);
 
         label = new QLabel(groupBox);
         label->setObjectName(QString::fromUtf8("label"));
 
-        formLayout->setWidget(4, QFormLayout::LabelRole, label);
+        formLayout->setWidget(5, QFormLayout::LabelRole, label);
 
         chunkSize = new QSpinBox(groupBox);
         chunkSize->setObjectName(QString::fromUtf8("chunkSize"));
@@ -171,54 +183,50 @@ public:
         chunkSize->setMaximum(20);
         chunkSize->setValue(10);
 
-        formLayout->setWidget(4, QFormLayout::FieldRole, chunkSize);
+        formLayout->setWidget(5, QFormLayout::FieldRole, chunkSize);
 
         label_3 = new QLabel(groupBox);
         label_3->setObjectName(QString::fromUtf8("label_3"));
 
-        formLayout->setWidget(5, QFormLayout::LabelRole, label_3);
+        formLayout->setWidget(6, QFormLayout::LabelRole, label_3);
 
         samplingRate = new QComboBox(groupBox);
         samplingRate->setObjectName(QString::fromUtf8("samplingRate"));
 
-        formLayout->setWidget(5, QFormLayout::FieldRole, samplingRate);
+        formLayout->setWidget(6, QFormLayout::FieldRole, samplingRate);
 
         label_7 = new QLabel(groupBox);
         label_7->setObjectName(QString::fromUtf8("label_7"));
 
-        formLayout->setWidget(6, QFormLayout::LabelRole, label_7);
+        formLayout->setWidget(7, QFormLayout::LabelRole, label_7);
 
         useAUX = new QCheckBox(groupBox);
         useAUX->setObjectName(QString::fromUtf8("useAUX"));
         useAUX->setChecked(false);
 
-        formLayout->setWidget(6, QFormLayout::FieldRole, useAUX);
+        formLayout->setWidget(7, QFormLayout::FieldRole, useAUX);
 
         label_8 = new QLabel(groupBox);
         label_8->setObjectName(QString::fromUtf8("label_8"));
 
-        formLayout->setWidget(7, QFormLayout::LabelRole, label_8);
+        formLayout->setWidget(8, QFormLayout::LabelRole, label_8);
 
         useACC = new QCheckBox(groupBox);
         useACC->setObjectName(QString::fromUtf8("useACC"));
         useACC->setChecked(true);
 
-        formLayout->setWidget(7, QFormLayout::FieldRole, useACC);
+        formLayout->setWidget(8, QFormLayout::FieldRole, useACC);
+
+        bipolarChannelCount = new QSpinBox(groupBox);
+        bipolarChannelCount->setObjectName(QString::fromUtf8("bipolarChannelCount"));
+        bipolarChannelCount->setMaximum(8);
+
+        formLayout->setWidget(4, QFormLayout::FieldRole, bipolarChannelCount);
 
         label_12 = new QLabel(groupBox);
         label_12->setObjectName(QString::fromUtf8("label_12"));
 
-        formLayout->setWidget(8, QFormLayout::LabelRole, label_12);
-
-        useBipolar = new QCheckBox(groupBox);
-        useBipolar->setObjectName(QString::fromUtf8("useBipolar"));
-
-        formLayout->setWidget(8, QFormLayout::FieldRole, useBipolar);
-
-        deviceSerialNumber = new QLineEdit(groupBox);
-        deviceSerialNumber->setObjectName(QString::fromUtf8("deviceSerialNumber"));
-
-        formLayout->setWidget(2, QFormLayout::LabelRole, deviceSerialNumber);
+        formLayout->setWidget(4, QFormLayout::LabelRole, label_12);
 
 
         verticalLayout->addWidget(groupBox);
@@ -322,7 +330,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 409, 21));
+        menuBar->setGeometry(QRect(0, 0, 434, 21));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QString::fromUtf8("menuFile"));
         MainWindow->setMenuBar(menuBar);
@@ -351,7 +359,7 @@ public:
         actionSave_Configuration->setText(QApplication::translate("MainWindow", "Save Configuration", 0, QApplication::UnicodeUTF8));
         actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
         actionQuit_2->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
-        groupBox_2->setTitle(QApplication::translate("MainWindow", "Channel Labels", 0, QApplication::UnicodeUTF8));
+        groupBox_2->setTitle(QApplication::translate("MainWindow", "Channel Labels (*=bipolar)", 0, QApplication::UnicodeUTF8));
         channelLabels->setPlainText(QApplication::translate("MainWindow", "Fp1\n"
 "Fp2\n"
 "F7\n"
@@ -384,11 +392,20 @@ public:
 "Oz\n"
 "O2\n"
 "PO10 ", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        overwriteChannelLabels->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>Uncheck this if you don't want the channel labels to change when you adjust the number of EEG or bipolar channels (e.g. if you want channel labels other than indices).</p></body></html>", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
+        overwriteChannelLabels->setText(QApplication::translate("MainWindow", "Overwrite on Channel Change", 0, QApplication::UnicodeUTF8));
         groupBox->setTitle(QApplication::translate("MainWindow", "Device Settings", 0, QApplication::UnicodeUTF8));
         label_4->setText(QApplication::translate("MainWindow", "Device Number", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        deviceSerialNumber->setToolTip(QApplication::translate("MainWindow", "The number of the USB device (if multiple); the first one is #0.", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
+        deviceSerialNumber->setInputMask(QString());
+        deviceSerialNumber->setText(QString());
         label_2->setText(QApplication::translate("MainWindow", "Number of EEG channels", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
-        channelCount->setToolTip(QApplication::translate("MainWindow", "This must match the number of entries in the channel list", 0, QApplication::UnicodeUTF8));
+        eegChannelCount->setToolTip(QApplication::translate("MainWindow", "This must match the number of entries in the channel list", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
         label->setText(QApplication::translate("MainWindow", "Chunk Size", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
@@ -414,13 +431,10 @@ public:
         useACC->setToolTip(QApplication::translate("MainWindow", "This will enable Acceleration sensors X, Y and Z.", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
         useACC->setText(QApplication::translate("MainWindow", "(check)", 0, QApplication::UnicodeUTF8));
-        label_12->setText(QApplication::translate("MainWindow", "Enable Bipolar (last 8 only) ", 0, QApplication::UnicodeUTF8));
-        useBipolar->setText(QApplication::translate("MainWindow", "(check)", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
-        deviceSerialNumber->setToolTip(QApplication::translate("MainWindow", "The number of the USB device (if multiple); the first one is #0.", 0, QApplication::UnicodeUTF8));
+        bipolarChannelCount->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p>In LiveAmp 32, if any bipolar channels are enabled, the maximum number of EEG channels drops to 24. In LiveAmp 16 or 8, you are limited to 16 or 8 channels total and a maximum of 8 bipolar channels.</p></body></html>", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
-        deviceSerialNumber->setInputMask(QString());
-        deviceSerialNumber->setText(QString());
+        label_12->setText(QApplication::translate("MainWindow", "Number of Bipolar channels", 0, QApplication::UnicodeUTF8));
         linkButton->setText(QApplication::translate("MainWindow", "Link", 0, QApplication::UnicodeUTF8));
         groupBox_3->setTitle(QApplication::translate("MainWindow", "LSL Trigger Output Style", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP

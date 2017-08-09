@@ -18,7 +18,8 @@ private:
 	// these are initialized in the constructor
 	HANDLE h;                        // device handle
 	std::string serialNumber;        // serial number
-	int availableChannels;           // number of available devices
+	int availableChannels;           // number of available channels
+	int usableChannels;				 // whether we are liveamp 8, 16, 32, 64
 
 	// these are set later on by the user
 	float samplingRate;
@@ -31,12 +32,14 @@ private:
 
 	// flexible? channel access arrays
 	std::vector<int> channelIndexes;  
-	std::vector<int> eegIndeces;
-	std::vector<int> auxIndeces;
-	std::vector<int> accIndeces;
-	std::vector<int> trigIndeces;
+	std::vector<int> eegIndices;
+	std::vector<int> bipolarIndices;
+	std::vector<int> auxIndices;
+	std::vector<int> accIndices;
+	std::vector<int> trigIndices;
 
 	int enabledChannelCnt;
+	bool bIsClosed;
 
 public:
 	// constructor
@@ -53,7 +56,7 @@ public:
 	void close();
 
 	// enable requested channels: for now acc and aux are all or nothing, triggers are always on, and eeg channels can be selected
-	void enableChannels(std::vector<int> eegIndecesIn, bool auxEnable, bool accEnable, bool bipolarEnable);
+	void enableChannels(std::vector<int> eegIndicesIn, std::vector<int> bipolarIndicesIn, bool auxEnable, bool accEnable);
 
 	// activate the configured device with enabled channels
 	void startAcquisition(void);
@@ -73,13 +76,16 @@ public:
 	inline std::string&      getSerialNumber(void){return serialNumber;}
 	inline int               getAvailableChannels(void){return availableChannels;}
 	inline int               getRecordingMode(void){return recordingMode;}
-	inline std::vector<int>& getEEGIndeces(void){return eegIndeces;}
-	inline std::vector<int>& getAuxIndeces(void){return auxIndeces;}
-	inline std::vector<int>& getAccIndeces(void){return accIndeces;}
-	inline std::vector<int>& getTrigIndeces(void){return trigIndeces;}
+	inline std::vector<int>& getEEGIndices(void){return eegIndices;}
+	inline std::vector<int>& getBipolarIndices(void){return bipolarIndices;}
+	inline std::vector<int>& getAuxIndices(void){return auxIndices;}
+	inline std::vector<int>& getAccIndices(void){return accIndices;}
+	inline std::vector<int>& getTrigIndices(void){return trigIndices;}
 	inline int               getEnabledChannelCnt(void){return enabledChannelCnt;}
 	inline int*              getDataTypeArray(void){return dataTypeArray;}  
 	inline int               getSampleSize(void){return sampleSize;}
+	inline int				 getUsableChannels(void){return usableChannels;}
+	inline bool				 isClosed(void){return bIsClosed;}
 };
 
 #endif //LiveAmp_H

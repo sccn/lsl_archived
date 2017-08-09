@@ -60,6 +60,8 @@ private slots:
     // close event (potentially disabled)
     void closeEvent(QCloseEvent *ev);
 
+	void update_channel_labels_with_eeg(int);
+	void update_channel_labels_with_bipolar(int);
 	
 	// if the device combo box item changes
 	void choose_device(int which);
@@ -67,11 +69,18 @@ private slots:
 
 private:
 
+	int eegChannelCount;
+	std::vector<int> usableChannelsByDevice;
+	int bipolarChannelCount;
+	bool overwrite;
+
+	bool check_configuration();
+	void update_channel_counters(int n);
 	void wait_message();
 
 
 	// background data reader thread
-	void read_thread(int chunkSize, int samplingRate, bool useAUX, bool useACC, bool useBipolar, std::vector<std::string> eegChannelLabels);
+	void read_thread(int chunkSize, int samplingRate, bool useAUX, bool useACC, std::vector<std::string> eegChannelLabels, std::vector<std::string> bipolarChannelLabels);
 	
 	
 	// container for amplifier enumeration

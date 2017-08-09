@@ -6,8 +6,13 @@
 //  Date:		2016-03-17
 //
 //	Change History
-//	2016-03-17	Version 1.xx	Initial implementation
-//				
+//	17.03.2016	Version 1.xx	- Initial implementation
+//	05.12.2016	Version 2.xx	- Added flash recording functions and properties
+//	22.03.2017  Version 3.xx	- New module property MPROP_B32_ImpedanceMeasurement
+//								- Depending on the availabilitiy of GND/REF measurement from modules
+//								  ampGetImpedanceData will deliver these additional values
+//	29.03.2017	Version 3.xx	- New module property MPROP_I32_UseableChannels
+//	
 /*------------------------------------------------------------------------------------------------*/
 
 
@@ -29,7 +34,7 @@
 // Defines
 /*------------------------------------------------------------------------------------------------*/
 
-#define API_MAJOR				(1)			// Application interface major version
+#define API_MAJOR				(3)			// Application interface major version
 #define API_MINOR				(0)			// Application interface minor version
 
 /*------------------------------------------------------------------------------------------------*/
@@ -49,16 +54,16 @@
 #define AMP_ERR_TIMEOUT  		(-10)		// a timeout occurred 
 #define AMP_ERR_BUFFERSIZE 		(-11)		// transfer buffer too small, there is more data available 
 
-#define BT_ERR_FAIL				(-100-1)	// BT connection error
-#define BT_ERR_BT_SERVICE		(-100-2)	// BT radio is off
-#define BT_ERR_MEMORY			(-100-3)	// BT out of memory
-#define BT_ERR_NODEVICE			(-100-4)	// BT interface not found
-#define BT_ERR_CONNECT			(-100-5)	// BT no conncection to amplifier
-#define BT_ERR_DISCONNECTED		(-100-6)	// BT amplifier disconnected
-#define BT_ERR_TIMEOUT			(-100-7)	// BT command time out
-#define BT_ERR_ALREADYOPEN		(-100-8)	// BT amplifier is already open
-#define BT_ERR_PARAMETER		(-100-9)	// BT invalid command parameters
-#define BT_ERR_ATCOMMAND		(-100-10)	// BT AT command failed
+#define IF_ERR_FAIL				(-100-1)	// interface connection error
+#define IF_ERR_BT_SERVICE		(-100-2)	// interface radio is off
+#define IF_ERR_MEMORY			(-100-3)	// interface out of memory
+#define IF_ERR_NODEVICE			(-100-4)	// interface interface not found
+#define IF_ERR_CONNECT			(-100-5)	// interface no conncection to amplifier
+#define IF_ERR_DISCONNECTED		(-100-6)	// interface amplifier disconnected
+#define IF_ERR_TIMEOUT			(-100-7)	// interface command time out
+#define IF_ERR_ALREADYOPEN		(-100-8)	// interface amplifier is already open
+#define IF_ERR_PARAMETER		(-100-9)	// interface invalid command parameters
+#define IF_ERR_ATCOMMAND		(-100-10)	// interface AT command failed
 
 #define DEVICE_ERR_BASE			(-200)		// error number base for device errors 
 #define DEVICE_ERR_FAIL			(-200-1)	// internal error, not specified
@@ -74,6 +79,28 @@
 #define DEVICE_ERR_AUXBOX 		(-200-11)   // AuxBox not available
 #define DEVICE_ERR_SDFULL		(-200-12)   // SD card full
 #define DEVICE_ERR_WSPACE		(-200-13)   // Workspace settings not available
+#define DEVICE_ERR_CLOCKED		(-200-14)	// Requested EEG channels are not available for this amplifer model
+#define DEVICE_ERR_SUPPORT		(-200-15)	// Function not supported in the current operation mode
+#define DEVICE_ERR_FILEINUSE	(-200-16)   // The requested file name is already used
+
+/*------------------------------------------------------------------------------------------------*/
+// Flags
+/*------------------------------------------------------------------------------------------------*/
+
+// Status bit definitions for the property DPROP_UI32_RecordingState
+#define FLAG_REC_AVAILABLE		0x0001			// recording to internal flash available
+#define FLAG_REC_ACTIVE			0x0002			// recording to internal flash is active
+#define FLAG_REC_PREPARE		0x0004			// preparing the recording to internal flash is in progress
+// Error flags for the property DPROP_UI32_RecordingState
+#define FLAG_REC_FILESYSTEM		0x00010000		// corrupted file system
+#define FLAG_REC_WRITE			0x00020000      // write error
+#define FLAG_REC_FULL			0x00040000      // memory full
+#define FLAG_REC_FILE_FULL		0x00080000      // 4GB file size reached
+#define FLAG_REC_FRAGMENTED		0x00100000      // cluster mapping failed, the flash memory is too much fragmented
+#define FLAG_REC_ALLOCATION		0x00200000      // cluster pre-allocation failed
+#define FLAG_REC_BUFFEROVF		0x00400000      // sector buffer overflow, maybe the memory is fragmented
+#define FLAG_REC_FORMAT			0x00800000      // memory is not properly formatted
+
 
 /*------------------------------------------------------------------------------------------------*/
 // Enums
@@ -213,6 +240,8 @@ typedef enum ModulePropertyID
 	MPROP_CHR_SerialNumber = 2,						// serial number in human readable format
 	MPROP_TVN_HardwareRevision = 3,					// hardware revision
 	MPROP_TVN_FirmwareVersion = 4,					// firmware version
+	MPROP_B32_ImpedanceMeasurement = 20,			// 1 = REF and GND impedance measurement available for this module
+	MPROP_I32_UseableChannels = 21,					// number of usable (selectable) channels in this module
 } t_ModulePropertyID;
 
 // Amplifier device properties
@@ -233,14 +262,20 @@ typedef enum DevicePropertyID
 	DPROP_I32_BatteryLevel = 101,				// battery filling level (t_BatteryState)
 	DPROP_I32_ConnectionState = 102,			// connection info (t_ConnectionState)
 	DPROP_I32_SignalQuality = 103,				// signal quality (t_SignalQuality if available)
-	DPROP_UI32_RecordingState = 104,			// device specific flags if recording to internal memory (if available)
-	DPROP_UI32_ErrorFlags = 105,					// device specific error flags
+	DPROP_UI32_ErrorFlags = 104,				// device specific error flags
 	// recording parameters
 	DPROP_I32_RecordingMode = 200,				// the recording mode (t_RecordingMode)
 	DPROP_F32_BaseSampleRate = 201,				// base sampling frequency of the amplifier
 	DPROP_F32_SubSampleDivisor = 202,			// sub sampling divisor
 	DPROP_I32_GoodImpedanceLevel = 203,			// Good impedance level in Ohm. Impedances below this level will be shown in green, else yellow 
-	DPROP_I32_BadImpedanceLevel = 204			// Bad impedance level in Ohm. Impedances above this level will be shown in red
+	DPROP_I32_BadImpedanceLevel = 204,			// Bad impedance level in Ohm. Impedances above this level will be shown in red
+	// flash recording status and parameters
+	DPROP_UI32_FlashRecordingState = 300,		// device specific flags if recording to internal memory (if available)
+	DPROP_UI32_FlashSegmentSize = 301,			// Size of the preallocated segments in MByte. Valid range is 1 - 4095 MByte. The size will be clipped to this range.
+	DPROP_CHR_FlashWorkspaceDescription = 302,	// XML description of the workspace settings (channel labels, trigger selection ...)
+	DPROP_UI32_FlashFreeSpace = 303,			// Free disk space in MB
+	DPROP_UI32_FlashFileSize = 304,				// Current recording file size in MB
+	DPROP_CHR_FlashFileName = 305				// Current recording file name
 } t_DevicePropertyID;
 
 
@@ -383,14 +418,26 @@ AMPAPI ampGetData(HANDLE DeviceHandle, void *Buffer, int32_t BufferSize, int32_t
 
 /// <summary>	Gets the impedance data of the selected channels. </summary>
 /// 			The channel order in the buffer is
-///				GND impedance, REF impedance,  CH1+, CH1-, CH2+, CH2-, .. CHn+, CHn-
+///				M0 GND impedance, M0 REF impedance, ... Mn GND, Mn REF, CH1+, CH1-, CH2+, CH2-, .. CHn+, CHn-
+///				M0 - Mn are the ground and reference impedances for all modules where the property MPROP_B32_ImpedanceMeasurement is set.
 ///				All value types are float and in [Ohm].
-///				CH- values are only valid for bipolar electrodes and -1 if not available 
+///				CH- values are only valid for bipolar electrodes and are -1 if the impedance value is not available 
 /// <param name="DeviceHandle">	Handle of the device. </param>
 /// <param name="Buffer">	   	Receive buffer. </param>
 /// <param name="BufferSize">  	Size of the receive buffer in bytes. </param>
 /// <returns>	Number of bytes written into the receive buffer.  </returns>
 AMPAPI ampGetImpedanceData(HANDLE DeviceHandle, void *Buffer, int32_t BufferSize);
+
+/// <summary>	Start recording to internal memory. </summary>
+/// <param name="DeviceHandle">	Handle of the device. </param>
+/// <returns>	. </returns>
+AMPAPI ampStartFlashRecording(HANDLE DeviceHandle);
+
+/// <summary>	Stop recording to internal memory. </summary>
+/// <param name="DeviceHandle">	Handle of the device. </param>
+/// <returns>	. </returns>
+AMPAPI ampStopFlashRecording(HANDLE DeviceHandle);
+
 
 
 #ifdef __cplusplus

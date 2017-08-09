@@ -111,7 +111,7 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>.\</OutDir>
     <IntDir>debug\</IntDir>
-    <TargetName>LiveAmpD</TargetName>
+    <TargetName>LiveAmp</TargetName>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -165,7 +165,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OutputFile>$(OutDir)\LiveAmpD.exe</OutputFile>
+      <OutputFile>$(OutDir)\LiveAmp.exe</OutputFile>
       <AdditionalLibraryDirectories>$(QTSDK)\lib;$(LSL_LIB)\bin;$(BOOST_ROOT)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>$(QTSDK)\lib\qtmaind.lib;$(QTSDK)\lib\QtGuid4.lib;$(QTSDK)\lib\QtCored4.lib;LiveAmpLib2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>

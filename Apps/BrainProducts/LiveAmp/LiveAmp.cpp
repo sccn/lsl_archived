@@ -10,7 +10,7 @@ LiveAmp::LiveAmp(std::string serialNumberIn, float samplingRateIn, bool useSim, 
 	int res;
 	char HWI[20];
 	
-
+	bIsClosed = false;
 	if(useSim)
 		strcpy_s(HWI, "SIM");
 	else
@@ -19,7 +19,7 @@ LiveAmp::LiveAmp(std::string serialNumberIn, float samplingRateIn, bool useSim, 
 	res = ampEnumerateDevices(HWI, sizeof(HWI), "LiveAmp", 0);
 
 	if (res <= 0)			
-		throw std::runtime_error("No LiveAmp connected");
+		throw std::runtime_error("No LiveAmp connected or device wasn't properly closed. Try restarting this application.");
 	else {
 		for(int i=0;i<res;i++){	
 			int result;
@@ -65,6 +65,11 @@ LiveAmp::LiveAmp(std::string serialNumberIn, float samplingRateIn, bool useSim, 
 				result = ampGetProperty(h, PG_DEVICE, 0, DPROP_I32_AvailableChannels, &availableChannels, sizeof(availableChannels));
 				if(result != AMP_OK)					
 					throw std::runtime_error(("Error getting available channel count, error code:  " + boost::lexical_cast<std::string>(result)).c_str());	
+
+				// set the usable channels               // this property name is misspelled in the API---we use the correct spelling locally
+				result = ampGetProperty(h, PG_MODULE, 0, MPROP_I32_UseableChannels, &usableChannels, sizeof(usableChannels));
+				if(result != AMP_OK)					
+					throw std::runtime_error(("Error getting usable channel count, error code:  " + boost::lexical_cast<std::string>(result)).c_str());	
 
 				break;
 			}
@@ -126,7 +131,7 @@ void LiveAmp::enumerate(std::vector<std::pair<std::string, int>> &ampData, bool 
 			else {
 		
 				int32_t iVar;
-				result = ampGetProperty(hndl, PG_DEVICE, i, DPROP_I32_AvailableChannels, &iVar, sizeof(iVar)); 
+				result = ampGetProperty(hndl, PG_MODULE, i, MPROP_I32_UseableChannels, &iVar, sizeof(iVar)); 
 				if(result != AMP_OK) {
 					std::string msg = "Cannot get device channel count: ";
 					msg.append (boost::lexical_cast<std::string>(i).c_str());
@@ -164,7 +169,7 @@ void LiveAmp::close(void){
 	}
 }
 
-void LiveAmp::enableChannels(std::vector<int> eegIndecesIn, bool auxEnable, bool accEnable, bool bipolarEnable) {
+void LiveAmp::enableChannels(std::vector<int> eegIndicesIn, std::vector<int> bipolarIndicesIn, bool auxEnable, bool accEnable) {
 	
 	int res;
 	int type;
@@ -173,10 +178,11 @@ void LiveAmp::enableChannels(std::vector<int> eegIndecesIn, bool auxEnable, bool
 	int bipType = CT_BIP;
 	char cValue[20]; // for determining if the aux channel is an accelerometer or not
 
-	if(!eegIndeces.empty())eegIndeces.clear();
-	if(!auxIndeces.empty())auxIndeces.clear();
-	if(!accIndeces.empty())accIndeces.clear();
-	if(!trigIndeces.empty())trigIndeces.clear();
+	if(!eegIndices.empty())eegIndices.clear();
+	if(!bipolarIndices.empty())bipolarIndices.clear();
+	if(!auxIndices.empty())auxIndices.clear();
+	if(!accIndices.empty())accIndices.clear();
+	if(!trigIndices.empty())trigIndices.clear();
 	enabledChannelCnt = 0;	
 	int passCnt = 0;
 	
@@ -185,6 +191,10 @@ void LiveAmp::enableChannels(std::vector<int> eegIndecesIn, bool auxEnable, bool
 		throw std::runtime_error((std::string("Invalid number of available channels on device ") + serialNumber).c_str());
 		return;
 	}
+	// first, disable all the channels
+	enable = false;
+	for(i=0;i<availableChannels;i++)
+		res = ampSetProperty(h, PG_CHANNEL, i, CPROP_B32_RecordingEnabled, &enable, sizeof(enable));
 
 	// go through the available channels and enable them if they are chosen
 	for(i=0;i<availableChannels;i++) {
@@ -196,10 +206,10 @@ void LiveAmp::enableChannels(std::vector<int> eegIndecesIn, bool auxEnable, bool
 		if (type == CT_EEG || type == CT_BIP) {
 			// go through the requested eeg channel vector and enable on match
 			passCnt = 0;
-			for(std::vector<int>::iterator it=eegIndecesIn.begin(); it!=eegIndecesIn.end();++it) {
+			for(std::vector<int>::iterator it=eegIndicesIn.begin(); it!=eegIndicesIn.end();++it) {
 				if(*it==i){
 					enable = true;
-					eegIndeces.push_back(i);
+					eegIndices.push_back(i);
 					++enabledChannelCnt;
 					passCnt++;
 					// I'm not sure if this check is necessary, but it's in the old code, so I am assuming it is
@@ -213,11 +223,36 @@ void LiveAmp::enableChannels(std::vector<int> eegIndecesIn, bool auxEnable, bool
 							throw std::runtime_error(("Error SetProperty enable for EEG channels, error: "  + boost::lexical_cast<std::string>(res)).c_str());	
 					}
 
-					if(type == CT_BIP && bipolarEnable == true){
-						res = ampSetProperty(h, PG_CHANNEL, i, CPROP_I32_Type, &bipType, sizeof(bipType));
-						if (res != AMP_OK)								
-							throw std::runtime_error(("Error SetProperty enable BIPOLAR EEG channels, error: "  + boost::lexical_cast<std::string>(res)).c_str());	
+					//if(type == CT_BIP && bipolarEnable == true){
+					//	res = ampSetProperty(h, PG_CHANNEL, i, CPROP_I32_Type, &bipType, sizeof(bipType));
+					//	if (res != AMP_OK)								
+					//		throw std::runtime_error(("Error SetProperty enable BIPOLAR EEG channels, error: "  + boost::lexical_cast<std::string>(res)).c_str());	
+					//}
+				}
+			}
+
+			for(std::vector<int>::iterator it=bipolarIndicesIn.begin(); it!=bipolarIndicesIn.end();++it) {
+				if(*it==i){
+					enable = true;
+					bipolarIndices.push_back(i);
+					++enabledChannelCnt;
+					passCnt++;
+					// I'm not sure if this check is necessary, but it's in the old code, so I am assuming it is
+					res = ampGetProperty(h, PG_CHANNEL, i, CPROP_B32_RecordingEnabled, &wasEnabled, sizeof(wasEnabled));
+					if (res != AMP_OK)								
+						throw std::runtime_error(("Error GetProperty enable for EEG channels, error: "  + boost::lexical_cast<std::string>(res)).c_str());	
+					
+					if(wasEnabled!=enable) {		
+						res = ampSetProperty(h, PG_CHANNEL, i, CPROP_B32_RecordingEnabled, &enable, sizeof(enable));
+						if (res != AMP_OK)				
+							throw std::runtime_error(("Error SetProperty enable for EEG channels, error: "  + boost::lexical_cast<std::string>(res)).c_str());	
 					}
+
+			
+					res = ampSetProperty(h, PG_CHANNEL, i, CPROP_I32_Type, &bipType, sizeof(bipType));
+					if (res != AMP_OK)								
+						throw std::runtime_error(("Error SetProperty enable BIPOLAR EEG channels, error: "  + boost::lexical_cast<std::string>(res)).c_str());	
+					
 				}
 			}
 		}
@@ -235,7 +270,7 @@ void LiveAmp::enableChannels(std::vector<int> eegIndecesIn, bool auxEnable, bool
 
 				enable = accEnable;
 				if(enable == true){
-					accIndeces.push_back(i);
+					accIndices.push_back(i);
 					++enabledChannelCnt;
 				}
 				res = ampGetProperty(h, PG_CHANNEL, i, CPROP_B32_RecordingEnabled, &wasEnabled, sizeof(wasEnabled));
@@ -256,7 +291,7 @@ void LiveAmp::enableChannels(std::vector<int> eegIndecesIn, bool auxEnable, bool
 
 				enable = auxEnable;
 				if(enable==true) {
-					accIndeces.push_back(i);
+					accIndices.push_back(i);
 					++enabledChannelCnt;
 				}
 				res = ampGetProperty(h, PG_CHANNEL, i, CPROP_B32_RecordingEnabled, &wasEnabled, sizeof(wasEnabled));
@@ -275,7 +310,7 @@ void LiveAmp::enableChannels(std::vector<int> eegIndecesIn, bool auxEnable, bool
 		
 		// the triggers are always enabled, but we need to keep track of them for channel labelling purposes
 		if(type == CT_TRG || type == CT_DIG) {
-			trigIndeces.push_back(i);	
+			trigIndices.push_back(i);	
 			++enabledChannelCnt;
 		}
 	}
