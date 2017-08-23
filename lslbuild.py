@@ -17,7 +17,6 @@
 # Optional / required for apps:
 # - Boost (+path set with -DBOOST_ROOT=path/to/boost)
 # - Qt (+path set)
-
 import os
 import os.path
 import shutil
@@ -25,7 +24,8 @@ import subprocess
 import sys
 
 presets = {
-    'apps': ['Examples', 'LabRecorder', 'XDFBrowser'],
+    'apps': [],
+    'build-dir': 'build',
     'dont-build': False,
     'dont-configure': False,
     'dont-run-tests': False,
@@ -47,7 +47,11 @@ class LSLBuilder:
     def __init__(self, config):
         self.sourcepath = os.path.dirname(os.path.realpath(__file__))
         self.cmake_conf = config['cmake_conf']
-        self.builddir = self.sourcepath + '/build/lsl_' + self.cmake_conf['CMAKE_BUILD_TYPE'] + '/'
+        bd = config['build-dir']
+        if bd.startswith('/'):
+            self.builddir = bd
+        else:
+            self.builddir = os.path.join(self.sourcepath, bd, 'lsl_' + self.cmake_conf['CMAKE_BUILD_TYPE'], '')
         self.apps = config['apps']
         self.interactive = conf['interactive']
         self.dry_run = config['dry-run']
@@ -82,7 +86,7 @@ class LSLBuilder:
             os.chdir(newdir)
 
     def call_cmake(self, generator=None, conf={}, otherargs=[]):
-        args = ['cmake-gui'] if self.interactive else ['cmake']
+        args = ['cmake']
         if generator is not None:
             args += ['-G', generator]
         for k, v in conf.items():
@@ -95,6 +99,9 @@ class LSLBuilder:
         self.mkbuilddir('', self.clean_builddir)
         self.chdir(self.builddir)
         self.cmake_conf['CMAKE_INSTALL_PREFIX'] = self.mkbuilddir('lslinstall', self.clean_builddir)
+        if self.interactive:
+            self.call(['cmake-gui', self.sourcepath])
+            return
         #assert (self.install_prefix == self.cmake_conf['CMAKE_INSTALL_PREFIX'])
         for app in self.apps:
             print('Adding ' + app + ' to the to do list')
@@ -103,9 +110,13 @@ class LSLBuilder:
         self.call_cmake(self.generator, self.cmake_conf, [self.sourcepath])  # generate CMake build files
 
     def build(self):
+        if not os.path.exists(os.path.join(self.builddir, 'CMakeCache.txt')) and not self.dry_run:
+            raise Exception('No configured build directory found!')
         self.call_cmake(otherargs=['--build', '.', '--target', 'install'])  # build everything and install it
 
     def run_tests(self):
+        if not os.path.exists(os.path.join(self.install_prefix, 'LSL', 'cmake')) and not self.dry_run:
+            raise Exception('LSL installation not found in ' + self.install_prefix)
         self.chdir(self.mkbuilddir('lsloot'))
         self.call_cmake(conf['generator'], {'LSL_ROOT': self.install_prefix + '/LSL/'},
                         [self.sourcepath + '/OutOfTreeTest'])
@@ -124,9 +135,9 @@ def print_conf(conf):
 def print_usage(conf):
     print_conf(conf)
     print(' --generator      set the CMake generator (see cmake -G)')
-    print(' --variant        set the build type (Debug or Release)')
+    print(' --build-dir      build prefix relative to the source or absolute')
     print(' --dry-run        just print the commands, don\'t execute them')
-    print(' --interactive    launch the cmake gui before building')
+    print(' --interactive    launch the cmake gui to configure the build manually')
     print(' --clean-builddir remove an existing build directory')
     print(' --help           print this message')
     print(' -Dvar=value      set the CMake variable \'var\' to \'value\'')
@@ -135,6 +146,7 @@ def print_usage(conf):
     print(' --dont-configure don\'t run the configuration step')
     print(' --dont-build     don\'t run the build step')
     print(' --dont-package   don\'t create a distributable archive')
+    print(' --dont-run-tests don\'t run tests to see if most things work')
     print('\n')
 
 if __name__ == '__main__':
@@ -149,7 +161,7 @@ if __name__ == '__main__':
         elif arg.startswith('--with-'):
             conf['apps'].append(arg[7:])
         elif arg.startswith('--without-'):
-            conf['apps'].append(arg[7:])
+            conf['apps'].remove(arg[10:])
         elif arg.startswith('--'):
             parts = arg[2:].split('=')
             if len(parts) == 1:
