@@ -12,15 +12,14 @@ else()
 	include(LSLAppBoilerplate)
 endif()
 
+option(LSLAPPS_Examples    "Build example apps" OFF)
+option(LSLAPPS_LabRecorder "Build the recorder app" ON)
+option(LSLAPPS_XDFBrowser  "Build the XDFBrowser app" ON)
 
 # Windows-only apps
 if(WIN32)
 	option(LSLAPPS_BrainAmp	"Build the BrainAmp app" OFF)
 endif()
-
-option(LSLAPPS_Examples    "Build example apps" OFF)
-option(LSLAPPS_LabRecorder "Build the recorder app" OFF)
-option(LSLAPPS_XDFBrowser  "Build the XDFBrowser app" OFF)
 
 
 # add all Apps the user wants to build

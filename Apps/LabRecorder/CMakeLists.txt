@@ -56,11 +56,11 @@ add_executable(${target}
 
 IF(MSVC)
     find_package(Boost REQUIRED COMPONENTS filesystem iostreams thread zlib)
-	target_link_libraries(${target} PRIVATE Boost::zlib)
+    set(zlib_libs Boost::zlib)
 ELSE()
     find_package(Boost REQUIRED COMPONENTS filesystem iostreams thread)
 	find_package(ZLIB REQUIRED)
-	target_link_libraries(${target} PRIVATE ${ZLIB_LIBRARIES})
+    set(zlib_libs ${ZLIB_LIBRARIES})
 ENDIF()
 
 target_link_libraries(${target}
@@ -70,6 +70,7 @@ target_link_libraries(${target}
 	Boost::filesystem
 	Boost::iostreams
 	Boost::thread
+	${zlib_libs}
 	LSL::lsl
 )
 
