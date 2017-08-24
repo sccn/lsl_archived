@@ -2,9 +2,13 @@
 General
 =======
 
-This manual describes the process of building liblsl from source for Windows, Mac OS X, and Linux. Since liblsl is cross-platform (it is written in standard C++ and uses some boost libraries), this process should be pretty straightforward. The following paragraphs provide a step-by-step instruction of the build process on all three platforms. 
+This manual describes the process of building liblsl from source for Windows, Mac OS X, and Linux.
+Since liblsl is cross-platform (it is written in standard C++ and uses some boost libraries),
+this process should be pretty straightforward.
+The following paragraphs provide a step-by-step instruction of the build process on all three platforms. 
 
-To get an overview of the project structure, the following tree lists the directory hierarchy of the source after you've unpacked the compressed source archive:
+To get an overview of the project structure, the following tree lists the directory
+hierarchy of the source after you've unpacked the compressed source archive:
 
   labstreaminglayer
   ├── Apps
@@ -38,15 +42,15 @@ CMake
 Tested platforms:
 * Windows 7, Visual Studio 2015
 * Ubuntu Linux 14.04
-* (To do: Mac OS X)
+* MacOS Sierra
 
 Prerequisites (LSL with bundled Boost)
 - CMake 3.5
-- Python 2.7
+- Python 2.7 or Python 3
 - (7zip)
 - Windows:
     - C++ compiler (tested: VS2015)
-    - Ninja (https://ninja-build.org/)
+    - optional: [Ninja](https://ninja-build.org/)
 - Linux
     - C++ compiler (tested: clang 3.5, GCC 6.2)
 - OS X
@@ -62,7 +66,11 @@ Optional / required for some apps:
     - if everything goes smoothly you should now have the libraries in `stage/x64/lib`
 - Qt (+path set with `-DQt5_DIR=C:/path_to/Qt/5.9.1/msvc2015_64/lib/cmake/Qt5/` or `set PATH=C:\Qt\5.9.1\msvc2015_64;%PATH%`)
 
-To build LSL, call either `lslbuild.py` from a valid build environment (e.g. the Visual C++ command line) or do it manually:
+On Mac, if using homebrew Qt5, it is necessary to run the following from the project root:
+`chmod +x ./fix_mac.sh`
+`sudo ./fix_mac.sh`
+
+To build LSL, call either `lslbuild.py` (see `lslbuild.py --help`) from a valid build environment (e.g. the Visual C++ command line) or do it manually:
 
 - extract the zip file or clone the repository (`git clone https://github.com/sccn/labstreaminglayer.git`)
 - change to this directory (git: `cd labstreaminglayer`)
@@ -74,27 +82,27 @@ To build LSL, call either `lslbuild.py` from a valid build environment (e.g. the
     - `-DCMAKE_BUILD_TYPE=Release` (`Release` or `Debug`) to compile with debug information or optimizations
     - `-DCMAKE_INSTALL_PREFIX` to set where to install the LSL distribution
     - `-G` to set the generator type (call without a parameter to see a list).
-- start the build process (depending on the generator), e.g. `make`, `ninja` or load the generated VS Solution file
-- install, e.g. `make install`, `ninja install`, in VS build the `INSTALL`-target
+- start the build process (all generators: `cmake --build .`) or load the generated VS Solution file
+- copy the generated files to an installation folder: `cmake --build . --target install` or use the `INSTALL` target in Visual Studio
 
 This will create a distribution tree similar to this:
 
     ├── AppX
     │   ├── AppX.exe
-    │   ├── AppX.bat
+    │   ├── liblsl64_MSVC14.dll
+	│   ├── Qt5Xml.dll
+	│   ├── Qt5Gui.dll
     │   └── AppX_configuration.ini
     ├── AppY
     │   ├── AppY.exe
-    │   ├── AppY.bat
     │   ├── AppY_conf.exe
+	│   ├── liblsl64_MSVC14.dll
     │   └── example.png
     ├── examples
     │   ├── CppReceive.exe
-    │   ├── CppReceive.bat
     │   ├── CppSendRand.exe
-    │   ├── CppSendRand.bat
     │   ├── SendDataC.exe
-    │   └── SendDataC.bat
+	│   ├── liblsl64_MSVC14.dll
     └── LSL
         ├── cmake
         │   ├── LSLAppBoilerplate.cmake
@@ -106,12 +114,7 @@ This will create a distribution tree similar to this:
         └── lib
             ├── liblsl64_MSVC14.dll
             ├── liblsl64_MSVC14.lib
-            ├── lslboost.lib
-            ├── Qt5Xml.dll
-            ├── Qt5Gui.dll
-            ├── [more Qt]
-            ├── libboost-system-msvc14-mt.dll
-            └── [more boost]
+            └── lslboost.lib
 
 On Unix systems (Linux+OS X) the executable's library path is changed to include
 `../LSL/lib/` and the executable folder (`./`) so common libraries (Qt, Boost)
