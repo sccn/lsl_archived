@@ -20,7 +20,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Set runtime path, i.e. where shared libs are searched relative to the exe
 if(APPLE)
-	list(APPEND CMAKE_INSTALL_RPATH "@executable_path/../LSL/lib:@executable_path")
+	list(APPEND CMAKE_INSTALL_RPATH "@executable_path/../LSL/lib")
+	list(APPEND CMAKE_INSTALL_RPATH "@executable_path/")
 elseif(UNIX)
 	list(APPEND CMAKE_INSTALL_RPATH "\$ORIGIN/../LSL/lib:\$ORIGIN")
 endif()
@@ -57,37 +58,19 @@ set(META_AUTHOR_DOMAIN            "https://github.com/sccn/labstreaminglayer/")
 # CMAKE_INSTALL_PREFIX/PROJECT_NAME/TARGET_NAME
 # e.g. C:/LSL/BrainAmpSeries/BrainAmpSeries.exe
 function(installLSLApp target)
+	
 	install(TARGETS ${target}
 		BUNDLE DESTINATION ${PROJECT_NAME}
 		RUNTIME DESTINATION ${PROJECT_NAME}
 		LIBRARY DESTINATION ${PROJECT_NAME}/lib
-		)
-
-	#install(CODE "
-	#	include(BundleUtilities)
-	#	set(BU_CHMOD_BUNDLE_ITEMS ON)
-	#			fixup_bundle(\"${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/${target}${CMAKE_EXECUTABLE_SUFFIX}\"
-	#			\"\"
-	#			\"${CMAKE_INSTALL_PREFIX}/LSL/lib\")" )
-
+	)
+	set(appbin "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/${target}${CMAKE_EXECUTABLE_SUFFIX}")
+	
 	# libraries
 	if(WIN32)
 		# copy the liblsl dll to the target directory
 		install(FILES $<TARGET_FILE:LSL::lsl>
 			DESTINATION ${PROJECT_NAME})
-	elseif(APPLE)
-		# #It should be enough to call fixup_bundle, but this mangles Qt somehow causing crashes on startup.
-		# #TODO: Either don't fixup Qt and rely on system Qt, or fix crash.
-		#install(CODE "
-		#	include(BundleUtilities)
-		#	set(BU_CHMOD_BUNDLE_ITEMS ON)
-		#	fixup_bundle(${CMAKE_INSTALL_PREFIX}/${target}.app \"\" \"${LSL_ROOT_DIR}/bin\")
-		#" COMPONENT Runtime)
-		# # macdeployqt somehow also mangles Qt.
-		#add_custom_command(TARGET ${target} POST_BUILD
-		#	COMMAND macdeployqt
-		#	ARGS ${CMAKE_CURRENT_BINARY_DIR}/\${CONFIGURATION}/${target}.app
-		#) # add -dmg for an image
 	endif()
 
 	# do we need to install with Qt5?
@@ -95,16 +78,11 @@ function(installLSLApp target)
 	if(";${TARGET_LIBRARIES}" MATCHES ";Qt5::")
 		# TODO: add the executable name to a list we feed to *deployqt later on?
 		# https://gitlab.pluribusgames.com/games/apitrace/blob/master/gui/CMakeLists.txt#L121-174
+		get_target_property(QT_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
+		get_filename_component(QT_BIN_DIR "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
 		if(WIN32)
-			#install(CODE "(TARGET foo POST_BUILD
-			#	COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt"
-			#	COMMAND set PATH=%PATH%$<SEMICOLON>${qt5_install_prefix}/bin
-			#	COMMAND Qt5::windeployqt "--libdir ${libdir}" ${appbin}
-			# )
-			get_target_property (QT_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
-			get_filename_component (QT_BIN_DIR "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
-			find_program (QT_WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${QT_BIN_DIR}")
-			if (QT_WINDEPLOYQT_EXECUTABLE)
+			find_program (QT_DEPLOYQT_EXECUTABLE windeployqt HINTS "${QT_BIN_DIR}")
+			if (QT_DEPLOYQT_EXECUTABLE)
 				file (TO_NATIVE_PATH "${QT_BIN_DIR}" QT_BIN_DIR_NATIVE)
 				# It's safer to use `\` separators in the Path, but we need to escape them
 				string (REPLACE "\\" "\\\\" QT_BIN_DIR_NATIVE "${QT_BIN_DIR_NATIVE}")
@@ -120,28 +98,64 @@ function(installLSLApp target)
 				else ()
 					message (FATAL_ERROR "Unsupported MSVC version ${MSVC_VERSION}")
 				endif ()
-		
-				set(appbin "${CMAKE_INSTALL_PREFIX}/${target}/${target}${CMAKE_EXECUTABLE_SUFFIX}")
+				
+				set(QT_DEPLOYQT_FLAGS --no-translations --no-system-d3d-compiler --no-opengl-sw)
 				install (CODE "
 					message (STATUS \"Running Qt Deploy Tool...\")
-					set(QT_WINDEPLOYQT_FLAGS --no-translations --no-system-d3d-compiler --no-opengl-sw)
 					if (CMAKE_INSTALL_CONFIG_NAME STREQUAL \"Debug\")
-						list (APPEND QT_WINDEPLOYQT_FLAGS --debug)
+						list (APPEND QT_DEPLOYQT_FLAGS --debug)
 					else ()
-						list (APPEND QT_WINDEPLOYQT_FLAGS --release)
+						list (APPEND QT_DEPLOYQT_FLAGS --release)
 					endif ()
 					execute_process(COMMAND
 						\"${CMAKE_COMMAND}\" -E env
 						\"Path=${QT_BIN_DIR_NATIVE};\$ENV{SystemRoot}\\\\System32;\$ENV{SystemRoot}\"
 						\"VCINSTALLDIR=${VCINSTALLDIR}\"
-						\"${QT_WINDEPLOYQT_EXECUTABLE}\"
-						\${QT_WINDEPLOYQT_FLAGS}
+						\"${QT_DEPLOYQT_EXECUTABLE}\"
+						\${QT_DEPLOYQT_FLAGS}
 						\"${appbin}\"
 					)
 				")
 			endif(QT_WINDEPLOYQT_EXECUTABLE)
+		
 		elseif(APPLE)
-			install(CODE "message(STATUS \"Please run macdeployqt manually until we figure out how to make CMake do it\")")
+			# It should be enough to call fixup_bundle (see below),
+			# but this fails to install qt plugins (cocoa).
+			# macdeployqt works better
+			# Copy liblsl64_AppleClang.1.4.0.dylib, because macdeployqt does not
+			install(
+				FILES $<TARGET_FILE:LSL::lsl>
+				DESTINATION ${appbin}.app/Contents/MacOS
+			)
+			find_program (QT_DEPLOYQT_EXECUTABLE macdeployqt HINTS "${QT_BIN_DIR}")
+			if(QT_DEPLOYQT_EXECUTABLE)
+				set(QT_DEPLOYQT_FLAGS "-libpath=${CMAKE_INSTALL_PREFIX}/LSL/lib -verbose=1")
+				install(CODE "
+					message(STATUS \"Running Qt Deploy Tool...\")
+					#list(APPEND QT_DEPLOYQT_FLAGS -dmg)
+					if(CMAKE_INSTALL_CONFIG_NAME STREQUAL \"Debug\")
+					    list(APPEND QT_DEPLOYQT_FLAGS -use-debug-libs)
+					endif()
+					execute_process(COMMAND
+						\"${QT_DEPLOYQT_EXECUTABLE}\"
+						\"${appbin}.app\"
+						${QT_DEPLOYQT_FLAGS}
+					)
+				")
+			endif(QT_DEPLOYQT_EXECUTABLE)
 		endif(WIN32)
+	elseif(APPLE)
+		# fixup_bundle appears to be broken for Qt apps. Use only for non-Qt.
+		install(CODE "
+			include(BundleUtilities)
+			set(BU_CHMOD_BUNDLE_ITEMS ON)
+			fixup_bundle(
+				${appbin}.app
+				\"\"
+				\"${CMAKE_INSTALL_PREFIX}/LSL/lib\"
+			)
+			"
+			COMPONENT Runtime
+		)
 	endif()
 endfunction()

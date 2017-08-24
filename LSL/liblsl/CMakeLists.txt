@@ -135,7 +135,7 @@ generate_export_header(${target}
 
 set_target_properties(${target} PROPERTIES
 	VERSION ${LSL_VERSION_MAJOR}.${LSL_VERSION_MINOR}.${LSL_VERSION_PATCH}
-	SOVERSION ${LSL_VERSION_MAJOR}.0.0 # hopefully backwards compatible symlink
+	#SOVERSION ${LSL_VERSION_MAJOR}.0.0 # hopefully backwards compatible symlink
 	CXX_VISIBILITY_PRESET hidden # only export symbols marked with LIBLSL_CPP_API
 )
 

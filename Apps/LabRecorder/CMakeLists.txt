@@ -81,5 +81,12 @@ target_link_libraries(${target}
 #endif(MSVC)
 
 installLSLApp(${target})
-install(FILES default_config.cfg
-	DESTINATION ${PROJECT_NAME})
+message(STATUS ${CMAKE_CURRENT_BINARY_DIR})
+message(STATUS ${PROJECT_NAME})
+IF(APPLE)
+	install(FILES default_config.cfg
+		DESTINATION ${PROJECT_NAME}/${target}.app/Contents/MacOS)
+ELSE()
+	install(FILES default_config.cfg
+		DESTINATION ${PROJECT_NAME})
+ENDIF()

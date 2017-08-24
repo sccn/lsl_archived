@@ -14,7 +14,11 @@ endif()
 # this creates a target, links the necessary libraries and
 # creates an install target
 function(addlslexample name extension)
-	add_executable(${name} ${name}.${extension})
+	add_executable(${name}
+		MACOSX_BUNDLE
+		WIN32
+		${name}.${extension}
+	)
 	target_link_libraries(${name} LSL::lsl)
 	target_compile_features(${name} PRIVATE cxx_constexpr)
 	installLSLApp(${name})
