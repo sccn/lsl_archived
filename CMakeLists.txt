@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.5)
 project(LabStreamingLayer)
 
+if(NOT CMAKE_INSTALL_PREFIX)
+	SET(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_LIST_DIR}/lsl_${CMAKE_BUILD_TYPE}")
+endif()
+
 # add the liblsl build directory
 add_subdirectory(LSL/liblsl)
 
