@@ -12,31 +12,30 @@
         * [WinHID](https://developer.microsoft.com/en-us/windows/hardware/download-kits-windows-hardware-development)
             * You may already have this installed with Visual Studio.
 
-### 
+### Build Instructions
+
+On Mac/Linux
 
 ```
-mkdir build
-cd build
-cmake ..
+mkdir build && cd build
+cmake -DLSL_ROOT=..\..\..\build\install\LSL ..
 make
+make install
 ```
 
-You may have to modify the cmake command if you are using a version of Qt5
-other than 5.7 or if Qt5 was not installed via the installer in Windows
-or via homebrew in MacOS.
+On Windows, the cmake command needs the Qt5_DIR and the generator if Win64 specified as well. e.g.,
+(modify below with your Qt5 dir and LSL install dir)
 
-`cmake .. -DCMAKE_PREFIX_PATH="path/to/Qt5/<version>"`
+```
+mkdir build && cd build
+cmake -DQt5_DIR=C:\Qt\5.9.1\msvc2015_64\lib\cmake\Qt5 -DLSL_ROOT=..\..\..\build\install\LSL -G "Visual Studio 14 2016 Win64" ..
+```
 
-You may also want to modify the cmake command with a different generator
-if you want to build 64-bit binaries in Windows or use Xcode in Mac.
-See [cmake generators](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html).
+Then open up the visual studio solution, change the Solution Configuration drop down to Release, right click on the INSTALL target, then Build.
 
 ## Usage instructions
 
-The app executable will be in your build directory.
-In Windows this might be in a Release or Debug subdirectory.
-In Windows, if you wish to move the app to another location,
-then bring along the DLLs found in its directory.
+The app executable will be in a sister directory to your LSL install. It should have all the necessary libraries with it.
 
 ### Windows - Pair devices in advance
 
