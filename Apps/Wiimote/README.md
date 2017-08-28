@@ -18,7 +18,7 @@ On Mac/Linux
 
 ```
 mkdir build && cd build
-cmake -DLSL_ROOT=..\..\..\build\install\LSL ..
+cmake -DLSL_ROOT=path/to/labstreaminglayer/build/lsl_Release/lslinstall/LSL ..
 make
 make install
 ```
