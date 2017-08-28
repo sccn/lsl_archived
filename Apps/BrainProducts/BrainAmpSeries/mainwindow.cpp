@@ -226,7 +226,7 @@ void MainWindow::link() {
 // background data reader thread
 void MainWindow::read_thread(int deviceNumber, ULONG serialNumber, int impedanceMode, int resolution, int dcCoupling, int chunkSize, int channelCount, std::vector<std::string> channelLabels) {
 	const float unit_scales[] = {0.1,0.5,10,152.6};
-	const char *unit_strings[] = {"100 nV","500 nV","10 µV","152.6 µV"};
+	const char *unit_strings[] = {"100 nV","500 nV","10 muV","152.6 muV"};
 	// reserve buffers to receive and send data
 	int chunk_words = chunkSize*(channelCount+1);
 	boost::int16_t *recv_buffer = new boost::int16_t[chunk_words];

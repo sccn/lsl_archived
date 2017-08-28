@@ -7,10 +7,10 @@ Written by Matthew Grivich, SCCN/UCSD, May 2014.
 
 *******************************************************************************************/
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include "mainwindow.h"
 
-MainWindow *theWindow = NULL;
+MainWindow *theWindow = nullptr;
 
 int main(int argc, char *argv[])
 {
