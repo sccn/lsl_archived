@@ -31,7 +31,6 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE) # Do NOT add path to dependencies f
     
 # Include cmake modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-#include(cmake/Custom.cmake)
 
 # Meta information about the project
 set(META_PROJECT_DESCRIPTION "Send Wii data streams (Wiimote, balanceboard, etc) to LSL Outlet.")

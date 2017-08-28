@@ -28,7 +28,7 @@ On Windows, the cmake command needs the Qt5_DIR and the generator if Win64 speci
 
 ```
 mkdir build && cd build
-cmake -DQt5_DIR=C:\Qt\5.9.1\msvc2015_64\lib\cmake\Qt5 -DLSL_ROOT=..\..\..\build\install\LSL -G "Visual Studio 14 2016 Win64" ..
+cmake -DQt5_DIR=C:\Qt\5.9.1\msvc2015_64\lib\cmake\Qt5 -DLSL_ROOT=D:\full\path\to\labstreaminglayer\build\lsl_Release\lslinstall\LSL -G "Visual Studio 14 2015 Win64" ..
 ```
 
 Then open up the visual studio solution, change the Solution Configuration drop down to Release, right click on the INSTALL target, then Build.
