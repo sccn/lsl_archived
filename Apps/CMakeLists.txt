@@ -19,14 +19,11 @@ option(LSLAPPS_Wiimote          "Build the Wiimote app"         ON)
 
 # Windows-only apps
 if(WIN32)
-    option(LSLAPPS_BrainAmp    "Build the BrainAmp app" OFF)
+    option(LSLAPPS_BrainAmp     "Build the BrainAmp app"        OFF)
+    option(LSLAPPS_Emotiv       "Build the Emotiv app"          OFF)
 endif()
 
 # add all Apps the user wants to build
-if(LSLAPPS_BrainAmp)
-    add_subdirectory(BrainProducts/BrainAmpSeries)
-    #add_subdirectory(BrainProducts/BrainAmpImpedance)
-endif()
 
 if(LSLAPPS_Examples)
     add_subdirectory(Examples)
@@ -42,4 +39,13 @@ endif()
 
 if(LSLAPPS_Wiimote)
     add_subdirectory(Wiimote)
+endif()
+
+if(LSLAPPS_BrainAmp)
+    add_subdirectory(BrainProducts/BrainAmpSeries)
+    #add_subdirectory(BrainProducts/BrainAmpImpedance)
+endif()
+
+if(LSLAPPS_Emotiv)
+    add_subdirectory(emotiv)
 endif()

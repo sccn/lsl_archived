@@ -24,6 +24,7 @@ IF(NOT EDK_ROOT)
         "C:/Program Files (x86)/Emotiv SDK Premium Edition v3.3.3/EDK*" 
         "C:/Program Files (x86)/Emotiv SDK Premium Edition v3.3.2/EDK*"
     )
+    message(STATUS ${PATH_Candidates})
     FIND_PATH(EmotivSDK_INCLUDE_DIR Iedk.h
         PATH_SUFFIXES "Header files"
         PATHS ${PATH_Candidates}
@@ -50,6 +51,8 @@ find_path(EmotivSDK_INCLUDE_DIR
         Iedk.h
     PATHS
         "${EDK_ROOT}/Header files"
+    PATH_SUFFIXES
+        C++
 )
 list(APPEND EmotivSDK_INCLUDE_DIRS ${EmotivSDK_INCLUDE_DIR})
 
