@@ -16,7 +16,6 @@ endif()
 function(addlslexample name extension)
 	add_executable(${name}
 		MACOSX_BUNDLE
-		WIN32
 		${name}.${extension}
 	)
 	target_link_libraries(${name} LSL::lsl)

@@ -159,3 +159,10 @@ function(installLSLApp target)
 		)
 	endif()
 endfunction()
+
+# installs additional files (configuration etc.)
+function(installLSLAuxFiles target)
+	install(FILES ${ARGN}
+		DESTINATION ${PROJECT_NAME}$<$<BOOL:APPLE>:/${target}.app/Contents/MacOS>)
+endfunction()
+
