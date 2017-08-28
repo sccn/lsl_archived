@@ -15,7 +15,6 @@ endif()
 # creates an install target
 function(addlslexample name extension)
 	add_executable(${name}
-		MACOSX_BUNDLE
 		${name}.${extension}
 	)
 	target_link_libraries(${name} LSL::lsl)

@@ -53,6 +53,19 @@ endif()
 set(META_AUTHOR_ORGANIZATION "David Medine -- SCCN")
 set(META_AUTHOR_DOMAIN            "https://github.com/sccn/labstreaminglayer/")
 
+
+# installs additional files (configuration etc.)
+function(installLSLAuxFiles target)
+	get_target_property(is_bundle ${target} MACOSX_BUNDLE)
+	set(destdir ${PROJECT_NAME})
+	if(is_bundle AND APPLE)
+		set(destdir ${destdir}/${target}.app/Contents/MacOS)
+	endif(is_bundle AND APPLE)
+	install(FILES ${ARGN}
+		DESTINATION ${destdir})
+endfunction()
+
+
 # adds the specified target to the install list
 # when calling make install / ninja install the executable is installed to
 # CMAKE_INSTALL_PREFIX/PROJECT_NAME/TARGET_NAME
@@ -66,11 +79,11 @@ function(installLSLApp target)
 	)
 	set(appbin "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/${target}${CMAKE_EXECUTABLE_SUFFIX}")
 	
-	# libraries
-	if(WIN32)
-		# copy the liblsl dll to the target directory
-		install(FILES $<TARGET_FILE:LSL::lsl>
-			DESTINATION ${PROJECT_NAME})
+	# Copy lsl library for WIN32 or MacOS.
+	# On Mac, dylib is only needed for macdeployqt and for non bundles when not using system liblsl.
+	# Copy anyway, and fixup_bundle can deal with the dylib already being present.
+	if(WIN32 OR APPLE)
+		installLSLAuxFiles(${target} $<TARGET_FILE:LSL::lsl>)
 	endif()
 
 	# do we need to install with Qt5?
@@ -99,7 +112,7 @@ function(installLSLApp target)
 					message (FATAL_ERROR "Unsupported MSVC version ${MSVC_VERSION}")
 				endif ()
 				
-				set(QT_DEPLOYQT_FLAGS --no-translations --no-system-d3d-compiler --no-opengl-sw)
+				set(QT_DEPLOYQT_FLAGS --no-translations --no-system-d3d-compiler --no-opengl-sw --no-compiler-runtime)
 				install (CODE "
 					message (STATUS \"Running Qt Deploy Tool...\")
 					if (CMAKE_INSTALL_CONFIG_NAME STREQUAL \"Debug\")
@@ -112,24 +125,19 @@ function(installLSLApp target)
 						\"Path=${QT_BIN_DIR_NATIVE};\$ENV{SystemRoot}\\\\System32;\$ENV{SystemRoot}\"
 						\"VCINSTALLDIR=${VCINSTALLDIR}\"
 						\"${QT_DEPLOYQT_EXECUTABLE}\"
-						\${QT_DEPLOYQT_FLAGS}
+						${QT_DEPLOYQT_FLAGS}
 						\"${appbin}\"
 					)
 				")
-			endif(QT_WINDEPLOYQT_EXECUTABLE)
+			endif(QT_DEPLOYQT_EXECUTABLE)
 		
 		elseif(APPLE)
 			# It should be enough to call fixup_bundle (see below),
 			# but this fails to install qt plugins (cocoa).
-			# macdeployqt works better
-			# Copy liblsl64_AppleClang.1.4.0.dylib, because macdeployqt does not
-			install(
-				FILES $<TARGET_FILE:LSL::lsl>
-				DESTINATION ${appbin}.app/Contents/MacOS
-			)
+			# Use macdeployqt instead (but this is bad at grabbing lsl dylib, so we did that above)
 			find_program (QT_DEPLOYQT_EXECUTABLE macdeployqt HINTS "${QT_BIN_DIR}")
 			if(QT_DEPLOYQT_EXECUTABLE)
-				set(QT_DEPLOYQT_FLAGS "-libpath=${CMAKE_INSTALL_PREFIX}/LSL/lib -verbose=1")
+				set(QT_DEPLOYQT_FLAGS "-verbose=1")  # Adding -libpath=${CMAKE_INSTALL_PREFIX}/LSL/lib seems to do nothing, maybe deprecated
 				install(CODE "
 					message(STATUS \"Running Qt Deploy Tool...\")
 					#list(APPEND QT_DEPLOYQT_FLAGS -dmg)
@@ -146,23 +154,19 @@ function(installLSLApp target)
 		endif(WIN32)
 	elseif(APPLE)
 		# fixup_bundle appears to be broken for Qt apps. Use only for non-Qt.
-		install(CODE "
-			include(BundleUtilities)
-			set(BU_CHMOD_BUNDLE_ITEMS ON)
-			fixup_bundle(
-				${appbin}.app
-				\"\"
-				\"${CMAKE_INSTALL_PREFIX}/LSL/lib\"
+		get_target_property(target_is_bundle ${target} MACOSX_BUNDLE)
+		if(target_is_bundle)
+			install(CODE "
+				include(BundleUtilities)
+				set(BU_CHMOD_BUNDLE_ITEMS ON)
+				fixup_bundle(
+					${appbin}.app
+					\"\"
+					\"${CMAKE_INSTALL_PREFIX}/LSL/lib\"
+				)
+				"
+				COMPONENT Runtime
 			)
-			"
-			COMPONENT Runtime
-		)
+		endif(target_is_bundle)
 	endif()
 endfunction()
-
-# installs additional files (configuration etc.)
-function(installLSLAuxFiles target)
-	install(FILES ${ARGN}
-		DESTINATION ${PROJECT_NAME}$<$<BOOL:APPLE>:/${target}.app/Contents/MacOS>)
-endfunction()
-
