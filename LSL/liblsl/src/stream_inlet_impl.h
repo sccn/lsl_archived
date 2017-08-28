@@ -152,11 +152,14 @@ namespace lsl {
 		* Retrieve an estimated time correction offset for the given stream.
 		* The first call to this function takes several msec for an initial estimate, subsequent calls are instantaneous.
 		* The correction offset is periodically re-estimated in the background (once every few sec.).
+		* @param remote_time The current time of the remote computer that was used to generate this time_correction. 
+		* @param uncertainty. The maximum uncertainty of the given time correction.
 		* @timeout Timeout for first time-correction estimate.
 		* @return The time correction estimate.
 		* @throws timeout_error If the initial estimate times out.
 		*/
 		double time_correction(double timeout=2) { return time_receiver_.time_correction(timeout); }
+        double time_correction(double *remote_time, double *uncertainty, double timeout=2) { return time_receiver_.time_correction(remote_time, uncertainty, timeout); }
 
 		/**
 		* Set post-processing flags to use. By default, the inlet performs NO post-processing and returns the 

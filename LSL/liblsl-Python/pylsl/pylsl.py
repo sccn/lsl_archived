@@ -20,7 +20,7 @@ import os
 import platform
 import struct
 from ctypes import CDLL, util, byref, c_char_p, c_void_p, c_double, c_int, \
-    c_long, c_float, c_short, c_byte, c_longlong
+    c_long, c_float, c_short, c_byte, c_longlong, cast, POINTER
 
 __all__ = ['IRREGULAR_RATE', 'DEDUCED_TIMESTAMP', 'FOREVER', 'cf_float32',
            'cf_double64', 'cf_string', 'cf_int32', 'cf_int16', 'cf_int8',
@@ -75,6 +75,14 @@ cf_int8 = 6
 cf_int64 = 7
 # Can not be transmitted.
 cf_undefined = 0
+
+# Post processing flags
+proc_none = 0
+proc_clocksync = 1
+proc_dejitter = 2
+proc_monotonize = 4
+proc_threadsafe = 8
+proc_ALL = proc_none | proc_clocksync | proc_dejitter | proc_monotonize | proc_threadsafe
 
 
 # ==========================================================
@@ -156,7 +164,7 @@ class StreamInfo:
                 experimenters or data analysts). Cannot be empty.
         type -- Content type of the stream. By convention LSL uses the content 
                 types defined in the XDF file format specification where 
-                applicable (code.google.com/p/xdf). The content type is the 
+                applicable (https://github.com/sccn/xdf). The content type is the 
                 preferred way to find streams (as opposed to searching by name).
         channel_count -- Number of channels per sample. This stays constant for 
                          the lifetime of the stream. (default 1)
@@ -454,21 +462,29 @@ class StreamOutlet:
                     precedence over the pushthrough flag. (default True)
 
         """
-        if len(x):
-            if type(x[0]) is list:
-                x = [v for sample in x for v in sample]
-            if self.channel_format == cf_string:
-                x = [v.encode('utf-8') for v in x]
-            if len(x) % self.channel_count == 0:
-                constructor = self.value_type*len(x)
-                # noinspection PyCallingNonCallable
-                handle_error(self.do_push_chunk(self.obj, constructor(*x),
-                                                c_long(len(x)),
-                                                c_double(timestamp),
-                                                c_int(pushthrough)))
-            else:
-                raise ValueError("each sample must have the same number of "
-                                 "channels.")
+        try:
+            n_values = self.channel_count * len(x)
+            data_buff = (self.value_type * n_values).from_buffer(x)
+            handle_error(self.do_push_chunk(self.obj, data_buff,
+                                            c_long(n_values),
+                                            c_double(timestamp),
+                                            c_int(pushthrough)))
+        except TypeError:
+            if len(x):
+                if type(x[0]) is list:
+                    x = [v for sample in x for v in sample]
+                if self.channel_format == cf_string:
+                    x = [v.encode('utf-8') for v in x]
+                if len(x) % self.channel_count == 0:
+                    constructor = self.value_type*len(x)
+                    # noinspection PyCallingNonCallable
+                    handle_error(self.do_push_chunk(self.obj, constructor(*x),
+                                                    c_long(len(x)),
+                                                    c_double(timestamp),
+                                                    c_int(pushthrough)))
+                else:
+                    raise ValueError("each sample must have the same number of "
+                                     "channels.")
                                 
     def have_consumers(self):
         """Check whether consumers are currently registered.
@@ -580,7 +596,16 @@ def resolve_bypred(predicate, minimum=1, timeout=FOREVER):
                                        c_double(timeout))
     return [StreamInfo(handle=buffer[k]) for k in range(num_found)]
 
-    
+
+# ====================
+# === Memory functions
+# ====================
+def free_char_p_array_memory(char_p_array,num_elements):
+    pointers = cast(char_p_array, POINTER(c_void_p))
+    for p in range(num_elements):
+        if pointers[p] is not None:  # only free initialized pointers
+            lib.lsl_destroy_string(pointers[p])
+
 # ====================
 # === Stream Inlet ===
 # ====================
@@ -593,7 +618,7 @@ class StreamInlet:
 
     """
     
-    def __init__(self, info, max_buflen=360, max_chunklen=0, recover=True):
+    def __init__(self, info, max_buflen=360, max_chunklen=0, recover=True, processing_flags=0):
         """Construct a new stream inlet from a resolved stream description.
         
         Keyword arguments:
@@ -633,6 +658,8 @@ class StreamInlet:
         self.obj = c_void_p(self.obj)
         if not self.obj: 
             raise RuntimeError("could not create stream inlet.")
+        if processing_flags > 0:
+            handle_error(lib.lsl_set_postprocessing(self.obj, processing_flags))
         self.channel_format = info.channel_format()
         self.channel_count = info.channel_count()
         self.do_pull_sample = fmt2pull_sample[self.channel_format]
@@ -770,7 +797,7 @@ class StreamInlet:
         else:
             return None, None
         
-    def pull_chunk(self, timeout=0.0, max_samples=1024):
+    def pull_chunk(self, timeout=0.0, max_samples=1024, dest_obj=None):
         """Pull a chunk of samples from the inlet.
         
         Keyword arguments:
@@ -779,6 +806,13 @@ class StreamInlet:
                    (default 0.0)
         max_samples -- Maximum number of samples to return. (default 
                        1024)
+        dest_obj -- A Python object that supports the buffer interface.
+                    If this is provided then the dest_obj will be updated in place
+                    and the samples list returned by this method will be empty.
+                    It is up to the caller to trim the buffer to the appropriate
+                    number of samples.
+                    A numpy buffer must be order='C'
+                    (default None)
                        
         Returns a tuple (samples,timestamps) where samples is a list of samples 
         (each itself a list of values), and timestamps is a list of time-stamps.
@@ -789,27 +823,37 @@ class StreamInlet:
         # look up a pre-allocated buffer of appropriate length        
         num_channels = self.channel_count
         max_values = max_samples*num_channels
+
         if max_samples not in self.buffers:
             # noinspection PyCallingNonCallable
             self.buffers[max_samples] = ((self.value_type*max_values)(),
                                          (c_double*max_samples)())
-        buffer = self.buffers[max_samples]
+        if dest_obj is not None:
+            data_buff = (self.value_type * max_values).from_buffer(dest_obj)
+        else:
+            data_buff = self.buffers[max_samples][0]
+        ts_buff = self.buffers[max_samples][1]
+
         # read data into it
         errcode = c_int()
         # noinspection PyCallingNonCallable
-        num_elements = self.do_pull_chunk(self.obj, byref(buffer[0]),
-                                          byref(buffer[1]), max_values,
+        num_elements = self.do_pull_chunk(self.obj, byref(data_buff),
+                                          byref(ts_buff), max_values,
                                           max_samples, c_double(timeout),
                                           byref(errcode))
         handle_error(errcode)
         # return results (note: could offer a more efficient format in the 
         # future, e.g., a numpy array)
         num_samples = num_elements/num_channels
-        samples = [[buffer[0][s*num_channels+c] for c in range(num_channels)]   
-                   for s in range(int(num_samples))]
-        if self.channel_format == cf_string:
-            samples = [[v.decode('utf-8') for v in s] for s in samples]
-        timestamps = [buffer[1][s] for s in range(int(num_samples))]
+        if dest_obj is None:
+            samples = [[data_buff[s*num_channels+c] for c in range(num_channels)]
+                       for s in range(int(num_samples))]
+            if self.channel_format == cf_string:
+                samples = [[v.decode('utf-8') for v in s] for s in samples]
+                free_char_p_array_memory(data_buff, max_values)
+        else:
+            samples = None
+        timestamps = [ts_buff[s] for s in range(int(num_samples))]
         return samples, timestamps
         
     def samples_available(self):
@@ -853,7 +897,7 @@ class XMLElement:
     
     def __init__(self, handle):
         """Construct new XML element from existing handle."""
-        self.e = handle
+        self.e = c_void_p(handle)
     
     # === Tree Navigation ===
     
@@ -1216,6 +1260,7 @@ lib.lsl_prepend_copy.restype = c_void_p
 lib.lsl_prepend_copy.argtypes = [c_void_p, c_void_p]
 lib.lsl_remove_child_n.argtypes = [c_void_p, c_char_p]
 lib.lsl_remove_child.argtypes = [c_void_p, c_void_p]
+lib.lsl_destroy_string.argtypes = [c_void_p]
 # noinspection PyBroadException
 try:
     lib.lsl_pull_chunk_f.restype = c_long

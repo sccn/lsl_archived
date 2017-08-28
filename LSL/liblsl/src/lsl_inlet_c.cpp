@@ -149,6 +149,28 @@ LIBLSL_C_API double lsl_time_correction(lsl_inlet in, double timeout, int *ec) {
 	return 0.0;
 }
 
+LIBLSL_C_API double lsl_time_correction_ex(lsl_inlet in, double *remote_time, double *uncertainty, double timeout, int *ec) {
+	if (ec)
+		*ec = lsl_no_error;
+	try {
+        double correction = ((stream_inlet_impl*)in)->time_correction(remote_time, uncertainty, timeout);
+		return correction;
+	}
+	catch(timeout_error &) {
+		if (ec)
+			*ec = lsl_timeout_error;
+	}
+	catch(lost_error &) {
+		if (ec)
+			*ec = lsl_lost_error;
+	}
+	catch(std::exception &) {
+		if (ec)
+			*ec = lsl_internal_error;
+	}
+	return 0.0;
+}
+
 /**
 * Set post-processing flags to use. 
 */

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>668</width>
+    <width>731</width>
     <height>427</height>
    </rect>
   </property>
@@ -64,9 +64,6 @@
              <width>361</width>
              <height>0</height>
             </size>
-           </property>
-           <property name="text">
-            <string>C:\Recordings\CurrentStudy\subj%n\block_%b.xdf</string>
            </property>
           </widget>
          </item>
@@ -1005,8 +1002,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>668</width>
-     <height>21</height>
+     <width>731</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

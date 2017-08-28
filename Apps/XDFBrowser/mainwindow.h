@@ -2,10 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <boost/shared_ptr.hpp>
 #include "xdffile.h"
 #include <QThread>
 #include <QStringListModel>
+#include <QItemSelection>
 
 class StringList : public QStringListModel
 {
@@ -46,8 +46,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    boost::shared_ptr<XDFfile> xdfFile;
-	boost::shared_ptr<StringList> chunkNameList;
+    std::shared_ptr<XDFfile> xdfFile;
+    std::shared_ptr<StringList> chunkNameList;
 };
 
   class OpenerThread : public QThread
@@ -57,8 +57,8 @@ private:
 	 OpenerThread() {}
 
 
-	boost::shared_ptr<XDFfile> xdfFile;
-	boost::shared_ptr<StringList> chunkNameList;
+    std::shared_ptr<XDFfile> xdfFile;
+    std::shared_ptr<StringList> chunkNameList;
 	QProgressBar *progressBar;
 
 
@@ -89,7 +89,7 @@ private:
  {
   Q_OBJECT
  public:
-	boost::shared_ptr<XDFfile> xdfFile;
+    std::shared_ptr<XDFfile> xdfFile;
 	QString xdfFileName;
 	QProgressBar *progressBar;
 

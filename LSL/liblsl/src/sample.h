@@ -79,9 +79,10 @@ namespace lsl {
 
 			/// Destroy the factory and delete all of its samples.
 			~factory() {
-				if (sample *cur = tail_)
+				if (sample *cur = head_)
 					for (sample *next=cur->next_;next;cur=next,next=next->next_)
 						delete cur;
+				delete sentinel_;
 			}
 
 			/// Create a new sample with a given timestamp and pushthrough flag.

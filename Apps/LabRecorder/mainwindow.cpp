@@ -1,13 +1,5 @@
-
-#include "ui_mainwindow.h"
 #include "mainwindow.h"
 
-#ifdef __WIN32
-#include <Objbase.h>
-#endif
-
-#include <sys/types.h> 
-#include <sys/stat.h>
 #include <errno.h>
 
 #include <iostream>
@@ -20,6 +12,8 @@
 #include <boost/filesystem.hpp>
 // #include <boost/algorithm/string.hpp>
 #include <algorithm>
+#include <QDateTime>
+#include <QMessageBox>
 #include <fstream>
 
 // recording class
@@ -60,8 +54,7 @@ void MainWindow::statusUpdate(void) {
 	int remainder;
 	int minutes;
 	int seconds;
-
-	int filesize;
+//	int filesize;
 
 	std::stringstream timeString;
 	if(currentlyRecording ==true) {
@@ -127,7 +120,8 @@ void MainWindow::blockSelected(QListWidgetItem *item) {
 
 void MainWindow::load_config(const std::string &filename) {
 	std::cout << "loading config file " << filename << std::endl;
-	try {
+	try
+    {
 		using boost::property_tree::ptree;
 		ptree pt;
 		read_ini(filename, pt);
@@ -137,11 +131,47 @@ void MainWindow::load_config(const std::string &filename) {
 		// required streams
 		// ----------------------------	
 		std::string str_requiredStreams = pt.get<std::string>("RequiredStreams","");
-		std::string rs_substr = str_requiredStreams.substr(1, str_requiredStreams.size()-2);
-		boost::algorithm::split(requiredStreams,rs_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
-		for (int k=0;k<requiredStreams.size();k++)
-			boost::algorithm::trim_if(requiredStreams[k],boost::algorithm::is_any_of(" '\""));
-		
+		if(str_requiredStreams.compare("")) {
+			std::string rs_substr = str_requiredStreams.substr(1, str_requiredStreams.size()-2);
+			boost::algorithm::split(requiredStreams,rs_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
+			for (int k=0;k<requiredStreams.size();k++){
+				boost::algorithm::trim_if(requiredStreams[k],boost::algorithm::is_any_of(" '\""));
+				std::cout << requiredStreams[k] << std::endl;
+			}
+		}
+
+		// ----------------------------
+		// online sync streams
+		// ----------------------------	
+		std::string str_onlineSyncStreams = pt.get<std::string>("OnlineSync","");
+		if(str_onlineSyncStreams.compare("")) {
+			std::string oss_substr = str_onlineSyncStreams.substr(1, str_onlineSyncStreams.size()-2);
+			boost::algorithm::split(onlineSyncStreams,oss_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
+			for (int k=0;k<onlineSyncStreams.size();k++) {
+				boost::algorithm::trim_if(onlineSyncStreams[k],boost::algorithm::is_any_of(" '\""));
+				std::vector<std::string>words; 
+				boost::algorithm::split(words,onlineSyncStreams[k],boost::algorithm::is_any_of(" "),boost::algorithm::token_compress_on);
+
+				//boost::algorithm::trim_if(trio[2],boost::algorithm::is_any_of(" "));
+				//int val = boost::lexical_cast<int>(trio[2]);
+				std::string key = std::string(words[0] + " " + words[1]);
+				
+				int val = 0;
+				for(int l=2;l<words.size();l++){
+					if(words[l].compare("post_clocksync")==0){val|=lsl::post_clocksync;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+					if(words[l].compare("post_dejitter")==0){val|=lsl::post_dejitter;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+					if(words[l].compare("post_monotonize")==0){val|=lsl::post_monotonize;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+					if(words[l].compare("post_threadsafe")==0){val|=lsl::post_threadsafe;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+					if(words[l].compare("post_ALL")==0){val=lsl::post_ALL;}//std::cout<<words[l]<< " "<<val<<std::endl;}	
+			
+					}
+				syncOptionsByStreamName.insert(std::make_pair(key, val));
+				std::cout << "key = " << key << std::endl;
+				
+				std::cout << "val = " << val << std::endl;
+				}
+
+		}
 
 		// ----------------------------
 		// recording location
@@ -149,22 +179,28 @@ void MainWindow::load_config(const std::string &filename) {
 		std::vector<std::string>sessionBlocks;
 		QListWidgetItem *item;
 		std::string str_sessionBlocks = pt.get<std::string>("SessionBlocks","");
-		std::string sb_substr = str_sessionBlocks.substr(1, str_sessionBlocks.size()-2);
-		boost::algorithm::split(sessionBlocks,sb_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
-		
-		for (int k=0;k<sessionBlocks.size();k++) {
-			boost::algorithm::trim_if(sessionBlocks[k],boost::algorithm::is_any_of(" '\""));
-			item=new QListWidgetItem(QString::fromStdString(sessionBlocks[k]), ui->blockList);
-			ui->blockList->addItem(item);
-			if(k==0) {
-				item->setSelected(true);
-				blockSelected(item);
+		if(str_sessionBlocks.compare("")) {
+			std::string sb_substr = str_sessionBlocks.substr(1, str_sessionBlocks.size()-2);
+			boost::algorithm::split(sessionBlocks,sb_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
+			
+			for (int k=0;k<sessionBlocks.size();k++) {
+				boost::algorithm::trim_if(sessionBlocks[k],boost::algorithm::is_any_of(" '\""));
+				item=new QListWidgetItem(QString::fromStdString(sessionBlocks[k]), ui->blockList);
+				ui->blockList->addItem(item);
+				if(k==0) {
+					item->setSelected(true);
+					blockSelected(item);
+				}
 			}
 		}
-		// get the path as a string
-		std::string str_path = pt.get<std::string>("StorageLocation", "C:\\Recordings\\CurrentStudy\\exp%n\\untitled.xdf");
-		ui->locationEdit->setText(str_path.c_str());
 
+		// get the path as a string
+		#if (win32)
+		std::string str_path = pt.get<std::string>("StorageLocation", "C:\\Recordings\\CurrentStudy\\exp%n\\untitled.xdf");
+		#else //win32
+		std::string str_path = pt.get<std::string>("StorageLocation", "exp%n/untitled.xdf");
+		#endif //win32
+		ui->locationEdit->setText(str_path.c_str());
 
 		// scan the path for %n and %b
 		std::string str_n("\%n");
@@ -181,18 +217,21 @@ void MainWindow::load_config(const std::string &filename) {
 
 		int i=1;
 		
-		if(pos_n<str_path.size()) {
+		if(pos_n<str_path.size())
+        {
 			abs_path.append(str_path.begin(),str_path.begin()+pos_n);
 		
 			// find the last value fo %n in the directories			
-			for(i=1;i<10000;i++) {
+			for(i=1;i<10000;i++)
+            {
 				ss << i; // convert int to string stream
 				p=(abs_path+ss.str()).c_str(); // build the path name
-				if(!boost::filesystem::exists(p)) break; // check for it
+				if(!boost::filesystem::exists(p))
+                {
+                    break; // check for it
+                }
 				ss.str(std::string()); // flush the string stream				
 			}
-		
-			
 		}
 
 		// update gui 
@@ -201,14 +240,14 @@ void MainWindow::load_config(const std::string &filename) {
 	} catch(std::exception &e) {
 		std::cout << "Problem parsing config file: " << e.what() << std::endl;
 	}
-
+	std::cout << "refreshing streams ..." <<std::endl;
 	refreshStreams();
 }
 
 
 void MainWindow::refreshStreams(void) {
 
-	std::cout << "refreshing streams ..." <<std::endl;
+	//std::cout << "refreshing streams ..." <<std::endl;
 	resolvedStreams.clear();
 	resolvedStreams = lsl::resolve_streams(1.0);
 	std::vector<std::string> streamNames;
@@ -229,16 +268,30 @@ void MainWindow::refreshStreams(void) {
 	bool got_one;
 	std::vector<std::string>::iterator it1;
 	std::vector<std::string>::iterator it2; 
+	int cnt1 = 0;
+	int cnt2 = 0;
 	for(it1 = requiredStreams.begin(); it1!=requiredStreams.end(); ++it1) {
 		got_one = false;
+		cnt2 = 0;
+		cnt1++;
 		for(it2 = streamNames.begin(); it2!=streamNames.end(); ++it2) {
-			if(*it1 == *it2) // we have a match  
+			cnt2++;
+			if(!strcmp(it1->c_str(), it2->c_str())){//*it1 == *it2) // we have a match  
+			
+				//std::cout << cnt1 << "   " << cnt2 << std::endl;
+				//std::cout << strcmp(it1->c_str(), it2->c_str()) << std::endl;
+				//std::cout << it1->c_str() << std::endl;
+				//std::cout << it2->c_str() << std::endl;
+
 				got_one = true;
 				break;
+			}
 		}
 		if(got_one==false) // TODO, check to make sure this isn't an emtpy string!
-			if(*it1!="")
+			if(*it1!="") {
+				//std::cout << it1->c_str() << std::endl;
 				missingStreams.push_back(*it1); // push this string onto the missing vector
+			}
 	}
 
 	std::sort(missingStreams.begin(), missingStreams.end());
@@ -250,7 +303,7 @@ void MainWindow::refreshStreams(void) {
 
 	std::vector<std::string> previouslyChecked;
 	QListWidgetItem *item;
-	for(unsigned i=0;i<ui->streamList->count();i++) {
+	for(int i=0;i<ui->streamList->count();i++) {
 		item=ui->streamList->item(i);
 		if(std::find(streamNames.begin(), streamNames.end(), item->text().toStdString())!=streamNames.end()) { 
 			if(item->checkState() == Qt::Checked)	
@@ -337,7 +390,7 @@ void MainWindow::startRecording(void) {
 			recFilename.replace(pos_b,  2, currentBlock);
  
 		// rename existing file if necessary
-		int lastdot;
+		size_t lastdot;
 		std::string rename_to;
 		if(boost::filesystem::exists(recFilename.c_str())) {
 			lastdot = recFilename.find_last_of(".");
@@ -395,7 +448,7 @@ void MainWindow::startRecording(void) {
 		for(std::vector<std::string>::iterator it=watchfor.begin(); it!=watchfor.end();++it)
 			std::cout << *it << std::endl;
 
-		currentRecording = new recording(recFilename, checkedStreams, watchfor, 1);
+		currentRecording = new recording(recFilename, checkedStreams, watchfor, syncOptionsByStreamName, 1);
 		currentlyRecording = true;
 		ui->stopButton->setEnabled(true);
 		ui->startButton->setEnabled(false);

@@ -672,14 +672,22 @@ extern LIBLSL_C_API void lsl_close_stream(lsl_inlet in);
 * Retrieve an estimated time correction offset for the given stream.
 * The first call to this function takes several milliseconds until a reliable first estimate is obtained.
 * Subsequent calls are instantaneous (and rely on periodic background updates).
-* The precision of these estimates should be below 1 ms (empirically it is within +/-0.2 ms).
+* On a well-behaved network, the precision of these estimates should be below 1 ms (empirically it is within +/-0.2 ms).
+* To get a measure of whether the network is well-behaved, use lsl_time_correction_ex and check uncertainty (which maps to round-trip-time).
+* 0.2 ms is typical of wired networks. 2 ms is typical of wireless networks. The number can be much higher on poor networks.
+*
 * @param in The lsl_inlet object to act on.
+* @param remote_time The current time of the remote computer that was used to generate this time_correction. 
+*    If desired, the client can fit time_correction vs remote_time to improve the real-time time_correction further.
+* @param uncertainty. The maximum uncertainty of the given time correction.
 * @param timeout Timeout to acquire the first time-correction estimate. Use LSL_FOREVER to defuse the timeout.
 * @param ec Error code: if nonzero, can be either lsl_timeout_error (if the timeout has expired) or lsl_lost_error (if the stream source has been lost).
 * @return The time correction estimate. This is the number that needs to be added to a time stamp that was remotely generated via lsl_local_clock() 
 *         to map it into the local clock domain of this machine.
 */
 extern LIBLSL_C_API double lsl_time_correction(lsl_inlet in, double timeout, int *ec);
+extern LIBLSL_C_API double lsl_time_correction_ex(lsl_inlet in, double *remote_time, double *uncertainty, double timeout, int *ec);
+
 
 /**
 * Set post-processing flags to use. By default, the inlet performs NO post-processing and returns the 

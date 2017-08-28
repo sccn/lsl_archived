@@ -385,10 +385,9 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\LSL\liblsl\external\lslboost\thread\pthread\once.hpp" />
     <ClInclude Include="..\..\..\LSL\liblsl\external\lslboost\thread\pthread\once_atomic.hpp" />
-    <ClInclude Include="..\..\..\LSL\liblsl\external\src\filesystem\src\windows_file_codecvt.hpp" />
     <ClInclude Include="..\..\..\LSL\liblsl\external\src\system\src\local_free_on_destruction.hpp" />
-    <ClInclude Include="..\..\..\include\lsl_c.h" />
-    <ClInclude Include="..\..\..\include\lsl_cpp.h" />
+    <ClInclude Include="..\..\..\liblsl\include\lsl_c.h" />
+    <ClInclude Include="..\..\..\liblsl\include\lsl_cpp.h" />
     <ClInclude Include="..\..\..\LSL\liblsl\src\api_config.h" />
     <ClInclude Include="..\..\..\LSL\liblsl\src\cancellable_streambuf.h" />
     <ClInclude Include="..\..\..\LSL\liblsl\src\cancellation.h" />

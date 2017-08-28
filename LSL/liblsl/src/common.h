@@ -4,11 +4,11 @@
 #include <stdexcept>
 #include <boost/version.hpp>
 
-#ifdef _WIN32
-    #define LIBLSL_CPP_API __declspec(dllexport)
-#else
-    #define LIBLSL_CPP_API
-    #pragma GCC visibility push(default)
+// export defines header automatically created by CMake
+#include "lsl_export_defines.h"
+
+#ifdef _MSC_VER
+#pragma warning( disable : 4275 )
 #endif
 
 
@@ -23,7 +23,7 @@
 const int LSL_PROTOCOL_VERSION = 110;
 
 // the library version
-const int LSL_LIBRARY_VERSION = 111;
+const int LSL_LIBRARY_VERSION = 112;
 
 namespace lsl {
 	/// A very large time duration (> 1 year) for timeout values.
@@ -88,10 +88,6 @@ namespace lsl {
 		explicit timeout_error(const std::string &msg): std::runtime_error(msg) {}
 	};
 }
-
-#ifndef _WIN32
-#pragma GCC visibility pop
-#endif
 
 
 // === Auto-generated target platform version defines (for Microsoft and asio) ===

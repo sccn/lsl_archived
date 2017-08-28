@@ -3,7 +3,7 @@
  * \file portable_oarchive.hpp
  * \brief Provides an archive to create portable binary files.
  * \author christian.pfligersdorffer@gmx.at
- * \version 5.0
+ * \version 5.1
  *
  * This pair of archives brings the advantages of binary streams to the cross
  * platform boost::serialization user. While being almost as fast as the native
@@ -26,6 +26,9 @@
  *       and x86-64 platforms featuring different byte order. So there is a good
  *       chance it will instantly work for your specific setup. If you encounter
  *       problems or have suggestions please contact the author.
+ *
+ * \note Version 5.1 is now compatible with boost up to version 1.59. Thanks to
+ *       ecotax for pointing to the issue with shared_ptr_helper.
  *
  * \note Version 5.0 is now compatible with boost up to version 1.49 and enables
  *       serialization of std::wstring by converting it to/from utf8 (thanks to
@@ -96,14 +99,8 @@
 #include <boost/archive/basic_binary_oprimitive.hpp>
 #include <boost/archive/basic_binary_oarchive.hpp>
 
-
-#if BOOST_VERSION >= 103500
+#if BOOST_VERSION >= 103500 && BOOST_VERSION < 105600
 #include <boost/archive/shared_ptr_helper.hpp>
-#endif
-
-#if BOOST_VERSION >= 104500
-#include <boost/program_options/config.hpp>
-#include <boost/program_options/detail/convert.hpp>
 #endif
 
 // funny polymorphics
@@ -146,7 +143,7 @@ namespace endian = boost::detail;
 namespace endian = boost::spirit::detail;
 #endif
 
-#ifndef BOOST_NO_STD_WSTRING
+#if BOOST_VERSION >= 104500 && !defined BOOST_NO_STD_WSTRING
 // used for wstring to utf8 conversion
 #include <boost/program_options/config.hpp>
 #include <boost/program_options/detail/convert.hpp>
@@ -206,10 +203,10 @@ namespace eos {
 		// save_override functions so we chose to stay one level higher
 		, public boost::archive::basic_binary_oarchive<portable_oarchive>
 
-	// #if BOOST_VERSION >= 103500
-	// 	// mix-in helper class for serializing shared_ptr
-	// 	, public boost::archive::detail::shared_ptr_helper
-	// #endif
+	#if BOOST_VERSION >= 103500 && BOOST_VERSION < 105600
+		// mix-in helper class for serializing shared_ptr
+		, public boost::archive::detail::shared_ptr_helper
+	#endif
 	{
 		// workaround for gcc: use a dummy struct
 		// as additional argument type for overloading

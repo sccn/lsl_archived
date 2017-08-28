@@ -174,6 +174,7 @@ void api_config::load_from_file(const std::string &filename) {
 		inlet_buffer_reserve_ms_ = pt.get("tuning.InletBufferReserveMs",5000);
 		inlet_buffer_reserve_samples_ = pt.get("tuning.InletBufferReserveSamples",128);
 		smoothing_halftime_ = pt.get("tuning.SmoothingHalftime",90.0f);
+		force_default_timestamps_ = pt.get("tuning.ForceDefaultTimestamps", false);
 
 	} catch(std::exception &e) {
 		std::cerr << "Error parsing config file " << filename << " (" << e.what() << "). Rolling back to defaults." << std::endl;

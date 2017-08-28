@@ -47,6 +47,8 @@ private:
     void load_config(const std::string &filename);
     void save_config(const std::string &filename);
 
+	bool stop_;
+
     // the biosemi backend
     boost::shared_ptr<biosemi_io> biosemi_;
     boost::shared_ptr<boost::thread> reader_thread_;
