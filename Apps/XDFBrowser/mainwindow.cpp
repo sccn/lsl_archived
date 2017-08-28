@@ -117,12 +117,12 @@ void MainWindow::on_actionOpen_triggered()
     QString xdfFileName = QFileDialog::getOpenFileName(this, tr("Open XDF File"), tr("*.xdf"));
 
 	if(!xdfFileName.isNull()) {
-		chunkNameList = boost::shared_ptr<StringList>(new StringList());
+		chunkNameList.reset(new StringList());
 		ui->listView->setModel(chunkNameList.get());
 		connect(ui->listView->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
 			this, SLOT(handleSelectionChanged(QItemSelection)));
 		
-		xdfFile = boost::shared_ptr<XDFfile>(new XDFfile(xdfFileName));
+		xdfFile.reset(new XDFfile(xdfFileName));
     
 		OpenerThread *workerThread = new OpenerThread;
 		workerThread->xdfFile = xdfFile;
@@ -132,8 +132,6 @@ void MainWindow::on_actionOpen_triggered()
 		connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
 	    workerThread->start();
 		this->setWindowTitle(xdfFileName);
-
-
 	}
 }
 
@@ -151,7 +149,7 @@ void MainWindow::on_actionClose_triggered()
 }
 
 void MainWindow::errorDialog(QString errorMessage) {
-	QMessageBox::critical(NULL, tr("Error"), errorMessage);
+	QMessageBox::critical(nullptr, tr("Error"), errorMessage);
 }
 
 

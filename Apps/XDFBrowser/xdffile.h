@@ -16,24 +16,21 @@ Written by Matthew Grivich, Swartz Center for Computation Neuroscience, Summer 2
 #include <iostream>
 #include <vector>
 #include <iostream>
-#include "exception"
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
+#include <exception>
 
 #include <QMessageBox>
 #include <QTextStream>
 #include <QDataStream>
 #include <QFile>
-#include <QtGui/QProgressBar>
+#include <QProgressBar>
 
 
 class IOException : public std::exception {
 
 	public:
-		char * description;
-		IOException(char * description) {
-			this->description = description;
-		}
+        const char * description;
+        IOException(const char * description): description(description) {}
 	virtual const char* what() const throw()
 	{
 		return description;
@@ -218,7 +215,8 @@ private:
     QFile file;
 	quint64 bytesLoaded; //total number of bytes loaded.
 	quint64 maxBytes; //Maximum number of bytes to load at once.
-	std::vector<boost::shared_ptr<XDFChunk> > chunks; //vector containing file data, one element for each chunk.
+    //TODO: unique_ptr?
+    std::vector<std::shared_ptr<XDFChunk> > chunks; //vector containing file data, one element for each chunk.
 	std::list<int> loadedChunks; //A list of all chunks that are currently loaded
 
 public:

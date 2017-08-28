@@ -20,7 +20,7 @@
 #include <boost/iostreams/filter/zlib.hpp>
 #include <boost/algorithm/string.hpp>
 
-#include "../../LSL/liblsl/include/lsl_cpp.h"
+#include <lsl_cpp.h>
 
 #include <boost/type_traits/is_integral.hpp>
 #include <boost/type_traits/is_signed.hpp>
