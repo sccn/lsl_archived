@@ -68,6 +68,7 @@ typedef struct _lsl_inlet_tilde{
   pthread_cond_t  condition;
   int             is_listening_;
   int             is_resolving_;
+  int             is_disconnecting_;
   int             stop_;
   int             can_launch_resolver;
   
@@ -130,8 +131,7 @@ static void *lsl_listen_thread(void *in){
   post("%d", type);
   ts = 0;
  
-  while(1){
-    if(x->stop_==0)break;
+  while(x->stop_==0){
     switch(type){
 
     case cft_float32 :
@@ -295,35 +295,34 @@ static int prop_resolve(t_lsl_inlet_tilde *x, int argc, t_atom *argv){
 static void lsl_inlet_disconnect(t_lsl_inlet_tilde *x){
 
   post("disconneting");
+  post("disconnecting from %s stream %s (%s)...",
+       lsl_get_type(x->lsl_info_list[x->which]),
+       lsl_get_name(x->lsl_info_list[x->which]),
+       lsl_get_source_id(x->lsl_info_list[x->which]));
   pthread_mutex_lock(&x->listen_lock);
-  if(x->is_listening_ == 1)
+  while(x->is_listening_ == 1)
     pthread_cond_wait(&x->condition, &x->listen_lock);
-  if(x->stop_!=1){
-    post("disconnecting from %s stream %s (%s)...",
-	 lsl_get_type(x->lsl_info_list[x->which]),
-    	 lsl_get_name(x->lsl_info_list[x->which]),
-    	 lsl_get_source_id(x->lsl_info_list[x->which]));
-    x->stop_=1;
-    x->which = -1;
-
-    // here we are forced to call the dreaded pthread_cancel
-    // because the lsl_inlet waits forever for a new sample to come in
-    // if a stream disappears before the thread exits, it will simply
-    // stick waiting for a new sample and joining the thread will
-    // halt pd in that state
-    //pthread_cancel(x->tid);
-    // however, we manage all of our resources outside of that thread, so it's cool (I think...)
-    
-    if(x->lsl_inlet_obj!=NULL){
-      lsl_destroy_inlet(x->lsl_inlet_obj);
-      x->lsl_inlet_obj=NULL;
-    }
-    post("...disconnected");
-    x->connected = 0;
-    x->ready = 0;
-
-    pthread_mutex_unlock(&x->listen_lock);
-  }
+  x->is_disconnecting_ = 1;
+  
+  
+  x->stop_=1;
+  x->which = -1;
+  
+  
+  // here we are forced to call the dreaded pthread_cancel
+  // because the lsl_inlet waits forever for a new sample to come in
+  // if a stream disappears before the thread exits, it will simply
+  // stick waiting for a new sample and joining the thread will
+  // halt pd in that state
+  pthread_cancel(x->tid);
+  // however, we manage all of our resources outside of that thread, so it's cool (I think...)
+  
+  post("...disconnected");
+  x->connected = 0;
+  x->ready = 0;
+  
+  pthread_mutex_unlock(&x->listen_lock);
+  
 }
 
 static void lsl_inlet_connect_by_idx(t_lsl_inlet_tilde *x, t_floatarg f){
@@ -714,6 +713,7 @@ static void *lsl_inlet_tilde_new(t_symbol *s, int argc, t_atom *argv){
   x->listen_lock = PTHREAD_MUTEX_INITIALIZER;
   x->condition = PTHREAD_COND_INITIALIZER;
   x->is_listening_ = 0;
+  x->is_disconnecting_ = 0;
   x->stop_=1;
   
   return x;

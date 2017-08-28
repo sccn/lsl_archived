@@ -74,7 +74,6 @@ your own risk!;
 #X text 594 509 <-smoothing filter \, each incoming sample is shelved.
 Basically \, this is poor-man's interpolation.;
 #X obj 503 653 hip~ 40;
-#X obj 411 322 lsl_inlet~ -nout 8 -buflen 10 -lag 1;
 #X text 638 640 Known bugs: Sometimes \, it just crashes for like no
 reason at all.;
 #X text 679 329 <-as of now there are three creation arguments. -nout
@@ -85,10 +84,11 @@ as they come in. 640 is probably overkill. -lag is the length (also
 in blocks) to wait before outputing the incoming signal. If you put
 '0' here \, the lag is 1 sample. Shown here are the default values.
 ;
-#X connect 0 0 43 0;
-#X connect 1 0 43 0;
-#X connect 5 0 43 0;
-#X connect 20 0 43 0;
+#X obj 411 322 lsl_inlet~ -nout 8 -buflen 10 -lag 1;
+#X connect 0 0 45 0;
+#X connect 1 0 45 0;
+#X connect 5 0 45 0;
+#X connect 20 0 45 0;
 #X connect 21 0 22 0;
 #X connect 23 0 21 0;
 #X connect 24 0 31 0;
@@ -98,11 +98,11 @@ in blocks) to wait before outputing the incoming signal. If you put
 #X connect 29 0 30 0;
 #X connect 30 0 31 1;
 #X connect 31 0 42 0;
-#X connect 32 0 43 0;
-#X connect 33 0 43 0;
-#X connect 34 0 43 0;
+#X connect 32 0 45 0;
+#X connect 33 0 45 0;
+#X connect 34 0 45 0;
 #X connect 36 0 40 0;
 #X connect 40 0 25 0;
 #X connect 42 0 26 0;
-#X connect 43 0 21 0;
-#X connect 43 0 24 0;
+#X connect 45 0 21 0;
+#X connect 45 0 24 0;
