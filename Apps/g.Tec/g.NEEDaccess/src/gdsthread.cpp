@@ -115,7 +115,7 @@ void GDSThread::refreshDeviceList()
 		for (size_t j = 0; j < connected_devices[i].ConnectedDevicesLength; j++)
 		{
 			newDeviceIndices.push_back(uint32_t(count_devices));
-			newDeviceInUse.push_back(connected_devices[i].InUse == TRUE);
+			newDeviceInUse.push_back(bool(connected_devices[i].InUse) == true);
 			newDeviceType.push_back(connected_devices[i].ConnectedDevices[j].DeviceType);
 			deviceList << connected_devices[i].ConnectedDevices[j].Name;
 			count_devices++;
