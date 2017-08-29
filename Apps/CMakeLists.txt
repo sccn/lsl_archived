@@ -12,15 +12,16 @@ else()
     include(LSLAppBoilerplate)
 endif()
 
-option(LSLAPPS_Examples         "Build example apps"            OFF)
-option(LSLAPPS_LabRecorder      "Build the recorder app"        ON)
-option(LSLAPPS_XDFBrowser       "Build the XDFBrowser app"      ON)
-option(LSLAPPS_Wiimote          "Build the Wiimote app"         ON)
+option(LSLAPPS_Examples         "Build example apps"                OFF)
+option(LSLAPPS_LabRecorder      "Build the recorder app"            ON)
+option(LSLAPPS_XDFBrowser       "Build the XDFBrowser app"          ON)
+option(LSLAPPS_Wiimote          "Build the Wiimote app"             ON)
 
 # Windows-only apps
 if(WIN32)
-    option(LSLAPPS_BrainAmp     "Build the BrainAmp app"        OFF)
-    option(LSLAPPS_Emotiv       "Build the Emotiv app"          OFF)
+    option(LSLAPPS_BrainAmp     "Build the BrainAmp app"            OFF)
+    option(LSLAPPS_Emotiv       "Build the Emotiv app"              OFF)
+    option(LSLAPPS_gNEEDaccess  "Build the g.Tec NEEDaccess app"    OFF)
 endif()
 
 # add all Apps the user wants to build
@@ -48,4 +49,8 @@ endif()
 
 if(LSLAPPS_Emotiv)
     add_subdirectory(emotiv)
+endif()
+
+if(LSLAPPS_gNEEDaccess)
+    add_subdirectory(g.Tec/g.NEEDaccess)
 endif()
