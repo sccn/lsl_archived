@@ -1,66 +1,36 @@
 cmake_minimum_required(VERSION 3.0)
 project(LSLOpenVR VERSION 0.0.1)
 
-##################
-# GENERAL CONFIG #
-##################
+# General Config #
 
-LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
-include(ExternalProject)
-# Set policies
-cmake_policy(SET CMP0028 NEW) # ENABLE CMP0028: Double colon in target name means ALIAS or IMPORTED target.
-cmake_policy(SET CMP0054 NEW) # ENABLE CMP0054: Only interpret if() arguments as variables or keywords when unquoted.
-cmake_policy(SET CMP0042 NEW) # ENABLE CMP0042: MACOSX_RPATH is enabled by default.
-cmake_policy(SET CMP0063 NEW) # ENABLE CMP0063: Honor visibility properties for all target types.
-# Generate folders for IDE targets (e.g., VisualStudio solutions)
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-set(IDE_FOLDER "")
-#
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
-# Set runtime path
-set(CMAKE_SKIP_BUILD_RPATH            FALSE) # Add absolute path to all dependencies for BUILD
-set(CMAKE_BUILD_WITH_INSTALL_RPATH    FALSE) # Use CMAKE_INSTALL_RPATH for INSTALL
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE) # Do NOT add path to dependencies for INSTALL
-# Runtime should find binaries relative to itself
-if(APPLE)
-    set(CMAKE_INSTALL_RPATH "@loader_path/../../../${INSTALL_LIB}")
-else()
-    set(CMAKE_INSTALL_RPATH "$ORIGIN/${INSTALL_LIB}")       
+# load LSLAppBoilerplate if not done already
+if(NOT TARGET LSL::lsl)
+    if(NOT LSL_ROOT)
+        set(LSL_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../build/lsl_Release/lslinstall/LSL")
+        get_filename_component(LSL_ROOT ${LSL_ROOT} ABSOLUTE)
+        if(NOT EXISTS ${LSL_ROOT})
+            message(FATAL_ERROR "When building a single app out of tree you need to set LSL_ROOT ( cmake -DLSL_ROOT=/path/to/installed/lsl)")
+        endif()
+    endif()
+    list(APPEND CMAKE_MODULE_PATH "${LSL_ROOT}/cmake")
+    include(LSLAppBoilerplate)
 endif()
 
-#########################
-# THIRD PARTY LIBRARIES #
-#########################
+set(CMAKE_INSTALL_PREFIX ${LSL_ROOT}/..)
 
-# LSL
-set(LSL_ROOT_DIR ${CMAKE_CURRENT_LIST_DIR}/../../LSL/liblsl)
-find_package(LSL REQUIRED)
+set(CMAKE_CXX_STANDARD 11)
+
+# THIRD PARTY LIBRARIES #
 
 # Qt
-FIND_PROGRAM(QT_QMAKE_EXECUTABLE_FINDQT
-    NAMES
-        qmake qmake5 qmake-qt5
-    PATHS
-        "${QT_SEARCH_PATH}/bin"
-        "$ENV{QTDIR}/bin"
-)
-SET(QT_QMAKE_EXECUTABLE ${QT_QMAKE_EXECUTABLE_FINDQT} CACHE PATH "Qt qmake program.")
-EXEC_PROGRAM(${QT_QMAKE_EXECUTABLE} ARGS "-query QT_INSTALL_PREFIX" OUTPUT_VARIABLE CMAKE_PREFIX_PATH)
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Network)
-find_package(Qt5Xml)
-find_package(Qt5Gui)
-find_package(Qt5Widgets)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)  # Because the ui_mainwindow.h file.
-# Enable automoc
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(AUTOMOC_MOC_OPTIONS PROPERTIES FOLDER CMakeAutomocTargets)
-set_property(GLOBAL PROPERTY AUTOMOC_FOLDER CMakeAutomocTargets)
-# ENABLE CMP0020: Automatically link Qt executables to qtmain target on Windows.
-cmake_policy(SET CMP0020 NEW)
+if(WIN32 AND NOT Qt5_DIR)
+    set(Qt5_DIR "C:\\Qt\\5.9.1\\msvc2015_64\\lib\\cmake\\Qt5")
+endif()
+find_package(Qt5 REQUIRED COMPONENTS Core Network Xml Gui Widgets)
 
 # OpenVR
+LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+include(ExternalProject)
 IF(NOT OpenVR_ROOT_DIR)
     message(STATUS "OpenVR_ROOT_DIR not set.")
     message("\tUse cmake [...] -DOpenVR_ROOT_DIR=<path/to/openvr>")

@@ -16,6 +16,7 @@ option(LSLAPPS_Examples         "Build example apps"            OFF)
 option(LSLAPPS_LabRecorder      "Build the recorder app"        ON)
 option(LSLAPPS_XDFBrowser       "Build the XDFBrowser app"      ON)
 option(LSLAPPS_Wiimote          "Build the Wiimote app"         OFF)
+option(LSLAPPS_OpenVR           "Build the OpenVR app"          OFF)
 
 # Windows-only apps
 if(WIN32)
@@ -39,6 +40,10 @@ endif()
 
 if(LSLAPPS_Wiimote)
     add_subdirectory(Wiimote)
+endif()
+
+if(LSLAPPS_OpenVR)
+    add_subdirectory(OpenVR)
 endif()
 
 if(LSLAPPS_BrainAmp)

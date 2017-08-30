@@ -9,7 +9,7 @@ Requirements:
 * [OpenVR](https://github.com/ValveSoftware/openvr)
 * liblsl
 * Build environment
-    * Tested with MSVC 2015, Xcode, and Qt Creator
+    * Tested with MSVC 2015 on Win10, Xcode on MacOS Sierra, and Qt Creator on Ubuntu 16.04
 
 Instructions:
 
@@ -19,11 +19,9 @@ Instructions:
     * Windows: `cmake .. -G "Visual Studio 14 2015 Win64"` (other [generators](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html#visual-studio-generators))
     * Mac: `cmake .. -G Xcode`
 1. You may need to specify additional cmake options.
-    * set OpenVR_ROOT_DIR to the directory where you downloaded openvr
-    * For Qt, you have a few options.
-        * Make sure qmake is on the path
-        * Set an environment variable to your Qt directory (e.g. `SET QTDIR=C:\Qt\5.8\msvc2015_64`) before calling cmake
-        * Pass a cmake argument for QT_SEARCH_PATH (e.g., `-DQT_SEARCH_PATH=C:\Qt\5.8\msvc2015_64`)
+    * set OpenVR_ROOT_DIR to the directory where you downloaded openvr, or let it download for you.
+    * -DQt5_DIR=path/to/qt/version/architecture/lib/cmake/Qt5
+
 
 ## Usage Instructions
 
@@ -58,5 +56,5 @@ This is a single int32 channel with each value having the following format XXYYY
 
 ## Known Issues
 
-* Cannot build debug app in Windows because it tries to link against non-debug liblsl64.lib, even though liblsl64-debug.lib is correctly specified in the project settings. I'm confused.
+* Cannot build debug app in Windows because it tries to link against non-debug liblsl64.lib, even though liblsl64-debug.lib is correctly specified in the project settings.
 * Sometimes an OpenVR controller will sleep/disconnect but it'll still be returned in the list of devices. Sleeping controllers will stream 0's for their pose data.
