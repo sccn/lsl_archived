@@ -63,17 +63,17 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEdit_serverport">
-         <property name="inputMask">
-          <string>0000000</string>
+        <widget class="QSpinBox" name="serverPortSpinBox">
+         <property name="maximum">
+          <number>999999</number>
          </property>
-         <property name="text">
-          <string>50223</string>
+         <property name="value">
+          <number>50223</number>
          </property>
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer_2">
+        <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -93,12 +93,19 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEdit_clientport">
-         <property name="inputMask">
-          <string>0000000</string>
+        <widget class="QSpinBox" name="clientPortSpinBox">
+         <property name="maximum">
+          <number>999999</number>
          </property>
+         <property name="value">
+          <number>50224</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="scanPushButton">
          <property name="text">
-          <string>50224</string>
+          <string>Scan</string>
          </property>
         </widget>
        </item>
@@ -132,6 +139,9 @@
          <height>250</height>
         </size>
        </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
       </widget>
      </item>
      <item row="2" column="2" rowspan="4">
@@ -141,6 +151,9 @@
          <width>0</width>
          <height>250</height>
         </size>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
        </property>
       </widget>
      </item>
@@ -153,6 +166,9 @@
      </item>
      <item row="3" column="1">
       <widget class="QPushButton" name="toAvailablePushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>&lt;</string>
        </property>
@@ -160,6 +176,9 @@
      </item>
      <item row="5" column="1">
       <widget class="QPushButton" name="goPushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Go!</string>
        </property>
@@ -173,7 +192,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>457</width>
+     <width>480</width>
      <height>21</height>
     </rect>
    </property>
