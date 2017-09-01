@@ -27,7 +27,7 @@ LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 if(NOT Qt5_DIR)
     set(Qt5_DIR "C:\\Qt\\5.9.1\\msvc2015_64\\lib\\cmake\\Qt5")
 endif()
-find_package(Qt5 REQUIRED COMPONENTS Core Network Xml Gui Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Core Xml Gui Widgets)
 
 # Emotiv SDK
 find_package(gNEEDaccessSDK)
@@ -45,8 +45,6 @@ LIST(APPEND gNEEDaccess_SRC
     ${CMAKE_CURRENT_LIST_DIR}/src/mainwindow.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/mainwindow.h
     ${CMAKE_CURRENT_LIST_DIR}/src/mainwindow.ui
-    ${CMAKE_CURRENT_LIST_DIR}/src/gdsthread.h
-    ${CMAKE_CURRENT_LIST_DIR}/src/gdsthread.cpp
 )
 
 LIST(APPEND gNEEDaccess_INCL_DIRS
