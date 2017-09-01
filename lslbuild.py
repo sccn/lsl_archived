@@ -120,8 +120,7 @@ class LSLBuilder:
         self.chdir(self.mkbuilddir('lsloot'))
         self.call_cmake(conf['generator'], {'LSL_ROOT': self.install_prefix + '/LSL/'},
                         [self.sourcepath + '/OutOfTreeTest'])
-        self.call_cmake(otherargs=['--build', '.'])
-        self.call(['./LSLOutOfTreeTest'])
+        self.call_cmake(otherargs=['--build', '.', '--target', 'runOutOfTree'])
 
     def package(self):
         self.chdir(self.sourcepath)
