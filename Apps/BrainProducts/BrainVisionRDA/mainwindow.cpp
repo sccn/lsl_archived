@@ -8,6 +8,8 @@
 #include <boost/foreach.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <iostream>
+#include <sstream>
+#include <math.h>
 #include <boost/asio.hpp>
 #include "rda_client.h"
 
@@ -154,6 +156,9 @@ void MainWindow::read_thread(QString serverIP) {
 		status = QString("waiting for server at %1:%2 ...").arg(serverIP).arg(RDA_Port);
 		emit sendMessage(status);
 		std::string lsl_id = QString("RDA %1:%2").arg(serverIP).arg(RDA_Port).toStdString();
+		long markerCount;
+		long maxMarkerCount = pow(2.0, 24)-1;
+
 		while(!stop_) {
 			switch(connectionPhase) {
 				case 0:
@@ -162,14 +167,15 @@ void MainWindow::read_thread(QString serverIP) {
 						socket_.close();
 					io_service.reset();
 					connectionPhase = 1;
+					markerCount = 0;
 				case 1: 
 					// wait for a connection to the RDA server
 					it_resolver = boost::asio::connect(socket_, resolver.resolve(query), ec);
 					if(!ec){
 						ep = *it_resolver;
 						std::string addr = ep.address().to_v4().to_string();
-						status = QString("connected to %1:%2").arg(addr.c_str()).arg(RDA_Port);
-						emit sendMessage(status);
+						//status = QString("connected to %1:%2").arg(addr.c_str()).arg(RDA_Port);
+						//emit sendMessage(status);
 						lsl_id = QString("RDA %1:%2").arg(addr.c_str()).arg(RDA_Port).toStdString();
 						rda_client.reset(new RDA_client(io_service, socket_));
 						connectionPhase = 2;
@@ -199,7 +205,7 @@ void MainWindow::read_thread(QString serverIP) {
 
 								// create data streaminfo
 								lsl_info.reset( new lsl::stream_info("BrainVision RDA", "EEG",
-									(int)rdaInfo.numChannels, rdaInfo.sampleRate, lsl::cf_float32, lsl_id));
+									(int)rdaInfo.numChannels +1, rdaInfo.sampleRate, lsl::cf_float32, lsl_id));
 								// append some meta-data
 								channels = lsl_info->desc().append_child("channels");
 								for (unsigned int k = 0; k < rdaInfo.channelLabels.size(); k++) 
@@ -209,6 +215,12 @@ void MainWindow::read_thread(QString serverIP) {
 										.append_child_value("type", "EEG")
 										.append_child_value("unit", "microvolts");
 								}
+								// add counted marker identifer channel
+								channels.append_child("channel")
+									.append_child_value("label", "MkIdx")
+									.append_child_value("type", "Marker")
+									.append_child_value("unit", "Counts (decimal)");
+
 								lsl_info->desc().append_child("acquisition")
 									.append_child_value("manufacturer","Brain Products");
 								// make a new data outlet
@@ -221,11 +233,14 @@ void MainWindow::read_thread(QString serverIP) {
 								lsl_event_outlet.reset(new lsl::stream_outlet(*lsl_event_info.get(),1));
 
 								blockCounter = -15;
+								status = QString("connected to %1:%2").arg(serverIP).arg(RDA_Port); // fixes re-start detection miss for status line update
+								emit sendMessage(status);
 								break;
 
 							case RDA_message::DATA32:
 								if(lsl_outlet)
 								{
+									// fetch data from RDA interface
 									std::vector<std::vector<float>> samples;
 									std::vector<RDA_Marker> markers;
 									msg.decode_data32(rdaInfo.channelResolutions, samples, markers);
@@ -234,14 +249,30 @@ void MainWindow::read_thread(QString serverIP) {
 										blockCounter++;
 									else 
 									{
+										// get base timestamp
 										double now = lsl::local_clock();
+										// add additional channel with default marker identifiers
+										for (size_t smp = 0; smp < samples.size(); smp++)
+											samples[smp].push_back(-1.0);
+										// send augmented (counted) markers
+										for(size_t mkr = 0; mkr < markers.size(); mkr++) {
+											// derive marker timestamp from base and sample position
+											double tm = now + ((double)markers[mkr].samplePosition + 1 - samples.size()) / rdaInfo.sampleRate;
+											// increment marker count, reset if > max
+											markerCount+=1;
+											if (markerCount > maxMarkerCount)
+												markerCount = 1;
+											//create counted marker string
+											std::stringstream ss;
+											ss << markerCount;
+											std::string countedMarker = "mk" + ss.str() + "=" + (markers[mkr].description.empty() ? markers[mkr].type : markers[mkr].description);
+											//push counted marker
+											lsl_event_outlet->push_sample(&countedMarker, tm);
+											//insert marker identifier into data sample
+											samples[markers[mkr].samplePosition].at((int)rdaInfo.numChannels) = float(markerCount);
+										}
 										// send samples
 										lsl_outlet->push_chunk(samples,now);
-										// send markers
-										for(size_t mkr = 0; mkr < markers.size(); mkr++) {
-											double tm = now + ((double)markers[mkr].samplePosition + 1 - samples.size()) / rdaInfo.sampleRate;
-											lsl_event_outlet->push_sample(markers[mkr].description.empty() ? &markers[mkr].type : &markers[mkr].description, tm);
-										}
 									}
 								}
 								break;

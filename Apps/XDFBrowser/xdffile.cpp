@@ -83,8 +83,7 @@ void FileHeaderChunk::setText(const QString& text) {
 void FileHeaderChunk::writeChunk(QDataStream &out) {
 	XDFChunk::writeChunk(out);
 	out << FILEHEADER_CHUNK;
-	
-	out.writeRawData(chunkData.toAscii(), thisChunkLength-2);
+	out.writeRawData(chunkData.toLatin1(), thisChunkLength-2);
 }
 
 FileHeaderChunk::~FileHeaderChunk(){};
@@ -120,7 +119,7 @@ void StreamHeaderChunk::writeChunk(QDataStream &out) {
 	XDFChunk::writeChunk(out);
 	out << STREAMHEADER_CHUNK;
 	out << streamID;
-	out.writeRawData(chunkData.toAscii(), thisChunkLength-6);
+	out.writeRawData(chunkData.toLatin1(), thisChunkLength-6);
 }
 
 StreamHeaderChunk::~StreamHeaderChunk(){};
@@ -343,7 +342,7 @@ void StreamFooterChunk::writeChunk(QDataStream &out) {
 	XDFChunk::writeChunk(out);
 	out << STREAMFOOTER_CHUNK;
 	out << streamID;
-	out.writeRawData(chunkData.toAscii(), thisChunkLength-6);
+	out.writeRawData(chunkData.toLatin1(), thisChunkLength-6);
 }
 
 StreamFooterChunk::~StreamFooterChunk(){};
@@ -439,20 +438,20 @@ void XDFfile::open(QProgressBar *progressBar)  {
 
 			switch(tagNumber){
 				case XDFChunk::FILEHEADER_CHUNK: {
-					boost::shared_ptr<FileHeaderChunk> chunk(new FileHeaderChunk(in, chunkPosition, numLengthBytes, chunkLength));
+					std::shared_ptr<FileHeaderChunk> chunk(new FileHeaderChunk(in, chunkPosition, numLengthBytes, chunkLength));
 					chunks.push_back(chunk);
 					bytesLoaded += chunkLength;
 					break;
 					}
 				case XDFChunk::STREAMHEADER_CHUNK: {
-					boost::shared_ptr<StreamHeaderChunk> chunk(new StreamHeaderChunk(in, chunkPosition, numLengthBytes, chunkLength));
+					std::shared_ptr<StreamHeaderChunk> chunk(new StreamHeaderChunk(in, chunkPosition, numLengthBytes, chunkLength));
 					chunks.push_back(chunk);
 					bytesLoaded += chunkLength;
 					break;
 				}
 				case XDFChunk::SAMPLES_CHUNK: {
 					bool loadData = bytesLoaded < maxBytes;					
-					boost::shared_ptr<SamplesChunk> chunk(new SamplesChunk(in, chunkPosition, numLengthBytes, chunkLength, loadData));
+					std::shared_ptr<SamplesChunk> chunk(new SamplesChunk(in, chunkPosition, numLengthBytes, chunkLength, loadData));
 					chunks.push_back(chunk);
 					if(loadData) {
 						bytesLoaded += chunkLength;
@@ -461,26 +460,26 @@ void XDFfile::open(QProgressBar *progressBar)  {
 					break;
 				}
 				case XDFChunk::CLOCKOFFSET_CHUNK: {
-					boost::shared_ptr<ClockOffsetChunk> chunk(new ClockOffsetChunk(in, chunkPosition, numLengthBytes, chunkLength));
+					std::shared_ptr<ClockOffsetChunk> chunk(new ClockOffsetChunk(in, chunkPosition, numLengthBytes, chunkLength));
 					chunks.push_back(chunk);
 					bytesLoaded+= chunkLength;
 					break;
 				}
 				case XDFChunk::BOUNDARY_CHUNK: {
-					boost::shared_ptr<BoundaryChunk> chunk(new BoundaryChunk(in, chunkPosition, numLengthBytes, chunkLength));
+					std::shared_ptr<BoundaryChunk> chunk(new BoundaryChunk(in, chunkPosition, numLengthBytes, chunkLength));
 					chunks.push_back(chunk);
 					bytesLoaded += chunkLength;
 					break;
 				}
 				case XDFChunk::STREAMFOOTER_CHUNK: {
-					boost::shared_ptr<StreamFooterChunk> chunk(new StreamFooterChunk(in, chunkPosition, numLengthBytes, chunkLength));
+					std::shared_ptr<StreamFooterChunk> chunk(new StreamFooterChunk(in, chunkPosition, numLengthBytes, chunkLength));
 					chunks.push_back(chunk);
 					bytesLoaded += chunkLength;
 					break;
 				}
 
 				default: {
-					boost::shared_ptr<UnrecognizedChunk> chunk(new UnrecognizedChunk(in, chunkPosition, numLengthBytes, chunkLength, tagNumber));
+					std::shared_ptr<UnrecognizedChunk> chunk(new UnrecognizedChunk(in, chunkPosition, numLengthBytes, chunkLength, tagNumber));
 					chunks.push_back(chunk);
 					bytesLoaded += chunkLength;
 					break;
@@ -489,12 +488,12 @@ void XDFfile::open(QProgressBar *progressBar)  {
 			
 			}
 			//update progress bar
-		    QMetaObject::invokeMethod(progressBar, "setValue", Qt::QueuedConnection, Q_ARG(int, (chunkPosition*100)/fileSize));     
+			QMetaObject::invokeMethod(progressBar, "setValue", Qt::QueuedConnection, Q_ARG(int, (chunkPosition*100)/fileSize));
 
 			
 		}
 		//set progress bar to zero
-	    QMetaObject::invokeMethod(progressBar,  "setValue", Qt::QueuedConnection, Q_ARG(int, 0));    
+		QMetaObject::invokeMethod(progressBar,  "setValue", Qt::QueuedConnection, Q_ARG(int, 0));
 
 		
 	}
@@ -546,10 +545,10 @@ void XDFfile::saveAs(const QString& fileName, QProgressBar *progressBar) {
 		chunks[i]->writeChunk(out);
 		
 		//update progress bar
-		QMetaObject::invokeMethod(progressBar, "setValue", Qt::QueuedConnection, Q_ARG(int, (i*100)/chunks.size()));     
+		QMetaObject::invokeMethod(progressBar, "setValue", Qt::QueuedConnection, Q_ARG(int, (i*100)/chunks.size()));
 
 	}
-	QMetaObject::invokeMethod(progressBar, "setValue", Qt::QueuedConnection, Q_ARG(int, 0));     
+	QMetaObject::invokeMethod(progressBar, "setValue", Qt::QueuedConnection, Q_ARG(int, 0));
 
 	this->file.close();
 	this->file.setFileName(fileName);

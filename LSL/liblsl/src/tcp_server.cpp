@@ -5,6 +5,7 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/serialization/split_member.hpp>
+#include <boost/container/flat_set.hpp>
 #include "tcp_server.h"
 #include "socket_utils.h"
 

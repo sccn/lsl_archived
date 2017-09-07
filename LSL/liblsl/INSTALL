@@ -1,3 +1,6 @@
+Please note that LSL is moving to CMake, so parts of this document may be outdated.
+See INSTALL.md in the main directory for current instructions.
+
 =======
 General
 =======

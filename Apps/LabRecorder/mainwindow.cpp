@@ -1,13 +1,5 @@
-
-#include "ui_mainwindow.h"
 #include "mainwindow.h"
 
-#ifdef __WIN32
-#include <Objbase.h>
-#endif
-
-#include <sys/types.h> 
-#include <sys/stat.h>
 #include <errno.h>
 
 #include <iostream>
@@ -20,6 +12,8 @@
 #include <boost/filesystem.hpp>
 // #include <boost/algorithm/string.hpp>
 #include <algorithm>
+#include <QDateTime>
+#include <QMessageBox>
 #include <fstream>
 
 // recording class
