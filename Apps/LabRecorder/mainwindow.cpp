@@ -131,7 +131,7 @@ void MainWindow::load_config(const std::string &filename) {
 		// required streams
 		// ----------------------------	
 		std::string str_requiredStreams = pt.get<std::string>("RequiredStreams","");
-		if(str_requiredStreams.compare("")) {
+		if(str_requiredStreams.compare("[]")) {
 			std::string rs_substr = str_requiredStreams.substr(1, str_requiredStreams.size()-2);
 			boost::algorithm::split(requiredStreams,rs_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
 			for (int k=0;k<requiredStreams.size();k++){
@@ -144,7 +144,7 @@ void MainWindow::load_config(const std::string &filename) {
 		// online sync streams
 		// ----------------------------	
 		std::string str_onlineSyncStreams = pt.get<std::string>("OnlineSync","");
-		if(str_onlineSyncStreams.compare("")) {
+		if(str_onlineSyncStreams.compare("[]")) {
 			std::string oss_substr = str_onlineSyncStreams.substr(1, str_onlineSyncStreams.size()-2);
 			boost::algorithm::split(onlineSyncStreams,oss_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
 			for (int k=0;k<onlineSyncStreams.size();k++) {
@@ -179,7 +179,7 @@ void MainWindow::load_config(const std::string &filename) {
 		std::vector<std::string>sessionBlocks;
 		QListWidgetItem *item;
 		std::string str_sessionBlocks = pt.get<std::string>("SessionBlocks","");
-		if(str_sessionBlocks.compare("")) {
+		if(str_sessionBlocks.compare("[]")) {
 			std::string sb_substr = str_sessionBlocks.substr(1, str_sessionBlocks.size()-2);
 			boost::algorithm::split(sessionBlocks,sb_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
 			
@@ -240,7 +240,7 @@ void MainWindow::load_config(const std::string &filename) {
 	} catch(std::exception &e) {
 		std::cout << "Problem parsing config file: " << e.what() << std::endl;
 	}
-	std::cout << "refreshing streams ..." <<std::endl;
+	//std::cout << "refreshing streams ..." <<std::endl;
 	refreshStreams();
 }
 
@@ -310,8 +310,6 @@ void MainWindow::refreshStreams(void) {
 				previouslyChecked.push_back(item->text().toStdString());
 		}
 	}
-
-
 
 	
 	ui->streamList->clear();
