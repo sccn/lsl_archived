@@ -46,6 +46,7 @@ add_executable(${target}
     mainwindow.h
     mainwindow.ui
     recording.h
+	recording.cpp
     targetver.h
 )
 
