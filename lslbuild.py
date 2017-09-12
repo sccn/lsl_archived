@@ -47,6 +47,7 @@ class LSLBuilder:
     def __init__(self, config):
         self.sourcepath = os.path.dirname(os.path.realpath(__file__))
         self.cmake_conf = config['cmake_conf']
+        self.cmake_exe = os.environ.get('CMAKE_EXE') or 'cmake' 
         bd = config['build-dir']
         if bd.startswith('/'):
             self.builddir = bd
@@ -60,6 +61,7 @@ class LSLBuilder:
         self.generator = config['generator']
         print('Found source in ' + self.sourcepath)
         print('building in ' + self.builddir)
+        self.call_cmake(otherargs=['--version'])
 
     def mkbuilddir(self, name, remove_if_existing=True):
         dirname = self.builddir + name
@@ -86,7 +88,7 @@ class LSLBuilder:
             os.chdir(newdir)
 
     def call_cmake(self, generator=None, conf={}, otherargs=[]):
-        args = ['cmake']
+        args = [self.cmake_exe]
         if generator is not None:
             args += ['-G', generator]
         for k, v in conf.items():
@@ -124,9 +126,7 @@ class LSLBuilder:
         self.call_cmake(otherargs=['--build', '.', '--target', 'runOutOfTree'])
 
     def package(self):
-        self.chdir(self.builddir)
-        archive_filename = os.path.join(self.builddir, self.cmake_conf['CMAKE_BUILD_TYPE'] + '.7z')
-        self.call(['cmake', '-E', 'tar', 'cvf', archive_filename, '--format=7zip', self.install_prefix])
+        self.call_cmake(otherargs=['--build', self.builddir, '--target', 'LSLPACKAGE'])
 
 def print_conf(conf):
     print('Configuration: ')

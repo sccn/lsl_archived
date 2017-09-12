@@ -2,7 +2,7 @@ language: cpp
 dist: trusty # at least until xenial becomes available
 compiler: clang # 3.5 instead of GCC 4.8
 script:
-    - python -u lslbuild.py
+- python -u lslbuild.py
 matrix:
   include:
     - os: linux
@@ -14,14 +14,17 @@ matrix:
             - libboost-filesystem-dev
             - libboost-serialization-dev
             - libboost-iostreams-dev
-            - p7zip-full
       before_script:
         - CMAKE_URL="https://cmake.org/files/v3.5/cmake-3.5.2-Linux-x86_64.tar.gz"
         - mkdir cmakebin && travis_retry wget --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmakebin
-        - export PATH=$PWD/cmakebin/bin:$PATH
-        - cmake --version; $PWD/cmakebin/bin/cmake --version
+        - export CMAKE_EXE=$PWD/cmakebin/bin/cmake
     - os: osx
-      osx_image: xcode7.3
       before_install:
-        - brew install qt p7zip
+        - brew install qt
         - export CMAKE_PREFIX_PATH=/usr/local/opt/qt/
+deploy:
+  provider: bintray
+  user: tstenner
+  key:
+    secure: 8Gou8FcKj7o3nYOO4a7gSaUoUqyCrE4NjmV8yFIaDAS5l79kFWuM8SACYY/mBlN2uFBaUGXnD6VUZGuQ0GkbYnWPUhs024vXR5B+XhLpW5pRoHS3hZxwPNcWTR+8X46IawuWn360kb6zRXGU/ftK5Ppf3n2lXvRdvhz8O3NyTmXJeR8gr0QgRoNKVYENNEpUtzZbwN2htWqUzm5gw32u2HBa35O9aR026iwtW2ktICCtuAyyNaHR9CHy2vh3dasZu/SMRFfde95Bf+FcxrwcdNMlw1ot09Hc+bmx/ec/VMn8LYJ9XFdVz+7Jqm+0UH19NokUpt3FCg+DRNOj6d0HaVR4vXCe3S8wwaoNlFWWArt/2gSRFN266TDpKtP3AdpCoDOOIxtlPJq6mC9KR4U1GwnhvjvtAh9NdU+FRzsJJT7npMYsyAwvvfGulhz4Vz4RJWZSb0Kf7Tdp2C4dagb9tDQPuQ/mhwGigLT8T4GPkGSkUnVR7mNSDL7TUeQhP2wxYMMAYoaigGcT6GcqCIK6x6dxX01VffsfCZozvGpaXbdXPmVc1U1KupRZDpuk+kkvySWjMlrkYYiTVzyWVEH7hsAJkq6i6qOgC/hsNQ7oJ8mgokgvb7VWgNEdRN0G2uaYXqKeXBwtsYtWB14kx/fiZyUhbjLFX0lIS23qS52pxzQ=
+  file: .bintray.json

@@ -27,3 +27,12 @@ include(LSLAppBoilerplate)
 add_subdirectory(Apps)
 
 install(DIRECTORY cmake DESTINATION LSL)
+
+# add a target that zips up a built installation tree
+# Example: cmake --build path/to/build_dir --target LSLPACKAGE
+set(LSLPACKAGENAME "LSL_${CMAKE_SYSTEM_NAME}.7z")
+add_custom_target(LSLPACKAGE 
+	COMMAND ${CMAKE_COMMAND} "--build" "${CMAKE_BINARY_DIR}" "--target" "install"
+	COMMAND ${CMAKE_COMMAND} "-E" "tar" "cvf" "${LSLPACKAGENAME}" "--format=7zip" "${CMAKE_INSTALL_PREFIX}"
+	BYPRODUCTS ${LSLPACKAGENAME}
+	WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/../")
