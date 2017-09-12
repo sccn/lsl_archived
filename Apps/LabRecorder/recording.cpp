@@ -1,13 +1,17 @@
 #include "recording.h"
 
-recording::recording(const std::string& filename, const std::vector<lsl::stream_info>& streams, const std::vector<std::string>& watchfor, const std::map<std::string, int>& syncOptions, bool collect_offsets):
+#include <boost/iostreams/device/file_descriptor.hpp>
+#include <boost/iostreams/filter/zlib.hpp>
+
+
+recording::recording(const std::string& filename, const std::vector<lsl::stream_info>& streams, const std::vector<std::string>& watchfor, std::map<std::string, int> syncOptions, bool collect_offsets):
     offsets_enabled_(collect_offsets),
     unsorted_(false),
     streamid_(0),
     shutdown_(false),
     headers_to_finish_(0),
     streaming_to_finish_(0),
-    sync_options_by_stream_(syncOptions)
+    sync_options_by_stream_(std::move(syncOptions))
 {
 	// open file stream
 	std::cout << "Opening file " << filename << " ... ";
@@ -20,11 +24,11 @@ recording::recording(const std::string& filename, const std::vector<lsl::stream_
 	// [FileHeader] chunk
 	write_chunk(ct_fileheader,"<?xml version=\"1.0\"?><info><version>1.0</version></info>");
 	// create a recording thread for each stream
-	for (std::size_t k=0;k<streams.size();k++)
-		stream_threads_.push_back(std::make_shared<boost::thread>(&recording::record_from_streaminfo, this, streams[k], true));
+	for (const auto& stream: streams)
+		stream_threads_.push_back(std::make_shared<boost::thread>(&recording::record_from_streaminfo, this, stream, true));
 	// create a resolve-and-record thread for each item in the watchlist
-	for (std::size_t k=0;k<watchfor.size();k++)
-		stream_threads_.push_back(std::make_shared<boost::thread>(&recording::record_from_query_results, this, watchfor[k]));
+	for (const auto& thread: watchfor)
+		stream_threads_.push_back(std::make_shared<boost::thread>(&recording::record_from_query_results, this, thread));
 	// create a boundary chunk writer thread
 	boundary_thread_ = std::make_shared<boost::thread>(&recording::record_boundaries, this);
 }
@@ -38,10 +42,10 @@ recording::~recording() {
 		}
 		// stop the Boundary writer thread
 		boundary_thread_->interrupt();
-		boundary_thread_->timed_join(boost::posix_time::seconds(max_join_wait));
+		boundary_thread_->timed_join(max_join_wait);
 		// wait for all stream threads to join...
 		for(auto& thread: stream_threads_)
-			thread->timed_join(boost::posix_time::seconds(max_join_wait));
+			thread->timed_join(max_join_wait);
 		std::cout << "Closing the file." << std::endl;
 	}
 	catch(std::exception &e) {
@@ -49,7 +53,7 @@ recording::~recording() {
 	}
 }
 
-void recording::record_from_query_results(std::string query) {
+void recording::record_from_query_results(const std::string& query) {
 	try {
 		std::set<std::string> known_uids;		// set of previously seen stream uid's
 		std::set<std::string> known_source_ids;	// set of previously seen source id's
@@ -63,7 +67,7 @@ void recording::record_from_query_results(std::string query) {
 				// if it is a new stream...
 				if (!known_uids.count(result.uid()))
 					// and doesn't have a previously seen source id...
-					if (!(!result.source_id().empty() && known_source_ids.count(result.source_id()))) {
+					if (!(!result.source_id().empty() && (!known_source_ids.count(result.source_id())))) {
 						std::cout << "Found a new stream named " << result.name() << ", adding it to the recording." << std::endl;
 						// start a new recording thread
 						threads.push_back(std::make_shared<boost::thread>(&recording::record_from_streaminfo, this, result, false));
@@ -75,8 +79,8 @@ void recording::record_from_query_results(std::string query) {
 			}
 		}
 		// wait for all our threads to join
-		for (std::size_t k=0;k<threads.size();k++)
-			threads[k]->timed_join(boost::posix_time::seconds(max_join_wait));
+		for (auto& thread: threads)
+			thread->timed_join(max_join_wait);
 	}
 	catch(boost::thread_interrupted &) {
 	}
@@ -85,7 +89,7 @@ void recording::record_from_query_results(std::string query) {
 	}
 }
 
-void recording::record_from_streaminfo(lsl::stream_info src, bool phase_locked) {
+void recording::record_from_streaminfo(const lsl::stream_info& src, bool phase_locked) {
 	try {
 		double first_timestamp, last_timestamp;
 		uint64_t sample_count;
@@ -101,13 +105,9 @@ void recording::record_from_streaminfo(lsl::stream_info src, bool phase_locked) 
 
 			// open an inlet to read from (and subscribe to data immediately)
 			in.reset(new lsl::stream_inlet(src));
-			for(std::map<std::string, int>::iterator it=sync_options_by_stream_.begin(); it!=sync_options_by_stream_.end(); ++it) {
-				if(it->first.compare(src.name() + " (" + src.hostname() + ")")==0){
-					/*std::cout << it->first << std::endl;
-						std::cout << it->second << std::endl;*/
-					in->set_postprocessing(it->second);
-				}
-			}
+			auto it = sync_options_by_stream_.find(src.name() + " (" + src.hostname() + ")");
+			if(it != sync_options_by_stream_.end())
+				in->set_postprocessing(it->second);
 
 			try {
 				in->open_stream(max_open_wait);
@@ -215,7 +215,7 @@ void recording::record_boundaries() {
 	try {
 		while (!shutdown_) {
 			// sleep for the interval
-			boost::this_thread::sleep(boost::posix_time::seconds(boundary_interval));
+			boost::this_thread::sleep(boundary_interval);
 			// write a [Boundary] chunk...
 			write_chunk(ct_boundary, std::string((char*)&boundary_uuid[0],16));
 		}
@@ -227,11 +227,11 @@ void recording::record_boundaries() {
 	}
 }
 
-void recording::record_offsets(uint32_t streamid, inlet_p in) {
+void recording::record_offsets(uint32_t streamid, const inlet_p& in) {
 	try {
 		while (!shutdown_) {
 			// sleep for the interval
-			boost::this_thread::sleep(boost::posix_time::seconds(offset_interval));
+			boost::this_thread::sleep(offset_interval);
 			// query the time offset
 			double offset, now;
 			try {
@@ -251,7 +251,7 @@ void recording::record_offsets(uint32_t streamid, inlet_p in) {
 			write_chunk(ct_clockoffset,content.str());
 			// also append to the offset lists
 			boost::mutex::scoped_lock lock(offset_mut_);
-			offset_lists_[streamid].push_back(std::make_pair(now-offset,offset));
+			offset_lists_[streamid].emplace_back(now-offset,offset);
 		}
 	}
 	catch(boost::thread_interrupted &) {
@@ -292,7 +292,7 @@ void recording::leave_headers_phase(bool phase_locked) {
 void recording::enter_streaming_phase(bool phase_locked) {
 	if (phase_locked) {
 		boost::mutex::scoped_lock lock(phase_mut_);
-		ready_for_streaming_.timed_wait(lock, boost::posix_time::seconds(max_headers_wait), [&]() { return this->ready_for_streaming(); });
+		ready_for_streaming_.timed_wait(lock, max_headers_wait, [&]() { return this->ready_for_streaming(); });
 		streaming_to_finish_++;
 	}
 }
@@ -309,6 +309,6 @@ void recording::leave_streaming_phase(bool phase_locked) {
 void recording::enter_footers_phase(bool phase_locked) {
 	if (phase_locked) {
 		boost::mutex::scoped_lock lock(phase_mut_);
-		ready_for_footers_.timed_wait(lock, boost::posix_time::seconds(max_footers_wait), [&]() {return this->ready_for_footers(); });
+		ready_for_footers_.timed_wait(lock, max_footers_wait, [&]() {return this->ready_for_footers(); });
 	}
 }

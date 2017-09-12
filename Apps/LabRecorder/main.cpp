@@ -1,7 +1,7 @@
 #include <QApplication>
 #include "mainwindow.h"
 
-MainWindow *theWindow = NULL;
+MainWindow *theWindow = nullptr;
 
 int main(int argc, char *argv[])
 {
@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
             config_file = argv[k+1];
 
     QApplication a(argc, argv);
-    MainWindow w(0, config_file);
+    MainWindow w(nullptr, config_file);
     w.show();
     
     return a.exec();

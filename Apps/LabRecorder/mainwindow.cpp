@@ -1,7 +1,7 @@
 #include "ui_mainwindow.h"
 #include "mainwindow.h"
 
-#include <errno.h>
+#include <cerrno>
 
 #include <iostream>
 #include <string>
@@ -55,7 +55,7 @@ ui(new Ui::MainWindow) {
 }
 
 void MainWindow::statusUpdate() const {
-	if(currentlyRecording ==true) {
+	if(currentlyRecording) {
 		int elapsed = (static_cast<int>(lsl::local_clock()) - startTime);
 
 		std::ifstream in(recFilename.c_str(), std::ifstream::ate | std::ifstream::binary);
@@ -74,7 +74,7 @@ void MainWindow::closeEvent(QCloseEvent *ev) {
 }
 
 void MainWindow::blockSelected(QListWidgetItem *item) {
-	if(currentlyRecording==true)
+	if(currentlyRecording)
 		QMessageBox::information(this, "Still recording", "Please stop recording before switching blocks.", QMessageBox::Ok);
 	else {
 		currentBlock = item->text().toStdString();
@@ -98,12 +98,12 @@ void MainWindow::load_config(const std::string &filename) {
 		// required streams
 		// ----------------------------	
 		std::string str_requiredStreams = pt.get<std::string>("RequiredStreams","");
-		if(str_requiredStreams.compare("[]")) {
+		if(str_requiredStreams != "[]") {
 			std::string rs_substr = str_requiredStreams.substr(1, str_requiredStreams.size()-2);
 			boost::algorithm::split(requiredStreams,rs_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
-			for (int k=0;k<requiredStreams.size();k++){
-				boost::algorithm::trim_if(requiredStreams[k],boost::algorithm::is_any_of(" '\""));
-				std::cout << requiredStreams[k] << std::endl;
+			for (auto& requiredStream: requiredStreams){
+				boost::algorithm::trim_if(requiredStream,boost::algorithm::is_any_of(" '\""));
+				std::cout << requiredStream << std::endl;
 			}
 		}
 
@@ -111,7 +111,7 @@ void MainWindow::load_config(const std::string &filename) {
 		// online sync streams
 		// ----------------------------	
 		std::string str_onlineSyncStreams = pt.get<std::string>("OnlineSync","");
-		if(str_onlineSyncStreams.compare("[]")) {
+		if(str_onlineSyncStreams != "[]") {
 			std::string oss_substr = str_onlineSyncStreams.substr(1, str_onlineSyncStreams.size()-2);
 			boost::algorithm::split(onlineSyncStreams,oss_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
 			for(std::string& oss: onlineSyncStreams) {
@@ -125,11 +125,11 @@ void MainWindow::load_config(const std::string &filename) {
 				
 				int val = 0;
 				for(int l=2;l<words.size();l++){
-					if(words[l].compare("post_clocksync")==0){val|=lsl::post_clocksync;}//std::cout<<words[l]<< " "<<val<<std::endl;}
-					if(words[l].compare("post_dejitter")==0){val|=lsl::post_dejitter;}//std::cout<<words[l]<< " "<<val<<std::endl;}
-					if(words[l].compare("post_monotonize")==0){val|=lsl::post_monotonize;}//std::cout<<words[l]<< " "<<val<<std::endl;}
-					if(words[l].compare("post_threadsafe")==0){val|=lsl::post_threadsafe;}//std::cout<<words[l]<< " "<<val<<std::endl;}
-					if(words[l].compare("post_ALL")==0){val=lsl::post_ALL;}//std::cout<<words[l]<< " "<<val<<std::endl;}	
+					if(words[l]=="post_clocksync"){val|=lsl::post_clocksync;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+					if(words[l]=="post_dejitter"){val|=lsl::post_dejitter;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+					if(words[l]=="post_monotonize"){val|=lsl::post_monotonize;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+					if(words[l]=="post_threadsafe"){val|=lsl::post_threadsafe;}//std::cout<<words[l]<< " "<<val<<std::endl;}
+					if(words[l]=="post_ALL"){val=lsl::post_ALL;}//std::cout<<words[l]<< " "<<val<<std::endl;}	
 			
 					}
 				syncOptionsByStreamName.insert(std::make_pair(key, val));
@@ -145,7 +145,7 @@ void MainWindow::load_config(const std::string &filename) {
 		// ----------------------------
 		std::vector<std::string>sessionBlocks;
 		std::string str_sessionBlocks = pt.get<std::string>("SessionBlocks","");
-		if(str_sessionBlocks.compare("[]")) {
+		if(str_sessionBlocks != "[]") {
 			std::string sb_substr = str_sessionBlocks.substr(1, str_sessionBlocks.size()-2);
 			boost::algorithm::split(sessionBlocks,sb_substr,boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
 
@@ -201,7 +201,7 @@ void MainWindow::load_config(const std::string &filename) {
 }
 
 
-void MainWindow::refreshStreams(void) {
+void MainWindow::refreshStreams() {
 
 	//std::cout << "refreshing streams ..." <<std::endl;
 	resolvedStreams.clear();
@@ -218,7 +218,7 @@ void MainWindow::refreshStreams(void) {
 
 	missingStreams.clear();
 	for(const auto& requiredStream: requiredStreams) {
-		if (requiredStream == "") continue;
+		if (requiredStream.empty()) continue;
 		auto it = std::find(streamNames.cbegin(), streamNames.cend(), requiredStream);
 		if (it == streamNames.cend())
 			missingStreams.push_back(requiredStream); // push this string onto the missing vector
@@ -268,9 +268,9 @@ void MainWindow::refreshStreams(void) {
 
 }
 
-void MainWindow::startRecording(void) {
+void MainWindow::startRecording() {
 	
-	if (currentlyRecording == false ) {
+	if (!currentlyRecording ) {
 
 		// automatically refresh streams
 		refreshStreams();
@@ -309,7 +309,7 @@ void MainWindow::startRecording(void) {
 			recFilename.replace(pos_b,  2, currentBlock);
  
 		if(boost::filesystem::exists(recFilename.c_str())) {
-			size_t lastdot = recFilename.find_last_of(".");
+			size_t lastdot = recFilename.find_last_of('.');
 			for(int i=1;i<=9999;i++) { // search for highest _oldN
 				std::string rename_to = recFilename.substr(0, lastdot) +
 					"_old" + std::to_string(i) +
@@ -374,9 +374,9 @@ void MainWindow::startRecording(void) {
 
 }
 
-void MainWindow::stopRecording(void) {
+void MainWindow::stopRecording() {
 
-	if(currentlyRecording==false)
+	if(!currentlyRecording)
 		QMessageBox::information(this, "Not recording", "There is not ongoing recording", QMessageBox::Ok);
 	else {
 
@@ -396,4 +396,3 @@ void MainWindow::stopRecording(void) {
 	}
 }
 
-MainWindow::~MainWindow() {}

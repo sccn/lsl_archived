@@ -38,7 +38,6 @@ class MainWindow : public QMainWindow {
 
 public:
     explicit MainWindow(QWidget *parent,const std::string &config_file);
-    ~MainWindow();
 
 private slots:
 	void statusUpdate(void) const;
@@ -47,8 +46,6 @@ private slots:
 	void refreshStreams(void);
 	void startRecording(void);
 	void stopRecording(void);
-
-
 
 private:
 
