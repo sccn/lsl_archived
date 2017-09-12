@@ -19,5 +19,5 @@ int main(int argc, char *argv[])
 	MainWindow w(0, configFilename);
     w.show();
 
-    return a.exec();
+	return a.exec();
 }

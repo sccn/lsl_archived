@@ -55,10 +55,7 @@ endif()
 if(LSLAPPS_Emotiv)
     add_subdirectory(emotiv)
 endif()
-<<<<<<< HEAD
 
 if(LSLAPPS_gNEEDaccess)
     add_subdirectory(g.Tec/g.NEEDaccess)
 endif()
-=======
->>>>>>> master

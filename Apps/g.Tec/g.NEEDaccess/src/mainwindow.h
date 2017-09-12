@@ -2,9 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QMutex>
 #include "lsl_cpp.h"
 #include "GDSClientAPI.h"
-//#include "gdsthread.h"
 
 const QString default_config_fname = "gneedaccess_config.cfg";
 
@@ -21,15 +21,15 @@ public:
         const QString config_file = default_config_fname);
     ~MainWindow();
 
+signals:
+	void dataReady(void);
+
 private slots:
 	// GUI
     void on_scanPushButton_clicked();
 	void on_connectPushButton_clicked();
     void on_goPushButton_clicked();
 	void on_availableListWidget_itemSelectionChanged();
-	// React to GDSThread
-	void handleOutletsStarted(bool success);
-	void handleDataSent(int nSamples);
 
 private:
 	struct chan_info_type {
@@ -57,18 +57,17 @@ private:
     // void save_config(const QString filename);  // TODO: Actually save the config to a file.
 
     Ui::MainWindow *ui;
+	QMutex mutex;
 
 	// GDS communication
 	GDS_HANDLE m_connectionHandle = 0;
 	GDS_ENDPOINT m_hostEndpoint = { "127.0.0.1", 50223 };
 	GDS_ENDPOINT m_localEndpoint = { "127.0.0.1", 50224 };
-	int16_t m_updateRate;
+	dev_info_type m_devInfo;
 
 	// LSL variables
-	std::vector<std::vector<float>> m_dataBuffer;
+	float* m_dataBuffer = NULL;
 	lsl::stream_outlet* m_eegOutlet;
-
-	//GDSThread m_thread;
 };
 
 #endif // MAINWINDOW_H
