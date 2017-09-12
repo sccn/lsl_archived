@@ -41,7 +41,7 @@ void MainWindow::dataReadyCallback(GDS_HANDLE connectionHandle, void* usrData)
 	if (scans_available > 0)
 	{
 		thisWin->m_eegOutlet->push_chunk_multiplexed(thisWin->m_dataBuffer, scans_available * thisWin->m_devInfo.nsamples_per_scan);
-		qDebug() << "Pushed " << scans_available;
+		qDebug() << "Pushed " << scans_available << " scans with " << thisWin->m_devInfo.nsamples_per_scan << " samples.";
 	}
 	thisWin->mutex.unlock();
 }
@@ -149,11 +149,18 @@ void MainWindow::on_connectPushButton_clicked()
 		std::strcpy(device_names[0], deviceName.toLatin1().data());
 		BOOL is_creator = FALSE;
 		if (handleResult("GDS_Connect",
-			GDS_Connect(m_hostEndpoint, m_localEndpoint, device_names, 1, TRUE, &m_connectionHandle, &is_creator)))
+			GDS_Connect(m_hostEndpoint, m_localEndpoint, device_names, 1, FALSE, &m_connectionHandle, &is_creator)))
 		{
 			ui->connectPushButton->setText("Disconnect");
 			ui->goPushButton->setDisabled(false);
 			m_bConnected = true;
+			m_devInfo.is_creator = bool(is_creator);
+
+			if (!m_devInfo.is_creator)
+			{
+				m_devInfo.is_creator = handleResult("GDS_BecomeCreator",
+					GDS_BecomeCreator(m_connectionHandle));
+			}
 		}
 		delete[] device_names;
 		device_names = NULL;
@@ -181,8 +188,9 @@ void MainWindow::on_goPushButton_clicked()
 	QString pbtext = ui->goPushButton->text();
 	if (pbtext == "Stop!")
 	{
-		handleResult("GDS_StopAcquisition", GDS_StopAcquisition(m_connectionHandle));
 		handleResult("GDS_StopStreaming", GDS_StopStreaming(m_connectionHandle));
+		if (m_devInfo.is_creator)
+			handleResult("GDS_StopAcquisition", GDS_StopAcquisition(m_connectionHandle));
 		handleResult("GDS_SetDataReadyCallback",
 			GDS_SetDataReadyCallback(m_connectionHandle, NULL, 0, NULL));
 		m_bStreaming = false;
@@ -249,27 +257,85 @@ void MainWindow::on_goPushButton_clicked()
 			char(*electrode_names)[GDS_GNAUTILUS_ELECTRODE_NAME_LENGTH_MAX] = new char[electrodeNamesCount][GDS_GNAUTILUS_ELECTRODE_NAME_LENGTH_MAX];
 			success &= handleResult("GDS_GNAUTILUS_GetChannelNames",
 				GDS_GNAUTILUS_GetChannelNames(m_connectionHandle, device_names, &mountedModulesCount, electrode_names, &electrodeNamesCount));
+
 			// Copy the result into m_devInfo
 			for (int chan_ix = 0; chan_ix < electrodeNamesCount; chan_ix++)
 			{
 				chan_info_type new_chan_info;
 				new_chan_info.enabled = cfg_dev->Channels[chan_ix].Enabled;
-				if (chan_ix < electrodeNamesCount)
-				{
-					new_chan_info.label = electrode_names[chan_ix];
-					new_chan_info.type = "EEG";
-					new_chan_info.unit = "uV";
-				}
-				else
-				{
-					// TODO: digital / other inputs. Maybe a separate stream?
-					new_chan_info.type = "Unknown";
-					new_chan_info.unit = "Unknown";
-				}
+				new_chan_info.label = electrode_names[chan_ix];
+				new_chan_info.type = "EEG";
+				new_chan_info.unit = "uV";
 				m_devInfo.channel_infos.push_back(new_chan_info);
 			}
 			delete[] electrode_names;
 			electrode_names = NULL;
+
+			if (cfg_dev->AccelerationData)
+			{
+				chan_info_type new_chan_info;
+				new_chan_info.enabled = true;
+				new_chan_info.type = "Accelerometer";
+				new_chan_info.unit = "g";
+				new_chan_info.label = "ACC X";
+				m_devInfo.channel_infos.push_back(new_chan_info);
+
+				new_chan_info.label = "ACC Y";
+				m_devInfo.channel_infos.push_back(new_chan_info);
+
+				new_chan_info.label = "ACC Z";
+				m_devInfo.channel_infos.push_back(new_chan_info);
+			}
+
+			if (cfg_dev->Counter)
+			{
+				chan_info_type new_chan_info;
+				new_chan_info.enabled = true;
+				new_chan_info.type = "Counter";
+				new_chan_info.unit = "samples";
+				new_chan_info.label = "Counter";
+				m_devInfo.channel_infos.push_back(new_chan_info);
+			}
+
+			if (cfg_dev->LinkQualityInformation)
+			{
+				chan_info_type new_chan_info;
+				new_chan_info.enabled = true;
+				new_chan_info.type = "LinkQuality";
+				new_chan_info.unit = "unknown";
+				new_chan_info.label = "Link Quality";
+				m_devInfo.channel_infos.push_back(new_chan_info);
+			}
+
+			if (cfg_dev->BatteryLevel)
+			{
+				chan_info_type new_chan_info;
+				new_chan_info.enabled = true;
+				new_chan_info.type = "BatteryLevel";
+				new_chan_info.unit = "unknown";
+				new_chan_info.label = "Battery Level";
+				m_devInfo.channel_infos.push_back(new_chan_info);
+			}
+
+			if (cfg_dev->DigitalIOs)
+			{
+				chan_info_type new_chan_info;
+				new_chan_info.enabled = true;
+				new_chan_info.type = "DigitalIOs";
+				new_chan_info.unit = "unknown";
+				new_chan_info.label = "Digital IOs";
+				m_devInfo.channel_infos.push_back(new_chan_info);
+			}
+
+			if (cfg_dev->ValidationIndicator)
+			{
+				chan_info_type new_chan_info;
+				new_chan_info.enabled = true;
+				new_chan_info.type = "ValidationIndicator";
+				new_chan_info.unit = "unknown";
+				new_chan_info.label = "Validation Indicator";
+				m_devInfo.channel_infos.push_back(new_chan_info);
+			}
 		}			
 		delete[] device_names;
 		device_names = NULL;
@@ -321,7 +387,8 @@ void MainWindow::on_goPushButton_clicked()
 		}
 		this->m_eegOutlet = new lsl::stream_outlet(gdsInfo);
 
-		success &= handleResult("GDS_StartAcquisition", GDS_StartAcquisition(m_connectionHandle));
+		if (m_devInfo.is_creator)
+			success &= handleResult("GDS_StartAcquisition", GDS_StartAcquisition(m_connectionHandle));
 		success &= handleResult("GDS_StartStreaming", GDS_StartStreaming(m_connectionHandle));
 		m_bStreaming = success;
 		

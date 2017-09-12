@@ -40,6 +40,7 @@ private:
 	};
 	struct dev_info_type {
 		std::string name;
+		bool is_creator = false;
 		int channel_count = 0;
 		size_t nsamples_per_scan = 0;
 		size_t scans_per_block = 0;
