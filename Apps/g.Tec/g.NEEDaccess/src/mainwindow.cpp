@@ -59,7 +59,23 @@ MainWindow::MainWindow(QWidget *parent, const QString config_file)
 
 MainWindow::~MainWindow()
 {
-	// TODO: attempt to close any resources in case the program is closed without pressing the approprate stop and disconnect buttons.
+	if (m_bStreaming)
+	{
+		handleResult("GDS_StopAcquisition", GDS_StopAcquisition(m_connectionHandle));
+		handleResult("GDS_StopStreaming", GDS_StopStreaming(m_connectionHandle));
+		handleResult("GDS_SetDataReadyCallback",
+			GDS_SetDataReadyCallback(m_connectionHandle, NULL, 0, NULL));
+		delete[] m_dataBuffer;
+		m_dataBuffer = NULL;
+		delete this->m_eegOutlet;
+		this->m_eegOutlet = NULL;
+	}
+	if (m_bConnected)
+	{
+		handleResult("GDS_Disconnect",
+			GDS_Disconnect(&m_connectionHandle));
+	}
+
 	GDS_Uninitialize();
     delete ui;
 }
@@ -137,6 +153,7 @@ void MainWindow::on_connectPushButton_clicked()
 		{
 			ui->connectPushButton->setText("Disconnect");
 			ui->goPushButton->setDisabled(false);
+			m_bConnected = true;
 		}
 		delete[] device_names;
 		device_names = NULL;
@@ -148,6 +165,7 @@ void MainWindow::on_connectPushButton_clicked()
 		if (success)
 		{
 			ui->connectPushButton->setText("Connect");
+			m_bConnected = false;
 		}
 		ui->goPushButton->setDisabled(true);
 	}
@@ -167,6 +185,7 @@ void MainWindow::on_goPushButton_clicked()
 		handleResult("GDS_StopStreaming", GDS_StopStreaming(m_connectionHandle));
 		handleResult("GDS_SetDataReadyCallback",
 			GDS_SetDataReadyCallback(m_connectionHandle, NULL, 0, NULL));
+		m_bStreaming = false;
 		delete[] m_dataBuffer;
 		m_dataBuffer = NULL;
 		delete this->m_eegOutlet;
@@ -304,6 +323,7 @@ void MainWindow::on_goPushButton_clicked()
 
 		success &= handleResult("GDS_StartAcquisition", GDS_StartAcquisition(m_connectionHandle));
 		success &= handleResult("GDS_StartStreaming", GDS_StartStreaming(m_connectionHandle));
+		m_bStreaming = success;
 		
 		ui->goPushButton->setText("Stop!");
 	}

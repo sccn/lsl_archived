@@ -58,6 +58,8 @@ private:
 
     Ui::MainWindow *ui;
 	QMutex mutex;
+	bool m_bConnected = false;
+	bool m_bStreaming = false;
 
 	// GDS communication
 	GDS_HANDLE m_connectionHandle = 0;
