@@ -30,6 +30,7 @@ private slots:
 	void on_connectPushButton_clicked();
     void on_goPushButton_clicked();
 	void on_availableListWidget_itemSelectionChanged();
+	void on_loadConfigPushButton_clicked();
 
 private:
 	struct chan_info_type {
@@ -56,6 +57,7 @@ private:
 	// Private methods
     void load_config(const QString filename);
     // void save_config(const QString filename);  // TODO: Actually save the config to a file.
+	void enable_config_elements(bool enabled);
 
     Ui::MainWindow *ui;
 	QMutex mutex;

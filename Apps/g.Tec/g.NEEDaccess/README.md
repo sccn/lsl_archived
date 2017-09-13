@@ -42,18 +42,15 @@ Pass the additional -DLSLAPPS_gNEEDaccess=ON argument to the cmake command at th
 1. Run the g.NEEDaccess - Demo Client.
 1. Find connected devices...
 1. Click on your device, then click on Select.
-1. In the new Device Configuration window, configure your device, then click on OK.
-1. If in the configuration window you clicked on any of the check boxes for Amplifier Settings
-    * Click on Start in the Single Device Client and leave it open during acquisition.
-    * Else close the client.
+1. In the new Device Configuration window, configure your channels, then click on OK.
+1. Close the Client.
 1. Open gNEEDaccess.exe
 1. Set the server IP and port, client port, then click Scan.
-1. Select your device from the list of available devices then click Connect.
+1. Select your device from the list and check appropriate boxes, then click Connect.
 1. Click Go! when ready to start streaming over LSL.
 1. When finished, click Stop!, then Disconnect, then close the App.
 
 ## Known Issues
 
 * g.USBamp and G.HIamp are not supported because I do not have a device for testing.
-* If requested, I can add the device-specific Amplifier Settings check boxes to this App so it is no longer necessary to run the Single Device Client.
 * Only a single device is supported per instance. If you want to stream from another device then another instance of g.NEEDaccess must be opened.

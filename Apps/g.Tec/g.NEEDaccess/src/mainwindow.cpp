@@ -153,6 +153,7 @@ void MainWindow::on_connectPushButton_clicked()
 		{
 			ui->connectPushButton->setText("Disconnect");
 			ui->goPushButton->setDisabled(false);
+			enable_config_elements(false);
 			m_bConnected = true;
 			m_devInfo.is_creator = bool(is_creator);
 
@@ -171,6 +172,7 @@ void MainWindow::on_connectPushButton_clicked()
 			GDS_Disconnect(&m_connectionHandle));
 		if (success)
 		{
+			enable_config_elements(true);
 			ui->connectPushButton->setText("Connect");
 			m_bConnected = false;
 		}
@@ -233,12 +235,14 @@ void MainWindow::on_goPushButton_clicked()
 		{
 			GDS_GUSBAMP_CONFIGURATION* cfg_dev = (GDS_GUSBAMP_CONFIGURATION*)cfg.Configuration;
 			m_devInfo.nominal_srate = double(cfg_dev->SampleRate);
+			m_devInfo.scans_per_block = cfg_dev->NumberOfScans;
 			qDebug() << "TODO: Get g.USBamp configuration. I do not have a device to test...";
 		}
 		else if (cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GHIAMP)
 		{
 			GDS_GHIAMP_CONFIGURATION* cfg_dev = (GDS_GHIAMP_CONFIGURATION*)cfg.Configuration;
 			m_devInfo.nominal_srate = double(cfg_dev->SamplingRate);
+			m_devInfo.scans_per_block = size_t(cfg_dev->NumberOfScans);
 			qDebug() << "TODO: Get g.HIamp configuration. I do not have a device to test...";
 		}
 		else if (cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GNAUTILUS)
@@ -246,6 +250,20 @@ void MainWindow::on_goPushButton_clicked()
 			GDS_GNAUTILUS_CONFIGURATION* cfg_dev = (GDS_GNAUTILUS_CONFIGURATION*)cfg.Configuration;
 			m_devInfo.nominal_srate = double(cfg_dev->SamplingRate);
 			m_devInfo.scans_per_block = size_t(cfg_dev->NumberOfScans);
+
+			if (m_devInfo.is_creator)
+			{
+				cfg_dev->CAR = ui->CARCheckBox->isChecked();
+				cfg_dev->NoiseReduction = ui->noiseCheckBox->isChecked();
+				cfg_dev->AccelerationData = ui->accelCheckBox->isChecked();
+				cfg_dev->Counter = ui->counterCheckBox->isChecked();
+				cfg_dev->LinkQualityInformation = ui->linkCheckBox->isChecked();
+				cfg_dev->BatteryLevel = ui->batteryCheckBox->isChecked();
+				cfg_dev->DigitalIOs = ui->digitalCheckBox->isChecked();
+				cfg_dev->ValidationIndicator = ui->validationCheckBox->isChecked();
+				handleResult("GDS_SetConfiguration",
+					GDS_SetConfiguration(m_connectionHandle, &cfg, 1));
+			}
 
 			// Get channel names
 			// First determine how many channel names there are.
@@ -398,6 +416,20 @@ void MainWindow::on_goPushButton_clicked()
 }
 
 
+void MainWindow::on_loadConfigPushButton_clicked()
+{
+	QString sel = QFileDialog::getOpenFileName(this,
+		"Load Configuration File",
+		"",//QDir::currentPath()
+		"Configuration Files (*.cfg)");
+	if (!sel.isEmpty())
+	{
+		load_config(sel);
+	}
+
+}
+
+
 void MainWindow::load_config(const QString filename)
 {
     QFile* xmlFile = new QFile(filename);
@@ -412,10 +444,28 @@ void MainWindow::load_config(const QString filename)
         if (xmlReader->isStartElement() && xmlReader->name() != "settings")
         {
             QStringRef elname = xmlReader->name();
-            if (elname == "todo-setting-xml-element")
-            {
-                // TODO: Do something with the setting.
-            }
+			if (elname == "server-ip")
+				ui->lineEdit_serverip->setText(xmlReader->readElementText());
+			else if (elname == "server-port")
+				ui->serverPortSpinBox->setValue(xmlReader->readElementText().toInt());
+			else if (elname == "client-port")
+				ui->clientPortSpinBox->setValue(xmlReader->readElementText().toInt());
+			else if (elname == "noise-reduction")
+				ui->noiseCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
+			else if (elname == "car")
+				ui->CARCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
+			else if (elname == "acceleration-data")
+				ui->accelCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
+			else if (elname == "counter")
+				ui->counterCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
+			else if (elname == "link-quality")
+				ui->linkCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
+			else if (elname == "battery-level")
+				ui->batteryCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
+			else if (elname == "digital-inputs")
+				ui->digitalCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
+			else if (elname == "validation-indicator")
+				ui->validationCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
         }
     }
     if (xmlReader->hasError()) {
@@ -428,4 +478,21 @@ void MainWindow::load_config(const QString filename)
 	delete xmlReader;
     xmlFile->close();
 	delete xmlFile;
+}
+
+
+void MainWindow::enable_config_elements(bool enabled)
+{
+	ui->lineEdit_serverip->setEnabled(enabled);
+	ui->serverPortSpinBox->setEnabled(enabled);
+	ui->clientPortSpinBox->setEnabled(enabled);
+	ui->noiseCheckBox->setEnabled(enabled);
+	ui->CARCheckBox->setEnabled(enabled);
+	ui->accelCheckBox->setEnabled(enabled);
+	ui->counterCheckBox->setEnabled(enabled);
+	ui->linkCheckBox->setEnabled(enabled);
+	ui->batteryCheckBox->setEnabled(enabled);
+	ui->digitalCheckBox->setEnabled(enabled);
+	ui->validationCheckBox->setEnabled(enabled);
+	ui->loadConfigPushButton->setEnabled(enabled);
 }
