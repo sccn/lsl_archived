@@ -237,6 +237,16 @@ void MainWindow::on_goPushButton_clicked()
 			m_devInfo.nominal_srate = double(cfg_dev->SampleRate);
 			m_devInfo.scans_per_block = cfg_dev->NumberOfScans;
 			qDebug() << "TODO: Get g.USBamp configuration. I do not have a device to test...";
+			
+			for (size_t chan_ix = 0; chan_ix < GDS_GUSBAMP_CHANNELS_MAX; chan_ix++)
+			{
+				chan_info_type new_chan_info;
+				new_chan_info.enabled = cfg_dev->Channels[chan_ix].Acquire;
+				new_chan_info.label = std::to_string(chan_ix + 1);
+				new_chan_info.type = "EEG";
+				new_chan_info.unit = "uV";
+				m_devInfo.channel_infos.push_back(new_chan_info);
+			}
 		}
 		else if (cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GHIAMP)
 		{
@@ -244,6 +254,15 @@ void MainWindow::on_goPushButton_clicked()
 			m_devInfo.nominal_srate = double(cfg_dev->SamplingRate);
 			m_devInfo.scans_per_block = size_t(cfg_dev->NumberOfScans);
 			qDebug() << "TODO: Get g.HIamp configuration. I do not have a device to test...";
+			for (size_t chan_ix = 0; chan_ix < GDS_GHIAMP_CHANNELS_MAX; chan_ix++)
+			{
+				chan_info_type new_chan_info;
+				new_chan_info.enabled = cfg_dev->Channels[chan_ix].Acquire;
+				new_chan_info.label = std::to_string(chan_ix + 1);
+				new_chan_info.type = "EEG";
+				new_chan_info.unit = "uV";
+				m_devInfo.channel_infos.push_back(new_chan_info);
+			}
 		}
 		else if (cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GNAUTILUS)
 		{
