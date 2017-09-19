@@ -1,0 +1,336 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="C/C++ API">
+      <UniqueIdentifier>{8d93d454-a0d6-4b1d-80d5-eebbd6d8d6d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{7196217d-fe17-4ea5-9967-289e07acaa1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\portable_archive">
+      <UniqueIdentifier>{618af406-3fc3-414f-aa13-ac33b630c47c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\pugixml">
+      <UniqueIdentifier>{d78e3454-e7fa-46b2-b4bd-0f88244054e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\boost">
+      <UniqueIdentifier>{a513b7ef-e9fe-4a67-87aa-d9505ddc165f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\boost\chrono">
+      <UniqueIdentifier>{e6d84594-b99e-4f8b-931b-e745b7afecb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\boost\filesystem">
+      <UniqueIdentifier>{15db302a-28df-4b45-945f-c5a87db6824d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\boost\serialization">
+      <UniqueIdentifier>{cabeb407-02a1-4a6b-a284-7652f7e9eb43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\boost\system">
+      <UniqueIdentifier>{8ff85640-e837-4bb9-a911-0b3f2bbba39d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\boost\thread">
+      <UniqueIdentifier>{6520a54e-d89d-4312-9dfd-5609b47449b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\boost\thread\win32">
+      <UniqueIdentifier>{32ebc1ed-0e06-471e-99bc-c99580b7c938}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\endian">
+      <UniqueIdentifier>{2c0e04c6-9b18-4477-b848-20a2ec2acfd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\endian\detail">
+      <UniqueIdentifier>{6e4189fa-246b-456c-8528-823e613cee5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\legacy">
+      <UniqueIdentifier>{54684167-2f93-4af5-9537-4f5fe552f374}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\lsl_c.h">
+      <Filter>C/C++ API</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\lsl_cpp.h">
+      <Filter>C/C++ API</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\api_config.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\cancellable_streambuf.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\cancellation.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\common.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\consumer_queue.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\data_receiver.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\info_receiver.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\inlet_connection.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\resolve_attempt_udp.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\resolver_impl.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\sample.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\send_buffer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket_utils.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\stream_info_impl.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\stream_inlet_impl.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\stream_outlet_impl.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\tcp_server.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\time_receiver.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\udp_server.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\portable_archive\portable_archive_exception.hpp">
+      <Filter>Source\portable_archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\portable_archive\portable_iarchive.hpp">
+      <Filter>Source\portable_archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\portable_archive\portable_oarchive.hpp">
+      <Filter>Source\portable_archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\pugixml\pugiconfig.hpp">
+      <Filter>Source\pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\pugixml\pugixml.hpp">
+      <Filter>Source\pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\external\src\filesystem\src\windows_file_codecvt.hpp">
+      <Filter>Source\boost\filesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\external\src\system\src\local_free_on_destruction.hpp">
+      <Filter>Source\boost\system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\endian\conversion.hpp">
+      <Filter>Source\endian</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\endian\detail\intrinsic.hpp">
+      <Filter>Source\endian\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\legacy\legacy_abi.h">
+      <Filter>Source\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\time_postprocessor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\lsl_continuous_resolver_c.cpp">
+      <Filter>C/C++ API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\lsl_freefuncs_c.cpp">
+      <Filter>C/C++ API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\lsl_inlet_c.cpp">
+      <Filter>C/C++ API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\lsl_outlet_c.cpp">
+      <Filter>C/C++ API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\lsl_streaminfo_c.cpp">
+      <Filter>C/C++ API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\lsl_xml_element_c.cpp">
+      <Filter>C/C++ API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\api_config.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\common.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\consumer_queue.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\data_receiver.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\dllmain.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\info_receiver.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\inlet_connection.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\resolve_attempt_udp.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\resolver_impl.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\sample.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\send_buffer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\socket_utils.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\stream_info_impl.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\stream_outlet_impl.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\tcp_server.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\time_receiver.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\udp_server.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\pugixml\pugixml.cpp">
+      <Filter>Source\pugixml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\chrono\src\chrono.cpp">
+      <Filter>Source\boost\chrono</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\filesystem\src\codecvt_error_category.cpp">
+      <Filter>Source\boost\filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\filesystem\src\operations.cpp">
+      <Filter>Source\boost\filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\filesystem\src\path.cpp">
+      <Filter>Source\boost\filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\filesystem\src\path_traits.cpp">
+      <Filter>Source\boost\filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\filesystem\src\portability.cpp">
+      <Filter>Source\boost\filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\filesystem\src\unique_path.cpp">
+      <Filter>Source\boost\filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\filesystem\src\utf8_codecvt_facet.cpp">
+      <Filter>Source\boost\filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\filesystem\src\windows_file_codecvt.cpp">
+      <Filter>Source\boost\filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\archive_exception.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\basic_archive.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\basic_iarchive.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\basic_iserializer.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\basic_oarchive.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\basic_oserializer.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\basic_pointer_iserializer.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\basic_pointer_oserializer.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\basic_serializer_map.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\binary_iarchive.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\binary_oarchive.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\binary_wiarchive.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\binary_woarchive.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\codecvt_null.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\extended_type_info.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\extended_type_info_no_rtti.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\extended_type_info_typeid.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\polymorphic_iarchive.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\polymorphic_oarchive.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\shared_ptr_helper.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\stl_port.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\utf8_codecvt_facet.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\serialization\src\void_cast.cpp">
+      <Filter>Source\boost\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\system\src\error_code.cpp">
+      <Filter>Source\boost\system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\thread\src\tss_null.cpp">
+      <Filter>Source\boost\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\thread\src\win32\thread.cpp">
+      <Filter>Source\boost\thread\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\thread\src\win32\tss_dll.cpp">
+      <Filter>Source\boost\thread\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\external\src\thread\src\win32\tss_pe.cpp">
+      <Filter>Source\boost\thread\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\legacy\legacy_abi.cpp">
+      <Filter>Source\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\time_postprocessor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
