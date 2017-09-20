@@ -1,5 +1,5 @@
-This is currently the most robust and straightforward way of making Android apps that incorporate LSL. These instructions apply to Android Studio 2.2.3. You will need to get jna-4.2.2.jar and put it in LSL/liblsl-Android/AndroidStudio/libs. You will need to get the native jna libraries from https://github.com/java-native-access/jna/tree/4.2.2/lib/native. Select branch 4.2.2 and download android-*.jar. Extract each of these jars, using 7-zip or similar, and create the following directory tree:
-LSL/liblsl-Android/jniLibs
+This is currently the most robust and straightforward way of making Android apps that incorporate LSL. These instructions apply to Android Studio 2.2.3. You will need to get jna-4.2.2.jar (from https://mvnrepository.com/artifact/net.java.dev.jna/jna/4.2.2) and put it in LSL/liblsl-Android/AndroidStudio/libs. You will need to get the native jna libraries from https://github.com/java-native-access/jna/tree/4.2.2/lib/native. Select branch 4.2.2 and download android-*.jar. Extract each of these jars, using 7-zip or similar, and create the following directory tree:
+LSL/liblsl-Android/AndroidStudio/jniLibs
     arm64-v8a
         libjnidispatch.so
     armeabi
@@ -16,6 +16,8 @@ LSL/liblsl-Android/jniLibs
         libjnidispatch.so
 
 Yes the platform names are different in the jar files than in the required the directory structure, and yes the names are important. If you do this incorrectly, you get errors related to "missing libjnidispatch.so".
+
+If you get errors related to native, built in functions such as fgetpos and fsetpos in cstdio, this implies a problem with the version of the ndk that you are using (revision 15c is broken for several platforms). Download Revision 14b from https://developer.android.com/ndk/downloads/older_releases.html to a volume with a lot of space (it is 2.36 GB). In Android Studio, go to File -> Project Structure -> SDK Locaiton -> Android NDK location at set the path to point at android-ndk-r14b.
 
 To run, select the desired module from the list box the the left of the green arrow, and click the green arrow.
 
