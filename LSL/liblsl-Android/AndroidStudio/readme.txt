@@ -17,7 +17,7 @@ LSL/liblsl-Android/AndroidStudio/jniLibs
 
 Yes the platform names are different in the jar files than in the required the directory structure, and yes the names are important. If you do this incorrectly, you get errors related to "missing libjnidispatch.so".
 
-If you get errors related to native, built in functions such as fgetpos and fsetpos in cstdio, this implies a problem with the version of the ndk that you are using (revision 15c is broken for several platforms). Download Revision 14b from https://developer.android.com/ndk/downloads/older_releases.html to a volume with a lot of space (it is 2.36 GB). In Android Studio, go to File -> Project Structure -> SDK Location -> Android NDK location at set the path to point at android-ndk-r14b.
+If you get errors related to native, built in functions such as fgetpos and fsetpos in cstdio, this implies a problem with the version of the ndk that you are using (revision 15c is broken for several platforms). Download Revision 14b from https://developer.android.com/ndk/downloads/older_releases.html to a volume with a lot of space (it is 2.36 GB). In Android Studio, go to File -> Project Structure -> SDK Location -> Android NDK location and set the path to point at android-ndk-r14b.
 
 To run, select the desired module from the list box the the left of the green arrow, and click the green arrow.
 
