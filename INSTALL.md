@@ -1,4 +1,3 @@
-=======
 General
 =======
 
@@ -10,32 +9,31 @@ The following paragraphs provide a step-by-step instruction of the build process
 To get an overview of the project structure, the following tree lists the directory
 hierarchy of the source after you've unpacked the compressed source archive:
 
-  labstreaminglayer
-  ├── Apps
-  │   ├── AMTI ForcePlate
-  │   ├── Examples
-  │   ├── [several other apps]
-  │   └── Wiimote
-  └── LSL
-      ├── liblsl
-      │   ├── bin
-      │   ├── examples
-      │   ├── external
-      │   │   ├── lslboost
-      │   │   └── src
-      │   ├── include
-      │   ├── project
-      │   ├── src
-      │   │   ├── portable_archive
-      │   │   └── pugixml
-      │   └── testing
-      ├── liblsl-Matlab
-      ├── liblsl-Python
-      └── liblsl-Java
+    labstreaminglayer
+    ├── Apps
+    │   ├── AMTI ForcePlate
+    │   ├── Examples
+    │   ├── [several other apps]
+    │   └── Wiimote
+    └── LSL
+        ├── liblsl
+        │   ├── bin
+        │   ├── examples
+        │   ├── external
+        │   │   ├── lslboost
+        │   │   └── src
+        │   ├── include
+        │   ├── project
+        │   ├── src
+        │   │   ├── portable_archive
+        │   │   └── pugixml
+        │   └── testing
+        ├── liblsl-Matlab
+        ├── liblsl-Python
+        └── liblsl-Java
 
 LSL and some Apps are built with CMake, the remaining Apps use Visual Studio Solution files.
 
-=====
 CMake
 =====
 
