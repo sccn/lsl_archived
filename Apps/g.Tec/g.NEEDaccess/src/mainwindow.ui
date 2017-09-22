@@ -20,7 +20,7 @@
       <x>0</x>
       <y>0</y>
       <width>489</width>
-      <height>368</height>
+      <height>375</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
@@ -113,9 +113,12 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="scanPushButton">
+        <widget class="QPushButton" name="loadConfigPushButton">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="text">
-          <string>Scan</string>
+          <string>LoadConfig</string>
          </property>
         </widget>
        </item>
@@ -217,22 +220,19 @@
       </widget>
      </item>
      <item row="1" column="4">
-      <widget class="QPushButton" name="loadConfigPushButton">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="text">
-        <string>LoadConfig</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="4">
       <widget class="QPushButton" name="saveConfigPushButton">
        <property name="enabled">
         <bool>false</bool>
        </property>
        <property name="text">
         <string>SaveConfig</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="4">
+      <widget class="QPushButton" name="scanPushButton">
+       <property name="text">
+        <string>Scan</string>
        </property>
       </widget>
      </item>

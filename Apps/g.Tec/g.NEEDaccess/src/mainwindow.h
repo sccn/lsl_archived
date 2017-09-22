@@ -31,6 +31,7 @@ private slots:
     void on_goPushButton_clicked();
 	void on_availableListWidget_itemSelectionChanged();
 	void on_loadConfigPushButton_clicked();
+	void notify_samples_pushed();
 
 private:
 	struct chan_info_type {
@@ -61,8 +62,10 @@ private:
 
     Ui::MainWindow *ui;
 	QMutex mutex;
+	QTimer* m_pTimer;
 	bool m_bConnected = false;
 	bool m_bStreaming = false;
+	size_t m_samplesPushed = 0;
 
 	// GDS communication
 	GDS_HANDLE m_connectionHandle = 0;

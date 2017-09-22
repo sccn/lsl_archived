@@ -41,7 +41,7 @@ void MainWindow::dataReadyCallback(GDS_HANDLE connectionHandle, void* usrData)
 	if (scans_available > 0)
 	{
 		thisWin->m_eegOutlet->push_chunk_multiplexed(thisWin->m_dataBuffer, scans_available * thisWin->m_devInfo.nsamples_per_scan);
-		qDebug() << "Pushed " << scans_available << " scans with " << thisWin->m_devInfo.nsamples_per_scan << " samples.";
+		thisWin->m_samplesPushed += scans_available;
 	}
 	thisWin->mutex.unlock();
 }
@@ -54,6 +54,8 @@ MainWindow::MainWindow(QWidget *parent, const QString config_file)
     ui->setupUi(this);
     load_config(config_file);
 	GDS_Initialize();  // Initialize the g.NEEDaccess library
+	m_pTimer = new QTimer(this);
+	connect(m_pTimer, SIGNAL(timeout()), this, SLOT(notify_samples_pushed()));
 }
 
 
@@ -78,6 +80,8 @@ MainWindow::~MainWindow()
 
 	GDS_Uninitialize();
     delete ui;
+	delete m_pTimer;
+	m_pTimer = nullptr;
 }
 
 
@@ -161,7 +165,18 @@ void MainWindow::on_connectPushButton_clicked()
 			{
 				m_devInfo.is_creator = handleResult("GDS_BecomeCreator",
 					GDS_BecomeCreator(m_connectionHandle));
+				if (!m_devInfo.is_creator)
+					statusBar()->showMessage("Device is first connected by another application. Checkboxes will be ignored.");
 			}
+			// checkboxes->setDisabled(!m_devInfo.is_creator)
+			ui->CARCheckBox->setDisabled(!m_devInfo.is_creator);
+			ui->noiseCheckBox->setDisabled(!m_devInfo.is_creator);
+			ui->accelCheckBox->setDisabled(!m_devInfo.is_creator);
+			ui->counterCheckBox->setDisabled(!m_devInfo.is_creator);
+			ui->linkCheckBox->setDisabled(!m_devInfo.is_creator);
+			ui->batteryCheckBox->setDisabled(!m_devInfo.is_creator);
+			ui->digitalCheckBox->setDisabled(!m_devInfo.is_creator);
+			ui->validationCheckBox->setDisabled(!m_devInfo.is_creator);
 		}
 		delete[] device_names;
 		device_names = NULL;
@@ -184,12 +199,14 @@ void MainWindow::on_connectPushButton_clicked()
 
 void MainWindow::on_goPushButton_clicked()
 {
+	// Lock everything to prevent the GDS thread from stomping on our data during callback.
 	QMutexLocker locker(&mutex);  // will unlock itself when function scope resolves.
 
 	ui->goPushButton->setDisabled(true);  // re-enable when process complete.
 	QString pbtext = ui->goPushButton->text();
 	if (pbtext == "Stop!")
 	{
+		m_pTimer->stop();
 		handleResult("GDS_StopStreaming", GDS_StopStreaming(m_connectionHandle));
 		if (m_devInfo.is_creator)
 			handleResult("GDS_StopAcquisition", GDS_StopAcquisition(m_connectionHandle));
@@ -217,7 +234,7 @@ void MainWindow::on_goPushButton_clicked()
 			GDS_GetConfiguration(m_connectionHandle, &deviceConfigurations, &deviceConfigurationsCount));
 
 		// Fill in some of dev_info for the selected device.
-		int dev_ix = ui->availableListWidget->currentRow();
+		int dev_ix = 0;
 		m_devInfo.name = ui->availableListWidget->currentItem()->text().toStdString();
 			
 		// GDS_<DEVICE>_GetChannelNames requires a device_names argument.
@@ -282,6 +299,17 @@ void MainWindow::on_goPushButton_clicked()
 				cfg_dev->ValidationIndicator = ui->validationCheckBox->isChecked();
 				handleResult("GDS_SetConfiguration",
 					GDS_SetConfiguration(m_connectionHandle, &cfg, 1));
+			}
+			else
+			{
+				ui->CARCheckBox->setChecked(cfg_dev->CAR);
+				ui->noiseCheckBox->setChecked(cfg_dev->NoiseReduction);
+				ui->accelCheckBox->setChecked(cfg_dev->AccelerationData);
+				ui->counterCheckBox->setChecked(cfg_dev->Counter);
+				ui->linkCheckBox->setChecked(cfg_dev->LinkQualityInformation);
+				ui->batteryCheckBox->setChecked(cfg_dev->BatteryLevel);
+				ui->digitalCheckBox->setChecked(cfg_dev->DigitalIOs);
+				ui->validationCheckBox->setChecked(cfg_dev->ValidationIndicator);
 			}
 
 			// Get channel names
@@ -403,13 +431,13 @@ void MainWindow::on_goPushButton_clicked()
 		
 		// Create outlet.
 		lsl::stream_info gdsInfo(
-			"gNEEDaccessData", "EEG",
+			m_devInfo.name, "EEG",
 			m_devInfo.channel_count, m_devInfo.nominal_srate,
 			m_devInfo.channel_format, m_devInfo.name);
 		// Append device meta-data
 		gdsInfo.desc().append_child("acquisition")
 			.append_child_value("manufacturer", "g.Tec")
-			.append_child_value("model", "g.NEEDaccess client");
+			.append_child_value("model", m_devInfo.name);
 		// Append channel info
 		lsl::xml_element channels_element = gdsInfo.desc().append_child("channels");
 		for (auto it = m_devInfo.channel_infos.begin(); it < m_devInfo.channel_infos.end(); it++)
@@ -423,6 +451,9 @@ void MainWindow::on_goPushButton_clicked()
 			}
 		}
 		this->m_eegOutlet = new lsl::stream_outlet(gdsInfo);
+		m_samplesPushed = 0;
+		statusBar()->showMessage("LSL stream created. Waiting for device to return samples...");
+		m_pTimer->start(500);
 
 		if (m_devInfo.is_creator)
 			success &= handleResult("GDS_StartAcquisition", GDS_StartAcquisition(m_connectionHandle));
@@ -514,4 +545,13 @@ void MainWindow::enable_config_elements(bool enabled)
 	ui->digitalCheckBox->setEnabled(enabled);
 	ui->validationCheckBox->setEnabled(enabled);
 	ui->loadConfigPushButton->setEnabled(enabled);
+}
+
+void MainWindow::notify_samples_pushed()
+{
+	if (m_samplesPushed > 0)
+	{
+		QString message = QString("Total samples pushed: ") + QString::number(m_samplesPushed);
+		statusBar()->showMessage(message, 500);
+	}
 }
