@@ -149,6 +149,9 @@ void MainWindow::on_connectPushButton_clicked()
 	if (pbtext == "Connect")
 	{
 		QString deviceName = ui->availableListWidget->currentItem()->text();
+		// A normal API would ask for N different char arrays, each with DEVICE_NAME_LENGTH_MAX characters.
+		// This API instead asks for DEVICE_NAME_LENGTH_MAX char arrays, each with N characters. i.e. it's transposed.
+		// So instead of trying to figure out the sane C++ way of conforming to an insane C API, I'm just copying their example code.
 		char(*device_names)[DEVICE_NAME_LENGTH_MAX] = new char[1][DEVICE_NAME_LENGTH_MAX];
 		std::strcpy(device_names[0], deviceName.toLatin1().data());
 		BOOL is_creator = FALSE;
@@ -168,15 +171,7 @@ void MainWindow::on_connectPushButton_clicked()
 				if (!m_devInfo.is_creator)
 					statusBar()->showMessage("Device is first connected by another application. Checkboxes will be ignored.");
 			}
-			// checkboxes->setDisabled(!m_devInfo.is_creator)
-			ui->CARCheckBox->setDisabled(!m_devInfo.is_creator);
-			ui->noiseCheckBox->setDisabled(!m_devInfo.is_creator);
-			ui->accelCheckBox->setDisabled(!m_devInfo.is_creator);
-			ui->counterCheckBox->setDisabled(!m_devInfo.is_creator);
-			ui->linkCheckBox->setDisabled(!m_devInfo.is_creator);
-			ui->batteryCheckBox->setDisabled(!m_devInfo.is_creator);
-			ui->digitalCheckBox->setDisabled(!m_devInfo.is_creator);
-			ui->validationCheckBox->setDisabled(!m_devInfo.is_creator);
+			ui->devCfgGrpBox->setEnabled(m_devInfo.is_creator);
 		}
 		delete[] device_names;
 		device_names = NULL;
