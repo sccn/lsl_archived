@@ -172,7 +172,7 @@ namespace lsl {
 
 	private:
 		// Thread-safe initialization logic (boilerplate).
-		static boost::once_flag once_flag;
+		static lslboost::once_flag once_flag;
 		static api_config *get_instance_internal();
 		static void called_once();
 

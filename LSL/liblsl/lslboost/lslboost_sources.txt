@@ -1,0 +1,16 @@
+src/atomic/src/lockpool.cpp
+src/chrono/src/chrono.cpp
+src/filesystem/src/operations.cpp
+src/filesystem/src/path.cpp
+src/program_options/src/convert.cpp
+src/serialization/src/archive_exception.cpp
+src/serialization/src/basic_archive.cpp
+src/serialization/src/basic_iarchive.cpp
+src/serialization/src/basic_iserializer.cpp
+src/serialization/src/basic_oarchive.cpp
+src/serialization/src/basic_oserializer.cpp
+src/serialization/src/basic_serializer_map.cpp
+src/serialization/src/extended_type_info.cpp
+src/serialization/src/extended_type_info_typeid.cpp
+src/serialization/src/singleton.cpp
+src/system/src/error_code.cpp

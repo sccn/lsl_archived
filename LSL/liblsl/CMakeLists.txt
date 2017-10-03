@@ -8,8 +8,8 @@ if(NOT CMAKE_DEBUG_POSTFIX)
 	set(CMAKE_DEBUG_POSTFIX -debug)
 endif()
 
-# Allow to use either the operating system supplied boost distribution or the shrink-wrapped one in the external/ directory
-option (LSL_USE_SYSTEM_BOOST "Use system Boost libraries instead of the version shipped with LSL." OFF)
+# Allow to use a custom pre-mangled boost distribution or the shrink-wrapped one in the external/ directory
+set(LSL_LSLBOOST_PATH "lslboost" CACHE STRING "Subdirectory with lslboost")
 
 # Build static library
 option (LSL_BUILD_STATIC "Also build static LSL library." OFF)
@@ -87,16 +87,10 @@ set(lslplatform ${lslplatform})
 
 set(lsl_export_targets ${target})
 
-if (LSL_USE_SYSTEM_BOOST)
-	if(WIN32)
-		set(Boost_USE_STATIC_LIBS On)
-	endif()
-	find_package(Boost COMPONENTS filesystem serialization thread REQUIRED)
-	set(LSL_BOOST_LIBS Boost::filesystem Boost::serialization Boost::thread)
-else ()
-	add_subdirectory (external)
-	set(LSL_BOOST_LIBS "lslboost")
-endif ()
+if(NOT LSL_LSLBOOST_PATH STREQUAL "lslboost")
+	message(WARNING "Using an unsupported path for lslboost.")
+endif()
+add_subdirectory(${LSL_LSLBOOST_PATH})
 
 # common definitions for the lsllib variants
 function(lsllib_properties libname)
@@ -105,9 +99,7 @@ function(lsllib_properties libname)
 		${CMAKE_CURRENT_BINARY_DIR} # generated export header
 		INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
 	)
-	message(STATUS "Linking LSL against: ${LSL_BOOST_LIBS}")
-	message(STATUS "Found Boost libraries: ${Boost_LIBRARIES}")
-	target_link_libraries(${libname} PRIVATE ${LSL_BOOST_LIBS})
+	target_link_libraries(${libname} PRIVATE lslboost)
 	target_compile_definitions(${libname} PRIVATE LSL_INCLUDE_EXPORT_DEFINES)
 endfunction()
 

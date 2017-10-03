@@ -1,9 +1,9 @@
-//  boost/endian/conversion.hpp  -------------------------------------------------------//
+//  lslboost/endian/conversion.hpp  -------------------------------------------------------//
 
 //  Copyright Beman Dawes 2010, 2011
 
 //  Distributed under the Boost Software License, Version 1.0.
-//  http://www.boost.org/LICENSE_1_0.txt
+//  http://www.lslboost.org/LICENSE_1_0.txt
 
 #ifndef BOOST_ENDIAN_CONVERTERS_HPP
 #define BOOST_ENDIAN_CONVERTERS_HPP
@@ -19,7 +19,7 @@
 
 //------------------------------------- synopsis ---------------------------------------//
 
-namespace lslboost
+namespace lsllslboost
 {
 namespace endian
 {
@@ -235,14 +235,14 @@ namespace endian
   inline float reverse_value(float x) BOOST_NOEXCEPT
   {
     BOOST_STATIC_ASSERT_MSG(sizeof(float) == sizeof(uint32_t),
-      "boost::endian only supprts sizeof(float) == 4; please report error to boost mailing list");
+      "lslboost::endian only supprts sizeof(float) == 4; please report error to lslboost mailing list");
     return detail::reverse_value(x);
   }
 
   inline double reverse_value(double x) BOOST_NOEXCEPT
   {
     BOOST_STATIC_ASSERT_MSG(sizeof(double) == sizeof(uint64_t),
-      "boost::endian only supprts sizeof(double) == 8; please report error to boost mailing list");
+      "lslboost::endian only supprts sizeof(double) == 8; please report error to lslboost mailing list");
     return detail::reverse_value(x);
   }
 
@@ -461,6 +461,6 @@ namespace endian
   }
 
 }  // namespace endian
-}  // namespace boost
+}  // namespace lslboost
 
 #endif // BOOST_ENDIAN_CONVERTERS_HPP

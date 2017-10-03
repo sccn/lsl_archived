@@ -2,7 +2,8 @@
 #define INLET_CONNECTION_H
 
 #include <map>
-#include <boost/asio.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/ip/udp.hpp>
 #include <boost/thread.hpp>
 #include <boost/function.hpp>
 #include "common.h"
@@ -10,8 +11,8 @@
 #include "cancellation.h"
 
 
-using boost::asio::ip::tcp;
-using boost::asio::ip::udp;
+using lslboost::asio::ip::tcp;
+using lslboost::asio::ip::udp;
 
 namespace lsl {
 
@@ -95,13 +96,13 @@ namespace lsl {
 		void update_receive_time(double t);
 
 		/// Register a condition variable that should be notified when a connection is lost
-		void register_onlost(void *id, boost::condition_variable *cond);
+		void register_onlost(void *id, lslboost::condition_variable *cond);
 
 		/// Unregister a condition variable from the set that is notified on connection loss
 		void unregister_onlost(void *id);
 
 		/// Register a callback function that shall be called when a recovery has been performed
-		void register_onrecover(void *id, const boost::function<void()> &func);
+		void register_onrecover(void *id, const lslboost::function<void()> &func);
 
 		/// Unregister a recovery callback function
 		void unregister_onrecover(void *id);
@@ -131,31 +132,31 @@ namespace lsl {
 		// core connection properties
 		const stream_info_impl type_info_;			// static/read-only information of the stream (type & format)
 		stream_info_impl host_info_;				// the volatile information of the stream (addresses and ports); protected by a read/write mutex
-		boost::shared_mutex host_info_mut_;			// a mutex to protect the state of the host_info (single-write/multiple-reader)
+		lslboost::shared_mutex host_info_mut_;			// a mutex to protect the state of the host_info (single-write/multiple-reader)
 		tcp tcp_protocol_;							// the TCP protocol used (according to api_config)
 		udp udp_protocol_;							// the UDP protocol used (according to api_config)
 		bool recovery_enabled_;						// whether we would try to recover the stream if it is lost
 		bool lost_;									// whether the stream is irrecoverably lost (set by try_recover_from_error if recovery is disabled)
 
 		// internal watchdog thread (to detect dead connections)
-		boost::thread watchdog_thread_;				// re-resolves the current connection speculatively
+		lslboost::thread watchdog_thread_;				// re-resolves the current connection speculatively
 
 		// things related to the shutdown condition
 		bool shutdown_;								// indicates to threads that we're shutting down
-		boost::mutex shutdown_mut_;					// a mutex to protect the shutdown state
-		boost::condition_variable shutdown_cond_;	// condition variable indicating that we're shutting down
+		lslboost::mutex shutdown_mut_;					// a mutex to protect the shutdown state
+		lslboost::condition_variable shutdown_cond_;	// condition variable indicating that we're shutting down
 
 		// things related to recovery
 		resolver_impl resolver_;					// our resolver, in case we need it
-		boost::mutex recovery_mut_;					// we allow only one recovery operation at a time
+		lslboost::mutex recovery_mut_;					// we allow only one recovery operation at a time
         
 		// client status info for recovery & notification purposes
-		std::map<void*,boost::condition_variable*> onlost_;		// a group of condition variables that should be notified when the connection is lost 
-		std::map<void*,boost::function<void()> > onrecover_;	// a group of callback functions that should be invoked once the connection has been recovered
+		std::map<void*,lslboost::condition_variable*> onlost_;		// a group of condition variables that should be notified when the connection is lost 
+		std::map<void*,lslboost::function<void()> > onrecover_;	// a group of callback functions that should be invoked once the connection has been recovered
 		double last_receive_time_;					// the last time when we received data from the server
 		int active_transmissions_;					// the number of currently active transmissions (data or info)
-		boost::mutex client_status_mut_;			// protects the client status info
-		boost::mutex onrecover_mut_;				// protects the onrecover callback map
+		lslboost::mutex client_status_mut_;			// protects the client status info
+		lslboost::mutex onrecover_mut_;				// protects the onrecover callback map
 	};
 
 }

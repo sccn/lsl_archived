@@ -6,7 +6,7 @@
 // === implementation of the stream_outlet_impl class ===
 
 using namespace lsl;
-using namespace boost::asio;
+using namespace lslboost::asio;
 
 /**
 * Establish a new stream outlet. This makes the stream discoverable.
@@ -53,7 +53,7 @@ stream_outlet_impl::stream_outlet_impl(const stream_info_impl &info, int chunk_s
 
 	// and start the IO threads to handle them
 	for (unsigned k=0;k<ios_.size();k++)
-		io_threads_.push_back(thread_p(new boost::thread(boost::bind(&stream_outlet_impl::run_io,this,ios_[k]))));
+		io_threads_.push_back(thread_p(new lslboost::thread(lslboost::bind(&stream_outlet_impl::run_io,this,ios_[k]))));
 }
 
 /**
@@ -100,18 +100,18 @@ stream_outlet_impl::~stream_outlet_impl() {
 			responders_[k]->end_serving();
 		// join the IO threads
 		for (unsigned k=0;k<io_threads_.size();k++)
-			if (!io_threads_[k]->try_join_for(boost::chrono::milliseconds(1000))) {
+			if (!io_threads_[k]->try_join_for(lslboost::chrono::milliseconds(1000))) {
  				// .. using force, if necessary (should only ever happen if the CPU is maxed out)
-				std::cerr << "Tearing down stream_outlet of thread " << io_threads_[k]->get_id() << " (in id: " << boost::this_thread::get_id() << "): " << std::endl;
+				std::cerr << "Tearing down stream_outlet of thread " << io_threads_[k]->get_id() << " (in id: " << lslboost::this_thread::get_id() << "): " << std::endl;
 				ios_[k]->stop();
-				for (int attempt=1; !io_threads_[k]->try_join_for(boost::chrono::milliseconds(1000)); attempt++) {
+				for (int attempt=1; !io_threads_[k]->try_join_for(lslboost::chrono::milliseconds(1000)); attempt++) {
 					std::cerr << "Trying to kill stream_outlet (attempt #" << attempt << ")..." << std::endl;
 					io_threads_[k]->interrupt();
 				}
 			}
 	}
 	catch(std::exception &e) {
-		std::cerr << "Unexpected error during destruction of a stream outlet (id: " << boost::this_thread::get_id() << "): " << e.what() << std::endl;
+		std::cerr << "Unexpected error during destruction of a stream outlet (id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
 	}
 	catch(...) {
 		std::cerr << "Severe error during stream outlet shutdown." << std::endl;
@@ -125,7 +125,7 @@ void stream_outlet_impl::run_io(io_service_p &ios) {
 			ios->run();
 			return;
 		} catch(std::exception &e) {
-			std::cerr << "Error during io_service processing (id: " << boost::this_thread::get_id() << "): " << e.what() << std::endl;
+			std::cerr << "Error during io_service processing (id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
 		}
 	}
 }

@@ -1,0 +1,7 @@
+src/filesystem/src/windows_file_codecvt.cpp
+src/filesystem/src/path_traits.cpp
+src/filesystem/src/codecvt_error_category.cpp
+src/serialization/src/codecvt_null.cpp
+src/thread/src/win32/thread.cpp
+src/thread/src/win32/tss_dll.cpp
+src/thread/src/win32/tss_pe.cpp

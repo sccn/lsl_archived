@@ -402,16 +402,14 @@ Makefile*
 # Build results
 [Dd]ebug/
 # an exception to the 'debug' exclusion rule
-!LSL/liblsl/external/lslboost/preprocessor/debug
-!LSL/liblsl/external/lslboost/bimap/detail/debug
+!/**/boost/**/debug/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
 x64/
 x86/
 # except for this one:
-!LSL/liblsl/external/lslboost/predef/architecture/x86
-!LSL/liblsl/external/lslboost/predef/architecture/x86/*
+!/**/boost/**/x86/
 build/
 bld/
 [Oo]bj/

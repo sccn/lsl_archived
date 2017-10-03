@@ -9,8 +9,8 @@
 namespace lsl {
 
 	/// A callback function that allows the post-processor to query some state from other objects when needed.
-	typedef boost::function<double()> postproc_callback_t;
-	typedef boost::function<bool()> reset_callback_t;
+	typedef lslboost::function<double()> postproc_callback_t;
+	typedef lslboost::function<bool()> reset_callback_t;
 
 
 	/// Internal class of an inlet that is responsible for post-processing time stamps.
@@ -64,7 +64,7 @@ namespace lsl {
 		double last_value_;						// last observed time-stamp value, to force monotonically increasing stamps
 
 		// mutex for thread safety
-		boost::mutex processing_mut_;			// a mutex that protects the runtime data structures
+		lslboost::mutex processing_mut_;			// a mutex that protects the runtime data structures
 	};
 
 
