@@ -1,4 +1,4 @@
-project(Examples)
+project(Benchmarks)
 
 # If building the whole tree use the current LSL
 if(TARGET lsl)
@@ -10,18 +10,19 @@ else()
 	find_package(LSL REQUIRED)
 endif()
 
-# convenience function to add an example file
-# this creates a target, links the necessary libraries and
-# creates an install target
-function(addlslexample name extension)
+function(addlslbench name extension)
 	add_executable(${name}
 		${name}.${extension}
 	)
 	target_link_libraries(${name} PRIVATE LSL::lsl)
+	if(UNIX)
+		target_link_libraries(${name} PRIVATE pthread)
+	endif()
 	target_compile_features(${name} PRIVATE cxx_constexpr)
 	installLSLApp(${name})
 endfunction()
 
-addlslexample(CppSendRand cpp)
-addlslexample(CppReceive cpp)
-addlslexample(SendDataC c)
+addlslbench(Bounce cpp)
+addlslbench(SpeedTest cpp)
+#addlslbench(StressTest cpp)
+#addlslbench(SyncTest cpp)

@@ -19,6 +19,7 @@ endif()
 # set various common paths (e.g. to the Qt5 dir) if they're not already set
 include(LSLSaneDefaults)
 
+option(LSLAPPS_Benchmarks       "Build benchmark apps"              OFF)
 option(LSLAPPS_Examples         "Build example apps"                OFF)
 option(LSLAPPS_LabRecorder      "Build the recorder app"            OFF)
 option(LSLAPPS_XDFBrowser       "Build the XDFBrowser app"          OFF)
@@ -34,6 +35,9 @@ if(WIN32)
 endif()
 
 # add all Apps the user wants to build
+if(LSLAPPS_Benchmarks)
+	add_subdirectory(Benchmarks)
+endif()
 
 if(LSLAPPS_Examples)
     add_subdirectory(Examples)
