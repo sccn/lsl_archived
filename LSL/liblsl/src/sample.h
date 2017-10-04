@@ -87,12 +87,15 @@ namespace lsl {
 
 			/// Create a new sample with a given timestamp and pushthrough flag.
 			/// Only one thread may call this function for a given factory object.
+			
 			sample_p new_sample(double timestamp, bool pushthrough) { 
+				char *c = new char[sample_size_];
 				sample *result = pop_freelist();
 				if (!result)
-					result = new(new char[sample_size_]) sample(fmt_,num_chans_,this);
+					result = new(c) sample(fmt_,num_chans_,this);
 				result->timestamp = timestamp;
 				result->pushthrough = pushthrough;
+				free(c);
 				return sample_p(result);
 			}
 
@@ -159,9 +162,10 @@ namespace lsl {
 			if (format_ == cf_string)
 				for (std::string *p=(std::string*)&data_,*e=p+num_channels_; p<e; (p++)->~basic_string<char>());
 		}
-
+	
 		/// Delete a sample.
 		void operator delete(void *x) {
+			
 			// delete the underlying memory only if it wasn't allocated in the factory's storage area
 			sample *s = (sample*)x;
 			if (s && !(s->factory_ && (((char*)s) >= s->factory_->storage_.get() && ((char*)s) <= s->factory_->storage_.get()+s->factory_->storage_size_)))
