@@ -118,14 +118,15 @@ class LSLBuilder:
         if not os.path.exists(os.path.join(self.install_prefix, 'LSL', 'cmake')) and not self.dry_run:
             raise Exception('LSL installation not found in ' + self.install_prefix)
         self.chdir(self.mkbuilddir('lsloot'))
-        self.call_cmake(conf['generator'], {'LSL_ROOT': self.install_prefix + '/LSL/'},
-                        [self.sourcepath + '/OutOfTreeTest'])
-        self.call_cmake(otherargs=['--build', '.'])
-        self.call(['./LSLOutOfTreeTest'])
+        testconf = {'LSL_ROOT': self.install_prefix + '/LSL/',
+            'CMAKE_BUILD_TYPE': self.cmake_conf['CMAKE_BUILD_TYPE']}
+        self.call_cmake(conf['generator'], testconf, [self.sourcepath + '/OutOfTreeTest'])
+        self.call_cmake(otherargs=['--build', '.', '--target', 'runOutOfTree'])
 
     def package(self):
-        self.chdir(self.sourcepath)
-        self.call(['7z', 'a', self.cmake_conf['CMAKE_BUILD_TYPE'] + '.7z', self.install_prefix])
+        self.chdir(self.builddir)
+        archive_filename = os.path.join(self.builddir, self.cmake_conf['CMAKE_BUILD_TYPE'] + '.7z')
+        self.call(['cmake', '-E', 'tar', 'cvf', archive_filename, '--format=7zip', self.install_prefix])
 
 def print_conf(conf):
     print('Configuration: ')

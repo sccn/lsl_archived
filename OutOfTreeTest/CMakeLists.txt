@@ -16,5 +16,9 @@ include(LSLAppBoilerplate)
 
 add_executable(LSLOutOfTreeTest OutOfTreeTest.c)
 target_link_libraries(LSLOutOfTreeTest PRIVATE LSL::lsl)
-install(TARGETS LSLOutOfTreeTest
-        RUNTIME DESTINATION bin)
+add_custom_target(runOutOfTree
+	COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:LSL::lsl> $<TARGET_FILE_DIR:LSLOutOfTreeTest>
+	COMMAND LSLOutOfTreeTest
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+	COMMENT "run generated test executable"
+)
