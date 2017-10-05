@@ -36,7 +36,7 @@ IF(NOT GDS_ROOT)
 ENDIF()
 
 IF(NOT GDS_ROOT)
-    message(status "gNEEDaccessSDK not found. Try 'set GDS_ROOT=<path/to/gtec/API/C>' then run cmake again.")
+    message(FATAL_ERROR "gNEEDaccessSDK not found. Try 'set GDS_ROOT=<path/to/gtec/API/C>' then run cmake again.")
 ENDIF()
 
 # Check if 32 or 64 bit system.
@@ -73,6 +73,7 @@ find_file(gNEEDaccessSDK_BINARIES
 
 SET(gNEEDaccessSDK_FOUND TRUE)
 
+# Old way. Need to target_link_libraries(${target} ${gNEEDaccessSDK_LIBRARIES}) and target_include_directories(${target} ${gNEEDaccessSDK_INCLUDE_DIRS})
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(gNEEDaccessSDK
     DEFAULT_MSG
@@ -80,8 +81,9 @@ find_package_handle_standard_args(gNEEDaccessSDK
     gNEEDaccessSDK_INCLUDE_DIRS
     gNEEDaccessSDK_LIBRARIES)
 
-mark_as_advanced(
-    gNEEDaccessSDK_FOUND
-    gNEEDaccessSDK_INCLUDE_DIRS
-    gNEEDaccessSDK_LIBRARIES
-    gNEEDaccessSDK_BINARIES)
+# New easier way. Only need to target_link_libraries(${target} gtec::gNEEDaccessSDK)
+add_library(gtec::gNEEDaccessSDK UNKNOWN IMPORTED)
+set_target_properties(gtec::gNEEDaccessSDK PROPERTIES
+    IMPORTED_LOCATION ${gNEEDaccessSDK_LIBRARIES}
+    INTERFACE_INCLUDE_DIRECTORIES ${gNEEDaccessSDK_INCLUDE_DIRS})
+    
