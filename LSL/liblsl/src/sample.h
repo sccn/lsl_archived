@@ -88,9 +88,13 @@ namespace lsl {
 			/// Create a new sample with a given timestamp and pushthrough flag.
 			/// Only one thread may call this function for a given factory object.
 			sample_p new_sample(double timestamp, bool pushthrough) { 
+				char * c = NULL;
 				sample *result = pop_freelist();
-				if (!result)
-					result = new(new char[sample_size_]) sample(fmt_,num_chans_,this);
+				if (!result){
+					c = new char[sample_size_];
+					result = new(c) sample(fmt_,num_chans_,this);
+					delete c;
+				}
 				result->timestamp = timestamp;
 				result->pushthrough = pushthrough;
 				return sample_p(result);
