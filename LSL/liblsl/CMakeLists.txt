@@ -83,7 +83,7 @@ if (CMAKE_SIZEOF_VOID_P EQUAL 8)
 else()
 	set(lslplatform 32)
 endif()
-set(lslplatform ${lslplatform}_${CMAKE_CXX_COMPILER_ID})
+set(lslplatform ${lslplatform})
 
 set(lsl_export_targets ${target})
 
