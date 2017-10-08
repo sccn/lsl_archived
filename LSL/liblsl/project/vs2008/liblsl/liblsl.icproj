@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="14.0"
+	Name="liblsl"
+	ProjectGUID="{4DD5F050-FEE7-403D-86C8-69DB6EDA6CF9}"
+	VCNestedProjectGUID="{06C12A6B-BF5B-413F-94CA-4EAA289ED93B}"
+	VCNestedProjectFileName="liblsl.vcproj"
+	>
+	<Configurations>
+		<Configuration
+			Name="Release|Win32"
+			>
+			<Tool
+				Name="CppCmplrTool"
+				InterproceduralOptimization="2"
+				UseIntelOptimizedHeaders="false"
+			/>
+		</Configuration>
+	</Configurations>
+	<Files/>
+</VisualStudioProject>

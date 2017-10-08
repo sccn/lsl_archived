@@ -1,0 +1,508 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		308C798E1D775ACA00F8C7CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA48E46B1512E76400DBC29F /* liblsl.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0821B51B1C6B0BB300063AA9;
+			remoteInfo = liblsl_ios;
+		};
+		308C79981D775ACA00F8C7CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA35E2791513D00B003F3939 /* SendStringMarkers.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA35E26C1513D00B003F3939;
+			remoteInfo = SendStringMarkers;
+		};
+		AA1103E51513AC8E006FD0CF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA1103E11513AC8D006FD0CF /* SendData.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA1103D41513AC8D006FD0CF;
+			remoteInfo = SendData;
+		};
+		AA35E1391513C036003F3939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA35E1351513C035003F3939 /* ReceiveData.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA35E1281513C035003F3939;
+			remoteInfo = ReceiveData;
+		};
+		AA35E15B1513C404003F3939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA35E1571513C404003F3939 /* ReceiveStringMarkers.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA35E14A1513C404003F3939;
+			remoteInfo = ReceiveStringMarkers;
+		};
+		AA35E17D1513C57F003F3939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA35E1791513C57E003F3939 /* GetAllStreams.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA35E16C1513C57E003F3939;
+			remoteInfo = GetAllStreams;
+		};
+		AA35E19F1513CB00003F3939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA35E19B1513CB00003F3939 /* GetFullinfo.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA35E18E1513CB00003F3939;
+			remoteInfo = GetFullinfo;
+		};
+		AA35E1C11513CBD2003F3939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA35E1BD1513CBD1003F3939 /* GetTimeCorrection.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA35E1B01513CBD1003F3939;
+			remoteInfo = GetTimeCorrection;
+		};
+		AA35E1DF1513CC47003F3939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA35E1DB1513CC46003F3939 /* ReceiveDataInChunks.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA35E1CE1513CC46003F3939;
+			remoteInfo = ReceiveDataInChunks;
+		};
+		AA35E2061513CE34003F3939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA35E2021513CE34003F3939 /* ReceiveDataSimple.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA35E1F51513CE34003F3939;
+			remoteInfo = ReceiveDataSimple;
+		};
+		AA35E2391513CEEE003F3939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA35E2351513CEEE003F3939 /* SendDataSimple.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA35E2281513CEEE003F3939;
+			remoteInfo = SendDataSimple;
+		};
+		AA35E25B1513CF7B003F3939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA35E2571513CF7B003F3939 /* SendDataInChunks.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA35E24A1513CF7B003F3939;
+			remoteInfo = SendDataInChunks;
+		};
+		AA48E46F1512E76400DBC29F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA48E46B1512E76400DBC29F /* liblsl.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA48E45B1512E76400DBC29F;
+			remoteInfo = liblsl;
+		};
+		AA6FC01D15B9EB5D0048161D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA6FC01915B9EB5C0048161D /* StressTest.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA6FC00C15B9EB5C0048161D;
+			remoteInfo = StressTest;
+		};
+		AAE649AA157827FD009EEA4A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA48E46B1512E76400DBC29F /* liblsl.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AA5A2F4715781EB200E9C4F9;
+			remoteInfo = liblsl32;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		AA1103E11513AC8D006FD0CF /* SendData.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SendData.xcodeproj; path = "../../examples/C++/SendData/SendData.xcodeproj"; sourceTree = "<group>"; };
+		AA35E1351513C035003F3939 /* ReceiveData.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReceiveData.xcodeproj; path = "../../examples/C++/ReceiveData/ReceiveData.xcodeproj"; sourceTree = "<group>"; };
+		AA35E1571513C404003F3939 /* ReceiveStringMarkers.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReceiveStringMarkers.xcodeproj; path = "../../examples/C++/ReceiveStringMarkers/ReceiveStringMarkers.xcodeproj"; sourceTree = "<group>"; };
+		AA35E1791513C57E003F3939 /* GetAllStreams.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GetAllStreams.xcodeproj; path = "../../examples/C++/GetAllStreams/GetAllStreams.xcodeproj"; sourceTree = "<group>"; };
+		AA35E19B1513CB00003F3939 /* GetFullinfo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GetFullinfo.xcodeproj; path = "../../examples/C++/GetFullinfo/GetFullinfo.xcodeproj"; sourceTree = "<group>"; };
+		AA35E1BD1513CBD1003F3939 /* GetTimeCorrection.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GetTimeCorrection.xcodeproj; path = "../../examples/C++/GetTimeCorrection/GetTimeCorrection.xcodeproj"; sourceTree = "<group>"; };
+		AA35E1DB1513CC46003F3939 /* ReceiveDataInChunks.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReceiveDataInChunks.xcodeproj; path = "../../examples/C++/ReceiveDataInChunks/ReceiveDataInChunks.xcodeproj"; sourceTree = "<group>"; };
+		AA35E2021513CE34003F3939 /* ReceiveDataSimple.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReceiveDataSimple.xcodeproj; path = "../../examples/C++/ReceiveDataSimple/ReceiveDataSimple.xcodeproj"; sourceTree = "<group>"; };
+		AA35E2351513CEEE003F3939 /* SendDataSimple.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SendDataSimple.xcodeproj; path = "../../examples/C++/SendDataSimple/SendDataSimple.xcodeproj"; sourceTree = "<group>"; };
+		AA35E2571513CF7B003F3939 /* SendDataInChunks.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SendDataInChunks.xcodeproj; path = "../../examples/C++/SendDataInChunks/SendDataInChunks.xcodeproj"; sourceTree = "<group>"; };
+		AA35E2791513D00B003F3939 /* SendStringMarkers.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SendStringMarkers.xcodeproj; path = "../../examples/C++/SendStringMarkers/SendStringMarkers.xcodeproj"; sourceTree = "<group>"; };
+		AA48E46B1512E76400DBC29F /* liblsl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = liblsl.xcodeproj; path = liblsl/liblsl.xcodeproj; sourceTree = "<group>"; };
+		AA6FC01915B9EB5C0048161D /* StressTest.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = StressTest.xcodeproj; path = ../../testing/StressTest/StressTest.xcodeproj; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		308C79861D775ACA00F8C7CE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				308C79991D775ACA00F8C7CE /* SendStringMarkers-mac */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA1103E21513AC8D006FD0CF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA1103E61513AC8E006FD0CF /* SendData-mac */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA35E1361513C035003F3939 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA35E13A1513C036003F3939 /* ReceiveData-mac */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA35E1581513C404003F3939 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA35E15C1513C404003F3939 /* ReceiveStringMarkers-mac */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA35E17A1513C57E003F3939 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA35E17E1513C57F003F3939 /* GetAllStreams-mac */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA35E19C1513CB00003F3939 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA35E1A01513CB00003F3939 /* GetFullinfo-mac */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA35E1BE1513CBD1003F3939 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA35E1C21513CBD2003F3939 /* GetTimeCorrection-mac */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA35E1DC1513CC46003F3939 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA35E1E01513CC47003F3939 /* ReceiveDataInChunks-mac */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA35E2031513CE34003F3939 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA35E2071513CE34003F3939 /* ReceiveDataSimple-mac */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA35E2361513CEEE003F3939 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA35E23A1513CEEE003F3939 /* SendDataSimple-mac */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA35E2581513CF7B003F3939 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA35E25C1513CF7B003F3939 /* SendDataInChunks-mac */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA48E4351512E74200DBC29F = {
+			isa = PBXGroup;
+			children = (
+				AA6FC01915B9EB5C0048161D /* StressTest.xcodeproj */,
+				AA35E2791513D00B003F3939 /* SendStringMarkers.xcodeproj */,
+				AA35E2571513CF7B003F3939 /* SendDataInChunks.xcodeproj */,
+				AA35E2351513CEEE003F3939 /* SendDataSimple.xcodeproj */,
+				AA35E2021513CE34003F3939 /* ReceiveDataSimple.xcodeproj */,
+				AA35E1DB1513CC46003F3939 /* ReceiveDataInChunks.xcodeproj */,
+				AA35E1BD1513CBD1003F3939 /* GetTimeCorrection.xcodeproj */,
+				AA35E19B1513CB00003F3939 /* GetFullinfo.xcodeproj */,
+				AA35E1791513C57E003F3939 /* GetAllStreams.xcodeproj */,
+				AA35E1571513C404003F3939 /* ReceiveStringMarkers.xcodeproj */,
+				AA35E1351513C035003F3939 /* ReceiveData.xcodeproj */,
+				AA1103E11513AC8D006FD0CF /* SendData.xcodeproj */,
+				AA48E46B1512E76400DBC29F /* liblsl.xcodeproj */,
+			);
+			sourceTree = "<group>";
+		};
+		AA48E46C1512E76400DBC29F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA48E4701512E76400DBC29F /* liblsl64-debug.dylib */,
+				AAE649AB157827FD009EEA4A /* liblsl32-debug.dylib */,
+				308C798F1D775ACA00F8C7CE /* libliblsl_ios.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA6FC01A15B9EB5C0048161D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA6FC01E15B9EB5D0048161D /* StressTest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXProject section */
+		AA48E4371512E74200DBC29F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = AA48E43A1512E74200DBC29F /* Build configuration list for PBXProject "Xcode" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = AA48E4351512E74200DBC29F;
+			productRefGroup = AA48E4351512E74200DBC29F;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = AA35E17A1513C57E003F3939 /* Products */;
+					ProjectRef = AA35E1791513C57E003F3939 /* GetAllStreams.xcodeproj */;
+				},
+				{
+					ProductGroup = AA35E19C1513CB00003F3939 /* Products */;
+					ProjectRef = AA35E19B1513CB00003F3939 /* GetFullinfo.xcodeproj */;
+				},
+				{
+					ProductGroup = AA35E1BE1513CBD1003F3939 /* Products */;
+					ProjectRef = AA35E1BD1513CBD1003F3939 /* GetTimeCorrection.xcodeproj */;
+				},
+				{
+					ProductGroup = AA48E46C1512E76400DBC29F /* Products */;
+					ProjectRef = AA48E46B1512E76400DBC29F /* liblsl.xcodeproj */;
+				},
+				{
+					ProductGroup = AA35E1361513C035003F3939 /* Products */;
+					ProjectRef = AA35E1351513C035003F3939 /* ReceiveData.xcodeproj */;
+				},
+				{
+					ProductGroup = AA35E1DC1513CC46003F3939 /* Products */;
+					ProjectRef = AA35E1DB1513CC46003F3939 /* ReceiveDataInChunks.xcodeproj */;
+				},
+				{
+					ProductGroup = AA35E2031513CE34003F3939 /* Products */;
+					ProjectRef = AA35E2021513CE34003F3939 /* ReceiveDataSimple.xcodeproj */;
+				},
+				{
+					ProductGroup = AA35E1581513C404003F3939 /* Products */;
+					ProjectRef = AA35E1571513C404003F3939 /* ReceiveStringMarkers.xcodeproj */;
+				},
+				{
+					ProductGroup = AA1103E21513AC8D006FD0CF /* Products */;
+					ProjectRef = AA1103E11513AC8D006FD0CF /* SendData.xcodeproj */;
+				},
+				{
+					ProductGroup = AA35E2581513CF7B003F3939 /* Products */;
+					ProjectRef = AA35E2571513CF7B003F3939 /* SendDataInChunks.xcodeproj */;
+				},
+				{
+					ProductGroup = AA35E2361513CEEE003F3939 /* Products */;
+					ProjectRef = AA35E2351513CEEE003F3939 /* SendDataSimple.xcodeproj */;
+				},
+				{
+					ProductGroup = 308C79861D775ACA00F8C7CE /* Products */;
+					ProjectRef = AA35E2791513D00B003F3939 /* SendStringMarkers.xcodeproj */;
+				},
+				{
+					ProductGroup = AA6FC01A15B9EB5C0048161D /* Products */;
+					ProjectRef = AA6FC01915B9EB5C0048161D /* StressTest.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		308C798F1D775ACA00F8C7CE /* libliblsl_ios.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libliblsl_ios.a;
+			remoteRef = 308C798E1D775ACA00F8C7CE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		308C79991D775ACA00F8C7CE /* SendStringMarkers-mac */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "SendStringMarkers-mac";
+			remoteRef = 308C79981D775ACA00F8C7CE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA1103E61513AC8E006FD0CF /* SendData-mac */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "SendData-mac";
+			remoteRef = AA1103E51513AC8E006FD0CF /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA35E13A1513C036003F3939 /* ReceiveData-mac */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "ReceiveData-mac";
+			remoteRef = AA35E1391513C036003F3939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA35E15C1513C404003F3939 /* ReceiveStringMarkers-mac */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "ReceiveStringMarkers-mac";
+			remoteRef = AA35E15B1513C404003F3939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA35E17E1513C57F003F3939 /* GetAllStreams-mac */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "GetAllStreams-mac";
+			remoteRef = AA35E17D1513C57F003F3939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA35E1A01513CB00003F3939 /* GetFullinfo-mac */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "GetFullinfo-mac";
+			remoteRef = AA35E19F1513CB00003F3939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA35E1C21513CBD2003F3939 /* GetTimeCorrection-mac */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "GetTimeCorrection-mac";
+			remoteRef = AA35E1C11513CBD2003F3939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA35E1E01513CC47003F3939 /* ReceiveDataInChunks-mac */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "ReceiveDataInChunks-mac";
+			remoteRef = AA35E1DF1513CC47003F3939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA35E2071513CE34003F3939 /* ReceiveDataSimple-mac */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "ReceiveDataSimple-mac";
+			remoteRef = AA35E2061513CE34003F3939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA35E23A1513CEEE003F3939 /* SendDataSimple-mac */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "SendDataSimple-mac";
+			remoteRef = AA35E2391513CEEE003F3939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA35E25C1513CF7B003F3939 /* SendDataInChunks-mac */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "SendDataInChunks-mac";
+			remoteRef = AA35E25B1513CF7B003F3939 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA48E4701512E76400DBC29F /* liblsl64-debug.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = "liblsl64-debug.dylib";
+			remoteRef = AA48E46F1512E76400DBC29F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA6FC01E15B9EB5D0048161D /* StressTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = StressTest;
+			remoteRef = AA6FC01D15B9EB5D0048161D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AAE649AB157827FD009EEA4A /* liblsl32-debug.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = "liblsl32-debug.dylib";
+			remoteRef = AAE649AA157827FD009EEA4A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin XCBuildConfiguration section */
+		AA48E44B1512E74200DBC29F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		AA48E44C1512E74200DBC29F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA48E43A1512E74200DBC29F /* Build configuration list for PBXProject "Xcode" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA48E44B1512E74200DBC29F /* Debug */,
+				AA48E44C1512E74200DBC29F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AA48E4371512E74200DBC29F /* Project object */;
+}

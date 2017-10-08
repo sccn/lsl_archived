@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Workspace">
+		<Project filename="liblsl/liblsl.cbp" />
+		<Project filename="../../examples/C++/SendData/SendData.cbp" active="1">
+			<Depends filename="liblsl/liblsl.cbp" />
+		</Project>
+		<Project filename="../../examples/C++/ReceiveData/ReceiveData.cbp">
+			<Depends filename="liblsl/liblsl.cbp" />
+		</Project>
+		<Project filename="../../examples/C++/GetAllStreams/GetAllStreams.cbp">
+			<Depends filename="liblsl/liblsl.cbp" />
+		</Project>
+		<Project filename="../../examples/C++/GetFullinfo/GetFullinfo.cbp">
+			<Depends filename="liblsl/liblsl.cbp" />
+		</Project>
+		<Project filename="../../examples/C++/GetTimeCorrection/GetTimeCorrection.cbp">
+			<Depends filename="liblsl/liblsl.cbp" />
+		</Project>
+		<Project filename="../../examples/C++/ReceiveDataInChunks/ReceiveDataInChunks.cbp">
+			<Depends filename="liblsl/liblsl.cbp" />
+		</Project>
+		<Project filename="../../examples/C++/ReceiveDataSimple/ReceiveDataSimple.cbp">
+			<Depends filename="liblsl/liblsl.cbp" />
+		</Project>
+		<Project filename="../../examples/C++/ReceiveStringMarkers/ReceiveStringMarkers.cbp">
+			<Depends filename="liblsl/liblsl.cbp" />
+		</Project>
+		<Project filename="../../examples/C++/SendDataInChunks/SendDataInChunks.cbp">
+			<Depends filename="liblsl/liblsl.cbp" />
+		</Project>
+		<Project filename="../../examples/C++/SendDataSimple/SendDataSimple.cbp">
+			<Depends filename="liblsl/liblsl.cbp" />
+		</Project>
+		<Project filename="../../examples/C++/SendStringMarkers/SendStringMarkers.cbp">
+			<Depends filename="liblsl/liblsl.cbp" />
+		</Project>
+		<Project filename="../../examples/C/SendDataC/SendDataC.cbp">
+			<Depends filename="liblsl/liblsl.cbp" />
+		</Project>
+		<Project filename="../../examples/C/ReceiveDataC/ReceiveDataC.cbp">
+			<Depends filename="liblsl/liblsl.cbp" />
+		</Project>
+		<Project filename="../../testing/StressTest/StressTest/StressTest.cbp">
+			<Depends filename="liblsl/liblsl.cbp" />
+		</Project>
+	</Workspace>
+</CodeBlocks_workspace_file>

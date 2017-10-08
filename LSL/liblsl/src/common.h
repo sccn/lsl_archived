@@ -4,8 +4,18 @@
 #include <stdexcept>
 #include <boost/version.hpp>
 
+#ifdef LSL_INCLUDE_EXPORT_DEFINES
 // export defines header automatically created by CMake
 #include "lsl_export_defines.h"
+#else
+//Apply settings for the most common compilers
+#ifdef _WIN32
+#define LIBLSL_CPP_API __declspec(dllexport)
+#else
+#define LIBLSL_CPP_API
+#pragma GCC visibility push(default)
+#endif
+#endif
 
 #ifdef _MSC_VER
 #pragma warning( disable : 4275 )

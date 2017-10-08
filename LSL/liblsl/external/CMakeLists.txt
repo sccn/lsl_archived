@@ -67,7 +67,7 @@ endif ()
 install(TARGETS lslboost EXPORT lslboostConfig
   ARCHIVE DESTINATION LSL/lib
   LIBRARY DESTINATION LSL/lib)
-install(DIRECTORY boost lslboost
-	DESTINATION LSL/include)
+#install(DIRECTORY boost lslboost
+#	DESTINATION LSL/include)
 install(EXPORT lslboostConfig
   DESTINATION LSL/cmake)

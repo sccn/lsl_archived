@@ -83,7 +83,7 @@ if (CMAKE_SIZEOF_VOID_P EQUAL 8)
 else()
 	set(lslplatform 32)
 endif()
-set(lslplatform ${lslplatform}_${CMAKE_CXX_COMPILER_ID})
+set(lslplatform ${lslplatform})
 
 set(lsl_export_targets ${target})
 
@@ -108,6 +108,7 @@ function(lsllib_properties libname)
 	message(STATUS "Linking LSL against: ${LSL_BOOST_LIBS}")
 	message(STATUS "Found Boost libraries: ${Boost_LIBRARIES}")
 	target_link_libraries(${libname} PRIVATE ${LSL_BOOST_LIBS})
+	target_compile_definitions(${libname} PRIVATE LSL_INCLUDE_EXPORT_DEFINES)
 endfunction()
 
 
