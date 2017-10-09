@@ -42,6 +42,7 @@ namespace lsl {
 		class factory;					// samples can only be created by the factory
 		double timestamp;				// time-stamp of the sample
 		bool pushthrough;				// whether the sample shall be buffered or pushed through
+		bool is_managed;
 
 	private:
 		channel_format_t format_;		// the channel format
@@ -64,7 +65,7 @@ namespace lsl {
 			/// Create a new factory and optionally pre-allocate samples.
 			factory(channel_format_t fmt, int num_chans, int num_reserve): fmt_(fmt), num_chans_(num_chans), 
 				sample_size_(ensure_multiple(sizeof(sample)-sizeof(char)+format_sizes[fmt]*num_chans,16)), storage_size_(sample_size_*std::max(1,num_reserve)), 
-				storage_(new char[storage_size_]), sentinel_(new_sample_unmanaged(fmt,num_chans,0.0,false)), head_(sentinel_), tail_(sentinel_)
+				storage_(new char[storage_size_]), sentinel_(new_sentinel(fmt,num_chans,0.0,false)), head_(sentinel_), tail_(sentinel_)
 			{
 				// pre-construct an array of samples in the storage area and chain into a freelist
 				sample *s = NULL;
@@ -88,12 +89,10 @@ namespace lsl {
 			/// Create a new sample with a given timestamp and pushthrough flag.
 			/// Only one thread may call this function for a given factory object.
 			sample_p new_sample(double timestamp, bool pushthrough) { 
-				char * c = NULL;
 				sample *result = pop_freelist();
-				if (!result){
-					c = new char[sample_size_];
-					result = new(c) sample(fmt_,num_chans_,this);
-					delete c;
+				if (!result) {
+					result = new(new char[sample_size_]) sample(fmt_, num_chans_, this);
+					result->is_managed = false;
 				}
 				result->timestamp = timestamp;
 				result->pushthrough = pushthrough;
@@ -315,6 +314,7 @@ namespace lsl {
 			} else {
 				// write numeric data in binary
 				if (use_byte_order == BOOST_BYTE_ORDER || format_sizes[format_]==1) {
+
 					save_raw(sb,&data_,format_sizes[format_]*num_channels_);
 				} else {
 					memcpy(scratchpad,&data_,format_sizes[format_]*num_channels_);
@@ -446,6 +446,7 @@ namespace lsl {
 		sample(channel_format_t fmt, int num_channels, factory *fact): format_(fmt), num_channels_(num_channels), refcount_(0), next_(NULL), factory_(fact) { 
 			if (format_ == cf_string)
 				for (std::string *p=(std::string*)&data_,*e=p+num_channels_; p<e; new(p++)std::string());
+			is_managed = true;
 		}
 
 		/// Increment ref count.
@@ -455,9 +456,11 @@ namespace lsl {
 
 		/// Decrement ref count and reclaim if unreferenced.
 		friend void intrusive_ptr_release(sample *s) {
-			if (s->refcount_.fetch_sub(1,boost::memory_order_release) == 1) {
-				boost::atomic_thread_fence(boost::memory_order_acquire);
-				s->factory_->reclaim_sample(s);
+			if (s->refcount_.fetch_sub(1, boost::memory_order_release) == 1) {
+				if (s->is_managed) {
+					boost::atomic_thread_fence(boost::memory_order_acquire);
+					s->factory_->reclaim_sample(s);
+				}
 			}
 		}
 	};

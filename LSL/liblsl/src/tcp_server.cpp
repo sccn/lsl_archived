@@ -402,6 +402,10 @@ void tcp_server::client_session::transfer_samples_thread(client_session_p) {
 						boost::bind(&client_session::handle_chunk_transfer_outcome,shared_from_this(),placeholders::error,placeholders::bytes_transferred));
 					// wait for the completion condition
 					completion_cond_.wait(lock, boost::bind(&client_session::transfer_completed,this));
+					//at this point we should be done with the sample
+					if (!samp->is_managed)
+						// only delete unmanaged samples
+						delete samp.get();
 					// handle transfer outcome
 					if (!transfer_error_) {
 						feedbuf_.consume(transfer_amount_);
