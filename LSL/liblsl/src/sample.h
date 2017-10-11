@@ -12,6 +12,7 @@
 #include <boost/atomic.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/serialization/split_member.hpp>
+#include <boost/thread.hpp>
 #include "endian/conversion.hpp"
 #include "common.h"
 
@@ -32,7 +33,8 @@ namespace lsl {
  
 	/// smart pointer to a sample
 	typedef boost::intrusive_ptr<class sample> sample_p;
-	
+
+
 	/**
 	* The sample data type.
 	* Used to represent samples across the library's various buffers and can be serialized (e.g., over the network).
@@ -65,7 +67,7 @@ namespace lsl {
 			/// Create a new factory and optionally pre-allocate samples.
 			factory(channel_format_t fmt, int num_chans, int num_reserve): fmt_(fmt), num_chans_(num_chans), 
 				sample_size_(ensure_multiple(sizeof(sample)-sizeof(char)+format_sizes[fmt]*num_chans,16)), storage_size_(sample_size_*std::max(1,num_reserve)), 
-				storage_(new char[storage_size_]), sentinel_(new_sentinel(fmt,num_chans,0.0,false)), head_(sentinel_), tail_(sentinel_)
+				storage_(new char[storage_size_]), sentinel_(new_sample_unmanaged(fmt,num_chans,0.0,false)), head_(sentinel_), tail_(sentinel_)
 			{
 				// pre-construct an array of samples in the storage area and chain into a freelist
 				sample *s = NULL;
@@ -76,6 +78,11 @@ namespace lsl {
 				s->next_ = NULL;
 				head_.store(s);
 				sentinel_->next_ = (sample*)storage_.get();
+				
+				/// start the garbage collector in the background
+				stop_garbage = false;
+				garbage_cnt = 0;
+				garbage_thread = new boost::thread(&factory::collect_garbage, this);
 			}
 
 			/// Destroy the factory and delete all of its samples.
@@ -84,6 +91,9 @@ namespace lsl {
 					for (sample *next=cur->next_;next;cur=next,next=next->next_)
 						delete cur;
 				delete sentinel_;
+				stop_garbage = true;
+				garbage_thread->join();
+				delete garbage_thread;
 			}
 
 			/// Create a new sample with a given timestamp and pushthrough flag.
@@ -92,7 +102,8 @@ namespace lsl {
 				sample *result = pop_freelist();
 				if (!result) {
 					result = new(new char[sample_size_]) sample(fmt_, num_chans_, this);
-					result->is_managed = false;
+					garbage_vec.push_back(result);
+					//result->is_managed = false;
 				}
 				result->timestamp = timestamp;
 				result->pushthrough = pushthrough;
@@ -112,6 +123,30 @@ namespace lsl {
 				result->timestamp = timestamp;
 				result->pushthrough = pushthrough;
 				return result;
+			}
+
+			/// garbage collection for unmanaged samples
+			std::vector<sample*> garbage_vec;
+			boost::thread *garbage_thread;
+			int garbage_cnt;
+			bool stop_garbage;
+			boost::mutex garbage_mutex;
+			void collect_garbage() {
+				int cnt;
+				while (!stop_garbage) {
+					cnt=0;
+					// trick to lock for shortest possible time
+					garbage_mutex.lock();
+					cnt = garbage_cnt;
+					garbage_mutex.unlock();
+					if (cnt < 1000)
+						boost::this_thread::sleep(boost::posix_time::milliseconds(10));
+					else {
+						while (!garbage_vec.empty())
+							garbage_vec.pop_back();
+						garbage_cnt = 0;
+					}
+				}
 			}
 
 		private:
