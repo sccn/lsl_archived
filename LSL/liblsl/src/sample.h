@@ -12,6 +12,7 @@
 #include <boost/atomic.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/serialization/split_member.hpp>
+#include <boost/thread.hpp>
 #include "endian/conversion.hpp"
 #include "common.h"
 
@@ -32,7 +33,8 @@ namespace lsl {
  
 	/// smart pointer to a sample
 	typedef boost::intrusive_ptr<class sample> sample_p;
-	
+
+
 	/**
 	* The sample data type.
 	* Used to represent samples across the library's various buffers and can be serialized (e.g., over the network).
@@ -42,6 +44,7 @@ namespace lsl {
 		class factory;					// samples can only be created by the factory
 		double timestamp;				// time-stamp of the sample
 		bool pushthrough;				// whether the sample shall be buffered or pushed through
+		bool is_managed;
 
 	private:
 		channel_format_t format_;		// the channel format
@@ -75,6 +78,7 @@ namespace lsl {
 				s->next_ = NULL;
 				head_.store(s);
 				sentinel_->next_ = (sample*)storage_.get();
+				
 			}
 
 			/// Destroy the factory and delete all of its samples.
@@ -83,14 +87,21 @@ namespace lsl {
 					for (sample *next=cur->next_;next;cur=next,next=next->next_)
 						delete cur;
 				delete sentinel_;
+
 			}
 
 			/// Create a new sample with a given timestamp and pushthrough flag.
 			/// Only one thread may call this function for a given factory object.
 			sample_p new_sample(double timestamp, bool pushthrough) { 
 				sample *result = pop_freelist();
-				if (!result)
-					result = new(new char[sample_size_]) sample(fmt_,num_chans_,this);
+				if (!result) {
+					result = (sample*)malloc(sizeof(char)*sample_size_);
+					result->format_ = fmt_;
+					result->num_channels_ = num_chans_;
+					result->factory_ = this;
+					result->is_managed = false;
+					result = new(new char[sample_size_]) sample(fmt_, num_chans_, this);
+				}
 				result->timestamp = timestamp;
 				result->pushthrough = pushthrough;
 				return sample_p(result);
@@ -110,6 +121,8 @@ namespace lsl {
 				result->pushthrough = pushthrough;
 				return result;
 			}
+
+
 
 		private:
 			/// ensure that a given value is a multiple of some base, round up if necessary
@@ -311,6 +324,7 @@ namespace lsl {
 			} else {
 				// write numeric data in binary
 				if (use_byte_order == BOOST_BYTE_ORDER || format_sizes[format_]==1) {
+
 					save_raw(sb,&data_,format_sizes[format_]*num_channels_);
 				} else {
 					memcpy(scratchpad,&data_,format_sizes[format_]*num_channels_);
@@ -442,6 +456,7 @@ namespace lsl {
 		sample(channel_format_t fmt, int num_channels, factory *fact): format_(fmt), num_channels_(num_channels), refcount_(0), next_(NULL), factory_(fact) { 
 			if (format_ == cf_string)
 				for (std::string *p=(std::string*)&data_,*e=p+num_channels_; p<e; new(p++)std::string());
+			is_managed = true;
 		}
 
 		/// Increment ref count.
@@ -451,9 +466,11 @@ namespace lsl {
 
 		/// Decrement ref count and reclaim if unreferenced.
 		friend void intrusive_ptr_release(sample *s) {
-			if (s->refcount_.fetch_sub(1,boost::memory_order_release) == 1) {
-				boost::atomic_thread_fence(boost::memory_order_acquire);
-				s->factory_->reclaim_sample(s);
+			if (s->refcount_.fetch_sub(1, boost::memory_order_release) == 1) {
+				if (s->is_managed) {
+					boost::atomic_thread_fence(boost::memory_order_acquire);
+					s->factory_->reclaim_sample(s);
+				}
 			}
 		}
 	};

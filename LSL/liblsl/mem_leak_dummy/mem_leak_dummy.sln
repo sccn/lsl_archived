@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mem_leak_dummy", "mem_leak_dummy.vcxproj", "{85BCCCC1-B226-4A86-9623-C41394BF7F71}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{85BCCCC1-B226-4A86-9623-C41394BF7F71}.Debug|Win32.ActiveCfg = Debug|Win32
+		{85BCCCC1-B226-4A86-9623-C41394BF7F71}.Debug|Win32.Build.0 = Debug|Win32
+		{85BCCCC1-B226-4A86-9623-C41394BF7F71}.Release|Win32.ActiveCfg = Release|Win32
+		{85BCCCC1-B226-4A86-9623-C41394BF7F71}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
