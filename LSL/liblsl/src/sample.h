@@ -79,10 +79,6 @@ namespace lsl {
 				head_.store(s);
 				sentinel_->next_ = (sample*)storage_.get();
 				
-				/// start the garbage collector in the background
-				stop_garbage = false;
-				garbage_cnt = 0;
-				garbage_thread = new boost::thread(&factory::collect_garbage, this);
 			}
 
 			/// Destroy the factory and delete all of its samples.
@@ -91,9 +87,7 @@ namespace lsl {
 					for (sample *next=cur->next_;next;cur=next,next=next->next_)
 						delete cur;
 				delete sentinel_;
-				stop_garbage = true;
-				garbage_thread->join();
-				delete garbage_thread;
+
 			}
 
 			/// Create a new sample with a given timestamp and pushthrough flag.
@@ -101,9 +95,12 @@ namespace lsl {
 			sample_p new_sample(double timestamp, bool pushthrough) { 
 				sample *result = pop_freelist();
 				if (!result) {
+					result = (sample*)malloc(sizeof(char)*sample_size_);
+					result->format_ = fmt_;
+					result->num_channels_ = num_chans_;
+					result->factory_ = this;
+					result->is_managed = false;
 					result = new(new char[sample_size_]) sample(fmt_, num_chans_, this);
-					garbage_vec.push_back(result);
-					//result->is_managed = false;
 				}
 				result->timestamp = timestamp;
 				result->pushthrough = pushthrough;
@@ -125,29 +122,7 @@ namespace lsl {
 				return result;
 			}
 
-			/// garbage collection for unmanaged samples
-			std::vector<sample*> garbage_vec;
-			boost::thread *garbage_thread;
-			int garbage_cnt;
-			bool stop_garbage;
-			boost::mutex garbage_mutex;
-			void collect_garbage() {
-				int cnt;
-				while (!stop_garbage) {
-					cnt=0;
-					// trick to lock for shortest possible time
-					garbage_mutex.lock();
-					cnt = garbage_cnt;
-					garbage_mutex.unlock();
-					if (cnt < 1000)
-						boost::this_thread::sleep(boost::posix_time::milliseconds(10));
-					else {
-						while (!garbage_vec.empty())
-							garbage_vec.pop_back();
-						garbage_cnt = 0;
-					}
-				}
-			}
+
 
 		private:
 			/// ensure that a given value is a multiple of some base, round up if necessary
