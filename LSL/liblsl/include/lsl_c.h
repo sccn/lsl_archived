@@ -200,6 +200,11 @@ extern LIBLSL_C_API int lsl_protocol_version();
 */
 extern LIBLSL_C_API int lsl_library_version();
 
+/**
+* Get a string containing library information. The format of the string shouldn't be used
+* for anything important except giving a a debugging person a good idea which exact library
+* version is used. */
+extern LIBLSL_C_API const char* lsl_library_info();
 
 /**
 * Obtain a local system time stamp in seconds. The resolution is better than a millisecond.
