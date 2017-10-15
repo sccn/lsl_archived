@@ -6,5 +6,5 @@
  */
 
 int main(int argc, char* argv[]) {
-	printf("Using LSL version %d\n", lsl_library_version());
+	printf("Using LSL version %d (%s)\n", lsl_library_version(), lsl_library_info());
 }
