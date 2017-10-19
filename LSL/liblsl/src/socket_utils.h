@@ -6,6 +6,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
+#include <iostream>
 
 namespace lsl {
     
