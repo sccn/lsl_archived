@@ -13,8 +13,8 @@ else()
 endif()
 
 option(LSLAPPS_Examples         "Build example apps"                OFF)
-option(LSLAPPS_LabRecorder      "Build the recorder app"            ON)
-option(LSLAPPS_XDFBrowser       "Build the XDFBrowser app"          ON)
+option(LSLAPPS_LabRecorder      "Build the recorder app"            OFF)
+option(LSLAPPS_XDFBrowser       "Build the XDFBrowser app"          OFF)
 option(LSLAPPS_Wiimote          "Build the Wiimote app"             OFF)
 option(LSLAPPS_OpenVR           "Build the OpenVR app"              OFF)
 
