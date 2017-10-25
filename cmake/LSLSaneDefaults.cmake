@@ -1,0 +1,32 @@
+# guess default paths for Windows / VC
+set(LATEST_QT_VERSION "5.9.2")
+
+if(WIN32 AND MSVC)
+	if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+		set(lslplatform 64)
+	else()
+		set(lslplatform 32)
+	endif()
+
+	# see https://cmake.org/cmake/help/latest/variable/MSVC_VERSION.html
+	if(MSVC_VERSION EQUAL 1500)
+		set(VCYEAR 2008)
+	elseif(MSVC_VERSION EQUAL 1600)
+		set(VCYEAR 2010)
+	elseif(MSVC_VERSION EQUAL 1700)
+		set(VCYEAR 2012)
+	elseif(MSVC_VERSION EQUAL 1800)
+		set(VCYEAR 2013)
+	elseif(MSVC_VERSION EQUAL 1900)
+		set(VCYEAR 2015)
+	elseif(MSVC_VERSION GREATER 1910 AND MSVC_VERSION LESS 1919)
+		set(VCYEAR 2017)
+	else()
+		message(WARNING "You're using an untested Visual C++ compiler.")
+	endif()
+	if(NOT Qt5_DIR)
+		set(Qt5_DIR "C:/Qt/${LATEST_QT_VERSION}/msvc${VCYEAR}_${lslplatform}/lib/cmake/Qt5")
+		message(STATUS "You didn't specify a Qt5_DIR. I'm guessing it's ${Qt5_DIR}. If this is wrong, please add the correct dir with -DQt5_DIR=/path/to/Qt5/lib/cmake/Qt5")
+	endif()
+endif()
+

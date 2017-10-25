@@ -12,6 +12,9 @@ else()
     include(LSLAppBoilerplate)
 endif()
 
+# set various common paths (e.g. to the Qt5 dir) if they're not already set
+include(LSLSaneDefaults)
+
 option(LSLAPPS_Examples         "Build example apps"                OFF)
 option(LSLAPPS_LabRecorder      "Build the recorder app"            OFF)
 option(LSLAPPS_XDFBrowser       "Build the XDFBrowser app"          OFF)
