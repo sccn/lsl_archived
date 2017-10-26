@@ -1,18 +1,13 @@
-version: 1.40.0.{build}
+version: 1.40.{build}
 pull_requests:
   do_not_increment_build_number: true
 skip_non_tags: true
-image: Visual Studio 2015
 configuration: Release
 platform: Any CPU
 shallow_clone: true
-init:
-- ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-environment:
-  APPVEYOR_RDP_PASSWORD: Foobar1234!
 install:
 - cmd: >-
-    appveyor DownloadFile https://github.com/ninja-build/ninja/releases/download/v1.7.2/ninja-win.zip -FileName ninja.zip
+    appveyor DownloadFile https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-win.zip -FileName ninja.zip
 
     7z x ninja.zip -oC:\projects\deps\ninja > nul
 
@@ -23,11 +18,17 @@ build_script:
 - cmd: >-
     call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 
-    set PATH=C:\Qt\5.9.1\msvc2015;%PATH%
+    mkdir build
 
-    python -u lslbuild.py --generator=Ninja -DBOOST_ROOT=c:/Libraries/boost_1_63_0
+    cd build
+
+    mkdir lslinstall
+
+    cmake -G Ninja -DQt5_DIR=C:/Qt/5.9.1/msvc2015/lib/cmake/Qt5 -DBOOST_ROOT=C:/Libraries/boost_1_63_0 -DCMAKE_BUILD_TYPE=Release -DLSLAPPS_LabRecorder=1 -DCMAKE_INSTALL_PREFIX=lslinstall ../
+
+    cmake --build . --config Release --target LSLPACKAGE
 artifacts:
-- path: build/lsl_Release/lslinstall
+- path: build/lslinstall
   name: lsl_Win32_$(APPVEYOR_BUILD_VERSION)_${APPVEYOR_REPO_COMMIT}
 deploy:
 - provider: BinTray
