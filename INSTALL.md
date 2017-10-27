@@ -65,10 +65,9 @@ Build instructions
 ==================
 
 1. extract the zip file or clone the repository (`git clone https://github.com/sccn/labstreaminglayer.git`)
-2. Windows only: start `build_windows.bat` and follow the isntructions in step 5
-3. change to this directory (git: `cd labstreaminglayer`)
-4. create a build directory (`mkdir build`) and enter it (`cd build`)
-5. open the configuration UI (`cmake-gui ../`) and click on `Configure`
+2. Windows only: start `build_windows.bat` and follow the isntructions in step 4
+3. change to the build directory (git: `cd labstreaminglayer/build`)
+4. open the configuration UI (`cmake-gui ../`) and click on `Configure`
     - select your compiler
     - check the Apps you want to use
     - if necessary, use `Add Entry` to add paths or change options
@@ -77,7 +76,7 @@ Build instructions
 	- a path where redistributable binaries get copied (`CMAKE_INSTALL_PREFIX`)
 	- build type (`CMAKE_BUILD_TYPE`, either `Release` or `Debug`). You can change this in Visual Studio later.
     - click on `Generate` to create the build files / Visual Studio Solution file (open it with `Open Project`)
-6. start the build process (`cmake --build . --config Release --target install`) or load the generated VS Solution file
+5. start the build process (`cmake --build . --config Release --target install`) or load the generated VS Solution file
 
 This will create a distribution tree similar to this:
 

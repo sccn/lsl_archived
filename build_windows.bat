@@ -7,7 +7,6 @@ REM Don't close the window on errors
 REM see https://stackoverflow.com/a/33929280
 if not defined in_subprocess (cmd /k set in_subprocess=y ^& %0 %*) & exit )
 
-mkdir build
 cd build
 
 echo After pressing Enter, the configuration GUI should appear
