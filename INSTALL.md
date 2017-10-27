@@ -38,69 +38,65 @@ CMake
 =====
 
 Tested platforms:
-* Windows 7, Visual Studio 2015
-* Ubuntu Linux 14.04
+* Windows 7, Windows 10
+    - [Visual Studio 2015](https://www.visualstudio.com/vs/older-downloads/), [Visual Studio 2017](https://www.visualstudio.com/downloads/)
+* Ubuntu Linux 14.04, 16.04
+    - Clang 3.5
+    - GCC 6.2
 * MacOS Sierra
+    - XCode 8.3
 
 Prerequisites (LSL with bundled Boost)
-- CMake 3.5
-- Python 2.7 or Python 3
-- (7zip)
-- Windows:
-    - C++ compiler (tested: VS2015)
-    - optional: [Ninja](https://ninja-build.org/)
-- Linux
-    - C++ compiler (tested: clang 3.5, GCC 6.2)
-- OS X
-    - C++ compiler (tested: XCode 8.3?)
+- [CMake 3.5](https://cmake.org/download/)
 
 Optional / required for some apps:
-- Boost (+path set with `-DBOOST_ROOT=path/to/boost`)
-    - to compile it yourself (in case you didn't download a precompiled version or use a different compiler) download [zlib](https://zlib.net/zlib-1.2.11.tar.xz) and extract it to the boost dir
-    - open the `x64 native command prompt for VS2015`
-    - `cd C:/path/to/boost_1_xy`
-    - `bootstrap.bat`
-    - `b2 -sZLIB_SOURCE="C:/path/to/zlib" -j8 address-model=64 --stagedir=./stage/x64 variant=debug,release link=static,shared --build-dir=build --with-chrono --with-date_time --with-filesystem --with-iostreams --with-regex --with-serialization --with-system --with-thread stage`
-    - if everything goes smoothly you should now have the libraries in `stage/x64/lib`
-- Qt (+path set with `-DQt5_DIR=C:/path_to/Qt/5.9.1/msvc2015_64/lib/cmake/Qt5/` or `set PATH=C:\Qt\5.9.1\msvc2015_64;%PATH%`)
+- [Boost](https://boost.org) (+path set with `-DBOOST_ROOT=path/to/boost`)
+    - Windows: install the [precompiled binaries](https://sourceforge.net/projects/boost/files/boost-binaries/)
+    - Debian / Ubuntu Linux: install the `libboost-dev` package
+    - OS X: install Boost via [Homebrew](https://brew.sh/)
+- [Qt](http://qt.io) (+path set with `-DQt5_DIR=C:/path_to/Qt/5.9.1/msvc2015_64/lib/cmake/Qt5/` or `set PATH=C:\Qt\5.9.1\msvc2015_64;%PATH%`)
+    - Windows: use the [installer](http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe)
+    - Debian / Ubuntu Linux: install the `qtbase5-dev` package
 
 On Mac, if using homebrew Qt5, it is necessary to run the following from the project root:
-`chmod +x ./fix_mac.sh`
-`sudo ./fix_mac.sh`
+`sudo bash ./fix_mac.sh`
 
-To build LSL, call either `lslbuild.py` (see `lslbuild.py --help`) from a valid build environment (e.g. the Visual C++ command line) or do it manually:
+Build instructions
+==================
 
-- extract the zip file or clone the repository (`git clone https://github.com/sccn/labstreaminglayer.git`)
-- change to this directory (git: `cd labstreaminglayer`)
-- create a build directory (`mkdir build`) and enter it (`cd build`)
-- create the generator files and define the build variables (`cmake -DVARX=Y -G "Generator Name" ../`). Notable switches are:
-	 - `-DLSL_USE_SYSTEM_BOOST` to compile against the bundled (`=Off`) or system (`=On`) Boost installation
-    - `-DBOOST_ROOT=/path/to/boost` to set the Boost path
-    - `-DLSLAPPS_Examples=On` to also build the "Examples"-App (for a complete list see `Apps/CMakeLists.txt`
-    - `-DCMAKE_BUILD_TYPE=Release` (`Release` or `Debug`) to compile with debug information or optimizations
-    - `-DCMAKE_INSTALL_PREFIX` to set where to install the LSL distribution
-    - `-G` to set the generator type (call without a parameter to see a list).
-- start the build process (all generators: `cmake --build .`) or load the generated VS Solution file
-- copy the generated files to an installation folder: `cmake --build . --target install` or use the `INSTALL` target in Visual Studio
+1. extract the zip file or clone the repository (`git clone https://github.com/sccn/labstreaminglayer.git`)
+2. Windows only: start `build_windows.bat` and follow the isntructions in step 5
+3. change to this directory (git: `cd labstreaminglayer`)
+4. create a build directory (`mkdir build`) and enter it (`cd build`)
+5. open the configuration UI (`cmake-gui ../`) and click on `Configure`
+    - select your compiler
+    - check the Apps you want to use
+    - if necessary, use `Add Entry` to add paths or change options
+        - Qt5 (`Qt5_DIR`, e.g. `C:/Qt/5.9.2/msvc2015_64/lib/cmake/Qt5/`)
+	- Boost (`BOOST_ROOT`, e.g. `C:/local/boost_1_65_1/`)
+	- a path where redistributable binaries get copied (`CMAKE_INSTALL_PREFIX`)
+	- build type (`CMAKE_BUILD_TYPE`, either `Release` or `Debug`). You can change this in Visual Studio later.
+    - click on `Generate` to create the build files / Visual Studio Solution file (open it with `Open Project`)
+6. start the build process (`cmake --build . --config Release --target install`) or load the generated VS Solution file
 
 This will create a distribution tree similar to this:
 
     ├── AppX
     │   ├── AppX.exe
-    │   ├── liblsl64_MSVC14.dll
-	│   ├── Qt5Xml.dll
-	│   ├── Qt5Gui.dll
+    │   ├── liblsl64.dll
+    │	├── Qt5Xml.dll
+    │   ├── Qt5Gui.dll
     │   └── AppX_configuration.ini
     ├── AppY
     │   ├── AppY.exe
     │   ├── AppY_conf.exe
-	│   ├── liblsl64_MSVC14.dll
+    │   ├── liblsl64.dll
     │   └── example.png
     ├── examples
     │   ├── CppReceive.exe
     │   ├── CppSendRand.exe
     │   ├── SendDataC.exe
-	│   ├── liblsl64_MSVC14.dll
+    │   ├── liblsl64.dll
     └── LSL
         ├── cmake
         │   ├── LSLAppBoilerplate.cmake
@@ -110,15 +106,14 @@ This will create a distribution tree similar to this:
         │   ├── lsl_c.h
         │   └── lsl_cpp.h
         └── lib
-            ├── liblsl64_MSVC14.dll
-            ├── liblsl64_MSVC14.lib
+            ├── liblsl64.dll
+            ├── liblsl64.lib
             └── lslboost.lib
 
 On Unix systems (Linux+OS X) the executable's library path is changed to include
 `../LSL/lib/` and the executable folder (`./`) so common libraries (Qt, Boost)
 can be distributed in a single library directory or put in the same folder.
-On Windows, the library is copied to (and search in) the executable folder.
+On Windows, the library is copied to (and searched in) the executable folder.
 
 If you want to build against the compiled liblsl, please see `OutOfTreeTest/CMakeLists.txt` for an example.
-
 
