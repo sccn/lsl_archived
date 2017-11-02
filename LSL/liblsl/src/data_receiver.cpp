@@ -190,12 +190,12 @@ void data_receiver::data_thread() {
 					// receive response parameters
 					while (server_stream.getline(buf,sizeof(buf)) && (buf[0] != '\r')) {
 						std::string hdrline(buf);
-						int colon = hdrline.find_first_of(":");
+						std::size_t colon = hdrline.find_first_of(':');
 						if (colon != std::string::npos) {
 							// extract key & value
 							std::string type = to_lower_copy(trim_copy(hdrline.substr(0,colon))), rest = to_lower_copy(trim_copy(hdrline.substr(colon+1)));
 							// strip off comments
-							int semicolon = rest.find_first_of(";");
+							std::size_t semicolon = rest.find_first_of(';');
 							if (semicolon != std::string::npos)
 								rest = rest.substr(0,semicolon);
 							// get the header information
