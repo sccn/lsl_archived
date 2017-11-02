@@ -17,48 +17,30 @@
 * To use this library you need to link to either the liblsl32 or liblsl64 shared library that comes with
 * this header. Under Visual Studio the library is linked in automatically.
 */
-
-#ifdef __MINGW32__
-    #ifdef LIBLSL_STATIC
-        #define LIBLSL_C_API
-    #elif defined (LIBLSL_EXPORTS)
+#ifdef LIBLSL_STATIC
+    #define LIBLSL_C_API
+#elif defined _WIN32 || defined __CYGWIN__
+    #if defined LIBLSL_EXPORTS
         #define LIBLSL_C_API __declspec(dllexport)
     #else
         #define LIBLSL_C_API __declspec(dllimport)
-    #endif
-#elif defined (_WIN32)
-    #ifdef LIBLSL_STATIC
-        #define LIBLSL_C_API
-    #elif defined (LIBLSL_EXPORTS)
-        #define LIBLSL_C_API __declspec(dllexport)
-    #else
-        #ifndef _DEBUG
-            #ifdef _WIN64
-                #pragma comment (lib,"liblsl64.lib")
-            #else
-                #pragma comment (lib,"liblsl32.lib")
-            #endif
+        #ifdef _WIN64
+            #define LSLBITS "64"
         #else
-            #ifdef LSL_DEBUG_BINDINGS
-                #ifdef _WIN64
-                    #pragma comment (lib,"liblsl64-debug.lib")
-                #else
-                    #pragma comment (lib,"liblsl32-debug.lib")
-                #endif
-            #else
-                #ifdef _WIN64
-                    #pragma comment (lib,"liblsl64.lib")
-                #else
-                    #pragma comment (lib,"liblsl32.lib")
-                #endif
-            #endif
+            #define LSLBITS "32"
         #endif
-        #define LIBLSL_C_API __declspec(dllimport)
+        #if defined _DEBUG && defined LSL_DEBUG_BINDINGS
+            #define LSLLIBPOSTFIX "-debug"
+        #else
+            #define LSLLIBPOSTFIX ""
+        #endif
+        #ifndef LSLNOAUTOLINK
+            #pragma comment (lib, "liblsl" LSLBITS LSLLIBPOSTFIX ".lib")
+        #endif
     #endif
     #pragma warning (disable:4275)
-#else
-    #pragma GCC visibility push(default)
-    #define LIBLSL_C_API
+#else // Linux / OS X
+    #define LIBLSL_C_API __attribute__((visibility("default")))
 #endif
 
 
@@ -1009,10 +991,6 @@ extern LIBLSL_C_API void lsl_destroy_continuous_resolver(lsl_continuous_resolver
 } /* end extern "C" */
 #endif
 
-
-#ifndef _WIN32
-    #pragma GCC visibility pop
-#endif
 
 #endif
 

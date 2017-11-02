@@ -97,14 +97,13 @@ add_subdirectory(${LSL_LSLBOOST_PATH})
 function(lsllib_properties libname)
 	target_link_libraries(${libname} PRIVATE lslboost)
 	target_include_directories(${libname}
-		PRIVATE
-		${CMAKE_CURRENT_BINARY_DIR} # generated export header
 		INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
 	)
 	target_compile_definitions(${libname} PRIVATE
-		LSL_INCLUDE_EXPORT_DEFINES
 		LIBLSL_EXPORTS
 		_SCL_SECURE_NO_WARNINGS _CRT_SECURE_NO_WARNINGS
+		PUBLIC
+		LSLNOAUTOLINK # don't use #pragma(lib) in CMake builds
 	)
 endfunction()
 
@@ -124,19 +123,10 @@ if(${LSL_BUILD_STATIC})
 	lsllib_properties(${target}-static)
 	list(APPEND lsl_export_targets "${target}-static")
 	# for LSL_CPP_API export header
-	target_compile_definitions(${target}-static PRIVATE LSL_STATIC_DEFINE)
+	target_compile_definitions(${target}-static PRIVATE LIBLSL_STATIC)
 	set_target_properties(${target}-static PROPERTIES
 		OUTPUT_NAME "${target}${lslplatform}-static")
 endif()
-
-# Generate with LIBLSL_CPP_API exports
-include(GenerateExportHeader)
-generate_export_header(${target}
-	BASE_NAME LSL
-	EXPORT_MACRO_NAME LIBLSL_CPP_API
-	EXPORT_FILE_NAME lsl_export_defines.h
-	STATIC_DEFINE LIBLSL_STATIC
-)
 
 if (MINGW)
 	target_link_libraries (${target} PUBLIC ws2_32 wsock32 winmm)
