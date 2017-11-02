@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.5)
 project(LabStreamingLayer)
 
-if(NOT CMAKE_INSTALL_PREFIX)
-	SET(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_LIST_DIR}/lsl_${CMAKE_BUILD_TYPE}")
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+	SET(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_LIST_DIR}/build/install/lsl_${CMAKE_BUILD_TYPE}" CACHE PATH
+		"Where to put redistributable binaries" FORCE)
+	message(WARNING "CMAKE_INSTALL_PREFIX default initialized to ${CMAKE_INSTALL_PREFIX}")
 endif()
 
 # add the liblsl build directory
