@@ -51,25 +51,24 @@ else ()  # WIN32
   set(Boost_LIBRARIES "")
 endif ()
 
-add_library (lslboost ${Boost_FILES})
-set_property (TARGET lslboost PROPERTY POSITION_INDEPENDENT_CODE ON)
+add_library (lslboost STATIC ${Boost_FILES})
 target_compile_definitions(lslboost PUBLIC BOOST_ALL_NO_LIB=1 BOOST_THREAD_BUILD_LIB=1)
 target_include_directories(lslboost PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 target_link_libraries(lslboost PRIVATE ${Boost_LIBRARIES})
-set_target_properties(lslboost PROPERTIES CXX_VISIBILITY_PRESET default)
+set_target_properties(lslboost PROPERTIES
+	CXX_VISIBILITY_PRESET hidden
+	POSITION_INDEPENDENT_CODE On
+)
 
 # gcc 5 needs -std=c++0x to compile lslboost
 if(NOT MSVC)
-  target_compile_definitions(lslboost PRIVATE cxx_auto_type)
+  target_compile_features(lslboost PRIVATE cxx_auto_type)
 endif ()
 
 install(TARGETS lslboost EXPORT lslboostConfig
 	COMPONENT "liblsl-dev"
-  ARCHIVE DESTINATION LSL/lib
-  LIBRARY DESTINATION LSL/lib)
-#install(DIRECTORY boost lslboost
-#	DESTINATION LSL/include)
+  ARCHIVE DESTINATION LSL/lib)
 install(EXPORT lslboostConfig
 	COMPONENT "liblsl-dev"
-  DESTINATION LSL/cmake)
+	DESTINATION LSL/cmake)
