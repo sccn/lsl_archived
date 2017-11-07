@@ -4,8 +4,8 @@
 #include "common.h"
 #include "api_config.h"
 #include <boost/cstdint.hpp>
-#include <boost/asio.hpp>
-#include <boost/thread.hpp>
+#include <boost/system/system_error.hpp>
+#include <boost/thread/thread.hpp>
 #include <iostream>
 
 namespace lsl {
@@ -16,7 +16,7 @@ namespace lsl {
 			try {
 				sock.bind(typename Protocol::endpoint(protocol,(unsigned short)(k + api_config::get_instance()->base_port())));
 				return k + api_config::get_instance()->base_port();
-			} catch (boost::system::system_error &) { /* port occupied */ }
+			} catch (lslboost::system::system_error &) { /* port occupied */ }
 		}
 		if (api_config::get_instance()->allow_random_ports()) {
 			while (true) {
@@ -24,7 +24,7 @@ namespace lsl {
 				try {
 					sock.bind(typename Protocol::endpoint(protocol,port));
 					return port;
-				} catch (boost::system::system_error &) { /* port occupied */ }
+				} catch (lslboost::system::system_error &) { /* port occupied */ }
 			}
 		} else
 			throw std::runtime_error("All local ports were found occupied. You may have more open outlets on this machine than your PortRange setting allows (see Network Connectivity in the LSL wiki) or you have a problem with your network configuration.");
@@ -37,7 +37,7 @@ namespace lsl {
 				sock.bind(typename Protocol::endpoint(protocol,(unsigned short)(k + api_config::get_instance()->base_port())));
                 sock.listen(backlog);
 				return k + api_config::get_instance()->base_port();
-			} catch (boost::system::system_error &) { /* port occupied */ }
+			} catch (lslboost::system::system_error &) { /* port occupied */ }
 		}
 		if (api_config::get_instance()->allow_random_ports()) {
 			while (true) {
@@ -46,7 +46,7 @@ namespace lsl {
 					sock.bind(typename Protocol::endpoint(protocol,port));
 					sock.listen(backlog);
 					return port;
-				} catch (boost::system::system_error &) { /* port occupied */ }
+				} catch (lslboost::system::system_error &) { /* port occupied */ }
 			}
 		} else
 			throw std::runtime_error("All local ports were found occupied. You may have more open outlets on this machine than your PortRange setting allows (see Network Connectivity in the LSL wiki) or you have a problem with your network configuration.");
@@ -58,7 +58,7 @@ namespace lsl {
 			if (sock->is_open())
 				sock->close();
 		}  catch(std::exception &e) {
-			std::cerr << "Error during close_if_open (thread id: " << boost::this_thread::get_id() << "): " << e.what() << std::endl;
+			std::cerr << "Error during close_if_open (thread id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
 		}
 	}
 
@@ -73,7 +73,7 @@ namespace lsl {
 				sock->close();
 			}
 		}  catch(std::exception &e) {
-			std::cerr << "Error during shutdown_and_close (thread id: " << boost::this_thread::get_id() << "): " << e.what() << std::endl;
+			std::cerr << "Error during shutdown_and_close (thread id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
 		}
 	}
 

@@ -30,16 +30,16 @@ info_receiver::~info_receiver() {
 
 /// Retrieve the complete information of the given stream, including the extended description.
 const stream_info_impl &info_receiver::info(double timeout) {
-	boost::unique_lock<boost::mutex> lock(fullinfo_mut_);
+	lslboost::unique_lock<lslboost::mutex> lock(fullinfo_mut_);
 	if (!info_ready()) {
 		// start thread if not yet running
 		if (!info_thread_.joinable())
-			info_thread_ = boost::thread(&info_receiver::info_thread,this);
+			info_thread_ = lslboost::thread(&info_receiver::info_thread,this);
 		// wait until we are ready to return a result (or we time out)
 		if (timeout >= FOREVER)
-			fullinfo_upd_.wait(lock, boost::bind(&info_receiver::info_ready,this));
+			fullinfo_upd_.wait(lock, lslboost::bind(&info_receiver::info_ready,this));
 		else
-			if (!fullinfo_upd_.wait_for(lock, boost::chrono::duration<double>(timeout), boost::bind(&info_receiver::info_ready,this)))
+			if (!fullinfo_upd_.wait_for(lock, lslboost::chrono::duration<double>(timeout), lslboost::bind(&info_receiver::info_ready,this)))
 				throw timeout_error("The info() operation timed out.");
 	}
 	if (conn_.lost())
@@ -54,7 +54,7 @@ void info_receiver::info_thread() {
 		while (!conn_.lost() && !conn_.shutdown()) {
 			try {
 				// make a new stream buffer & stream
-				boost::asio::cancellable_streambuf<tcp> buffer;
+				lslboost::asio::cancellable_streambuf<tcp> buffer;
 				buffer.register_at(&conn_);
 				std::iostream server_stream(&buffer);
 				// connect...
@@ -71,7 +71,7 @@ void info_receiver::info_thread() {
 					continue;
 				// store the result for pickup & return
 				{
-					boost::lock_guard<boost::mutex> lock(fullinfo_mut_);
+					lslboost::lock_guard<lslboost::mutex> lock(fullinfo_mut_);
 					fullinfo_ = stream_info_impl_p(new stream_info_impl(info));
 				}
 				fullinfo_upd_.notify_all();

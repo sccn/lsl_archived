@@ -23,7 +23,7 @@
 
 
 #if BOOST_VERSION < 104500
-	#error "Please do not compile this with a boost version older than 1.45 because the library would otherwise not be protocol-compatible with builds using other versions."
+	#error "Please do not compile this with a lslboost version older than 1.45 because the library would otherwise not be protocol-compatible with builds using other versions."
 #endif
 
 

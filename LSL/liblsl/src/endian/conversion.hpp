@@ -461,6 +461,6 @@ namespace endian
   }
 
 }  // namespace endian
-}  // namespace boost
+}  // namespace lslboost
 
 #endif // BOOST_ENDIAN_CONVERTERS_HPP

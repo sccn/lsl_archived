@@ -29,7 +29,7 @@ LIBLSL_C_API int lsl_library_version() { return LSL_LIBRARY_VERSION; }
 * when a sample was actually captured.
 */
 LIBLSL_C_API double lsl_local_clock() { 
-	return boost::chrono::nanoseconds(boost::chrono::high_resolution_clock::now().time_since_epoch()).count()/1000000000.0; 
+	return lslboost::chrono::nanoseconds(lslboost::chrono::high_resolution_clock::now().time_since_epoch()).count()/1000000000.0; 
 } 
 
 /**
