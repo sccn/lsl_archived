@@ -10,8 +10,8 @@
 // === implementation of the api_config class ===
 
 using namespace lsl;
-using namespace boost::filesystem;
-using namespace boost::algorithm;
+using namespace lslboost::filesystem;
+using namespace lslboost::algorithm;
 
 /// Helper function: Substitute the "~" character by the full home directory (according to environment variables).
 path static expand_tilde(const std::string &filename) {
@@ -33,7 +33,7 @@ static std::vector<std::string> parse_set(const std::string &setstr) {
 	if ((setstr.size() > 2) && setstr[0] == '{' && setstr[setstr.size()-1] == '}') {
 		// non-empty set: split by ","
         std::string sub = setstr.substr(1,setstr.size()-2);
-        boost::algorithm::split(result,sub,boost::algorithm::is_any_of(","));
+        lslboost::algorithm::split(result,sub,lslboost::algorithm::is_any_of(","));
 		// remove leading and trailing whitespace from each element
 		for (std::vector<std::string>::iterator i=result.begin(); i!=result.end(); i++)
 			trim(*i);
@@ -73,7 +73,7 @@ api_config::api_config() {
 */
 void api_config::load_from_file(const std::string &filename) {
 	try {
-		boost::property_tree::ptree pt;
+		lslboost::property_tree::ptree pt;
 		if (!filename.empty())
 			read_ini(filename, pt);
 
@@ -191,7 +191,7 @@ void api_config::load_from_file(const std::string &filename) {
 * Instantiate / retrieve singleton.
 */
 const api_config *api_config::get_instance() {
-	boost::call_once(&called_once,once_flag);
+	lslboost::call_once(&called_once,once_flag);
 	return get_instance_internal();
 }
 
@@ -202,5 +202,5 @@ api_config *api_config::get_instance_internal() {
 
 void api_config::called_once() { get_instance_internal(); }
 
-boost::once_flag api_config::once_flag = BOOST_ONCE_INIT;
+lslboost::once_flag api_config::once_flag = BOOST_ONCE_INIT;
 

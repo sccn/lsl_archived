@@ -4,6 +4,8 @@
 #include <set>
 #include <boost/container/flat_set.hpp>
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/condition_variable.hpp>
 #include "consumer_queue.h"
 #include "sample.h"
 
@@ -19,8 +21,8 @@ namespace lsl {
 	* queues (each of which can have its own capacity preferences). The ownership of the send_buffer is shared 
 	* between the consumer_queues and the owner of the send_buffer.
 	*/
-	class send_buffer: public boost::enable_shared_from_this<send_buffer> {
-		typedef boost::container::flat_set<consumer_queue*> consumer_set;
+	class send_buffer: public lslboost::enable_shared_from_this<send_buffer> {
+		typedef lslboost::container::flat_set<consumer_queue*> consumer_set;
 	public:
 		/**
 		* Create a new send buffer.
@@ -64,8 +66,8 @@ namespace lsl {
 
 		int max_capacity_;							// maximum capacity beyond which the oldest samples will be dropped
 		consumer_set consumers_;					// a set of registered consumer queues
-		boost::mutex consumers_mut_;				// mutex to protect the integrity of consumers_
-		boost::condition_variable some_registered_;	// condition variable signaling that a consumer has registered
+		lslboost::mutex consumers_mut_;				// mutex to protect the integrity of consumers_
+		lslboost::condition_variable some_registered_;	// condition variable signaling that a consumer has registered
 	};
 
 }

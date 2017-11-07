@@ -1,14 +1,14 @@
 #ifndef DATA_RECEIVER_H
 #define DATA_RECEIVER_H
 
-#include <boost/thread.hpp>
+#include <boost/thread/thread.hpp>
 #include "consumer_queue.h"
 #include "inlet_connection.h"
 #include "cancellable_streambuf.h"
 
 
 
-using boost::asio::ip::tcp;
+using lslboost::asio::ip::tcp;
 
 namespace lsl {
 
@@ -55,7 +55,7 @@ namespace lsl {
 				throw lost_error("The stream read by this outlet has been lost. To recover, you need to re-resolve the source and re-create the inlet.");
 			// start data thread implicitly if necessary
 			if (check_thread_start_ && !data_thread_.joinable()) {
-				data_thread_ = boost::thread(&data_receiver::data_thread,this);
+				data_thread_ = lslboost::thread(&data_receiver::data_thread,this);
 				check_thread_start_ = false;
 			}
 			// get the sample with timeout
@@ -89,13 +89,13 @@ namespace lsl {
 
 		// fields related to the data reader thread
 		sample::factory_p sample_factory_;			// a factory to create samples of appropriate type
-		boost::thread data_thread_;					// background read thread
+		lslboost::thread data_thread_;					// background read thread
 		bool check_thread_start_;					// whether we need to check whether the thread has been started
 		bool closing_stream_;						// indicates to the data thread that it a close has been requested
 		bool connected_;							// whether the stream has been connected / opened
 		consumer_queue sample_queue_;				// queue of samples ready to be picked up (populated by the data thread)
-		boost::mutex connected_mut_;				// mutex to protect the connected state
-		boost::condition_variable connected_upd_;	// condition variable to indicate that an update for the connected state is available
+		lslboost::mutex connected_mut_;				// mutex to protect the connected state
+		lslboost::condition_variable connected_upd_;	// condition variable to indicate that an update for the connected state is available
 
 		// internal data used by the reader thread
 		int max_buflen_;							// the maximum number of samples to be buffered for this inlet

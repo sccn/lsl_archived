@@ -2,21 +2,20 @@
 #define CONSUMER_QUEUE_H
 
 #include <boost/lockfree/spsc_queue.hpp>
-#include <boost/thread.hpp>
 #include "sample.h"
 
 namespace lsl {
 	/// shared pointer to a consumer queue
-	typedef boost::shared_ptr<class consumer_queue> consumer_queue_p;
+	typedef lslboost::shared_ptr<class consumer_queue> consumer_queue_p;
 	/// shared pointer to a send buffer
-	typedef boost::shared_ptr<class send_buffer> send_buffer_p;
+	typedef lslboost::shared_ptr<class send_buffer> send_buffer_p;
 
 	/**
 	* A thread-safe producer-consumer queue of unread samples.
 	* Erases the oldest samples if max capacity is exceeded. Implemented as a circular buffer.
 	*/
-	class consumer_queue: private boost::noncopyable {
-		typedef boost::lockfree::spsc_queue<sample_p> buffer_type;
+	class consumer_queue: private lslboost::noncopyable {
+		typedef lslboost::lockfree::spsc_queue<sample_p> buffer_type;
 	public:
 		/**
 		* Create a new queue with a given capacity.

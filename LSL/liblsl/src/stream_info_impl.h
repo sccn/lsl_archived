@@ -5,13 +5,13 @@
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/bimap.hpp>
-#include <boost/thread.hpp>
+#include <boost/thread/mutex.hpp>
 #include "pugixml/pugixml.hpp"
 
 namespace lsl {
 
 	/// shared pointer to a stream_info_impl
-	typedef boost::shared_ptr<class stream_info_impl> stream_info_impl_p;
+	typedef lslboost::shared_ptr<class stream_info_impl> stream_info_impl_p;
 
 	/**
 	* Actual implementation of the stream_info class.
@@ -19,7 +19,7 @@ namespace lsl {
 	*/
 	class stream_info_impl {
 		/// The query cache is a (bidirectional) mapping between query-strings and pairs of (last-use-timestamp, matching-true/false)
-		typedef boost::bimap<std::string,std::pair<double,bool> > query_cache;
+		typedef lslboost::bimap<std::string,std::pair<double,bool> > query_cache;
 	public:
 
 		/**
@@ -126,7 +126,7 @@ namespace lsl {
 		* Get the number of bytes per channel (returns 0 for string-typed channels).
 		*/
 		int channel_bytes() const {
-			const int channel_format_sizes[] = {0,sizeof(float),sizeof(double),sizeof(std::string),sizeof(boost::uint32_t),sizeof(boost::uint16_t),sizeof(boost::uint8_t),8};
+			const int channel_format_sizes[] = {0,sizeof(float),sizeof(double),sizeof(std::string),sizeof(lslboost::uint32_t),sizeof(lslboost::uint16_t),sizeof(lslboost::uint8_t),8};
 			return channel_format_sizes[channel_format_];
 		}
 
@@ -263,7 +263,7 @@ namespace lsl {
 		pugi::xml_document doc_;
 		// cached query results
 		query_cache cached_;
-		boost::mutex cache_mut_;
+		lslboost::mutex cache_mut_;
 	};
 
 

@@ -8,7 +8,7 @@
 // === implementation of the inlet_connection class ===
 
 using namespace lsl;
-using namespace boost::asio;
+using namespace lslboost::asio;
 
 /**
 * Construct a new inlet connection.
@@ -81,14 +81,14 @@ inlet_connection::inlet_connection(const stream_info_impl &info, bool recover): 
 /// Engage the connection and its recovery watchdog thread.
 void inlet_connection::engage() {
 	if (recovery_enabled_)
-		watchdog_thread_ = boost::thread(&inlet_connection::watchdog_thread,this);
+		watchdog_thread_ = lslboost::thread(&inlet_connection::watchdog_thread,this);
 }
 
 /// Disengage the connection and all its resolver capabilities (including the watchdog).
 void inlet_connection::disengage() {
 	// shut down the connection
 	{
-		boost::lock_guard<boost::mutex> lock(shutdown_mut_);
+		lslboost::lock_guard<lslboost::mutex> lock(shutdown_mut_);
 		shutdown_ = true;
 	}
 	shutdown_cond_.notify_all();
@@ -105,7 +105,7 @@ void inlet_connection::disengage() {
 
 // get the TCP endpoint from the info (according to our configured protocol)
 tcp::endpoint inlet_connection::get_tcp_endpoint() {
-	boost::shared_lock<boost::shared_mutex> lock(host_info_mut_);
+	lslboost::shared_lock<lslboost::shared_mutex> lock(host_info_mut_);
 	
 	if(tcp_protocol_ == tcp::v4()) {
         std::string address = host_info_.v4address();
@@ -113,15 +113,15 @@ tcp::endpoint inlet_connection::get_tcp_endpoint() {
         return tcp::endpoint(ip::address::from_string(address), port);
         
     //This more complicated procedure is required when the address is an ipv6 link-local address.
-    //Simplified from https://stackoverflow.com/questions/10286042/using-boost-to-accept-on-ipv6-link-scope-address
+    //Simplified from https://stackoverflow.com/questions/10286042/using-lslboost-to-accept-on-ipv6-link-scope-address
 	//It does not hurt when the address is not link-local.
 	} else {
         std::string address = host_info_.v6address();
-        std::string port = boost::lexical_cast<std::string>(host_info_.v6data_port());
+        std::string port = lslboost::lexical_cast<std::string>(host_info_.v6data_port());
 
         io_service io; 
         ip::tcp::resolver resolver(io);
-        ip::tcp::resolver::query query( address, boost::lexical_cast<std::string>(port));
+        ip::tcp::resolver::query query( address, lslboost::lexical_cast<std::string>(port));
         ip::tcp::resolver::iterator it = resolver.resolve(query);
         ip::tcp::resolver::iterator end;
         
@@ -135,7 +135,7 @@ tcp::endpoint inlet_connection::get_tcp_endpoint() {
 
 // get the UDP endpoint from the info (according to our configured protocol)
 udp::endpoint inlet_connection::get_udp_endpoint() {
-	boost::shared_lock<boost::shared_mutex> lock(host_info_mut_);
+	lslboost::shared_lock<lslboost::shared_mutex> lock(host_info_mut_);
 	
 	if(udp_protocol_ == udp::v4()) {
         std::string address = host_info_.v4address();
@@ -143,15 +143,15 @@ udp::endpoint inlet_connection::get_udp_endpoint() {
         return udp::endpoint(ip::address::from_string(address), port);
         
     //This more complicated procedure is required when the address is an ipv6 link-local address.
-    //Simplified from https://stackoverflow.com/questions/10286042/using-boost-to-accept-on-ipv6-link-scope-address
+    //Simplified from https://stackoverflow.com/questions/10286042/using-lslboost-to-accept-on-ipv6-link-scope-address
 	//It does not hurt when the address is not link-local.
 	} else {
         std::string address = host_info_.v6address();
-        std::string port = boost::lexical_cast<std::string>(host_info_.v6data_port());
+        std::string port = lslboost::lexical_cast<std::string>(host_info_.v6data_port());
 
         io_service io; 
         ip::udp::resolver resolver(io);
-        ip::udp::resolver::query query( address, boost::lexical_cast<std::string>(port));
+        ip::udp::resolver::query query( address, lslboost::lexical_cast<std::string>(port));
         ip::udp::resolver::iterator it = resolver.resolve(query);
         ip::udp::resolver::iterator end;
         
@@ -165,19 +165,19 @@ udp::endpoint inlet_connection::get_udp_endpoint() {
 
 // get the hostname from the info
 std::string inlet_connection::get_hostname() {
-	boost::shared_lock<boost::shared_mutex> lock(host_info_mut_);
+	lslboost::shared_lock<lslboost::shared_mutex> lock(host_info_mut_);
 	return host_info_.hostname();
 }
 
 /// get the current stream UID (may change between crashes/reconnects)
 std::string inlet_connection::current_uid() {
-	boost::shared_lock<boost::shared_mutex> lock(host_info_mut_);
+	lslboost::shared_lock<lslboost::shared_mutex> lock(host_info_mut_);
 	return host_info_.uid();
 }
 
 /// get the current nominal sampling rate (might change between crashes/reconnects)
 double inlet_connection::current_srate() {
-	boost::shared_lock<boost::shared_mutex> lock(host_info_mut_);
+	lslboost::shared_lock<lslboost::shared_mutex> lock(host_info_mut_);
 	return host_info_.nominal_srate();
 }
 
@@ -188,20 +188,20 @@ double inlet_connection::current_srate() {
 void inlet_connection::try_recover() {
 	if (recovery_enabled_) {
 		try {
-			boost::lock_guard<boost::mutex> lock(recovery_mut_);
+			lslboost::lock_guard<lslboost::mutex> lock(recovery_mut_);
 			// first create the query string based on the known stream information
 			std::ostringstream query; 
 			{
-				boost::shared_lock<boost::shared_mutex> lock(host_info_mut_);
+				lslboost::shared_lock<lslboost::shared_mutex> lock(host_info_mut_);
 				// construct query according to the fields that are present in the stream_info
 				const char *channel_format_strings[] = {"undefined","float32","double64","string","int32","int16","int8","int64"};
-				query << "channel_count='" << boost::lexical_cast<std::string>(host_info_.channel_count()) << "'";
+				query << "channel_count='" << lslboost::lexical_cast<std::string>(host_info_.channel_count()) << "'";
 				if (!host_info_.name().empty())
 					query << " and name='" << host_info_.name() << "'";
 				if (!host_info_.type().empty())
 					query << " and type='" << host_info_.type() << "'";
 				if (host_info_.nominal_srate() > 0)
-					query << " and nominal_srate='" << boost::lexical_cast<std::string>(host_info_.nominal_srate()) << "'";
+					query << " and nominal_srate='" << lslboost::lexical_cast<std::string>(host_info_.nominal_srate()) << "'";
 				if (!host_info_.source_id().empty())
 					query << " and source_id='" << host_info_.source_id() << "'";					
 				query << " and channel_format='" << channel_format_strings[host_info_.channel_format()] << "'";
@@ -212,7 +212,7 @@ void inlet_connection::try_recover() {
 				std::vector<stream_info_impl> infos = resolver_.resolve_oneshot(query.str(),1,FOREVER,attempt==0 ? 1.0 : 5.0);
 				if (!infos.empty()) {
 					// got a result
-					boost::unique_lock<boost::shared_mutex> lock(host_info_mut_);
+					lslboost::unique_lock<lslboost::shared_mutex> lock(host_info_mut_);
 					// check if any of the returned streams is the one that we're currently connected to
 					for (unsigned k=0;k<infos.size();k++)
 						if (infos[k].uid() == host_info_.uid())
@@ -225,8 +225,8 @@ void inlet_connection::try_recover() {
 						// cancel all cancellable operations registered with this connection
 						cancel_all_registered();
 						// invoke any callbacks associated with a connection recovery
-						boost::lock_guard<boost::mutex> lock(onrecover_mut_);
-						for(std::map<void*,boost::function<void()> >::iterator i=onrecover_.begin(),e=onrecover_.end();i!=e;i++)
+						lslboost::lock_guard<lslboost::mutex> lock(onrecover_mut_);
+						for(std::map<void*,lslboost::function<void()> >::iterator i=onrecover_.begin(),e=onrecover_.end();i!=e;i++)
 							(i->second)();
 					} else {
 						// there are multiple possible streams to connect to in a recovery attempt: we warn and re-try
@@ -253,7 +253,7 @@ void inlet_connection::watchdog_thread() {
 		try {
 			// we only try to recover if a) there are active transmissions and b) we haven't seen new data for some time
 			{
-				boost::unique_lock<boost::mutex> lock(client_status_mut_);
+				lslboost::unique_lock<lslboost::mutex> lock(client_status_mut_);
 				if ((active_transmissions_ > 0) && (lsl_clock() - last_receive_time_ > api_config::get_instance()->watchdog_time_threshold())) {
 					lock.unlock();
 					try_recover();
@@ -262,8 +262,8 @@ void inlet_connection::watchdog_thread() {
 			// instead of sleeping we're waiting on a condition variable for the sleep duration 
 			// so that the watchdog can be cancelled conveniently
 			{
-				boost::unique_lock<boost::mutex> lock(shutdown_mut_);
-				shutdown_cond_.wait_for(lock,boost::chrono::duration<double>(api_config::get_instance()->watchdog_check_interval()), boost::bind(&inlet_connection::shutdown,this));
+				lslboost::unique_lock<lslboost::mutex> lock(shutdown_mut_);
+				shutdown_cond_.wait_for(lock,lslboost::chrono::duration<double>(api_config::get_instance()->watchdog_check_interval()), lslboost::bind(&inlet_connection::shutdown,this));
 			}
 		} catch(std::exception &e) {
 			std::cerr << "Unexpected hiccup in the watchdog thread: " << e.what() << std::endl;
@@ -279,8 +279,8 @@ void inlet_connection::try_recover_from_error() {
 			// so we need to notify the other inlet components
 			lost_ = true;
 			try {
-				boost::lock_guard<boost::mutex> lock(client_status_mut_);
-				for(std::map<void*,boost::condition_variable*>::iterator i=onlost_.begin(),e=onlost_.end();i!=e;i++)
+				lslboost::lock_guard<lslboost::mutex> lock(client_status_mut_);
+				for(std::map<void*,lslboost::condition_variable*>::iterator i=onlost_.begin(),e=onlost_.end();i!=e;i++)
 					i->second->notify_all();
 			} catch(std::exception &e) {
 				std::cerr << "Unexpected problem while trying to issue a connection loss notification: " << e.what() << std::endl;
@@ -296,42 +296,42 @@ void inlet_connection::try_recover_from_error() {
 
 /// Indicate that a transmission is now active.
 void inlet_connection::acquire_watchdog() {
-	boost::lock_guard<boost::mutex> lock(client_status_mut_);
+	lslboost::lock_guard<lslboost::mutex> lock(client_status_mut_);
 	active_transmissions_++;
 }
 
 /// Indicate that a transmission has just completed.
 void inlet_connection::release_watchdog() {
-	boost::lock_guard<boost::mutex> lock(client_status_mut_);
+	lslboost::lock_guard<lslboost::mutex> lock(client_status_mut_);
 	active_transmissions_--;
 }
 
 /// Update the time when the last content was received from the source
 void inlet_connection::update_receive_time(double t) {
-	boost::lock_guard<boost::mutex> lock(client_status_mut_);
+	lslboost::lock_guard<lslboost::mutex> lock(client_status_mut_);
 	last_receive_time_ = t;
 }
 
 /// Register a condition variable that should be notified when a connection is lost
-void inlet_connection::register_onlost(void *id, boost::condition_variable *cond) {
-	boost::lock_guard<boost::mutex> lock(client_status_mut_);
+void inlet_connection::register_onlost(void *id, lslboost::condition_variable *cond) {
+	lslboost::lock_guard<lslboost::mutex> lock(client_status_mut_);
 	onlost_[id] = cond;
 }
 
 /// Unregister a condition variable
 void inlet_connection::unregister_onlost(void *id) {
-	boost::lock_guard<boost::mutex> lock(client_status_mut_);
+	lslboost::lock_guard<lslboost::mutex> lock(client_status_mut_);
 	onlost_.erase(id);
 }
 
 /// Register a callback function that shall be called when a recovery has been performed
-void inlet_connection::register_onrecover(void *id, const boost::function<void()> &func) {
-	boost::lock_guard<boost::mutex> lock(onrecover_mut_);
+void inlet_connection::register_onrecover(void *id, const lslboost::function<void()> &func) {
+	lslboost::lock_guard<lslboost::mutex> lock(onrecover_mut_);
 	onrecover_[id] = func;
 }
 
 /// Unregister a recovery callback function
 void inlet_connection::unregister_onrecover(void *id) {
-	boost::lock_guard<boost::mutex> lock(onrecover_mut_);
+	lslboost::lock_guard<lslboost::mutex> lock(onrecover_mut_);
 	onrecover_.erase(id);
 }
