@@ -18,13 +18,9 @@ build_script:
 - cmd: >-
     call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 
-    mkdir build
-
     cd build
 
-    mkdir lslinstall
-
-    cmake -G Ninja -DQt5_DIR=C:/Qt/5.9.1/msvc2015/lib/cmake/Qt5 -DBOOST_ROOT=C:/Libraries/boost_1_63_0 -DCMAKE_BUILD_TYPE=Release -DLSLAPPS_LabRecorder=1 -DCMAKE_INSTALL_PREFIX=lslinstall ../
+    cmake -G Ninja -DQt5_DIR=C:/Qt/5.9.1/msvc2015/lib/cmake/Qt5 -DBOOST_ROOT=C:/Libraries/boost_1_63_0 -DCMAKE_BUILD_TYPE=Release -DLSLAPPS_LabRecorder=1 -DCMAKE_INSTALL_PREFIX=install ../
 
     cmake --build . --config Release --target LSLPACKAGE
 artifacts:
