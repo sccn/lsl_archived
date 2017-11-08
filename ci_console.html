@@ -1,0 +1,103 @@
+<!doctype html5>
+<html><head><meta charset="utf-8"><title>Start CI builds</title>
+<style type="text/css">
+body{
+        margin:40px auto;
+        max-width:30em;
+        line-height:1.6;
+        color:#444;
+        padding:0 10px;
+}
+div {border: 1px solid gray; white-space: pre-wrap;}
+form label { width: 10em; display:inline-block; }
+input[type="text"],input[type="button"] { width: 25em; display: inline-block; }
+</style>
+<script>
+function $(id) { return document.getElementById(id); }
+function formval(formid) { return $(formid).value; }
+function savesettings() {
+	if(window.location.protocol!=='file:') alert('Credentials are only saved on local (file://C:/foo.html) files');
+	for(inp of document.getElementsByTagName('input')) window.localStorage.setItem(inp.name, inp.value);
+}
+function xhr(url, headers, data) {
+	var req = new XMLHttpRequest();
+	req.open('POST', url);
+	headers['Content-Type'] = 'application/json';
+	for(key in headers) req.setRequestHeader(key, headers[key]);
+	req.onload = ()=>{
+		$('result').textContent = req.response;
+		console.log(req);
+	}
+	let datastr = JSON.stringify(data, null, 2);
+	$('request').textContent = datastr;
+	req.send(datastr);
+}
+function buildtravis() {
+	var data = { 'request': { }};
+	if(branch = formval('branch')) {data.request.branch = branch;}
+	if(cmakeargs = formval('cmakeargs')) data.request.config = {'env':{'CMakeArgs': cmakeargs}};
+
+	let reponame = formval('accountName') + '%2F' + formval('projectSlug');
+	let url = 'https://api.travis-ci.org/repo/' + reponame + '/requests';
+	let headers = {'Travis-API-Version': 3, 'Authorization': 'token ' + formval('trtoken')};
+	xhr(url, headers, data);
+}
+// Useful presets for AppVeyor
+let appveyorcompilers = {'Default': {},
+	'Default x64': {'VCVER': '14.0', 'ARCH': 'amd64', 'QTCOMPILER': 'msvc2015_64'},
+	'vs2008': {'VCVER': '9.0', 'ARCH': 'x86', 'QTCOMPILER': 'not supported', 'CMakeArgs': ''},
+	'vs2012': {'VCVER': '11.0', 'ARCH': 'x86', 'QTCOMPILER': 'not supported', 'CMakeArgs': ''},
+	'vs2013': {'VCVER': '12.0', 'ARCH': 'x86', 'QTCOMPILER': 'msvc2013'}
+	};
+function buildappveyor() {
+	var data = { 'accountName': formval('accountName'), 'projectSlug': formval('projectSlug'),
+		'environmentVariables': appveyorcompilers[formval('avcompiler')]};
+	if(branch = formval('branch')) data.branch = branch;
+	if(cmakeargs = formval('cmakeargs')) data.environmentVariables.CMakeArgs = cmakeargs;
+
+	let headers = { 'Authorization': 'Bearer ' + formval('avtoken')};
+	xhr('https://ci.appveyor.com/api/builds', headers, data);
+}
+document.addEventListener("DOMContentLoaded", function() {
+	for(inp of document.getElementsByTagName('input')) {
+		if(inp.type=='button') continue;
+		let savedval = window.localStorage.getItem(inp.name);
+		if(savedval !== null) inp.value = savedval;
+	}
+	
+	for(key in appveyorcompilers) {
+		var option = document.createElement('option');
+		option.textContent = option.value = key;
+		$('avcompiler').appendChild(option);
+	}
+	$('avcompiler').onchange = (ev)=>{
+		$('avcompilersettings').textContent = JSON.stringify(appveyorcompilers[formval('avcompiler')], null, 2);
+	};
+});
+	</script></head>
+	<body><form action="#">
+		<fieldset><legend>Account / Repo settings</legend>
+		<label>Account Name: <input id="accountName" name="accountName" value="tstenner"/></label><br>
+		<label>Repo Name: <input id="projectSlug" name="projectSlug" value="labstreaminglayer"/></label><br>
+		<label>AppVeyor-Token: <input id="avtoken" name="avtoken" value=""/></label><br>
+		<label>Travis-Token: <input id="trtoken" name="trtoken" value=""/></label><br>
+		<input type="button" value="Save settings locally" onclick="savesettings()">
+		</fieldset>
+		<fieldset><legend>Build settings</legend>
+		<label>Branch (optional): <input id="branch" name="branch" value=""/></label><br>
+		<label>CMake args: <input id="cmakeargs" name="cmakeargs" value="-DLSLAPPS_LabRecorder=1"/></label><br>
+		</fieldset>
+		<!--Travis-Repo-ID: <input id="travisrepoid" name="travisrepoid" value="14417672"></br>-->
+		<fieldset><legend>AppVeyor Settings</legend>
+		<select id="avcompiler" name="avcompiler"><!-- Filled automatically on page load--></select><br>
+		<div id="avcompilersettings"></div>
+		<input id="buildbtnAV" type="button" value="Build on AppVeyor" onclick="buildappveyor()">
+		</fieldset>
+		<fieldset><legend><a href="https://docs.travis-ci.com/user/triggering-builds/">Travis settings</a></legend>
+		<input id="buildbtnTravis" type="button" value="Build on Travis" onclick="buildtravis()">
+		</fieldset>
+	</form>
+	<div id="request"></div>
+	<div id="result"></div>
+	</body>
+</html>
