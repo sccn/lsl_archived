@@ -1,5 +1,4 @@
-General
-=======
+# General
 
 This manual describes the process of building liblsl from source for Windows, Mac OS X, and Linux.
 Since liblsl is cross-platform (it is written in standard C++ and uses some boost libraries),
@@ -34,8 +33,7 @@ hierarchy of the source after you've unpacked the compressed source archive:
 
 LSL and some Apps are built with CMake, the remaining Apps use Visual Studio Solution files.
 
-CMake
-=====
+# CMake
 
 Tested platforms:
 * Windows 7, Windows 10
@@ -61,8 +59,14 @@ Optional / required for some apps:
 On Mac, if using homebrew Qt5, it is necessary to run the following from the project root:
 `sudo bash ./fix_mac.sh`
 
-Build instructions
-==================
+# Build instructions
+
+There are two build types:
+
+1. [in tree builds](#intreebuilds) build the LSL library and all apps you explicitely enable. This is probably what you want.
+1. [out of tree builds](#outoftreebuild) build only a single app and require you to have a prebuilt LSL library and the exported build configuration (`LSLConfig.cmake`).
+
+## In tree builds (recommended) {#intreebuilds}
 
 1. extract the zip file or clone the repository (`git clone https://github.com/sccn/labstreaminglayer.git`)
 2. Windows only: start `build_windows.bat` and follow the isntructions in step 4
@@ -76,14 +80,16 @@ Build instructions
 	- a path where redistributable binaries get copied (`CMAKE_INSTALL_PREFIX`)
 	- build type (`CMAKE_BUILD_TYPE`, either `Release` or `Debug`). You can change this in Visual Studio later.
     - click on `Generate` to create the build files / Visual Studio Solution file (open it with `Open Project`)
-5. start the build process (`cmake --build . --config Release --target install`) or load the generated VS Solution file
+5. start the build process (`cmake --build . --config Release --target install`[*](#installtarget)) or load the generated VS Solution file
 
-This will create a distribution tree similar to this:
+This will create a distribution tree in the folder specified by `CMAKE_INSTALL_PREFIX` similar to this:
+
+## 'installed' directory tree {#installtree}
 
     ├── AppX
     │   ├── AppX.exe
     │   ├── liblsl64.dll
-    │	├── Qt5Xml.dll
+    │   ├── Qt5Xml.dll
     │   ├── Qt5Gui.dll
     │   └── AppX_configuration.ini
     ├── AppY
@@ -114,5 +120,31 @@ On Unix systems (Linux+OS X) the executable's library path is changed to include
 can be distributed in a single library directory or put in the same folder.
 On Windows, the library is copied to (and searched in) the executable folder.
 
-If you want to build against the compiled liblsl, please see `OutOfTreeTest/CMakeLists.txt` for an example.
+The resulting folder `LSL` contains three subfolders:
 
+`cmake` contains the exported build configuration (`LSLConfig.cmake`) that can be used to import
+the library in [out of tree builds](#outoftreebuilds).
+
+`include` contains the include headers for C (`lsl_c.h`) and C++ (`lsl_cpp.h`) programs.
+
+`lib` contains the library files. To run a program, you need the `liblslXY.dll` (Windows) or `.so` (Linux / OS X).
+
+## Notes regarding the `install` target {#installtarget}
+
+CMake places built binary files as well as build sideproducts in a build tree that should be separate from
+the source directory. To copy only the needed files (and additional library files they depend on) to a folder
+you can share with colleagues or onto another PC, you need to 'install' them.
+This doesn't mean 'installing' them in a traditional sense (with Windows installers or package managers on
+Linux / OS X), but only copying them to a separate folder and fixing some hardcoded paths in the binaries.
+
+## Out of tree builds {#outoftreebuilds}
+
+An out of tree build doesn't include the whole `labstreaminglayer` directory but only a single application
+(a minimal example is contained in the folder `OutOfTreeTest`).
+
+Building the LSL library should take only 1-2 minutes, so you should prefer [in tree builds](#intreebuilds)
+unless you know what you're doing.
+
+To import the LSL library in a separate CMake build, you need to set the ['installed' LSL directory](#installtree)
+in the `LSL_ROOT` variable (e.g. `-DLSL_ROOT=C:/LSL/build/install/lsl_Release/LSL`) or add the `LSL/cmake` subfolder
+of the ['installed' LSL directory](#installtree) to your `CMAKE_PREFIX_PATH`.

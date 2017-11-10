@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 project(LabStreamingLayer)
 
+if(NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
+endif()
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 	SET(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_LIST_DIR}/build/install/lsl_${CMAKE_BUILD_TYPE}" CACHE PATH
 		"Where to put redistributable binaries" FORCE)
@@ -28,7 +31,9 @@ include(LSLAppBoilerplate)
 # and includes their build configurations
 add_subdirectory(Apps)
 
-install(DIRECTORY cmake DESTINATION LSL)
+install(FILES
+	cmake/LSLAppBoilerplate.cmake
+	DESTINATION LSL/cmake)
 
 # add a target that zips up a built installation tree
 # Example: cmake --build path/to/build_dir --target LSLPACKAGE
