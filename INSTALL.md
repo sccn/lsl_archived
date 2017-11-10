@@ -145,6 +145,7 @@ An out of tree build doesn't include the whole `labstreaminglayer` directory but
 Building the LSL library should take only 1-2 minutes, so you should prefer [in tree builds](#in-tree-builds-recommended)
 unless you know what you're doing.
 
-To import the LSL library in a separate CMake build, you need to set the ['installed' LSL directory](#install-directory-tree)
-in the `LSL_ROOT` variable (e.g. `-DLSL_ROOT=C:/LSL/build/install/lsl_Release/LSL`) or add the `LSL/cmake` subfolder
+To import the LSL library in a separate CMake build, you need to set the the 
+**absolute path** to the['installed' LSL directory](#install-directory-tree)
+in the `LSL_ROOT` variable (e.g. `-DLSL_ROOT=C:/LSL/build/install/lsl_Release/LSL`) or add the **absolute path** to the`LSL/cmake` subfolder
 of the ['installed' LSL directory](#install-directory-tree) to your `CMAKE_PREFIX_PATH`.
