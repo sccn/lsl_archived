@@ -5,18 +5,21 @@ project(LSLOpenVR VERSION 0.0.1)
 
 # load LSLAppBoilerplate if not done already
 if(NOT TARGET LSL::lsl)
-    if(NOT LSL_ROOT)
-        set(LSL_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../build/lsl_Release/lslinstall/LSL")
-        get_filename_component(LSL_ROOT ${LSL_ROOT} ABSOLUTE)
-        if(NOT EXISTS ${LSL_ROOT})
-            message(FATAL_ERROR "When building a single app out of tree you need to set LSL_ROOT ( cmake -DLSL_ROOT=/path/to/installed/lsl)")
+    if(NOT LSL_INSTALL_ROOT)
+        set(LSL_INSTALL_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../build/lsl_Release/lslinstall/LSL")
+        get_filename_component(LSL_INSTALL_ROOT ${LSL_INSTALL_ROOT} ABSOLUTE)
+        if(NOT EXISTS ${LSL_INSTALL_ROOT})
+            message(FATAL_ERROR "When building a single app out of tree you need to set LSL_INSTALL_ROOT ( cmake -DLSL_INSTALL_ROOT=/path/to/installed/lsl)")
         endif()
     endif()
-    list(APPEND CMAKE_MODULE_PATH "${LSL_ROOT}/cmake")
+	if(NOT IS_ABSOLUTE ${LSL_INSTALL_ROOT})
+		message(FATAL_ERROR "LSL_INSTALL_ROOT needs to be an absolute path")
+	endif()
+    list(APPEND CMAKE_MODULE_PATH "${LSL_INSTALL_ROOT}/cmake")
     include(LSLAppBoilerplate)
 endif()
 
-set(CMAKE_INSTALL_PREFIX ${LSL_ROOT}/..)
+set(CMAKE_INSTALL_PREFIX ${LSL_INSTALL_ROOT}/..)
 
 set(CMAKE_CXX_STANDARD 11)
 

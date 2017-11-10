@@ -3,18 +3,21 @@ project(gNEEDaccess VERSION 0.0.1)
 
 # load LSLAppBoilerplate if not done already
 if(NOT TARGET LSL::lsl)
-    if(NOT LSL_ROOT)
-        # If building the app out of tree, the user is expected to supply LSL_ROOT.
+	if(NOT LSL_INSTALL_ROOT)
+		# If building the app out of tree, the user is expected to supply LSL_INSTALL_ROOT.
         # For ease of Chadwick Boulay's development, he has added a default directory to check.
         # This default directory is probably wrong for you. Ignore it.
-        # Just supply -DLSL_ROOT=/path/to/installed/lsl to the cmake command.
-        set(LSL_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../build/lsl_Release/lslinstall/LSL")
-        get_filename_component(LSL_ROOT ${LSL_ROOT} ABSOLUTE)
-        if(NOT EXISTS ${LSL_ROOT})
-            message(FATAL_ERROR "When building a single app out of tree you need to set LSL_ROOT ( cmake -DLSL_ROOT=/path/to/installed/lsl)")
+		# Just supply -DLSL_INSTALL_ROOT=/path/to/installed/lsl to the cmake command.
+		set(LSL_INSTALL_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../build/lsl_Release/lslinstall/LSL")
+		get_filename_component(LSL_INSTALL_ROOT ${LSL_INSTALL_ROOT} ABSOLUTE)
+		if(NOT EXISTS ${LSL_INSTALL_ROOT})
+			message(FATAL_ERROR "When building a single app out of tree you need to set LSL_INSTALL_ROOT ( cmake -DLSL_INSTALL_ROOT=/path/to/installed/lsl)")
         endif()
     endif()
-    list(APPEND CMAKE_MODULE_PATH "${LSL_ROOT}/cmake")
+	if(NOT IS_ABSOLUTE ${LSL_INSTALL_ROOT})
+		message(FATAL_ERROR "LSL_INSTALL_ROOT needs to be an absolute path")
+	endif()
+	list(APPEND CMAKE_MODULE_PATH "${LSL_INSTALL_ROOT}/cmake")
     include(LSLAppBoilerplate)
 endif()
 

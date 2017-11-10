@@ -4,11 +4,14 @@ cmake_minimum_required(VERSION 3.5)
 # target_compile_features()
 set(CMAKE_CXX_STANDARD 11)
 
-# when building out of tree LSL_ROOT needs to be specified on the cmd line
-if(NOT LSL_ROOT)
-    message(FATAL_ERROR "When building out of tree you need to set LSL_ROOT ( cmake -DLSL_ROOT=/path/to/lsl/installation)")
+# when building out of tree LSL_INSTALL_ROOT needs to be specified on the cmd line
+if(NOT LSL_INSTALL_ROOT)
+    message(FATAL_ERROR "When building out of tree you need to set LSL_INSTALL_ROOT ( cmake -DLSL_INSTALL_ROOT=/path/to/lsl/installation)")
 else()
-    list(APPEND CMAKE_MODULE_PATH "${LSL_ROOT}/cmake")
+	if(NOT IS_ABSOLUTE ${LSL_INSTALL_ROOT})
+		message(FATAL_ERROR "LSL_INSTALL_ROOT needs to be an absolute path")
+	endif()
+    list(APPEND CMAKE_MODULE_PATH "${LSL_INSTALL_ROOT}/cmake")
     include(LSLAppBoilerplate)
 endif()
 
