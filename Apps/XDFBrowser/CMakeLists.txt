@@ -12,6 +12,7 @@ if(NOT TARGET LSL::lsl)
 		message(FATAL_ERROR "LSL_INSTALL_ROOT needs to be an absolute path")
 	endif()
 	list(APPEND CMAKE_MODULE_PATH "${LSL_INSTALL_ROOT}/cmake")
+	file(TO_CMAKE_PATH ${LSL_INSTALL_ROOT} LSL_INSTALL_ROOT)
 	include(LSLAppBoilerplate)
 endif()
 

@@ -6,12 +6,13 @@ set(CMAKE_CXX_STANDARD 11)
 
 # when building out of tree LSL_INSTALL_ROOT needs to be specified on the cmd line
 if(NOT LSL_INSTALL_ROOT)
-    message(FATAL_ERROR "When building out of tree you need to set LSL_INSTALL_ROOT ( cmake -DLSL_INSTALL_ROOT=/path/to/lsl/installation)")
+	message(FATAL_ERROR "When building out of tree you need to set LSL_INSTALL_ROOT ( cmake -DLSL_INSTALL_ROOT=/path/to/lsl/installation)")
 else()
 	if(NOT IS_ABSOLUTE ${LSL_INSTALL_ROOT})
 		message(FATAL_ERROR "LSL_INSTALL_ROOT needs to be an absolute path")
 	endif()
-    list(APPEND CMAKE_MODULE_PATH "${LSL_INSTALL_ROOT}/cmake")
+	file(TO_CMAKE_PATH ${LSL_INSTALL_ROOT} LSL_INSTALL_ROOT)
+	list(APPEND CMAKE_MODULE_PATH "${LSL_INSTALL_ROOT}/cmake")
     include(LSLAppBoilerplate)
 endif()
 
