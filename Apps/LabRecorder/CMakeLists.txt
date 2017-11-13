@@ -7,10 +7,14 @@ project(LabRecorder
 
 # load LSLAppBoilerplate if not done already
 if(NOT TARGET LSL::lsl)
-    if(NOT LSL_ROOT)
-        message(FATAL_ERROR "When building a single app out of tree you need to set LSL_ROOT ( cmake -DLSL_ROOT=/path/to/installed/lsl)")
-    endif()
-    list(APPEND CMAKE_MODULE_PATH "${LSL_ROOT}/cmake")
+	if(NOT LSL_INSTALL_ROOT)
+		message(FATAL_ERROR "When building a single app out of tree you need to set LSL_INSTALL_ROOT ( cmake -DLSL_INSTALL_ROOT=/path/to/installed/lsl)")
+	endif()
+	if(NOT IS_ABSOLUTE ${LSL_INSTALL_ROOT})
+		message(FATAL_ERROR "LSL_INSTALL_ROOT needs to be an absolute path")
+	endif()
+	file(TO_CMAKE_PATH ${LSL_INSTALL_ROOT} LSL_INSTALL_ROOT)
+	list(APPEND CMAKE_MODULE_PATH "${LSL_INSTALL_ROOT}/cmake")
     include(LSLAppBoilerplate)
 endif()
 

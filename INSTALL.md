@@ -147,5 +147,6 @@ unless you know what you're doing.
 
 To import the LSL library in a separate CMake build, you need to set the the 
 **absolute path** to the['installed' LSL directory](#install-directory-tree)
-in the `LSL_ROOT` variable (e.g. `-DLSL_ROOT=C:/LSL/build/install/lsl_Release/LSL`) or add the **absolute path** to the`LSL/cmake` subfolder
-of the ['installed' LSL directory](#install-directory-tree) to your `CMAKE_PREFIX_PATH`.
+in the `LSL_INSTALL_ROOT` variable (e.g. `-DLSL_INSTALL_ROOT=C:/LSL/build/install/lsl_Release/LSL`) or add the **absolute path** to the`LSL/cmake` subfolder
+of the ['installed' LSL directory](#install-directory-tree) to your `CMAKE_PREFIX_PATH`
+(`list(APPEND CMAKE_MODULE_PATH "C:/path/to/LSL/build/install/cmake/")`.
