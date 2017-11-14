@@ -40,12 +40,12 @@ set(CMAKE_AUTORC ON)
 #SET(Boost_DEBUG OFF) #Switch this and next to ON for help debugging Boost problems.
 #SET(Boost_DETAILED_FAILURE_MSG ON)
 if(WIN32)
-	set(Boost_USE_STATIC_LIBS ON)
+	#set(Boost_USE_STATIC_LIBS ON)
 endif()
 
 IF(MSVC)
 	# Disable boost auto linking.
-	add_definitions(-DBOOST_ALL_NO_LIB )
+	#add_definitions(-DBOOST_ALL_NO_LIB )
 endif()
 
 
