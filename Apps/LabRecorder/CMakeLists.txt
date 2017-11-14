@@ -58,22 +58,10 @@ add_executable(${target}
     targetver.h
 )
 
-set(Boost_NO_SYSTEM_PATHS true)
-set (Boost_USE_STATIC_LIBS OFF CACHE BOOL "use static libraries from Boost")
-set (Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_LIBS ON)
+
 find_package(Boost REQUIRED COMPONENTS system chrono date_time filesystem iostreams thread zlib)
 include_directories(${Boost_INCLUDE_DIRS})
 #link_libraries(${Boost_LIBRARIES})
-
-if (WIN32)
-  # disable autolinking in boost
-  add_definitions( -DBOOST_ALL_NO_LIB )
-
-  # force all boost libraries to dynamic link (we already disabled
-  # autolinking, so I don't know why we need this, but we do!)
-  #add_definitions( -DBOOST_ALL_DYN_LINK )
-endif()
 
 #IF(MSVC)
 #    find_package(Boost REQUIRED COMPONENTS filesystem iostreams thread zlib)
