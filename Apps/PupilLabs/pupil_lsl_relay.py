@@ -76,10 +76,10 @@ class Pupil_LSL_Relay(Plugin):
         self.thread_pipe = zhelper.zthread_fork(self.context, self.thread_loop)
         self.menu = None
 
-    def init_gui(self):
+    def init_ui(self):
         """Initializes sidebar menu"""
-        self.menu = ui.Growing_Menu('Pupil LSL Relay')
-        self.g_pool.sidebar.append(self.menu)
+        self.add_menu()
+        self.menu.label = 'Pupil LSL Relay'
 
         def close():
             self.alive = False
@@ -109,23 +109,21 @@ class Pupil_LSL_Relay(Plugin):
                                    label='Relay notifications',
                                    setter=make_setter(NOTIFY_SUB_TOPIC,
                                                       'relay_notifications')))
-
     def get_init_dict(self):
         """Store settings"""
         return {'relay_pupil': self.relay_pupil, 'relay_gaze': self.relay_gaze,
                 'relay_notifications': self.relay_notifications}
 
-    def deinit_gui(self):
+    def deinit_ui(self):
         if self.menu:
-            self.g_pool.sidebar.remove(self.menu)
-            self.menu = None
+            self.remove_menu()
 
     def cleanup(self):
         """gets called when the plugin get terminated.
            This happens either voluntarily or forced.
         """
         self.shutdown_thread_loop()
-        self.deinit_gui()
+        self.deinit_ui()
 
     def shutdown_thread_loop(self):
         if self.thread_pipe:
