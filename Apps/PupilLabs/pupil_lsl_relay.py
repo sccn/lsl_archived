@@ -68,21 +68,17 @@ class Pupil_LSL_Relay(Plugin):
             relay_gaze (bool, optional): Relay gaze data
             relay_notifications (bool, optional): Relay notifications
         """
-        super(Pupil_LSL_Relay, self).__init__(g_pool)
+        super().__init__(g_pool)
         self.relay_pupil = relay_pupil
         self.relay_gaze = relay_gaze
         self.relay_notifications = relay_notifications
         self.context = g_pool.zmq_ctx
         self.thread_pipe = zhelper.zthread_fork(self.context, self.thread_loop)
-        self.menu = None
 
     def init_ui(self):
         """Initializes sidebar menu"""
         self.add_menu()
         self.menu.label = 'Pupil LSL Relay'
-
-        def close():
-            self.alive = False
 
         def make_setter(sub_topic, attribute_name):
             def set_value(value):
@@ -95,7 +91,6 @@ class Pupil_LSL_Relay(Plugin):
         help_str = ('Pupil LSL Relay subscribes to the Pupil ZMQ Backbone'
                     + ' and relays the incoming data using the lab'
                     + ' streaming layer.')
-        self.menu.append(ui.Button('Close', close))
         self.menu.append(ui.Info_Text(help_str))
         self.menu.append(ui.Switch('relay_pupil', self,
                                    label='Relay pupil data',
@@ -115,15 +110,13 @@ class Pupil_LSL_Relay(Plugin):
                 'relay_notifications': self.relay_notifications}
 
     def deinit_ui(self):
-        if self.menu:
-            self.remove_menu()
+        self.remove_menu()
 
     def cleanup(self):
         """gets called when the plugin get terminated.
            This happens either voluntarily or forced.
         """
         self.shutdown_thread_loop()
-        self.deinit_ui()
 
     def shutdown_thread_loop(self):
         if self.thread_pipe:
