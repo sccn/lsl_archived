@@ -58,23 +58,41 @@ add_executable(${target}
     targetver.h
 )
 
-IF(MSVC)
-    find_package(Boost REQUIRED COMPONENTS filesystem iostreams thread zlib)
-    set(zlib_libs Boost::zlib)
-ELSE()
-    find_package(Boost REQUIRED COMPONENTS filesystem iostreams thread)
-    find_package(ZLIB REQUIRED)
-    set(zlib_libs ${ZLIB_LIBRARIES})
-ENDIF()
+set(Boost_NO_SYSTEM_PATHS true)
+set (Boost_USE_STATIC_LIBS OFF CACHE BOOL "use static libraries from Boost")
+set (Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_LIBS ON)
+find_package(Boost REQUIRED COMPONENTS system chrono date_time filesystem iostreams thread zlib)
+include_directories(${Boost_INCLUDE_DIRS})
+#link_libraries(${Boost_LIBRARIES})
 
+if (WIN32)
+  # disable autolinking in boost
+  add_definitions( -DBOOST_ALL_NO_LIB )
+
+  # force all boost libraries to dynamic link (we already disabled
+  # autolinking, so I don't know why we need this, but we do!)
+  #add_definitions( -DBOOST_ALL_DYN_LINK )
+endif()
+
+#IF(MSVC)
+#    find_package(Boost REQUIRED COMPONENTS filesystem iostreams thread zlib)
+#    set(zlib_libs Boost::zlib)
+#ELSE()
+#    find_package(Boost REQUIRED COMPONENTS filesystem iostreams thread)
+#    find_package(ZLIB REQUIRED)
+#    set(zlib_libs ${ZLIB_LIBRARIES})
+#ENDIF()
+#INCLUDE_DIRECTORIES(${INCLUDE_DIRECTORIES} ${BOOST_ROOT})
 target_link_libraries(${target}
     PRIVATE
     Qt5::Widgets
     Qt5::Network
-    Boost::filesystem
-    Boost::iostreams
-    Boost::thread
-    ${zlib_libs}
+	${Boost_LIBRARIES}
+    #Boost::filesystem
+    #Boost::iostreams
+    #Boost::thread
+    #${zlib_libs}
     LSL::lsl
 )
 
