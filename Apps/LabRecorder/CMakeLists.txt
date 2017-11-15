@@ -59,22 +59,20 @@ add_executable(${target}
 )
 
 IF(MSVC)
-    find_package(Boost REQUIRED COMPONENTS filesystem iostreams thread zlib)
-    set(zlib_libs Boost::zlib)
+    find_package(Boost REQUIRED system chrono date_time filesystem iostreams thread zlib)
+	set(req_libs ${Boost_LIBRARIES})
+	INCLUDE_DIRECTORIES(${INCLUDE_DIRECTORIES} ${BOOST_ROOT})
 ELSE()
     find_package(Boost REQUIRED COMPONENTS filesystem iostreams thread)
     find_package(ZLIB REQUIRED)
-    set(zlib_libs ${ZLIB_LIBRARIES})
+	set(req_libs Boost::filesystem Boost::iostreams Boost::thread ${ZLIB_LIBRARIES})
 ENDIF()
-
+#INCLUDE_DIRECTORIES(${INCLUDE_DIRECTORIES} ${BOOST_ROOT})
 target_link_libraries(${target}
     PRIVATE
     Qt5::Widgets
     Qt5::Network
-    Boost::filesystem
-    Boost::iostreams
-    Boost::thread
-    ${zlib_libs}
+	${req_libs}
     LSL::lsl
 )
 
