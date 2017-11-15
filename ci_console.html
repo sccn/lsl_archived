@@ -44,7 +44,7 @@
 			let data = { 'request': { }};
 			if(branch = formval('branch')) {data.request.branch = branch;}
 			if(cmakeargs = formval('cmakeargs')) data.request.config = {'env':{'CMakeArgs': cmakeargs}};
-
+			
 			let reponame = formval('accountName') + '%2F' + formval('projectSlug');
 			let url = 'https://api.travis-ci.org/repo/' + reponame + '/requests';
 			let headers = {'Travis-API-Version': 3, 'Authorization': 'token ' + formval('trtoken')};
@@ -65,7 +65,7 @@
 			};
 			if(branch = formval('branch')) data.branch = branch;
 			if(cmakeargs = formval('cmakeargs')) data.environmentVariables.CMakeArgs = cmakeargs;
-
+			
 			let headers = { 'Authorization': 'Bearer ' + formval('avtoken')};
 			let cb = (resp)=>{
 				let link = document.createElement('a');
@@ -85,7 +85,7 @@
 			let savedval = window.localStorage.getItem(inp.id);
 			if(savedval !== null) inp.value = savedval;
 		}
-
+		
 		for(key in appveyorcompilers) {
 			var option = document.createElement('option');
 			option.textContent = option.value = key;
@@ -97,6 +97,16 @@
 	});
 </script></head>
 <body><form action="#">
+	<h1>CI build console</h1>
+	<h2>What's this for?</h2>
+	<span>LSL supports a large range of systems, from tiny Raspberry Pis and Android/iOS Phones to
+		large PCs with Windows, Linux and OS X. Before proposing changes, it's therefore a good
+		idea to test if your code compiles and runs on these platforms.
+		You can register with your GitHub Account at <a href="https://appveyor.com">AppVeyor</a>
+		and <a href="https://travis-ci.org">Travis CI</a> and compile your code on most supported
+		systems. To do this, request your API tokens (see links below) and fill out the forms below
+		to start a CI build and see if everything works.
+	</span>
 	<fieldset><legend>Account / Repo settings</legend>
 		<label>Account Name: <input id="accountName" value="tstenner"/></label><br>
 		<label>Repo Name: <input id="projectSlug"  value="labstreaminglayer"/></label><br>
