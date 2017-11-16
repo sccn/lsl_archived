@@ -105,6 +105,9 @@ function(lsllib_properties libname)
 		PUBLIC
 		LSLNOAUTOLINK # don't use #pragma(lib) in CMake builds
 	)
+	if(NOT MSVC)
+		target_compile_features(${libname} PRIVATE cxx_auto_type)
+	endif()
 endfunction()
 
 
