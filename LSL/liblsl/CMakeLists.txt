@@ -74,7 +74,7 @@ set (sources
 	src/udp_server.cpp
 	src/udp_server.h
 )
-if(WIN32)
+if(MSVC)
 	list(APPEND sources src/legacy/legacy_abi.cpp src/legacy/legacy_abi.h)
 endif()
 
@@ -139,12 +139,9 @@ generate_export_header(${target}
 	STATIC_DEFINE LIBLSL_STATIC
 )
 
-# TODO: Need to check if all flags are necessary or if some flags are missing
-if (WIN32)
-	if (MINGW)
-		target_link_libraries (${target} winmm ws2_32 wsock32)
-	endif()
-endif ()
+if (MINGW)
+	target_link_libraries (${target} PUBLIC ws2_32 wsock32 winmm)
+endif()
 
 install(TARGETS ${lsl_export_targets}
 	COMPONENT liblsl
