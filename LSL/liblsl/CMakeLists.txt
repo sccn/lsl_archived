@@ -115,7 +115,10 @@ endfunction()
 # shared library
 add_library(${target} SHARED ${sources} ${headers})
 lsllib_properties(${target})
-set_target_properties(${target} PROPERTIES OUTPUT_NAME "${target}${lslplatform}")
+set_target_properties(${target} PROPERTIES
+	PREFIX "lib"
+	OUTPUT_NAME "${target}${lslplatform}"
+)
 
 if(${LSL_BUILD_STATIC})
 	add_library(${target}-static ${sources} ${headers})
