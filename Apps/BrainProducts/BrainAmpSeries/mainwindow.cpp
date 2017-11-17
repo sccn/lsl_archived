@@ -102,6 +102,7 @@ void MainWindow::load_config(const std::string &filename) {
 		ui->dcCoupling->setCurrentIndex(pt.get<int>("settings.dccoupling",0));
 		ui->chunkSize->setValue(pt.get<int>("settings.chunksize",32));
 		ui->usePolyBox->setCheckState(pt.get<bool>("settings.usepolybox",false) ? Qt::Checked : Qt::Unchecked);
+		ui->sendRawStream->setChecked(pt.get<bool>("settings.sendrawstream", false));
 		ui->unsampledMarkers->setCheckState(pt.get<bool>("settings.unsampledmarkers",false) ? Qt::Checked : Qt::Unchecked);	
 		ui->sampledMarkers->setCheckState(pt.get<bool>("settings.sampledmarkers",true) ? Qt::Checked : Qt::Unchecked);	
 		ui->sampledMarkersEEG->setCheckState(pt.get<bool>("settings.sampledmarkersEEG",false) ? Qt::Checked : Qt::Unchecked);
@@ -127,6 +128,7 @@ void MainWindow::save_config(const std::string &filename) {
 		pt.put("settings.dccoupling",ui->dcCoupling->currentIndex());
 		pt.put("settings.chunksize",ui->chunkSize->value());
 		pt.put("settings.usepolybox",ui->usePolyBox->checkState()==Qt::Checked);
+		pt.put("settings.sendrawstream", ui->sendRawStream->isChecked());
 		pt.put("settings.unsampledmarkers",ui->unsampledMarkers->checkState()==Qt::Checked);
 		pt.put("settings.sampledmarkers",ui->sampledMarkers->checkState()==Qt::Checked);
 		pt.put("settings.sampledmarkersEEG",ui->sampledMarkersEEG->checkState()==Qt::Checked);
@@ -180,6 +182,7 @@ void MainWindow::link() {
 			int dcCoupling = ui->dcCoupling->currentIndex();
 			int chunkSize = ui->chunkSize->value();
 			bool usePolyBox = ui->usePolyBox->checkState()==Qt::Checked;
+			bool sendRawStream = ui->sendRawStream->isChecked();
 
 			g_unsampledMarkers  = ui->unsampledMarkers->checkState()==Qt::Checked;
 			g_sampledMarkers    = ui->sampledMarkers->checkState()==Qt::Checked;
@@ -231,7 +234,8 @@ void MainWindow::link() {
 
 			// start reader thread
 			stop_ = false;
-			reader_thread_.reset(new std::thread(&MainWindow::read_thread,this,deviceNumber,serialNumber,impedanceMode,resolution,dcCoupling,chunkSize,channelCount,channelLabels));
+			auto function_handle = sendRawStream ? &MainWindow::read_thread<int16_t> : &MainWindow::read_thread<float>;
+			reader_thread_.reset(new std::thread(function_handle,this,deviceNumber,serialNumber, impedanceMode,resolution,dcCoupling,chunkSize,channelCount,channelLabels));
 		}
 
 		catch(std::exception &e) {
@@ -256,14 +260,16 @@ void MainWindow::link() {
 }
 
 // background data reader thread
+template<typename T>
 void MainWindow::read_thread(int deviceNumber, ULONG serialNumber, int impedanceMode, int resolution, int dcCoupling, int chunkSize, int channelCount, std::vector<std::string> channelLabels) {
 	const float unit_scales[] = {0.1f, 0.5f, 10.f, 152.6f};
 	const char *unit_strings[] = {"100 nV","500 nV","10 muV","152.6 muV"};
+	const bool sendRawStream = std::is_same<T, int16_t>::value;
 	// reserve buffers to receive and send data
 	int chunk_words = chunkSize*(channelCount+1);
 	std::vector<int16_t> recv_buffer(chunk_words, 0);
 	std::size_t outbufferChannelCount = channelCount + (g_sampledMarkersEEG ? 1 : 0);
-	std::vector<std::vector<float>> send_buffer(chunkSize, std::vector<float>(outbufferChannelCount));
+	std::vector<std::vector<T>> send_buffer(chunkSize, std::vector<T>(outbufferChannelCount));
 
 	std::vector<std::vector<std::string>> marker_buffer(chunkSize, std::vector<std::string>(1));
 	std::vector<std::string> s_mrkr;
@@ -281,16 +287,18 @@ void MainWindow::read_thread(int deviceNumber, ULONG serialNumber, int impedance
 	std::unique_ptr<lsl::stream_outlet> marker_outlet, s_marker_outlet;
 	try {
 		// create data streaminfo and append some meta-data
-		auto stream_format = lsl::cf_float32;
+		auto stream_format = sendRawStream ? lsl::cf_int16 : lsl::cf_float32;
 		lsl::stream_info data_info("BrainAmpSeries-" + std::to_string(deviceNumber), "EEG",
 		                           outbufferChannelCount, sampling_rate, stream_format,
 		                           "BrainAmpSeries_" + std::to_string(deviceNumber) + "_" +std::to_string(serialNumber));
 		lsl::xml_element channels = data_info.desc().append_child("channels");
+		std::string postprocessing_factor = sendRawStream ? std::to_string(unit_scales[resolution]) : "1";
 		for (const auto& channelLabel : channelLabels)
 			channels.append_child("channel")
 				.append_child_value("label",channelLabel)
 				.append_child_value("type","EEG")
-				.append_child_value("unit","microvolts");
+				.append_child_value("unit","microvolts")
+				.append_child_value("scaling_factor", postprocessing_factor);
 		if (g_sampledMarkersEEG){
 			channels.append_child("channel")
 				.append_child_value("label", "triggerStream")	
@@ -301,6 +309,7 @@ void MainWindow::read_thread(int deviceNumber, ULONG serialNumber, int impedance
 		data_info.desc().append_child("amplifier").append_child("settings")
 			.append_child_value("low_impedance_mode",impedanceMode ? "true" : "false")
 			.append_child_value("resolution",unit_strings[resolution])
+		        .append_child_value("resolutionfactor", std::to_string(unit_scales[resolution]))
 			.append_child_value("dc_coupling",dcCoupling?"DC":"AC");
 		data_info.desc().append_child("acquisition")
 			.append_child_value("manufacturer","Brain Products")
@@ -329,7 +338,8 @@ void MainWindow::read_thread(int deviceNumber, ULONG serialNumber, int impedance
 		DWORD bytes_read;
 
 
-		float scale = unit_scales[resolution];
+		const T scale = std::is_same<T,float>::value ? unit_scales[resolution] : 1;
+
 		while (!stop_) {
 			// read chunk into recv_buffer
 			if(!ReadFile(hDevice, recv_buffer.data(), 2 * chunk_words, &bytes_read, NULL))
@@ -359,7 +369,7 @@ void MainWindow::read_thread(int deviceNumber, ULONG serialNumber, int impedance
 					trigger_buffer[s] = mrkr;
 
 					if (g_sampledMarkersEEG)
-						send_buffer[s][channelCount] = (mrkr==prev_mrkr ? 0.0 : static_cast<float>(mrkr));
+						send_buffer[s][channelCount] = (mrkr==prev_mrkr ? 0.0 : static_cast<T>(mrkr));
 					
 					if (g_sampledMarkers || g_unsampledMarkers) {
 						s_mrkr.clear();
