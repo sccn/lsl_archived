@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>562</width>
+    <height>496</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>BrainAmpSeries Connector</string>
   </property>
@@ -226,11 +234,28 @@ PO10 </string>
            </property>
           </widget>
          </item>
+         <item row="7" column="0" colspan="2">
+          <widget class="QCheckBox" name="sendRawStream">
+           <property name="text">
+            <string>Send Raw Stream (int16_t)</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
       <item>
-       <spacer name="verticalSpacer"/>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+       </spacer>
       </item>
       <item>
        <widget class="QGroupBox" name="trigger_box">
@@ -271,6 +296,12 @@ PO10 </string>
          <spacer name="spacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
           </property>
          </spacer>
         </item>

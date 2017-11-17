@@ -42,7 +42,10 @@ private slots:
     void closeEvent(QCloseEvent *ev) override;
 private:
     // background data reader thread
-	void read_thread(int deviceNumber, ULONG serialNumber, int impedanceMode, int resolution, int dcCoupling, int chunkSize, int channelCount, std::vector<std::string> channelLabels);
+	template<typename T>
+	void read_thread(int deviceNumber, ULONG serialNumber, int impedanceMode,
+					 int resolution, int dcCoupling, int chunkSize, int channelCount,
+					 std::vector<std::string> channelLabels);
 
     // raw config file IO
     void load_config(const std::string &filename);
