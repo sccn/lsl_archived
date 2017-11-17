@@ -9,6 +9,35 @@
 
 #ifdef WIN32
 #include <winioctl.h>
+#else
+// dummy declarations to test compilation / static analysis on Linux/OS X
+HANDLE INVALID_HANDLE_VALUE = nullptr;
+enum Dummy {
+	FILE_DEVICE_UNKNOWN,
+	NORMAL_PRIORITY_CLASS,
+	METHOD_BUFFERED,
+	FILE_WRITE_DATA,
+	FILE_READ_DATA,
+	GENERIC_READ,
+	GENERIC_WRITE,
+	FILE_ATTRIBUTE_NORMAL,
+	FILE_FLAG_WRITE_THROUGH,
+	OPEN_EXISTING,
+	HIGH_PRIORITY_CLASS
+};
+inline int GetCurrentProcess() { return 0; }
+inline int SetPriorityClass(int, int) { return 0; }
+inline int CTL_CODE(int, int, int, int) { return 0; }
+inline void CloseHandle(HANDLE) {}
+inline bool DeviceIoControl(HANDLE, int, void*, int, void*, int, void*, void*) { return true; }
+inline HANDLE CreateFileA(const char*, int, int, void*, int, int, void*) { return static_cast<void*>(&INVALID_HANDLE_VALUE); }
+inline int32_t GetLastError() { return 0; }
+inline bool ReadFile(HANDLE, int16_t*, int, ulong*, void*) { return false; }
+using DWORD = unsigned long;
+using USHORT = uint16_t;
+using ULONG = unsigned long;
+using CHAR = signed char;
+using UCHAR = unsigned char;
 #endif
 
 #include "BrainAmpIoCtl.h"
