@@ -27,6 +27,8 @@ matrix:
         - brew install qt
         - export CMAKE_PREFIX_PATH=/usr/local/opt/qt/
         - export CMAKE_EXE=`which cmake`
+ notifications:
+    slack: labstreaminglayer:nVh8xmzDKzA3i3YJAmdPAgbr
 #deploy:
 #  provider: bintray
 #  user: tstenner
