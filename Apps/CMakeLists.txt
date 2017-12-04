@@ -24,10 +24,12 @@ option(LSLAPPS_LabRecorder      "Build the recorder app"            OFF)
 option(LSLAPPS_XDFBrowser       "Build the XDFBrowser app"          OFF)
 option(LSLAPPS_Wiimote          "Build the Wiimote app"             OFF)
 option(LSLAPPS_OpenVR           "Build the OpenVR app"              OFF)
+option(LSLAPPS_VideoStream2     "Build the VideoStrem2 app"         OFF)
 
 # Windows-only apps
 if(WIN32)
     option(LSLAPPS_BrainAmp     "Build the BrainAmp app"            OFF)
+	#option(LSLAPPS_LiveAmp      "Build the LiveAmp app"             OFF)
     option(LSLAPPS_Emotiv       "Build the Emotiv app"              OFF)
     option(LSLAPPS_gNEEDaccess  "Build the g.Tec NEEDaccess app"    OFF)
 endif()
@@ -54,10 +56,18 @@ if(LSLAPPS_OpenVR)
     add_subdirectory(OpenVR)
 endif()
 
+if(LSLAPPS_VideoStream2)
+    add_subdirectory(VideoStream2)
+endif()
+
 if(LSLAPPS_BrainAmp)
     add_subdirectory(BrainProducts/BrainAmpSeries)
     #add_subdirectory(BrainProducts/BrainAmpImpedance)
 endif()
+
+#if(LSLAPPS_LiveAmp)
+#	add_subdirectory(BrainProducts/LiveAmp)
+#endif()
 
 if(LSLAPPS_Emotiv)
     add_subdirectory(emotiv)
