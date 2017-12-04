@@ -1,8 +1,5 @@
-#ifdef ENVIRONMENT64
 #include <QApplication>
-#else
-#include <QtGui/QApplication>
-#endif 
+
 #include "mainwindow.h"
 #include <string>
 #include <boost/algorithm/string.hpp>
@@ -10,7 +7,7 @@
 int main(int argc, char *argv[])
 {
     // determine the startup config file...
-    std::string config_file = "LiveAmp_config.cfg";
+    std::string config_file = "default_config.cfg";
     for (int k=1;k<argc;k++)
         if (std::string(argv[k]) == "-c" || std::string(argv[k]) == "--config")
             config_file = argv[k+1];

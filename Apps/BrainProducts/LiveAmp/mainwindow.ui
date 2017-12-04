@@ -141,14 +141,14 @@ PO10 </string>
            </property>
           </widget>
          </item>
-         <item row="5" column="0">
+         <item row="9" column="0">
           <widget class="QLabel" name="label">
            <property name="text">
             <string>Chunk Size</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
+         <item row="9" column="1">
           <widget class="QSpinBox" name="chunkSize">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The number of samples per chunk emitted by the driver -- a small value will lead to lower overall latency but causes more CPU load, max value is 20&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -164,14 +164,14 @@ PO10 </string>
            </property>
           </widget>
          </item>
-         <item row="6" column="0">
+         <item row="10" column="0">
           <widget class="QLabel" name="label_3">
            <property name="text">
             <string>Sampling Rate</string>
            </property>
           </widget>
          </item>
-         <item row="6" column="1">
+         <item row="10" column="1">
           <widget class="QComboBox" name="samplingRate">
            <property name="toolTip">
             <string>The sampling rate to use; higher sampling rates require more network bandwidth (and storage space if recording), particularly the very high rates of 10KHz+. The native rates are those that are natively supported by the hardware and the resampled rates are resampled in software  (using a linear-phase sinc resampler that delays the output signal by 5 samples).</string>
@@ -196,46 +196,6 @@ PO10 </string>
            </item>
           </widget>
          </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="label_7">
-           <property name="text">
-            <string>Use AUX Channels</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1">
-          <widget class="QCheckBox" name="useAUX">
-           <property name="toolTip">
-            <string>If this is checked then the last 8 channels will hold the AUX signals; make sure to increase your channel count accordingly.</string>
-           </property>
-           <property name="text">
-            <string>(check)</string>
-           </property>
-           <property name="checked">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="0">
-          <widget class="QLabel" name="label_8">
-           <property name="text">
-            <string>Enable ACC sensors</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="1">
-          <widget class="QCheckBox" name="useACC">
-           <property name="toolTip">
-            <string>This will enable Acceleration sensors X, Y and Z.</string>
-           </property>
-           <property name="text">
-            <string>(check)</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
          <item row="4" column="1">
           <widget class="QSpinBox" name="bipolarChannelCount">
            <property name="toolTip">
@@ -250,6 +210,40 @@ PO10 </string>
           <widget class="QLabel" name="label_12">
            <property name="text">
             <string>Number of Bipolar channels</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Enable ACC sensors</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QCheckBox" name="useACC">
+           <property name="toolTip">
+            <string>This will enable Acceleration sensors X, Y and Z.</string>
+           </property>
+           <property name="text">
+            <string>(check)</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Number of AUX Channels</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QSpinBox" name="auxChannelCount">
+           <property name="maximum">
+            <number>8</number>
            </property>
           </widget>
          </item>

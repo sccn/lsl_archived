@@ -169,7 +169,7 @@ void LiveAmp::close(void){
 	}
 }
 
-void LiveAmp::enableChannels(std::vector<int> eegIndicesIn, std::vector<int> bipolarIndicesIn, bool auxEnable, bool accEnable) {
+void LiveAmp::enableChannels(const std::vector<int>& eegIndicesIn, const std::vector<int>& bipolarIndicesIn, const std::vector<int>& auxIndicesIn, bool accEnable) {
 	
 	int res;
 	int type;
@@ -192,13 +192,13 @@ void LiveAmp::enableChannels(std::vector<int> eegIndicesIn, std::vector<int> bip
 		return;
 	}
 	// first, disable all the channels
-	enable = false;
+	enable = 0;
 	for(i=0;i<availableChannels;i++)
 		res = ampSetProperty(h, PG_CHANNEL, i, CPROP_B32_RecordingEnabled, &enable, sizeof(enable));
 
 	// go through the available channels and enable them if they are chosen
 	for(i=0;i<availableChannels;i++) {
-		enable = false;
+		enable = 0;
 		res = ampGetProperty(h, PG_CHANNEL, i, CPROP_I32_Type, &type, sizeof(type));
 		if(res != AMP_OK)					
 			throw std::runtime_error(("Error getting property for channel type: error code:  " + boost::lexical_cast<std::string>(res)).c_str());
@@ -206,9 +206,9 @@ void LiveAmp::enableChannels(std::vector<int> eegIndicesIn, std::vector<int> bip
 		if (type == CT_EEG || type == CT_BIP) {
 			// go through the requested eeg channel vector and enable on match
 			passCnt = 0;
-			for(std::vector<int>::iterator it=eegIndicesIn.begin(); it!=eegIndicesIn.end();++it) {
+			for(std::vector<int>::const_iterator it=eegIndicesIn.begin(); it!=eegIndicesIn.end();++it) {
 				if(*it==i){
-					enable = true;
+					enable = 1;
 					eegIndices.push_back(i);
 					++enabledChannelCnt;
 					passCnt++;
@@ -231,9 +231,9 @@ void LiveAmp::enableChannels(std::vector<int> eegIndicesIn, std::vector<int> bip
 				}
 			}
 
-			for(std::vector<int>::iterator it=bipolarIndicesIn.begin(); it!=bipolarIndicesIn.end();++it) {
+			for(std::vector<int>::const_iterator it=bipolarIndicesIn.begin(); it!=bipolarIndicesIn.end();++it) {
 				if(*it==i){
-					enable = true;
+					enable = 1;
 					bipolarIndices.push_back(i);
 					++enabledChannelCnt;
 					passCnt++;
@@ -269,7 +269,7 @@ void LiveAmp::enableChannels(std::vector<int> eegIndicesIn, std::vector<int> bip
 				
 
 				enable = accEnable;
-				if(enable == true){
+				if(enable == 1){
 					accIndices.push_back(i);
 					++enabledChannelCnt;
 				}
@@ -288,22 +288,41 @@ void LiveAmp::enableChannels(std::vector<int> eegIndicesIn, std::vector<int> bip
 
 			else { // this is a non-acc aux channel
 				
+				for (std::vector<int>::const_iterator it = auxIndicesIn.begin(); it != auxIndicesIn.end(); ++it) {
+					if (*it == i) {
 
-				enable = auxEnable;
-				if(enable==true) {
-					accIndices.push_back(i);
-					++enabledChannelCnt;
+						enable = 1;
+						if (enable == 1) {
+							accIndices.push_back(i);
+							++enabledChannelCnt;
+						}
+						res = ampGetProperty(h, PG_CHANNEL, i, CPROP_B32_RecordingEnabled, &wasEnabled, sizeof(wasEnabled));
+						if (res != AMP_OK)
+							throw std::runtime_error(("Error SetProperty enable for AUX channels, error: " + boost::lexical_cast<std::string>(res)).c_str());
+
+						// if requested, enable it
+						if (wasEnabled != enable) {
+							res = ampSetProperty(h, PG_CHANNEL, i, CPROP_B32_RecordingEnabled, &enable, sizeof(enable));
+							if (res != AMP_OK)
+								throw std::runtime_error(("Error SetProperty enable for AUX channels, error: " + boost::lexical_cast<std::string>(res)).c_str());
+						}
+					}
 				}
-				res = ampGetProperty(h, PG_CHANNEL, i, CPROP_B32_RecordingEnabled, &wasEnabled, sizeof(wasEnabled));
-				if (res != AMP_OK)	
-					throw std::runtime_error(("Error SetProperty enable for AUX channels, error: "  + boost::lexical_cast<std::string>(res)).c_str());
-					
-				// if requested, enable it
-				if(wasEnabled!=enable){
-					res = ampSetProperty(h, PG_CHANNEL, i, CPROP_B32_RecordingEnabled, &enable, sizeof(enable));
-					if (res != AMP_OK)				
-						throw std::runtime_error(("Error SetProperty enable for AUX channels, error: "  + boost::lexical_cast<std::string>(res)).c_str());	
-				}
+				//enable = auxEnable;
+				//if(enable==true) {
+				//	accIndices.push_back(i);
+				//	++enabledChannelCnt;
+				//}
+				//res = ampGetProperty(h, PG_CHANNEL, i, CPROP_B32_RecordingEnabled, &wasEnabled, sizeof(wasEnabled));
+				//if (res != AMP_OK)	
+				//	throw std::runtime_error(("Error SetProperty enable for AUX channels, error: "  + boost::lexical_cast<std::string>(res)).c_str());
+				//	
+				//// if requested, enable it
+				//if(wasEnabled!=enable){
+				//	res = ampSetProperty(h, PG_CHANNEL, i, CPROP_B32_RecordingEnabled, &enable, sizeof(enable));
+				//	if (res != AMP_OK)				
+				//		throw std::runtime_error(("Error SetProperty enable for AUX channels, error: "  + boost::lexical_cast<std::string>(res)).c_str());	
+				//}
 				
 			}			
 		}

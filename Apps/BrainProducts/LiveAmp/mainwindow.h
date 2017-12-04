@@ -13,7 +13,7 @@
 
 // LSL API
 #define LSL_DEBUG_BINDINGS
-#include "../../../LSL/liblsl/include/lsl_cpp.h"
+#include <lsl_cpp.h>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -62,6 +62,8 @@ private slots:
 
 	void update_channel_labels_with_eeg(int);
 	void update_channel_labels_with_bipolar(int);
+	void update_channel_labels_aux(int);
+	void update_channel_labels_acc(bool);
 	
 	// if the device combo box item changes
 	void choose_device(int which);
@@ -73,15 +75,15 @@ private:
 	std::vector<int> usableChannelsByDevice;
 	int bipolarChannelCount;
 	bool overwrite;
-
+	bool overrideAutoUpdate;
 	bool check_configuration();
 	void update_channel_counters(int n);
 	void wait_message();
-
+	void update_channel_labels(void);
 
 	// background data reader thread
-	void read_thread(int chunkSize, int samplingRate, bool useAUX, bool useACC, std::vector<std::string> eegChannelLabels, std::vector<std::string> bipolarChannelLabels);
-	
+	void read_thread(int chunkSize, int samplingRate, std::vector<std::string> channelLabels);
+
 	
 	// container for amplifier enumeration
 	//std::vector<std::pair<std::string, int>> ampData;
@@ -108,7 +110,7 @@ private:
 	std::vector<std::string> live_amp_sns;				// live amp serial number container
 
 	boost::shared_ptr<boost::thread> reader_thread_;	// our reader thread
-	
+
     Ui::MainWindow *ui;
 
 	bool use_simulators;

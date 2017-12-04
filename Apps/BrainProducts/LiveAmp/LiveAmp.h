@@ -7,6 +7,7 @@
 #include "Amplifier_LIB.h"
 #include <vector>
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 
 
@@ -56,7 +57,7 @@ public:
 	void close();
 
 	// enable requested channels: for now acc and aux are all or nothing, triggers are always on, and eeg channels can be selected
-	void enableChannels(std::vector<int> eegIndicesIn, std::vector<int> bipolarIndicesIn, bool auxEnable, bool accEnable);
+	void enableChannels(const std::vector<int>& eegIndicesIn, const std::vector<int>& bipolarIndicesIn, const std::vector<int>& auxIndicesIn, bool accEnable);
 
 	// activate the configured device with enabled channels
 	void startAcquisition(void);
