@@ -83,6 +83,7 @@ target_link_libraries(${target}
 	Qt5::MultimediaWidgets
     Boost::thread
     ${zlib_libs}
+	${wmf_libs}
     LSL::lsl
 )
 
