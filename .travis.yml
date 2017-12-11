@@ -23,11 +23,10 @@ matrix:
         - export CMAKE_EXE=$PWD/cmakebin/bin/cmake
     - os: osx
       before_install:
-        - brew update
         - brew install qt
         - export CMAKE_PREFIX_PATH=/usr/local/opt/qt/
         - export CMAKE_EXE=`which cmake`
- notifications:
+notifications:
     slack: labstreaminglayer:nVh8xmzDKzA3i3YJAmdPAgbr
 #deploy:
 #  provider: bintray
