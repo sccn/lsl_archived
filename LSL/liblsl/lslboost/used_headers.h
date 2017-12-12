@@ -8,6 +8,13 @@
 #include <boost/archive/basic_binary_oprimitive.hpp>
 #include <boost/archive/detail/polymorphic_iarchive_route.hpp>
 #include <boost/archive/detail/polymorphic_oarchive_route.hpp>
+#include <boost/archive/impl/archive_pointer_iserializer.ipp>
+#include <boost/archive/impl/archive_pointer_oserializer.ipp>
+#include <boost/archive/impl/archive_serializer_map.ipp>
+#include <boost/archive/impl/basic_binary_iarchive.ipp>
+#include <boost/archive/impl/basic_binary_iprimitive.ipp>
+#include <boost/archive/impl/basic_binary_oarchive.ipp>
+#include <boost/archive/impl/basic_binary_oprimitive.ipp>
 #include <boost/archive/shared_ptr_helper.hpp>
 #include <boost/asio/basic_socket.hpp>
 #include <boost/asio/deadline_timer.hpp>
@@ -32,7 +39,6 @@
 #include <boost/detail/endian.hpp>
 #include <boost/detail/scoped_enum_emulation.hpp>
 #include <boost/enable_shared_from_this.hpp>
-#include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/function.hpp>
@@ -74,5 +80,3 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/version.hpp>
-/* Additional files bcp somehow misses when enumerating required boost files*/
-#include <boost/parameter/aux_/overloads.hpp>
