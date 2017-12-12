@@ -27,7 +27,6 @@ boost/container/flat_set.hpp
 boost/cstdint.hpp
 boost/date_time/time_duration.hpp
 boost/enable_shared_from_this.hpp
-boost/filesystem.hpp
 boost/format.hpp
 boost/functional/hash.hpp
 boost/function.hpp

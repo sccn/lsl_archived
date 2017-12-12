@@ -45,7 +45,8 @@ static std::vector<std::string> parse_set(const std::string &setstr) {
 
 // Returns true if the file exists and is openable for reading
 bool file_is_readable(const std::string& filename) {
-	return std::ifstream(filename).good();
+	std::ifstream f(filename.c_str());
+	return f.good();
 }
 
 /**
