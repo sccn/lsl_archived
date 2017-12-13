@@ -71,15 +71,19 @@ There are two build types:
 1. extract the zip file or clone the repository (`git clone https://github.com/sccn/labstreaminglayer.git`)
 2. Windows only: start `build_windows.bat` and follow the instructions in step 4
 3. change to the build directory (git: `cd labstreaminglayer/build`)
-4. open the configuration UI (`cmake-gui ../`) and click on `Configure`
+4. Configure the project using cmake.
+    Option 1 - using the GUI
+    - open the configuration UI (`cmake-gui ../`) and click on `Configure`
     - select your compiler
     - check the Apps you want to use
     - if necessary, use `Add Entry` to add paths or change options
-        - Qt5 (`Qt5_DIR`, e.g. `C:/Qt/5.9.2/msvc2015_64/lib/cmake/Qt5/`)
-	- Boost (`BOOST_ROOT`, e.g. `C:/local/boost_1_65_1/`)
-	- a path where redistributable binaries get copied (`CMAKE_INSTALL_PREFIX`)
-	- build type (`CMAKE_BUILD_TYPE`, either `Release` or `Debug`). You can change this in Visual Studio later.
+        - location of Qt5Config.cmake (`Qt5_DIR`, PATH, e.g. `C:/Qt/5.9.2/msvc2015_64/lib/cmake/Qt5/`)
+        - Boost (`BOOST_ROOT`, PATH, e.g. `C:/local/boost_1_65_1/`)
+        - a path where redistributable binaries get copied (`CMAKE_INSTALL_PREFIX`)
+        - build type (`CMAKE_BUILD_TYPE`, either `Release` or `Debug`). You can change this in Visual Studio later.
     - click on `Generate` to create the build files / Visual Studio Solution file (open it with `Open Project`)
+    Option 2 - using commandline. The following is an example. Add/remove options as required.
+    - cmake .. -G "Visual Studio 14 2015 Win64" -DQt5_DIR=C:\Qt\5.9.3\msvc2015_64\lib\cmake\Qt5 -DBOOST_ROOT=C:\local\boost_1_65_0 -DLSLAPPS_LabRecorder=ON -DLSLAPPS_XDFBrowser=ON -DLSLAPPS_OpenVR=ON
 5. start the build process (`cmake --build . --config Release --target install`[*](#regarding-the-install-target)) or load the generated VS Solution file
 
 This will create a distribution tree in the folder specified by `CMAKE_INSTALL_PREFIX`[*](#regarding-the-install-target) similar to this:
