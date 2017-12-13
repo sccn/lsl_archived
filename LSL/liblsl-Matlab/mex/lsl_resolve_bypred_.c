@@ -38,7 +38,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     pred_len = mxGetNumberOfElements(prhs[1]);
     if (pred_len+1 > sizeof(pred)/sizeof(pred[0]))
         mexErrMsgTxt("The given property name is too long.");    
-    mxGetNChars_700(prhs[1], pred, pred_len+1);
+    mxGetString(prhs[1], pred, pred_len+1);
     if (mxGetClassID(prhs[2]) != mxDOUBLE_CLASS)
         mexErrMsgTxt("The minimum argument must be passed as a double.");
     minimum = (int)(*(double*)mxGetData(prhs[2]));
