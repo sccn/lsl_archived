@@ -22,6 +22,8 @@ else
 	exit 1;
 fi
 
-for i in mex/*.c; do $buildcmd -I../liblsl/include -Lbin/ -llsl64 -ldl $i; done
+cd bin
+for i in ../mex/*.c; do $buildcmd -I../../liblsl/include -L. -llsl64 -ldl ../mex/$i; done
+cd ..
 
-octave-cli -p examples -p bin -p mex examples/LSLVersion.m 
+octave-cli -p bin examples/LSLVersion.m
