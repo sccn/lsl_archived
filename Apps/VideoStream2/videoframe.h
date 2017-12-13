@@ -13,14 +13,22 @@
 // if windows
 #include "GetDeviceInfo_win.h"
 
-
 #include <lsl_cpp.h>
+
+#include <string>
+
 namespace Ui {
 class VideoFrame;
 }
 
 class VideoFrame : public QMainWindow {
 	Q_OBJECT
+
+private slots:
+
+	void updateCameras(void);
+	void updateFrameRate(int idx);
+	void updateResolutions(int idx);
 
 public:
 	explicit VideoFrame(QWidget *parent);
@@ -41,6 +49,7 @@ private:
 
 	QList<QCameraInfo> m_availableCameras;
 	// windows only
+	GetDeviceInfo_win m_gdInfo; 
 	GetDeviceInfo_win::t_cameraSettings m_cameraSettings;
 
 };

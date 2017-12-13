@@ -13,22 +13,10 @@ VideoFrame::VideoFrame(QWidget *parent) : QMainWindow(parent), ui(new Ui::VideoF
 	ui->wBackground->setAutoFillBackground(true);
 	ui->wBackground->setPalette(pal);
 
-	// if windows
-	// get the names of all available cameras
-	std::vector<std::string> cameraNames;
-	GetDeviceInfo_win gdInfo;
-	gdInfo.getCameraNames(cameraNames);
+	QObject::connect(ui->cbFrameRate, SIGNAL(currentIndexChanged(int)), this, SLOT(updateResolutions(int)));
 
-	// put the names into the ui
-	for (std::vector<std::string>::iterator it = cameraNames.begin();
-		it != cameraNames.end();
-		++it) {
-		ui->cbCameras->addItem(QString("%1").arg(it->c_str()));
-	}
+	updateCameras();
 	
-	std::vector<wmfCameraInfo> cameraInfo;
-	gdInfo.getCameraInfo(ui->cbCameras->currentText().toStdString(), cameraInfo, m_cameraSettings);
-
 	////audio codecs
 	//ui->cbAudioCodec->addItem(tr("Default audio codec"), QVariant(QString()));
 	//const QStringList supportedAudioCodecs = mediaRecorder->supportedAudioCodecs();
@@ -90,4 +78,52 @@ VideoFrame::VideoFrame(QWidget *parent) : QMainWindow(parent), ui(new Ui::VideoF
 
 VideoFrame::~VideoFrame() {
 	delete ui;
+}
+
+void VideoFrame::updateCameras(void) {
+	// if windows
+	// get the names of all available cameras
+	std::vector<std::string> cameraNames;
+	m_gdInfo.getCameraNames(cameraNames);
+
+	// put the names into the ui
+	for (std::vector<std::string>::iterator it = cameraNames.begin();
+		it != cameraNames.end();
+		++it) {
+		ui->cbCameras->addItem(QString("%1").arg(it->c_str()));
+	}
+
+	updateFrameRate(1);
+	
+}
+
+void VideoFrame::updateFrameRate(int idx) {
+
+	std::vector<wmfCameraInfo> cameraInfo;
+	m_gdInfo.getCameraInfo(ui->cbCameras->currentText().toStdString(), cameraInfo);
+
+	for (GetDeviceInfo_win::t_cameraSettings::iterator it = m_gdInfo.cameraSettings.begin();
+		it != m_gdInfo.cameraSettings.end();
+		++it) {
+		ui->cbFrameRate->addItem(QString("%1").arg(it->first));
+	}
+
+	updateResolutions(ui->cbFrameRate->currentIndex());
+}
+
+void VideoFrame::updateResolutions(int idx) {
+
+	int which = std::stoi(ui->cbFrameRate->currentText().toStdString());
+	ui->cbResolution->clear();
+	for (GetDeviceInfo_win::t_cameraSettings::iterator it1 = m_gdInfo.cameraSettings.begin();
+		it1 != m_gdInfo.cameraSettings.end();
+		++it1) {
+		if (it1->first == which) {
+			for (std::vector<resolution>::iterator it2 = it1->second.begin();
+				it2 != it1->second.end();
+				++it2) {
+				ui->cbResolution->addItem(QString("%1 x %2").arg(it2->width).arg(it2->height));
+			}
+		}
+	}
 }

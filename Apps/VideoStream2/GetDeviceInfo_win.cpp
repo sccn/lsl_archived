@@ -1,6 +1,7 @@
 #include "GetDeviceInfo_win.h"
 
 #include <iostream>
+#include <algorithm>
 #include "saferelease.h"
 
 
@@ -176,7 +177,7 @@ done:
 	return hr;
 }
 
-void GetDeviceInfo_win::parseCameraOptions(std::vector<wmfCameraInfo>& cameraInfo, t_cameraSettings& cameraSettings) {
+void GetDeviceInfo_win::parseCameraOptions(std::vector<wmfCameraInfo>& cameraInfo) {
 
 	std::vector<float>framerates;
 	std::vector<resolution>resolutions;
@@ -206,6 +207,13 @@ void GetDeviceInfo_win::parseCameraOptions(std::vector<wmfCameraInfo>& cameraInf
 			cameraSettings.push_back(p);
 		}
 	}
+
+	// somehow I get duplicates in my resolution list
+	for (t_cameraSettings::iterator it = cameraSettings.begin();
+		it != cameraSettings.end();
+		++it) {
+		it->second.erase( std::unique( it->second.begin(), it->second.end() ), it->second.end() );
+	}
 }
 
 // public interface
@@ -216,14 +224,14 @@ void GetDeviceInfo_win::getCameraNames(std::vector<std::string>& cameraNames) {
 		throw hr;
 }
 
-void GetDeviceInfo_win::getCameraInfo(std::string deviceName, std::vector<wmfCameraInfo>& cameraInfo, t_cameraSettings& cameraSettings) {
+void GetDeviceInfo_win::getCameraInfo(std::string deviceName, std::vector<wmfCameraInfo>& cameraInfo) {
 
 	HRESULT hr = SelectDevice(deviceName, cameraInfo);
 	if (hr != S_OK)
 		throw hr;
 
-
-	parseCameraOptions(cameraInfo, cameraSettings);
+	cameraSettings.clear();
+	parseCameraOptions(cameraInfo);
 
 	for (std::vector<std::pair<float, std::vector<resolution>>>::iterator it1 = cameraSettings.begin();
 		it1 != cameraSettings.end();

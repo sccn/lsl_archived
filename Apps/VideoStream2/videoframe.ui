@@ -47,6 +47,13 @@
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="bScanCameras">
+       <property name="text">
+        <string>Re-Scan for Cameras</string>
+       </property>
+      </widget>
+     </item>
      <item alignment="Qt::AlignRight">
       <widget class="QLabel" name="label">
        <property name="text">
