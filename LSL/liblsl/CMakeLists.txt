@@ -158,17 +158,22 @@ if (WIN32)
 endif ()
 
 install(TARGETS ${lsl_export_targets}
+	COMPONENT liblsl
   EXPORT "${PROJECT_NAME}Config"
   RUNTIME DESTINATION LSL/lib
   LIBRARY DESTINATION LSL/lib
   INCLUDES DESTINATION LSL/include
-  ARCHIVE DESTINATION LSL/lib)
+  ARCHIVE DESTINATION LSL/lib
+)
+# TODO: where to install this, see https://stackoverflow.com/a/10766438 
 install(EXPORT "${PROJECT_NAME}Config"
+	COMPONENT liblslheaders
    NAMESPACE "LSL::"
    DESTINATION LSL/cmake)
 
 # install headers
 install(FILES ${headers}
+	COMPONENT "liblsl-dev"
   DESTINATION LSL/include/
 )
-
+set(CPACK_COMPONENT_liblsl-dev_DEPENDS liblsl GLOBAL_SCOPE)

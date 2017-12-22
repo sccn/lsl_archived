@@ -34,6 +34,7 @@ add_subdirectory(Apps)
 
 install(FILES
 	cmake/LSLAppBoilerplate.cmake
+	COMPONENT "liblsl-dev"
 	DESTINATION LSL/cmake)
 
 # add a target that zips up a built installation tree
@@ -44,3 +45,10 @@ add_custom_target(LSLPACKAGE
 	COMMAND ${CMAKE_COMMAND} "-E" "tar" "cvf" "${LSLPACKAGENAME}" "--format=7zip" "${CMAKE_INSTALL_PREFIX}"
 	BYPRODUCTS ${LSLPACKAGENAME}
 	WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/../")
+
+# Generate packages for LSL and all built apps
+if(UNIX)
+	include(LslCPackCommon)
+	include(LslCPackDeb)
+	include(CPack)
+endif()

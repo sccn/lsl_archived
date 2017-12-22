@@ -1,4 +1,6 @@
-project(Examples)
+cmake_minimum_required(VERSION 3.5)
+project(Examples
+	VERSION 0.1)
 
 # If building the whole tree use the current LSL
 if(TARGET lsl)
