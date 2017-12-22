@@ -50,6 +50,8 @@ if(NOT MSVC)
 endif ()
 
 install(TARGETS lslboost EXPORT lslboostConfig
+	COMPONENT "liblsl-dev"
 	ARCHIVE DESTINATION LSL/lib)
 install(EXPORT lslboostConfig
+	COMPONENT "liblsl-dev"
 	DESTINATION LSL/cmake)
