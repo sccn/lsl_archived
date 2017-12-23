@@ -29,7 +29,6 @@
 #include <boost/asio/stream_socket_service.hpp>
 #include <boost/atomic.hpp>
 #include <boost/bimap.hpp>
-#include<boost/bind.hpp>
 #include <boost/bind.hpp>
 #include <boost/chrono/system_clocks.hpp>
 #include <boost/config.hpp>
