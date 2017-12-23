@@ -31,7 +31,6 @@ set (sources
 	src/consumer_queue.h
 	src/data_receiver.cpp
 	src/data_receiver.h
-	src/dllmain.cpp
 	src/endian/conversion.hpp
 	src/endian/detail/intrinsic.hpp
 	src/info_receiver.cpp
