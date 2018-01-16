@@ -36,8 +36,8 @@ IF(MSVC)
     # Default location of pre-compiled Boost for Windows
     # Override by adding "-DBOOST_ROOT=C:\path\to\boost\ -DBOOST_LIBRARYDIR=C:\path\to\boost\lib32-msvc-14.0\" to your cmake command
     IF (NOT BOOST_ROOT)
-        SET(BOOST_ROOT "C:/local/boost_1_63_0/")
-        SET(BOOST_LIBRARYDIR "C:/local/boost_1_63_0/lib64-msvc-14.0/")
+        SET(BOOST_ROOT "C:/local/boost_1_65_0/")
+        SET(BOOST_LIBRARYDIR "C:/local/boost_1_65_0/lib64-msvc-14.0/")
         ENDIF()
 ENDIF()
 
