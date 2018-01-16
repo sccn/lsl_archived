@@ -3,23 +3,25 @@ project(gNEEDaccess VERSION 0.0.1)
 
 # load LSLAppBoilerplate if not done already
 if(NOT TARGET LSL::lsl)
-	if(NOT LSL_INSTALL_ROOT)
-		# If building the app out of tree, the user is expected to supply LSL_INSTALL_ROOT.
+    if(NOT LSL_INSTALL_ROOT)
+        # If building the app out of tree, the user is expected to supply LSL_INSTALL_ROOT.
         # For ease of Chadwick Boulay's development, he has added a default directory to check.
         # This default directory is probably wrong for you. Ignore it.
-		# Just supply -DLSL_INSTALL_ROOT=/path/to/installed/lsl to the cmake command.
-		set(LSL_INSTALL_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../build/lsl_Release/lslinstall/LSL")
-		get_filename_component(LSL_INSTALL_ROOT ${LSL_INSTALL_ROOT} ABSOLUTE)
-		if(NOT EXISTS ${LSL_INSTALL_ROOT})
-			message(FATAL_ERROR "When building a single app out of tree you need to set LSL_INSTALL_ROOT ( cmake -DLSL_INSTALL_ROOT=/path/to/installed/lsl)")
+        # Just supply -DLSL_INSTALL_ROOT=/path/to/installed/lsl to the cmake command.
+        set(LSL_INSTALL_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../build/install/lsl_Release/LSL")
+        get_filename_component(LSL_INSTALL_ROOT ${LSL_INSTALL_ROOT} ABSOLUTE)
+        if(NOT EXISTS ${LSL_INSTALL_ROOT})
+            message(FATAL_ERROR "When building a single app out of tree you need to set LSL_INSTALL_ROOT ( cmake -DLSL_INSTALL_ROOT=/path/to/installed/lsl)")
         endif()
     endif()
-	if(NOT IS_ABSOLUTE ${LSL_INSTALL_ROOT})
-		message(FATAL_ERROR "LSL_INSTALL_ROOT needs to be an absolute path")
-	endif()
-	file(TO_CMAKE_PATH ${LSL_INSTALL_ROOT} LSL_INSTALL_ROOT)
-	list(APPEND CMAKE_MODULE_PATH "${LSL_INSTALL_ROOT}/cmake")
+    if(NOT IS_ABSOLUTE ${LSL_INSTALL_ROOT})
+        message(FATAL_ERROR "LSL_INSTALL_ROOT needs to be an absolute path")
+    endif()
+    file(TO_CMAKE_PATH ${LSL_INSTALL_ROOT} LSL_INSTALL_ROOT)
+    list(APPEND CMAKE_MODULE_PATH "${LSL_INSTALL_ROOT}/cmake")
     include(LSLAppBoilerplate)
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../cmake")
+    include(LSLSaneDefaults)
 endif()
 
 # GENERAL CONFIG #
@@ -29,9 +31,7 @@ LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 # THIRD PARTY LIBRARIES #
 
 # Qt
-if(NOT Qt5_DIR)
-    set(Qt5_DIR "C:\\Qt\\5.9.1\\msvc2015_64\\lib\\cmake\\Qt5")
-endif()
+# If Qt5_DIR is not supplied, use default directory defined in ${CMAKE_CURRENT_LIST_DIR}/../../../cmake/LSLSaneDefaults
 find_package(Qt5 REQUIRED COMPONENTS Core Xml Gui Widgets)
 
 # g.Tec gNEEDaccessSDK
@@ -51,6 +51,9 @@ LIST(APPEND gNEEDaccess_SRC
     ${CMAKE_CURRENT_LIST_DIR}/src/mainwindow.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/mainwindow.h
     ${CMAKE_CURRENT_LIST_DIR}/src/mainwindow.ui
+    ${CMAKE_CURRENT_LIST_DIR}/src/nautilus_dlg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/nautilus_dlg.h
+    ${CMAKE_CURRENT_LIST_DIR}/src/nautilus_dlg.ui
 )
 #...headers
 LIST(APPEND gNEEDaccess_INCL_DIRS

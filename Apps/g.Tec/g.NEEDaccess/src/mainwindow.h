@@ -5,6 +5,7 @@
 #include <QMutex>
 #include "lsl_cpp.h"
 #include "GDSClientAPI.h"
+#include "nautilus_dlg.h"
 
 const QString default_config_fname = "gneedaccess_config.cfg";
 
@@ -26,11 +27,13 @@ signals:
 
 private slots:
 	// GUI
-    void on_scanPushButton_clicked();
+	void on_loadConfigPushButton_clicked();
+	void on_saveConfigPushButton_clicked();
+	void on_scanPushButton_clicked();
+	void on_devCfgPushButton_clicked();
 	void on_connectPushButton_clicked();
     void on_goPushButton_clicked();
 	void on_availableListWidget_itemSelectionChanged();
-	void on_loadConfigPushButton_clicked();
 	void notify_samples_pushed();
 
 private:
@@ -39,10 +42,11 @@ private:
 		std::string label;
 		std::string type;
 		std::string unit;
+		double scaling_offset = 0.0;
+		double scaling_factor = 1.0;
 	};
 	struct dev_info_type {
 		std::string name;
-		bool is_creator = false;
 		int channel_count = 0;
 		size_t nsamples_per_scan = 0;
 		size_t scans_per_block = 0;
@@ -57,9 +61,10 @@ private:
 	
 	// Private methods
     void load_config(const QString filename);
-    // void save_config(const QString filename);  // TODO: Actually save the config to a file.
+    void save_config(const QString filename);  // TODO: Actually save the config to a file.
 	void enable_config_elements(bool enabled);
 
+	// private members
     Ui::MainWindow *ui;
 	QMutex mutex;
 	QTimer* m_pTimer;
@@ -67,12 +72,15 @@ private:
 	bool m_bStreaming = false;
 	size_t m_samplesPushed = 0;
 
+	std::vector<QDialog*> m_cfgDialogs;
+
 	// GDS communication
 	GDS_HANDLE m_connectionHandle = 0;
 	GDS_ENDPOINT m_hostEndpoint = { "127.0.0.1", 50223 };
 	GDS_ENDPOINT m_localEndpoint = { "127.0.0.1", 50224 };
-	dev_info_type m_devInfo;
-
+	std::vector<dev_info_type> m_devInfos;
+	bool m_isCreator = false;
+	
 	// LSL variables
 	float* m_dataBuffer = NULL;
 	lsl::stream_outlet* m_eegOutlet;

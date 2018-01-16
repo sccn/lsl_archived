@@ -8,6 +8,8 @@
 #include "GDSClientAPI_gHIamp.h"
 #include "GDSClientAPI_gNautilus.h"
 
+#define SELECTED_DEVICES_MAX	4
+
 
 // GDS_DeviceInfo contains basic identifying information for each found device.
 struct GDS_DeviceInfo
@@ -35,12 +37,12 @@ void MainWindow::dataReadyCallback(GDS_HANDLE connectionHandle, void* usrData)
 {
 	MainWindow* thisWin = reinterpret_cast< MainWindow* >(usrData);
 	thisWin->mutex.lock();
-	size_t bufferSize = thisWin->m_devInfo.scans_per_block * thisWin->m_devInfo.nsamples_per_scan;
+	size_t bufferSize = thisWin->m_devInfos[0].scans_per_block * thisWin->m_devInfos[0].nsamples_per_scan;
 	size_t scans_available = 0;  // Read as many scans as possible, up to as many will fit in m_dataBuffer
 	GDS_RESULT res = GDS_GetData(thisWin->m_connectionHandle, &scans_available, thisWin->m_dataBuffer, bufferSize);
 	if (scans_available > 0)
 	{
-		thisWin->m_eegOutlet->push_chunk_multiplexed(thisWin->m_dataBuffer, scans_available * thisWin->m_devInfo.nsamples_per_scan);
+		thisWin->m_eegOutlet->push_chunk_multiplexed(thisWin->m_dataBuffer, scans_available * thisWin->m_devInfos[0].nsamples_per_scan);
 		thisWin->m_samplesPushed += scans_available;
 	}
 	thisWin->mutex.unlock();
@@ -94,7 +96,14 @@ void MainWindow::on_scanPushButton_clicked()
 
 	strcpy(this->m_hostEndpoint.IpAddress, ui->lineEdit_serverip->text().toLatin1().data());
 	this->m_hostEndpoint.Port = ui->serverPortSpinBox->value();
-	this->m_localEndpoint.Port = ui->clientPortSpinBox->value();	
+	this->m_localEndpoint.Port = ui->clientPortSpinBox->value();
+
+	// Delete any config dialogs
+	while (m_cfgDialogs.size() > 0)
+	{
+		delete m_cfgDialogs.back();
+		m_cfgDialogs.pop_back();
+	}
 
 	GDS_DEVICE_CONNECTION_INFO* connected_devices = NULL;
 	size_t count_daq_units = 0;
@@ -124,15 +133,30 @@ void MainWindow::on_scanPushButton_clicked()
 	if (new_devices.size() > 0)
 	{
 		ui->availableListWidget->clear();
-		QStringList newDeviceNames;
 		for (auto it = new_devices.begin(); it != new_devices.end(); ++it) {
+			// Add the device to the list of available devices.
+			// TODO: Use other GDS_DeviceInfo fields in list representation.
 			ui->availableListWidget->addItem(it->name);
-			// TODO: Use other GDS_DeviceInfo fields
+			// Add a hidden config dialog depending on device.
+			switch (it->type)
+			{
+			case GDS_DEVICE_TYPE_GNAUTILUS:
+				m_cfgDialogs.push_back(new NautilusDlg());
+			default:
+				break;
+			}
 		}
 		ui->availableListWidget->setCurrentRow(0);
 	}
 	ui->scanPushButton->setText("Scan");
 	ui->scanPushButton->setDisabled(false);
+}
+
+
+void MainWindow::on_devCfgPushButton_clicked()
+{
+	int dev_ix = ui->availableListWidget->currentRow();
+	m_cfgDialogs[dev_ix]->exec();
 }
 
 
@@ -148,30 +172,36 @@ void MainWindow::on_connectPushButton_clicked()
 	QString pbtext = ui->connectPushButton->text();
 	if (pbtext == "Connect")
 	{
-		QString deviceName = ui->availableListWidget->currentItem()->text();
+		QList<QListWidgetItem *> selectedItemsList = ui->availableListWidget->selectedItems();
+		int nSelected = selectedItemsList.size();
+		
 		// A normal API would ask for N different char arrays, each with DEVICE_NAME_LENGTH_MAX characters.
 		// This API instead asks for DEVICE_NAME_LENGTH_MAX char arrays, each with N characters. i.e. it's transposed.
 		// So instead of trying to figure out the sane C++ way of conforming to an insane C API, I'm just copying their example code.
-		char(*device_names)[DEVICE_NAME_LENGTH_MAX] = new char[1][DEVICE_NAME_LENGTH_MAX];
-		std::strcpy(device_names[0], deviceName.toLatin1().data());
+		char(*device_names)[DEVICE_NAME_LENGTH_MAX] = new char[SELECTED_DEVICES_MAX][DEVICE_NAME_LENGTH_MAX];
+		for (int dev_ix = 0; dev_ix < nSelected; dev_ix++)
+		{
+			std::strcpy(device_names[dev_ix], selectedItemsList.at(dev_ix)->text().toLatin1().data());
+		}
 		BOOL is_creator = FALSE;
 		if (handleResult("GDS_Connect",
-			GDS_Connect(m_hostEndpoint, m_localEndpoint, device_names, 1, FALSE, &m_connectionHandle, &is_creator)))
+			GDS_Connect(m_hostEndpoint, m_localEndpoint, device_names, nSelected, FALSE, &m_connectionHandle, &is_creator)))
 		{
 			ui->connectPushButton->setText("Disconnect");
 			ui->goPushButton->setDisabled(false);
 			enable_config_elements(false);
 			m_bConnected = true;
-			m_devInfo.is_creator = bool(is_creator);
 
-			if (!m_devInfo.is_creator)
+			m_isCreator = bool(is_creator);
+
+			if (!m_isCreator)
 			{
-				m_devInfo.is_creator = handleResult("GDS_BecomeCreator",
+				m_isCreator = handleResult("GDS_BecomeCreator",
 					GDS_BecomeCreator(m_connectionHandle));
-				if (!m_devInfo.is_creator)
-					statusBar()->showMessage("Device is first connected by another application. Checkboxes will be ignored.");
+				if (!m_isCreator)
+					statusBar()->showMessage("Device is first connected by another application. Cannot modify its configuration.");
 			}
-			ui->devCfgGrpBox->setEnabled(m_devInfo.is_creator);
+			ui->devCfgPushButton->setEnabled(m_isCreator);
 		}
 		delete[] device_names;
 		device_names = NULL;
@@ -203,7 +233,7 @@ void MainWindow::on_goPushButton_clicked()
 	{
 		m_pTimer->stop();
 		handleResult("GDS_StopStreaming", GDS_StopStreaming(m_connectionHandle));
-		if (m_devInfo.is_creator)
+		if (m_isCreator)
 			handleResult("GDS_StopAcquisition", GDS_StopAcquisition(m_connectionHandle));
 		handleResult("GDS_SetDataReadyCallback",
 			GDS_SetDataReadyCallback(m_connectionHandle, NULL, 0, NULL));
@@ -227,181 +257,224 @@ void MainWindow::on_goPushButton_clicked()
 		// Note: API allocates memory during GDS_GetConfiguration. We must free it with GDS_FreeConfigurationList.
 		success &= handleResult("GDS_GetConfiguration",
 			GDS_GetConfiguration(m_connectionHandle, &deviceConfigurations, &deviceConfigurationsCount));
+		
+		if (!success)
+		{
+			// e.g., network timeout.
+			ui->goPushButton->setDisabled(false);
+			return;
+		}
 
-		// Fill in some of dev_info for the selected device.
-		int dev_ix = 0;
-		m_devInfo.name = ui->availableListWidget->currentItem()->text().toStdString();
+		m_devInfos.clear();
+		for (size_t dev_ix = 0; dev_ix < deviceConfigurationsCount; dev_ix++)
+		{
+			// When clicking Go!, get
+			dev_info_type thisDevInfo = {};
+			thisDevInfo.name = deviceConfigurations[dev_ix].DeviceInfo.Name;
+
+			// Some API functions require a device_names argument.
+			// The API wants an _array_ of char[DEVICE_NAME_LENGTH_MAX] even though these functions are designed for only one device.
+			char(*device_names)[DEVICE_NAME_LENGTH_MAX] = new char[1][DEVICE_NAME_LENGTH_MAX];
+			std::strcpy(device_names[0], deviceConfigurations[dev_ix].DeviceInfo.Name);
 			
-		// GDS_<DEVICE>_GetChannelNames requires a device_names argument.
-		// The API wants an array of char[DEVICE_NAME_LENGTH_MAX] even though these functions are designed for only one device.
-		char(*device_names)[DEVICE_NAME_LENGTH_MAX] = new char[1][DEVICE_NAME_LENGTH_MAX];
-		std::strcpy(device_names[0], ui->availableListWidget->currentItem()->text().toLatin1().data());
+			GDS_CONFIGURATION_BASE cfg = deviceConfigurations[dev_ix];
+			if (cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_NOT_SUPPORTED)
+			{
+				success = false;
+				qDebug() << "Unknown device type.";
+			}
+			else if (cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GUSBAMP)
+			{
+				GDS_GUSBAMP_CONFIGURATION* cfg_dev = (GDS_GUSBAMP_CONFIGURATION*)cfg.Configuration;
+				thisDevInfo.nominal_srate = double(cfg_dev->SampleRate);
+				thisDevInfo.scans_per_block = cfg_dev->NumberOfScans;
+				
+				GDS_GUSBAMP_SCALING scaling;
+				handleResult("GDS_GUSBAMP_GetScaling",
+					GDS_GUSBAMP_GetScaling(m_connectionHandle, device_names, &scaling));
 
-		GDS_CONFIGURATION_BASE cfg = deviceConfigurations[dev_ix];
-		if (cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_NOT_SUPPORTED)
-		{
-			success = false;
-			qDebug() << "Unknown device type.";
+				for (size_t chan_ix = 0; chan_ix < GDS_GUSBAMP_CHANNELS_MAX; chan_ix++)
+				{
+					chan_info_type new_chan_info;
+					new_chan_info.enabled = cfg_dev->Channels[chan_ix].Acquire;
+					new_chan_info.label = std::to_string(chan_ix + 1);
+					new_chan_info.type = "EEG";
+					new_chan_info.unit = "uV";
+					new_chan_info.scaling_offset = scaling.Offset[chan_ix];
+					new_chan_info.scaling_factor = scaling.ScalingFactor[chan_ix];
+					thisDevInfo.channel_infos.push_back(new_chan_info);
+				}
+
+				if (cfg_dev->TriggerEnabled)
+				{
+					chan_info_type new_chan_info;
+					new_chan_info.enabled = true;
+					new_chan_info.type = "DigitalIOs";
+					new_chan_info.unit = "unknown";
+					new_chan_info.label = "Digital IOs";
+					thisDevInfo.channel_infos.push_back(new_chan_info);
+				}
+
+				// TODO: 
+				// ShortCutEnabled, CounterEnabled, CommonGround[GDS_GUSBAMP_GROUPS_MAX], CommonReference[GDS_GUSBAMP_GROUPS_MAX]
+			}
+			else if (cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GHIAMP)
+			{
+				GDS_GHIAMP_CONFIGURATION* cfg_dev = (GDS_GHIAMP_CONFIGURATION*)cfg.Configuration;
+				thisDevInfo.nominal_srate = double(cfg_dev->SamplingRate);
+				thisDevInfo.scans_per_block = size_t(cfg_dev->NumberOfScans);
+				qDebug() << "TODO: Get g.HIamp configuration. I do not have a device to test...";
+				for (size_t chan_ix = 0; chan_ix < GDS_GHIAMP_CHANNELS_MAX; chan_ix++)
+				{
+					chan_info_type new_chan_info;
+					new_chan_info.enabled = cfg_dev->Channels[chan_ix].Acquire;
+					new_chan_info.label = std::to_string(chan_ix + 1);
+					new_chan_info.type = "EEG";
+					new_chan_info.unit = "uV";
+					thisDevInfo.channel_infos.push_back(new_chan_info);
+				}
+			}
+			else if (cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GNAUTILUS)
+			{
+				GDS_GNAUTILUS_CONFIGURATION* cfg_dev = (GDS_GNAUTILUS_CONFIGURATION*)cfg.Configuration;
+				thisDevInfo.nominal_srate = double(cfg_dev->SamplingRate);
+				thisDevInfo.scans_per_block = size_t(cfg_dev->NumberOfScans);
+
+				// There are some configuration parameters that are not saved in the device/server.
+				// For these we can set them from a GUI if we are the creator, or read them into the GUI if we are not.
+				if (m_isCreator)
+				{
+					// TODO: Access the dialog for the list of m_cfgDialogs
+					// NautilusDlg* myDlg = (NautilusDlg*)m_cfgDialogs[0];
+					// myDlg->ui->
+					/*
+					cfg_dev->CAR = ui->CARCheckBox->isChecked();
+					cfg_dev->NoiseReduction = ui->noiseCheckBox->isChecked();
+					cfg_dev->AccelerationData = ui->accelCheckBox->isChecked();
+					cfg_dev->Counter = ui->counterCheckBox->isChecked();
+					cfg_dev->LinkQualityInformation = ui->linkCheckBox->isChecked();
+					cfg_dev->BatteryLevel = ui->batteryCheckBox->isChecked();
+					cfg_dev->DigitalIOs = ui->digitalCheckBox->isChecked();
+					cfg_dev->ValidationIndicator = ui->validationCheckBox->isChecked();
+					*/
+					handleResult("GDS_SetConfiguration",
+						GDS_SetConfiguration(m_connectionHandle, &cfg, 1));
+				}
+				else
+				{
+					/*
+					ui->CARCheckBox->setChecked(cfg_dev->CAR);
+					ui->noiseCheckBox->setChecked(cfg_dev->NoiseReduction);
+					ui->accelCheckBox->setChecked(cfg_dev->AccelerationData);
+					ui->counterCheckBox->setChecked(cfg_dev->Counter);
+					ui->linkCheckBox->setChecked(cfg_dev->LinkQualityInformation);
+					ui->batteryCheckBox->setChecked(cfg_dev->BatteryLevel);
+					ui->digitalCheckBox->setChecked(cfg_dev->DigitalIOs);
+					ui->validationCheckBox->setChecked(cfg_dev->ValidationIndicator);
+					*/
+				}
+
+				// Get channel names
+
+				// First determine how many channel names there are.
+				uint32_t mountedModulesCount = 0;
+				size_t electrodeNamesCount = 0;
+				success &= handleResult("GDS_GNAUTILUS_GetChannelNames",
+					GDS_GNAUTILUS_GetChannelNames(m_connectionHandle, device_names, &mountedModulesCount, NULL, &electrodeNamesCount));
+				// Allocate memory to store the channel names.
+				char(*electrode_names)[GDS_GNAUTILUS_ELECTRODE_NAME_LENGTH_MAX] = new char[electrodeNamesCount][GDS_GNAUTILUS_ELECTRODE_NAME_LENGTH_MAX];
+				success &= handleResult("GDS_GNAUTILUS_GetChannelNames",
+					GDS_GNAUTILUS_GetChannelNames(m_connectionHandle, device_names, &mountedModulesCount, electrode_names, &electrodeNamesCount));
+				
+				// Copy the result into thisDevInfo
+				for (int chan_ix = 0; chan_ix < electrodeNamesCount; chan_ix++)
+				{
+					chan_info_type new_chan_info;
+					new_chan_info.enabled = cfg_dev->Channels[chan_ix].Enabled;
+					new_chan_info.label = electrode_names[chan_ix];
+					new_chan_info.type = "EEG";
+					new_chan_info.unit = "uV";
+					thisDevInfo.channel_infos.push_back(new_chan_info);
+				}
+				delete[] electrode_names;
+				electrode_names = NULL;
+
+				if (cfg_dev->AccelerationData)
+				{
+					chan_info_type new_chan_info;
+					new_chan_info.enabled = true;
+					new_chan_info.type = "Accelerometer";
+					new_chan_info.unit = "g";
+					new_chan_info.label = "ACC X";
+					thisDevInfo.channel_infos.push_back(new_chan_info);
+
+					new_chan_info.label = "ACC Y";
+					thisDevInfo.channel_infos.push_back(new_chan_info);
+
+					new_chan_info.label = "ACC Z";
+					thisDevInfo.channel_infos.push_back(new_chan_info);
+				}
+
+				if (cfg_dev->Counter)
+				{
+					chan_info_type new_chan_info;
+					new_chan_info.enabled = true;
+					new_chan_info.type = "Counter";
+					new_chan_info.unit = "samples";
+					new_chan_info.label = "Counter";
+					thisDevInfo.channel_infos.push_back(new_chan_info);
+				}
+
+				if (cfg_dev->LinkQualityInformation)
+				{
+					chan_info_type new_chan_info;
+					new_chan_info.enabled = true;
+					new_chan_info.type = "LinkQuality";
+					new_chan_info.unit = "unknown";
+					new_chan_info.label = "Link Quality";
+					thisDevInfo.channel_infos.push_back(new_chan_info);
+				}
+
+				if (cfg_dev->BatteryLevel)
+				{
+					chan_info_type new_chan_info;
+					new_chan_info.enabled = true;
+					new_chan_info.type = "BatteryLevel";
+					new_chan_info.unit = "unknown";
+					new_chan_info.label = "Battery Level";
+					thisDevInfo.channel_infos.push_back(new_chan_info);
+				}
+
+				if (cfg_dev->DigitalIOs)
+				{
+					chan_info_type new_chan_info;
+					new_chan_info.enabled = true;
+					new_chan_info.type = "DigitalIOs";
+					new_chan_info.unit = "unknown";
+					new_chan_info.label = "Digital IOs";
+					thisDevInfo.channel_infos.push_back(new_chan_info);
+				}
+
+				if (cfg_dev->ValidationIndicator)
+				{
+					chan_info_type new_chan_info;
+					new_chan_info.enabled = true;
+					new_chan_info.type = "ValidationIndicator";
+					new_chan_info.unit = "unknown";
+					new_chan_info.label = "Validation Indicator";
+					thisDevInfo.channel_infos.push_back(new_chan_info);
+				}
+			}
+			// Cleanup device_names used in API calls
+			delete[] device_names;
+			device_names = NULL;
+
+			m_devInfos.push_back(thisDevInfo);
 		}
-		else if (cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GUSBAMP)
-		{
-			GDS_GUSBAMP_CONFIGURATION* cfg_dev = (GDS_GUSBAMP_CONFIGURATION*)cfg.Configuration;
-			m_devInfo.nominal_srate = double(cfg_dev->SampleRate);
-			m_devInfo.scans_per_block = cfg_dev->NumberOfScans;
-			qDebug() << "TODO: Get g.USBamp configuration. I do not have a device to test...";
-			
-			for (size_t chan_ix = 0; chan_ix < GDS_GUSBAMP_CHANNELS_MAX; chan_ix++)
-			{
-				chan_info_type new_chan_info;
-				new_chan_info.enabled = cfg_dev->Channels[chan_ix].Acquire;
-				new_chan_info.label = std::to_string(chan_ix + 1);
-				new_chan_info.type = "EEG";
-				new_chan_info.unit = "uV";
-				m_devInfo.channel_infos.push_back(new_chan_info);
-			}
-		}
-		else if (cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GHIAMP)
-		{
-			GDS_GHIAMP_CONFIGURATION* cfg_dev = (GDS_GHIAMP_CONFIGURATION*)cfg.Configuration;
-			m_devInfo.nominal_srate = double(cfg_dev->SamplingRate);
-			m_devInfo.scans_per_block = size_t(cfg_dev->NumberOfScans);
-			qDebug() << "TODO: Get g.HIamp configuration. I do not have a device to test...";
-			for (size_t chan_ix = 0; chan_ix < GDS_GHIAMP_CHANNELS_MAX; chan_ix++)
-			{
-				chan_info_type new_chan_info;
-				new_chan_info.enabled = cfg_dev->Channels[chan_ix].Acquire;
-				new_chan_info.label = std::to_string(chan_ix + 1);
-				new_chan_info.type = "EEG";
-				new_chan_info.unit = "uV";
-				m_devInfo.channel_infos.push_back(new_chan_info);
-			}
-		}
-		else if (cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GNAUTILUS)
-		{
-			GDS_GNAUTILUS_CONFIGURATION* cfg_dev = (GDS_GNAUTILUS_CONFIGURATION*)cfg.Configuration;
-			m_devInfo.nominal_srate = double(cfg_dev->SamplingRate);
-			m_devInfo.scans_per_block = size_t(cfg_dev->NumberOfScans);
 
-			if (m_devInfo.is_creator)
-			{
-				cfg_dev->CAR = ui->CARCheckBox->isChecked();
-				cfg_dev->NoiseReduction = ui->noiseCheckBox->isChecked();
-				cfg_dev->AccelerationData = ui->accelCheckBox->isChecked();
-				cfg_dev->Counter = ui->counterCheckBox->isChecked();
-				cfg_dev->LinkQualityInformation = ui->linkCheckBox->isChecked();
-				cfg_dev->BatteryLevel = ui->batteryCheckBox->isChecked();
-				cfg_dev->DigitalIOs = ui->digitalCheckBox->isChecked();
-				cfg_dev->ValidationIndicator = ui->validationCheckBox->isChecked();
-				handleResult("GDS_SetConfiguration",
-					GDS_SetConfiguration(m_connectionHandle, &cfg, 1));
-			}
-			else
-			{
-				ui->CARCheckBox->setChecked(cfg_dev->CAR);
-				ui->noiseCheckBox->setChecked(cfg_dev->NoiseReduction);
-				ui->accelCheckBox->setChecked(cfg_dev->AccelerationData);
-				ui->counterCheckBox->setChecked(cfg_dev->Counter);
-				ui->linkCheckBox->setChecked(cfg_dev->LinkQualityInformation);
-				ui->batteryCheckBox->setChecked(cfg_dev->BatteryLevel);
-				ui->digitalCheckBox->setChecked(cfg_dev->DigitalIOs);
-				ui->validationCheckBox->setChecked(cfg_dev->ValidationIndicator);
-			}
-
-			// Get channel names
-			// First determine how many channel names there are.
-			uint32_t mountedModulesCount = 0;
-			size_t electrodeNamesCount = 0;
-			success &= handleResult("GDS_GNAUTILUS_GetChannelNames",
-				GDS_GNAUTILUS_GetChannelNames(m_connectionHandle, device_names, &mountedModulesCount, NULL, &electrodeNamesCount));
-			// Allocate memory to store the channel names.
-			char(*electrode_names)[GDS_GNAUTILUS_ELECTRODE_NAME_LENGTH_MAX] = new char[electrodeNamesCount][GDS_GNAUTILUS_ELECTRODE_NAME_LENGTH_MAX];
-			success &= handleResult("GDS_GNAUTILUS_GetChannelNames",
-				GDS_GNAUTILUS_GetChannelNames(m_connectionHandle, device_names, &mountedModulesCount, electrode_names, &electrodeNamesCount));
-
-			// Copy the result into m_devInfo
-			for (int chan_ix = 0; chan_ix < electrodeNamesCount; chan_ix++)
-			{
-				chan_info_type new_chan_info;
-				new_chan_info.enabled = cfg_dev->Channels[chan_ix].Enabled;
-				new_chan_info.label = electrode_names[chan_ix];
-				new_chan_info.type = "EEG";
-				new_chan_info.unit = "uV";
-				m_devInfo.channel_infos.push_back(new_chan_info);
-			}
-			delete[] electrode_names;
-			electrode_names = NULL;
-
-			if (cfg_dev->AccelerationData)
-			{
-				chan_info_type new_chan_info;
-				new_chan_info.enabled = true;
-				new_chan_info.type = "Accelerometer";
-				new_chan_info.unit = "g";
-				new_chan_info.label = "ACC X";
-				m_devInfo.channel_infos.push_back(new_chan_info);
-
-				new_chan_info.label = "ACC Y";
-				m_devInfo.channel_infos.push_back(new_chan_info);
-
-				new_chan_info.label = "ACC Z";
-				m_devInfo.channel_infos.push_back(new_chan_info);
-			}
-
-			if (cfg_dev->Counter)
-			{
-				chan_info_type new_chan_info;
-				new_chan_info.enabled = true;
-				new_chan_info.type = "Counter";
-				new_chan_info.unit = "samples";
-				new_chan_info.label = "Counter";
-				m_devInfo.channel_infos.push_back(new_chan_info);
-			}
-
-			if (cfg_dev->LinkQualityInformation)
-			{
-				chan_info_type new_chan_info;
-				new_chan_info.enabled = true;
-				new_chan_info.type = "LinkQuality";
-				new_chan_info.unit = "unknown";
-				new_chan_info.label = "Link Quality";
-				m_devInfo.channel_infos.push_back(new_chan_info);
-			}
-
-			if (cfg_dev->BatteryLevel)
-			{
-				chan_info_type new_chan_info;
-				new_chan_info.enabled = true;
-				new_chan_info.type = "BatteryLevel";
-				new_chan_info.unit = "unknown";
-				new_chan_info.label = "Battery Level";
-				m_devInfo.channel_infos.push_back(new_chan_info);
-			}
-
-			if (cfg_dev->DigitalIOs)
-			{
-				chan_info_type new_chan_info;
-				new_chan_info.enabled = true;
-				new_chan_info.type = "DigitalIOs";
-				new_chan_info.unit = "unknown";
-				new_chan_info.label = "Digital IOs";
-				m_devInfo.channel_infos.push_back(new_chan_info);
-			}
-
-			if (cfg_dev->ValidationIndicator)
-			{
-				chan_info_type new_chan_info;
-				new_chan_info.enabled = true;
-				new_chan_info.type = "ValidationIndicator";
-				new_chan_info.unit = "unknown";
-				new_chan_info.label = "Validation Indicator";
-				m_devInfo.channel_infos.push_back(new_chan_info);
-			}
-		}			
-		delete[] device_names;
-		device_names = NULL;
-
+		// TODO: Below does not work with multiple g.USBamps
 		success &= handleResult("GDS_SetDataReadyCallback",
-			GDS_SetDataReadyCallback(m_connectionHandle, dataReadyCallback, m_devInfo.scans_per_block, this));
+			GDS_SetDataReadyCallback(m_connectionHandle, dataReadyCallback, m_devInfos[0].scans_per_block, this));
 
 		// Free the resources used by the config
 		success &= handleResult("GDS_FreeConfigurationList",
@@ -411,31 +484,31 @@ void MainWindow::on_goPushButton_clicked()
 		size_t n_scans = 1;
 		size_t ndevices_with_channels = 0;
 		success &= handleResult("GDS_GetDataInfo",
-			GDS_GetDataInfo(m_connectionHandle, &n_scans, NULL, &ndevices_with_channels, &(m_devInfo.nsamples_per_scan)));
+			GDS_GetDataInfo(m_connectionHandle, &n_scans, NULL, &ndevices_with_channels, &(m_devInfos[0].nsamples_per_scan)));
 
 		// Now that we know ndevices_with_channels, get the number of channels in each device.
 		size_t* channels_per_device = new size_t[ndevices_with_channels];
 		success &= handleResult("GDS_GetDataInfo",
-			GDS_GetDataInfo(m_connectionHandle, &n_scans, channels_per_device, &ndevices_with_channels, &(m_devInfo.nsamples_per_scan)));
-		m_devInfo.channel_count = int(channels_per_device[dev_ix]);
+			GDS_GetDataInfo(m_connectionHandle, &n_scans, channels_per_device, &ndevices_with_channels, &(m_devInfos[0].nsamples_per_scan)));
+		m_devInfos[0].channel_count = int(channels_per_device[0]);
 		delete[] channels_per_device;
 		channels_per_device = NULL;
 
-		m_dataBuffer = new float[m_devInfo.scans_per_block * m_devInfo.nsamples_per_scan];  // Allocate only as much as is needed in a single block.
+		m_dataBuffer = new float[m_devInfos[0].scans_per_block * m_devInfos[0].nsamples_per_scan];  // Allocate only as much as is needed in a single block.
 		// m_dataBuffer = new float[buffer_duration * m_devInfo.nominal_srate * m_devInfo.nsamples_per_scan];  // Allocate a longer buffer
 		
 		// Create outlet.
 		lsl::stream_info gdsInfo(
-			m_devInfo.name, "EEG",
-			m_devInfo.channel_count, m_devInfo.nominal_srate,
-			m_devInfo.channel_format, m_devInfo.name);
+			m_devInfos[0].name, "EEG",
+			m_devInfos[0].channel_count, m_devInfos[0].nominal_srate,
+			m_devInfos[0].channel_format, m_devInfos[0].name);
 		// Append device meta-data
 		gdsInfo.desc().append_child("acquisition")
 			.append_child_value("manufacturer", "g.Tec")
-			.append_child_value("model", m_devInfo.name);
+			.append_child_value("model", m_devInfos[0].name);
 		// Append channel info
 		lsl::xml_element channels_element = gdsInfo.desc().append_child("channels");
-		for (auto it = m_devInfo.channel_infos.begin(); it < m_devInfo.channel_infos.end(); it++)
+		for (auto it = m_devInfos[0].channel_infos.begin(); it < m_devInfos[0].channel_infos.end(); it++)
 		{
 			if (it->enabled)
 			{
@@ -450,7 +523,7 @@ void MainWindow::on_goPushButton_clicked()
 		statusBar()->showMessage("LSL stream created. Waiting for device to return samples...");
 		m_pTimer->start(500);
 
-		if (m_devInfo.is_creator)
+		if (m_isCreator)
 			success &= handleResult("GDS_StartAcquisition", GDS_StartAcquisition(m_connectionHandle));
 		success &= handleResult("GDS_StartStreaming", GDS_StartStreaming(m_connectionHandle));
 		m_bStreaming = success;
@@ -495,6 +568,7 @@ void MainWindow::load_config(const QString filename)
 				ui->serverPortSpinBox->setValue(xmlReader->readElementText().toInt());
 			else if (elname == "client-port")
 				ui->clientPortSpinBox->setValue(xmlReader->readElementText().toInt());
+			/*
 			else if (elname == "noise-reduction")
 				ui->noiseCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
 			else if (elname == "car")
@@ -511,6 +585,7 @@ void MainWindow::load_config(const QString filename)
 				ui->digitalCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
 			else if (elname == "validation-indicator")
 				ui->validationCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
+			*/
         }
     }
     if (xmlReader->hasError()) {
@@ -526,11 +601,32 @@ void MainWindow::load_config(const QString filename)
 }
 
 
+void MainWindow::on_saveConfigPushButton_clicked()
+{
+	QString sel = QFileDialog::getOpenFileName(this,
+		"Save Configuration File",
+		"",//QDir::currentPath()
+		"Configuration Files (*.cfg)");
+	if (!sel.isEmpty())
+	{
+		// TODO: Confirm overwrite
+		save_config(sel);
+	}
+}
+
+
+void MainWindow::save_config(const QString filename)
+{
+	
+}
+
+
 void MainWindow::enable_config_elements(bool enabled)
 {
 	ui->lineEdit_serverip->setEnabled(enabled);
 	ui->serverPortSpinBox->setEnabled(enabled);
 	ui->clientPortSpinBox->setEnabled(enabled);
+	/*
 	ui->noiseCheckBox->setEnabled(enabled);
 	ui->CARCheckBox->setEnabled(enabled);
 	ui->accelCheckBox->setEnabled(enabled);
@@ -540,6 +636,7 @@ void MainWindow::enable_config_elements(bool enabled)
 	ui->digitalCheckBox->setEnabled(enabled);
 	ui->validationCheckBox->setEnabled(enabled);
 	ui->loadConfigPushButton->setEnabled(enabled);
+	*/
 }
 
 void MainWindow::notify_samples_pushed()
