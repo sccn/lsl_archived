@@ -29,7 +29,7 @@ option(LSLAPPS_OpenVR           "Build the OpenVR app"              OFF)
 # Windows-only apps
 if(WIN32)
     option(LSLAPPS_BrainAmp     "Build the BrainAmp app"            OFF)
-	option(LSLAPPS_LiveAmp      "Build the LiveAmp app"             OFF)
+    option(LSLAPPS_LiveAmp      "Build the LiveAmp app"             OFF)
     option(LSLAPPS_Emotiv       "Build the Emotiv app"              OFF)
     option(LSLAPPS_gNEEDaccess  "Build the g.Tec NEEDaccess app"    OFF)
 endif()
