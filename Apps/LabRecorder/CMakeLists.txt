@@ -16,6 +16,7 @@ if(NOT TARGET LSL::lsl)
 	file(TO_CMAKE_PATH ${LSL_INSTALL_ROOT} LSL_INSTALL_ROOT)
 	list(APPEND CMAKE_MODULE_PATH "${LSL_INSTALL_ROOT}/cmake")
     include(LSLAppBoilerplate)
+    include(LSLSaneDefaults)
 endif()
 
 # GENERAL CONFIG #
@@ -30,16 +31,6 @@ set(META_PROJECT_DESCRIPTION "Record LabStreamingLayer streams to XDF data file.
 # THIRD PARTY LIBRARIES #
 find_package(Qt5 REQUIRED COMPONENTS Network Xml Widgets)
 #TODO: Make sure the architecture of the Qt binaries matches the current context architecture.
-
-# Boost
-IF(MSVC)
-    # Default location of pre-compiled Boost for Windows
-    # Override by adding "-DBOOST_ROOT=C:\path\to\boost\ -DBOOST_LIBRARYDIR=C:\path\to\boost\lib32-msvc-14.0\" to your cmake command
-    IF (NOT BOOST_ROOT)
-        SET(BOOST_ROOT "C:/local/boost_1_65_0/")
-        SET(BOOST_LIBRARYDIR "C:/local/boost_1_65_0/lib64-msvc-14.0/")
-        ENDIF()
-ENDIF()
 
 # APPLICATION #
 

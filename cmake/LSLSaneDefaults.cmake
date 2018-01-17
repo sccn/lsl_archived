@@ -1,5 +1,5 @@
 # guess default paths for Windows / VC
-set(LATEST_QT_VERSION "5.9.2")
+set(LATEST_QT_VERSION "5.10.0")
 
 if(WIN32 AND MSVC)
 	if (CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -26,7 +26,15 @@ if(WIN32 AND MSVC)
 	endif()
 	if(NOT Qt5_DIR)
 		set(Qt5_DIR "C:/Qt/${LATEST_QT_VERSION}/msvc${VCYEAR}_${lslplatform}/lib/cmake/Qt5")
-		message(STATUS "You didn't specify a Qt5_DIR. I'm guessing it's ${Qt5_DIR}. If this is wrong, please add the correct dir with -DQt5_DIR=/path/to/Qt5/lib/cmake/Qt5")
+		message(STATUS "You didn't specify a Qt5_DIR. I'm guessing it's ${Qt5_DIR}.")
+		message(STATUS "If you are building Apps that require Qt and if this is wrong then please add the correct dir with -DQt5_DIR=/path/to/Qt5/lib/cmake/Qt5")
 	endif()
 endif()
 
+if(MSVC AND (NOT BOOST_ROOT))
+    message(STATUS "Attempting to find Boost, whether or not you need it.")
+    include(CMakeBoostHelper)
+    if(NOT BOOST_ROOT)
+        message(STATUS "Did not find Boost. If you need it then set BOOST_ROOT and/or BOOST_LIBRARYDIR")
+    endif()
+endif()
