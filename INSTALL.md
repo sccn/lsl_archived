@@ -33,26 +33,29 @@ hierarchy of the source after you've unpacked the compressed source archive:
 
 LSL and some Apps are built with CMake, the remaining Apps use Visual Studio Solution files.
 
-# CMake
+# Configure with CMake
 
 Tested platforms:
+
 * Windows 7, Windows 10
-    - [Visual Studio 2015](https://www.visualstudio.com/vs/older-downloads/), [Visual Studio 2017](https://www.visualstudio.com/downloads/)
+    * [Visual Studio 2015](https://www.visualstudio.com/vs/older-downloads/), [Visual Studio 2017](https://www.visualstudio.com/downloads/)
 * Ubuntu Linux 14.04, 16.04
-    - Clang 3.5
-    - GCC 6.2
+    * Clang 3.5
+    * GCC 6.2
 * MacOS Sierra
-    - XCode 8.3
+    * XCode 8.3
 
 Prerequisites (LSL with bundled Boost)
-- [CMake](https://cmake.org/download/)
+
+* [CMake](https://cmake.org/download/)
 
 Optional / required for some apps:
-- [Boost](https://boost.org) (+path set with `-DBOOST_ROOT=path/to/boost`)
+
+* [Boost](https://boost.org) (+path set with `-DBOOST_ROOT=path/to/boost`)
     - Windows: install the [precompiled binaries](https://sourceforge.net/projects/boost/files/boost-binaries/)
     - Debian / Ubuntu Linux: install the `libboost-dev` package
     - OS X: install Boost via [Homebrew](https://brew.sh/)
-- [Qt](http://qt.io) (+path set with `-DQt5_DIR=C:/path_to/Qt/<version>/<compiler_arch>/lib/cmake/Qt5/` or `set PATH=C:\Qt\<version>\<compiler_arch>;%PATH%`)
+* [Qt](http://qt.io) (+path set with `-DQt5_DIR=C:/path_to/Qt/<version>/<compiler_arch>/lib/cmake/Qt5/` or `set PATH=C:\Qt\<version>\<compiler_arch>;%PATH%`)
     - Windows: use the [installer](http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe)
     - Debian / Ubuntu Linux: install the `qtbase5-dev` package
 
@@ -70,7 +73,7 @@ There are two build types:
 
 1. extract the zip file or clone the repository (`git clone https://github.com/sccn/labstreaminglayer.git`)
 2. Configure the project using cmake
-    Option 1 - Using the GUI
+    * Option 1 - Using the GUI
         - Windows only:
             - Start `build_windows.bat` then press any key after reading the instructions.
             - If the source code field is empty then click on `Browse Source`. The default folder should be correct (i.e., the one containing build_windows.bat)
@@ -88,14 +91,14 @@ There are two build types:
             - Build type (`CMAKE_BUILD_TYPE`, either `Release` or `Debug`). You can change this in Visual Studio later.
             - Click on `Configure` again to confirm changes.
         - Click on `Generate` to create the build files / Visual Studio Solution file
-    Option 2 - Using commandline. The following is an example. Add/remove/modify options as required.
+    * Option 2 - Using commandline. The following is an example. Add/remove/modify options as required.
         - `cmake .. -G "Visual Studio 14 2015 Win64" -DQt5_DIR=C:\Qt\5.10.0\msvc2015_64\lib\cmake\Qt5 -DBOOST_ROOT=C:\local\boost_1_65_1 -DLSLAPPS_LabRecorder=ON -DLSLAPPS_XDFBrowser=ON -DLSLAPPS_OpenVR=ON`
 3. Build the project
-    Option 1 - Using MSVC
+    * Option 1 - Using MSVC
         - Still in cmake-gui, Click `Open Project`, or if not still in cmake-gui, double click on the created build/LabStreamingLayer.sln
         - Change the target to Release.
         - In the solution explorer, right click on INSTALL and click build.
-    Option 2 - command line
+    * Option 2 - command line
         - Start the build process (`cmake --build . --config Release --target install`[*](#regarding-the-install-target))
 
 This will create a distribution tree in the folder specified by `CMAKE_INSTALL_PREFIX`[*](#regarding-the-install-target) similar to this:
@@ -172,7 +175,7 @@ of the ['installed' LSL directory](#install-directory-tree) to your `CMAKE_PREFI
 ### If your Boost version is so new that cmake can't find it.
 
 CMake has built in instructions on how to find modules and their dependencies within the boost library.
-These instructions are tied to specific versions boost.
+These instructions are tied to specific versions of boost.
 If a new version of boost is released, then older cmake will not have instructions on how to load its modules.
 The easiest way to fix this is to use the last version of boost that is compatible with the most recent version of cmake.
 At the time of this writing, CMake 3.10 supported up to Boost 1.65.1
@@ -185,4 +188,3 @@ In the last version check check in this section, the one with `set(_Boost_IMPORT
 modify the `if(NOT Boost_VERSION VERSION_LESS <value>)` to be something greater than your boost version.
 e.g., If your boost version is 1.66 then make it `106700`.
 NOTE: This has worked for me in the past but IS NOT working for Boost 1.66. Something must have changed.
-
