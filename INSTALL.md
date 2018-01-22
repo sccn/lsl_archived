@@ -141,12 +141,9 @@ On Windows, the library is copied to (and searched in) the executable folder.
 
 The resulting folder `LSL` contains three subfolders:
 
-    * `cmake` contains the exported build configuration (`LSLConfig.cmake`) that can be used to import
-the library in [out of tree builds](#out-of-tree-builds).
-
-    * `include` contains the include headers for C (`lsl_c.h`) and C++ (`lsl_cpp.h`) programs.
-
-    * `lib` contains the library files. To run a program, you need the `liblslXY.dll` (Windows) or `.so` (Linux) or `.dylib` (MacOS).
+* `cmake` contains the exported build configuration (`LSLConfig.cmake`) that can be used to import the library in [out of tree builds](#out-of-tree-builds).
+* `include` contains the include headers for C (`lsl_c.h`) and C++ (`lsl_cpp.h`) programs.
+* `lib` contains the library files. To run a program, you need the `liblslXY.dll` (Windows) or `.so` (Linux) or `.dylib` (MacOS).
 
 ## Regarding the `install` target
 
