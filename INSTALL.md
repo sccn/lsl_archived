@@ -92,8 +92,10 @@ There are two build types:
             - Build type (`CMAKE_BUILD_TYPE`, either `Release` or `Debug`). You can change this in Visual Studio later.
             - Click on `Configure` again to confirm changes.
         - Click on `Generate` to create the build files / Visual Studio Solution file
-    * Option 2 - Using commandline. The following is an example. Add/remove/modify options as required.
-        - `cmake .. -G "Visual Studio 14 2015 Win64" -DQt5_DIR=C:\Qt\5.10.0\msvc2015_64\lib\cmake\Qt5 -DBOOST_ROOT=C:\local\boost_1_65_1 -DLSLAPPS_LabRecorder=ON -DLSLAPPS_XDFBrowser=ON -DLSLAPPS_OpenVR=ON`
+    * Option 2 - Using commandline.
+        - Open a Terminal window or a 'Developer Command Prompt for VS2015' (or 2017, as needed)
+        - Run cmake with commandline options.  The following is an example. Add/remove/modify options as required:
+            - `cmake .. -G "Visual Studio 14 2015 Win64" -DQt5_DIR=C:\Qt\5.10.0\msvc2015_64\lib\cmake\Qt5 -DBOOST_ROOT=C:\local\boost_1_65_1 -DLSLAPPS_LabRecorder=ON -DLSLAPPS_XDFBrowser=ON -DLSLAPPS_OpenVR=ON`
 3. Build the project
     * Option 1 - Using MSVC
         - Still in cmake-gui, Click `Open Project`, or if not still in cmake-gui, double click on the created build/LabStreamingLayer.sln
