@@ -38,7 +38,7 @@ LSL and some Apps are built with CMake, the remaining Apps use Visual Studio Sol
 You'll need to download a toolchain. The following platforms have been tested:
 
 * Windows 7, Windows 10
-    * [Visual Studio 2015](https://www.visualstudio.com/vs/older-downloads/) ([alternate](https://stackoverflow.com/a/44290942)), [Visual Studio 2017](https://www.visualstudio.com/downloads/)
+    * [Visual Studio 2015](https://www.visualstudio.com/vs/older-downloads/) ([alternate](https://stackoverflow.com/a/44290942)), or [Visual Studio 2017](https://www.visualstudio.com/downloads/). During install, choose custom install and be sure to select under programming languages > Visual C++ > Common Tools (this should add the Windows SDK to the installation).
 * Ubuntu Linux 14.04, 16.04
     * Clang 3.5
     * GCC 6.2
