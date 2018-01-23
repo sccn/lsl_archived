@@ -48,7 +48,7 @@ Tested platforms:
 Prerequisites (LSL with bundled Boost)
 
 * [CMake](https://cmake.org/download/)
-    * During installation, check the box to add it to the path (for all users).
+    * On Windows, choose the installer (.msi extension). During installation, check the box to add it to the path (for all users).
 
 Optional / required for some apps:
 
