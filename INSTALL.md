@@ -35,7 +35,9 @@ LSL and some Apps are built with CMake, the remaining Apps use Visual Studio Sol
 
 # Configure with CMake
 
-You'll need to download a toolchain. The following platforms have been tested:
+## Toolchain
+
+Download a toolchain. The following platforms have been tested:
 
 * Windows 7, Windows 10
     * [Visual Studio 2015](https://www.visualstudio.com/vs/older-downloads/) ([alternate](https://stackoverflow.com/a/44290942)), or [Visual Studio 2017](https://www.visualstudio.com/downloads/). During install, choose custom install and be sure to select under programming languages > Visual C++ > Common Tools (this should add the Windows SDK to the installation).
@@ -45,15 +47,18 @@ You'll need to download a toolchain. The following platforms have been tested:
 * MacOS Sierra
     * XCode 8.3
 
-Prerequisites (LSL with bundled Boost)
+## Prerequisites
+
+To build LSL only, using the version of boost that comes with LSL, all you need is cmake.
 
 * [CMake](https://cmake.org/download/)
     * On Windows, choose the installer (.msi extension). During installation, check the box to add it to the path (for all users).
 
-Optional / required for some apps:
+To build many of the Apps, you may need Boost and/or Qt:
 
 * [Boost](https://boost.org) (+path set with `-DBOOST_ROOT=path/to/boost`)
     - Windows: install the [precompiled binaries](https://sourceforge.net/projects/boost/files/boost-binaries/)
+        - Choose the version that matches your compiler and target architecture (probably 64-bit). You can find the mapping between visual studio number and compiler version [here](https://en.wikipedia.org/wiki/Microsoft_Visual_C%2B%2B#Internal_version_numbering). 
     - Debian / Ubuntu Linux: install the `libboost-dev` package
     - OS X: install Boost via [Homebrew](https://brew.sh/)
 * [Qt](http://qt.io) (+path set with `-DQt5_DIR=C:/path_to/Qt/<version>/<compiler_arch>/lib/cmake/Qt5/` or `set PATH=C:\Qt\<version>\<compiler_arch>;%PATH%`)
