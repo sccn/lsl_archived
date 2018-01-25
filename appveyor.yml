@@ -5,6 +5,7 @@ skip_non_tags: true
 shallow_clone: true
 environment:
   VCVER: 14.0
+  QTVER: 5.10.0
   QTCOMPILER: msvc2015
   ARCH: x86
   CMakeArgs: "-DLSLAPPS_LabRecorder=1"
@@ -23,7 +24,7 @@ build_script:
 
     cd build
 
-    cmake -G Ninja -DQt5_DIR=C:/Qt/10.0/%QTCOMPILER%/lib/cmake/Qt5 -DBOOST_ROOT=C:/Libraries/boost_1_63_0 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install %CMakeArgs% ../
+    cmake -G Ninja -DQt5_DIR=C:/Qt/%QTVER%/%QTCOMPILER%/lib/cmake/Qt5 -DBOOST_ROOT=C:/Libraries/boost_1_63_0 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install %CMakeArgs% ../
 
     cmake --build . --config Release --target LSLPACKAGE
 artifacts:
