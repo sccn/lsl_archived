@@ -9,6 +9,7 @@ if(NOT TARGET LSL::lsl)
         # This default directory is probably wrong for you. Ignore it.
         # Just supply -DLSL_INSTALL_ROOT=/path/to/installed/lsl to the cmake command.
         set(LSL_INSTALL_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../build/install/lsl_Release/LSL")
+        set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_LIST_DIR}/../../../build/install/lsl_Release")
         get_filename_component(LSL_INSTALL_ROOT ${LSL_INSTALL_ROOT} ABSOLUTE)
         if(NOT EXISTS ${LSL_INSTALL_ROOT})
             message(FATAL_ERROR "When building a single app out of tree you need to set LSL_INSTALL_ROOT ( cmake -DLSL_INSTALL_ROOT=/path/to/installed/lsl)")

@@ -13,5 +13,12 @@ class NautilusDlg : public QDialog
 public:
 	explicit NautilusDlg(QWidget *parent = 0);
 
+	void set_config(void* config);
+
 	Ui::NautilusDlg *ui;
+	void* m_device_config;
+
+private:
+	void update_ui();
+	void accept() override;
 };

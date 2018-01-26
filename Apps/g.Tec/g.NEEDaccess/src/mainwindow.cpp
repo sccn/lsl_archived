@@ -4,11 +4,11 @@
 #include <QDebug>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "nautilus_dlg.h"
+// TODO: #include "usbamp_dlg.h"
 #include "GDSClientAPI_gUSBamp.h"
 #include "GDSClientAPI_gHIamp.h"
 #include "GDSClientAPI_gNautilus.h"
-
-#define SELECTED_DEVICES_MAX	4
 
 
 // GDS_DeviceInfo contains basic identifying information for each found device.
@@ -37,12 +37,12 @@ void MainWindow::dataReadyCallback(GDS_HANDLE connectionHandle, void* usrData)
 {
 	MainWindow* thisWin = reinterpret_cast< MainWindow* >(usrData);
 	thisWin->mutex.lock();
-	size_t bufferSize = thisWin->m_devInfos[0].scans_per_block * thisWin->m_devInfos[0].nsamples_per_scan;
+	size_t bufferSize = thisWin->m_devInfo.scans_per_block * thisWin->m_devInfo.nsamples_per_scan;
 	size_t scans_available = 0;  // Read as many scans as possible, up to as many will fit in m_dataBuffer
-	GDS_RESULT res = GDS_GetData(thisWin->m_connectionHandle, &scans_available, thisWin->m_dataBuffer, bufferSize);
+	GDS_RESULT res = GDS_GetData(thisWin->m_connectionHandle, &scans_available, &thisWin->m_dataBuffer[0], bufferSize);
 	if (scans_available > 0)
 	{
-		thisWin->m_eegOutlet->push_chunk_multiplexed(thisWin->m_dataBuffer, scans_available * thisWin->m_devInfos[0].nsamples_per_scan);
+		thisWin->m_eegOutlet->push_chunk_multiplexed(&thisWin->m_dataBuffer[0], scans_available * thisWin->m_devInfo.nsamples_per_scan);
 		thisWin->m_samplesPushed += scans_available;
 	}
 	thisWin->mutex.unlock();
@@ -69,8 +69,6 @@ MainWindow::~MainWindow()
 		handleResult("GDS_StopStreaming", GDS_StopStreaming(m_connectionHandle));
 		handleResult("GDS_SetDataReadyCallback",
 			GDS_SetDataReadyCallback(m_connectionHandle, NULL, 0, NULL));
-		delete[] m_dataBuffer;
-		m_dataBuffer = NULL;
 		delete this->m_eegOutlet;
 		this->m_eegOutlet = NULL;
 	}
@@ -79,7 +77,7 @@ MainWindow::~MainWindow()
 		handleResult("GDS_Disconnect",
 			GDS_Disconnect(&m_connectionHandle));
 	}
-
+	clear_dev_configs();
 	GDS_Uninitialize();
     delete ui;
 	delete m_pTimer;
@@ -91,63 +89,42 @@ void MainWindow::on_scanPushButton_clicked()
 {
 	bool success = true;
 
+	// These temporary updates to the UI elements will never be rendered because 
+	// they will change back before the function returns. I will keep them anyway
+	// because they act as code comments, and they could serve a purpose if device
+	// communication ever becomes asynchronous.
     ui->scanPushButton->setText("Scanning...");
     ui->scanPushButton->setDisabled(true);
 
+	// Copy the server info from UI elements to m_hostEndpoint.
 	strcpy(this->m_hostEndpoint.IpAddress, ui->lineEdit_serverip->text().toLatin1().data());
 	this->m_hostEndpoint.Port = ui->serverPortSpinBox->value();
 	this->m_localEndpoint.Port = ui->clientPortSpinBox->value();
 
-	// Delete any config dialogs
-	while (m_cfgDialogs.size() > 0)
-	{
-		delete m_cfgDialogs.back();
-		m_cfgDialogs.pop_back();
-	}
-
+	// Scan the server for connected devices.
 	GDS_DEVICE_CONNECTION_INFO* connected_devices = NULL;
 	size_t count_daq_units = 0;
 	handleResult("GDS_GetConnectedDevices",
 		GDS_GetConnectedDevices(m_hostEndpoint, m_localEndpoint, &connected_devices, &count_daq_units));
 
-	std::vector<GDS_DeviceInfo> new_devices;
-	uint32_t count_devices = 0;
+	// Add the device names to the list widget.
+	// Note: While I would prefer to store the device names and keep it separate from the GUI,
+	// that would require updating that list of names whenever the user drag-and-dropped in the GUI.
+	// SIGNAL: ui->availableListWidget->model().rowsMoved
+	ui->availableListWidget->clear();
 	for (size_t i = 0; i < count_daq_units; i++)
 	{
 		// Each daq unit operates a different number of devices. The second "for" loop 
 		// addresses the devices attached to the daq unit.
 		for (size_t j = 0; j < connected_devices[i].ConnectedDevicesLength; j++)
 		{
-			GDS_DeviceInfo new_info;
-			new_info.index = count_devices;
-			new_info.inUse = bool(connected_devices[i].InUse) == true;
-			new_info.name = connected_devices[i].ConnectedDevices[j].Name;
-			new_info.type = connected_devices[i].ConnectedDevices[j].DeviceType;
-			new_devices.push_back(new_info);
-			count_devices++;
+			ui->availableListWidget->addItem(QString::fromStdString(connected_devices[i].ConnectedDevices[j].Name));
 		}
 	}
+	ui->availableListWidget->setCurrentRow(0);
 	success &= handleResult("GDS_FreeConnectedDevicesList",
 		GDS_FreeConnectedDevicesList(&connected_devices, count_daq_units));
 
-	if (new_devices.size() > 0)
-	{
-		ui->availableListWidget->clear();
-		for (auto it = new_devices.begin(); it != new_devices.end(); ++it) {
-			// Add the device to the list of available devices.
-			// TODO: Use other GDS_DeviceInfo fields in list representation.
-			ui->availableListWidget->addItem(it->name);
-			// Add a hidden config dialog depending on device.
-			switch (it->type)
-			{
-			case GDS_DEVICE_TYPE_GNAUTILUS:
-				m_cfgDialogs.push_back(new NautilusDlg());
-			default:
-				break;
-			}
-		}
-		ui->availableListWidget->setCurrentRow(0);
-	}
 	ui->scanPushButton->setText("Scan");
 	ui->scanPushButton->setDisabled(false);
 }
@@ -156,7 +133,18 @@ void MainWindow::on_scanPushButton_clicked()
 void MainWindow::on_devCfgPushButton_clicked()
 {
 	int dev_ix = ui->availableListWidget->currentRow();
-	m_cfgDialogs[dev_ix]->exec();
+	if (m_devConfigs[0].DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GNAUTILUS)
+	{
+		NautilusDlg cfg_dlg;
+		cfg_dlg.set_config(m_devConfigs[0].Configuration);
+		cfg_dlg.exec();
+	}
+	else if (m_devConfigs[0].DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GUSBAMP)
+	{
+		//TODO: usbamp_dlg
+		//cfg_dlg.set_config(m_devConfigs[0].Configuration);
+		//cfg_dlg.exec();
+	}
 }
 
 
@@ -169,67 +157,158 @@ void MainWindow::on_availableListWidget_itemSelectionChanged()
 void MainWindow::on_connectPushButton_clicked()
 {
 	ui->goPushButton->setDisabled(true);
-	QString pbtext = ui->connectPushButton->text();
-	if (pbtext == "Connect")
+
+	if (!m_bConnected)
 	{
-		QList<QListWidgetItem *> selectedItemsList = ui->availableListWidget->selectedItems();
-		int nSelected = selectedItemsList.size();
-		
-		// A normal API would ask for N different char arrays, each with DEVICE_NAME_LENGTH_MAX characters.
-		// This API instead asks for DEVICE_NAME_LENGTH_MAX char arrays, each with N characters. i.e. it's transposed.
-		// So instead of trying to figure out the sane C++ way of conforming to an insane C API, I'm just copying their example code.
-		char(*device_names)[DEVICE_NAME_LENGTH_MAX] = new char[SELECTED_DEVICES_MAX][DEVICE_NAME_LENGTH_MAX];
-		for (int dev_ix = 0; dev_ix < nSelected; dev_ix++)
-		{
-			std::strcpy(device_names[dev_ix], selectedItemsList.at(dev_ix)->text().toLatin1().data());
-		}
-		BOOL is_creator = FALSE;
-		if (handleResult("GDS_Connect",
-			GDS_Connect(m_hostEndpoint, m_localEndpoint, device_names, nSelected, FALSE, &m_connectionHandle, &is_creator)))
-		{
-			ui->connectPushButton->setText("Disconnect");
-			ui->goPushButton->setDisabled(false);
-			enable_config_elements(false);
-			m_bConnected = true;
-
-			m_isCreator = bool(is_creator);
-
-			if (!m_isCreator)
-			{
-				m_isCreator = handleResult("GDS_BecomeCreator",
-					GDS_BecomeCreator(m_connectionHandle));
-				if (!m_isCreator)
-					statusBar()->showMessage("Device is first connected by another application. Cannot modify its configuration.");
-			}
-			ui->devCfgPushButton->setEnabled(m_isCreator);
-		}
-		delete[] device_names;
-		device_names = NULL;
+		m_bConnected = do_connect();  // This updates our data.
 	}
 	else
 	{
-		bool success = handleResult("GDS_Disconnect",
+		m_bConnected = !handleResult("GDS_Disconnect",
 			GDS_Disconnect(&m_connectionHandle));
-		if (success)
-		{
-			enable_config_elements(true);
-			ui->connectPushButton->setText("Connect");
-			m_bConnected = false;
-		}
-		ui->goPushButton->setDisabled(true);
 	}
+
+	// Update UI elements to reflect connection state.
+	ui->connectPushButton->setText(m_bConnected ? "Disconnect" : "Connect");
+	ui->goPushButton->setEnabled(m_bConnected);
+	ui->devCfgPushButton->setEnabled(m_isCreator && m_bConnected && m_isConfigurable);
+	ui->availableListWidget->setDisabled(m_bConnected);
+
 	ui->connectPushButton->setDisabled(false);
+}
+
+
+bool MainWindow::do_connect()
+{
+	QList<QListWidgetItem *> selectedItemsList = ui->availableListWidget->selectedItems();
+	// Get variables needed for GDS_Connect.
+	BOOL is_creator = FALSE;
+	int nSelected = selectedItemsList.size();
+	char(*device_names)[DEVICE_NAME_LENGTH_MAX] = new char[nSelected][DEVICE_NAME_LENGTH_MAX];
+	// Note: This API is pretty unusual in the requested format of device_names.
+	// Instead of trying to figure out the sane C++ way of conforming to an unusual C API, I'm just copying their example code.
+	for (int dev_ix = 0; dev_ix < nSelected; dev_ix++)
+	{
+		std::strcpy(device_names[dev_ix], selectedItemsList.at(dev_ix)->text().toLatin1().data());
+	}
+
+	bool success = handleResult("GDS_Connect",
+		GDS_Connect(m_hostEndpoint, m_localEndpoint, device_names, nSelected, FALSE, &m_connectionHandle, &is_creator));
+	if (success)
+	{
+		m_isCreator = bool(is_creator);
+		if (!m_isCreator)
+		{
+			m_isCreator = handleResult("GDS_BecomeCreator",
+				GDS_BecomeCreator(m_connectionHandle));
+			if (!m_isCreator)
+				statusBar()->showMessage("Device is first connected by another application. Cannot modify its configuration.");
+		}
+		success &= get_connected_devices_configs();
+
+		if (success & m_isCreator)
+		{
+			// TODO: Get rid of m_isConfigurable and this loop once all the config GUI elements are built.
+			m_isConfigurable = false;
+			for each (GDS_CONFIGURATION_BASE cfg in m_devConfigs)
+			{
+				m_isConfigurable |= cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GUSBAMP;
+				m_isConfigurable |= cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GNAUTILUS;
+			}
+		}
+
+		if (!success)
+		{
+			GDS_Disconnect(&m_connectionHandle);  // Couldn't get configs, so disconnect.
+		}
+	}
+	delete[] device_names;
+	device_names = NULL;
+
+	return success;
+}
+
+
+void MainWindow::clear_dev_configs()
+{
+	for (size_t dev_ix = 0; dev_ix < m_devConfigs.size(); dev_ix++)
+	{
+		switch (m_devConfigs[dev_ix].DeviceInfo.DeviceType)
+		{
+		case GDS_DEVICE_TYPE_NOT_SUPPORTED:
+			break;
+		case GDS_DEVICE_TYPE_GUSBAMP:
+			delete (GDS_GUSBAMP_CONFIGURATION*)m_devConfigs[dev_ix].Configuration;
+			break;
+		case GDS_DEVICE_TYPE_GHIAMP:
+			delete (GDS_GHIAMP_CONFIGURATION*)m_devConfigs[dev_ix].Configuration;
+			break;
+		case GDS_DEVICE_TYPE_GNAUTILUS:
+			delete (GDS_GNAUTILUS_CONFIGURATION*)m_devConfigs[dev_ix].Configuration;
+			break;
+		default:
+			break;
+		}
+	}
+	m_devConfigs.clear();
+}
+
+
+bool MainWindow::get_connected_devices_configs()
+{
+	bool success = true;
+
+	GDS_CONFIGURATION_BASE *deviceConfigurations = NULL;
+	size_t deviceConfigurationsCount = 0;
+	success &= handleResult("GDS_GetConfiguration",
+		GDS_GetConfiguration(m_connectionHandle, &deviceConfigurations, &deviceConfigurationsCount));
+	// Note: API allocates memory during GDS_GetConfiguration. We must free it with GDS_FreeConfigurationList below.
+
+	// Copy device configs to our local map.
+	clear_dev_configs();
+	for (size_t dev_ix = 0; dev_ix < deviceConfigurationsCount; dev_ix++)
+	{
+		m_devConfigs.push_back(deviceConfigurations[dev_ix]);
+		// We must also copy the data pointed to by the device-specific .Configuration
+		size_t copy_bytes = 0;
+		switch (deviceConfigurations[dev_ix].DeviceInfo.DeviceType)
+		{
+		case GDS_DEVICE_TYPE_NOT_SUPPORTED:
+			break;
+		case GDS_DEVICE_TYPE_GUSBAMP:
+			copy_bytes = sizeof(GDS_GUSBAMP_CONFIGURATION);
+			m_devConfigs[dev_ix].Configuration = new GDS_GUSBAMP_CONFIGURATION();  // Allocate memory.
+			break;
+		case GDS_DEVICE_TYPE_GHIAMP:
+			copy_bytes = sizeof(GDS_GHIAMP_CONFIGURATION);
+			m_devConfigs[dev_ix].Configuration = new GDS_GHIAMP_CONFIGURATION();  // Allocate memory.
+			break;
+		case GDS_DEVICE_TYPE_GNAUTILUS:
+			copy_bytes = sizeof(GDS_GNAUTILUS_CONFIGURATION);
+			m_devConfigs[dev_ix].Configuration = new GDS_GNAUTILUS_CONFIGURATION();  // Allocate memory.
+			break;
+		default:
+			break;
+		}
+		memcpy(m_devConfigs[dev_ix].Configuration, deviceConfigurations[dev_ix].Configuration, copy_bytes);
+	}
+
+	// Free the resources used by the config
+	success &= handleResult("GDS_FreeConfigurationList",
+		GDS_FreeConfigurationList(&deviceConfigurations, deviceConfigurationsCount));
+	
+	return success;
 }
 
 
 void MainWindow::on_goPushButton_clicked()
 {
+	ui->goPushButton->setDisabled(true);  // re-enable when process complete.
+
 	// Lock everything to prevent the GDS thread from stomping on our data during callback.
 	QMutexLocker locker(&mutex);  // will unlock itself when function scope resolves.
-
-	ui->goPushButton->setDisabled(true);  // re-enable when process complete.
-	QString pbtext = ui->goPushButton->text();
-	if (pbtext == "Stop!")
+		
+	if (m_bStreaming)  // Already streaming --> Stop!
 	{
 		m_pTimer->stop();
 		handleResult("GDS_StopStreaming", GDS_StopStreaming(m_connectionHandle));
@@ -238,57 +317,59 @@ void MainWindow::on_goPushButton_clicked()
 		handleResult("GDS_SetDataReadyCallback",
 			GDS_SetDataReadyCallback(m_connectionHandle, NULL, 0, NULL));
 		m_bStreaming = false;
-		delete[] m_dataBuffer;
-		m_dataBuffer = NULL;
 		delete this->m_eegOutlet;
 		this->m_eegOutlet = NULL;
 		ui->goPushButton->setText("Go!");
 	}
-	else  //pbtext == "Go!"
+	else  // Not already streaming --> Start!
 	{
 		bool success = true;
+
+		// If we are the daq unit creator, set config
+		if (m_isCreator)
+		{
+			success &= handleResult("GDS_SetConfiguration",
+				GDS_SetConfiguration(m_connectionHandle, &m_devConfigs[0], m_devConfigs.size()));
+		}
 
 		// TODO: GDS_SetDataAcquisitionErrorCallback
 		// TODO: GDS_SetServerDiedCallback
 
-		// Get the device configuration(s)
-		GDS_CONFIGURATION_BASE *deviceConfigurations = NULL;
-		size_t deviceConfigurationsCount = 0;
-		// Note: API allocates memory during GDS_GetConfiguration. We must free it with GDS_FreeConfigurationList.
-		success &= handleResult("GDS_GetConfiguration",
-			GDS_GetConfiguration(m_connectionHandle, &deviceConfigurations, &deviceConfigurationsCount));
-		
-		if (!success)
-		{
-			// e.g., network timeout.
-			ui->goPushButton->setDisabled(false);
-			return;
-		}
+		// Get all device-specific parameters into a convenient structure for LSL info
+		m_devInfo = dev_info_type();  // reset m_devInfo;
 
-		m_devInfos.clear();
-		for (size_t dev_ix = 0; dev_ix < deviceConfigurationsCount; dev_ix++)
+		for (int dev_ix = 0; dev_ix < m_devConfigs.size(); dev_ix++)
 		{
-			// When clicking Go!, get
-			dev_info_type thisDevInfo = {};
-			thisDevInfo.name = deviceConfigurations[dev_ix].DeviceInfo.Name;
+			if (dev_ix == 0)
+			{
+				// With the exception of gUSBamps, there should only be one device.
+				// For gUSBamps, we'll take the details of the first (master)
+				m_devInfo.name = m_devConfigs[dev_ix].DeviceInfo.Name;
+			}
+			
 
 			// Some API functions require a device_names argument.
 			// The API wants an _array_ of char[DEVICE_NAME_LENGTH_MAX] even though these functions are designed for only one device.
 			char(*device_names)[DEVICE_NAME_LENGTH_MAX] = new char[1][DEVICE_NAME_LENGTH_MAX];
-			std::strcpy(device_names[0], deviceConfigurations[dev_ix].DeviceInfo.Name);
-			
-			GDS_CONFIGURATION_BASE cfg = deviceConfigurations[dev_ix];
-			if (cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_NOT_SUPPORTED)
+			std::strcpy(device_names[0], m_devConfigs[dev_ix].DeviceInfo.Name);
+
+			GDS_DEVICE_TYPE dev_type = m_devConfigs[dev_ix].DeviceInfo.DeviceType;
+			if (dev_type == GDS_DEVICE_TYPE_NOT_SUPPORTED)
 			{
 				success = false;
 				qDebug() << "Unknown device type.";
 			}
-			else if (cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GUSBAMP)
+			else if (dev_type == GDS_DEVICE_TYPE_GUSBAMP)
 			{
-				GDS_GUSBAMP_CONFIGURATION* cfg_dev = (GDS_GUSBAMP_CONFIGURATION*)cfg.Configuration;
-				thisDevInfo.nominal_srate = double(cfg_dev->SampleRate);
-				thisDevInfo.scans_per_block = cfg_dev->NumberOfScans;
-				
+				GDS_GUSBAMP_CONFIGURATION* cfg_dev = (GDS_GUSBAMP_CONFIGURATION*)m_devConfigs[dev_ix].Configuration;
+
+				if (dev_ix == 0)
+				{
+					// I hope all USBamps in a master/slave set have the same srate and scans_per_block
+					m_devInfo.nominal_srate = double(cfg_dev->SampleRate);
+					m_devInfo.scans_per_block = cfg_dev->NumberOfScans;
+				}
+
 				GDS_GUSBAMP_SCALING scaling;
 				handleResult("GDS_GUSBAMP_GetScaling",
 					GDS_GUSBAMP_GetScaling(m_connectionHandle, device_names, &scaling));
@@ -297,14 +378,14 @@ void MainWindow::on_goPushButton_clicked()
 				{
 					chan_info_type new_chan_info;
 					new_chan_info.enabled = cfg_dev->Channels[chan_ix].Acquire;
-					new_chan_info.label = std::to_string(chan_ix + 1);
+					new_chan_info.label = std::to_string(chan_ix + 1);  // Device does not have access to custom channel labels.
 					new_chan_info.type = "EEG";
 					new_chan_info.unit = "uV";
 					new_chan_info.scaling_offset = scaling.Offset[chan_ix];
 					new_chan_info.scaling_factor = scaling.ScalingFactor[chan_ix];
-					thisDevInfo.channel_infos.push_back(new_chan_info);
+					m_devInfo.channel_infos.push_back(new_chan_info);
 				}
-
+				// Add the trigger channel last.
 				if (cfg_dev->TriggerEnabled)
 				{
 					chan_info_type new_chan_info;
@@ -312,18 +393,18 @@ void MainWindow::on_goPushButton_clicked()
 					new_chan_info.type = "DigitalIOs";
 					new_chan_info.unit = "unknown";
 					new_chan_info.label = "Digital IOs";
-					thisDevInfo.channel_infos.push_back(new_chan_info);
+					m_devInfo.channel_infos.push_back(new_chan_info);
 				}
 
-				// TODO: 
+				// TODO: Add info to metadata.
 				// ShortCutEnabled, CounterEnabled, CommonGround[GDS_GUSBAMP_GROUPS_MAX], CommonReference[GDS_GUSBAMP_GROUPS_MAX]
+				// List of all devices incl master/slave
 			}
-			else if (cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GHIAMP)
+			else if (dev_type == GDS_DEVICE_TYPE_GHIAMP)
 			{
-				GDS_GHIAMP_CONFIGURATION* cfg_dev = (GDS_GHIAMP_CONFIGURATION*)cfg.Configuration;
-				thisDevInfo.nominal_srate = double(cfg_dev->SamplingRate);
-				thisDevInfo.scans_per_block = size_t(cfg_dev->NumberOfScans);
-				qDebug() << "TODO: Get g.HIamp configuration. I do not have a device to test...";
+				GDS_GHIAMP_CONFIGURATION* cfg_dev = (GDS_GHIAMP_CONFIGURATION*)m_devConfigs[dev_ix].Configuration;
+				m_devInfo.nominal_srate = double(cfg_dev->SamplingRate);
+				m_devInfo.scans_per_block = size_t(cfg_dev->NumberOfScans);
 				for (size_t chan_ix = 0; chan_ix < GDS_GHIAMP_CHANNELS_MAX; chan_ix++)
 				{
 					chan_info_type new_chan_info;
@@ -331,48 +412,15 @@ void MainWindow::on_goPushButton_clicked()
 					new_chan_info.label = std::to_string(chan_ix + 1);
 					new_chan_info.type = "EEG";
 					new_chan_info.unit = "uV";
-					thisDevInfo.channel_infos.push_back(new_chan_info);
+					m_devInfo.channel_infos.push_back(new_chan_info);
 				}
 			}
-			else if (cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GNAUTILUS)
+			else if (dev_type == GDS_DEVICE_TYPE_GNAUTILUS)
 			{
-				GDS_GNAUTILUS_CONFIGURATION* cfg_dev = (GDS_GNAUTILUS_CONFIGURATION*)cfg.Configuration;
-				thisDevInfo.nominal_srate = double(cfg_dev->SamplingRate);
-				thisDevInfo.scans_per_block = size_t(cfg_dev->NumberOfScans);
+				GDS_GNAUTILUS_CONFIGURATION* cfg_dev = (GDS_GNAUTILUS_CONFIGURATION*)m_devConfigs[dev_ix].Configuration;
 
-				// There are some configuration parameters that are not saved in the device/server.
-				// For these we can set them from a GUI if we are the creator, or read them into the GUI if we are not.
-				if (m_isCreator)
-				{
-					// TODO: Access the dialog for the list of m_cfgDialogs
-					// NautilusDlg* myDlg = (NautilusDlg*)m_cfgDialogs[0];
-					// myDlg->ui->
-					/*
-					cfg_dev->CAR = ui->CARCheckBox->isChecked();
-					cfg_dev->NoiseReduction = ui->noiseCheckBox->isChecked();
-					cfg_dev->AccelerationData = ui->accelCheckBox->isChecked();
-					cfg_dev->Counter = ui->counterCheckBox->isChecked();
-					cfg_dev->LinkQualityInformation = ui->linkCheckBox->isChecked();
-					cfg_dev->BatteryLevel = ui->batteryCheckBox->isChecked();
-					cfg_dev->DigitalIOs = ui->digitalCheckBox->isChecked();
-					cfg_dev->ValidationIndicator = ui->validationCheckBox->isChecked();
-					*/
-					handleResult("GDS_SetConfiguration",
-						GDS_SetConfiguration(m_connectionHandle, &cfg, 1));
-				}
-				else
-				{
-					/*
-					ui->CARCheckBox->setChecked(cfg_dev->CAR);
-					ui->noiseCheckBox->setChecked(cfg_dev->NoiseReduction);
-					ui->accelCheckBox->setChecked(cfg_dev->AccelerationData);
-					ui->counterCheckBox->setChecked(cfg_dev->Counter);
-					ui->linkCheckBox->setChecked(cfg_dev->LinkQualityInformation);
-					ui->batteryCheckBox->setChecked(cfg_dev->BatteryLevel);
-					ui->digitalCheckBox->setChecked(cfg_dev->DigitalIOs);
-					ui->validationCheckBox->setChecked(cfg_dev->ValidationIndicator);
-					*/
-				}
+				m_devInfo.nominal_srate = double(cfg_dev->SamplingRate);
+				m_devInfo.scans_per_block = size_t(cfg_dev->NumberOfScans);
 
 				// Get channel names
 
@@ -385,7 +433,7 @@ void MainWindow::on_goPushButton_clicked()
 				char(*electrode_names)[GDS_GNAUTILUS_ELECTRODE_NAME_LENGTH_MAX] = new char[electrodeNamesCount][GDS_GNAUTILUS_ELECTRODE_NAME_LENGTH_MAX];
 				success &= handleResult("GDS_GNAUTILUS_GetChannelNames",
 					GDS_GNAUTILUS_GetChannelNames(m_connectionHandle, device_names, &mountedModulesCount, electrode_names, &electrodeNamesCount));
-				
+
 				// Copy the result into thisDevInfo
 				for (int chan_ix = 0; chan_ix < electrodeNamesCount; chan_ix++)
 				{
@@ -394,7 +442,7 @@ void MainWindow::on_goPushButton_clicked()
 					new_chan_info.label = electrode_names[chan_ix];
 					new_chan_info.type = "EEG";
 					new_chan_info.unit = "uV";
-					thisDevInfo.channel_infos.push_back(new_chan_info);
+					m_devInfo.channel_infos.push_back(new_chan_info);
 				}
 				delete[] electrode_names;
 				electrode_names = NULL;
@@ -406,13 +454,13 @@ void MainWindow::on_goPushButton_clicked()
 					new_chan_info.type = "Accelerometer";
 					new_chan_info.unit = "g";
 					new_chan_info.label = "ACC X";
-					thisDevInfo.channel_infos.push_back(new_chan_info);
+					m_devInfo.channel_infos.push_back(new_chan_info);
 
 					new_chan_info.label = "ACC Y";
-					thisDevInfo.channel_infos.push_back(new_chan_info);
+					m_devInfo.channel_infos.push_back(new_chan_info);
 
 					new_chan_info.label = "ACC Z";
-					thisDevInfo.channel_infos.push_back(new_chan_info);
+					m_devInfo.channel_infos.push_back(new_chan_info);
 				}
 
 				if (cfg_dev->Counter)
@@ -422,7 +470,7 @@ void MainWindow::on_goPushButton_clicked()
 					new_chan_info.type = "Counter";
 					new_chan_info.unit = "samples";
 					new_chan_info.label = "Counter";
-					thisDevInfo.channel_infos.push_back(new_chan_info);
+					m_devInfo.channel_infos.push_back(new_chan_info);
 				}
 
 				if (cfg_dev->LinkQualityInformation)
@@ -432,7 +480,7 @@ void MainWindow::on_goPushButton_clicked()
 					new_chan_info.type = "LinkQuality";
 					new_chan_info.unit = "unknown";
 					new_chan_info.label = "Link Quality";
-					thisDevInfo.channel_infos.push_back(new_chan_info);
+					m_devInfo.channel_infos.push_back(new_chan_info);
 				}
 
 				if (cfg_dev->BatteryLevel)
@@ -442,7 +490,7 @@ void MainWindow::on_goPushButton_clicked()
 					new_chan_info.type = "BatteryLevel";
 					new_chan_info.unit = "unknown";
 					new_chan_info.label = "Battery Level";
-					thisDevInfo.channel_infos.push_back(new_chan_info);
+					m_devInfo.channel_infos.push_back(new_chan_info);
 				}
 
 				if (cfg_dev->DigitalIOs)
@@ -452,7 +500,7 @@ void MainWindow::on_goPushButton_clicked()
 					new_chan_info.type = "DigitalIOs";
 					new_chan_info.unit = "unknown";
 					new_chan_info.label = "Digital IOs";
-					thisDevInfo.channel_infos.push_back(new_chan_info);
+					m_devInfo.channel_infos.push_back(new_chan_info);
 				}
 
 				if (cfg_dev->ValidationIndicator)
@@ -462,53 +510,52 @@ void MainWindow::on_goPushButton_clicked()
 					new_chan_info.type = "ValidationIndicator";
 					new_chan_info.unit = "unknown";
 					new_chan_info.label = "Validation Indicator";
-					thisDevInfo.channel_infos.push_back(new_chan_info);
+					m_devInfo.channel_infos.push_back(new_chan_info);
 				}
 			}
-			// Cleanup device_names used in API calls
+
+			// Cleanup device_names used in device-specific API calls
 			delete[] device_names;
 			device_names = NULL;
-
-			m_devInfos.push_back(thisDevInfo);
 		}
-
-		// TODO: Below does not work with multiple g.USBamps
-		success &= handleResult("GDS_SetDataReadyCallback",
-			GDS_SetDataReadyCallback(m_connectionHandle, dataReadyCallback, m_devInfos[0].scans_per_block, this));
-
-		// Free the resources used by the config
-		success &= handleResult("GDS_FreeConfigurationList",
-			GDS_FreeConfigurationList(&deviceConfigurations, deviceConfigurationsCount));
+		
+		// We need to know how many samples we will retrieve per callback and allocate a buffer.
+		// = scans_per_block * samples_per_scan;
 
 		// Get the number of devices and the number of samples per 1 scan (aka samples per frame)
 		size_t n_scans = 1;
-		size_t ndevices_with_channels = 0;
+		size_t n_devices_with_channels = 0;
 		success &= handleResult("GDS_GetDataInfo",
-			GDS_GetDataInfo(m_connectionHandle, &n_scans, NULL, &ndevices_with_channels, &(m_devInfos[0].nsamples_per_scan)));
+			GDS_GetDataInfo(m_connectionHandle, &n_scans, NULL, &n_devices_with_channels, &m_devInfo.nsamples_per_scan));
 
 		// Now that we know ndevices_with_channels, get the number of channels in each device.
-		size_t* channels_per_device = new size_t[ndevices_with_channels];
+		std::vector<size_t> channels_per_device(n_devices_with_channels);
 		success &= handleResult("GDS_GetDataInfo",
-			GDS_GetDataInfo(m_connectionHandle, &n_scans, channels_per_device, &ndevices_with_channels, &(m_devInfos[0].nsamples_per_scan)));
-		m_devInfos[0].channel_count = int(channels_per_device[0]);
-		delete[] channels_per_device;
-		channels_per_device = NULL;
+			GDS_GetDataInfo(m_connectionHandle, &n_scans, &channels_per_device[0], &n_devices_with_channels, &m_devInfo.nsamples_per_scan));
+				
+		// Prepare the buffer with the appropriate amount of data.
+		m_dataBuffer.clear();
+		m_dataBuffer.resize(m_devInfo.scans_per_block * m_devInfo.nsamples_per_scan);  // Allocate only as much as is needed in a single block.
+		// m_dataBuffer.resize(buffer_duration * m_devInfo.nominal_srate * m_devInfo.nsamples_per_scan);  // Allocate only as much as is needed in a single block.
 
-		m_dataBuffer = new float[m_devInfos[0].scans_per_block * m_devInfos[0].nsamples_per_scan];  // Allocate only as much as is needed in a single block.
-		// m_dataBuffer = new float[buffer_duration * m_devInfo.nominal_srate * m_devInfo.nsamples_per_scan];  // Allocate a longer buffer
-		
-		// Create outlet.
+		// TODO: Check that m_devInfo.nsamples_per_scan == channel_sum
+		size_t channel_sum = 0;
+		for (auto& n : channels_per_device)
+			channel_sum += n;
+
+		// Create an LSL outlet.
+		// First we need stream info.
 		lsl::stream_info gdsInfo(
-			m_devInfos[0].name, "EEG",
-			m_devInfos[0].channel_count, m_devInfos[0].nominal_srate,
-			m_devInfos[0].channel_format, m_devInfos[0].name);
+			m_devInfo.name, "EEG",
+			channel_sum, m_devInfo.nominal_srate,
+			m_devInfo.channel_format, m_devInfo.name);
 		// Append device meta-data
 		gdsInfo.desc().append_child("acquisition")
 			.append_child_value("manufacturer", "g.Tec")
-			.append_child_value("model", m_devInfos[0].name);
+			.append_child_value("model", m_devInfo.name);
 		// Append channel info
 		lsl::xml_element channels_element = gdsInfo.desc().append_child("channels");
-		for (auto it = m_devInfos[0].channel_infos.begin(); it < m_devInfos[0].channel_infos.end(); it++)
+		for (auto it = m_devInfo.channel_infos.begin(); it < m_devInfo.channel_infos.end(); it++)
 		{
 			if (it->enabled)
 			{
@@ -520,14 +567,17 @@ void MainWindow::on_goPushButton_clicked()
 		}
 		this->m_eegOutlet = new lsl::stream_outlet(gdsInfo);
 		m_samplesPushed = 0;
-		statusBar()->showMessage("LSL stream created. Waiting for device to return samples...");
-		m_pTimer->start(500);
 
+		success &= handleResult("GDS_SetDataReadyCallback",
+			GDS_SetDataReadyCallback(m_connectionHandle, dataReadyCallback, m_devInfo.scans_per_block, this));
+		
 		if (m_isCreator)
 			success &= handleResult("GDS_StartAcquisition", GDS_StartAcquisition(m_connectionHandle));
 		success &= handleResult("GDS_StartStreaming", GDS_StartStreaming(m_connectionHandle));
 		m_bStreaming = success;
 		
+		statusBar()->showMessage("LSL stream created. Waiting for device to return samples...");
+		m_pTimer->start(500);
 		ui->goPushButton->setText("Stop!");
 	}
 	ui->goPushButton->setDisabled(false);
@@ -638,6 +688,7 @@ void MainWindow::enable_config_elements(bool enabled)
 	ui->loadConfigPushButton->setEnabled(enabled);
 	*/
 }
+
 
 void MainWindow::notify_samples_pushed()
 {
