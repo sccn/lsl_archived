@@ -6,11 +6,7 @@ project(LSLOpenVR VERSION 0.0.1)
 # load LSLAppBoilerplate if not done already
 if(NOT TARGET LSL::lsl)
 	if(NOT LSL_INSTALL_ROOT)
-		set(LSL_INSTALL_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../build/lsl_Release/lslinstall/LSL")
-		get_filename_component(LSL_INSTALL_ROOT ${LSL_INSTALL_ROOT} ABSOLUTE)
-		if(NOT EXISTS ${LSL_INSTALL_ROOT})
-			message(FATAL_ERROR "When building a single app out of tree you need to set LSL_INSTALL_ROOT ( cmake -DLSL_INSTALL_ROOT=/path/to/installed/lsl)")
-		endif()
+		message(FATAL_ERROR "When building a single app out of tree you need to set LSL_INSTALL_ROOT ( cmake -DLSL_INSTALL_ROOT=/path/to/installed/lsl)")
 	endif()
 	if(NOT IS_ABSOLUTE ${LSL_INSTALL_ROOT})
 		message(FATAL_ERROR "LSL_INSTALL_ROOT needs to be an absolute path")
@@ -18,18 +14,13 @@ if(NOT TARGET LSL::lsl)
 	file(TO_CMAKE_PATH ${LSL_INSTALL_ROOT} LSL_INSTALL_ROOT)
 	list(APPEND CMAKE_MODULE_PATH "${LSL_INSTALL_ROOT}/cmake")
     include(LSLAppBoilerplate)
+    include(LSLSaneDefaults)
 endif()
 
-set(CMAKE_INSTALL_PREFIX ${LSL_INSTALL_ROOT}/..)
-
-set(CMAKE_CXX_STANDARD 11)
+set(META_PROJECT_DESCRIPTION "Capture OpenVR pose data.")
 
 # THIRD PARTY LIBRARIES #
-
 # Qt
-if(WIN32 AND NOT Qt5_DIR)
-    set(Qt5_DIR "C:\\Qt\\5.9.1\\msvc2015_64\\lib\\cmake\\Qt5")
-endif()
 find_package(Qt5 REQUIRED COMPONENTS Core Network Xml Gui Widgets)
 
 # OpenVR
@@ -37,8 +28,8 @@ LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 include(ExternalProject)
 IF(NOT OpenVR_ROOT_DIR)
     message(STATUS "OpenVR_ROOT_DIR not set.")
-    message("\tUse cmake [...] -DOpenVR_ROOT_DIR=<path/to/openvr>")
-    message("\tAttempting Chad's default rel directory...")
+    message(STATUS "\tUse cmake [...] -DOpenVR_ROOT_DIR=<path/to/openvr>")
+    message(STATUS "\tAttempting Chad's default rel directory...")
     SET(OpenVR_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../../VR/openvr")
 ENDIF()
 find_package(OpenVR)

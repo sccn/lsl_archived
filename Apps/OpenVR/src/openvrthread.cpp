@@ -162,9 +162,9 @@ bool OpenVRThread::connectToOpenVR()
         return false;
     }
 
-    if (vrsys->IsInputFocusCapturedByAnotherProcess())
+    if (!vrsys->IsInputAvailable())
     {
-        qDebug() << "Input focus is captured by another process";
+        qDebug() << "Unable to receive OpenVR input.";
         return false;
     }
 

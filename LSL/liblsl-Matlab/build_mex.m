@@ -3,15 +3,14 @@
 % You also need the liblsl64 binary in the bin folder and a configured
 % C compiler (mex -setup)
 
-if IsWindows
+libs = '-llsl64';
+if ispc
 	dllext = 'dll';
-	extralibs = '';
-elseif IsLinux
+elseif isunix
 	dllext = 'so';
-	extralibs = '-ldl';
-elseif IsOSX
+	libs = ['-llsl64 -ldl'];
+elseif ismac
 	dllext = 'dylib';
-	extralibs = '';
 end
 
 
@@ -28,7 +27,7 @@ for i = 1:length(files)
 	[~, base, ~] = fileparts(f.name);
 	targetstats = dir([base, ext]);
 	if isempty(targetstats) || f.datenum > targetstats.datenum
-		mex('-I../../liblsl/include','-L.','-llsl64',extralibs, ['../mex/', f.name]);
+		mex('-I../../liblsl/include','-L.', libs, ['../mex/', f.name]);
 	else
 		disp([base, ext, ' up to date']);
 	end

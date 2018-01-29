@@ -53,5 +53,5 @@ endif()
 
 # Deployment
 installLSLApp(${target})
-install(FILES BrainAmpSeries_config.cfg
-	DESTINATION ${PROJECT_NAME})
+installLSLAuxFiles(${target} BrainAmpSeries_config.cfg
+	explanation_of_trigger_marker_types.pdf)

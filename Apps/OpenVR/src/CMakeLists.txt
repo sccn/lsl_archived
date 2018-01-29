@@ -34,6 +34,7 @@ SET(target LSLOpenVR)
 
 add_executable(${target}
     MACOSX_BUNDLE
+    WIN32
     ${LSLOpenVR_SRC}
 )
 

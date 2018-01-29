@@ -25,7 +25,6 @@ if(APPLE)
 elseif(UNIX)
 	list(APPEND CMAKE_INSTALL_RPATH "\$ORIGIN/../LSL/lib:\$ORIGIN")
 endif()
-# Windows: see .bat install code in installLSLApp()
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "limited configs" FORCE)
 
@@ -62,7 +61,9 @@ function(installLSLAuxFiles target)
 		set(destdir ${destdir}/${target}.app/Contents/MacOS)
 	endif(is_bundle AND APPLE)
 	install(FILES ${ARGN}
-		DESTINATION ${destdir})
+		COMPONENT "LSL${PROJECT_NAME}"
+		DESTINATION ${destdir}
+		)
 endfunction()
 
 
@@ -71,12 +72,13 @@ endfunction()
 # CMAKE_INSTALL_PREFIX/PROJECT_NAME/TARGET_NAME
 # e.g. C:/LSL/BrainAmpSeries/BrainAmpSeries.exe
 function(installLSLApp target)
-	
 	install(TARGETS ${target}
+		COMPONENT "LSL${PROJECT_NAME}"
 		BUNDLE DESTINATION ${PROJECT_NAME}
 		RUNTIME DESTINATION ${PROJECT_NAME}
 		LIBRARY DESTINATION ${PROJECT_NAME}/lib
 	)
+	set(CPACK_COMPONENT_${PROJECT_NAME}_DEPENDS liblsl GLOBAL_SCOPE)
 	set(appbin "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/${target}${CMAKE_EXECUTABLE_SUFFIX}")
 	
 	# Copy lsl library for WIN32 or MacOS.

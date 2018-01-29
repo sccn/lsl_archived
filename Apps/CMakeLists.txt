@@ -19,6 +19,7 @@ endif()
 # set various common paths (e.g. to the Qt5 dir) if they're not already set
 include(LSLSaneDefaults)
 
+option(LSLAPPS_Benchmarks       "Build benchmark apps"              OFF)
 option(LSLAPPS_Examples         "Build example apps"                OFF)
 option(LSLAPPS_LabRecorder      "Build the recorder app"            OFF)
 option(LSLAPPS_XDFBrowser       "Build the XDFBrowser app"          OFF)
@@ -28,12 +29,15 @@ option(LSLAPPS_OpenVR           "Build the OpenVR app"              OFF)
 # Windows-only apps
 if(WIN32)
     option(LSLAPPS_BrainAmp     "Build the BrainAmp app"            OFF)
-	option(LSLAPPS_LiveAmp      "Build the LiveAmp app"             OFF)
+    option(LSLAPPS_LiveAmp      "Build the LiveAmp app"             OFF)
     option(LSLAPPS_Emotiv       "Build the Emotiv app"              OFF)
     option(LSLAPPS_gNEEDaccess  "Build the g.Tec NEEDaccess app"    OFF)
 endif()
 
 # add all Apps the user wants to build
+if(LSLAPPS_Benchmarks)
+	add_subdirectory(Benchmarks)
+endif()
 
 if(LSLAPPS_Examples)
     add_subdirectory(Examples)
