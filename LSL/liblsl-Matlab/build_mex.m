@@ -23,7 +23,7 @@ ext = ['.' mexext];
 files = dir('mex/*.c');
 cd('bin');
 for i = 1:length(files)
-	f = files(i);
+    f = files(i);
 	[~, base, ~] = fileparts(f.name);
 	targetstats = dir([base, ext]);
 	if isempty(targetstats) || f.datenum > targetstats.datenum
