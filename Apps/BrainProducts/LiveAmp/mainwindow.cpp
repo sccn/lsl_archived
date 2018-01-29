@@ -183,7 +183,7 @@ void MainWindow::save_config(const std::string &filename) {
 		pt.put("settings.chunksize",ui->chunkSize->value());
 		pt.put("settings.samplingrate",ui->samplingRate->currentIndex());
 		pt.put("settings.auxChannelCount", ui->auxChannelCount->value());
-		pt.put("settings.activeshield",ui->useACC->checkState()==Qt::Checked);
+		pt.put("settings.useACC", ui->useACC->checkState() == Qt::Checked);
 		pt.put("settings.unsampledmarkers",ui->unsampledMarkers->checkState()==Qt::Checked);
 		pt.put("settings.sampledmarkers",ui->sampledMarkers->checkState()==Qt::Checked);
 		pt.put("settings.sampledmarkersEEG",ui->sampledMarkersEEG->checkState()==Qt::Checked);
@@ -329,7 +329,7 @@ void MainWindow::link() {
 			{
 				if(i<ui->eegChannelCount->value())
 					eegChannelLabels.push_back(*it);
-				else if (i<ui->bipolarChannelCount->value())
+				else if (i-ui->eegChannelCount->value()<ui->bipolarChannelCount->value())
 					bipolarChannelLabels.push_back(*it);
 				else
 					auxChannelLabels.push_back(*it);
@@ -489,7 +489,7 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, std::vector<std::s
 
 	// for keeping track of trigger signal changes, which is all we are interested in
 	float f_mrkr;
-	float prev_marker_float;
+	float prev_marker_float=0.0;
 	float f_u_mrkr;
 	float prev_u_marker_float;
 
@@ -579,6 +579,7 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, std::vector<std::s
 
 			// pull the data from the amplifier 
 			samples_read = liveAmp->pullAmpData(buffer, bufferSize);
+
 
 			if (samples_read <= 0){
 				// CPU saver, this is ok even at higher sampling rates
