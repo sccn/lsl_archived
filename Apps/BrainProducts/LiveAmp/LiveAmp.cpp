@@ -446,7 +446,9 @@ void LiveAmp::pushAmpData(BYTE* buffer, int bufferSize, int64_t samplesRead, std
 				case DT_INT32:
 					{
 						int32_t tmp = *(int32_t*)&buffer[s*sampleSize + offset];
-						sample = (float) tmp;
+						sample = (float)(tmp);
+						sample /= 16777216.0;
+						sample *= 1000000.0;
 						offset += 4;
 						break;
 					}
