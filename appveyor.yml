@@ -28,7 +28,7 @@ build_script:
 
     cmake --build . --config Release --target LSLPACKAGE
 artifacts:
-- path: build/lslinstall
+- path: build/install
   name: lsl_Win32_$(APPVEYOR_BUILD_VERSION)_${APPVEYOR_REPO_COMMIT}
 deploy:
 - provider: BinTray
