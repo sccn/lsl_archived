@@ -55,6 +55,9 @@ LIST(APPEND gNEEDaccess_SRC
     ${CMAKE_CURRENT_LIST_DIR}/src/nautilus_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/nautilus_dlg.h
     ${CMAKE_CURRENT_LIST_DIR}/src/nautilus_dlg.ui
+    ${CMAKE_CURRENT_LIST_DIR}/src/gUSB_dlg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/gUSB_dlg.h
+    ${CMAKE_CURRENT_LIST_DIR}/src/gUSB_dlg.ui
 )
 #...headers
 LIST(APPEND gNEEDaccess_INCL_DIRS

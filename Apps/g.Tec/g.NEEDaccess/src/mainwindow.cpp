@@ -5,7 +5,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "nautilus_dlg.h"
-// TODO: #include "usbamp_dlg.h"
+#include "gUSB_dlg.h"
 #include "GDSClientAPI_gUSBamp.h"
 #include "GDSClientAPI_gHIamp.h"
 #include "GDSClientAPI_gNautilus.h"
@@ -141,9 +141,9 @@ void MainWindow::on_devCfgPushButton_clicked()
 	}
 	else if (m_devConfigs[0].DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GUSBAMP)
 	{
-		//TODO: usbamp_dlg
-		//cfg_dlg.set_config(m_devConfigs[0].Configuration);
-		//cfg_dlg.exec();
+		GUSBDlg cfg_dlg;
+		cfg_dlg.set_configs(m_devConfigs);
+		cfg_dlg.exec();
 	}
 }
 
@@ -547,7 +547,7 @@ void MainWindow::on_goPushButton_clicked()
 		// First we need stream info.
 		lsl::stream_info gdsInfo(
 			m_devInfo.name, "EEG",
-			channel_sum, m_devInfo.nominal_srate,
+			(int)channel_sum, m_devInfo.nominal_srate,
 			m_devInfo.channel_format, m_devInfo.name);
 		// Append device meta-data
 		gdsInfo.desc().append_child("acquisition")
@@ -677,14 +677,6 @@ void MainWindow::enable_config_elements(bool enabled)
 	ui->serverPortSpinBox->setEnabled(enabled);
 	ui->clientPortSpinBox->setEnabled(enabled);
 	/*
-	ui->noiseCheckBox->setEnabled(enabled);
-	ui->CARCheckBox->setEnabled(enabled);
-	ui->accelCheckBox->setEnabled(enabled);
-	ui->counterCheckBox->setEnabled(enabled);
-	ui->linkCheckBox->setEnabled(enabled);
-	ui->batteryCheckBox->setEnabled(enabled);
-	ui->digitalCheckBox->setEnabled(enabled);
-	ui->validationCheckBox->setEnabled(enabled);
 	ui->loadConfigPushButton->setEnabled(enabled);
 	*/
 }

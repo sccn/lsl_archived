@@ -39,50 +39,6 @@
      <property name="horizontalSpacing">
       <number>6</number>
      </property>
-     <item row="3" column="0">
-      <widget class="QLabel" name="available_label">
-       <property name="text">
-        <string>Available Devices</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="2">
-      <widget class="QPushButton" name="goPushButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Go!</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QPushButton" name="scanPushButton">
-       <property name="text">
-        <string>Scan</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="2">
-      <widget class="QPushButton" name="connectPushButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Connect</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QPushButton" name="saveConfigPushButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>SaveConfig</string>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="0" colspan="3">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
@@ -151,27 +107,21 @@
        </item>
       </layout>
      </item>
-     <item row="2" column="0">
-      <widget class="QPushButton" name="loadConfigPushButton">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
+     <item row="1" column="0">
+      <widget class="QLabel" name="available_label">
        <property name="text">
-        <string>LoadConfig</string>
+        <string>Available Devices</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="2">
-      <widget class="QPushButton" name="devCfgPushButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
+     <item row="1" column="2">
+      <widget class="QPushButton" name="scanPushButton">
        <property name="text">
-        <string>Config Device</string>
+        <string>Scan</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="0" rowspan="3" colspan="2">
+     <item row="2" column="0" rowspan="5" colspan="2">
       <widget class="QListWidget" name="availableListWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -193,6 +143,56 @@
        </property>
        <property name="selectionMode">
         <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QPushButton" name="connectPushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Connect</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QPushButton" name="devCfgPushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Config Device</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="2">
+      <widget class="QPushButton" name="loadConfigPushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>LoadConfig</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="2">
+      <widget class="QPushButton" name="saveConfigPushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>SaveConfig</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="2">
+      <widget class="QPushButton" name="goPushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Go!</string>
        </property>
       </widget>
      </item>
