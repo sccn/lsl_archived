@@ -35,6 +35,7 @@ void GUSBDlg::create_widgets()
 		QLabel *name_label = new QLabel(m_configs[cfg_ix].DeviceInfo.Name);
 
 		QComboBox *samplerate_box = new QComboBox;
+		// TODO: Use GDS_GUSBAMP_GetSupportedSamplingRates instead of gUSBamp_sample_rates
 		for each (uint32_t srate in gUSBamp_sample_rates)
 		{
 			samplerate_box->addItem(QString::number(srate));
@@ -62,6 +63,18 @@ void GUSBDlg::create_widgets()
 		}
 
 		// TODO: Channels
+		QTableWidget *chan_table = new QTableWidget(GDS_GUSBAMP_CHANNELS_MAX, 5);
+		QStringList h_labels;
+		h_labels << "Channel" << "Acquire" << "Bipolar" << "Bandpass" << "Notch";
+		chan_table->setHorizontalHeaderLabels(h_labels);
+		for (int chan_ix = 0; chan_ix < GDS_GUSBAMP_CHANNELS_MAX; chan_ix++)
+		{
+			chan_table->setItem(chan_ix, 0, new QTableWidgetItem(tr("%1").arg(chan_ix + 1)));
+			chan_table->setCellWidget(chan_ix, 1, new QCheckBox());
+			chan_table->setItem(chan_ix, 2, new QTableWidgetItem(tr("?")));
+			chan_table->setItem(chan_ix, 3, new QTableWidgetItem(tr("?")));
+			chan_table->setItem(chan_ix, 4, new QTableWidgetItem(tr("?")));
+		}
 		
 		// Put all the widgets together on a layout.
 		// |name     samplerate  |
@@ -77,6 +90,7 @@ void GUSBDlg::create_widgets()
 		dev_layout->addLayout(top_info_layout);
 		
 		QHBoxLayout *sw_gr_ref_layout = new QHBoxLayout;
+
 		QVBoxLayout *switches_layout = new QVBoxLayout;
 		switches_layout->addWidget(shortcut_box);
 		switches_layout->addWidget(counter_box);
@@ -95,7 +109,8 @@ void GUSBDlg::create_widgets()
 		sw_gr_ref_layout->addLayout(gr_ref_layout);
 		dev_layout->addLayout(sw_gr_ref_layout);
 
-		// TODO: Channels layout
+		// Channels widget
+		dev_layout->addWidget(chan_table);
 
 		// Device done. Add to parent layout.
 		ui->devices_layout->addLayout(dev_layout, (int)cfg_ix, 0);
@@ -139,7 +154,16 @@ void GUSBDlg::update_ui()
 		}
 		
 		// TODO: Channels
-		
+		QTableWidget *chan_table = (QTableWidget*)dev_layout->itemAt(2)->widget();
+		for (int chan_ix = 0; chan_ix < GDS_GUSBAMP_CHANNELS_MAX; chan_ix++)
+		{
+			QCheckBox *chan_acquire = (QCheckBox*)chan_table->cellWidget(chan_ix, 1);
+			chan_acquire->setChecked(dev_cfg->Channels[chan_ix].Acquire);
+			QTableWidgetItem *chan_bipolar = chan_table->item(chan_ix, 2);
+			dev_cfg->Channels[chan_ix].BandpassFilterIndex;
+			QTableWidgetItem *chan_bandpass = chan_table->item(chan_ix, 3);
+			QTableWidgetItem *chan_notch = chan_table->item(chan_ix, 4);
+		}
 	}
 }
 
@@ -179,6 +203,12 @@ void GUSBDlg::accept()
 		}
 
 		// TODO: Channels
+		QTableWidget *chan_table = (QTableWidget*)dev_layout->itemAt(2)->widget();
+		for (int chan_ix = 0; chan_ix < GDS_GUSBAMP_CHANNELS_MAX; chan_ix++)
+		{
+			QCheckBox *chan_acquire = (QCheckBox*)chan_table->cellWidget(chan_ix, 1);
+			dev_cfg->Channels[chan_ix].Acquire = chan_acquire->isChecked();
+		}
 	}
 
 	QDialog::accept();
