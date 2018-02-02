@@ -85,12 +85,13 @@ There are two build types:
             - If the source code field is empty then click on `Browse Source`. The default folder should be correct (i.e., the one containing build_windows.bat)
         - Others:
             - Open a terminal/shell/command prompt and change to the labstreaminglayer directory.
-            - `mkdir build && cd build`
-            - `cmake-gui ..`
-        - Click on `Configure`. Click `OK` to create the directory if asked.
-        - Select your compiler and click Finish
-        - Check the Apps you want to use
-        - If necessary, change options or add options/paths with `Add Entry`
+            - If you have previously deleted the 'build' dir: `mkdir build`
+            - `cd build`
+            - `cmake-gui ..` on Windows or `ccmake ..` on other platforms.
+        - Do an initial `Configure`. Agree to create the directory if asked.
+        - Select your compiler and click Finish.
+        - Use the interface to enable building of the Apps you want to use.
+        - If necessary, change options or add options/paths (`Add Entry`).
             - Location of Qt5Config.cmake if the default was not correct (`Qt5_DIR`, PATH, e.g. `C:/Qt/5.10.0/msvc2015_64/lib/cmake/Qt5/`)
             - Boost if the default was not correct (`BOOST_ROOT`, PATH, e.g. `C:/local/boost_1_65_1/`)
             - A path where redistributable binaries get copied (`CMAKE_INSTALL_PREFIX`)
