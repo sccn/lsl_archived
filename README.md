@@ -16,6 +16,12 @@ Hosted here is only the source code for the project. Develpers will want to clon
 
 You can find recent releases on our FTP site : ftp://sccn.ucsd.edu/pub/software/LSL/
 
+These releases may be slightly out of date. We are working toward an automated build and deployment system but it is not ready yet.
+
+# Building from source
+
+Follow the instructions in the INSTALL.md file.
+
 # Streaming Layer API
 
 The liblsl library provides the following **abstractions** for use by client programs:
