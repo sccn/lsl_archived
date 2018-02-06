@@ -186,6 +186,12 @@ If a new version of boost is released, then older cmake will not have instructio
 The easiest way to fix this is to use the last version of boost that is compatible with the most recent version of cmake.
 At the time of this writing, CMake 3.10 supported up to Boost 1.65.1
 
+#### MacOS
+
+If you are using MacOS and homebrew, then install an old version of boost with (e.g.) `brew install boost@1.60`. Then the cmake argment will be `-DBOOST_ROOT=$(brew --prefix boost@1.60)`. Try `brew search boost` to see which older versions of boost are available.
+
+#### Using the latest version of boost anyway
+
 If you absolutely need the latest version of boost then the next easiest way to fix this for this project and other projects,
 is to edit the file that tells cmake about boost versions:
 `C:\Program Files\CMake\share\cmake-3.10\Modules\FindBoost.cmake`.
@@ -193,4 +199,5 @@ Scroll down to the section that checks boost versions (search for `if(NOT Boost_
 In the last version check check in this section, the one with `set(_Boost_IMPORTED_TARGETS FALSE)`,
 modify the `if(NOT Boost_VERSION VERSION_LESS <value>)` to be something greater than your boost version.
 e.g., If your boost version is 1.66 then make it `106700`.
+
 NOTE: This has worked for me in the past but IS NOT working for Boost 1.66. Something must have changed.
