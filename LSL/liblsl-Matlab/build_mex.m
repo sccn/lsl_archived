@@ -6,16 +6,16 @@
 libs = '-llsl64';
 if ispc
 	dllext = 'dll';
+elseif ismac
+	dllext = 'dylib';
 elseif isunix
 	dllext = 'so';
 	libs = ['-llsl64 -ldl'];
-elseif ismac
-	dllext = 'dylib';
 end
 
 
 if isempty(dir(['bin/liblsl64.', dllext]))
-	error('liblsl64.so not found in bin/');
+	error(['liblsl64.' dllext ' not found in bin/']);
 end
 
 ext = ['.' mexext];
