@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent, const QString config_file)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    load_config(config_file);
+	load_config(config_file);
 	GDS_Initialize();  // Initialize the g.NEEDaccess library
 	m_pTimer = new QTimer(this);
 	connect(m_pTimer, SIGNAL(timeout()), this, SLOT(notify_samples_pushed()));
@@ -142,7 +142,7 @@ void MainWindow::on_devCfgPushButton_clicked()
 	else if (m_devConfigs[0].DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GUSBAMP)
 	{
 		GUSBDlg cfg_dlg;
-		cfg_dlg.set_configs(m_devConfigs);
+		cfg_dlg.set_configs(&m_connectionHandle, m_devConfigs);
 		cfg_dlg.exec();
 	}
 }
@@ -618,24 +618,6 @@ void MainWindow::load_config(const QString filename)
 				ui->serverPortSpinBox->setValue(xmlReader->readElementText().toInt());
 			else if (elname == "client-port")
 				ui->clientPortSpinBox->setValue(xmlReader->readElementText().toInt());
-			/*
-			else if (elname == "noise-reduction")
-				ui->noiseCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
-			else if (elname == "car")
-				ui->CARCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
-			else if (elname == "acceleration-data")
-				ui->accelCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
-			else if (elname == "counter")
-				ui->counterCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
-			else if (elname == "link-quality")
-				ui->linkCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
-			else if (elname == "battery-level")
-				ui->batteryCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
-			else if (elname == "digital-inputs")
-				ui->digitalCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
-			else if (elname == "validation-indicator")
-				ui->validationCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
-			*/
         }
     }
     if (xmlReader->hasError()) {
@@ -667,7 +649,7 @@ void MainWindow::on_saveConfigPushButton_clicked()
 
 void MainWindow::save_config(const QString filename)
 {
-	
+	qDebug() << "TODO: MainWindow::save_config";
 }
 
 
@@ -676,9 +658,7 @@ void MainWindow::enable_config_elements(bool enabled)
 	ui->lineEdit_serverip->setEnabled(enabled);
 	ui->serverPortSpinBox->setEnabled(enabled);
 	ui->clientPortSpinBox->setEnabled(enabled);
-	/*
 	ui->loadConfigPushButton->setEnabled(enabled);
-	*/
 }
 
 

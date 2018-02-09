@@ -18,7 +18,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0,
-        const QString config_file = default_config_fname);
+		const QString config_file = default_config_fname);
     ~MainWindow();
 
 signals:
