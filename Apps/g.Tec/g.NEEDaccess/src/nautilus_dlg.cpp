@@ -44,3 +44,22 @@ void NautilusDlg::accept()
 	cfg->ValidationIndicator = ui->validationCheckBox->isChecked();
 	QDialog::accept();
 }
+
+/*
+if (elname == "noise-reduction")
+ui->noiseCheckBox->setChecked(xmlReader.readElementText().compare("true", Qt::CaseInsensitive) == 0);
+else if (elname == "car")
+ui->CARCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
+else if (elname == "acceleration-data")
+ui->accelCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
+else if (elname == "counter")
+ui->counterCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
+else if (elname == "link-quality")
+ui->linkCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
+else if (elname == "battery-level")
+ui->batteryCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
+else if (elname == "digital-inputs")
+ui->digitalCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
+else if (elname == "validation-indicator")
+ui->validationCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
+*/

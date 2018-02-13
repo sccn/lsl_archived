@@ -42,9 +42,6 @@
      <layout class="QHBoxLayout" name="configLayout">
       <item>
        <widget class="QPushButton" name="loadCfgButton">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
         <property name="text">
          <string>Load Config</string>
         </property>
@@ -52,9 +49,6 @@
       </item>
       <item>
        <widget class="QPushButton" name="saveCfgButton">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
         <property name="text">
          <string>Save Config</string>
         </property>

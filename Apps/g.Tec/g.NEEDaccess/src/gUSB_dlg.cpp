@@ -3,6 +3,7 @@
 #include "GDSClientAPI.h"
 #include "GDSClientAPI_gUSBamp.h"
 #include <QtWidgets>
+#include <algorithm>
 
 
 GUSBDlg::GUSBDlg(QWidget *parent)
@@ -10,14 +11,13 @@ GUSBDlg::GUSBDlg(QWidget *parent)
 	  ui(new Ui::GUSBDlg)
 {
 	ui->setupUi(this);
-	//connect(ui->loadCfgButton, SIGNAL(clicked()), this, SLOT(on_loadCfgButton_clicked()));  // <-- shouldn't this be automatic?
-	//connect(ui->saveCfgButton, SIGNAL(clicked()), this, SLOT(on_saveCfgButton_clicked()));
 }
 
 
-void GUSBDlg::set_configs(GDS_HANDLE* connection_handle, std::vector<GDS_CONFIGURATION_BASE> configs)
+void GUSBDlg::set_configs(GDS_HANDLE* connection_handle, std::vector<GDS_CONFIGURATION_BASE> configs, std::vector<std::string>* chan_labels)
 {
 	m_pHandle = connection_handle;
+	m_pChannel_labels = chan_labels;
 	m_configs.clear();
 	for (size_t cfg_ix = 0; cfg_ix < configs.size(); cfg_ix++)
 	{
@@ -76,7 +76,14 @@ void GUSBDlg::create_widgets()
 		chan_table->setHorizontalHeaderLabels(h_labels);
 		for (int chan_ix = 0; chan_ix < GDS_GUSBAMP_CHANNELS_MAX; chan_ix++)
 		{
-			chan_table->setItem(chan_ix, 0, new QTableWidgetItem(tr("%1").arg(chan_ix + 1)));
+			if (m_pChannel_labels->size() > chan_ix)
+			{
+				chan_table->setItem(chan_ix, 0, new QTableWidgetItem(QString::fromStdString(m_pChannel_labels->at(chan_ix))));
+			}
+			else
+			{
+				chan_table->setItem(chan_ix, 0, new QTableWidgetItem(tr("%1").arg(chan_ix + 1)));
+			}
 			chan_table->setCellWidget(chan_ix, 1, new QCheckBox());
 			QSpinBox* bipolar_spinbox = new QSpinBox();
 			chan_table->setCellWidget(chan_ix, 2, bipolar_spinbox);
@@ -290,9 +297,12 @@ void GUSBDlg::accept()
 			dev_cfg->CommonReference[grp_ix] = ref_box->isChecked();
 		}
 
+		m_pChannel_labels->clear();
 		QTableWidget *chan_table = (QTableWidget*)dev_layout->itemAt(2)->widget();
 		for (int chan_ix = 0; chan_ix < GDS_GUSBAMP_CHANNELS_MAX; chan_ix++)
 		{
+			QTableWidgetItem *chan_label = chan_table->item(chan_ix, 0);
+			m_pChannel_labels->push_back(chan_label->text().toStdString());
 			QCheckBox *chan_acquire = (QCheckBox*)chan_table->cellWidget(chan_ix, 1);
 			dev_cfg->Channels[chan_ix].Acquire = chan_acquire->isChecked();
 			QSpinBox* chan_bipolar = (QSpinBox*)chan_table->cellWidget(chan_ix, 2);
@@ -323,56 +333,128 @@ void GUSBDlg::on_loadCfgButton_clicked()
 
 void GUSBDlg::load_config(const QString filename)
 {
-	QFile* xmlFile = new QFile(filename);
-	if (!xmlFile->open(QIODevice::ReadOnly | QIODevice::Text)) {
+	QFile xmlFile(filename);
+	if (!xmlFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		qDebug() << "Could not load XML from file " << filename;
 		return;
 	}
-	QXmlStreamReader* xmlReader = new QXmlStreamReader(xmlFile);
-	while (!xmlReader->atEnd() && !xmlReader->hasError()) {
-		// Read next element
-		xmlReader->readNext();
-		if (xmlReader->isStartElement() && xmlReader->name() != "settings")
+	QXmlStreamReader xmlReader(&xmlFile);
+	size_t device_ix = -1;
+	int channel_ix = -1;
+	std::vector<std::string> gr_blocks = { "A", "B", "C", "D" };
+	bool label_is_channel = false;
+
+	// Convenience references to GUI items that change depending on which device, ground or ref, etc.
+	QVBoxLayout *dev_layout;
+	QGroupBox *switches_group;
+	QVBoxLayout *gr_ref_layout;
+	QHBoxLayout *gr_or_ref_layout;
+	QTableWidget *chan_table;
+	
+
+	while (!xmlReader.atEnd() && !xmlReader.hasError()) {
+		xmlReader.readNext();
+		if (xmlReader.isStartElement())
 		{
-			/*
-			QStringRef elname = xmlReader->name();
-			if (elname == "noise-reduction")
-			ui->noiseCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
-			else if (elname == "car")
-			ui->CARCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
-			else if (elname == "acceleration-data")
-			ui->accelCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
-			else if (elname == "counter")
-			ui->counterCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
-			else if (elname == "link-quality")
-			ui->linkCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
-			else if (elname == "battery-level")
-			ui->batteryCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
-			else if (elname == "digital-inputs")
-			ui->digitalCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
-			else if (elname == "validation-indicator")
-			ui->validationCheckBox->setChecked(xmlReader->readElementText().compare("true", Qt::CaseInsensitive) == 0);
-			*/
+			QStringRef elname = xmlReader.name();
+			if (elname == "device")
+			{
+				device_ix++;
+				label_is_channel = false;
+				dev_layout = (QVBoxLayout*)ui->devices_layout->itemAtPosition((int)device_ix, 0)->layout();
+				QHBoxLayout *sw_gr_ref_layout = (QHBoxLayout*)dev_layout->itemAt(1)->layout();
+				switches_group = (QGroupBox*)sw_gr_ref_layout->itemAt(0)->widget();
+				gr_ref_layout = (QVBoxLayout*)sw_gr_ref_layout->itemAt(1)->layout();
+				chan_table = (QTableWidget*)dev_layout->itemAt(2)->widget();
+			}
+			else if (elname == "grounds")
+			{
+				QGroupBox *ground_group = (QGroupBox*)gr_ref_layout->itemAt(0)->widget();
+				gr_or_ref_layout = (QHBoxLayout*)ground_group->layout();
+			}
+			else if (elname == "references")
+			{
+				QGroupBox *ref_group = (QGroupBox*)gr_ref_layout->itemAt(1)->widget();
+				gr_or_ref_layout = (QHBoxLayout*)ref_group->layout();
+			}
+			else if (elname == "SampleRate" && device_ix == 0)
+			{
+				QHBoxLayout *top_info_layout = (QHBoxLayout*)dev_layout->itemAt(0)->layout();
+				QComboBox *samplerate_box = (QComboBox*)top_info_layout->itemAt(2)->widget();
+				samplerate_box->setCurrentIndex(std::find(gUSBamp_sample_rates.begin(), gUSBamp_sample_rates.end(),
+					xmlReader.readElementText().toInt()) - gUSBamp_sample_rates.begin());
+			}
+			else if (elname == "ShortCutEnabled")
+			{
+				QCheckBox *shortcut_box = (QCheckBox*)switches_group->layout()->itemAt(0)->widget();
+				shortcut_box->setChecked(xmlReader.readElementText().compare("true", Qt::CaseInsensitive) == 0);
+			}
+			else if (elname == "CounterEnabled")
+			{
+				QCheckBox *counter_box = (QCheckBox*)switches_group->layout()->itemAt(1)->widget();
+				counter_box->setChecked(xmlReader.readElementText().compare("true", Qt::CaseInsensitive) == 0);
+			}
+			else if (elname == "TriggerEnabled")
+			{
+				QCheckBox *trigger_box = (QCheckBox*)switches_group->layout()->itemAt(2)->widget();
+				trigger_box->setChecked(xmlReader.readElementText().compare("true", Qt::CaseInsensitive) == 0);
+			}
+			else if (std::find(gr_blocks.begin(), gr_blocks.end(), elname.toString().toStdString()) != gr_blocks.end())  // A, B, C, D
+			{
+				ptrdiff_t block_ix = std::distance(gr_blocks.begin(), std::find(gr_blocks.begin(), gr_blocks.end(), elname.toString().toStdString()));
+				QCheckBox *check_box = (QCheckBox*)gr_or_ref_layout->itemAt(block_ix)->widget();
+				check_box->setChecked(xmlReader.readElementText().compare("true", Qt::CaseInsensitive) == 0);
+			}
+			else if (elname == "channels")
+				channel_ix = -1;
+			else if (elname == "channel")
+			{
+				channel_ix++;
+				label_is_channel = true;
+			}
+			else if (elname == "Label" && label_is_channel)
+			{
+				QTableWidgetItem *chan_label = chan_table->item(channel_ix, 0);
+				chan_label->setText(xmlReader.readElementText());
+			}
+			else if (elname == "Acquire")
+			{
+				QCheckBox *chan_acquire = (QCheckBox*)chan_table->cellWidget(channel_ix, 1);
+				chan_acquire->setChecked(xmlReader.readElementText().compare("true", Qt::CaseInsensitive) == 0);
+			}
+			else if (elname == "BipolarChannel")
+			{
+				QSpinBox* chan_bipolar = (QSpinBox*)chan_table->cellWidget(channel_ix, 2);
+				chan_bipolar->setValue(xmlReader.readElementText().toInt());
+			}
+			else if (elname == "BandpassFilterIndex")
+			{
+				QSpinBox* chan_bandpass = (QSpinBox*)chan_table->cellWidget(channel_ix, 3);
+				chan_bandpass->setValue(xmlReader.readElementText().toInt());
+			}
+			else if (elname == "NotchFilterIndex")
+			{
+				QSpinBox* chan_notch = (QSpinBox*)chan_table->cellWidget(channel_ix, 4);
+				chan_notch->setValue(xmlReader.readElementText().toInt());
+			}
 		}
 	}
-	if (xmlReader->hasError()) {
+	if (xmlReader.hasError()) {
 		qDebug() << "Config file parse error "
-			<< xmlReader->error()
+			<< xmlReader.error()
 			<< ": "
-			<< xmlReader->errorString();
+			<< xmlReader.errorString();
 	}
-	xmlReader->clear();
-	delete xmlReader;
-	xmlFile->close();
-	delete xmlFile;
+	xmlReader.clear();
+	xmlFile.close();
 }
 
 
 void GUSBDlg::on_saveCfgButton_clicked()
 {
-	QString sel = QFileDialog::getOpenFileName(this,
+	QString sel = QFileDialog::getSaveFileName(this,
 		"Save Configuration File",
-		"",//QDir::currentPath()
+		QDir::currentPath(),
 		"Configuration Files (*.cfg)");
 	if (!sel.isEmpty())
 	{
@@ -382,9 +464,91 @@ void GUSBDlg::on_saveCfgButton_clicked()
 }
 
 
-void GUSBDlg::save_config(const QString filename)
+void GUSBDlg::save_config(QString filename)
 {
-	qDebug() << "TODO: GUSBDlg::save_config";
+	try {
+		QFile file(filename);
+		file.open(QIODevice::WriteOnly);
+		QXmlStreamWriter stream(&file);
+		stream.setAutoFormatting(true);
+		stream.writeStartDocument();
+		// Save GUI state of device + channel config.
+		stream.writeStartElement("devices");
+		for (size_t cfg_ix = 0; cfg_ix < m_configs.size(); cfg_ix++)
+		{
+			stream.writeStartElement("device");
+			QVBoxLayout *dev_layout = (QVBoxLayout*)ui->devices_layout->itemAtPosition((int)cfg_ix, 0)->layout();
+
+			QHBoxLayout *top_info_layout = (QHBoxLayout*)dev_layout->itemAt(0)->layout();
+			QLabel *dev_label = (QLabel*)top_info_layout->itemAt(0)->widget();
+			stream.writeTextElement("Label", dev_label->text());
+			QComboBox *samplerate_box = (QComboBox*)top_info_layout->itemAt(2)->widget();
+			stream.writeTextElement("SampleRate", QString::number(gUSBamp_sample_rates[samplerate_box->currentIndex()]));
+
+			QHBoxLayout *sw_gr_ref_layout = (QHBoxLayout*)dev_layout->itemAt(1)->layout();
+
+			QGroupBox *switches_group = (QGroupBox*)sw_gr_ref_layout->itemAt(0)->widget();
+			
+			QCheckBox *shortcut_box = (QCheckBox*)switches_group->layout()->itemAt(0)->widget();
+			stream.writeTextElement("ShortCutEnabled", shortcut_box->isChecked() ? "true" : "false");
+			
+			QCheckBox *counter_box = (QCheckBox*)switches_group->layout()->itemAt(1)->widget();
+			stream.writeTextElement("CounterEnabled", counter_box->isChecked() ? "true" : "false");
+			
+			QCheckBox *trigger_box = (QCheckBox*)switches_group->layout()->itemAt(2)->widget();
+			stream.writeTextElement("TriggerEnabled", trigger_box->isChecked() ? "true" : "false");
+
+			QStringList gr_blocks;
+			gr_blocks << "A" << "B" << "C" << "D";
+
+			stream.writeStartElement("grounds");
+			QVBoxLayout *gr_ref_layout = (QVBoxLayout*)sw_gr_ref_layout->itemAt(1)->layout();
+			QGroupBox *ground_group = (QGroupBox*)gr_ref_layout->itemAt(0)->widget();
+			QHBoxLayout *gr_layout = (QHBoxLayout*)ground_group->layout();
+			for (int grp_ix = 0; grp_ix < GDS_GUSBAMP_GROUPS_MAX; grp_ix++)
+			{
+				QCheckBox *ground_box = (QCheckBox*)gr_layout->itemAt(grp_ix)->widget();
+				stream.writeTextElement(gr_blocks.at(grp_ix), ground_box->isChecked() ? "true" : "false");
+			}
+			stream.writeEndElement(); // grounds
+
+			stream.writeStartElement("references");
+			QGroupBox *ref_group = (QGroupBox*)gr_ref_layout->itemAt(1)->widget();
+			QHBoxLayout *ref_layout = (QHBoxLayout*)ref_group->layout();
+			for (int grp_ix = 0; grp_ix < GDS_GUSBAMP_GROUPS_MAX; grp_ix++)
+			{
+				QCheckBox *ref_box = (QCheckBox*)ref_layout->itemAt(grp_ix)->widget();
+				stream.writeTextElement(gr_blocks.at(grp_ix), ref_box->isChecked() ? "true" : "false");
+			}
+			stream.writeEndElement(); // references
+
+			stream.writeStartElement("channels");
+			QTableWidget *chan_table = (QTableWidget*)dev_layout->itemAt(2)->widget();
+			for (int chan_ix = 0; chan_ix < GDS_GUSBAMP_CHANNELS_MAX; chan_ix++)
+			{
+				stream.writeStartElement("channel");
+				QTableWidgetItem *chan_label = chan_table->item(chan_ix, 0);
+				stream.writeTextElement("Label", chan_label->text());
+				QCheckBox *chan_acquire = (QCheckBox*)chan_table->cellWidget(chan_ix, 1);
+				stream.writeTextElement("Acquire", chan_acquire->isChecked() ? "true" : "false");
+				QSpinBox* chan_bipolar = (QSpinBox*)chan_table->cellWidget(chan_ix, 2);
+				stream.writeTextElement("BipolarChannel", QString::number(chan_bipolar->value()));
+				QSpinBox* chan_bandpass = (QSpinBox*)chan_table->cellWidget(chan_ix, 3);
+				stream.writeTextElement("BandpassFilterIndex", QString::number(chan_bandpass->value()));
+				QSpinBox* chan_notch = (QSpinBox*)chan_table->cellWidget(chan_ix, 4);
+				stream.writeTextElement("NotchFilterIndex", QString::number(chan_notch->value()));
+				stream.writeEndElement(); // channel
+			}
+			stream.writeEndElement(); // channels
+			stream.writeEndElement(); // device
+		}
+		stream.writeEndElement(); // devices
+		stream.writeEndDocument();
+		file.close();
+	}
+	catch (std::exception &e) {
+		qDebug() << "Problem saving to config file: " << e.what();
+	}
 }
 
 

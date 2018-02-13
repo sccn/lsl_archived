@@ -142,7 +142,7 @@ void MainWindow::on_devCfgPushButton_clicked()
 	else if (m_devConfigs[0].DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GUSBAMP)
 	{
 		GUSBDlg cfg_dlg;
-		cfg_dlg.set_configs(&m_connectionHandle, m_devConfigs);
+		cfg_dlg.set_configs(&m_connectionHandle, m_devConfigs, &m_chanLabels);
 		cfg_dlg.exec();
 	}
 }
@@ -544,6 +544,7 @@ void MainWindow::on_goPushButton_clicked()
 			channel_sum += n;
 
 		// Create an LSL outlet.
+		// https://github.com/sccn/xdf/wiki/EEG-Meta-Data
 		// First we need stream info.
 		lsl::stream_info gdsInfo(
 			m_devInfo.name, "EEG",

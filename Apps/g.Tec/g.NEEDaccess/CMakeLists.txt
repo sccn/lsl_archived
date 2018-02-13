@@ -35,6 +35,9 @@ LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 # If Qt5_DIR is not supplied, use default directory defined in ${CMAKE_CURRENT_LIST_DIR}/../../../cmake/LSLSaneDefaults
 find_package(Qt5 REQUIRED COMPONENTS Core Xml Gui Widgets)
 
+# Boost
+# find_package(Boost REQUIRED)
+
 # g.Tec gNEEDaccessSDK
 find_package(gNEEDaccessSDK)
 
@@ -59,10 +62,12 @@ LIST(APPEND gNEEDaccess_SRC
     ${CMAKE_CURRENT_LIST_DIR}/src/gUSB_dlg.h
     ${CMAKE_CURRENT_LIST_DIR}/src/gUSB_dlg.ui
 )
+
 #...headers
-LIST(APPEND gNEEDaccess_INCL_DIRS
-    ${Boost_INCLUDE_DIRS}
-)
+#LIST(APPEND gNEEDaccess_INCL_DIRS
+#    ${Boost_INCLUDE_DIRS}
+#)
+
 #...libraries
 LIST(APPEND gNEEDaccess_REQ_LIBS
     Qt5::Core

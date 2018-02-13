@@ -72,6 +72,7 @@ private:
 	bool m_bConnected = false;
 	bool m_bStreaming = false;
 	size_t m_samplesPushed = 0;
+	std::vector<std::string> m_chanLabels;  // g.HIamp and g.USBamp do not store channel names, so we need to manage them via config file.
 
 	// GDS communication
 	GDS_ENDPOINT m_hostEndpoint = { "127.0.0.1", 50223 };
