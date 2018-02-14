@@ -13,4 +13,4 @@ This is the MATLAB interface for liblsl.
 
 If you get an error similar to `lsl_loadlib_ undefined`, then you may need to run the `build_mex.m` script from within the liblsl-Matlab directory. In Linux, you may need to run `build_linux.sh` instead.
 
-On MacOS, you may still get an error similar to ``. To fix this run the following command in a Terminal window from within the liblsl-Matlab directory: `install_name_tool -add_rpath "@loader_path/" bin/lsl_loadlib_.mexmaci64`
+On MacOS, you may still get an error similar to `Invalid MEX-file [...] lsl_loadlib_.mexmaci64; Reason: image not found.`. To fix this run the following command in a Terminal window from within the liblsl-Matlab directory: `install_name_tool -add_rpath "@loader_path/" bin/lsl_loadlib_.mexmaci64`
