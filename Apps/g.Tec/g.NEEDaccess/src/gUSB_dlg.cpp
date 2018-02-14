@@ -11,6 +11,8 @@ GUSBDlg::GUSBDlg(QWidget *parent)
 	  ui(new Ui::GUSBDlg)
 {
 	ui->setupUi(this);
+
+	load_config(default_config_fname);
 }
 
 

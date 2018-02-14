@@ -61,6 +61,9 @@ LIST(APPEND gNEEDaccess_SRC
     ${CMAKE_CURRENT_LIST_DIR}/src/gUSB_dlg.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/gUSB_dlg.h
     ${CMAKE_CURRENT_LIST_DIR}/src/gUSB_dlg.ui
+    ${CMAKE_CURRENT_LIST_DIR}/src/gHIamp_dlg.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/gHIamp_dlg.h
+    ${CMAKE_CURRENT_LIST_DIR}/src/gHIamp_dlg.ui
 )
 
 #...headers
@@ -75,8 +78,8 @@ LIST(APPEND gNEEDaccess_REQ_LIBS
     Qt5::Widgets
     Qt5::Xml
     LSL::lsl
-    ${Boost_LIBRARIES}
     gtec::gNEEDaccessSDK
+    # ${Boost_LIBRARIES}
 )
 
 # TARGET #

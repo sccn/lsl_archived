@@ -6,9 +6,10 @@
 #include "ui_mainwindow.h"
 #include "nautilus_dlg.h"
 #include "gUSB_dlg.h"
+#include "gHIamp_dlg.h"
+#include "GDSClientAPI_gNautilus.h"
 #include "GDSClientAPI_gUSBamp.h"
 #include "GDSClientAPI_gHIamp.h"
-#include "GDSClientAPI_gNautilus.h"
 
 
 // GDS_DeviceInfo contains basic identifying information for each found device.
@@ -130,24 +131,6 @@ void MainWindow::on_scanPushButton_clicked()
 }
 
 
-void MainWindow::on_devCfgPushButton_clicked()
-{
-	int dev_ix = ui->availableListWidget->currentRow();
-	if (m_devConfigs[0].DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GNAUTILUS)
-	{
-		NautilusDlg cfg_dlg;
-		cfg_dlg.set_config(m_devConfigs[0].Configuration);
-		cfg_dlg.exec();
-	}
-	else if (m_devConfigs[0].DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GUSBAMP)
-	{
-		GUSBDlg cfg_dlg;
-		cfg_dlg.set_configs(&m_connectionHandle, m_devConfigs, &m_chanLabels);
-		cfg_dlg.exec();
-	}
-}
-
-
 void MainWindow::on_availableListWidget_itemSelectionChanged()
 {
 	ui->connectPushButton->setDisabled(false);
@@ -171,7 +154,7 @@ void MainWindow::on_connectPushButton_clicked()
 	// Update UI elements to reflect connection state.
 	ui->connectPushButton->setText(m_bConnected ? "Disconnect" : "Connect");
 	ui->goPushButton->setEnabled(m_bConnected);
-	ui->devCfgPushButton->setEnabled(m_isCreator && m_bConnected && m_isConfigurable);
+	ui->devCfgPushButton->setEnabled(m_isCreator && m_bConnected);
 	ui->availableListWidget->setDisabled(m_bConnected);
 
 	ui->connectPushButton->setDisabled(false);
@@ -204,18 +187,7 @@ bool MainWindow::do_connect()
 			if (!m_isCreator)
 				statusBar()->showMessage("Device is first connected by another application. Cannot modify its configuration.");
 		}
-		success &= get_connected_devices_configs();
-
-		if (success & m_isCreator)
-		{
-			// TODO: Get rid of m_isConfigurable and this loop once all the config GUI elements are built.
-			m_isConfigurable = false;
-			for each (GDS_CONFIGURATION_BASE cfg in m_devConfigs)
-			{
-				m_isConfigurable |= cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GUSBAMP;
-				m_isConfigurable |= cfg.DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GNAUTILUS;
-			}
-		}
+		success &= get_connected_devices_configs();  // Populate m_devConfigs
 
 		if (!success)
 		{
@@ -301,6 +273,30 @@ bool MainWindow::get_connected_devices_configs()
 }
 
 
+void MainWindow::on_devCfgPushButton_clicked()
+{
+	int dev_ix = ui->availableListWidget->currentRow();
+	if (m_devConfigs[0].DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GNAUTILUS)
+	{
+		NautilusDlg cfg_dlg;
+		cfg_dlg.set_config(m_devConfigs[0].Configuration);
+		cfg_dlg.exec();
+	}
+	else if (m_devConfigs[0].DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GUSBAMP)
+	{
+		GUSBDlg cfg_dlg;
+		cfg_dlg.set_configs(&m_connectionHandle, m_devConfigs, &m_chanLabels);
+		cfg_dlg.exec();
+	}
+	else if (m_devConfigs[0].DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GHIAMP)
+	{
+		GHIampDlg cfg_dlg;
+		cfg_dlg.set_config(&m_connectionHandle, m_devConfigs[0], &m_chanLabels, &m_chanImpedances);
+		cfg_dlg.exec();
+	}
+}
+
+
 void MainWindow::on_goPushButton_clicked()
 {
 	ui->goPushButton->setDisabled(true);  // re-enable when process complete.
@@ -370,6 +366,16 @@ void MainWindow::on_goPushButton_clicked()
 					m_devInfo.scans_per_block = cfg_dev->NumberOfScans;
 				}
 
+				// Get filter details
+				size_t bandpassFiltersCount;
+				size_t notchFiltersCount;
+				GDS_RESULT res = GDS_GUSBAMP_GetBandpassFilters(m_connectionHandle, device_names, NULL, &bandpassFiltersCount);
+				std::vector<GDS_FILTER_INFO> bandpassFilters(bandpassFiltersCount);
+				res = GDS_GUSBAMP_GetBandpassFilters(m_connectionHandle, device_names, bandpassFilters.data(), &bandpassFiltersCount);
+				res = GDS_GUSBAMP_GetNotchFilters(m_connectionHandle, device_names, NULL, &notchFiltersCount);
+				std::vector<GDS_FILTER_INFO> notchFilters(notchFiltersCount);
+				res = GDS_GUSBAMP_GetNotchFilters(m_connectionHandle, device_names, notchFilters.data(), &notchFiltersCount);
+
 				GDS_GUSBAMP_SCALING scaling;
 				handleResult("GDS_GUSBAMP_GetScaling",
 					GDS_GUSBAMP_GetScaling(m_connectionHandle, device_names, &scaling));
@@ -378,11 +384,38 @@ void MainWindow::on_goPushButton_clicked()
 				{
 					chan_info_type new_chan_info;
 					new_chan_info.enabled = cfg_dev->Channels[chan_ix].Acquire;
-					new_chan_info.label = std::to_string(chan_ix + 1);  // Device does not have access to custom channel labels.
+					new_chan_info.label = m_chanLabels[dev_ix*GDS_GUSBAMP_CHANNELS_MAX + chan_ix];
 					new_chan_info.type = "EEG";
 					new_chan_info.unit = "uV";
 					new_chan_info.scaling_offset = scaling.Offset[chan_ix];
 					new_chan_info.scaling_factor = scaling.ScalingFactor[chan_ix];
+					if (m_chanImpedances.size() > chan_ix)
+					{
+						new_chan_info.impedance = m_chanImpedances[chan_ix];
+					}
+					new_chan_info.filtering.clear();
+
+					if (cfg_dev->Channels[chan_ix].BandpassFilterIndex >= 0)
+					{
+						filter_type bpfilt;
+						bpfilt.filter_class = filter_type::bandpass;
+						bpfilt.lower = bandpassFilters[cfg_dev->Channels[chan_ix].BandpassFilterIndex].LowerCutoffFrequency;
+						bpfilt.upper = bandpassFilters[cfg_dev->Channels[chan_ix].BandpassFilterIndex].UpperCutoffFrequency;
+						bpfilt.order = bandpassFilters[cfg_dev->Channels[chan_ix].BandpassFilterIndex].Order;
+						// TODO: type, design
+						new_chan_info.filtering.push_back(bpfilt);
+					}
+					if (cfg_dev->Channels[chan_ix].NotchFilterIndex >= 0)
+					{
+						filter_type notchfilt;
+						notchfilt.filter_class = filter_type::notch;
+						notchfilt.lower = notchFilters[cfg_dev->Channels[chan_ix].NotchFilterIndex].LowerCutoffFrequency;
+						notchfilt.upper = notchFilters[cfg_dev->Channels[chan_ix].NotchFilterIndex].UpperCutoffFrequency;
+						notchfilt.order = notchFilters[cfg_dev->Channels[chan_ix].NotchFilterIndex].Order;
+						// TODO: type, design
+						new_chan_info.filtering.push_back(notchfilt);
+					}
+
 					m_devInfo.channel_infos.push_back(new_chan_info);
 				}
 				// Add the trigger channel last.
@@ -396,8 +429,15 @@ void MainWindow::on_goPushButton_clicked()
 					m_devInfo.channel_infos.push_back(new_chan_info);
 				}
 
+				if (cfg_dev->CounterEnabled)
+				{
+					m_devInfo.channel_infos[GDS_GUSBAMP_CHANNELS_MAX-1].type = "Counter";
+					m_devInfo.channel_infos[GDS_GUSBAMP_CHANNELS_MAX - 1].unit = "mod(samples,1000000)";
+					m_devInfo.channel_infos[GDS_GUSBAMP_CHANNELS_MAX - 1].label = "Counter";
+				}
+
 				// TODO: Add info to metadata.
-				// ShortCutEnabled, CounterEnabled, CommonGround[GDS_GUSBAMP_GROUPS_MAX], CommonReference[GDS_GUSBAMP_GROUPS_MAX]
+				// CommonGround[GDS_GUSBAMP_GROUPS_MAX], CommonReference[GDS_GUSBAMP_GROUPS_MAX]
 				// List of all devices incl master/slave
 			}
 			else if (dev_type == GDS_DEVICE_TYPE_GHIAMP)
@@ -405,13 +445,59 @@ void MainWindow::on_goPushButton_clicked()
 				GDS_GHIAMP_CONFIGURATION* cfg_dev = (GDS_GHIAMP_CONFIGURATION*)m_devConfigs[dev_ix].Configuration;
 				m_devInfo.nominal_srate = double(cfg_dev->SamplingRate);
 				m_devInfo.scans_per_block = size_t(cfg_dev->NumberOfScans);
+
+				// Get filter details
+				size_t bandpassFiltersCount;
+				size_t notchFiltersCount;
+				GDS_RESULT res = GDS_GHIAMP_GetBandpassFilters(m_connectionHandle, device_names, NULL, &bandpassFiltersCount);
+				std::vector<GDS_FILTER_INFO> bandpassFilters(bandpassFiltersCount);
+				res = GDS_GHIAMP_GetBandpassFilters(m_connectionHandle, device_names, bandpassFilters.data(), &bandpassFiltersCount);
+				res = GDS_GHIAMP_GetNotchFilters(m_connectionHandle, device_names, NULL, &notchFiltersCount);
+				std::vector<GDS_FILTER_INFO> notchFilters(notchFiltersCount);
+				res = GDS_GHIAMP_GetNotchFilters(m_connectionHandle, device_names, notchFilters.data(), &notchFiltersCount);
+
 				for (size_t chan_ix = 0; chan_ix < GDS_GHIAMP_CHANNELS_MAX; chan_ix++)
 				{
 					chan_info_type new_chan_info;
 					new_chan_info.enabled = cfg_dev->Channels[chan_ix].Acquire;
-					new_chan_info.label = std::to_string(chan_ix + 1);
+					new_chan_info.label = m_chanLabels[chan_ix];
 					new_chan_info.type = "EEG";
 					new_chan_info.unit = "uV";
+					if (m_chanImpedances.size() > chan_ix)
+					{
+						new_chan_info.impedance = m_chanImpedances[chan_ix];
+					}
+					// Add filter info
+					new_chan_info.filtering.clear();
+					if (cfg_dev->Channels[chan_ix].BandpassFilterIndex >= 0)
+					{
+						filter_type bpfilt;
+						bpfilt.filter_class = filter_type::bandpass;
+						bpfilt.lower = bandpassFilters[cfg_dev->Channels[chan_ix].BandpassFilterIndex].LowerCutoffFrequency;
+						bpfilt.upper = bandpassFilters[cfg_dev->Channels[chan_ix].BandpassFilterIndex].UpperCutoffFrequency;
+						bpfilt.order = bandpassFilters[cfg_dev->Channels[chan_ix].BandpassFilterIndex].Order;
+						// TODO: type, design
+						new_chan_info.filtering.push_back(bpfilt);
+					}
+					if (cfg_dev->Channels[chan_ix].NotchFilterIndex >= 0)
+					{
+						filter_type notchfilt;
+						notchfilt.filter_class = filter_type::notch;
+						notchfilt.lower = notchFilters[cfg_dev->Channels[chan_ix].NotchFilterIndex].LowerCutoffFrequency;
+						notchfilt.upper = notchFilters[cfg_dev->Channels[chan_ix].NotchFilterIndex].UpperCutoffFrequency;
+						notchfilt.order = notchFilters[cfg_dev->Channels[chan_ix].NotchFilterIndex].Order;
+						// TODO: type, design
+						new_chan_info.filtering.push_back(notchfilt);
+					}
+					m_devInfo.channel_infos.push_back(new_chan_info);
+				}
+				if (cfg_dev->TriggerLinesEnabled)
+				{
+					chan_info_type new_chan_info;
+					new_chan_info.enabled = true;
+					new_chan_info.label = "Trigger";
+					new_chan_info.type = "digital";
+					new_chan_info.unit = "16-bit mask";
 					m_devInfo.channel_infos.push_back(new_chan_info);
 				}
 			}
@@ -544,13 +630,13 @@ void MainWindow::on_goPushButton_clicked()
 			channel_sum += n;
 
 		// Create an LSL outlet.
-		// https://github.com/sccn/xdf/wiki/EEG-Meta-Data
 		// First we need stream info.
 		lsl::stream_info gdsInfo(
 			m_devInfo.name, "EEG",
 			(int)channel_sum, m_devInfo.nominal_srate,
 			m_devInfo.channel_format, m_devInfo.name);
 		// Append device meta-data
+		// https://github.com/sccn/xdf/wiki/EEG-Meta-Data
 		gdsInfo.desc().append_child("acquisition")
 			.append_child_value("manufacturer", "g.Tec")
 			.append_child_value("model", m_devInfo.name);
@@ -560,10 +646,26 @@ void MainWindow::on_goPushButton_clicked()
 		{
 			if (it->enabled)
 			{
-				channels_element.append_child("channel")
-					.append_child_value("label", it->label)
-					.append_child_value("type", it->type)
-					.append_child_value("unit", it->unit);
+				lsl::xml_element chan_el = channels_element.append_child("channel");
+				chan_el.append_child_value("label", it->label);
+				chan_el.append_child_value("type", it->type);
+				chan_el.append_child_value("unit", it->unit);
+				chan_el.append_child_value("impedance", std::to_string(it->impedance));
+				if (it->filtering.size() > 0)
+				{
+					lsl::xml_element filt_el = chan_el.append_child("filtering");
+					for (auto filt_it = it->filtering.begin(); filt_it < it->filtering.end(); filt_it++)
+					{
+						std::vector<std::string> filt_class_strs = { "bandpass", "highpass", "lowpass", "notch" };
+						std::vector<std::string> filt_type_strs = { "FIR", "IIR", "Analog", "Unknown" };
+						lsl::xml_element filt_desc = filt_el.append_child(filt_class_strs[filt_it->filter_class]);
+						filt_desc.append_child_value("type", filt_type_strs[filt_it->type]);
+						filt_desc.append_child_value("design", filt_it->design);
+						filt_desc.append_child_value("lower", std::to_string(filt_it->lower));
+						filt_desc.append_child_value("upper", std::to_string(filt_it->upper));
+						filt_desc.append_child_value("order", std::to_string(filt_it->order));
+					}
+				}
 			}
 		}
 		this->m_eegOutlet = new lsl::stream_outlet(gdsInfo);
@@ -581,6 +683,7 @@ void MainWindow::on_goPushButton_clicked()
 		m_pTimer->start(500);
 		ui->goPushButton->setText("Stop!");
 	}
+	ui->connectPushButton->setDisabled(m_bStreaming);
 	ui->goPushButton->setDisabled(false);
 }
 
@@ -608,7 +711,6 @@ void MainWindow::load_config(const QString filename)
     }
     QXmlStreamReader* xmlReader = new QXmlStreamReader(xmlFile);
     while (!xmlReader->atEnd() && !xmlReader->hasError()) {
-        // Read next element
         xmlReader->readNext();
         if (xmlReader->isStartElement() && xmlReader->name() != "settings")
         {
@@ -636,13 +738,12 @@ void MainWindow::load_config(const QString filename)
 
 void MainWindow::on_saveConfigPushButton_clicked()
 {
-	QString sel = QFileDialog::getOpenFileName(this,
+	QString sel = QFileDialog::getSaveFileName(this,
 		"Save Configuration File",
 		"",//QDir::currentPath()
 		"Configuration Files (*.cfg)");
 	if (!sel.isEmpty())
 	{
-		// TODO: Confirm overwrite
 		save_config(sel);
 	}
 }
@@ -650,16 +751,18 @@ void MainWindow::on_saveConfigPushButton_clicked()
 
 void MainWindow::save_config(const QString filename)
 {
-	qDebug() << "TODO: MainWindow::save_config";
-}
-
-
-void MainWindow::enable_config_elements(bool enabled)
-{
-	ui->lineEdit_serverip->setEnabled(enabled);
-	ui->serverPortSpinBox->setEnabled(enabled);
-	ui->clientPortSpinBox->setEnabled(enabled);
-	ui->loadConfigPushButton->setEnabled(enabled);
+	QFile file(filename);
+	file.open(QIODevice::WriteOnly);
+	QXmlStreamWriter stream(&file);
+	stream.setAutoFormatting(true);
+	stream.writeStartDocument();
+	stream.writeStartElement("settings");
+	stream.writeTextElement("server-ip", ui->lineEdit_serverip->text());
+	stream.writeTextElement("server-port", QString::number(ui->serverPortSpinBox->value()));
+	stream.writeTextElement("client-port", QString::number(ui->clientPortSpinBox->value()));
+	stream.writeEndElement();  // settings
+	stream.writeEndDocument();
+	file.close();
 }
 
 

@@ -36,13 +36,26 @@ private slots:
 	void notify_samples_pushed();
 
 private:
+	struct filter_type {
+		enum eFilterClass { bandpass, highpass, lowpass, notch };
+		enum eFilterType { FIR, IIR, Analog, Unknown };
+		eFilterClass filter_class = bandpass;
+		eFilterType type = Unknown;
+		std::string design = "Unknown";
+		double lower = 0;
+		double upper = 0;
+		int order = 0;
+	};
 	struct chan_info_type {
 		bool enabled;
 		std::string label;
 		std::string type;
 		std::string unit;
+		int reference = -1;
+		double impedance = -1;
 		double scaling_offset = 0.0;
 		double scaling_factor = 1.0;
+		std::vector<filter_type> filtering;
 	};
 	struct dev_info_type {
 		std::string name;
@@ -59,8 +72,7 @@ private:
 	
 	// Private methods
     void load_config(const QString filename);
-    void save_config(const QString filename);  // TODO: Actually save the config to a file.
-	void enable_config_elements(bool enabled);
+    void save_config(const QString filename);
 	bool do_connect();
 	bool get_connected_devices_configs();
 	void clear_dev_configs();
@@ -73,6 +85,7 @@ private:
 	bool m_bStreaming = false;
 	size_t m_samplesPushed = 0;
 	std::vector<std::string> m_chanLabels;  // g.HIamp and g.USBamp do not store channel names, so we need to manage them via config file.
+	std::vector<double> m_chanImpedances;  // TODO: Use GDS_GNAUTILUS_GetImpedance, GDS_GUSBAMP_GetImpedance
 
 	// GDS communication
 	GDS_ENDPOINT m_hostEndpoint = { "127.0.0.1", 50223 };
@@ -80,7 +93,6 @@ private:
 	std::vector<GDS_CONFIGURATION_BASE> m_devConfigs;
 	GDS_HANDLE m_connectionHandle = 0;
 	bool m_isCreator = false;
-	bool m_isConfigurable = false;
 	
 	// LSL variables
 	dev_info_type m_devInfo;

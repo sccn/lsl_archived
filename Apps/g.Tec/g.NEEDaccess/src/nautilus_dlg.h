@@ -18,7 +18,14 @@ public:
 	Ui::NautilusDlg *ui;
 	void* m_device_config;
 
+private slots:
+	void on_loadCfgButton_clicked();
+	void on_saveCfgButton_clicked();
 private:
 	void update_ui();
 	void accept() override;
+	void save_config(QString filename);
+	void load_config(const QString filename);
+
+	const QString default_config_fname = "gNautilus_default.cfg";
 };

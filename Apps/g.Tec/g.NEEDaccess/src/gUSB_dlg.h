@@ -13,11 +13,9 @@ class GUSBDlg : public QDialog
 	Q_OBJECT
 public:
 	explicit GUSBDlg(QWidget *parent = 0);
-
 	void set_configs(GDS_HANDLE*, std::vector<GDS_CONFIGURATION_BASE>, std::vector<std::string>*);
 
 	Ui::GUSBDlg *ui;
-	void* m_device_config;
 
 private slots:
 	void on_loadCfgButton_clicked();
@@ -37,7 +35,8 @@ private:
 	std::vector<GDS_CONFIGURATION_BASE> m_configs;
 	GDS_HANDLE* m_pHandle;
 	std::vector<std::string>* m_pChannel_labels;
+	//std::vector<double>* m_pChannel_impedances;  // TOOD: Use GDS_GUSBAMP_GetImpedance to fill this.
 	const std::vector<uint32_t> gUSBamp_sample_rates = { 32, 64, 128, 256, 512, 600, 1200, 2400, 4800, 9600, 19200, 38400 };
 
-	const QString default_config_fname = "gUSB_config.cfg";
+	const QString default_config_fname = "gUSB_default.cfg";
 };
