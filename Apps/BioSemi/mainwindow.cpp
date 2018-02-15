@@ -356,9 +356,11 @@ void MainWindow::load_config(const std::string &filename) {
 		}
 
 		// initialize the list of cap designs
-		std::string knownschemes = pt.get<std::string>("cap.knownschemes","[Rita-MoBI-2010-7, BioSemi-ABC]");
+		std::string knownschemes_bracketed = pt.get<std::string>("cap.knownschemes","[Rita-MoBI-2010-7, BioSemi-ABC]");
+		std::string knownschemes = knownschemes_bracketed.substr(1, knownschemes_bracketed.size()-2);
 		std::vector<std::string> schemes;
-		boost::algorithm::split(schemes,knownschemes.substr(1,knownschemes.size()-2),boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
+		boost::algorithm::split(schemes, knownschemes,
+			boost::algorithm::is_any_of(","), boost::algorithm::token_compress_on);
 		ui->capDesign->clear();
 		for (int k=0;k<schemes.size();k++) {
 			boost::algorithm::trim_if(schemes[k],boost::algorithm::is_any_of(" '\""));

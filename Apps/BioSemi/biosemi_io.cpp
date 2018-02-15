@@ -15,7 +15,7 @@
 		const char *dllpath = "DLL\\Win32\\Labview_DLL.dll";
 	#endif
 #else
-	#ifdef __macosx__
+	#ifdef __APPLE__
 		const char *dllpath = "DLL/Mac/liblabview_dll.0.0.1.dylib";
 	#else
 		#ifdef _LP64
@@ -62,7 +62,19 @@ biosemi_io::biosemi_io() {
     std::cout << "Loading BioSemi driver dll..." << std::endl;
     hDLL_ = LOAD_LIBRARY(dllpath);
     if (!hDLL_)
-        throw std::runtime_error("Could not load BioSemi driver DLL.");
+    {
+    #ifdef _WIN32
+        DWORD errorMessageID = GetLastError();
+        LPSTR messageBuffer = nullptr;
+        size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                                 NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
+        std::string err_message(messageBuffer, size);
+        LocalFree(messageBuffer);
+    #else
+        std::string err_message(dlerror());
+    #endif
+        throw std::runtime_error(err_message);
+    }
     OPEN_DRIVER_ASYNC = (OPEN_DRIVER_ASYNC_t)LOAD_FUNCTION(hDLL_,"OPEN_DRIVER_ASYNC");
     if (!OPEN_DRIVER_ASYNC) {
         FREE_LIBRARY(hDLL_);
