@@ -36,6 +36,9 @@ Pre-requisites:
 * Qt
 * Boost (v > 1.47.0)
 * LSL (v1.02 or later, probably found in the same source tree as this application)
+* BioSemi driver
+    * For MacOS and Win64, this is already provided in the DLL folder.
+    * For Linux, [download here](https://www.biosemi.com/download/USB%20drivers%20Linux/USB_drivers_Linux.zip) and follow the instructions.
 
 Build instructions:
 
@@ -44,6 +47,9 @@ Build instructions:
     * Call `cmake ..` with optional arguments Qt5_DIR and BOOST_ROOT
         * e.g., on my Mac: `cmake .. -DBOOST_ROOT=$(brew --prefix boost@1.60)`
         * e.g., on my Win box: `cmake .. -G "Visual Studio 14 2015 Win64"`
+    * Build and install the application
+        * `make && make install`
+        * If using VS2015, open the project, switch the target to Release, then build the INSTALL target.
 * With Visual Studio 2008 project files:
     * Customize the QtSDK location (default is C:\DEVEL\QtSDK)
     * Set the environment variable BOOST_ROOT to point to the location of your boost_v_vv_v directory (otherwise you will have to change project settings)

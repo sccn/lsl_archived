@@ -69,6 +69,9 @@ LIST(APPEND BioSemi_REQ_LIBS
     ${Boost_LIBRARIES}
     LSL::lsl
 )
+if (UNIX)
+    LIST(APPEND BioSemi_REQ_LIBS pthread dl)
+endif(UNIX)
 
 # TARGET #
 SET(target BioSemi)
