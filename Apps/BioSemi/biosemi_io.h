@@ -52,6 +52,8 @@ private:
     typedef int (BIOSEMI_LINKAGE *READ_POINTER_t)(void*,unsigned*);
     typedef int (BIOSEMI_LINKAGE *CLOSE_DRIVER_ASYNC_t)(void*);
 
+	static std::string get_last_error();
+
     // amplifier parameters
     bool is_mk2_;       // whether the amp is a MK2 amplifier
     int speed_mode_;    // amplifier speed mode

@@ -43,6 +43,7 @@ Build instructions:
     * `mkdir build && cd build`
     * Call `cmake ..` with optional arguments Qt5_DIR and BOOST_ROOT
         * e.g., on my Mac: `cmake .. -DBOOST_ROOT=$(brew --prefix boost@1.60)`
+        * e.g., on my Win box: `cmake .. -G "Visual Studio 14 2015 Win64"`
 * With Visual Studio 2008 project files:
     * Customize the QtSDK location (default is C:\DEVEL\QtSDK)
     * Set the environment variable BOOST_ROOT to point to the location of your boost_v_vv_v directory (otherwise you will have to change project settings)

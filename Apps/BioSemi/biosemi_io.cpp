@@ -53,6 +53,29 @@ const unsigned char msg_handshake[64] = {255,0};
 #endif
 
 
+std::string biosemi_io::get_last_error() {
+#ifdef _WIN32
+	DWORD errorMessageID = GetLastError();
+	LPSTR messageBuffer = nullptr;
+	size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
+	if (size)
+	{
+		std::string err_message(messageBuffer, size);
+		LocalFree(messageBuffer);
+		return err_message;
+	}
+	else
+	{
+		return std::string();
+	}
+	
+#else
+	std::string err_message(dlerror());
+#endif
+}
+
+
 biosemi_io::biosemi_io() {
     boost::uint32_t start_idx; // index of the first sample that was recorded
     boost::uint32_t cur_idx;   // index past the current sample
@@ -63,17 +86,7 @@ biosemi_io::biosemi_io() {
     hDLL_ = LOAD_LIBRARY(dllpath);
     if (!hDLL_)
     {
-    #ifdef _WIN32
-        DWORD errorMessageID = GetLastError();
-        LPSTR messageBuffer = nullptr;
-        size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                                 NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
-        std::string err_message(messageBuffer, size);
-        LocalFree(messageBuffer);
-    #else
-        std::string err_message(dlerror());
-    #endif
-        throw std::runtime_error(err_message);
+        throw std::runtime_error(biosemi_io::get_last_error());
     }
     OPEN_DRIVER_ASYNC = (OPEN_DRIVER_ASYNC_t)LOAD_FUNCTION(hDLL_,"OPEN_DRIVER_ASYNC");
     if (!OPEN_DRIVER_ASYNC) {
@@ -109,7 +122,7 @@ biosemi_io::biosemi_io() {
     hConn_ = OPEN_DRIVER_ASYNC();
     if (!hConn_) {
         FREE_LIBRARY(hDLL_);
-        throw std::runtime_error("Could not open connection to BioSemi driver.");
+		throw std::runtime_error("Could not open connection to BioSemi driver.");
     }
 
     // initialize USB2 interface
