@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+mkdir build
 cd build
 
 echo "After pressing Enter, the configuration GUI should appear"
