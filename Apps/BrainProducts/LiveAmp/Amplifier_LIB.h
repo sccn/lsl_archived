@@ -8,10 +8,25 @@
 //	Change History
 //	17.03.2016	Version 1.xx	- Initial implementation
 //	05.12.2016	Version 2.xx	- Added flash recording functions and properties
-//	22.03.2017  Version 3.xx	- New module property MPROP_B32_ImpedanceMeasurement
+//	22.03.2017  Version 3.0		- New module property MPROP_B32_ImpedanceMeasurement
 //								- Depending on the availabilitiy of GND/REF measurement from modules
 //								  ampGetImpedanceData will deliver these additional values
-//	29.03.2017	Version 3.xx	- New module property MPROP_I32_UseableChannels
+//	29.03.2017	Version 3.0		- New module property MPROP_I32_UseableChannels
+//	27.06.2017  Version 3.1		- New device property DPROP_I32_RecordingState
+//								- New module properties for the trigger output mode
+//								  MPROP_I32_TriggerOutMode, MPROP_I32_TriggerSyncPin, MPROP_I32_TriggerSyncPeriod and MPROP_I32_TriggerSyncWidth
+//								- Manual control of the active electrode LEDs with
+//								  a channel property CPROP_I32_LedColor and the module properties MPROP_I32_LedColorREF and MPROP_I32_LedColorGND
+//								  The device property DPROP_I32_LedControl turns the manual LED control on or off. 
+//								- State and control of a user button with
+//								  module properties MPROP_I32_UserButtonState and MPROP_I32_UserButtonLed
+//								- New device property DPROP_I32_ActiveShieldGain
+//								- Output values for digitial channels (CT_TRG or CT_DIG) can be set now via the 
+//								  channel property CPROP_UI32_OutputValue instead of ampSetDigitalPort (this function is obsolete now and will be removed)
+//								  ampGetPropertyRange may also return a mask (RT_BITMASK) for the available bits.
+//								- Flash formatting device property  
+//	24.11.2017  Version 3.1		- New device error DEVICE_ERR_SYNC
+//								 
 //	
 /*------------------------------------------------------------------------------------------------*/
 
@@ -35,7 +50,7 @@
 /*------------------------------------------------------------------------------------------------*/
 
 #define API_MAJOR				(3)			// Application interface major version
-#define API_MINOR				(0)			// Application interface minor version
+#define API_MINOR				(1)			// Application interface minor version
 
 /*------------------------------------------------------------------------------------------------*/
 // Error codes
@@ -82,16 +97,17 @@
 #define DEVICE_ERR_CLOCKED		(-200-14)	// Requested EEG channels are not available for this amplifer model
 #define DEVICE_ERR_SUPPORT		(-200-15)	// Function not supported in the current operation mode
 #define DEVICE_ERR_FILEINUSE	(-200-16)   // The requested file name is already used
+#define DEVICE_ERR_SYNC			(-200-17)   // cannot execute function because the device is not synchronized
 
 /*------------------------------------------------------------------------------------------------*/
 // Flags
 /*------------------------------------------------------------------------------------------------*/
 
-// Status bit definitions for the property DPROP_UI32_RecordingState
+// Status bit definitions for the property DPROP_UI32_FlashRecordingState
 #define FLAG_REC_AVAILABLE		0x0001			// recording to internal flash available
 #define FLAG_REC_ACTIVE			0x0002			// recording to internal flash is active
 #define FLAG_REC_PREPARE		0x0004			// preparing the recording to internal flash is in progress
-// Error flags for the property DPROP_UI32_RecordingState
+// Error flags for the property DPROP_UI32_FlashRecordingState
 #define FLAG_REC_FILESYSTEM		0x00010000		// corrupted file system
 #define FLAG_REC_WRITE			0x00020000      // write error
 #define FLAG_REC_FULL			0x00040000      // memory full
@@ -186,9 +202,36 @@ typedef enum SignalQuality
 typedef enum PropertyRangeType
 {
 	RT_READONLY	= 0,			// This property is read only
-	RT_MINMAX = 1,				// The returned property range array contains two values for minimum and maximum
-	RT_DISCRETE = 2				// The returned property range array contains discrete values
+	RT_MINMAX	= 1,			// The returned property range array contains two values for minimum and maximum
+	RT_DISCRETE	= 2,			// The returned property range array contains discrete values
+	RT_BITMASK	= 3				// The returned property range array contains two bit masks for read and write
 }t_PropertyRangeType;
+
+// Trigger output mode
+typedef enum TriggerOutputMode
+{
+	TM_DEFAULT	= 0,			// The trigger output port is independent from input
+	TM_MIRROR	= 1,			// Copy the trigger input to the trigger output port
+	TM_SYNC		= 2				// Generate an synchronization output signal with a configurable period and pulse width
+}t_TriggerOutputMode;
+
+// Electrode LED color
+typedef enum ElectrodeLedColor
+{
+	LED_OFF		= 0,			// Turn off the electrode LED
+	LED_GREEN	= 1,			// Green
+	LED_RED		= 2,			// Red
+	LED_YELLOW	= 3				// Yellow
+}t_ElectrodeLedColor;
+
+// User button state
+typedef enum UserButtonState
+{
+	BTN_NONE	= 0,			// Button not pressed (default)
+	BTN_HOLD	= 1,			// Button pressed and hold
+	BTN_PUSH	= 2,			// Button changed from none to hold since last read
+	BTN_RELEASE = 3				// Button changed state from hold to none since last read
+}t_UserButtonState;
 
 /*------------------------------------------------------------------------------------------------*/
 // Properties
@@ -231,6 +274,8 @@ typedef enum ChannelPropertyID
 	CPROP_B32_ReferenceChannel = 12,				// 1 = can be used as reference channel or is used as reference channel
 	CPROP_B32_ImpedanceMeasurement = 13,			// 1 = impedance measurement available for this channel
 	CPROP_B32_RecordingEnabled = 14,				// 1 = channel is enabled for recording
+	CPROP_I32_LedColor = 15,						// manual color selection for the active electrode LED (t_ElectrodeLedColor)
+	CPROP_UI32_OutputValue = 16						// output value for digital (CT_TRG or CT_DIG) channels
 } t_ChannelPropertyID;
 
 // Amplifier module properties
@@ -242,6 +287,14 @@ typedef enum ModulePropertyID
 	MPROP_TVN_FirmwareVersion = 4,					// firmware version
 	MPROP_B32_ImpedanceMeasurement = 20,			// 1 = REF and GND impedance measurement available for this module
 	MPROP_I32_UseableChannels = 21,					// number of usable (selectable) channels in this module
+	MPROP_I32_TriggerOutMode = 30,					// trigger output mode (t_TriggerOutputMode)
+	MPROP_I32_TriggerSyncPin = 31,					// trigger output sychronization pin number (zero based) for TM_SYNC 
+	MPROP_I32_TriggerSyncPeriod = 32,				// period of the sychronization output signal in number of samples 
+	MPROP_I32_TriggerSyncWidth = 33,				// pulse width of the sychronization output signal in number of samples
+	MPROP_I32_LedColorREF = 40,						// manual color selection for the active REF electrode LED (t_ElectrodeLedColor)
+	MPROP_I32_LedColorGND = 41,						// manual color selection for the active GND electrode LED (t_ElectrodeLedColor)
+	MPROP_I32_UserButtonState = 42,					// state of the user button (t_UserButtonState)
+	MPROP_I32_UserButtonLed = 43					// user button LED control. Blinking interval in ms (min=off, max=on)
 } t_ModulePropertyID;
 
 // Amplifier device properties
@@ -263,19 +316,24 @@ typedef enum DevicePropertyID
 	DPROP_I32_ConnectionState = 102,			// connection info (t_ConnectionState)
 	DPROP_I32_SignalQuality = 103,				// signal quality (t_SignalQuality if available)
 	DPROP_UI32_ErrorFlags = 104,				// device specific error flags
+	DPROP_I32_RecordingState = 105,				// the current recording mode of the device (t_RecordingMode)
 	// recording parameters
-	DPROP_I32_RecordingMode = 200,				// the recording mode (t_RecordingMode)
+	DPROP_I32_RecordingMode = 200,				// the requested recording mode for the next ampStartAcquisition (t_RecordingMode)
 	DPROP_F32_BaseSampleRate = 201,				// base sampling frequency of the amplifier
 	DPROP_F32_SubSampleDivisor = 202,			// sub sampling divisor
 	DPROP_I32_GoodImpedanceLevel = 203,			// Good impedance level in Ohm. Impedances below this level will be shown in green, else yellow 
 	DPROP_I32_BadImpedanceLevel = 204,			// Bad impedance level in Ohm. Impedances above this level will be shown in red
+	DPROP_I32_LedControl = 205,					// Manual control of the active electrode LEDs (0=off, 1=update all electrodes to the selected values)
+	DPROP_I32_ActiveShieldGain = 206,			// active shielding gain (0=w/o active shielding)
+
 	// flash recording status and parameters
 	DPROP_UI32_FlashRecordingState = 300,		// device specific flags if recording to internal memory (if available)
 	DPROP_UI32_FlashSegmentSize = 301,			// Size of the preallocated segments in MByte. Valid range is 1 - 4095 MByte. The size will be clipped to this range.
 	DPROP_CHR_FlashWorkspaceDescription = 302,	// XML description of the workspace settings (channel labels, trigger selection ...)
 	DPROP_UI32_FlashFreeSpace = 303,			// Free disk space in MB
 	DPROP_UI32_FlashFileSize = 304,				// Current recording file size in MB
-	DPROP_CHR_FlashFileName = 305				// Current recording file name
+	DPROP_CHR_FlashFileName = 305,				// Current recording file name
+	DPROP_B32_FlashFormatting = 306				// Formatting of the flash memory
 } t_DevicePropertyID;
 
 
@@ -370,8 +428,11 @@ AMPAPI ampSetProperty(HANDLE DeviceHandle, t_PropertyGroup PropertyGroup, uint32
 /// 								For the module property group this is the zero based module number.</param>
 /// <param name="PropertyID">		Property identifier. </param>
 /// <param name="RangeArray">		Property range array buffer. 
-/// 								The array elements have the same datatype as the property itself.
-/// 								String properties are returned as a zero terminated string with elements separated by a LF character.</param>
+/// 								The array elements have the same datatype as the property itself,
+/// 								except RT_MINMAX for string properties, which has integer elements
+/// 								for the min. and max. number of characters.
+/// 								Discrete string properties range is returned as a zero terminated string 
+/// 								with elements separated by a LF character.</param>
 /// <param name="ArrayByteSize">	Size of the array buffer in byte. </param>
 /// <param name="RangeType">		Type of the property range. </param>
 AMPAPI ampGetPropertyRange(HANDLE DeviceHandle, t_PropertyGroup PropertyGroup, uint32_t Index, int32_t PropertyID, void *RangeArray, uint32_t *ArrayByteSize, t_PropertyRangeType *RangeType);

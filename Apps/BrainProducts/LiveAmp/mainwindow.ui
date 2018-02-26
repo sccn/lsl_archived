@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>434</width>
-    <height>574</height>
+    <width>428</width>
+    <height>684</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -250,18 +250,110 @@ PO10 </string>
         </layout>
        </widget>
       </item>
-      <item alignment="Qt::AlignRight">
-       <widget class="QPushButton" name="linkButton">
-        <property name="enabled">
-         <bool>true</bool>
+      <item>
+       <widget class="QGroupBox" name="groupBox_5">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>80</height>
+         </size>
         </property>
-        <property name="text">
-         <string>Link</string>
+        <property name="toolTip">
+         <string>If the Signal Trigger Extension box is connected, you can configure the trigger output port settings.</string>
         </property>
+        <property name="title">
+         <string>STE Out Mode</string>
+        </property>
+        <widget class="QGroupBox" name="groupBox_6">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>101</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Sync Freq (Hz)</string>
+         </property>
+         <widget class="QSpinBox" name="sbSyncFreq">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>20</y>
+            <width>71</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>49</number>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="">
+         <property name="geometry">
+          <rect>
+           <x>120</x>
+           <y>10</y>
+           <width>84</width>
+           <height>65</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QRadioButton" name="rbDefault">
+            <property name="text">
+             <string>Default</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">buttonGroup</string>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="rbMirror">
+            <property name="toolTip">
+             <string>Forward hardwre triggers to trigger out (extension box only)</string>
+            </property>
+            <property name="text">
+             <string>Mirror</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">buttonGroup</string>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="rbSync">
+            <property name="toolTip">
+             <string>Send a sync signal out of the ste box trigger output</string>
+            </property>
+            <property name="text">
+             <string>Sync</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">buttonGroup</string>
+            </attribute>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </item>
       <item>
-       <spacer name="verticalSpacer_2">
+       <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -282,6 +374,13 @@ PO10 </string>
          <property name="fieldGrowthPolicy">
           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
          </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Unsampled String Markers</string>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="1">
           <widget class="QCheckBox" name="unsampledMarkers">
            <property name="toolTip">
@@ -329,15 +428,53 @@ PO10 </string>
            </property>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_5">
-           <property name="text">
-            <string>Unsampled String Markers</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item alignment="Qt::AlignRight">
+       <widget class="QPushButton" name="linkButton">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>75</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>Link</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
       </item>
       <item>
        <widget class="QGroupBox" name="groupBox_4">
@@ -400,7 +537,7 @@ PO10 </string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>434</width>
+     <width>428</width>
      <height>21</height>
     </rect>
    </property>
@@ -440,4 +577,7 @@ PO10 </string>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>

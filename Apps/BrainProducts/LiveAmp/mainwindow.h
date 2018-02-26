@@ -68,6 +68,9 @@ private slots:
 	// if the device combo box item changes
 	void choose_device(int which);
 
+	void radio_button_behavior(bool b);
+	
+
 
 private:
 
@@ -116,6 +119,7 @@ private:
 	bool use_simulators;
 	bool stop_;											// whether the reader thread is supposed to stop
 
+	t_TriggerOutputMode triggerOutputMode;
 
 };
 

@@ -21,13 +21,22 @@ private:
 	std::string serialNumber;        // serial number
 	int availableChannels;           // number of available channels
 	int usableChannels;				 // whether we are liveamp 8, 16, 32, 64
+	int availableModules;            // use to detect STE box
+	bool bHasSTE;                    // actual flag for STE connected
+	int STEIdx;                      // index of which module is the STE
 
 	// these are set later on by the user
 	float samplingRate;
 	int recordingMode;               // defaults to record mode
 
 	// set during configuration
-	int dataTypeArray[100];
+	typedef struct _channelInfo {
+		int dataType;
+		float resolution;
+		int channelType;
+	}t_channelInfo;
+	// int dataTypeArray[100];
+	t_channelInfo channelInfoArray[100];
 	int sampleSize;
 
 
@@ -41,6 +50,7 @@ private:
 
 	int enabledChannelCnt;
 	bool bIsClosed;
+	
 
 public:
 	// constructor
@@ -71,9 +81,12 @@ public:
 	// push it into a vector TODO: make this a template to support any buffer type
 	void pushAmpData(BYTE* buffer, int bufferSize, int64_t samplesRead, std::vector<std::vector<float>> &outData);
 	
+	// set the output trigger output mode
+	void setOutTriggerMode(t_TriggerOutputMode mode, int syncPin, int freq, int pulseWidth);
+
 	// public data access methods 	
 	inline float             getSamplingRate(void){return samplingRate;}
-	inline HANDLE            getHandle(void){return h;}
+	inline HANDLE            getHandle(void) { if (h == NULL)return NULL;else return h; }
 	inline std::string&      getSerialNumber(void){return serialNumber;}
 	inline int               getAvailableChannels(void){return availableChannels;}
 	inline int               getRecordingMode(void){return recordingMode;}
@@ -83,10 +96,11 @@ public:
 	inline std::vector<int>& getAccIndices(void){return accIndices;}
 	inline std::vector<int>& getTrigIndices(void){return trigIndices;}
 	inline int               getEnabledChannelCnt(void){return enabledChannelCnt;}
-	inline int*              getDataTypeArray(void){return dataTypeArray;}  
+	//inline int*              getDataTypeArray(void){return dataTypeArray;}  
 	inline int               getSampleSize(void){return sampleSize;}
 	inline int				 getUsableChannels(void){return usableChannels;}
 	inline bool				 isClosed(void){return bIsClosed;}
+	inline bool              hasSTE(void) { return bHasSTE; }
 };
 
 #endif //LiveAmp_H
