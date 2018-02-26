@@ -20,18 +20,18 @@ namespace lsl {
 	BOOST_STATIC_ASSERT(sizeof(double)==8);
 
 	// constants used in the network protocol
-	const boost::uint8_t TAG_DEDUCED_TIMESTAMP = 1;
-	const boost::uint8_t TAG_TRANSMITTED_TIMESTAMP = 2;
+	const lslboost::uint8_t TAG_DEDUCED_TIMESTAMP = 1;
+	const lslboost::uint8_t TAG_TRANSMITTED_TIMESTAMP = 2;
 
 	/// channel format properties
-	const int format_sizes[] = {0,sizeof(float),sizeof(double),sizeof(std::string),sizeof(boost::int32_t),sizeof(boost::int16_t),sizeof(boost::int8_t),8};
+	const int format_sizes[] = {0,sizeof(float),sizeof(double),sizeof(std::string),sizeof(lslboost::int32_t),sizeof(lslboost::int16_t),sizeof(lslboost::int8_t),8};
 	const bool format_ieee754[] = {false,std::numeric_limits<float>::is_iec559,std::numeric_limits<double>::is_iec559,false,false,false,false,false}; 
 	const bool format_subnormal[] = {false,std::numeric_limits<float>::has_denorm!=std::denorm_absent,std::numeric_limits<double>::has_denorm!=std::denorm_absent,false,false,false,false,false}; 
 	const bool format_integral[] = {false,false,false,false,true,true,true,true}; 
 	const bool format_float[] = {false,true,true,false,false,false,false,false}; 
  
 	/// smart pointer to a sample
-	typedef boost::intrusive_ptr<class sample> sample_p;
+	typedef lslboost::intrusive_ptr<class sample> sample_p;
 	
 	/**
 	* The sample data type.
@@ -46,8 +46,8 @@ namespace lsl {
 	private:
 		channel_format_t format_;		// the channel format
 		int num_channels_;				// number of channels
-		boost::atomic<int> refcount_;	// reference count used by sample_p
-		boost::atomic<sample*> next_;	// linked list of samples, for use in a freelist
+		lslboost::atomic<int> refcount_;	// reference count used by sample_p
+		lslboost::atomic<sample*> next_;	// linked list of samples, for use in a freelist
 		factory *factory_;				// the factory used to reclaim this sample, if any
 		char data_;						// the data payload begins here
 
@@ -55,7 +55,7 @@ namespace lsl {
 		// === Construction ===
 
 		// shared pointer to a sample factory
-		typedef boost::shared_ptr<factory> factory_p;
+		typedef lslboost::shared_ptr<factory> factory_p;
 
 		/// A factory to create samples of a given format/size.
 		/// Must outlive all of its created samples.
@@ -113,7 +113,7 @@ namespace lsl {
 
 		private:
 			/// ensure that a given value is a multiple of some base, round up if necessary
-			static boost::uint32_t ensure_multiple(boost::uint32_t v, unsigned base) { return (v%base) ? v - (v%base) + base : v; }
+			static lslboost::uint32_t ensure_multiple(lslboost::uint32_t v, unsigned base) { return (v%base) ? v - (v%base) + base : v; }
 
 			// Pop a sample from the freelist
 			// (multi-producer/single-consumer queue by Dmitry Vjukov)
@@ -147,9 +147,9 @@ namespace lsl {
 			int num_chans_;							// the number of channels to construct samples with
 			int sample_size_;						// size of a sample, in bytes
 			int storage_size_;						// size of the allocated storage, in bytes
-			boost::scoped_array<char> storage_;		// a slab of storage for pre-allocated samples
+			lslboost::scoped_array<char> storage_;		// a slab of storage for pre-allocated samples
 			sample *sentinel_;						// a sentinel element for our freelist
-			boost::atomic<sample*> head_;			// head of the freelist
+			lslboost::atomic<sample*> head_;			// head of the freelist
 			sample *tail_;							// tail of the freelist
 		};
 
@@ -175,19 +175,19 @@ namespace lsl {
 
 		/// Assign an array of numeric values (with type conversions).
 		template<class T> sample &assign_typed(T *s) { 
-			if ((sizeof(T) == format_sizes[format_]) && ((boost::is_integral<T>::value && format_integral[format_]) || (boost::is_floating_point<T>::value && format_float[format_]))) {
+			if ((sizeof(T) == format_sizes[format_]) && ((lslboost::is_integral<T>::value && format_integral[format_]) || (lslboost::is_floating_point<T>::value && format_float[format_]))) {
 				memcpy(&data_,s,format_sizes[format_]*num_channels_);
 			} else {
 				switch (format_) {
 					case cf_float32:  for (float          *p=(float*)         &data_,*e=p+num_channels_; p<e; *p++ = (float)*s++); break;
 					case cf_double64: for (double         *p=(double*)        &data_,*e=p+num_channels_; p<e; *p++ = (double)*s++); break;
-					case cf_int8:     for (boost::int8_t  *p=(boost::int8_t*) &data_,*e=p+num_channels_; p<e; *p++ = (boost::int8_t)*s++); break; 
-					case cf_int16:    for (boost::int16_t *p=(boost::int16_t*)&data_,*e=p+num_channels_; p<e; *p++ = (boost::int16_t)*s++); break; 
-					case cf_int32:    for (boost::int32_t *p=(boost::int32_t*)&data_,*e=p+num_channels_; p<e; *p++ = (boost::int32_t)*s++); break; 
+					case cf_int8:     for (lslboost::int8_t  *p=(lslboost::int8_t*) &data_,*e=p+num_channels_; p<e; *p++ = (lslboost::int8_t)*s++); break; 
+					case cf_int16:    for (lslboost::int16_t *p=(lslboost::int16_t*)&data_,*e=p+num_channels_; p<e; *p++ = (lslboost::int16_t)*s++); break; 
+					case cf_int32:    for (lslboost::int32_t *p=(lslboost::int32_t*)&data_,*e=p+num_channels_; p<e; *p++ = (lslboost::int32_t)*s++); break; 
 #ifndef BOOST_NO_INT64_T
-					case cf_int64:    for (boost::int64_t *p=(boost::int64_t*)&data_,*e=p+num_channels_; p<e; *p++ = (boost::int64_t)*s++); break; 
+					case cf_int64:    for (lslboost::int64_t *p=(lslboost::int64_t*)&data_,*e=p+num_channels_; p<e; *p++ = (lslboost::int64_t)*s++); break; 
 #endif
-					case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; *p++ = boost::lexical_cast<std::string>(*s++)); break; 
+					case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; *p++ = lslboost::lexical_cast<std::string>(*s++)); break; 
 					default: throw std::invalid_argument("Unsupported channel format.");
 				}
 			}
@@ -196,19 +196,19 @@ namespace lsl {
 
 		/// Retrieve an array of numeric values (with type conversions).
 		template<class T> sample &retrieve_typed(T *d) { 
-			if ((sizeof(T) == format_sizes[format_]) && ((boost::is_integral<T>::value && format_integral[format_]) || (boost::is_floating_point<T>::value && format_float[format_]))) {
+			if ((sizeof(T) == format_sizes[format_]) && ((lslboost::is_integral<T>::value && format_integral[format_]) || (lslboost::is_floating_point<T>::value && format_float[format_]))) {
 				memcpy(d,&data_,format_sizes[format_]*num_channels_);
 			} else {
 				switch (format_) {
 					case cf_float32:  for (float          *p=(float*)         &data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
 					case cf_double64: for (double         *p=(double*)        &data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
-					case cf_int8:     for (boost::int8_t  *p=(boost::int8_t*) &data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
-					case cf_int16:    for (boost::int16_t *p=(boost::int16_t*)&data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
-					case cf_int32:    for (boost::int32_t *p=(boost::int32_t*)&data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
+					case cf_int8:     for (lslboost::int8_t  *p=(lslboost::int8_t*) &data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
+					case cf_int16:    for (lslboost::int16_t *p=(lslboost::int16_t*)&data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
+					case cf_int32:    for (lslboost::int32_t *p=(lslboost::int32_t*)&data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
 #ifndef BOOST_NO_INT64_T
-					case cf_int64:    for (boost::int64_t *p=(boost::int64_t*)&data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
+					case cf_int64:    for (lslboost::int64_t *p=(lslboost::int64_t*)&data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
 #endif
-					case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; *d++ = boost::lexical_cast<T>(*p++)); break; 
+					case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; *d++ = lslboost::lexical_cast<T>(*p++)); break; 
 					default: throw std::invalid_argument("Unsupported channel format.");
 				}
 			}
@@ -272,7 +272,7 @@ namespace lsl {
 		}
 
 		/// Load a value from a stream buffer; specialization of the above.
-		template<class StreamBuf> void load_value(StreamBuf &sb, boost::uint8_t &v, int use_byte_order) { load_raw(sb,&v,sizeof(v)); }
+		template<class StreamBuf> void load_value(StreamBuf &sb, lslboost::uint8_t &v, int use_byte_order) { load_raw(sb,&v,sizeof(v)); }
 
 		/// Serialize a sample to a stream buffer (protocol 1.10).
 		template<class StreamBuf> void save_streambuf(StreamBuf &sb, int protocol_version, int use_byte_order, void *scratchpad=NULL) const {
@@ -288,18 +288,18 @@ namespace lsl {
 				for (std::string *p=(std::string*)&data_,*e=p+num_channels_; p<e; p++) {
 					// write string length as variable-length integer
 					if (p->size() <= 0xFF) {
-						save_value(sb,(boost::uint8_t)sizeof(boost::uint8_t),use_byte_order);
-						save_value(sb,(boost::uint8_t)p->size(),use_byte_order);
+						save_value(sb,(lslboost::uint8_t)sizeof(lslboost::uint8_t),use_byte_order);
+						save_value(sb,(lslboost::uint8_t)p->size(),use_byte_order);
 					} else {
 						if (p->size() <= 0xFFFFFFFF) {
-							save_value(sb,(boost::uint8_t)sizeof(boost::uint32_t),use_byte_order);
-							save_value(sb,(boost::uint32_t)p->size(),use_byte_order);
+							save_value(sb,(lslboost::uint8_t)sizeof(lslboost::uint32_t),use_byte_order);
+							save_value(sb,(lslboost::uint32_t)p->size(),use_byte_order);
 						} else {
 #ifndef BOOST_NO_INT64_T
-							save_value(sb,(boost::uint8_t)sizeof(boost::uint64_t),use_byte_order);
-							save_value(sb,(boost::uint64_t)p->size(),use_byte_order);
+							save_value(sb,(lslboost::uint8_t)sizeof(lslboost::uint64_t),use_byte_order);
+							save_value(sb,(lslboost::uint64_t)p->size(),use_byte_order);
 #else
-							save_value(sb,(boost::uint8_t)sizeof(std::size_t),use_byte_order);
+							save_value(sb,(lslboost::uint8_t)sizeof(std::size_t),use_byte_order);
 							save_value(sb,(std::size_t)p->size(),use_byte_order);
 #endif
 						}
@@ -323,7 +323,7 @@ namespace lsl {
 		/// Deserialize a sample from a stream buffer (protocol 1.10).
 		template<class StreamBuf> void load_streambuf(StreamBuf &sb, int protocol_version, int use_byte_order, bool suppress_subnormals) {
 			// read sample header
-			boost::uint8_t tag; load_value(sb,tag,use_byte_order);
+			lslboost::uint8_t tag; load_value(sb,tag,use_byte_order);
 			if (tag == TAG_DEDUCED_TIMESTAMP) {
 				// deduce the timestamp
 				timestamp = DEDUCED_TIMESTAMP;
@@ -336,13 +336,13 @@ namespace lsl {
 				for (std::string *p=(std::string*)&data_,*e=p+num_channels_; p<e; p++) {
 					// read string length as variable-length integer
 					std::size_t len = 0;
-					boost::uint8_t lenbytes; load_value(sb,lenbytes,use_byte_order);
+					lslboost::uint8_t lenbytes; load_value(sb,lenbytes,use_byte_order);
 					switch (lenbytes) {
-						case sizeof(boost::uint8_t):  { boost::uint8_t tmp;  load_value(sb,tmp,use_byte_order); len = tmp; }; break; 
-						case sizeof(boost::uint16_t): { boost::uint16_t tmp; load_value(sb,tmp,use_byte_order); len = tmp; }; break; 
-						case sizeof(boost::uint32_t): { boost::uint32_t tmp; load_value(sb,tmp,use_byte_order); len = tmp; }; break; 
+						case sizeof(lslboost::uint8_t):  { lslboost::uint8_t tmp;  load_value(sb,tmp,use_byte_order); len = tmp; }; break; 
+						case sizeof(lslboost::uint16_t): { lslboost::uint16_t tmp; load_value(sb,tmp,use_byte_order); len = tmp; }; break; 
+						case sizeof(lslboost::uint32_t): { lslboost::uint32_t tmp; load_value(sb,tmp,use_byte_order); len = tmp; }; break; 
 #ifndef BOOST_NO_INT64_T
-						case sizeof(boost::uint64_t): { boost::uint64_t tmp; load_value(sb,tmp,use_byte_order); len = tmp; }; break;
+						case sizeof(lslboost::uint64_t): { lslboost::uint64_t tmp; load_value(sb,tmp,use_byte_order); len = tmp; }; break;
 #else
 						case 8: throw std::runtime_error("This platform does not support strings of 64-bit length.");
 #endif
@@ -360,12 +360,12 @@ namespace lsl {
 					convert_endian(&data_);
 				if (suppress_subnormals && format_float[format_]) {
 					if (format_ == cf_float32) {
-						for (boost::uint32_t *p=(boost::uint32_t*)&data_,*e=p+num_channels_; p<e; p++)
+						for (lslboost::uint32_t *p=(lslboost::uint32_t*)&data_,*e=p+num_channels_; p<e; p++)
 							if (*p && ((*p & UINT32_C(0x7fffffff)) <= UINT32_C(0x007fffff)))
 								*p &= UINT32_C(0x80000000);
 					} else {
 #ifndef BOOST_NO_INT64_T
-						for (boost::uint64_t *p=(boost::uint64_t*)&data_,*e=p+num_channels_; p<e; p++)
+						for (lslboost::uint64_t *p=(lslboost::uint64_t*)&data_,*e=p+num_channels_; p<e; p++)
 							if (*p && ((*p & UINT64_C(0x7fffffffffffffff)) <= UINT64_C(0x000fffffffffffff)))
 								*p &= UINT64_C(0x8000000000000000);
 #endif
@@ -378,10 +378,10 @@ namespace lsl {
 		void convert_endian(void *data) const {
 			switch (format_sizes[format_]) {
 				case 1: break;
-				case sizeof(boost::int16_t): for (boost::int16_t *p=(boost::int16_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
-				case sizeof(boost::int32_t): for (boost::int32_t *p=(boost::int32_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
+				case sizeof(lslboost::int16_t): for (lslboost::int16_t *p=(lslboost::int16_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
+				case sizeof(lslboost::int32_t): for (lslboost::int32_t *p=(lslboost::int32_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
 #ifndef BOOST_NO_INT64_T
-				case sizeof(boost::int64_t): for (boost::int64_t *p=(boost::int64_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
+				case sizeof(lslboost::int64_t): for (lslboost::int64_t *p=(lslboost::int64_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
 #else
 				case sizeof(double): for (double *p=(double*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
 #endif
@@ -422,11 +422,11 @@ namespace lsl {
 				case cf_float32:  for (float          *p=(float*)         &data_,*e=p+num_channels_; p<e; ar & *p++); break;
 				case cf_double64: for (double         *p=(double*)        &data_,*e=p+num_channels_; p<e; ar & *p++); break;
 				case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; ar & *p++); break;
-				case cf_int8:     for (boost::int8_t  *p=(boost::int8_t*) &data_,*e=p+num_channels_; p<e; ar & *p++); break;
-				case cf_int16:    for (boost::int16_t *p=(boost::int16_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
-				case cf_int32:    for (boost::int32_t *p=(boost::int32_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
+				case cf_int8:     for (lslboost::int8_t  *p=(lslboost::int8_t*) &data_,*e=p+num_channels_; p<e; ar & *p++); break;
+				case cf_int16:    for (lslboost::int16_t *p=(lslboost::int16_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
+				case cf_int32:    for (lslboost::int32_t *p=(lslboost::int32_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
 #ifndef BOOST_NO_INT64_T
-				case cf_int64:    for (boost::int64_t *p=(boost::int64_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
+				case cf_int64:    for (lslboost::int64_t *p=(lslboost::int64_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
 #endif
 				default: throw std::runtime_error("Unsupported channel format.");
 			}
@@ -446,13 +446,13 @@ namespace lsl {
 
 		/// Increment ref count.
 		friend void intrusive_ptr_add_ref(sample *s) {
-			s->refcount_.fetch_add(1,boost::memory_order_relaxed);
+			s->refcount_.fetch_add(1,lslboost::memory_order_relaxed);
 		}
 
 		/// Decrement ref count and reclaim if unreferenced.
 		friend void intrusive_ptr_release(sample *s) {
-			if (s->refcount_.fetch_sub(1,boost::memory_order_release) == 1) {
-				boost::atomic_thread_fence(boost::memory_order_acquire);
+			if (s->refcount_.fetch_sub(1,lslboost::memory_order_release) == 1) {
+				lslboost::atomic_thread_fence(lslboost::memory_order_acquire);
 				s->factory_->reclaim_sample(s);
 			}
 		}

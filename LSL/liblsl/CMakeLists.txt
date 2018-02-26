@@ -8,8 +8,14 @@ if(NOT CMAKE_DEBUG_POSTFIX)
 	set(CMAKE_DEBUG_POSTFIX -debug)
 endif()
 
-# Allow to use either the operating system supplied boost distribution or the shrink-wrapped one in the external/ directory
-option (LSL_USE_SYSTEM_BOOST "Use system Boost libraries instead of the version shipped with LSL." OFF)
+# lsl uses boost, but several other projects (e.g. Matlab) also use boost.
+# To prevent clashes with different boost versions, lsl ships a subset of
+# boost with renamed symbols (lslboost::xy instead of boost::xy)
+# If you need a specific boost version, you can put it in a subdirectory
+# and add a CMakeLists.txt that exports the lslboost target
+# (see lslboost/CMakeLists.txt for an example).
+# If in doubt, use "external" (1.57 with patches) or "lslboost" (1.65.1)
+set(LSL_LSLBOOST_PATH "external" CACHE STRING "Subdirectory with lslboost")
 
 # Build static library
 option (LSL_BUILD_STATIC "Also build static LSL library." OFF)
@@ -25,7 +31,6 @@ set (sources
 	src/consumer_queue.h
 	src/data_receiver.cpp
 	src/data_receiver.h
-	src/dllmain.cpp
 	src/endian/conversion.hpp
 	src/endian/detail/intrinsic.hpp
 	src/info_receiver.cpp
@@ -68,7 +73,7 @@ set (sources
 	src/udp_server.cpp
 	src/udp_server.h
 )
-if(WIN32)
+if(MSVC)
 	list(APPEND sources src/legacy/legacy_abi.cpp src/legacy/legacy_abi.h)
 endif()
 
@@ -77,38 +82,30 @@ set(headers
 	include/lsl_cpp.h
 )
 
-set(target lsl)
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
 	set(lslplatform 64)
 else()
 	set(lslplatform 32)
 endif()
-set(lslplatform ${lslplatform})
 
+set(target lsl)
 set(lsl_export_targets ${target})
 
-if (LSL_USE_SYSTEM_BOOST)
-	if(WIN32)
-		set(Boost_USE_STATIC_LIBS On)
-	endif()
-	find_package(Boost COMPONENTS filesystem serialization thread REQUIRED)
-	set(LSL_BOOST_LIBS Boost::filesystem Boost::serialization Boost::thread)
-else ()
-	add_subdirectory (external)
-	set(LSL_BOOST_LIBS "lslboost")
-endif ()
+add_subdirectory(${LSL_LSLBOOST_PATH})
 
-# common definitions for the lsllib variants
+# common definitions for the lsl and lsl-static
 function(lsllib_properties libname)
+	target_link_libraries(${libname} PRIVATE lslboost)
 	target_include_directories(${libname}
 		PRIVATE
 		${CMAKE_CURRENT_BINARY_DIR} # generated export header
 		INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
 	)
-	message(STATUS "Linking LSL against: ${LSL_BOOST_LIBS}")
-	message(STATUS "Found Boost libraries: ${Boost_LIBRARIES}")
-	target_link_libraries(${libname} PRIVATE ${LSL_BOOST_LIBS})
-	target_compile_definitions(${libname} PRIVATE LSL_INCLUDE_EXPORT_DEFINES)
+	target_compile_definitions(${libname} PRIVATE
+		LSL_INCLUDE_EXPORT_DEFINES
+		LIBLSL_EXPORTS
+		_SCL_SECURE_NO_WARNINGS _CRT_SECURE_NO_WARNINGS
+	)
 endfunction()
 
 
@@ -116,8 +113,10 @@ endfunction()
 add_library(${target} SHARED ${sources} ${headers})
 lsllib_properties(${target})
 set_target_properties(${target} PROPERTIES
+	VERSION ${LSL_VERSION_MAJOR}.${LSL_VERSION_MINOR}.${LSL_VERSION_PATCH}
 	PREFIX "lib"
 	OUTPUT_NAME "${target}${lslplatform}"
+	CXX_VISIBILITY_PRESET hidden
 )
 
 if(${LSL_BUILD_STATIC})
@@ -135,27 +134,13 @@ include(GenerateExportHeader)
 generate_export_header(${target}
 	BASE_NAME LSL
 	EXPORT_MACRO_NAME LIBLSL_CPP_API
-	EXPORT_FILE_NAME lsl_export_defines.h)
-
-set_target_properties(${target} PROPERTIES
-	VERSION ${LSL_VERSION_MAJOR}.${LSL_VERSION_MINOR}.${LSL_VERSION_PATCH}
-	#SOVERSION ${LSL_VERSION_MAJOR}.0.0 # hopefully backwards compatible symlink
-	CXX_VISIBILITY_PRESET hidden # only export symbols marked with LIBLSL_CPP_API
+	EXPORT_FILE_NAME lsl_export_defines.h
+	STATIC_DEFINE LIBLSL_STATIC
 )
 
-# TODO: Need to check if all flags are necessary or if some flags are missing
-if (WIN32)
-	if (MINGW)
-		target_link_libraries (${target} winmm ws2_32 wsock32)
-	endif()
-
-	target_compile_definitions(${target} PUBLIC
-		BOOST_ALL_NO_LIB # only link explicitly via target_link_libraries
-		LIBLSL_EXPORTS
-		_SCL_SECURE_NO_WARNINGS
-		_CRT_SECURE_NO_WARNINGS
-	)
-endif ()
+if (MINGW)
+	target_link_libraries (${target} PUBLIC ws2_32 wsock32 winmm)
+endif()
 
 install(TARGETS ${lsl_export_targets}
 	COMPONENT liblsl

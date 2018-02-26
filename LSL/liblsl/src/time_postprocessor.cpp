@@ -20,7 +20,7 @@ time_postprocessor::time_postprocessor(const postproc_callback_t &query_correcti
 
 double time_postprocessor::process_timestamp(double value) {
 	if (options_ & post_threadsafe) {
-		boost::lock_guard<boost::mutex> lock(processing_mut_);
+		lslboost::lock_guard<lslboost::mutex> lock(processing_mut_);
 		return process_internal(value);
 	} else
 		return process_internal(value);

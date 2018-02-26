@@ -60,10 +60,13 @@ function(installLSLAuxFiles target)
 	if(is_bundle AND APPLE)
 		set(destdir ${destdir}/${target}.app/Contents/MacOS)
 	endif(is_bundle AND APPLE)
-	install(FILES ${ARGN}
-		COMPONENT "LSL${PROJECT_NAME}"
-		DESTINATION ${destdir}
-		)
+	if("${ARGV1}" STREQUAL "directory")
+		install(DIRECTORY ${ARGV2} DESTINATION ${destdir})
+	else()
+		install(FILES ${ARGN}
+			COMPONENT "LSL${PROJECT_NAME}"
+			DESTINATION ${destdir})
+	endif()
 endfunction()
 
 

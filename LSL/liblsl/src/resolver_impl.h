@@ -6,23 +6,24 @@
 #include "stream_info_impl.h"
 #include "resolve_attempt_udp.h"
 #include <set>
-#include <boost/asio.hpp>
+#include <boost/asio/deadline_timer.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/ip/udp.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/thread.hpp>
+#include <boost/thread/mutex.hpp>
 
-
-using boost::asio::ip::udp;
-using boost::asio::ip::tcp;
-using boost::system::error_code;
+using lslboost::asio::ip::udp;
+using lslboost::asio::ip::tcp;
+using lslboost::system::error_code;
 
 namespace lsl {
 
 	/// Pointer to a deadline timer
-	typedef boost::shared_ptr<boost::asio::deadline_timer> deadline_timer_p;
+	typedef lslboost::shared_ptr<lslboost::asio::deadline_timer> deadline_timer_p;
 	/// Pointer to an io_service
-	typedef boost::shared_ptr<boost::asio::io_service> io_service_p;
+	typedef lslboost::shared_ptr<lslboost::asio::io_service> io_service_p;
 
 	/**
 	* A stream resolver object.
@@ -35,7 +36,7 @@ namespace lsl {
 	*				   by calling resolve_continuous() and the list is retrieved in parallel when desired using
 	*				   results(). In this case a new resolver instance must be created to issue a new query.
 	*/
-	class resolver_impl: public cancellable_registry, public boost::noncopyable {
+	class resolver_impl: public cancellable_registry, public lslboost::noncopyable {
 	public:
 		/**
 		* Instantiate a new resolver and configure timing parameters.
@@ -119,14 +120,14 @@ namespace lsl {
 		double wait_until_;								// wait until this point in time before returning results (optional to allow for returning potentially more than a minimum number of results)
 		bool fast_mode_;								// whether this is a fast resolve: determines the rate at which the query is repeated
 		result_container results_;						// results are stored here
-		boost::mutex results_mut_;						// a mutex that protects the results map
+		lslboost::mutex results_mut_;						// a mutex that protects the results map
 
 		// io objects
 		io_service_p io_;								// our IO service
-		boost::shared_ptr<boost::thread> background_io_;// a thread that runs background IO if we are performing a resolve_continuous
-		boost::asio::deadline_timer resolve_timeout_expired_;	// the overall timeout for a query
-		boost::asio::deadline_timer wave_timer_;		// a timer that fires when a new wave should be scheduled
-		boost::asio::deadline_timer unicast_timer_;		// a timer that fires when the unicast wave should be scheduled
+		lslboost::shared_ptr<lslboost::thread> background_io_;// a thread that runs background IO if we are performing a resolve_continuous
+		lslboost::asio::deadline_timer resolve_timeout_expired_;	// the overall timeout for a query
+		lslboost::asio::deadline_timer wave_timer_;		// a timer that fires when a new wave should be scheduled
+		lslboost::asio::deadline_timer unicast_timer_;		// a timer that fires when the unicast wave should be scheduled
 	};
 
 }

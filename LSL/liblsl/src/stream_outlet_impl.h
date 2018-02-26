@@ -14,15 +14,15 @@
 namespace lsl { 
 
 	/// pointer to a thread
-	typedef boost::shared_ptr<boost::thread> thread_p;
+	typedef lslboost::shared_ptr<lslboost::thread> thread_p;
 	/// pointer to an io_service
-	typedef boost::shared_ptr<boost::asio::io_service> io_service_p;
+	typedef lslboost::shared_ptr<lslboost::asio::io_service> io_service_p;
 
 	/**
 	* A stream outlet.
 	* Outlets are used to make streaming data (and the meta-data) available on the lab network.
 	*/
-	class stream_outlet_impl: public boost::noncopyable {
+	class stream_outlet_impl: public lslboost::noncopyable {
 	public:
 		/**
 		* Establish a new stream outlet. This makes the stream discoverable.

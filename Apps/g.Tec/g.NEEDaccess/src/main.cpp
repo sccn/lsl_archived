@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 	QCommandLineParser parser;
-	parser.setApplicationDescription("LabStreamingLayer interface for OpenVR.");
+	parser.setApplicationDescription("LabStreamingLayer interface for g.tec g.NEEDaccess.");
 	parser.addHelpOption();
 	parser.addVersionOption();
 	QCommandLineOption configFileOption(QStringList() << "c" << "config",

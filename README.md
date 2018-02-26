@@ -16,6 +16,12 @@ Hosted here is only the source code for the project. Develpers will want to clon
 
 You can find recent releases on our FTP site : ftp://sccn.ucsd.edu/pub/software/LSL/
 
+These releases may be slightly out of date. We are working toward an automated build and deployment system but it is not ready yet.
+
+# Building from source
+
+Follow the instructions in the INSTALL.md file.
+
 # Streaming Layer API
 
 The liblsl library provides the following **abstractions** for use by client programs:
@@ -107,6 +113,12 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 ```
+
+# How to get support
+If you are having trouble with LSL, there are few things you can do to get help.
+First, search this GitHub repository's issues list, including closed issues.
+If you don't find what you are looking for, then you can create a new issue. Try to include as much information as possible about your device (if applicable), your computing environment (operating system, processor achitecture), what you have tested so far, and also provide logs or other error messages if available. If you end up creating a new issue, please close it once the issue is solved.
+You can also try joining the LabStreamingLayer `#users` channel on Slack. [Invite Link](https://join.slack.com/t/labstreaminglayer/shared_invite/enQtMzA2NjEwNDk0NjA5LWI2MmI4MjBhYjgyMmRmMzg2NzEzODc2M2NjNDIwODhmNzViZmRmMWQyNTBkYzkwNmUyMzZhOTU5ZGFiYzkzMzQ). Someone there may be able to get to the bottom of your problem through conversation.
 
 # Acknowledgements
 The original version of this software was written at the [Swartz Center for Computational Neuroscience](http://sccn.ucsd.edu/people/), UCSD. This work was funded by the Army Research Laboratory under Cooperative Agreement Number W911NF-10-2-0022 as well as through NINDS grant 3R01NS047293-06S1.

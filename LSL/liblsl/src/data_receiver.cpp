@@ -12,7 +12,7 @@
 // === implementation of the data_receiver class ===
 
 using namespace lsl;
-using namespace boost::algorithm;
+using namespace lslboost::algorithm;
 
 /**
 * Construct a new data receiver from an info connection.
@@ -60,18 +60,18 @@ data_receiver::~data_receiver() {
 */
 void data_receiver::open_stream(double timeout) {
 	closing_stream_ = false;
-	boost::unique_lock<boost::mutex> lock(connected_mut_);
+	lslboost::unique_lock<lslboost::mutex> lock(connected_mut_);
 	if (!connection_completed()) {
 		// start thread if not yet running
 		if (check_thread_start_ && !data_thread_.joinable()) {
-			data_thread_ = boost::thread(&data_receiver::data_thread,this);
+			data_thread_ = lslboost::thread(&data_receiver::data_thread,this);
 			check_thread_start_ = false;
 		}
 		// wait until the connection attempt completes (or we time out)
 		if (timeout >= FOREVER)
-			connected_upd_.wait(lock, boost::bind(&data_receiver::connection_completed,this));
+			connected_upd_.wait(lock, lslboost::bind(&data_receiver::connection_completed,this));
 		else
-			if (!connected_upd_.wait_for(lock, boost::chrono::duration<double>(timeout), boost::bind(&data_receiver::connection_completed,this)))
+			if (!connected_upd_.wait_for(lock, lslboost::chrono::duration<double>(timeout), lslboost::bind(&data_receiver::connection_completed,this)))
 				throw timeout_error("The open_stream() operation timed out.");
 	}
 	if (conn_.lost())
@@ -105,7 +105,7 @@ double data_receiver::pull_sample_untyped(void *buffer, int buffer_bytes, double
 		throw lost_error("The stream read by this inlet has been lost. To recover, you need to re-resolve the source and re-create the inlet.");
 	// start data thread implicitly if necessary
 	if (check_thread_start_ && !data_thread_.joinable()) {
-		data_thread_ = boost::thread(&data_receiver::data_thread,this);
+		data_thread_ = lslboost::thread(&data_receiver::data_thread,this);
 		check_thread_start_ = false;
 	}
 	// get the sample with timeout
@@ -135,11 +135,11 @@ void data_receiver::data_thread() {
 				// --- connection setup ---
 
 				// make a new stream buffer and a stream on top of it
-				boost::asio::cancellable_streambuf<tcp> buffer;
+				lslboost::asio::cancellable_streambuf<tcp> buffer;
 				buffer.register_at(&conn_);
 				buffer.register_at(this);
 				std::iostream server_stream(&buffer);
-				boost::scoped_ptr<eos::portable_iarchive> inarch;
+				lslboost::scoped_ptr<eos::portable_iarchive> inarch;
 				// connect to endpoint
 				buffer.connect(conn_.get_tcp_endpoint());
 				if (buffer.puberror())
@@ -177,9 +177,9 @@ void data_receiver::data_thread() {
 					std::vector<std::string> parts; split(parts,buf,is_any_of(" \t"));
 					if (parts.size() < 3 || !starts_with(parts[0],"LSL/"))
 						throw std::runtime_error("Received a malformed response.");
-					if (boost::lexical_cast<int>(parts[0].substr(4))/100 > api_config::get_instance()->use_protocol_version()/100)
+					if (lslboost::lexical_cast<int>(parts[0].substr(4))/100 > api_config::get_instance()->use_protocol_version()/100)
 						throw std::runtime_error("The other party's protocol version is too new for this client; please upgrade your LSL library.");
-					int status_code = boost::lexical_cast<int>(parts[1]);
+					int status_code = lslboost::lexical_cast<int>(parts[1]);
 					if (status_code == 404)
 						throw lost_error("The given address does not serve the resolved stream (likely outdated).");
 					if (status_code >= 400)
@@ -200,16 +200,16 @@ void data_receiver::data_thread() {
 								rest = rest.substr(0,semicolon);
 							// get the header information
 							if (type == "byte-order") {
-								use_byte_order = boost::lexical_cast<int>(rest);
+								use_byte_order = lslboost::lexical_cast<int>(rest);
 								if (use_byte_order==2134 && BOOST_BYTE_ORDER!=2134 && format_sizes[conn_.type_info().channel_format()]>=8)
 									throw std::runtime_error("The byte order conversion requested by the other party is not supported.");
 							}
 							if (type == "suppress-subnormals") 
-								suppress_subnormals = boost::lexical_cast<bool>(rest);
+								suppress_subnormals = lslboost::lexical_cast<bool>(rest);
 							if (type == "uid" && rest != conn_.current_uid())
 								throw lost_error("The received UID does not match the current connection's UID.");
 							if (type == "data-protocol-version") {
-								data_protocol_version = boost::lexical_cast<int>(rest);
+								data_protocol_version = lslboost::lexical_cast<int>(rest);
 								if (data_protocol_version > api_config::get_instance()->use_protocol_version())
 									throw std::runtime_error("The protocol version requested by the other party is not supported by this client.");
 							}
@@ -237,7 +237,7 @@ void data_receiver::data_thread() {
 				// --- format validation ---
 				{
 					// receive and parse two subsequent test-pattern samples and check if they are formatted as expected
-					boost::scoped_ptr<sample> temp[4]; 
+					lslboost::scoped_ptr<sample> temp[4]; 
 					for (int k=0; k<4; temp[k++].reset(sample::factory::new_sample_unmanaged(conn_.type_info().channel_format(),conn_.type_info().channel_count(),0.0,false)));
 					temp[0]->assign_test_pattern(4); if (data_protocol_version >= 110) temp[1]->load_streambuf(buffer,data_protocol_version,use_byte_order,suppress_subnormals); else *inarch >> *temp[1];
 					temp[2]->assign_test_pattern(2); if (data_protocol_version >= 110) temp[3]->load_streambuf(buffer,data_protocol_version,use_byte_order,suppress_subnormals); else *inarch >> *temp[3];
@@ -248,7 +248,7 @@ void data_receiver::data_thread() {
                 // signal to accessor functions on other threads that the protocol negotiation has been successful,
                 // so we're now connected (and remain to be even if we later recover silently)
                 {
-                    boost::lock_guard<boost::mutex> lock(connected_mut_);
+                    lslboost::lock_guard<lslboost::mutex> lock(connected_mut_);
                     connected_ = true;
                 }
                 connected_upd_.notify_all();
@@ -294,7 +294,7 @@ void data_receiver::data_thread() {
 				conn_.try_recover_from_error();
 			}
             // wait for a few msec so as to not spam the provider with reconnects
-            boost::this_thread::sleep(boost::posix_time::millisec(500));
+            lslboost::this_thread::sleep(lslboost::posix_time::millisec(500));
 		}
 	}
 	catch(lost_error &) {

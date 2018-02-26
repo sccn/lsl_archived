@@ -7,12 +7,16 @@
 #include <map>
 #include <boost/asio.hpp>
 #include <boost/enable_shared_from_this.hpp>
-#include <boost/thread.hpp>
+#include <boost/thread/mutex.hpp>
+
+using lslboost::asio::ip::udp;
+using lslboost::asio::ip::tcp;
+using lslboost::system::error_code;
 
 
-using boost::asio::ip::udp;
-using boost::asio::ip::tcp;
-using boost::system::error_code;
+using lslboost::asio::ip::udp;
+using lslboost::asio::ip::tcp;
+using lslboost::system::error_code;
 
 namespace lsl {
 
@@ -20,11 +24,11 @@ namespace lsl {
 	typedef std::map<std::string,std::pair<stream_info_impl,double> > result_container;
 
 	/// Pointer to a UDP resolve attempt.
-	typedef boost::shared_ptr<class resolve_attempt_udp> resolve_attempt_udp_p;
+	typedef lslboost::shared_ptr<class resolve_attempt_udp> resolve_attempt_udp_p;
 	/// Pointer to a deadline timer
-	typedef boost::shared_ptr<boost::asio::deadline_timer> deadline_timer_p;
+	typedef lslboost::shared_ptr<lslboost::asio::deadline_timer> deadline_timer_p;
 	/// Pointer to an io_service
-	typedef boost::shared_ptr<boost::asio::io_service> io_service_p;
+	typedef lslboost::shared_ptr<lslboost::asio::io_service> io_service_p;
 
 
 	/**
@@ -34,7 +38,7 @@ namespace lsl {
 	* result packet receives. The operation will wait for return packets until either a particular 
 	* timeout has been reached or until it is cancelled via the cancel() method.
 	*/
-	class resolve_attempt_udp: public cancellable_obj, public boost::enable_shared_from_this<resolve_attempt_udp> {
+	class resolve_attempt_udp: public cancellable_obj, public lslboost::enable_shared_from_this<resolve_attempt_udp> {
 		typedef std::vector<udp::endpoint> endpoint_list;
 	public:
 		/**
@@ -52,7 +56,7 @@ namespace lsl {
 		* @param cancel_after The time duration after which the attempt is automatically cancelled, i.e. the receives are ended.
 		* @param registry A registry where the attempt can register itself as active so it can be cancelled during shutdown.
 		*/
-		resolve_attempt_udp(boost::asio::io_service &io, const udp &protocol, const std::vector<udp::endpoint> &targets, const std::string &query, result_container &results, boost::mutex &results_mut, double cancel_after=5.0, cancellable_registry *registry=NULL);
+		resolve_attempt_udp(lslboost::asio::io_service &io, const udp &protocol, const std::vector<udp::endpoint> &targets, const std::string &query, result_container &results, lslboost::mutex &results_mut, double cancel_after=5.0, cancellable_registry *registry=NULL);
 
 		/// Destructor
 		~resolve_attempt_udp();
@@ -92,9 +96,9 @@ namespace lsl {
 
 
 		// data shared with the resolver_impl
-		boost::asio::io_service &io_;	// reference to the IO service that executes our actions
+		lslboost::asio::io_service &io_;	// reference to the IO service that executes our actions
 		result_container &results_;		// shared result container
-		boost::mutex &results_mut_;		// shared mutex that protects the results
+		lslboost::mutex &results_mut_;		// shared mutex that protects the results
 
 		// constant over the lifetime of this attempt
 		double cancel_after_;			// the timeout for giving up
@@ -115,7 +119,7 @@ namespace lsl {
 		udp::socket broadcast_socket_;	// socket to send data over (for broadcasts)
 		udp::socket multicast_socket_;	// socket to send data over (for multicasts)
 		udp::socket recv_socket_;		// socket to receive replies (always unicast)
-		boost::asio::deadline_timer cancel_timer_;	// timer to schedule the cancel action
+		lslboost::asio::deadline_timer cancel_timer_;	// timer to schedule the cancel action
 	};
 
 }

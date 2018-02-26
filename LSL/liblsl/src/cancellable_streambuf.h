@@ -8,8 +8,8 @@
 // Copyright (c) 2003-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Modified by Christian A. Kothe, 2012
 //
-// Distributed under the boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the lslboost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.lslboost.org/LICENSE_1_0.txt)
 //
 
 #ifndef CANCELLABLE_STREAMBUF_HPP
@@ -30,24 +30,19 @@
 #include <boost/asio/detail/throw_error.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/stream_socket_service.hpp>
-#include <boost/thread.hpp>
 
-#ifdef LSLBOOST_NAMESPACE_DECLARED
 namespace lslboost {
-#else
-namespace boost {
-#endif
 	namespace asio {
 
 		/// Iostream streambuf for a socket.
 		template <typename Protocol, typename StreamSocketService=stream_socket_service<Protocol> >
-		class cancellable_streambuf: public std::streambuf, private boost::base_from_member<io_service>, public basic_socket<Protocol, StreamSocketService>, public lsl::cancellable_obj {
+		class cancellable_streambuf: public std::streambuf, private lslboost::base_from_member<io_service>, public basic_socket<Protocol, StreamSocketService>, public lsl::cancellable_obj {
 		public:
 			/// The endpoint type.
 			typedef typename Protocol::endpoint endpoint_type;
 
 			/// Construct a cancellable_streambuf without establishing a connection.
-			cancellable_streambuf(): basic_socket<Protocol, StreamSocketService>(boost::base_from_member<boost::asio::io_service>::member), cancel_issued_(false), cancel_started_(false) {
+			cancellable_streambuf(): basic_socket<Protocol, StreamSocketService>(lslboost::base_from_member<lslboost::asio::io_service>::member), cancel_issued_(false), cancel_started_(false) {
 				init_buffers();
 			}
 
@@ -66,9 +61,9 @@ namespace boost {
 			*/
 			void cancel() {
 				cancel_issued_ = true;
-				boost::lock_guard<boost::recursive_mutex> lock(cancel_mut_);
+				lslboost::lock_guard<lslboost::recursive_mutex> lock(cancel_mut_);
 				cancel_started_ = false;
-				this->get_service().get_io_service().post(boost::bind(&cancellable_streambuf::close_if_open,this));
+				this->get_service().get_io_service().post(lslboost::bind(&cancellable_streambuf::close_if_open,this));
 			}
 
 
@@ -81,7 +76,7 @@ namespace boost {
 			*/
 			cancellable_streambuf<Protocol, StreamSocketService>* connect(const endpoint_type& endpoint) {
 				{
-					boost::lock_guard<boost::recursive_mutex> lock(cancel_mut_);
+					lslboost::lock_guard<lslboost::recursive_mutex> lock(cancel_mut_);
 					if (cancel_issued_)
 						throw std::runtime_error("Attempt to connect() a cancellable_streambuf after it has been cancelled.");
 
@@ -92,9 +87,9 @@ namespace boost {
 					this->basic_socket<Protocol, StreamSocketService>::async_connect(endpoint, handler);
 					this->get_service().get_io_service().reset();
 				}
-				ec_ = boost::asio::error::would_block;
+				ec_ = lslboost::asio::error::would_block;
 				do this->get_service().get_io_service().run_one();
-				while (!cancel_issued_ && ec_ == boost::asio::error::would_block);
+				while (!cancel_issued_ && ec_ == lslboost::asio::error::would_block);
 				return !ec_ ? this : 0;
 			}
 
@@ -116,7 +111,7 @@ namespace boost {
 			* @return An \c error_code corresponding to the last error from the stream
 			* buffer.
 			*/
-			const boost::system::error_code& puberror() const { return error(); }
+			const lslboost::system::error_code& puberror() const { return error(); }
 
 		protected:
 			/// Close the socket if it's open.
@@ -129,7 +124,7 @@ namespace boost {
 
 			/// This function makes sure that a cancellation, if issued, is not being eaten by the io_service reset()
 			void protected_reset() {
-				boost::lock_guard<boost::recursive_mutex> lock(cancel_mut_);
+				lslboost::lock_guard<lslboost::recursive_mutex> lock(cancel_mut_);
 				// if the cancel() comes between completion of a run_one() and this call, close will be issued right here at the next opportunity
 				if (cancel_issued_)
 					close_if_open();
@@ -141,13 +136,13 @@ namespace boost {
 				if (gptr() == egptr()) {
 					io_handler handler = { this };
 					this->get_service().async_receive(this->get_implementation(),
-						boost::asio::buffer(boost::asio::buffer(get_buffer_) + putback_max),
+						lslboost::asio::buffer(lslboost::asio::buffer(get_buffer_) + putback_max),
 						0, handler);
 
-					ec_ = boost::asio::error::would_block;
+					ec_ = lslboost::asio::error::would_block;
 					protected_reset(); // line changed for lsl
 					do this->get_service().get_io_service().run_one();
-					while (ec_ == boost::asio::error::would_block);
+					while (ec_ == lslboost::asio::error::would_block);
 					if (ec_)
 						return traits_type::eof();
 
@@ -161,16 +156,16 @@ namespace boost {
 
 			int_type overflow(int_type c) {
 				// Send all data in the output buffer.
-				boost::asio::const_buffer buffer =
-					boost::asio::buffer(pbase(), pptr() - pbase());
-				while (boost::asio::buffer_size(buffer) > 0) {
+				lslboost::asio::const_buffer buffer =
+					lslboost::asio::buffer(pbase(), pptr() - pbase());
+				while (lslboost::asio::buffer_size(buffer) > 0) {
 					io_handler handler = { this };
 					this->get_service().async_send(this->get_implementation(),
-						boost::asio::buffer(buffer), 0, handler);
-					ec_ = boost::asio::error::would_block;
+						lslboost::asio::buffer(buffer), 0, handler);
+					ec_ = lslboost::asio::error::would_block;
 					protected_reset(); // line changed for lsl
 					do this->get_service().get_io_service().run_one();
-					while (ec_ == boost::asio::error::would_block);
+					while (ec_ == lslboost::asio::error::would_block);
 					if (ec_)
 						return traits_type::eof();
 					buffer = buffer + bytes_transferred_;
@@ -199,7 +194,7 @@ namespace boost {
 			* @return An \c error_code corresponding to the last error from the stream
 			* buffer.
 			*/
-			virtual const boost::system::error_code& error() const { return ec_; }
+			virtual const lslboost::system::error_code& error() const { return ec_; }
 
 			//private:
 			void init_buffers() {
@@ -213,7 +208,7 @@ namespace boost {
 			friend struct io_handler;
 			struct io_handler {
 				cancellable_streambuf* this_;
-				void operator()(const boost::system::error_code& ec, std::size_t bytes_transferred = 0) {
+				void operator()(const lslboost::system::error_code& ec, std::size_t bytes_transferred = 0) {
 					this_->ec_ = ec;
 					this_->bytes_transferred_ = bytes_transferred;
 				}
@@ -221,17 +216,17 @@ namespace boost {
 
 			enum { putback_max = 8 };
 			enum { buffer_size = 512 };
-			boost::asio::detail::array<char, buffer_size> get_buffer_;
-			boost::asio::detail::array<char, buffer_size> put_buffer_;
-			boost::system::error_code ec_;
+			lslboost::asio::detail::array<char, buffer_size> get_buffer_;
+			lslboost::asio::detail::array<char, buffer_size> put_buffer_;
+			lslboost::system::error_code ec_;
 			std::size_t bytes_transferred_;
 			bool cancel_issued_;
 			bool cancel_started_;
-			boost::recursive_mutex cancel_mut_;
+			lslboost::recursive_mutex cancel_mut_;
 		};
 
 	} // namespace asio
-} // namespace boost
+} // namespace lslboost
 
 #endif // CANCELLABLE_STREAMBUF_HPP
 

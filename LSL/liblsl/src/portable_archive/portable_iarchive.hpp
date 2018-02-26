@@ -6,7 +6,7 @@
  * \version 5.1
  *
  * This pair of archives brings the advantages of binary streams to the cross
- * platform boost::serialization user. While being almost as fast as the native
+ * platform lslboost::serialization user. While being almost as fast as the native
  * binary archive it allows its files to be exchanged between cpu architectures
  * using different byte order (endianness). Speaking of speed: in serializing
  * numbers the (portable) binary approach is approximately ten times faster than
@@ -101,18 +101,8 @@
 #endif
 
 // funny polymorphics
-#if BOOST_VERSION < 103500
-#include <boost/archive/detail/polymorphic_iarchive_impl.hpp>
-#define POLYMORPHIC(T) boost::archive::detail::polymorphic_iarchive_impl<T>
-
-#elif BOOST_VERSION < 103600
-#include <boost/archive/detail/polymorphic_iarchive_dispatch.hpp>
-#define POLYMORPHIC(T) boost::archive::detail::polymorphic_iarchive_dispatch<T>
-
-#else
 #include <boost/archive/detail/polymorphic_iarchive_route.hpp>
-#define POLYMORPHIC(T) boost::archive::detail::polymorphic_iarchive_route<T>
-#endif
+#define POLYMORPHIC(T) lslboost::archive::detail::polymorphic_iarchive_route<T>
 
 // endian and fpclassify
 #if BOOST_VERSION < 103600
@@ -128,16 +118,16 @@
 
 // namespace alias
 #if BOOST_VERSION < 103800
-namespace fp = boost::math;
+namespace fp = lslboost::math;
 #else
-namespace fp = boost::spirit::math;
+namespace fp = lslboost::spirit::math;
 #endif
 
 // namespace alias endian
 #if BOOST_VERSION < 104800
-namespace endian = boost::detail;
+namespace endian = lslboost::detail;
 #else
-namespace endian = boost::spirit::detail;
+namespace endian = lslboost::spirit::detail;
 #endif
 
 #if BOOST_VERSION >= 104500 && !defined BOOST_NO_STD_WSTRING
@@ -165,7 +155,7 @@ namespace eos {
 	// forward declaration
 	class portable_iarchive;
 
-	typedef boost::archive::basic_binary_iprimitive<
+	typedef lslboost::archive::basic_binary_iprimitive<
 		portable_iarchive
 	#if BOOST_VERSION < 103400
 		, std::istream
@@ -184,7 +174,7 @@ namespace eos {
 	 * care that e.g. a very large int being saved on a 64 bit machine will result
 	 * in a portable_archive_exception if loaded into an int on a 32 bit system.
 	 * A possible workaround to this would be to use fixed types like
-	 * boost::uint64_t in your serialization structures.
+	 * lslboost::uint64_t in your serialization structures.
 	 *
 	 * \note The class is based on the portable binary example by Robert Ramey and
 	 *	     uses Beman Dawes endian library plus fp_utilities by Johan Rade.
@@ -193,15 +183,15 @@ namespace eos {
 
 		// the example derives from common_oarchive but that lacks the
 		// load_override functions so we chose to stay one level higher
-		, public boost::archive::basic_binary_iarchive<portable_iarchive>
+		, public lslboost::archive::basic_binary_iarchive<portable_iarchive>
 
 	#if BOOST_VERSION >= 103500 && BOOST_VERSION < 105600
 		// mix-in helper class for serializing shared_ptr
-		, public boost::archive::detail::shared_ptr_helper
+		, public lslboost::archive::detail::shared_ptr_helper
 	#endif
 	{
 		// only needed for Robert's hack in basic_binary_iarchive::init
-		friend class boost::archive::basic_binary_iarchive<portable_iarchive>;
+		friend class lslboost::archive::basic_binary_iarchive<portable_iarchive>;
 
 		// workaround for gcc: use a dummy struct
 		// as additional argument type for overloading
@@ -218,7 +208,7 @@ namespace eos {
 		// archive initialization
 		void init(unsigned flags)
 		{
-			using namespace boost::archive;
+			using namespace lslboost::archive;
 			archive_version_type input_library_version(3);
 
 			// it is vital to have version information!
@@ -253,24 +243,24 @@ namespace eos {
 		 * type sizes.
 		 *
 		 * We could have called basic_binary_iarchive::init which would create
-		 * the boost::serialization standard archive header containing also the
+		 * the lslboost::serialization standard archive header containing also the
 		 * library version. Due to efficiency we stick with our own.
 		 */
 		portable_iarchive(std::istream& is, unsigned flags = 0)
 		#if BOOST_VERSION < 103400
-			: portable_iprimitive(is, flags & boost::archive::no_codecvt)
+			: portable_iprimitive(is, flags & lslboost::archive::no_codecvt)
 		#else
-			: portable_iprimitive(*is.rdbuf(), flags & boost::archive::no_codecvt)
+			: portable_iprimitive(*is.rdbuf(), flags & lslboost::archive::no_codecvt)
 		#endif
-			, boost::archive::basic_binary_iarchive<portable_iarchive>(flags)
+			, lslboost::archive::basic_binary_iarchive<portable_iarchive>(flags)
 		{
 			init(flags);
 		}
 
 	#if BOOST_VERSION >= 103400
 		portable_iarchive(std::streambuf& sb, unsigned flags = 0)
-			: portable_iprimitive(sb, flags & boost::archive::no_codecvt)
-			, boost::archive::basic_binary_iarchive<portable_iarchive>(flags)
+			: portable_iprimitive(sb, flags & lslboost::archive::no_codecvt)
+			, lslboost::archive::basic_binary_iarchive<portable_iarchive>(flags)
 		{
 			init(flags);
 		}
@@ -299,7 +289,7 @@ namespace eos {
 		{
 			std::string utf8;
 			load(utf8);
-			s = boost::from_utf8(utf8);
+			s = lslboost::from_utf8(utf8);
 		}
 	#endif
 
@@ -334,14 +324,14 @@ namespace eos {
 		 * to the original value by using load_little_endian.
 		 */
 		template <typename T>
-		typename boost::enable_if<boost::is_integral<T> >::type
+		typename lslboost::enable_if<lslboost::is_integral<T> >::type
 		load(T & t, dummy<2> = 0)
 		{
 			// get the number of bytes in the stream
 			if (signed char size = load_signed_char())
 			{
 				// check for negative value in unsigned type
-				if (size < 0 && boost::is_unsigned<T>::value)
+				if (size < 0 && lslboost::is_unsigned<T>::value)
 					throw portable_archive_exception();
 
 				// check that our type T is large enough
@@ -388,7 +378,7 @@ namespace eos {
 		 * small rounding off errors. 
 		 */
 		template <typename T>
-		typename boost::enable_if<boost::is_floating_point<T> >::type
+		typename lslboost::enable_if<lslboost::is_floating_point<T> >::type
 		load(T & t, dummy<3> = 0)
 		{
 			typedef typename fp::detail::fp_traits<T>::type traits;
@@ -421,7 +411,7 @@ namespace eos {
 		// in boost 1.44 version_type was splitted into library_version_type and
 		// item_version_type, plus a whole bunch of additional strong typedefs.
 		template <typename T>
-		typename boost::disable_if<boost::is_arithmetic<T> >::type
+		typename lslboost::disable_if<lslboost::is_arithmetic<T> >::type
 		load(T& t, dummy<4> = 0)
 		{
 			// we provide a generic load routine for all types that feature
@@ -429,7 +419,7 @@ namespace eos {
 			// created through BOOST_STRONG_TYPEDEF(X, some unsigned int) like
 			// library_version_type, collection_size_type, item_version_type,
 			// class_id_type, object_id_type, version_type and tracking_type
-			load((typename boost::uint_t<sizeof(T)*CHAR_BIT>::least&)(t));
+			load((typename lslboost::uint_t<sizeof(T)*CHAR_BIT>::least&)(t));
 		}
 	};
 
@@ -464,12 +454,7 @@ BOOST_SERIALIZATION_REGISTER_ARCHIVE(eos::polymorphic_portable_iarchive)
 #define BOOST_ARCHIVE_SERIALIZER_INCLUDED
 #endif
 
-#ifdef LSLBOOST_NAMESPACE_DECLARED
 namespace lslboost { namespace archive {
-#else
-namespace boost { namespace archive {
-#endif
-
 	// explicitly instantiate for this type of binary stream
 	template class basic_binary_iarchive<eos::portable_iarchive>;
 
@@ -490,6 +475,6 @@ namespace boost { namespace archive {
 	//template class detail::archive_serializer_map<eos::polymorphic_portable_iarchive>;
 #endif
 
-} } // namespace boost::archive
+} } // namespace lslboost::archive
 
 #endif
