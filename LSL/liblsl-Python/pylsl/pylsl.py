@@ -1184,7 +1184,7 @@ else:
     raise RuntimeError("unrecognized operating system:", os_name)
 libpath = os.path.join(os.path.dirname(__file__), libname)
 if not os.path.isfile(libpath):
-    libpath = util.find_library(libname)
+    libpath = util.find_library('lsl' + str(bitness))
 if not libpath:
     raise RuntimeError("library " + libname + " was not found - make sure "
                        "that it is on the search path (e.g., in the same "
