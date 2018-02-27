@@ -7,14 +7,8 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QCloseEvent>
-#include <QMessageBox>
 #include <QListWidget>
-#include <QListWidgetItem>
-#include <QHostInfo>
-#include <QBrush>
 #include <QTimer>
-#include <QStatusBar>
-#include <fstream>
 
 #ifdef __WIN32
 
@@ -46,31 +40,23 @@ public:
     explicit MainWindow(QWidget *parent,const std::string &config_file);
     ~MainWindow();
 
-private slots:    
-	
-	void statusUpdate(void);	
-    void closeEvent(QCloseEvent *ev);
-	void browseConfigDialog(void);
-	void browseLocationDialog(void);
+private slots:
+	void statusUpdate(void) const;
+	void closeEvent(QCloseEvent *ev) override;
 	void blockSelected(QListWidgetItem *item);
 	void refreshStreams(void);
 	void startRecording(void);
 	void stopRecording(void);
 
 
-	// I think this is unnecessary
-	//void streamClicked(void);
-
-
 
 private:
 
-	
 	bool currentlyRecording;
 	recording *currentRecording;
 	
 	int startTime;
-	QTimer *timer;
+	std::unique_ptr<QTimer> timer;
  
 	int currentTrial;
 	std::string currentBlock;
@@ -85,12 +71,10 @@ private:
 	std::string recFilename;
 	FILE *p_recFile;
 
-
-
 	// function for loading config file
 	void load_config(const std::string &filename);
     
-	Ui::MainWindow *ui;										// window pointer
+	std::unique_ptr<Ui::MainWindow> ui;	// window pointer
 };
 
 
