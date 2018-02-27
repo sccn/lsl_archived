@@ -114,8 +114,8 @@ add_library(${target} SHARED ${sources} ${headers})
 lsllib_properties(${target})
 set_target_properties(${target} PROPERTIES
 	VERSION ${LSL_VERSION_MAJOR}.${LSL_VERSION_MINOR}.${LSL_VERSION_PATCH}
-	PREFIX "lib"
-	OUTPUT_NAME "${target}${lslplatform}"
+	PREFIX ""
+	OUTPUT_NAME "lib${target}${lslplatform}"
 	CXX_VISIBILITY_PRESET hidden
 )
 
