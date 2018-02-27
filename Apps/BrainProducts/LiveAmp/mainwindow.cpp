@@ -725,7 +725,7 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, std::vector<std::s
 					// unfortunately, we have up to 3 trigger channels to check
 					if (liveAmp->hasSTE()&&(sampledMarkers||sampledMarkersEEG))
 					{
-						float mrkr_tmp_in = (float)(255-((int)liveamp_buffer[i][totalChannelCount] >> 8));
+						float mrkr_tmp_in = (float)(((int)liveamp_buffer[i][totalChannelCount] >> 8));
 						f_mrkr_in = (mrkr_tmp_in == prev_marker_float_in ? -1.0 : mrkr_tmp_in);
 						if (mrkr_tmp_in != prev_marker_float_in)
 							prev_marker_float_in = prev_marker_float_in;
@@ -745,7 +745,7 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, std::vector<std::s
 						}
 						if (!ui->rbDefault->isChecked())
 						{
-							float mrkr_tmp_out = (float)(255-((int)liveamp_buffer[i][totalChannelCount+1] >> 8));
+							float mrkr_tmp_out = (float)(((int)liveamp_buffer[i][totalChannelCount+1] >> 8));
 							f_mrkr_out = (mrkr_tmp_out == prev_marker_float_out ? -1.0 : mrkr_tmp_out);
 							prev_marker_float_out = mrkr_tmp_out;
 
@@ -792,7 +792,7 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, std::vector<std::s
 						prev_u_marker_float = f_u_mrkr;
 						if (liveAmp->hasSTE())
 						{
-							f_u_mrkr_in = (float)(255-((int)liveamp_buffer[s][totalChannelCount] >> 8));
+							f_u_mrkr_in = (float)(((int)liveamp_buffer[s][totalChannelCount] >> 8));
 							if (f_u_mrkr_in != prev_u_marker_float_in) {
 								std::string mrk_string_in = boost::lexical_cast<std::string>(f_u_mrkr_in);
 								marker_outlet_in->push_sample(&mrk_string_in, now + (s + 1 - sampleCount) / samplingRate);
@@ -800,7 +800,7 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, std::vector<std::s
 							prev_u_marker_float_in = f_u_mrkr_in;
 							if (!ui->rbDefault->isChecked())
 							{
-								f_u_mrkr_out = (float)(255-((int)liveamp_buffer[s][totalChannelCount+1] >> 8));
+								f_u_mrkr_out = (float)(((int)liveamp_buffer[s][totalChannelCount+1] >> 8));
 								if (f_u_mrkr_out != prev_u_marker_float_out) {
 									std::string mrk_string_out = boost::lexical_cast<std::string>(f_u_mrkr_out);
 									marker_outlet_out->push_sample(&mrk_string_out, now + (s + 1 - sampleCount) / samplingRate);
