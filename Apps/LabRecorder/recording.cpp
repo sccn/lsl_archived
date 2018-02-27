@@ -1,8 +1,9 @@
 #include "recording.h"
 
 #include <boost/iostreams/device/file_descriptor.hpp>
+#ifdef XDFZ_SUPPORT
 #include <boost/iostreams/filter/zlib.hpp>
-
+#endif
 
 recording::recording(const std::string& filename, const std::vector<lsl::stream_info>& streams, const std::vector<std::string>& watchfor, std::map<std::string, int> syncOptions, bool collect_offsets):
     offsets_enabled_(collect_offsets),
@@ -15,8 +16,10 @@ recording::recording(const std::string& filename, const std::vector<lsl::stream_
 {
 	// open file stream
 	std::cout << "Opening file " << filename << " ... ";
+#ifdef XDFZ_SUPPORT
 	if (boost::iends_with(filename,".xdfz"))
 		file_.push(boost::iostreams::zlib_compressor());
+#endif
 	file_.push(boost::iostreams::file_descriptor_sink(filename,std::ios::binary | std::ios::trunc));
 	std::cout << "done." << std::endl;
 	// [MagicCode]
