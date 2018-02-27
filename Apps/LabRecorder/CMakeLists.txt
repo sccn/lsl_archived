@@ -46,17 +46,26 @@ add_executable(${target}
     mainwindow.h
     mainwindow.ui
     recording.h
+	recording.cpp
     targetver.h
 )
 
-IF(MSVC)
-    find_package(Boost REQUIRED COMPONENTS filesystem iostreams thread zlib)
-    set(zlib_libs Boost::zlib)
-ELSE()
-    find_package(Boost REQUIRED COMPONENTS filesystem iostreams thread)
-    find_package(ZLIB REQUIRED)
-    set(zlib_libs ${ZLIB_LIBRARIES})
-ENDIF()
+find_package(Boost REQUIRED COMPONENTS filesystem iostreams thread)
+set(zlib_libs "")
+if(WIN32)
+	find_package(Boost OPTIONAL_COMPONENTS zlib QUIET)
+	if(TARGET Boost::zlib)
+		set(zlib_libs "Boost::zlib")
+		message(STATUS "LabRecorder: Using Boost.zlib for xdfz support")
+
+	endif()
+else()
+	find_package(ZLIB QUIET)
+	if(ZLIB_FOUND)
+		message(STATUS "LabRecorder: Using zlib for xdfz support")
+		set(zlib_libs ${ZLIB_LIBRARIES})
+	endif()
+endif()
 
 target_link_libraries(${target}
     PRIVATE
@@ -69,11 +78,10 @@ target_link_libraries(${target}
     LSL::lsl
 )
 
-# Fix a bug where building debug tries to link with non-debug lib.
-# This should rather be addressed in the default linking pragmas
-#if(MSVC)
-#   SET_TARGET_PROPERTIES(${target} PROPERTIES LINK_FLAGS "/NODEFAULTLIB:\"liblsl64\"")
-#endif(MSVC)
+# Enable xdfz support if Boost.zlib (Windows) or plain zlib (Unix) was found
+if(${zlib_libs})
+	target_compile_definitions(${target} PRIVATE XDFZ_SUPPORT=1)
+endif()
 
 installLSLApp(${target})
 installLSLAuxFiles(${target} default_config.cfg)
