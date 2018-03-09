@@ -43,5 +43,5 @@ FORMS += \
 
 
 
-INCLUDEPATH += /home/bot/Documents/labstreaminglayer/build/install/lsl_Release/LSL/include
-LIBS += -L/home/bot/Documents/labstreaminglayer/build/install/lsl_Release/LSL/lib
+INCLUDEPATH += $$PWD/../../LSL/liblsl/include
+DEPENDPATH += $$PWD/../../LSL/liblsl/bin
