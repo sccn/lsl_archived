@@ -588,7 +588,7 @@ void MainWindow::read_thread(int chunkSize, int samplingRate, std::vector<std::s
 				channels.append_child("channel")
 					.append_child_value("label", channelLabels[k].c_str())
 					.append_child_value("type", "ACC")
-					.append_child_value("unit", "milligrams");
+					.append_child_value("unit", "milliGs");
 			}
 		}
 
