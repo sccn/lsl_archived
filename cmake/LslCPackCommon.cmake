@@ -6,6 +6,6 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
 elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "arm")
     set(SYSTEM_PROCESSOR armhf)
 else()
-    message(FATAL_ERROR "Unknown processor type: " ${CMAKE_SYSTEM_PROCESSOR})
+	message(WARNING "Unknown processor type: " ${CMAKE_SYSTEM_PROCESSOR})
 endif()
 
