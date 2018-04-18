@@ -69,6 +69,7 @@ namespace lsl {
 				// pre-construct an array of samples in the storage area and chain into a freelist
 				sample *s = NULL;
 				for (char *p=storage_.get(),*e=p+storage_size_;p<e;) {
+					#pragma warning(suppress: 4291)
 					s = new((sample*)p) sample(fmt,num_chans,this);
 					s->next_ = (sample*)(p += sample_size_);
 				}
@@ -90,6 +91,7 @@ namespace lsl {
 			sample_p new_sample(double timestamp, bool pushthrough) { 
 				sample *result = pop_freelist();
 				if (!result)
+					#pragma warning(suppress: 4291)
 					result = new(new char[sample_size_]) sample(fmt_,num_chans_,this);
 				result->timestamp = timestamp;
 				result->pushthrough = pushthrough;
@@ -105,6 +107,7 @@ namespace lsl {
 
 			/// Create a new sample whose memory is not managed by the factory.
 			static sample *new_sample_unmanaged(channel_format_t fmt, int num_chans, double timestamp, bool pushthrough) { 
+				#pragma warning(suppress: 4291)
 				sample *result = new(new char[ensure_multiple(sizeof(sample)-sizeof(char) + format_sizes[fmt]*num_chans,16)]) sample(fmt,num_chans,NULL);
 				result->timestamp = timestamp;
 				result->pushthrough = pushthrough;
@@ -337,14 +340,14 @@ namespace lsl {
 					// read string length as variable-length integer
 					std::size_t len = 0;
 					lslboost::uint8_t lenbytes; load_value(sb,lenbytes,use_byte_order);
+					if(sizeof(std::size_t) < 8 && lenbytes > sizeof(std::size_t))
+						throw std::runtime_error("This platform does not support strings of 64-bit length.");
 					switch (lenbytes) {
 						case sizeof(lslboost::uint8_t):  { lslboost::uint8_t tmp;  load_value(sb,tmp,use_byte_order); len = tmp; }; break; 
 						case sizeof(lslboost::uint16_t): { lslboost::uint16_t tmp; load_value(sb,tmp,use_byte_order); len = tmp; }; break; 
 						case sizeof(lslboost::uint32_t): { lslboost::uint32_t tmp; load_value(sb,tmp,use_byte_order); len = tmp; }; break; 
 #ifndef BOOST_NO_INT64_T
 						case sizeof(lslboost::uint64_t): { lslboost::uint64_t tmp; load_value(sb,tmp,use_byte_order); len = tmp; }; break;
-#else
-						case 8: throw std::runtime_error("This platform does not support strings of 64-bit length.");
 #endif
 						default: throw std::runtime_error("Stream contents corrupted (invalid varlen int).");
 					}
