@@ -29,8 +29,7 @@ cmake_policy(SET CMP0042 NEW) # ENABLE CMP0042: MACOSX_RPATH is enabled by defau
 set(META_PROJECT_DESCRIPTION "Record LabStreamingLayer streams to XDF data file.")
 
 # THIRD PARTY LIBRARIES #
-find_package(Qt5 REQUIRED COMPONENTS Network Xml Widgets)
-#TODO: Make sure the architecture of the Qt binaries matches the current context architecture.
+find_package(Qt5 REQUIRED COMPONENTS Network Widgets)
 
 # APPLICATION #
 
@@ -49,6 +48,7 @@ add_executable(${target}
 	recording.cpp
     targetver.h
 )
+target_compile_features(${target} PRIVATE cxx_auto_type)
 
 find_package(Boost REQUIRED COMPONENTS filesystem iostreams thread)
 set(zlib_libs "")

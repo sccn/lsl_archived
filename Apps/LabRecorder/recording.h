@@ -68,9 +68,9 @@ const auto boundary_interval = boost::posix_time::seconds(10);
 // approx. interval between offset measurements, in seconds
 const auto offset_interval = boost::posix_time::seconds(5);
 // approx. interval between resolves for outstanding streams on the watchlist, in seconds
-const float resolve_interval = 5;
+const double resolve_interval = 5;
 // approx. interval between resolves for outstanding streams on the watchlist, in seconds
-const float chunk_interval = 0.5;
+const boost::posix_time::milliseconds chunk_interval(500);
 // maximum waiting time for moving past the headers phase while recording, in seconds
 const auto max_headers_wait = boost::posix_time::seconds(10);
 // maximum waiting time for moving into the footers phase while recording, in seconds
@@ -78,7 +78,7 @@ const auto max_footers_wait = boost::posix_time::seconds(2);
 // maximum waiting time for subscribing to a stream, in seconds (if exceeded, stream subscription will take place later)
 const float max_open_wait = 5;
 // maximum time that we wait to join a thread, in seconds
-const auto max_join_wait = boost::posix_time::seconds(5);
+const boost::posix_time::seconds max_join_wait(5);
 
 // the signature of the boundary chunk (next chunk begins right after this)
 const unsigned char boundary_uuid[] = {0x43,0xA5,0x46,0xDC,0xCB,0xF5,0x41,0x0F,0xB3,0x0E,0xD5,0x46,0x73,0x83,0xCB,0xE4};
@@ -304,20 +304,20 @@ private:
 					// write the actual chunk
 					write_chunk(ct_samples,content.str());
 				} else
-					boost::this_thread::sleep(boost::posix_time::seconds(chunk_interval));
+					boost::this_thread::sleep(chunk_interval);
 
 			}
 
 			// terminate the offset collection thread, too
 			if (offset_thread) {
 				offset_thread->interrupt();
-				offset_thread->timed_join(boost::posix_time::seconds(max_join_wait));
+				offset_thread->timed_join(max_join_wait);
 			}
 		}
 		catch(std::exception &) {
 			if (offset_thread) {
 				offset_thread->interrupt();
-				offset_thread->timed_join(boost::posix_time::seconds(max_join_wait));
+				offset_thread->timed_join(max_join_wait);
 			}
 			throw;
 		}
