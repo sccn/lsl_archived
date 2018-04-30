@@ -14,7 +14,7 @@ Hosted here is only the source code for the project. Develpers will want to clon
 
 # Download Binary Releases
 
-You can find recent releases on our FTP site : ftp://sccn.ucsd.edu/pub/software/LSL/
+You can find recent releases on our FTP site : [ftp://sccn.ucsd.edu/pub/software/LSL/](ftp://sccn.ucsd.edu/pub/software/LSL/)
 
 These releases may be slightly out of date. We are working toward an automated build and deployment system but it is not ready yet.
 
