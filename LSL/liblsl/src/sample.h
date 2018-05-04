@@ -49,7 +49,7 @@ namespace lsl {
 		lslboost::atomic<int> refcount_;	// reference count used by sample_p
 		lslboost::atomic<sample*> next_;	// linked list of samples, for use in a freelist
 		factory *factory_;				// the factory used to reclaim this sample, if any
-		char data_;						// the data payload begins here
+		BOOST_ALIGNMENT(8) char data_;	// the data payload begins here
 
 	public:
 		// === Construction ===
