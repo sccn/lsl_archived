@@ -77,6 +77,19 @@ namespace lsl {
 		post_ALL = 1|2|4|8		// The combination of all possible post-processing options.
 	};
 
+#ifndef LSL_C_H
+	/**
+	* Possible error codes.
+	*/
+	typedef enum {
+	    lsl_no_error = 0,           /* No error occurred */
+	    lsl_timeout_error = -1,     /* The operation failed due to a timeout. */
+	    lsl_lost_error = -2,        /* The stream has been lost. */
+	    lsl_argument_error = -3,    /* An argument was incorrectly specified (e.g., wrong format or wrong length). */
+	    lsl_internal_error = -4     /* Some other internal error has happened. */
+	} lsl_error_code_t;
+#endif
+
 	/// Exception class that indicates that a stream inlet's source has been irrecoverably lost.
 	class LIBLSL_CPP_API lost_error: public std::runtime_error {
 	public:
