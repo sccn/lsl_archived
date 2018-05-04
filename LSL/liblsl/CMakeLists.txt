@@ -91,6 +91,21 @@ else()
 	set(lslplatform 32)
 endif()
 
+# try to find out which revision is currently checked out
+find_package(Git)
+if(GIT_FOUND)
+	execute_process(
+		COMMAND ${GIT_EXECUTABLE} describe --tags HEAD
+		WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
+		OUTPUT_VARIABLE lslgitrevision
+		ERROR_QUIET
+		OUTPUT_STRIP_TRAILING_WHITESPACE
+	)
+else()
+       set(lslgitrevision "unknown")
+endif()
+set(LSL_VERSION_INFO "\"git:${lslgitrevision}/build:${CMAKE_BUILD_TYPE}/compiler:${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}/boost:\" BOOST_LIB_VERSION")
+
 set(target lsl)
 set(lsl_export_targets ${target})
 
@@ -105,6 +120,7 @@ function(lsllib_properties libname)
 	target_compile_definitions(${libname} PRIVATE
 		LIBLSL_EXPORTS
 		_SCL_SECURE_NO_WARNINGS _CRT_SECURE_NO_WARNINGS
+		LSL_LIBRARY_INFO_STR=${LSL_VERSION_INFO}
 		PUBLIC
 		LSLNOAUTOLINK # don't use #pragma(lib) in CMake builds
 	)
