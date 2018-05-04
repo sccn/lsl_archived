@@ -76,6 +76,25 @@ namespace lsl {
 		void push_sample(const char *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
 		void push_sample(const std::string *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
 
+
+	    template <typename T>
+	    inline lsl_error_code_t push_sample_noexcept(const T* data, double timestamp = 0.0,
+		                                             bool pushthrough = true) BOOST_NOEXCEPT {
+		    try {
+			    enqueue(data, timestamp, pushthrough);
+			    return lsl_no_error;
+		    } catch (std::range_error& e) {
+			    std::cerr << "Error during push_sample: " << e.what() << std::endl;
+			    return lsl_argument_error;
+		    } catch (std::invalid_argument& e) {
+			    std::cerr << "Error during push_sample: " << e.what() << std::endl;
+			    return lsl_argument_error;
+		    } catch (std::exception& e) {
+			    std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
+			    return lsl_internal_error;
+		    }
+	    }
+
 		/**
 		* Push a pointer to raw numeric data as one sample into the outlet. 
 		* This is the lowest-level function; does no checking of any kind. Do not use for variable-size/string data-formatted channels.
