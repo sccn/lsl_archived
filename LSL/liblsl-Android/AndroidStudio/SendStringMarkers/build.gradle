@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "edu.ucsd.sccn.sendstringmarkers"
         minSdkVersion 17
@@ -12,7 +12,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-                cppFlags "-std=c++11 -frtti -fexceptions"
+                cppFlags "-std=c++11 -frtti -fexceptions  -Wno-redeclared-class-member -Wno-deprecated-declarations  -Wno-expansion-to-defined -Wno-deprecated-register"
             }
         }
     }
@@ -40,12 +40,12 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: '../libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(dir: '../libs', include: ['*.jar'])
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    testCompile 'junit:junit:4.12'
+    implementation 'com.android.support:appcompat-v7:24.2.1'
+    testImplementation 'junit:junit:4.12'
 }
 
 //copy native libraries to per project location

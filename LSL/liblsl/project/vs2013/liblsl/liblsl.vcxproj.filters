@@ -173,9 +173,6 @@
     <ClCompile Include="..\..\..\src\data_receiver.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\dllmain.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\info_receiver.cpp">
       <Filter>Source</Filter>
     </ClCompile>
