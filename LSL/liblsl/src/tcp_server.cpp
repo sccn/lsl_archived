@@ -342,8 +342,16 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 
 			// send test pattern samples
 			lslboost::scoped_ptr<sample> temp(sample::factory::new_sample_unmanaged(serv_->info_->channel_format(),serv_->info_->channel_count(),0.0,false));
-			temp->assign_test_pattern(4); if (data_protocol_version_ >= 110) temp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get()); else *outarch_ << *temp;
-			temp->assign_test_pattern(2); if (data_protocol_version_ >= 110) temp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get()); else *outarch_ << *temp;
+			temp->assign_test_pattern(4);
+			if (data_protocol_version_ >= 110)
+				temp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get());
+			else
+				*outarch_ << *temp;
+			temp->assign_test_pattern(2);
+			if (data_protocol_version_ >= 110)
+				temp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get());
+			else
+				*outarch_ << *temp;
 			// send off the newly created feedheader
 			async_write(*sock_,feedbuf_.data(),
 				lslboost::bind(&client_session::handle_send_feedheader_outcome,shared_from_this(),placeholders::error,placeholders::bytes_transferred));
@@ -393,7 +401,10 @@ void tcp_server::client_session::transfer_samples_thread(client_session_p) {
 					if (serv_->chunk_size_)
 						samp->pushthrough = (((++seqn)%(unsigned)serv_->chunk_size_) == 0);
 				// serialize the sample into the stream
-				if (data_protocol_version_ >= 110) samp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get()); else *outarch_ << *samp;
+				if (data_protocol_version_ >= 110)
+					samp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get());
+				else
+					*outarch_ << *samp;
 				// if the sample shall be pushed though...
 				if (samp->pushthrough) {
 					// send off the chunk that we aggregated so far

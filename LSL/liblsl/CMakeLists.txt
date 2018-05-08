@@ -4,6 +4,9 @@ project (LSL
 	LANGUAGES CXX)
 
 cmake_policy(SET CMP0042 NEW) # ENABLE CMP0042: MACOSX_RPATH is enabled by default.
+cmake_policy(SET CMP0063 NEW) # ENABLE CMP0063: Honor visibility for all targets
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+
 if(NOT CMAKE_DEBUG_POSTFIX)
 	set(CMAKE_DEBUG_POSTFIX -debug)
 endif()
@@ -105,6 +108,9 @@ function(lsllib_properties libname)
 		PUBLIC
 		LSLNOAUTOLINK # don't use #pragma(lib) in CMake builds
 	)
+	if(NOT MSVC)
+		target_compile_features(${libname} PRIVATE cxx_auto_type)
+	endif()
 endfunction()
 
 
@@ -115,7 +121,6 @@ set_target_properties(${target} PROPERTIES
 	VERSION ${LSL_VERSION_MAJOR}.${LSL_VERSION_MINOR}.${LSL_VERSION_PATCH}
 	PREFIX ""
 	OUTPUT_NAME "lib${target}${lslplatform}"
-	CXX_VISIBILITY_PRESET hidden
 )
 
 if(${LSL_BUILD_STATIC})

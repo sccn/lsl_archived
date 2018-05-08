@@ -10,11 +10,11 @@ There is an intro lecture/demo on LSL here: [http://www.youtube.com/watch?v=Y1at
 
 You may also wish to subscribe to the LSL mailing list here: [https://mailman.ucsd.edu/mailman/listinfo/lsl-l](https://mailman.ucsd.edu/mailman/listinfo/lsl-l).
 
-Hosted here is only the source code for the project. Develpers will want to clone this repo, then run 'python get_deps.py' to download all the 3rd party libraries from our ftp. 
+Hosted here is only the source code for the project. Developers will want to clone this repo, then run 'python get_deps.py' to download all the 3rd party libraries from our ftp. 
 
 # Download Binary Releases
 
-You can find recent releases on our FTP site : ftp://sccn.ucsd.edu/pub/software/LSL/
+You can find recent releases on our FTP site : [ftp://sccn.ucsd.edu/pub/software/LSL/](ftp://sccn.ucsd.edu/pub/software/LSL/)
 
 These releases may be slightly out of date. We are working toward an automated build and deployment system but it is not ready yet.
 
