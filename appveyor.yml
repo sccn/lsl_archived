@@ -26,7 +26,7 @@ build_script:
 - cmd: call "C:\Program Files (x86)\Microsoft Visual Studio %VCVER%\VC\vcvarsall.bat" %ARCH%
 - mkdir build
 - cd build
-- cmd: cmake -G Ninja -DQt5_DIR=C:/Qt/%QTVER%/%QTCOMPILER%/lib/cmake/Qt5 -DBOOST_ROOT=C:/Libraries/boost_1_66_0 %CMakeArgs% ../
+- cmd: cmake -G Ninja -DQt5_DIR=C:/Qt/%QTVER%/%QTCOMPILER%/lib/cmake/Qt5 -DBOOST_ROOT=C:/Libraries/boost_1_66_0 -DCMAKE_BUILD_TYPE=Release %CMakeArgs% ../
 - sh: sudo cmake -G Ninja ../ # Why is sudo needed here?
 - cmake --build . --config Release --target install
 artifacts:
