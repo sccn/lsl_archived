@@ -10,6 +10,7 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 if(NOT CMAKE_DEBUG_POSTFIX)
 	set(CMAKE_DEBUG_POSTFIX -debug)
 endif()
+option(LSL_UNIXFOLDERS "Use the unix folder layout for install targets" Off)
 
 # lsl uses boost, but several other projects (e.g. Matlab) also use boost.
 # To prevent clashes with different boost versions, lsl ships a subset of
@@ -102,7 +103,7 @@ if(GIT_FOUND)
 		OUTPUT_STRIP_TRAILING_WHITESPACE
 	)
 else()
-       set(lslgitrevision "unknown")
+	set(lslgitrevision "unknown")
 endif()
 set(LSL_VERSION_INFO "\"git:${lslgitrevision}/build:${CMAKE_BUILD_TYPE}/compiler:${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}/boost:\" BOOST_LIB_VERSION")
 
@@ -153,24 +154,30 @@ if (MINGW)
 	target_link_libraries (${target} PUBLIC ws2_32 wsock32 winmm)
 endif()
 
+if(LSL_UNIXFOLDERS)
+	set(LSLPREFIX "")
+else()
+	set(LSLPREFIX "LSL/")
+endif()
+
 install(TARGETS ${lsl_export_targets}
 	COMPONENT liblsl
-  EXPORT "${PROJECT_NAME}Config"
-  RUNTIME DESTINATION LSL/lib
-  LIBRARY DESTINATION LSL/lib
-  INCLUDES DESTINATION LSL/include
-  ARCHIVE DESTINATION LSL/lib
+	EXPORT "${PROJECT_NAME}Config"
+	RUNTIME DESTINATION ${LSLPREFIX}lib
+	LIBRARY DESTINATION ${LSLPREFIX}lib
+	INCLUDES DESTINATION ${LSLPREFIX}include
+	ARCHIVE DESTINATION ${LSLPREFIX}lib
 )
-# TODO: where to install this, see https://stackoverflow.com/a/10766438 
+
 install(EXPORT "${PROJECT_NAME}Config"
-	COMPONENT liblslheaders
-   NAMESPACE "LSL::"
-   DESTINATION LSL/cmake)
+	COMPONENT liblsl
+	NAMESPACE "LSL::"
+	DESTINATION "${LSLPREFIX}share/LSL")
 
 # install headers
 install(FILES ${headers}
-	COMPONENT "liblsl-dev"
-  DESTINATION LSL/include/
+	COMPONENT liblsl
+	DESTINATION "${LSLPREFIX}include"
 )
 
 install(FILES LSLCMake.cmake
