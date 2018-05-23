@@ -1,5 +1,5 @@
-#include <QtGui/QApplication>
-#include "mainwindow.h"
+#include <QApplication>
+#include "EGIAmpWindow.h"
 #include <string>
 #include <boost/algorithm/string.hpp>
 
@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
             config_file = argv[k+1];
 
     QApplication a(argc, argv);
-    MainWindow w(0,config_file);
+    EGIAmpWindow w(0,config_file);
     w.show();
 
     

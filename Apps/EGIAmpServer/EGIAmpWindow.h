@@ -1,34 +1,34 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef EGIAmpWindow_H
+#define EGIAmpWindow_H
 
 #include <QMainWindow>
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <boost/shared_ptr.hpp>
-#include <boost/thread.hpp>
 #include <boost/asio.hpp>
 #include <string>
 #include <vector>
+#include <thread>
+#include <atomic>
 
 // LSL API
 #include <lsl_cpp.h>
 
 namespace ip = boost::asio::ip;
 typedef ip::tcp::iostream socket_stream;
-typedef boost::shared_ptr<socket_stream> socket_stream_p;
 
 namespace Ui {
-class MainWindow;
+class EGIAmpWindow;
 }
 
-class MainWindow : public QMainWindow
+class EGIAmpWindow : public QMainWindow
 {
     Q_OBJECT
     
 public:
-    explicit MainWindow(QWidget *parent, const std::string &config_file);
-    ~MainWindow();
+	explicit EGIAmpWindow(QWidget *parent, const std::string &config_file);
+	EGIAmpWindow(const EGIAmpWindow&) = delete;
+	~EGIAmpWindow();
     
 private slots:
     // config file dialog ops (from main menu)
@@ -42,6 +42,7 @@ private slots:
     void closeEvent(QCloseEvent *ev);
 private:
 	void halt_ampserver(int id);
+	std::atomic<bool> stop_flag;
 
     // background data reader thread
 	void read_thread(const std::string &address, int amplifierId, int samplingRate, int nChannels);
@@ -50,13 +51,13 @@ private:
     void load_config(const std::string &filename);
     void save_config(const std::string &filename);
 	
-    boost::shared_ptr<boost::thread> reader_thread_;	// our reader thread
+	std::unique_ptr<std::thread> reader_thread_;	// our reader thread
 	// streams talking to the AmpServer
-	socket_stream_p commandStream_;
-	socket_stream_p notificationStream_;
-	socket_stream_p dataStream_;
+	socket_stream commandStream_;
+	socket_stream notificationStream_;
+	socket_stream dataStream_;
 
-    Ui::MainWindow *ui;
+	Ui::EGIAmpWindow *ui;
 };
 
-#endif // MAINWINDOW_H
+#endif // EGIAmpWindow_H
