@@ -6,14 +6,10 @@
 #include <iostream>
 #include <set>
 
-//#include "thread.hpp"
 #include <boost/thread.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/bind.hpp>
-#include <boost/iostreams/device/file_descriptor.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
-#include <boost/iostreams/filter/zlib.hpp>
 #include <boost/algorithm/string.hpp>
 
 #include <lsl_cpp.h>
@@ -76,7 +72,7 @@ const auto max_headers_wait = boost::posix_time::seconds(10);
 // maximum waiting time for moving into the footers phase while recording, in seconds
 const auto max_footers_wait = boost::posix_time::seconds(2);
 // maximum waiting time for subscribing to a stream, in seconds (if exceeded, stream subscription will take place later)
-const float max_open_wait = 5;
+const double max_open_wait = 5;
 // maximum time that we wait to join a thread, in seconds
 const boost::posix_time::seconds max_join_wait(5);
 
@@ -92,14 +88,7 @@ using offset_list = std::list<std::pair<double,double>>;
 // a map from streamid to offset_list
 using offset_lists = std::map<int,offset_list>;
 
-/* The following append was created by David Medine at SCCN on 2015/1/5.
- * This was done in order to make this file compliant with Standard C++.
- * The offending lines of code (which these are copies of) occur between lines
- * 529 and 598 and are commented out.
-*/
 
-//------------------------------------------------------
-//begin append:
 namespace detail{
 
 	// === writer functions ===
@@ -164,8 +153,6 @@ namespace detail{
 }
 
 using namespace detail;
-
-// end append
 
 //------------------------------------------------------
 
@@ -323,69 +310,8 @@ private:
 		}
 	}
 
-
-	/* // === writer functions === */
-
-	/* // store a sample's values to a stream (numeric version) */
-	/* template<class T> void write_sample_values(std::streambuf *dst, const std::vector<T> &sample) { */
-	/* 	// [Value1] .. [ValueN] *\/ */
-	/* 	for (std::size_t c=0;c<sample.size();c++) */
-	/* 		write_little_endian(dst,sample[c]); */
-	/* } */
-
-	/* // store a sample's values to a stream (string version) */
-	/* template<> void write_sample_values(std::streambuf *dst, const std::vector<std::string> &sample) { */
-	/* // [Value1] .. [ValueN] *\/ */
-	/* 	for (std::size_t c=0;c<sample.size();c++) { */
-	/* 		// [NumLengthBytes], [Length] (as varlen int) */
-	/* 		write_varlen_int(dst,sample[c].size()); */
-	/* 		// [StringContent] *\/ */
-	/* 		dst->sputn(sample[c].data(),sample[c].size()); */
-	/* 	} */
-	/* } */
-
 	// write a generic chunk
 	void write_chunk(chunk_tag_t tag, const std::string &content);
-
-	/* // write a variable-length integer (int8, int32, or int64) */
-	/* void write_varlen_int(std::streambuf *dst, boost::uint64_t val) { */
-	/* 	if (val < 256) { */
-	/* 		dst->sputc(1); */
-	/* 		dst->sputc((boost::uint8_t)val); */
-	/* 	} else */
-	/* 	if (val <= 4294967295) { */
-	/* 		dst->sputc(4); */
-	/* 		write_little_endian(dst,(boost::uint32_t)val); */
-	/* 	} else { */
-	/* 		dst->sputc(8); */
-	/* 		write_little_endian(dst,(boost::uint64_t)val); */
-	/* 	} */
-	/* } */
-
-	/* // write an integer value in little endian */
-	/* // derived from portable archive code by christian.pfligersdorffer@eos.info (under boost license) */
-	/* template <typename T> typename boost::enable_if<boost::is_integral<T> >::type write_little_endian(std::streambuf *dst,const T &t) { */
-	/* 	T temp; */
-	/* 	endian::store_little_endian<T,sizeof(T)>(&temp,t); */
-	/* 	dst->sputn((char*)&temp,sizeof(temp)); */
-	/* } */
-
-	/* // write a floating-point value in little endian */
-	/* // derived from portable archive code by christian.pfligersdorffer@eos.info (under boost license) */
-	/* template <typename T> typename boost::enable_if<boost::is_floating_point<T> >::type write_little_endian(std::streambuf *dst,const T &t) { */
-	/* 	typedef typename fp::detail::fp_traits<T>::type traits; */
-	/* 	typename traits::bits bits; */
-	/* 	// remap to bit representation */
-	/* 	switch (fp::fpclassify(t)) { */
-	/* 		case FP_NAN: bits = traits::exponent | traits::mantissa; break; */
-	/* 		case FP_INFINITE: bits = traits::exponent | (t<0) * traits::sign; break; */
-	/* 		case FP_SUBNORMAL: assert(std::numeric_limits<T>::has_denorm); */
-	/* 		case FP_ZERO: // note that floats can be ±0.0 */
-	/* 		case FP_NORMAL: traits::get_bits(t, bits); break; */
-	/* 		default: bits = 0; break; */
-	/* 	} */
-	/* 	write_little_endian(dst,bits); */
-	/* } */
 
 	// === phase registration & condition checks ===
 	// writing is coordinated across threads in three phases to keep the file chunks sorted

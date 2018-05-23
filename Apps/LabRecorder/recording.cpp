@@ -23,7 +23,7 @@ recording::recording(const std::string& filename, const std::vector<lsl::stream_
 	file_.push(boost::iostreams::file_descriptor_sink(filename,std::ios::binary | std::ios::trunc));
 	std::cout << "done." << std::endl;
 	// [MagicCode]
-	file_.rdbuf()->sputn("XDF:",4);
+	file_ << "XDF:";
 	// [FileHeader] chunk
 	write_chunk(ct_fileheader,"<?xml version=\"1.0\"?><info><version>1.0</version></info>");
 	// create a recording thread for each stream
@@ -119,15 +119,14 @@ void recording::record_from_streaminfo(const lsl::stream_info& src, bool phase_l
 				std::cout << "Subscribing to the stream " << src.name() << " is taking relatively long; collection from this stream will be delayed." << std::endl;
 			}
 
-			// retrieve the stream header & get its XML version
-			info = in->info();
-			std::string as_xml = info.as_xml();
 			// generate the [StreamHeader] chunk contents...
 			std::ostringstream hdr_content;
 			// [StreamId]
 			write_little_endian(hdr_content.rdbuf(),streamid);
 			// [Content]
-			hdr_content.rdbuf()->sputn(&as_xml[0],as_xml.size());
+			// retrieve the stream header & get its XML version
+			info = in->info();
+			hdr_content << info.as_xml();
 			// write the actual chunk
 			write_chunk(ct_streamheader,hdr_content.str());
 			std::cout << "Received header for stream " << src.name() << "." << std::endl;
@@ -273,7 +272,7 @@ void recording::write_chunk(chunk_tag_t tag, const std::string& content) {
 	// [Tag]
 	write_little_endian(file_.rdbuf(), static_cast<uint16_t>(tag));
 	// [Content]
-	file_.rdbuf()->sputn(content.data(),content.size());
+	file_ << content;
 }
 
 void recording::enter_headers_phase(bool phase_locked) {
@@ -295,7 +294,7 @@ void recording::leave_headers_phase(bool phase_locked) {
 void recording::enter_streaming_phase(bool phase_locked) {
 	if (phase_locked) {
 		boost::mutex::scoped_lock lock(phase_mut_);
-		ready_for_streaming_.timed_wait(lock, max_headers_wait, [&]() { return this->ready_for_streaming(); });
+		ready_for_streaming_.timed_wait(lock, max_headers_wait, [this]() { return this->ready_for_streaming(); });
 		streaming_to_finish_++;
 	}
 }
@@ -312,6 +311,6 @@ void recording::leave_streaming_phase(bool phase_locked) {
 void recording::enter_footers_phase(bool phase_locked) {
 	if (phase_locked) {
 		boost::mutex::scoped_lock lock(phase_mut_);
-		ready_for_footers_.timed_wait(lock, max_footers_wait, [&]() {return this->ready_for_footers(); });
+		ready_for_footers_.timed_wait(lock, max_footers_wait, [this]() {return this->ready_for_footers(); });
 	}
 }

@@ -5,7 +5,6 @@
 #include "ui_mainwindow.h"
 
 #include <QMainWindow>
-#include <QFileDialog>
 #include <QCloseEvent>
 #include <QListWidget>
 #include <QTimer>

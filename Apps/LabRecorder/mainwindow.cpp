@@ -6,23 +6,16 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <boost/lexical_cast.hpp>
-#include <boost/asio.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/filesystem.hpp>
-// #include <boost/algorithm/string.hpp>
-#include <algorithm>
 #include <QDateTime>
+#include <QFileDialog>
 #include <QMessageBox>
 #include <fstream>
 
 // recording class
 #include "recording.h"
-
-// global -- can't be in header file
-recording *currentRecording;
-
 
 MainWindow::MainWindow(QWidget *parent, const std::string &config_file) :
 QMainWindow(parent),
@@ -56,10 +49,10 @@ ui(new Ui::MainWindow) {
 
 void MainWindow::statusUpdate() const {
 	if(currentlyRecording) {
-		int elapsed = (static_cast<int>(lsl::local_clock()) - startTime);
+		auto elapsed = static_cast<unsigned int>(lsl::local_clock() - startTime);
 
-		std::ifstream in(recFilename.c_str(), std::ifstream::ate | std::ifstream::binary);
-		int size = in.tellg();
+		std::ifstream in(recFilename, std::ifstream::ate | std::ifstream::binary);
+		auto size = in.tellg();
 		QString timeString = QStringLiteral("Recording (%1); %2kb)").arg(
 			QDateTime::fromTime_t(elapsed).toUTC().toString("hh:mm:ss"),
 			QString::number(size / 1000));
@@ -119,24 +112,20 @@ void MainWindow::load_config(const std::string &filename) {
 				std::vector<std::string>words;
 				boost::algorithm::split(words, oss, boost::algorithm::is_any_of(" "), boost::algorithm::token_compress_on);
 
-				//boost::algorithm::trim_if(trio[2],boost::algorithm::is_any_of(" "));
-				//int val = boost::lexical_cast<int>(trio[2]);
 				std::string key = std::string(words[0] + " " + words[1]);
 				
 				int val = 0;
-				for(int l=2;l<words.size();l++){
-					if(words[l]=="post_clocksync"){val|=lsl::post_clocksync;}//std::cout<<words[l]<< " "<<val<<std::endl;}
-					if(words[l]=="post_dejitter"){val|=lsl::post_dejitter;}//std::cout<<words[l]<< " "<<val<<std::endl;}
-					if(words[l]=="post_monotonize"){val|=lsl::post_monotonize;}//std::cout<<words[l]<< " "<<val<<std::endl;}
-					if(words[l]=="post_threadsafe"){val|=lsl::post_threadsafe;}//std::cout<<words[l]<< " "<<val<<std::endl;}
-					if(words[l]=="post_ALL"){val=lsl::post_ALL;}//std::cout<<words[l]<< " "<<val<<std::endl;}	
-			
-					}
+				for (std::size_t l = 2; l < words.size(); l++) {
+					if (words[l] == "post_clocksync") { val |= lsl::post_clocksync; }
+					if (words[l] == "post_dejitter") { val |= lsl::post_dejitter; }
+					if (words[l] == "post_monotonize") { val |= lsl::post_monotonize; }
+					if (words[l] == "post_threadsafe") { val |= lsl::post_threadsafe; }
+					if (words[l] == "post_ALL") { val = lsl::post_ALL; }
+				}
 				syncOptionsByStreamName.insert(std::make_pair(key, val));
 				std::cout << "key = " << key << std::endl;
-				
 				std::cout << "val = " << val << std::endl;
-				}
+			}
 
 		}
 
@@ -163,11 +152,12 @@ void MainWindow::load_config(const std::string &filename) {
 		}
 
 		// get the path as a string
-		#if (win32)
-		std::string str_path = pt.get<std::string>("StorageLocation", "C:\\Recordings\\CurrentStudy\\exp%n\\untitled.xdf");
+		#ifdef win32
+		const char* defaultpath = "C:\\Recordings\\CurrentStudy\\exp%n\\untitled.xdf";
 		#else //win32
-		std::string str_path = pt.get<std::string>("StorageLocation", "exp%n/untitled.xdf");
+		const char* defaultpath = "exp%n/untitled.xdf";
 		#endif //win32
+		std::string str_path = pt.get<std::string>("StorageLocation", defaultpath);
 		ui->locationEdit->setText(str_path.c_str());
 
 		// scan the path for %n
@@ -308,17 +298,17 @@ void MainWindow::startRecording() {
 		if(pos_b<recFilename.size()) // check to make sure it is there
 			recFilename.replace(pos_b,  2, currentBlock);
  
-		if(boost::filesystem::exists(recFilename.c_str())) {
+		if(boost::filesystem::exists(recFilename)) {
 			size_t lastdot = recFilename.find_last_of('.');
 			for(int i=1;i<=9999;i++) { // search for highest _oldN
 				std::string rename_to = recFilename.substr(0, lastdot) +
 					"_old" + std::to_string(i) +
 					recFilename.substr(lastdot,recFilename.size());
 
-				if(!boost::filesystem::exists(rename_to.c_str())) { // found it
+				if(!boost::filesystem::exists(rename_to)) { // found it
 					try {
-						boost::filesystem::rename(boost::filesystem::path(recFilename.c_str()),
-							                      boost::filesystem::path(rename_to.c_str()));
+						boost::filesystem::rename(boost::filesystem::path(recFilename),
+							                      boost::filesystem::path(rename_to));
 					} catch(std::exception &e) {
 						QMessageBox::information(this,"Permissions issue", QString::fromStdString("Can not rename the file " + recFilename + " to " + rename_to + ": " + e.what()), QMessageBox::Ok);
 						return;
@@ -333,11 +323,11 @@ void MainWindow::startRecording() {
 		// regardless, we need to check for this one
 		std::string targetdir = recFilename.substr(0,recFilename.find_last_of("/\\"));
 		try {
-			if(!boost::filesystem::exists(targetdir.c_str()))
-				boost::filesystem::create_directories(targetdir.c_str());
+			if(!boost::filesystem::exists(targetdir))
+				boost::filesystem::create_directories(targetdir);
 		} catch(std::exception &e) {
 			std::cout << "with creating directory: " << e.what() << std::endl;
-			QMessageBox::information(this,"Permissions issue", ("Can not create the directory " + targetdir + ". Please check your permissions.").c_str(), QMessageBox::Ok);
+			QMessageBox::information(this,"Permissions issue", "Can not create the directory " + QString(targetdir.c_str()) + ". Please check your permissions.", QMessageBox::Ok);
 			return;
 		}
 

@@ -1,8 +1,6 @@
 #include <QApplication>
 #include "mainwindow.h"
 
-MainWindow *theWindow = nullptr;
-
 int main(int argc, char *argv[])
 {
 
