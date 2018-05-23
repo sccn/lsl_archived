@@ -34,8 +34,12 @@ else ()  # WIN32
 endif ()
 
 add_library (lslboost STATIC ${lslboost_sources} ${lslboost_sources_platform} ${lslboost_headers})
-target_compile_definitions(lslboost PUBLIC BOOST_ALL_NO_LIB BOOST_THREAD_BUILD_LIB BOOST_ASIO_ENABLE_OLD_SERVICES)
-target_include_directories(lslboost PUBLIC
+target_compile_definitions(lslboost PUBLIC
+	BOOST_ALL_NO_LIB
+	BOOST_THREAD_BUILD_LIB
+	BOOST_ASIO_ENABLE_OLD_SERVICES
+)
+target_include_directories(lslboost SYSTEM PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 target_link_libraries(lslboost PRIVATE ${Boost_LIBRARIES})
 set_target_properties(lslboost PROPERTIES
@@ -48,9 +52,5 @@ if(NOT MSVC)
   target_compile_features(lslboost PRIVATE cxx_auto_type)
 endif ()
 
-install(TARGETS lslboost EXPORT lslboostConfig
-	COMPONENT "liblsl-dev"
-	ARCHIVE DESTINATION LSL/lib)
-install(EXPORT lslboostConfig
-	COMPONENT "liblsl-dev"
-	DESTINATION LSL/cmake)
+export(TARGETS lslboost
+	FILE lslboostConfig.cmake)
