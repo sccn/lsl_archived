@@ -172,4 +172,11 @@ install(FILES ${headers}
 	COMPONENT "liblsl-dev"
   DESTINATION LSL/include/
 )
-set(CPACK_COMPONENT_liblsl-dev_DEPENDS liblsl GLOBAL_SCOPE)
+
+install(FILES LSLCMake.cmake
+	COMPONENT liblsl
+	DESTINATION "${LSLPREFIX}share/LSL")
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
+include(LSLCMake)
+LSLGenerateCPackConfig()
