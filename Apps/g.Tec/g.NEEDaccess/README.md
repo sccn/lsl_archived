@@ -37,35 +37,22 @@ Pass the additional -DLSLAPPS_gNEEDaccess=ON argument to the cmake command at th
 
 ## Usage Instructions
 
-The usage instructions are a bit complicated right now until the GUI elements for each device are built out.
-
-    * For g.USBamp(s), the LSL app should have all the functionality you need except for checking impedances.
-        * Use g.NEEDaccessDemo client app to check impedances.
-    * For g.Nautilus, use the g.NEEDaccessDemo client to configure the device, which gets saved to the device (yay!)
-        * Some parameters don't get saved (boo!). Use the LSL app's config menu to set these.
-    * For g.HIamp, use the g.NEEDaccessDemo client to configure the device AND start acquisition.
-        * The LSL app will not have ownership over the device connection.
-
-### Preliminary device configuration (g.Nautilus, g.HIamp only)
-
-1. Run the g.NEEDaccess - Demo Client.
-1. Find connected devices...
-1. Click on your device, then click on Select.
-1. In the new Device Configuration window, configure your channels, then click on OK.
-1. For g.Nautilus, close the client.
-1. For g.HIamp, start acquisition.
-
-### Running the app
+    * Use g.NEEDaccessDemo client app to check impedances.
+        * The gNEEDaccess LSL app can refresh impedance values for some of the supported devices, but the g.NEEDaccessDemo client has a nicer user interface for this
+    * Quite the g.NEEDaccessDemo client before running this LSL app.
 
 1. Run gNEEDaccess.exe
 1. Set the server IP and port, client port, then click Scan.
 1. Select your device(s) from the list and check appropriate boxes, then click Connect.
     * Use ctrl + click to select more than one g.USBamp
     * The 'master' g.USBamp should be first in the list of selected devices. You can drag and drop it up.
-1. Click on "Config" and configure your device. Then click OK to set the device config.
+1. Click on "Config" and configure your device.
+1. Change your settings
+    * Use the load/save menu to load/save configs.
+1. Click OK to set the device config and close the config Window.
 1. Click Go! when ready to start streaming over LSL.
 1. When finished, click Stop!, then Disconnect, then close the App.
 
 ## Known Issues
 
-* Requiring the demo client to configure devices is less than ideal. This will go away when all the GUI elements are done.
+* Devices use the hardware-provided defaults upon initialization. Loading the config screen will then always use the <devicename>_default.cfg file provided (currently not available for g.USBamp). You can save yourself some effort by backing up the original config, then saving your custom config over the _default.cfg file so this is automatically loaded next time you load the config screen.

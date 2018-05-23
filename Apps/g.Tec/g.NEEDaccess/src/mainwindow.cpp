@@ -98,7 +98,7 @@ void MainWindow::on_scanPushButton_clicked()
     ui->scanPushButton->setDisabled(true);
 
 	// Copy the server info from UI elements to m_hostEndpoint.
-	strcpy(this->m_hostEndpoint.IpAddress, ui->lineEdit_serverip->text().toLatin1().data());
+	std::strcpy(this->m_hostEndpoint.IpAddress, ui->lineEdit_serverip->text().toLatin1().data());
 	this->m_hostEndpoint.Port = ui->serverPortSpinBox->value();
 	this->m_localEndpoint.Port = ui->clientPortSpinBox->value();
 
@@ -279,7 +279,7 @@ void MainWindow::on_devCfgPushButton_clicked()
 	if (m_devConfigs[0].DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GNAUTILUS)
 	{
 		NautilusDlg cfg_dlg;
-		cfg_dlg.set_config(m_devConfigs[0].Configuration);
+		cfg_dlg.set_config(&m_connectionHandle, m_devConfigs[0], &m_chanLabels, &m_chanImpedances);
 		cfg_dlg.exec();
 	}
 	else if (m_devConfigs[0].DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GUSBAMP)
@@ -458,38 +458,41 @@ void MainWindow::on_goPushButton_clicked()
 
 				for (size_t chan_ix = 0; chan_ix < GDS_GHIAMP_CHANNELS_MAX; chan_ix++)
 				{
-					chan_info_type new_chan_info;
-					new_chan_info.enabled = cfg_dev->Channels[chan_ix].Acquire;
-					new_chan_info.label = m_chanLabels[chan_ix];
-					new_chan_info.type = "EEG";
-					new_chan_info.unit = "uV";
-					if (m_chanImpedances.size() > chan_ix)
+					if (cfg_dev->Channels[chan_ix].Acquire)
 					{
-						new_chan_info.impedance = m_chanImpedances[chan_ix];
+						chan_info_type new_chan_info;
+						new_chan_info.enabled = cfg_dev->Channels[chan_ix].Acquire;
+						new_chan_info.label = m_chanLabels[chan_ix];
+						new_chan_info.type = "EEG";
+						new_chan_info.unit = "uV";
+						if (m_chanImpedances.size() > chan_ix)
+						{
+							new_chan_info.impedance = m_chanImpedances[chan_ix];
+						}
+						// Add filter info
+						new_chan_info.filtering.clear();
+						if (cfg_dev->Channels[chan_ix].BandpassFilterIndex >= 0)
+						{
+							filter_type bpfilt;
+							bpfilt.filter_class = filter_type::bandpass;
+							bpfilt.lower = bandpassFilters[cfg_dev->Channels[chan_ix].BandpassFilterIndex].LowerCutoffFrequency;
+							bpfilt.upper = bandpassFilters[cfg_dev->Channels[chan_ix].BandpassFilterIndex].UpperCutoffFrequency;
+							bpfilt.order = bandpassFilters[cfg_dev->Channels[chan_ix].BandpassFilterIndex].Order;
+							// TODO: type, design
+							new_chan_info.filtering.push_back(bpfilt);
+						}
+						if (cfg_dev->Channels[chan_ix].NotchFilterIndex >= 0)
+						{
+							filter_type notchfilt;
+							notchfilt.filter_class = filter_type::notch;
+							notchfilt.lower = notchFilters[cfg_dev->Channels[chan_ix].NotchFilterIndex].LowerCutoffFrequency;
+							notchfilt.upper = notchFilters[cfg_dev->Channels[chan_ix].NotchFilterIndex].UpperCutoffFrequency;
+							notchfilt.order = notchFilters[cfg_dev->Channels[chan_ix].NotchFilterIndex].Order;
+							// TODO: type, design
+							new_chan_info.filtering.push_back(notchfilt);
+						}
+						m_devInfo.channel_infos.push_back(new_chan_info);
 					}
-					// Add filter info
-					new_chan_info.filtering.clear();
-					if (cfg_dev->Channels[chan_ix].BandpassFilterIndex >= 0)
-					{
-						filter_type bpfilt;
-						bpfilt.filter_class = filter_type::bandpass;
-						bpfilt.lower = bandpassFilters[cfg_dev->Channels[chan_ix].BandpassFilterIndex].LowerCutoffFrequency;
-						bpfilt.upper = bandpassFilters[cfg_dev->Channels[chan_ix].BandpassFilterIndex].UpperCutoffFrequency;
-						bpfilt.order = bandpassFilters[cfg_dev->Channels[chan_ix].BandpassFilterIndex].Order;
-						// TODO: type, design
-						new_chan_info.filtering.push_back(bpfilt);
-					}
-					if (cfg_dev->Channels[chan_ix].NotchFilterIndex >= 0)
-					{
-						filter_type notchfilt;
-						notchfilt.filter_class = filter_type::notch;
-						notchfilt.lower = notchFilters[cfg_dev->Channels[chan_ix].NotchFilterIndex].LowerCutoffFrequency;
-						notchfilt.upper = notchFilters[cfg_dev->Channels[chan_ix].NotchFilterIndex].UpperCutoffFrequency;
-						notchfilt.order = notchFilters[cfg_dev->Channels[chan_ix].NotchFilterIndex].Order;
-						// TODO: type, design
-						new_chan_info.filtering.push_back(notchfilt);
-					}
-					m_devInfo.channel_infos.push_back(new_chan_info);
 				}
 				if (cfg_dev->TriggerLinesEnabled)
 				{
@@ -508,8 +511,18 @@ void MainWindow::on_goPushButton_clicked()
 				m_devInfo.nominal_srate = double(cfg_dev->SamplingRate);
 				m_devInfo.scans_per_block = size_t(cfg_dev->NumberOfScans);
 
-				// Get channel names
+				// Get filter details
+				size_t bandpassFiltersCount;
+				size_t notchFiltersCount;
+				GDS_RESULT res = GDS_GNAUTILUS_GetBandpassFilters(m_connectionHandle, device_names, NULL, &bandpassFiltersCount);
+				std::vector<GDS_FILTER_INFO> bandpassFilters(bandpassFiltersCount);
+				res = GDS_GNAUTILUS_GetBandpassFilters(m_connectionHandle, device_names, bandpassFilters.data(), &bandpassFiltersCount);
+				res = GDS_GNAUTILUS_GetNotchFilters(m_connectionHandle, device_names, NULL, &notchFiltersCount);
+				std::vector<GDS_FILTER_INFO> notchFilters(notchFiltersCount);
+				res = GDS_GNAUTILUS_GetNotchFilters(m_connectionHandle, device_names, notchFilters.data(), &notchFiltersCount);
 
+				// Get channel names. This seems broken.
+				/*
 				// First determine how many channel names there are.
 				uint32_t mountedModulesCount = 0;
 				size_t electrodeNamesCount = 0;
@@ -519,19 +532,54 @@ void MainWindow::on_goPushButton_clicked()
 				char(*electrode_names)[GDS_GNAUTILUS_ELECTRODE_NAME_LENGTH_MAX] = new char[electrodeNamesCount][GDS_GNAUTILUS_ELECTRODE_NAME_LENGTH_MAX];
 				success &= handleResult("GDS_GNAUTILUS_GetChannelNames",
 					GDS_GNAUTILUS_GetChannelNames(m_connectionHandle, device_names, &mountedModulesCount, electrode_names, &electrodeNamesCount));
+					*/
 
 				// Copy the result into thisDevInfo
-				for (int chan_ix = 0; chan_ix < electrodeNamesCount; chan_ix++)
+				for (int chan_ix = 0; chan_ix < GDS_GNAUTILUS_CHANNELS_MAX; chan_ix++)
 				{
-					chan_info_type new_chan_info;
-					new_chan_info.enabled = cfg_dev->Channels[chan_ix].Enabled;
-					new_chan_info.label = electrode_names[chan_ix];
-					new_chan_info.type = "EEG";
-					new_chan_info.unit = "uV";
-					m_devInfo.channel_infos.push_back(new_chan_info);
+					if (cfg_dev->Channels[chan_ix].Enabled)
+					{
+						chan_info_type new_chan_info;
+						new_chan_info.enabled = cfg_dev->Channels[chan_ix].Enabled;
+						new_chan_info.label = m_chanLabels[chan_ix];
+						new_chan_info.type = "EEG";
+						new_chan_info.unit = "uV";
+
+						if (m_chanImpedances.size() > chan_ix)
+						{
+							new_chan_info.impedance = m_chanImpedances[chan_ix];
+						}
+						// Add filter info
+						new_chan_info.filtering.clear();
+						if (cfg_dev->Channels[chan_ix].BandpassFilterIndex >= 0)
+						{
+							filter_type bpfilt;
+							bpfilt.filter_class = filter_type::bandpass;
+							bpfilt.lower = bandpassFilters[cfg_dev->Channels[chan_ix].BandpassFilterIndex].LowerCutoffFrequency;
+							bpfilt.upper = bandpassFilters[cfg_dev->Channels[chan_ix].BandpassFilterIndex].UpperCutoffFrequency;
+							bpfilt.order = bandpassFilters[cfg_dev->Channels[chan_ix].BandpassFilterIndex].Order;
+							// TODO: type, design
+							new_chan_info.filtering.push_back(bpfilt);
+						}
+						if (cfg_dev->Channels[chan_ix].NotchFilterIndex >= 0)
+						{
+							filter_type notchfilt;
+							notchfilt.filter_class = filter_type::notch;
+							notchfilt.lower = notchFilters[cfg_dev->Channels[chan_ix].NotchFilterIndex].LowerCutoffFrequency;
+							notchfilt.upper = notchFilters[cfg_dev->Channels[chan_ix].NotchFilterIndex].UpperCutoffFrequency;
+							notchfilt.order = notchFilters[cfg_dev->Channels[chan_ix].NotchFilterIndex].Order;
+							// TODO: type, design
+							new_chan_info.filtering.push_back(notchfilt);
+						}
+						// TODO: Sensitivity.
+
+						m_devInfo.channel_infos.push_back(new_chan_info);
+					}
+					
 				}
-				delete[] electrode_names;
-				electrode_names = NULL;
+
+				// delete[] electrode_names;
+				// electrode_names = NULL;
 
 				if (cfg_dev->AccelerationData)
 				{

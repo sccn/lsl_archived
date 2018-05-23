@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>361</width>
-    <height>112</height>
+    <width>836</width>
+    <height>681</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,124 +21,341 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>361</width>
-     <height>111</height>
+     <width>821</width>
+     <height>681</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,1">
+    <property name="spacing">
+     <number>0</number>
+    </property>
     <item>
      <layout class="QGridLayout" name="config_layout">
-      <item row="0" column="0">
+      <item row="0" column="0" colspan="2">
        <widget class="QPushButton" name="loadCfgButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>Load Config</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="0" column="2" colspan="2">
        <widget class="QPushButton" name="saveCfgButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>Save Config</string>
         </property>
        </widget>
       </item>
-      </layout>
-     </item>
+      <item row="1" column="0">
+       <widget class="QSpinBox" name="bipolar_spinBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="bipolar_pushButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Apply Bipolar</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QComboBox" name="bandpass_comboBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QPushButton" name="bandpass_pushButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Apply Bandpass</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QComboBox" name="inputrange_comboBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="inputrange_pushButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Apply Range</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QComboBox" name="notch_comboBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="3">
+       <widget class="QPushButton" name="notch_pushButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Apply Notch</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
     <item>
-     <widget class="QGroupBox" name="devCfgGrpBox">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="title">
-       <string>Device Settings</string>
-      </property>
-      <widget class="QWidget" name="layoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>351</width>
-         <height>61</height>
-        </rect>
-       </property>
-       <layout class="QGridLayout" name="cb_gridLayout">
-        <property name="sizeConstraint">
-         <enum>QLayout::SetDefaultConstraint</enum>
+     <layout class="QGridLayout" name="device_layout" rowstretch="1,1,8">
+      <item row="0" column="0">
+       <widget class="QLabel" name="dev_label">
+        <property name="text">
+         <string>DevName</string>
         </property>
-        <property name="spacing">
-         <number>0</number>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
-        <item row="1" column="4">
-         <widget class="QCheckBox" name="validationCheckBox">
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="impedance_pushButton">
+        <property name="text">
+         <string>Get Impedances</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <layout class="QHBoxLayout" name="samplerate_layout">
+        <item>
+         <widget class="QLabel" name="samplerate_label">
           <property name="text">
-           <string>Valid. Indic.</string>
+           <string>Sampling Rate (Hz):</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="CARCheckBox">
-          <property name="text">
-           <string>CAR</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QCheckBox" name="accelCheckBox">
-          <property name="text">
-           <string>Accel. Data</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QCheckBox" name="counterCheckBox">
-          <property name="text">
-           <string>Counter</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QCheckBox" name="noiseCheckBox">
-          <property name="text">
-           <string>Noise Red.</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QCheckBox" name="batteryCheckBox">
-          <property name="text">
-           <string>Battery Level</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="4">
-         <widget class="QCheckBox" name="digitalCheckBox">
-          <property name="text">
-           <string>Digital Inputs</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QCheckBox" name="linkCheckBox">
-          <property name="text">
-           <string>Link Quality</string>
-          </property>
-         </widget>
+        <item>
+         <widget class="QComboBox" name="samplerate_comboBox"/>
         </item>
        </layout>
-      </widget>
-     </widget>
+      </item>
+      <item row="0" column="3">
+       <layout class="QHBoxLayout" name="networkchan_layout">
+        <item>
+         <widget class="QLabel" name="networkchan_label">
+          <property name="text">
+           <string>Network Channel:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="networkchan_comboBox"/>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0" colspan="4">
+       <widget class="QGroupBox" name="devCfgGrpBox">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="title">
+         <string>Device Settings</string>
+        </property>
+        <widget class="QWidget" name="layoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>371</width>
+           <height>42</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="cb_gridLayout">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="noiseCheckBox">
+            <property name="text">
+             <string>Noise Red.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="CARCheckBox">
+            <property name="text">
+             <string>CAR</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="accelCheckBox">
+            <property name="text">
+             <string>Accel. Data</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="counterCheckBox">
+            <property name="text">
+             <string>Counter</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QCheckBox" name="batteryCheckBox">
+            <property name="text">
+             <string>Battery Level</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QCheckBox" name="digitalCheckBox">
+            <property name="text">
+             <string>Digital Inputs</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QCheckBox" name="validationCheckBox">
+            <property name="text">
+             <string>Valid. Indic.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QCheckBox" name="linkCheckBox">
+            <property name="text">
+             <string>Link Quality</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="4">
+       <widget class="QTableWidget" name="channels_tableWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <attribute name="horizontalHeaderMinimumSectionSize">
+         <number>34</number>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>25</number>
+        </attribute>
+        <attribute name="verticalHeaderMinimumSectionSize">
+         <number>15</number>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>Channel</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Acquire</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Range Index</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Bipolar Index</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Bandpass Index</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Notch Index</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>In CAR</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>In Noise Red.</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Impedance</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
      <widget class="QDialogButtonBox" name="buttonBox">
