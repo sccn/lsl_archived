@@ -1,58 +1,54 @@
 #include <iostream>
 #include <lsl_cpp.h>
 #include <string>
-using namespace std; // std::cout, std::cin, std::string, std::endl;
 
 /**
-* Example program that demonstrates how to resolve a specific stream on the lab
-* network and how to connect to it in order to receive data.
-*/
+ * Example program that demonstrates how to resolve a specific stream on the lab
+ * network and how to connect to it in order to receive data.
+ */
 
-int main(int argc, char *argv[]) {
-  string field, value;
-  if (argc != 3) {
-	cout << "This connects to a stream which has a particular value for a "
-			"given field and receives data."
-		 << endl;
-	cout << "Please enter a field name and the desired value (e.g. \"type "
-			"EEG\" (without the quotes)):"
-		 << endl;
-	cin >> field >> value;
-  } else {
-	field = argv[1];
-	value = argv[2];
-  }
+int main(int argc, char* argv[]) {
+	std::string field, value;
+	const int max_samples = argc > 3 ? std::stoi(argv[3]) : 10;
+	if (argc < 3) {
+		std::cout << "This connects to a stream which has a particular value for a "
+		             "given field and receives data.\nPlease enter a field name and the desired "
+		             "value (e.g. \"type EEG\" (without the quotes)):"
+		          << std::endl;
+		std::cin >> field >> value;
+	} else {
+		field = argv[1];
+		value = argv[2];
+	}
 
-  // try {
+	// resolve the stream of interet
+	std::cout << "Now resolving streams..." << std::endl;
+	std::vector<lsl::stream_info> results = lsl::resolve_stream(field, value);
 
-  // resolve the stream of interet
-  cout << "Now resolving streams..." << endl;
-  vector<lsl::stream_info> results = lsl::resolve_stream(field, value);
+	std::cout << "Here is what was resolved: " << std::endl;
+	std::cout << results[0].as_xml() << std::endl;
 
-  cout << "Here is what was resolved: " << endl;
-  cout << results[0].as_xml() << endl;
+	// make an inlet to get data from it
+	std::cout << "Now creating the inlet..." << std::endl;
+	lsl::stream_inlet inlet(results[0]);
 
-  // make an inlet to get data from it
-  cout << "Now creating the inlet..." << endl;
-  lsl::stream_inlet inlet(results[0]);
+	// start receiving & displaying the data
+	std::cout << "Now pulling samples..." << std::endl;
 
-  // start receiving & displaying the data
-  cout << "Now pulling samples..." << endl;
-  while (true) {
-	// get the sample
-	float sample[8];
-	double ts = inlet.pull_sample(sample, 8);
+	std::vector<float> sample;
+	for(int i=0; i < max_samples; ++i) {
+		// get the sample
+		double ts = inlet.pull_sample(sample);
 
-	// display
-	for (unsigned c = 0; c < 8; c++)
-	  cout << "\t" << sample[c];
-	cout << endl;
-  }
+		// display
+		std::cout << ts << ':';
+		for (auto c: sample) std::cout << "\t" << c;
+		std::cout << std::endl;
+	}
 
-  //} catch(std::exception &e) {
-  //	cerr << "Got an exception: " << e.what() << endl;
-  //}
-  cout << "Press any key to exit. " << endl;
-  cin.get();
-  return 0;
+	if(argc == 1) {
+		std::cout << "Press any key to exit. " << std::endl;
+		std::cin.get();
+	}
+	return 0;
 }
