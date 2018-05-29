@@ -1,6 +1,5 @@
 #include <iostream>
 #include <boost/asio.hpp>
-#include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
@@ -244,11 +243,11 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 
 			// check request validity
 			if (request_protocol_version/100 > api_config::get_instance()->use_protocol_version()/100) {
-				send_status_message((lslboost::format("LSL/%1% 505 Version not supported") % api_config::get_instance()->use_protocol_version()).str());
+				send_status_message("LSL/"+lslboost::lexical_cast<std::string>(api_config::get_instance()->use_protocol_version())+" 505 Version not supported");
 				return;
 			}
 			if (!request_uid.empty() && request_uid != serv_->info_->uid()) {
-				send_status_message((lslboost::format("LSL/%1% 404 Not found") % api_config::get_instance()->use_protocol_version()).str());
+				send_status_message("LSL/"+lslboost::lexical_cast<std::string>(api_config::get_instance()->use_protocol_version())+" 404 Not found");
 				return;
 			}
 
