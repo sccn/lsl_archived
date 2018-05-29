@@ -101,7 +101,7 @@ namespace lsl {
 	* Get a string containing library information. The format of the string shouldn't be used
 	* for anything important except giving a a debugging person a good idea which exact library
 	* version is used. */
-	inline const char* lsl_library_info() { return lsl_library_info(); }
+	inline const char* library_info() { return lsl_library_info(); }
 
     /**
     * Obtain a local system time stamp in seconds. The resolution is better than a millisecond.
