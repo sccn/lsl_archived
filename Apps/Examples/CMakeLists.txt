@@ -30,4 +30,5 @@ endfunction()
 
 addlslexample(CppSendRand cpp)
 addlslexample(CppReceive cpp)
+addlslexample(CppReceiveStringMarkers cpp)
 addlslexample(SendDataC c)
