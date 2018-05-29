@@ -19,7 +19,10 @@ using namespace lslboost::asio;
 * @param recover Try to silently recover lost streams that are recoverable (=those that that have a source_id set).
 *				 In all other cases (recover is false or the stream is not recoverable) a lost_error is thrown where indicated if the stream's source is lost (e.g., due to an app or computer crash).
 */
-inlet_connection::inlet_connection(const stream_info_impl &info, bool recover): type_info_(info), host_info_(info), recovery_enabled_(recover), tcp_protocol_(tcp::v4()), udp_protocol_(udp::v4()), lost_(false), shutdown_(false), last_receive_time_(lsl_clock()), active_transmissions_(0) {
+inlet_connection::inlet_connection(const stream_info_impl &info, bool recover):
+    type_info_(info), host_info_(info), tcp_protocol_(tcp::v4()), udp_protocol_(udp::v4()),
+    recovery_enabled_(recover), lost_(false), shutdown_(false),
+    last_receive_time_(lsl_clock()), active_transmissions_(0) {
 	// if the given stream_info is already fully resolved...
 	if (!host_info_.v4address().empty() || !host_info_.v6address().empty()) {
 

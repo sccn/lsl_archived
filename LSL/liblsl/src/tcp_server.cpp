@@ -135,7 +135,9 @@ void tcp_server::close_inflight_sockets() {
 
 
 /// Instantiate a new session & its socket.
-tcp_server::client_session::client_session(const tcp_server_p &serv): registered_(false), io_(serv->io_), serv_(serv), sock_(tcp_socket_p(new tcp::socket(*serv->io_))), requeststream_(&requestbuf_), use_byte_order_(0), data_protocol_version_(100) {	}
+tcp_server::client_session::client_session(const tcp_server_p &serv):
+    registered_(false), io_(serv->io_), serv_(serv), sock_(tcp_socket_p(new tcp::socket(*serv->io_))),
+    requeststream_(&requestbuf_), use_byte_order_(0), data_protocol_version_(100) {	}
 
 /**
 * Destructor. Unregisters the socket from the server & closes it.
