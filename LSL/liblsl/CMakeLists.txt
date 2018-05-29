@@ -106,6 +106,7 @@ else()
 	set(lslgitrevision "unknown")
 endif()
 set(LSL_VERSION_INFO "\"git:${lslgitrevision}/build:${CMAKE_BUILD_TYPE}/compiler:${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}/boost:\" BOOST_LIB_VERSION")
+set_source_files_properties("src/lsl_freefuncs_c.cpp" PROPERTIES COMPILE_DEFINITIONS LSL_LIBRARY_INFO_STR=${LSL_VERSION_INFO})
 
 set(target lsl)
 set(lsl_export_targets ${target})
@@ -121,7 +122,6 @@ function(lsllib_properties libname)
 	target_compile_definitions(${libname} PRIVATE
 		LIBLSL_EXPORTS
 		_SCL_SECURE_NO_WARNINGS _CRT_SECURE_NO_WARNINGS
-		LSL_LIBRARY_INFO_STR=${LSL_VERSION_INFO}
 		PUBLIC
 		LSLNOAUTOLINK # don't use #pragma(lib) in CMake builds
 	)
