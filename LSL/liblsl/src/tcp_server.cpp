@@ -194,7 +194,7 @@ void tcp_server::client_session::handle_read_command_outcome(error_code err) {
 			if (lslboost::algorithm::starts_with(method,"LSL:streamfeed/")) {
 				// streamfeed request with version: read feed parameters
 				std::vector<std::string> parts; lslboost::algorithm::split(parts,method,lslboost::algorithm::is_any_of(" \t"));
-				int request_protocol_version = lslboost::lexical_cast<int>(parts[0].substr(parts[0].find_first_of("/")+1));
+				int request_protocol_version = lslboost::lexical_cast<int>(parts[0].substr(parts[0].find_first_of('/')+1));
 				std::string request_uid = (parts.size()>1) ? parts[1] : "";
 				async_read_until(*sock_, requestbuf_, "\r\n\r\n",
 					lslboost::bind(&client_session::handle_read_feedparams,shared_from_this(),request_protocol_version,request_uid,placeholders::error));
@@ -264,12 +264,12 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 				char buf[16384] = {0};
 				while (requeststream_.getline(buf,sizeof(buf)) && (buf[0] != '\r')) {
 					std::string hdrline(buf);
-					int colon = hdrline.find_first_of(":");
+					std::size_t colon = hdrline.find_first_of(':');
 					if (colon != std::string::npos) {
 						// extract key & value
 						std::string type = to_lower_copy(trim_copy(hdrline.substr(0,colon))), rest = to_lower_copy(trim_copy(hdrline.substr(colon+1)));
 						// strip off comments
-						int semicolon = rest.find_first_of(";");
+						std::size_t semicolon = rest.find_first_of(';');
 						if (semicolon != std::string::npos)
 							rest = rest.substr(0,semicolon);
 						// get the header information
