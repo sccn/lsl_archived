@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.5)
 project (LSL
-	VERSION 1.4.0
+	VERSION 1.12.0
 	LANGUAGES CXX)
 
 cmake_policy(SET CMP0042 NEW) # ENABLE CMP0042: MACOSX_RPATH is enabled by default.

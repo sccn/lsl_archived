@@ -1,6 +1,6 @@
 # Common functions and settings for LSL
 
-message(STATUS "Included LSL CMake helpers, rev. 5")
+message(STATUS "Included LSL CMake helpers, rev. 7")
 
 # set build type and default install dir if not done already
 if(NOT CMAKE_BUILD_TYPE)
@@ -67,9 +67,9 @@ function(installLSLAuxFiles target)
 		set(destdir ${destdir}/${target}.app/Contents/MacOS)
 	endif()
 	if("${ARGV1}" STREQUAL "directory")
-		install(DIRECTORY ${ARGV2} DESTINATION ${destdir} COMPONENT "LSL${PROJECT_NAME}")
+		install(DIRECTORY ${ARGV2} DESTINATION ${destdir} COMPONENT "${PROJECT_NAME}")
 	else()
-		install(FILES ${ARGN} DESTINATION ${destdir} COMPONENT "LSL${PROJECT_NAME}")
+		install(FILES ${ARGN} DESTINATION ${destdir} COMPONENT "${PROJECT_NAME}")
 	endif()
 endfunction()
 
@@ -84,7 +84,7 @@ function(installLSLApp target)
 	set(CPACK_COMPONENT_${PROJECT_NAME}_DEPENDS liblsl PARENT_SCOPE)
 	if(LSL_UNIXFOLDERS)
 		install(TARGETS ${target}
-			COMPONENT "LSL${PROJECT_NAME}"
+			COMPONENT "${PROJECT_NAME}"
 			RUNTIME DESTINATION bin
 			LIBRARY DESTINATION lib
 		)
@@ -100,7 +100,7 @@ endfunction()
 # e.g. C:/LSL/BrainAmpSeries/BrainAmpSeries.exe
 function(installLSLAppSingleFolder target)
 	install(TARGETS ${target}
-		COMPONENT "LSL${PROJECT_NAME}"
+		COMPONENT "${PROJECT_NAME}"
 		BUNDLE DESTINATION ${PROJECT_NAME}
 		RUNTIME DESTINATION ${PROJECT_NAME}
 		LIBRARY DESTINATION ${PROJECT_NAME}/lib
@@ -280,38 +280,63 @@ if(WIN32 AND MSVC)
 	endif()
 endif()
 
+
+# CPack configuration
+include(CPackComponent)
+cpack_add_component(${PROJECT_NAME}
+	DISPLAY_NAME ${PROJECT_NAME}
+	DESCRIPTION "${PROJECT_NAME} ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+
 macro(LSLGenerateCPackConfig)
-	# CPack configuration
-	set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
-	set(CPACK_PACKAGE_NAME lsl)
-	set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
-	set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
-	set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
-	set(CPACK_STRIP_FILES ON)
-	set(SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
+	# top level CMakeLists.txt?
+	if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+		# CPack configuration
+		set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+		set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+		set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+		set(CPACK_STRIP_FILES ON)
+		set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
+		set(CPACK_PACKAGE_NAME lsl)
+		if(APPLE)
+			set(CPACK_GENERATOR "TBZ2")
+			set(LSL_OS "OSX${lslplatform}")
+		elseif(WIN32)
+			set(CPACK_GENERATOR "7Z")
+			set(LSL_OS "Win${lslplatform}-MSVC${_vs_ver}")
+		elseif(UNIX)
+			set(CPACK_GENERATOR DEB)
+			set(CPACK_SET_DESTDIR 1)
+			set(CPACK_INSTALL_PREFIX "/usr")
+			set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Tristan Stenner <ttstenner@gmail.com>")
+			set(CPACK_DEBIAN_ENABLE_COMPONENT_DEPENDS 1)
+			set(CPACK_DEB_COMPONENT_INSTALL ON)
+			set(CPACK_DEBIAN_PACKAGE_PRIORITY optional)
 
-	if(APPLE)
-		set(CPACK_GENERATOR "TBZ2")
-	elseif(WIN32)
-		set(CPACK_GENERATOR "ZIP")
-	elseif(UNIX)
-		set(CPACK_GENERATOR DEB)
-		set(CPACK_SET_DESTDIR 1)
-		set(CPACK_INSTALL_PREFIX "/usr")
-		set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Tristan Stenner <ttstenner@gmail.com>")
-		set(CPACK_DEBIAN_ENABLE_COMPONENT_DEPENDS 1)
-		set(CPACK_DEB_COMPONENT_INSTALL ON)
-		set(CPACK_DEBIAN_PACKAGE_PRIORITY optional)
+			# include distribution name (e.g. trusty or xenial) in the file name
+			# only works on CMake>=3.6, does nothing on CMake<3.6
+			find_program(LSB_RELEASE lsb_release)
+			execute_process(COMMAND ${LSB_RELEASE} -cs
+				OUTPUT_VARIABLE LSB_RELEASE_CODENAME
+				OUTPUT_STRIP_TRAILING_WHITESPACE
+			)
+			set(CPACK_DEBIAN_PACKAGE_RELEASE ${LSB_RELEASE_CODENAME})
+			set(LSL_OS "Linux${lslplatform}-${LSB_RELEASE_CODENAME}")
+		endif()
 
-		# include distribution name (e.g. trusty or xenial) in the file name
-		# only works on CMake>=3.6, does nothing on CMake<3.6
-		find_program(LSB_RELEASE lsb_release)
-		execute_process(COMMAND ${LSB_RELEASE} -cs
-			OUTPUT_VARIABLE LSB_RELEASE_CODENAME
-			OUTPUT_STRIP_TRAILING_WHITESPACE
-		)
-		set(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")
-		set(CPACK_DEBIAN_PACKAGE_RELEASE ${LSB_RELEASE_CODENAME})
+		message(STATUS ${LSL_CPACK_FILENAME})
+
+		get_cmake_property(CPACK_COMPONENTS_ALL COMPONENTS)
+		foreach(component ${CPACK_COMPONENTS_ALL})
+			string(TOUPPER ${component} COMPONENT)
+			message(STATUS "Setting packages name for ${COMPONENT}")
+			set(LSL_CPACK_FILENAME "${component}-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}-${LSL_OS}")
+			message(STATUS "${LSL_CPACK_FILENAME}")
+			set("CPACK_DEBIAN_${COMPONENT}_FILE_NAME" "${LSL_CPACK_FILENAME}.deb")
+			set("CPACK_ARCHIVE_${COMPONENT}_FILE_NAME" ${LSL_CPACK_FILENAME})
+			#set(CPACK_DEBIAN_${component}_FILE_NAME "${FILENAME}.deb")
+		endforeach()
+
+		message(STATUS "Installing Components: ${CPACK_COMPONENTS_ALL}")
+		include(CPack)
 	endif()
-	include(CPack)
 endmacro()

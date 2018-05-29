@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
-project(LabStreamingLayer)
+project(LabStreamingLayer
+	VERSION 1.12.0)
 
 # add the liblsl build directory
 add_subdirectory(LSL/liblsl)
@@ -18,10 +19,5 @@ set(LSL_INSTALL_ROOT ${CMAKE_CURRENT_LIST_DIR} CACHE STRING
 # and includes their build configurations
 add_subdirectory(Apps)
 
-# When building the whole tree, no component specific versions can be used
-# https://stackoverflow.com/q/44951598/73299
-set(CPACK_PACKAGE_VERSION_MAJOR 0)
-set(CPACK_PACKAGE_VERSION_MINOR 0)
-set(CPACK_PACKAGE_VERSION_PATCH 1)
 # Generate packages for LSL and all built apps
 LSLGenerateCPackConfig()
