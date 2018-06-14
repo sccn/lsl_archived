@@ -1,10 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
+#include <QSettings>
 #include <chrono>
 #include <iostream>
+#include <QDebug>
 #include <lsl_cpp.h>
 
 #ifdef WIN32
@@ -43,9 +43,9 @@ using UCHAR = unsigned char;
 #include "BrainAmpIoCtl.h"
 
 const double sampling_rate = 5000.0;
-const char *error_messages[] = {"No error.","Loss lock.","Low power.","Can't establish communication at start.","Synchronisation error"};
+static const char *error_messages[] = {"No error.","Loss lock.","Low power.","Can't establish communication at start.","Synchronisation error"};
 
-MainWindow::MainWindow(QWidget *parent, const std::string &config_file): QMainWindow(parent),ui(new Ui::MainWindow),hDevice(NULL)
+MainWindow::MainWindow(QWidget *parent, const char* config_file): QMainWindow(parent),ui(new Ui::MainWindow),hDevice(NULL)
 {
 	ui->setupUi(this);
 
@@ -67,13 +67,13 @@ MainWindow::MainWindow(QWidget *parent, const std::string &config_file): QMainWi
 void MainWindow::load_config_dialog() {
 	QString sel = QFileDialog::getOpenFileName(this,"Load Configuration File","","Configuration Files (*.cfg)");
 	if (!sel.isEmpty())
-		load_config(sel.toStdString());
+		load_config(sel);
 }
 
 void MainWindow::save_config_dialog() {
 	QString sel = QFileDialog::getSaveFileName(this,"Save Configuration File","","Configuration Files (*.cfg)");
 	if (!sel.isEmpty())
-		save_config(sel.toStdString());
+		save_config(sel);
 }
 
 void MainWindow::closeEvent(QCloseEvent *ev) {
@@ -81,69 +81,45 @@ void MainWindow::closeEvent(QCloseEvent *ev) {
 		ev->ignore();
 }
 
-void MainWindow::load_config(const std::string &filename) {
-	using boost::property_tree::ptree;
-	ptree pt;
+void MainWindow::load_config(QString filename) {
+	QSettings pt(filename, QSettings::IniFormat);
 
-	// parse file
-	try {
-		read_xml(filename, pt);
-	} catch(std::exception &e) {
-		QMessageBox::information(this, "Error", QString("Cannot read config file: ") + e.what(), QMessageBox::Ok);
-		return;
-	}
-
-	// get config values
-	try {
-		ui->deviceNumber->setValue(pt.get<int>("settings.devicenumber",1));
-		ui->channelCount->setValue(pt.get<int>("settings.channelcount",32));
-		ui->impedanceMode->setCurrentIndex(pt.get<int>("settings.impedancemode",0));
-		ui->resolution->setCurrentIndex(pt.get<int>("settings.resolution",0));
-		ui->dcCoupling->setCurrentIndex(pt.get<int>("settings.dccoupling",0));
-		ui->chunkSize->setValue(pt.get<int>("settings.chunksize",32));
-		ui->usePolyBox->setCheckState(pt.get<bool>("settings.usepolybox",false) ? Qt::Checked : Qt::Unchecked);
-		ui->sendRawStream->setChecked(pt.get<bool>("settings.sendrawstream", false));
-		ui->unsampledMarkers->setCheckState(pt.get<bool>("settings.unsampledmarkers",false) ? Qt::Checked : Qt::Unchecked);	
-		ui->sampledMarkers->setCheckState(pt.get<bool>("settings.sampledmarkers",true) ? Qt::Checked : Qt::Unchecked);	
-		ui->sampledMarkersEEG->setCheckState(pt.get<bool>("settings.sampledmarkersEEG",false) ? Qt::Checked : Qt::Unchecked);
-		ui->channelLabels->clear();
-		for (ptree::value_type &v: pt.get_child("channels.labels"))
-			ui->channelLabels->appendPlainText(v.second.data().c_str());
-	} catch(std::exception &) {
-		QMessageBox::information(this,"Error in Config File","Could not read out config parameters.",QMessageBox::Ok);
-		return;
-	}
+	ui->deviceNumber->setValue(pt.value("settings/devicenumber", 1).toInt());
+	ui->channelCount->setValue(pt.value("settings/channelcount", 32).toInt());
+	ui->impedanceMode->setCurrentIndex(pt.value("settings/impedancemode", 0).toInt());
+	ui->resolution->setCurrentIndex(pt.value("settings/resolution", 0).toInt());
+	ui->dcCoupling->setCurrentIndex(pt.value("settings/dccoupling", 0).toInt());
+	ui->chunkSize->setValue(pt.value("settings/chunksize", 32).toInt());
+	ui->usePolyBox->setChecked(pt.value("settings/usepolybox", false).toBool());
+	ui->sendRawStream->setChecked(pt.value("settings/sendrawstream", false).toBool());
+	ui->unsampledMarkers->setChecked(pt.value("settings/unsampledmarkers", false).toBool());
+	ui->sampledMarkers->setChecked(pt.value("settings/sampledmarkers", true).toBool());
+	ui->sampledMarkersEEG->setChecked(pt.value("settings/sampledmarkersEEG", false).toBool());
+	ui->channelLabels->setPlainText(pt.value("channels/labels").toStringList().join('\n'));
 }
 
-void MainWindow::save_config(const std::string &filename) {
-	using boost::property_tree::ptree;
-	ptree pt;
+void MainWindow::save_config(QString filename) {
+	QSettings pt(filename, QSettings::IniFormat);
 
 	// transfer UI content into property tree
-	try {
-		pt.put("settings.devicenumber",ui->deviceNumber->value());
-		pt.put("settings.channelcount",ui->channelCount->value());
-		pt.put("settings.impedancemode",ui->impedanceMode->currentIndex());
-		pt.put("settings.resolution",ui->resolution->currentIndex());
-		pt.put("settings.dccoupling",ui->dcCoupling->currentIndex());
-		pt.put("settings.chunksize",ui->chunkSize->value());
-		pt.put("settings.usepolybox",ui->usePolyBox->checkState()==Qt::Checked);
-		pt.put("settings.sendrawstream", ui->sendRawStream->isChecked());
-		pt.put("settings.unsampledmarkers",ui->unsampledMarkers->checkState()==Qt::Checked);
-		pt.put("settings.sampledmarkers",ui->sampledMarkers->checkState()==Qt::Checked);
-		pt.put("settings.sampledmarkersEEG",ui->sampledMarkersEEG->checkState()==Qt::Checked);
-		std::vector<std::string> channelLabels;
-		for (auto& label: ui->channelLabels->toPlainText().split('\n')) pt.add("channels.labels.label", label.toStdString());
-	} catch(std::exception &e) {
-		QMessageBox::critical(this, "Error", QString("Could not prepare settings for saving: ") + e.what(), QMessageBox::Ok);
-	}
+	pt.beginGroup("settings");
+	pt.setValue("devicenumber", ui->deviceNumber->value());
+	pt.setValue("devicenumber", ui->deviceNumber->value());
+	pt.setValue("channelcount", ui->channelCount->value());
+	pt.setValue("impedancemode", ui->impedanceMode->currentIndex());
+	pt.setValue("resolution", ui->resolution->currentIndex());
+	pt.setValue("dccoupling", ui->dcCoupling->currentIndex());
+	pt.setValue("chunksize", ui->chunkSize->value());
+	pt.setValue("usepolybox", ui->usePolyBox->isChecked());
+	pt.setValue("sendrawstream", ui->sendRawStream->isChecked());
+	pt.setValue("unsampledmarkers", ui->unsampledMarkers->isChecked());
+	pt.setValue("sampledmarkers", ui->sampledMarkers->isChecked());
+	pt.setValue("sampledmarkersEEG", ui->sampledMarkersEEG->isChecked());
+	pt.endGroup();
 
-	// write to disk
-	try {
-		write_xml(filename, pt);
-	} catch(std::exception &e) {
-		QMessageBox::critical(this, "Error", QString("Could not write to config file: ") + e.what(), QMessageBox::Ok);
-	}
+	pt.beginGroup("channels");
+	pt.setValue("labels", ui->channelLabels->toPlainText().split('\n'));
+	pt.endGroup();
 }
 
 

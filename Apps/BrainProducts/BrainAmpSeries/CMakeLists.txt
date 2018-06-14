@@ -5,15 +5,16 @@ project(BrainAmpSeries
 
 # load LSLAppBoilerplate if not done already
 if(NOT TARGET LSL::lsl)
-	if(NOT LSL_INSTALL_ROOT)
-		message(FATAL_ERROR "When building a single app out of tree you need to set LSL_INSTALL_ROOT ( cmake -DLSL_INSTALL_ROOT=/path/to/installed/lsl)")
+	# when building out of tree LSL_ROOT needs to be specified on the cmd line
+	file(TO_CMAKE_PATH "${LSL_INSTALL_ROOT}" LSL_INSTALL_ROOT)
+	list(APPEND LSL_INSTALL_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../LSL/liblsl/build/install")
+	find_package(LSL HINTS ${LSL_INSTALL_ROOT}/share/LSL/ QUIET)
+	if(NOT LSL_FOUND)
+		message(FATAL_ERROR "Precompiled LSL was not found. Set LSL_INSTALL_ROOT to the LSL installation path ( cmake -DLSL_INSTALL_ROOT=/path/to/installed/lsl)")
 	endif()
-	if(NOT IS_ABSOLUTE ${LSL_INSTALL_ROOT})
-		message(FATAL_ERROR "LSL_INSTALL_ROOT needs to be an absolute path")
-	endif()
-	file(TO_CMAKE_PATH ${LSL_INSTALL_ROOT} LSL_INSTALL_ROOT)
-	list(APPEND CMAKE_MODULE_PATH "${LSL_INSTALL_ROOT}/cmake")
-	include(LSLAppBoilerplate)
+	list(APPEND CMAKE_MODULE_PATH ${LSL_DIR})
+	message(STATUS "Looking for LSLCMake in ${LSL_DIR}")
+	include(LSLCMake)
 endif()
 
 # GENERAL CONFIG #
@@ -21,7 +22,6 @@ set(META_PROJECT_DESCRIPTION "Stream from BrainAmp devices via Lab Streaming Lay
 
 # THIRD PARTY LIBRARIES #
 find_package(Qt5 COMPONENTS Xml Widgets REQUIRED)
-find_package(Boost REQUIRED)
 
 # Target name
 set(target BrainAmpSeries)
@@ -44,8 +44,6 @@ target_link_libraries(${target}
 	Qt5::Xml
 	LSL::lsl
 )
-# Boost includes needed here because they aren't pulled in by any linked library above
-target_include_directories(${target} PRIVATE ${Boost_INCLUDE_DIRS})
 
 if(UNIX)
   target_link_libraries(${target} PRIVATE pthread) # for std::thread

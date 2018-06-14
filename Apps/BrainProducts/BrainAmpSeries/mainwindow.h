@@ -27,7 +27,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit MainWindow(QWidget *parent, const std::string &config_file);
+    explicit MainWindow(QWidget *parent, const char* config_file);
     ~MainWindow();
     
 private slots:
@@ -48,8 +48,8 @@ private:
 					 std::vector<std::string> channelLabels);
 
     // raw config file IO
-    void load_config(const std::string &filename);
-    void save_config(const std::string &filename);
+    void load_config(QString filename);
+    void save_config(QString filename);
 	
 	HANDLE hDevice;
 	std::atomic<bool> stop_;						// whether the reader thread is supposed to stop
