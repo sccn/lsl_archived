@@ -2,9 +2,9 @@
 #define INFO_RECEIVER_H
 
 #include "inlet_connection.h"
-#include <boost/thread/thread.hpp>
-#include <boost/thread/condition_variable.hpp>
-#include <boost/thread/mutex.hpp>
+#include <lslboost/thread/thread.hpp>
+#include <lslboost/thread/condition_variable.hpp>
+#include <lslboost/thread/mutex.hpp>
 
 namespace lsl {
 

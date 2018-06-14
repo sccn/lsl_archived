@@ -1,7 +1,7 @@
 #include "info_receiver.h"
 #include "cancellable_streambuf.h"
 #include <iostream>
-#include <boost/bind.hpp>
+#include <lslboost/bind.hpp>
 
 
 // === implementation of the info_receiver class ===

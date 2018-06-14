@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <set>
-#include <boost/thread.hpp>
+#include <lslboost/thread.hpp>
 
 
 namespace lsl { 

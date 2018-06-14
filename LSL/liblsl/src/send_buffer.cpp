@@ -1,5 +1,5 @@
 #include "send_buffer.h"
-#include <boost/bind.hpp>
+#include <lslboost/bind.hpp>
 
 
 // === implementation of the send_buffer class ===

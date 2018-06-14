@@ -6,12 +6,12 @@
 #include "stream_info_impl.h"
 #include "resolve_attempt_udp.h"
 #include <set>
-#include <boost/asio/deadline_timer.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/ip/udp.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/noncopyable.hpp>
-#include <boost/thread/mutex.hpp>
+#include <lslboost/asio/deadline_timer.hpp>
+#include <lslboost/asio/ip/tcp.hpp>
+#include <lslboost/asio/ip/udp.hpp>
+#include <lslboost/shared_ptr.hpp>
+#include <lslboost/noncopyable.hpp>
+#include <lslboost/thread/mutex.hpp>
 
 using lslboost::asio::ip::udp;
 using lslboost::asio::ip::tcp;

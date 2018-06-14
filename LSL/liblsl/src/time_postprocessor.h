@@ -1,8 +1,8 @@
 #ifndef TIME_POSTPROCESSOR_H
 #define TIME_POSTPROCESSOR_H
 
-#include <boost/function.hpp>
-#include <boost/thread.hpp>
+#include <lslboost/function.hpp>
+#include <lslboost/thread.hpp>
 #include "common.h"
 
 

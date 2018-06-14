@@ -5,9 +5,9 @@
 #include "stream_info_impl.h"
 #include "cancellation.h"
 #include <map>
-#include <boost/asio.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/thread/mutex.hpp>
+#include <lslboost/asio.hpp>
+#include <lslboost/enable_shared_from_this.hpp>
+#include <lslboost/thread/mutex.hpp>
 
 using lslboost::asio::ip::udp;
 using lslboost::asio::ip::tcp;

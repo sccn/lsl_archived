@@ -1,7 +1,7 @@
 #ifndef CONSUMER_QUEUE_H
 #define CONSUMER_QUEUE_H
 
-#include <boost/lockfree/spsc_queue.hpp>
+#include <lslboost/lockfree/spsc_queue.hpp>
 #include "sample.h"
 
 namespace lsl {

@@ -1,11 +1,11 @@
 #include <iostream>
-#include <boost/asio.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
-#include <boost/serialization/split_member.hpp>
-#include <boost/container/flat_set.hpp>
+#include <lslboost/asio.hpp>
+#include <lslboost/algorithm/string.hpp>
+#include <lslboost/uuid/uuid.hpp>
+#include <lslboost/uuid/uuid_generators.hpp>
+#include <lslboost/uuid/uuid_io.hpp>
+#include <lslboost/serialization/split_member.hpp>
+#include <lslboost/container/flat_set.hpp>
 #include "tcp_server.h"
 #include "socket_utils.h"
 

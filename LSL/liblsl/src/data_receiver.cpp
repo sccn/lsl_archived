@@ -1,9 +1,9 @@
 #include <iostream>
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/split_member.hpp>
-#include <boost/bind.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/algorithm/string.hpp>
+#include <lslboost/serialization/string.hpp>
+#include <lslboost/serialization/split_member.hpp>
+#include <lslboost/bind.hpp>
+#include <lslboost/scoped_ptr.hpp>
+#include <lslboost/algorithm/string.hpp>
 #include "data_receiver.h"
 #include "socket_utils.h"
 #include "portable_archive/portable_iarchive.hpp"

@@ -3,9 +3,9 @@
 
 #include "common.h"
 #include "api_config.h"
-#include <boost/cstdint.hpp>
-#include <boost/system/system_error.hpp>
-#include <boost/thread/thread.hpp>
+#include <lslboost/cstdint.hpp>
+#include <lslboost/system/system_error.hpp>
+#include <lslboost/thread/thread.hpp>
 #include <iostream>
 
 namespace lsl {

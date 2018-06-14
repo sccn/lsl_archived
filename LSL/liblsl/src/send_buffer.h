@@ -2,10 +2,10 @@
 #define SEND_BUFFER_H
 
 #include <set>
-#include <boost/container/flat_set.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition_variable.hpp>
+#include <lslboost/container/flat_set.hpp>
+#include <lslboost/enable_shared_from_this.hpp>
+#include <lslboost/thread/mutex.hpp>
+#include <lslboost/thread/condition_variable.hpp>
 #include "consumer_queue.h"
 
 namespace lsl {

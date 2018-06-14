@@ -1,17 +1,17 @@
 #ifndef SAMPLE_H
 #define SAMPLE_H
 
-#include <boost/lexical_cast.hpp>
+#include <lslboost/lexical_cast.hpp>
 #include <vector>
 #include <string>
 #include <iostream>
-#include <boost/type_traits.hpp>
-#include <boost/cstdint.hpp>
-#include <boost/smart_ptr.hpp>
-#include <boost/intrusive_ptr.hpp>
-#include <boost/atomic.hpp>
-#include <boost/static_assert.hpp>
-#include <boost/serialization/split_member.hpp>
+#include <lslboost/type_traits.hpp>
+#include <lslboost/cstdint.hpp>
+#include <lslboost/smart_ptr.hpp>
+#include <lslboost/intrusive_ptr.hpp>
+#include <lslboost/atomic.hpp>
+#include <lslboost/static_assert.hpp>
+#include <lslboost/serialization/split_member.hpp>
 #include "endian/conversion.hpp"
 #include "common.h"
 

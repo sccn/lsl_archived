@@ -16,7 +16,57 @@ set(lslboost_sources
 	libs/serialization/src/void_cast.cpp
 	libs/system/src/error_code.cpp
 )
-file(STRINGS lslboost_headers.txt lslboost_headers)
+# generate via grep " <lslboost" -hr .| sed -e 's/#include <lsl//;s/>$//' | sort | uniq
+set(lslboost_headers
+	boost/algorithm/string.hpp
+	boost/asio.hpp
+	boost/asio/basic_socket.hpp
+	boost/asio/deadline_timer.hpp
+	boost/asio/detail/array.hpp
+	boost/asio/detail/config.hpp
+	boost/asio/detail/throw_error.hpp
+	boost/asio/io_service.hpp
+	boost/asio/ip/tcp.hpp
+	boost/asio/ip/udp.hpp
+	boost/asio/stream_socket_service.hpp
+	boost/asio/streambuf.hpp
+	boost/atomic.hpp
+	boost/bimap.hpp
+	boost/bind.hpp
+	boost/chrono/system_clocks.hpp
+	boost/container/flat_set.hpp
+	boost/cstdint.hpp
+	boost/date_time/time_duration.hpp
+	boost/enable_shared_from_this.hpp
+	boost/function.hpp
+	boost/functional/hash.hpp
+	boost/intrusive_ptr.hpp
+	boost/lexical_cast.hpp
+	boost/lockfree/spsc_queue.hpp
+	boost/noncopyable.hpp
+	boost/property_tree/ini_parser.hpp
+	boost/property_tree/ptree.hpp
+	boost/random.hpp
+	boost/scoped_ptr.hpp
+	boost/serialization/split_member.hpp
+	boost/serialization/string.hpp
+	boost/shared_ptr.hpp
+	boost/smart_ptr.hpp
+	boost/static_assert.hpp
+	boost/system/system_error.hpp
+	boost/thread.hpp
+	boost/thread/condition_variable.hpp
+	boost/thread/mutex.hpp
+	boost/thread/once.hpp
+	boost/thread/shared_mutex.hpp
+	boost/thread/thread.hpp
+	boost/type_traits.hpp
+	boost/utility/base_from_member.hpp
+	boost/uuid/uuid.hpp
+	boost/uuid/uuid_generators.hpp
+	boost/uuid/uuid_io.hpp
+	boost/version.hpp
+)
 if (UNIX)
 	set(lslboost_sources_platform
 		libs/thread/src/pthread/once.cpp
