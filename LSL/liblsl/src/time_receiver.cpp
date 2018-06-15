@@ -3,10 +3,6 @@
 #include <boost/asio.hpp>
 #include <iostream>
 #include <boost/bind.hpp>
-<<<<<<<
-=======
-#include "socket_utils.h"
->>>>>>>
 
 
 // === implementation of the time_receiver class ===
