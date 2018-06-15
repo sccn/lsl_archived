@@ -28,345 +28,75 @@ LIBLSL_C_API void lsl_destroy_outlet(lsl_outlet out) {
 }
 
 LIBLSL_C_API int lsl_push_sample_f(lsl_outlet out, float *data) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data);
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data);
 }
 
 LIBLSL_C_API int lsl_push_sample_ft(lsl_outlet out, float *data, double timestamp) {
-	try {
-		((stream_outlet_impl*)out)->push_sample(data,timestamp); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data, timestamp);
 }
 
 LIBLSL_C_API int lsl_push_sample_ftp(lsl_outlet out, float *data, double timestamp, int pushthrough) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data,timestamp,pushthrough!=0); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data, timestamp, pushthrough);
 }
 
 LIBLSL_C_API int lsl_push_sample_d(lsl_outlet out, double *data) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data);
 }
 
 LIBLSL_C_API int lsl_push_sample_dt(lsl_outlet out, double *data, double timestamp) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data,timestamp); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data, timestamp);
 }
 
 LIBLSL_C_API int lsl_push_sample_dtp(lsl_outlet out, double *data, double timestamp, int pushthrough) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data,timestamp,pushthrough!=0); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data, timestamp, pushthrough);
 }
 
 LIBLSL_C_API int lsl_push_sample_l(lsl_outlet out, long *data) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data);
 }
 
 LIBLSL_C_API int lsl_push_sample_lt(lsl_outlet out, long *data, double timestamp) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data,timestamp); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data, timestamp);
 }
 
 LIBLSL_C_API int lsl_push_sample_ltp(lsl_outlet out, long *data, double timestamp, int pushthrough) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data,timestamp,pushthrough!=0); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data, timestamp, pushthrough);
 }
 
 LIBLSL_C_API int lsl_push_sample_i(lsl_outlet out, int *data) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data);
 }
 
 LIBLSL_C_API int lsl_push_sample_it(lsl_outlet out, int *data, double timestamp) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data,timestamp); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data, timestamp);
 }
 
 LIBLSL_C_API int lsl_push_sample_itp(lsl_outlet out, int *data, double timestamp, int pushthrough) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data,timestamp,pushthrough!=0); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data, timestamp, pushthrough);
 }
 
 LIBLSL_C_API int lsl_push_sample_s(lsl_outlet out, short *data) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data);
 }
 
 LIBLSL_C_API int lsl_push_sample_st(lsl_outlet out, short *data, double timestamp) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data,timestamp); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data, timestamp);
 }
 
 LIBLSL_C_API int lsl_push_sample_stp(lsl_outlet out, short *data, double timestamp, int pushthrough) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data,timestamp,pushthrough!=0); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data, timestamp, pushthrough);
 }
 
 LIBLSL_C_API int lsl_push_sample_c(lsl_outlet out, char *data) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data);
 }
 
 LIBLSL_C_API int lsl_push_sample_ct(lsl_outlet out, char *data, double timestamp) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data,timestamp); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data, timestamp);
 }
 
 LIBLSL_C_API int lsl_push_sample_ctp(lsl_outlet out, char *data, double timestamp, int pushthrough) { 
-	try {
-		((stream_outlet_impl*)out)->push_sample(data,timestamp,pushthrough!=0); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_sample_noexcept(data, timestamp, pushthrough);
 }
 
 LIBLSL_C_API int lsl_push_sample_v(lsl_outlet out, void *data) { 

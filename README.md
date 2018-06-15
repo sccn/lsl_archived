@@ -10,11 +10,17 @@ There is an intro lecture/demo on LSL here: [http://www.youtube.com/watch?v=Y1at
 
 You may also wish to subscribe to the LSL mailing list here: [https://mailman.ucsd.edu/mailman/listinfo/lsl-l](https://mailman.ucsd.edu/mailman/listinfo/lsl-l).
 
-Hosted here is only the source code for the project. Develpers will want to clone this repo, then run 'python get_deps.py' to download all the 3rd party libraries from our ftp. 
+Hosted here is only the source code for the project. Developers will want to clone this repo, then run 'python get_deps.py' to download all the 3rd party libraries from our ftp. 
 
 # Download Binary Releases
 
-You can find recent releases on our FTP site : ftp://sccn.ucsd.edu/pub/software/LSL/
+You can find recent releases on our FTP site : [ftp://sccn.ucsd.edu/pub/software/LSL/](ftp://sccn.ucsd.edu/pub/software/LSL/)
+
+These releases may be slightly out of date. We are working toward an automated build and deployment system but it is not ready yet.
+
+# Building from source
+
+Follow the instructions in the INSTALL.md file.
 
 # Streaming Layer API
 
@@ -43,7 +49,7 @@ The lab streaming layer comes with a built-in synchronized time facility for all
 
 The built-in time synchronization is designed after the widely deployed Network Time Protocol (NTP) and implemented in the LSL library. This feature is explained in more detail in the [TimeSynchronization](https://github.com/sccn/labstreaminglayer/wiki/TimeSynchronization.wiki) section.
 # File Format
-The transport API itself does not endorse or provide a particular file format, but the provided recording program (`LabRecorder`) and Python/C++ library (`RecorderLib`) record into the XDF file format (Extensible Data Format, hosted at http://code.google.com/p/xdf). XDF was designed concurrently with the lab streaming layer and supports the full feature set of LSL (including multi-stream container files, per-stream arbitrarily large XML headers, all sample formats as well as time-synchronization information).
+The transport API itself does not endorse or provide a particular file format, but the provided recording program (`LabRecorder`) and Python/C++ library (`RecorderLib`) record into the XDF file format (Extensible Data Format, hosted at https://github.com/sccn/xdf). XDF was designed concurrently with the lab streaming layer and supports the full feature set of LSL (including multi-stream container files, per-stream arbitrarily large XML headers, all sample formats as well as time-synchronization information).
 
 # Coding Guides
 The distribution includes a range of code examples in C, C++, Python, MATLAB, Java, and C# including some very simple sender and receiver programs, as well as some fairly extensive demo apps. This page includes just some simple teasers. See [ExampleCode](https://github.com/sccn/labstreaminglayer/wiki/ExampleCode.wiki) for a broader overview of example programs, API documentation link, and general programming tips, tricks, and frequently asked questions.
@@ -107,6 +113,12 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 ```
+
+# How to get support
+If you are having trouble with LSL, there are few things you can do to get help.
+First, search this GitHub repository's issues list, including closed issues.
+If you don't find what you are looking for, then you can create a new issue. Try to include as much information as possible about your device (if applicable), your computing environment (operating system, processor achitecture), what you have tested so far, and also provide logs or other error messages if available. If you end up creating a new issue, please close it once the issue is solved.
+You can also try joining the LabStreamingLayer `#users` channel on Slack. [Invite Link](https://join.slack.com/t/labstreaminglayer/shared_invite/enQtMzA2NjEwNDk0NjA5LWI2MmI4MjBhYjgyMmRmMzg2NzEzODc2M2NjNDIwODhmNzViZmRmMWQyNTBkYzkwNmUyMzZhOTU5ZGFiYzkzMzQ). Someone there may be able to get to the bottom of your problem through conversation.
 
 # Acknowledgements
 The original version of this software was written at the [Swartz Center for Computational Neuroscience](http://sccn.ucsd.edu/people/), UCSD. This work was funded by the Army Research Laboratory under Cooperative Agreement Number W911NF-10-2-0022 as well as through NINDS grant 3R01NS047293-06S1.

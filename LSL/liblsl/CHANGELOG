@@ -1,3 +1,33 @@
+Changes for liblsl 1.12
+* Added support for iOS. (Matthew Grivich; de3f1318)
+* changed constructor of lsl::xml_element to have default (David Medine; fd6a87b7)
+* Add support for gcc 5 / MinGW (BorisMansencal)
+* Fixed warning in GCC 4.9: 'lsl::stream_info' has a field 'lsl::stream_info::obj' whose type uses the anonymous namespace 1> class stream_info { (Matthew Grivich; 072563f5)
+* Added optional time-stamp post-processing to the LSL inlet (Christian Kothe; d29ebde8)
+* fixed broken relative paths (Giso Grimm; 1396ce6e)
+* automatic version number extraction (Giso Grimm; a3e912ad)
+* version number extraction and new location (Giso Grimm; 56f210a2)
+
+Changes for liblsl 1.11
+
+* Updated C/C++ examples to conform to XDF meta-data spec (per Luca Mussi). (Christian Kothe; 61d83de6)
+* pugixml 1.0->1.7 . This fixes a build error in OS X. Also tested in Win 10 binaries with no apparent problems. (Chadwick Boulay; 067e1330)
+* several changes to the build system and include files (Matthew Grivich, Chadwick Boulay)
+* Fixed remaining references to old documentation. (Kyu Crane; ecf9cd09)
+* Some fixes and updates here and there. (Christian Kothe; 65fa64e2)
+* Fixed bug in push_chunk_multiplexed (Christian Kothe; 89339d08)
+* Fixed regression in samples_available() (Christian Kothe; 5d0659da)
+* Delete ._stream_info_impl.cpp (Christian Kothe; 92bfd87c)
+* Updated consumer_queue::pop_sample() (Christian Kothe; 22662cb7)
+* Fixed consumer_queue::pop_sample() to respect the timeout. (Steven Boswell; 678995dd)
+* Fixed some memory leaks in the C# interop layer. (Steven Boswell; 06684ec6)
+* Now multicasting can specify the local IP address to bind to. (Steven Boswell; 04a397e4)
+* attempting to strip binaries (David Medine; bc216cc2)
+
+Changes for liblsl 1.10
+
+[Here a lot of changes happened that aren't included yet]
+
 Changes for distribution 1.0.10  (library version 0.91)
 * fix: in the C++ interface, the template pull_chunk() that fills a vector of time stamps did not clear this vector initially
        (no recompile necessary, just a header fix)

@@ -1,0 +1,487 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="NsightTegraProject">
+    <NsightTegraProjectRevisionNumber>11</NsightTegraProjectRevisionNumber>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|AArch64-Android-NVIDIA">
+      <Configuration>Debug</Configuration>
+      <Platform>AArch64-Android-NVIDIA</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|ARM-Android-NVIDIA">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM-Android-NVIDIA</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64-Android-NVIDIA">
+      <Configuration>Debug</Configuration>
+      <Platform>x64-Android-NVIDIA</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x86-Android-NVIDIA">
+      <Configuration>Debug</Configuration>
+      <Platform>x86-Android-NVIDIA</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|AArch64-Android-NVIDIA">
+      <Configuration>Release</Configuration>
+      <Platform>AArch64-Android-NVIDIA</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM-Android-NVIDIA">
+      <Configuration>Release</Configuration>
+      <Platform>ARM-Android-NVIDIA</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64-Android-NVIDIA">
+      <Configuration>Release</Configuration>
+      <Platform>x64-Android-NVIDIA</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x86-Android-NVIDIA">
+      <Configuration>Release</Configuration>
+      <Platform>x86-Android-NVIDIA</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Shipping|AArch64-Android-NVIDIA">
+      <Configuration>Shipping</Configuration>
+      <Platform>AArch64-Android-NVIDIA</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Shipping|ARM-Android-NVIDIA">
+      <Configuration>Shipping</Configuration>
+      <Platform>ARM-Android-NVIDIA</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Shipping|x64-Android-NVIDIA">
+      <Configuration>Shipping</Configuration>
+      <Platform>x64-Android-NVIDIA</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Shipping|x86-Android-NVIDIA">
+      <Configuration>Shipping</Configuration>
+      <Platform>x86-Android-NVIDIA</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6B7AA000-22D2-4F50-8A63-33D68AE7D9BB}</ProjectGuid>
+    <RootNamespace>vs2013</RootNamespace>
+    <ProjectName>liblsl</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AArch64-Android-NVIDIA'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <AndroidTargetAPI>android-21</AndroidTargetAPI>
+    <NdkToolchainVersion>gcc-4.9</NdkToolchainVersion>
+    <AndroidMinAPI>android-21</AndroidMinAPI>
+    <AndroidStripLibrary>false</AndroidStripLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64-Android-NVIDIA'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <AndroidTargetAPI>android-21</AndroidTargetAPI>
+    <NdkToolchainVersion>gcc-4.9</NdkToolchainVersion>
+    <AndroidMinAPI>android-21</AndroidMinAPI>
+    <AndroidStripLibrary>false</AndroidStripLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM-Android-NVIDIA'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <AndroidTargetAPI>android-17</AndroidTargetAPI>
+    <NdkToolchainVersion>gcc-4.9</NdkToolchainVersion>
+    <AndroidStripLibrary>false</AndroidStripLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86-Android-NVIDIA'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <AndroidTargetAPI>android-17</AndroidTargetAPI>
+    <NdkToolchainVersion>gcc-4.9</NdkToolchainVersion>
+    <AndroidStripLibrary>false</AndroidStripLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AArch64-Android-NVIDIA'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <AndroidTargetAPI>android-21</AndroidTargetAPI>
+    <NdkToolchainVersion>gcc-4.9</NdkToolchainVersion>
+    <AndroidMinAPI>android-21</AndroidMinAPI>
+    <AndroidStripLibrary>false</AndroidStripLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64-Android-NVIDIA'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <AndroidTargetAPI>android-21</AndroidTargetAPI>
+    <NdkToolchainVersion>gcc-4.9</NdkToolchainVersion>
+    <AndroidMinAPI>android-21</AndroidMinAPI>
+    <AndroidStripLibrary>false</AndroidStripLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM-Android-NVIDIA'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <AndroidTargetAPI>android-17</AndroidTargetAPI>
+    <NdkToolchainVersion>gcc-4.9</NdkToolchainVersion>
+    <AndroidStripLibrary>false</AndroidStripLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86-Android-NVIDIA'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <AndroidTargetAPI>android-17</AndroidTargetAPI>
+    <NdkToolchainVersion>gcc-4.9</NdkToolchainVersion>
+    <AndroidStripLibrary>false</AndroidStripLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|AArch64-Android-NVIDIA'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <AndroidTargetAPI>android-21</AndroidTargetAPI>
+    <NdkToolchainVersion>gcc-4.9</NdkToolchainVersion>
+    <AndroidMinAPI>android-21</AndroidMinAPI>
+    <AndroidStripLibrary>false</AndroidStripLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x64-Android-NVIDIA'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <AndroidTargetAPI>android-21</AndroidTargetAPI>
+    <NdkToolchainVersion>gcc-4.9</NdkToolchainVersion>
+    <AndroidMinAPI>android-21</AndroidMinAPI>
+    <AndroidStripLibrary>false</AndroidStripLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|ARM-Android-NVIDIA'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <AndroidTargetAPI>android-17</AndroidTargetAPI>
+    <NdkToolchainVersion>gcc-4.9</NdkToolchainVersion>
+    <AndroidStripLibrary>false</AndroidStripLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x86-Android-NVIDIA'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <AndroidTargetAPI>android-17</AndroidTargetAPI>
+    <NdkToolchainVersion>gcc-4.9</NdkToolchainVersion>
+    <AndroidStripLibrary>false</AndroidStripLibrary>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros">
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AArch64-Android-NVIDIA'">
+    <TargetName>$(ProjectName)-android-aarch64</TargetName>
+    <IntDir>output\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>..\bin</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64-Android-NVIDIA'">
+    <TargetName>$(ProjectName)-android-x64</TargetName>
+    <IntDir>output\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>..\bin</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM-Android-NVIDIA'">
+    <TargetName>$(ProjectName)-android-arm</TargetName>
+    <IntDir>output\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>..\bin</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86-Android-NVIDIA'">
+    <TargetName>$(ProjectName)-android-x86</TargetName>
+    <IntDir>output\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>..\bin</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AArch64-Android-NVIDIA'">
+    <TargetName>$(ProjectName)-android-aarch64-debug</TargetName>
+    <IntDir>output\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>..\bin</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64-Android-NVIDIA'">
+    <TargetName>$(ProjectName)-android-x64-debug</TargetName>
+    <IntDir>output\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>..\bin</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM-Android-NVIDIA'">
+    <TargetName>$(ProjectName)-android-arm-debug</TargetName>
+    <IntDir>output\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>..\bin</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86-Android-NVIDIA'">
+    <TargetName>$(ProjectName)-android-x86-debug</TargetName>
+    <IntDir>output\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>..\bin</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|AArch64-Android-NVIDIA'">
+    <TargetName>$(ProjectName)</TargetName>
+    <IntDir>output\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>..\bin</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x64-Android-NVIDIA'">
+    <TargetName>$(ProjectName)</TargetName>
+    <IntDir>output\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>..\bin</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|ARM-Android-NVIDIA'">
+    <TargetName>$(ProjectName)</TargetName>
+    <IntDir>output\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>..\bin</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x86-Android-NVIDIA'">
+    <TargetName>$(ProjectName)</TargetName>
+    <IntDir>output\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>..\bin</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AArch64-Android-NVIDIA'">
+    <ClCompile>
+      <CppLanguageStandard>gnu++11</CppLanguageStandard>
+      <AdditionalIncludeDirectories>../../../liblsl/external</AdditionalIncludeDirectories>
+      <GccExceptionHandling>true</GccExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <ObjectFileName>$(IntDir)/dummy/dummy/dummy/%(RelativeDir)%(FileName).o</ObjectFileName>
+      <PreprocessorDefinitions>_WINDLL;LIBLSL_EXPORTS;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link />
+    <Link />
+    <Link>
+      <AdditionalOptions>-z muldefs %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64-Android-NVIDIA'">
+    <ClCompile>
+      <CppLanguageStandard>gnu++11</CppLanguageStandard>
+      <AdditionalIncludeDirectories>../../../liblsl/external</AdditionalIncludeDirectories>
+      <GccExceptionHandling>true</GccExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <ObjectFileName>$(IntDir)/dummy/dummy/dummy/%(RelativeDir)%(FileName).o</ObjectFileName>
+      <PreprocessorDefinitions>_WINDLL;LIBLSL_EXPORTS;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link />
+    <Link />
+    <Link>
+      <AdditionalOptions>-z muldefs %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM-Android-NVIDIA'">
+    <ClCompile>
+      <CppLanguageStandard>gnu++11</CppLanguageStandard>
+      <AdditionalIncludeDirectories>../../../liblsl/external</AdditionalIncludeDirectories>
+      <GccExceptionHandling>true</GccExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <ObjectFileName>$(IntDir)/dummy/dummy/dummy/%(RelativeDir)%(FileName).o</ObjectFileName>
+      <PreprocessorDefinitions>BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link />
+    <Link />
+    <Link>
+      <AdditionalOptions>-z muldefs %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86-Android-NVIDIA'">
+    <ClCompile>
+      <CppLanguageStandard>gnu++11</CppLanguageStandard>
+      <AdditionalIncludeDirectories>../../../liblsl/external</AdditionalIncludeDirectories>
+      <GccExceptionHandling>true</GccExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <ObjectFileName>$(IntDir)/dummy/dummy/dummy/%(RelativeDir)%(FileName).o</ObjectFileName>
+      <PreprocessorDefinitions>_WINDLL;LIBLSL_EXPORTS;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link />
+    <Link />
+    <Link>
+      <AdditionalOptions>-z muldefs %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|AArch64-Android-NVIDIA'">
+    <ClCompile>
+      <CppLanguageStandard>gnu++11</CppLanguageStandard>
+      <ObjectFileName>$(IntDir)/dummy/dummy/dummy/%(RelativeDir)%(FileName).o</ObjectFileName>
+      <PreprocessorDefinitions>_WINDLL;LIBLSL_EXPORTS;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../liblsl/external</AdditionalIncludeDirectories>
+      <GccExceptionHandling>true</GccExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+    </ClCompile>
+    <Link />
+    <Link />
+    <Link>
+      <AdditionalOptions>-z muldefs %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64-Android-NVIDIA'">
+    <ClCompile>
+      <CppLanguageStandard>gnu++11</CppLanguageStandard>
+      <ObjectFileName>$(IntDir)/dummy/dummy/dummy/%(RelativeDir)%(FileName).o</ObjectFileName>
+      <PreprocessorDefinitions>_WINDLL;LIBLSL_EXPORTS;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../liblsl/external</AdditionalIncludeDirectories>
+      <GccExceptionHandling>true</GccExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+    </ClCompile>
+    <Link />
+    <Link />
+    <Link>
+      <AdditionalOptions>-z muldefs %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM-Android-NVIDIA'">
+    <ClCompile>
+      <CppLanguageStandard>gnu++11</CppLanguageStandard>
+      <ObjectFileName>$(IntDir)/dummy/dummy/dummy/%(RelativeDir)%(FileName).o</ObjectFileName>
+      <PreprocessorDefinitions>_WINDLL;LIBLSL_EXPORTS;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../liblsl/external</AdditionalIncludeDirectories>
+      <GccExceptionHandling>true</GccExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+    </ClCompile>
+    <Link />
+    <Link />
+    <Link>
+      <AdditionalOptions>-z muldefs %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86-Android-NVIDIA'">
+    <ClCompile>
+      <CppLanguageStandard>gnu++11</CppLanguageStandard>
+      <ObjectFileName>$(IntDir)/dummy/dummy/dummy/%(RelativeDir)%(FileName).o</ObjectFileName>
+      <PreprocessorDefinitions>_WINDLL;LIBLSL_EXPORTS;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../liblsl/external</AdditionalIncludeDirectories>
+      <GccExceptionHandling>true</GccExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+    </ClCompile>
+    <Link />
+    <Link />
+    <Link>
+      <AdditionalOptions>-z muldefs %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|AArch64-Android-NVIDIA'">
+    <ClCompile>
+      <CppLanguageStandard>gnu++11</CppLanguageStandard>
+      <AdditionalIncludeDirectories>../../../liblsl/external</AdditionalIncludeDirectories>
+      <GccExceptionHandling>true</GccExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <ObjectFileName>$(IntDir)/dummy/dummy/dummy/%(RelativeDir)%(FileName).o</ObjectFileName>
+      <PreprocessorDefinitions>_WINDLL;LIBLSL_EXPORTS;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link />
+    <Link />
+    <Link>
+      <AdditionalOptions>-z muldefs %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x64-Android-NVIDIA'">
+    <ClCompile>
+      <CppLanguageStandard>gnu++11</CppLanguageStandard>
+      <AdditionalIncludeDirectories>../../../liblsl/external</AdditionalIncludeDirectories>
+      <GccExceptionHandling>true</GccExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <ObjectFileName>$(IntDir)/dummy/dummy/dummy/%(RelativeDir)%(FileName).o</ObjectFileName>
+      <PreprocessorDefinitions>_WINDLL;LIBLSL_EXPORTS;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link />
+    <Link />
+    <Link>
+      <AdditionalOptions>-z muldefs %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|ARM-Android-NVIDIA'">
+    <ClCompile>
+      <CppLanguageStandard>gnu++11</CppLanguageStandard>
+      <AdditionalIncludeDirectories>../../../liblsl/external</AdditionalIncludeDirectories>
+      <GccExceptionHandling>true</GccExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <ObjectFileName>$(IntDir)/dummy/dummy/dummy/%(RelativeDir)%(FileName).o</ObjectFileName>
+      <PreprocessorDefinitions>_WINDLL;LIBLSL_EXPORTS;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link />
+    <Link />
+    <Link>
+      <AdditionalOptions>-z muldefs %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|x86-Android-NVIDIA'">
+    <ClCompile>
+      <CppLanguageStandard>gnu++11</CppLanguageStandard>
+      <AdditionalIncludeDirectories>../../../liblsl/external</AdditionalIncludeDirectories>
+      <GccExceptionHandling>true</GccExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <ObjectFileName>$(IntDir)/dummy/dummy/dummy/%(RelativeDir)%(FileName).o</ObjectFileName>
+      <PreprocessorDefinitions>_WINDLL;LIBLSL_EXPORTS;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link />
+    <Link />
+    <Link>
+      <AdditionalOptions>-z muldefs %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\LSL\liblsl\external\lslboost\thread\pthread\once.hpp" />
+    <ClInclude Include="..\..\..\LSL\liblsl\external\lslboost\thread\pthread\once_atomic.hpp" />
+    <ClInclude Include="..\..\..\LSL\liblsl\external\src\system\src\local_free_on_destruction.hpp" />
+    <ClInclude Include="..\..\..\liblsl\include\lsl_c.h" />
+    <ClInclude Include="..\..\..\liblsl\include\lsl_cpp.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\api_config.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\cancellable_streambuf.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\cancellation.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\common.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\consumer_queue.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\data_receiver.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\endian\conversion.hpp" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\endian\detail\intrinsic.hpp" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\info_receiver.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\inlet_connection.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\legacy\legacy_abi.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\portable_archive\portable_archive_exception.hpp" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\portable_archive\portable_iarchive.hpp" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\portable_archive\portable_oarchive.hpp" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\pugixml\pugiconfig.hpp" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\pugixml\pugixml.hpp" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\resolver_impl.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\resolve_attempt_udp.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\sample.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\send_buffer.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\socket_utils.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\stream_info_impl.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\stream_inlet_impl.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\stream_outlet_impl.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\tcp_server.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\time_receiver.h" />
+    <ClInclude Include="..\..\..\LSL\liblsl\src\udp_server.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\liblsl\external\src\chrono\src\chrono.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\filesystem\src\codecvt_error_category.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\filesystem\src\operations.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\filesystem\src\path.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\filesystem\src\path_traits.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\filesystem\src\portability.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\filesystem\src\unique_path.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\filesystem\src\utf8_codecvt_facet.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\filesystem\src\windows_file_codecvt.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\archive_exception.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\basic_archive.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\basic_iarchive.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\basic_iserializer.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\basic_oarchive.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\basic_oserializer.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\basic_pointer_iserializer.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\basic_pointer_oserializer.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\basic_serializer_map.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\binary_iarchive.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\binary_oarchive.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\binary_wiarchive.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\binary_woarchive.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\codecvt_null.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\extended_type_info.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\extended_type_info_no_rtti.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\extended_type_info_typeid.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\polymorphic_iarchive.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\polymorphic_oarchive.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\shared_ptr_helper.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\stl_port.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\utf8_codecvt_facet.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\serialization\src\void_cast.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\system\src\error_code.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\thread\src\pthread\once.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\thread\src\pthread\once_atomic.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\thread\src\pthread\thread.cpp" />
+    <ClCompile Include="..\..\..\liblsl\external\src\thread\src\tss_null.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\api_config.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\common.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\consumer_queue.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\data_receiver.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\dllmain.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\info_receiver.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\inlet_connection.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\legacy\legacy_abi.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\lsl_continuous_resolver_c.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\lsl_freefuncs_c.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\lsl_inlet_c.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\lsl_outlet_c.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\lsl_streaminfo_c.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\lsl_xml_element_c.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\pugixml\pugixml.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\resolver_impl.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\resolve_attempt_udp.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\sample.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\send_buffer.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\socket_utils.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\stream_info_impl.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\stream_outlet_impl.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\tcp_server.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\time_postprocessor.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\time_receiver.cpp" />
+    <ClCompile Include="..\..\..\liblsl\src\udp_server.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

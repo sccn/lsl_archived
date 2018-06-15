@@ -2,8 +2,7 @@
 #include "send_buffer.h"
 #include "../include/lsl_c.h"
 #include <iostream>
-#include <boost/thread.hpp>
-
+#include <boost/date_time/time_duration.hpp>
 
 // === implementation of the consumer_queue class ===
 
@@ -53,11 +52,12 @@ sample_p consumer_queue::pop_sample(double timeout) {
 		buffer_.pop(result);
 	} else {
 		if (!buffer_.pop(result)) {
-			timeout += lsl_local_clock();
+			// turn timeout into the point in time at which we give up
+			timeout += lsl_local_clock(); 
 			do {
 				if (lsl_local_clock() >= timeout)
 					break;
-				boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+				lslboost::this_thread::sleep(lslboost::posix_time::milliseconds(1));
 			} while (!buffer_.pop(result));
 		}
 	}

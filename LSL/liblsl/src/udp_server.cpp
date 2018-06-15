@@ -1,4 +1,5 @@
 #include <iostream>
+#include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <boost/algorithm/string.hpp>
 #include "udp_server.h"
@@ -9,7 +10,7 @@
 // === implementation of the udp_server class ===
 
 using namespace lsl;
-using namespace boost::asio;
+using namespace lslboost::asio;
 
 /*
 * Create a UDP responder in unicast mode that listens next to a TCP server.
@@ -86,10 +87,20 @@ void udp_server::begin_serving() {
 	request_next_packet();
 }
 
+/// Gracefully close a socket.
+void close_if_open(udp_socket_p sock) {
+	try {
+		if (sock->is_open())
+			sock->close();
+	}  catch(std::exception &e) {
+		std::cerr << "Error during close_if_open (thread id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
+	}
+}
+
 /// Initiate teardown of UDP traffic.
 void udp_server::end_serving() {
 	// gracefully close the socket; this will eventually lead to the cancellation of the IO operation(s) tied to its socket
-	io_.post(boost::bind(&close_if_open<udp_socket_p>,socket_));
+	io_.post(lslboost::bind(&close_if_open, socket_));
 }
 
 
@@ -98,8 +109,8 @@ void udp_server::end_serving() {
 /// Initiate next packet request.
 /// The result of the operation will eventually trigger the handle_receive_outcome() handler.
 void udp_server::request_next_packet() {
-	socket_->async_receive_from(boost::asio::buffer(buffer_), remote_endpoint_,
-		boost::bind(&udp_server::handle_receive_outcome, shared_from_this(), placeholders::error, placeholders::bytes_transferred));
+	socket_->async_receive_from(lslboost::asio::buffer(buffer_), remote_endpoint_,
+		lslboost::bind(&udp_server::handle_receive_outcome, shared_from_this(), placeholders::error, placeholders::bytes_transferred));
 }
 
 /// Handler that gets called when the next packet was received (or the op was cancelled).
@@ -112,10 +123,10 @@ void udp_server::handle_receive_outcome(error_code err, std::size_t len) {
 
 				// wrap received packet into a request stream and parse the method from it
 				std::istringstream request_stream(std::string(buffer_,buffer_+len));
-				std::string method; getline(request_stream,method); boost::trim(method);
+				std::string method; getline(request_stream,method); lslboost::trim(method);
 				if (method == "LSL:shortinfo") {
 					// shortinfo request: parse content query string
-					std::string query; getline(request_stream,query); boost::trim(query);
+					std::string query; getline(request_stream,query); lslboost::trim(query);
 					// parse return address, port, and query ID
 					int return_port; request_stream >> return_port;
 					std::string query_id; request_stream >> query_id;
@@ -124,8 +135,8 @@ void udp_server::handle_receive_outcome(error_code err, std::size_t len) {
 						// query matches: send back reply
 						udp::endpoint return_endpoint(remote_endpoint_.address(),(unsigned short)return_port);
 						string_p replymsg(new std::string((query_id += "\r\n") += shortinfo_msg_));
-						socket_->async_send_to(boost::asio::buffer(*replymsg), return_endpoint,
-							boost::bind(&udp_server::handle_send_outcome,shared_from_this(),replymsg,placeholders::error));
+						socket_->async_send_to(lslboost::asio::buffer(*replymsg), return_endpoint,
+							lslboost::bind(&udp_server::handle_send_outcome,shared_from_this(),replymsg,placeholders::error));
 						return;
 					}
 				} else {
@@ -136,8 +147,8 @@ void udp_server::handle_receive_outcome(error_code err, std::size_t len) {
 						// send it off (including the time of packet submission and a shared ptr to the message content owned by the handler)
 						std::ostringstream reply; reply.precision(16); reply << " " << wave_id << " " << t0 << " " << t1 << " " << lsl_clock();
 						string_p replymsg(new std::string(reply.str()));
-						socket_->async_send_to(boost::asio::buffer(*replymsg), remote_endpoint_,
-							boost::bind(&udp_server::handle_send_outcome,shared_from_this(),replymsg,placeholders::error));
+						socket_->async_send_to(lslboost::asio::buffer(*replymsg), remote_endpoint_,
+							lslboost::bind(&udp_server::handle_send_outcome,shared_from_this(),replymsg,placeholders::error));
 						return;
 					}
 				}

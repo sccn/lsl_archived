@@ -165,10 +165,14 @@ namespace lsl {
 		int inlet_buffer_reserve_ms() const { return inlet_buffer_reserve_ms_; }
 		/// Default pre-allocated buffer size for the inlet, in samples (irregular streams).
 		int inlet_buffer_reserve_samples() const { return inlet_buffer_reserve_samples_; }
+		/// Default halftime of the time-stamp smoothing window (if enabled), in seconds.
+		float smoothing_halftime() const { return smoothing_halftime_; }
+		/// Override timestamps with lsl clock if True
+		bool force_default_timestamps() const { return force_default_timestamps_; }
 
 	private:
 		// Thread-safe initialization logic (boilerplate).
-		static boost::once_flag once_flag;
+		static lslboost::once_flag once_flag;
 		static api_config *get_instance_internal();
 		static void called_once();
 
@@ -216,6 +220,8 @@ namespace lsl {
 		int outlet_buffer_reserve_samples_;
 		int inlet_buffer_reserve_ms_;
 		int inlet_buffer_reserve_samples_;
+		float smoothing_halftime_;
+		bool force_default_timestamps_;
 	};
 }
 

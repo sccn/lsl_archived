@@ -1,4 +1,5 @@
 % instantiate the library
+addpath(genpath('./../../liblsl-Matlab/'))
 disp('Loading the library...');
 lib = lsl_loadlib();
 

@@ -21,15 +21,24 @@ LIBLSL_C_API int lsl_protocol_version() { return api_config::get_instance()->use
 */
 LIBLSL_C_API int lsl_library_version() { return LSL_LIBRARY_VERSION; }
 
+/** Get a string containing library information */
+LIBLSL_C_API const char* lsl_library_info() {
+#ifdef LSL_LIBRARY_INFO_STR
+	return LSL_LIBRARY_INFO_STR;
+#else
+	return "Unknown (not set by build system)";
+#endif
+}
+
 /**
-* Obtain a local system time stamp in seconds. The resolution is better than a milisecond.
+* Obtain a local system time stamp in seconds. The resolution is better than a millisecond.
 * This reading can be used to assign time stamps to samples as they are being acquired. 
 * If the "age" of a sample is known at a particular time (e.g., from USB transmission 
 * delays), it can be used as an offset to local_clock() to obtain a better estimate of 
 * when a sample was actually captured.
 */
 LIBLSL_C_API double lsl_local_clock() { 
-	return boost::chrono::nanoseconds(boost::chrono::high_resolution_clock::now().time_since_epoch()).count()/1000000000.0; 
+	return lslboost::chrono::nanoseconds(lslboost::chrono::high_resolution_clock::now().time_since_epoch()).count()/1000000000.0; 
 } 
 
 /**

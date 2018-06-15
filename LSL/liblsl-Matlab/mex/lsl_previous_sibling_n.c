@@ -36,7 +36,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     str_len = mxGetNumberOfElements(prhs[2]);
     if (str_len+1 > sizeof(str)/sizeof(str[0]))
         mexErrMsgTxt("The given string is too long.");
-    mxGetNChars_700(prhs[2], str, str_len+1);
+    mxGetString(prhs[2], str, str_len+1);
     
     /* invoke & return */
     out = func(in,str);

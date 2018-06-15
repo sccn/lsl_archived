@@ -356,9 +356,11 @@ void MainWindow::load_config(const std::string &filename) {
 		}
 
 		// initialize the list of cap designs
-		std::string knownschemes = pt.get<std::string>("cap.knownschemes","[Rita-MoBI-2010-7, BioSemi-ABC]");
+		std::string knownschemes_bracketed = pt.get<std::string>("cap.knownschemes","[Rita-MoBI-2010-7, BioSemi-ABC]");
+		std::string knownschemes = knownschemes_bracketed.substr(1, knownschemes_bracketed.size()-2);
 		std::vector<std::string> schemes;
-		boost::algorithm::split(schemes,knownschemes.substr(1,knownschemes.size()-2),boost::algorithm::is_any_of(","),boost::algorithm::token_compress_on);
+		boost::algorithm::split(schemes, knownschemes,
+			boost::algorithm::is_any_of(","), boost::algorithm::token_compress_on);
 		ui->capDesign->clear();
 		for (int k=0;k<schemes.size();k++) {
 			boost::algorithm::trim_if(schemes[k],boost::algorithm::is_any_of(" '\""));
@@ -417,6 +419,7 @@ void MainWindow::connect_amp() {
 	if (reader_thread_) {
 		// we are linked: shut down the reader thread, unlink
 		try {
+			stop_ = true;
 			reader_thread_->interrupt();
 			reader_thread_->join();
 			reader_thread_.reset();
@@ -500,6 +503,7 @@ void MainWindow::connect_amp() {
 		}
 
 		// and create new reader thread
+		stop_ = false;
 		reader_thread_.reset(new boost::thread(&MainWindow::read_thread,this,locmap,ui->capDesign->currentText().toStdString(),ui->capLocation->text().toStdString(),ui->capCircumference->text().toStdString(),ui->referenceChannels->text().toStdString(),ui->resamplingOn->checkState()==Qt::Checked));
 
 		// done
@@ -581,13 +585,13 @@ void MainWindow::read_thread(std::map<std::string,std::vector<std::string> > loc
 		.append_child_value("compensated_lag",boost::lexical_cast<std::string>(compensated_lag).c_str())
 		.append_child_value("causal_correction",boost::lexical_cast<std::string>(sigproc_lag).c_str());
 
-	// <synchronization> meta-data
-	info.desc().append_child("synchronization")
-		.append_child_value("offset_mean", "0.00772")
-		.append_child_value("offset_rms", "0.000070")
-		.append_child_value("offset_median", "0.00772")
-		.append_child_value("offset_5_centile", "0.00764")
-		.append_child_value("offset_95_centile", "0.00783");
+	//// <synchronization> meta-data
+	//info.desc().append_child("synchronization")
+	//	.append_child_value("offset_mean", "0.00772")
+	//	.append_child_value("offset_rms", "0.000070")
+	//	.append_child_value("offset_median", "0.00772")
+	//	.append_child_value("offset_5_centile", "0.00764")
+	//	.append_child_value("offset_95_centile", "0.00783");
 
 	// make a new outlet
 	lsl::stream_outlet outlet(info);
@@ -629,7 +633,7 @@ void MainWindow::read_thread(std::map<std::string,std::vector<std::string> > loc
 	}
 
 	// send data...
-	while (true) {
+	while (!stop_) {
 
 		// get a chunk from the device --> raw_chunk is [#insamples x #channels]
 		biosemi_->get_chunk(raw_chunk);

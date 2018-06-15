@@ -1,3 +1,6 @@
+/*#define _CRTDBG_MAP_ALLOC  
+#include <stdlib.h>  
+#include <crtdbg.h> */ 
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -489,9 +492,13 @@ const double coeffs_10000_to_1000[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1.519574e-
 	1.338956e-004, 4.260406e-019, -1.054849e-004, -1.749852e-004, -2.067444e-004, -2.043512e-004, -1.756247e-004,
 	-1.310480e-004, -8.198651e-005, -3.893685e-005, -1.003438e-005, -1.519574e-034};
 
+void Transpose(const vector<vector<double> > &in, vector<vector<double> > &out);
 
 MainWindow::MainWindow(QWidget *parent, const std::string &config_file): QMainWindow(parent),ui(new Ui::MainWindow)
 {
+	//_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF ); 
+	//_CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_DEBUG ); 
+
 	ui->setupUi(this);
 
 	// parse startup config file
@@ -502,8 +509,33 @@ MainWindow::MainWindow(QWidget *parent, const std::string &config_file): QMainWi
 	QObject::connect(ui->linkButton, SIGNAL(clicked()), this, SLOT(link()));
 	QObject::connect(ui->actionLoad_Configuration, SIGNAL(triggered()), this, SLOT(load_config_dialog()));
 	QObject::connect(ui->actionSave_Configuration, SIGNAL(triggered()), this, SLOT(save_config_dialog()));
+	QObject::connect(ui->samplingRate, SIGNAL(currentIndexChanged(int)), this, SLOT(setMinChunk()));
 }
 
+void MainWindow::setMinChunk(){
+
+	int idx = ui->samplingRate->currentIndex();	
+	int samplingRate = sampling_rates[idx];
+
+	switch (samplingRate) {
+	case 125:
+		if(ui->chunkSize->value()<80)ui->chunkSize->setValue(80);
+		ui->chunkSize->setMinimum(80);
+		break;
+	case 250:
+		if(ui->chunkSize->value()<40)ui->chunkSize->setValue(40);
+		ui->chunkSize->setMinimum(40);
+		break;
+	case 500:
+		if(ui->chunkSize->value()<20)ui->chunkSize->setValue(20);
+		ui->chunkSize->setMinimum(20);
+		break;
+	case 1000:
+		if(ui->chunkSize->value()<10)ui->chunkSize->setValue(10);
+		ui->chunkSize->setMinimum(10);
+		break;
+	}
+}
 
 void MainWindow::load_config_dialog() {
 	QString sel = QFileDialog::getOpenFileName(this,"Load Configuration File","","Configuration Files (*.cfg)");
@@ -520,6 +552,8 @@ void MainWindow::save_config_dialog() {
 void MainWindow::closeEvent(QCloseEvent *ev) {
 	if (reader_thread_)
 		ev->ignore();
+	/*else
+		_CrtDumpMemoryLeaks();  */
 }
 
 void MainWindow::load_config(const std::string &filename) {
@@ -540,8 +574,12 @@ void MainWindow::load_config(const std::string &filename) {
 		ui->channelCount->setValue(pt.get<int>("settings.channelcount",32));
 		ui->chunkSize->setValue(pt.get<int>("settings.chunksize",10));
 		ui->samplingRate->setCurrentIndex(pt.get<int>("settings.samplingrate",2));
+		setMinChunk();
 		ui->useAUX->setCheckState(pt.get<bool>("settings.useaux",false) ? Qt::Checked : Qt::Unchecked);
 		ui->activeShield->setCheckState(pt.get<bool>("settings.activeshield",true) ? Qt::Checked : Qt::Unchecked);
+		ui->sampledMarkers->setCheckState(pt.get<bool>("settings.sampledmarkers",true) ? Qt::Checked : Qt::Unchecked);	
+		ui->sampledMarkersEEG->setCheckState(pt.get<bool>("settings.sampledmarkersEEG",false) ? Qt::Checked : Qt::Unchecked);
+		ui->unsampledMarkers->setCheckState(pt.get<bool>("settings.unsampledmarkers",false) ? Qt::Checked : Qt::Unchecked);	
 		ui->channelLabels->clear();
 		BOOST_FOREACH(ptree::value_type &v, pt.get_child("channels.labels"))
 			ui->channelLabels->appendPlainText(v.second.data().c_str());
@@ -563,6 +601,9 @@ void MainWindow::save_config(const std::string &filename) {
 		pt.put("settings.samplingrate",ui->samplingRate->currentIndex());
 		pt.put("settings.useaux",ui->useAUX->checkState()==Qt::Checked);
 		pt.put("settings.activeshield",ui->activeShield->checkState()==Qt::Checked);
+		pt.put("settings.unsampledmarkers",ui->unsampledMarkers->checkState()==Qt::Checked);
+		pt.put("settings.sampledmarkers",ui->sampledMarkers->checkState()==Qt::Checked);
+		pt.put("settings.sampledmarkersEEG",ui->sampledMarkersEEG->checkState()==Qt::Checked);
 		std::vector<std::string> channelLabels;
 		boost::algorithm::split(channelLabels,ui->channelLabels->toPlainText().toStdString(),boost::algorithm::is_any_of("\n"));
 		BOOST_FOREACH(std::string &v, channelLabels)
@@ -607,6 +648,11 @@ void MainWindow::link() {
 			int samplingRate = sampling_rates[ui->samplingRate->currentIndex()];
 			bool useAUX = ui->useAUX->checkState()==Qt::Checked;
 			bool activeShield = ui->activeShield->checkState()==Qt::Checked;
+
+			g_unsampledMarkers  = ui->unsampledMarkers->checkState()==Qt::Checked;
+			g_sampledMarkers    = ui->sampledMarkers->checkState()==Qt::Checked;
+			g_sampledMarkersEEG = ui->sampledMarkersEEG->checkState()==Qt::Checked;
+
 			std::vector<std::string> channelLabels;
 			boost::algorithm::split(channelLabels,ui->channelLabels->toPlainText().toStdString(),boost::algorithm::is_any_of("\n"));
 			if (channelLabels.size() != channelCount)
@@ -695,42 +741,98 @@ void MainWindow::link() {
 	}
 }
 
+
+
 // background data reader thread
 void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, int samplingRate, bool useAUX, bool activeShield, std::vector<std::string> channelLabels) {
 	HANDLE hDevice = NULL;
 	bool started = false;
+	bool _resample = false;
+
+	// set thread priority to high in order to ensure we don't lose data during sleep periods
+	int res = SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
+
+	// adjust channelCount if using aux
+	int eeg_count,aux_count;
+	if (useAUX) {
+		eeg_count = channelCount;
+		aux_count = 8;
+
+	} else {
+		eeg_count = channelCount;
+		aux_count = 0;
+	}
+
+	// hand allocated items 
+	lsl::stream_outlet *marker_outlet;
+	lsl::stream_outlet *s_marker_outlet;
+	char *recv_buffer;
+
+	std::vector<std::vector<double> > temp_buffer(chunkSize,std::vector<double>(channelCount+(g_sampledMarkersEEG?1:0)+aux_count));
+	std::vector<std::vector<double> > send_buffer(chunkSize,std::vector<double>(channelCount+(g_sampledMarkersEEG?1:0)+aux_count));
+	std::vector<unsigned> trigger_buffer(chunkSize);
+
+	std::vector<std::vector<double>> rs_temp_in,rs_temp_out;
+
+	// containers for the marker streams
+	std::vector<std::vector<std::string>> marker_buffer(chunkSize, std::vector<std::string>(1));
+	std::vector<std::string> s_mrkr;
+	float f_mrkr;
+
+	// the native sampling frequency is 10KHz, using other frequencies the signals must be resampled
+	if(samplingRate < 10000)
+		_resample = true;
+		
+	std::vector<Resampler<double,double,double>*> resamplers;
+	for (unsigned c=0;c<channelCount+(g_sampledMarkersEEG?1:0)+aux_count;c++) {
+		switch (samplingRate) {
+			case 125:
+				resamplers.push_back(new Resampler<double,double,double>(1,80,coeffs_10000_to_125,sizeof(coeffs_10000_to_125)/sizeof(coeffs_10000_to_125[0])));
+				break;
+			case 250:
+				resamplers.push_back(new Resampler<double,double,double>(1,40,coeffs_10000_to_250,sizeof(coeffs_10000_to_250)/sizeof(coeffs_10000_to_250[0])));
+				break;
+			case 500:
+				resamplers.push_back(new Resampler<double,double,double>(1,20,coeffs_10000_to_500,sizeof(coeffs_10000_to_500)/sizeof(coeffs_10000_to_500[0])));
+				break;
+			case 1000:
+				resamplers.push_back(new Resampler<double,double,double>(1,10,coeffs_10000_to_1000,sizeof(coeffs_10000_to_1000)/sizeof(coeffs_10000_to_1000[0])));
+				break;
+		}
+	}
+
 	try {
+		
 		// try to open the device again (we're doing everything in the same thread to not confuse the driver)
 		hDevice = champOpen(deviceNumber);
 		if (hDevice == NULL)
 			throw std::runtime_error("Could not open connection to the amplifier. Please make sure that the device is plugged in, turned on, and that the driver is installed correctly.");
+		
 		// try to get version
 		t_champVersion version;
 		if (champGetVersion(hDevice,&version) != CHAMP_ERR_OK)
 			throw std::runtime_error("Could not query device version number.");
+		
 		// try to get device properties
 		t_champProperty properties;	
 		if (champGetProperty(hDevice,&properties) != CHAMP_ERR_OK)
 			throw std::runtime_error("Could not query device properties.");
+		
 		// determine some acquisition parameters
 		float EEG_scale = properties.ResolutionEeg*1000000;
 		float AUX_scale = properties.ResolutionAux*1000000;
-		int eeg_count,aux_count;
-		if (useAUX) {
-			eeg_count = channelCount-8;
-			aux_count = 8;
-		} else {
-			eeg_count = channelCount;
-			aux_count = 0;
-		}
+
+
 		// try to get device module list
 		t_champModules modules;	
 		if (champGetModules(hDevice,&modules) != CHAMP_ERR_OK)
 			throw std::runtime_error("Could not query device modules.");
+
 		// try to enable all necessary modules
 		modules.Enabled = (useAUX?1:0) | (eeg_count>0?(1<<1):0) | (eeg_count>32?(1<<2):0) | (eeg_count>64?(1<<3):0) | (eeg_count>96?(1<<4):0) | (eeg_count>128?(1<<5):0);
 		if (champSetModules(hDevice,&modules) != CHAMP_ERR_OK)
 			throw std::runtime_error("Could not enable all present device modules.");
+
 		// try to set device settings
 		t_champSettingsEx settings;
 		settings.Mode = activeShield ? CHAMP_MODE_ACTIVE_SHIELD : CHAMP_MODE_NORMAL;
@@ -739,6 +841,7 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 		settings.Decimation = CHAMP_DECIMATION_0;
 		if (champSetSettingsEx(hDevice,&settings) != CHAMP_ERR_OK)
 			throw std::runtime_error("Could not apply device settings.");
+
 		// try to start acquisition
 		if (champStart(hDevice) != CHAMP_ERR_OK)
 			throw std::runtime_error("Could not start data acquisition.");
@@ -749,28 +852,21 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 
 		// reserve buffers to receive and send data
 		int buffer_bytes = chunkSize*sampleSize;
-		char *recv_buffer = new char[buffer_bytes*10];
-		std::vector<std::vector<double> > temp_buffer(chunkSize,std::vector<double>(channelCount));
-		std::vector<std::vector<double> > send_buffer(chunkSize,std::vector<double>(channelCount));
-		std::vector<unsigned> trigger_buffer(chunkSize);
-
-		// allocate resampler
-		Resampler<double,double,double> *resampler = NULL;
-		switch (samplingRate) {
-			case 125: resampler = new Resampler<double,double,double>(1,80,coeffs_10000_to_125,sizeof(coeffs_10000_to_125)/sizeof(coeffs_10000_to_125[0])); break;
-			case 250: resampler = new Resampler<double,double,double>(1,40,coeffs_10000_to_250,sizeof(coeffs_10000_to_250)/sizeof(coeffs_10000_to_250[0])); break;
-			case 500: resampler = new Resampler<double,double,double>(1,20,coeffs_10000_to_500,sizeof(coeffs_10000_to_500)/sizeof(coeffs_10000_to_500[0])); break;
-			case 1000: resampler = new Resampler<double,double,double>(1,10,coeffs_10000_to_1000,sizeof(coeffs_10000_to_1000)/sizeof(coeffs_10000_to_1000[0])); break;
-		}
+		recv_buffer = new char[buffer_bytes*10];
 
 		// create data streaminfo and append some meta-data
-		lsl::stream_info data_info("ActiChamp-" + boost::lexical_cast<std::string>(deviceNumber),"EEG",channelCount,samplingRate,lsl::cf_float32,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber));
+		lsl::stream_info data_info("ActiChamp-" + boost::lexical_cast<std::string>(deviceNumber),"EEG",channelCount+(g_sampledMarkersEEG?1:0)+aux_count,samplingRate,lsl::cf_float32,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber));
 		lsl::xml_element channels = data_info.desc().append_child("channels");
 		for (std::size_t k=0;k<channelLabels.size();k++)
 			channels.append_child("channel")
 				.append_child_value("label",channelLabels[k].c_str())
 				.append_child_value("type","EEG")
 				.append_child_value("unit","microvolts");
+		if(g_sampledMarkersEEG)
+			channels.append_child("channel")
+				.append_child_value("label", "Trigger")
+				.append_child_value("type","Trigger")
+				.append_child_value("unit","trigger values");
 		data_info.desc().append_child("acquisition")
 			.append_child_value("manufacturer","Brain Products")
 			.append_child_value("dll_version",boost::lexical_cast<std::string>(version.Dll).c_str())
@@ -778,31 +874,61 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 			.append_child_value("cypress_version",boost::lexical_cast<std::string>(version.Cypress).c_str())
 			.append_child_value("FPGA_version",boost::lexical_cast<std::string>(version.Fpga).c_str())
 			.append_child_value("msp430_version",boost::lexical_cast<std::string>(version.Msp430).c_str());
+		
 		// make a data outlet
 		lsl::stream_outlet data_outlet(data_info);
+		
+		// if using markers
+		if(g_unsampledMarkers) {
+			lsl::stream_info marker_info("ActiChamp-" + boost::lexical_cast<std::string>(deviceNumber) + "-Markers","Markers", 1, 0, lsl::cf_string,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber) + "_markers");
+			marker_outlet = new lsl::stream_outlet(marker_info);
+		}	
 
-		// create marker streaminfo and outlet
-		lsl::stream_info marker_info("ActiChamp-" + boost::lexical_cast<std::string>(deviceNumber) + "-Markers","Markers",1,0,lsl::cf_string,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber) + "_markers");
-		lsl::stream_outlet marker_outlet(marker_info);
-			
-		// enter transmission loop		
+		if(g_sampledMarkers) {
+			lsl::stream_info s_marker_info("ActiChamp-" + boost::lexical_cast<std::string>(deviceNumber) + "-Sampled-Markers","sampledMarkers", 1, (samplingRate > 1000 ? samplingRate : 10000), lsl::cf_string,"ActiChamp_" + boost::lexical_cast<std::string>(deviceNumber) + "_sampled_markers");
+			s_marker_outlet = new lsl::stream_outlet(s_marker_info);
+				// ditch the outlet if we don't need it (need to do it this way in order to trick C++ compiler into using this object conditionally)
+		}
+
+		// for keeping track of changes to the trigger signal
 		int last_mrk = 0;
+		int prev_markerSampled = 0;
+		int prev_markerEEG = 0;
+		
+		// for the resampler
+		int insamples;
+		int outchannels;
+		int outsamples;
+
+		// for resizing the temporary data buffer channels
+		int channs = channelCount+(g_sampledMarkersEEG?1:0)+aux_count;
+
+		// enter transmission loop		
 		int bytes_read, samples_read;
 		while (!stop_) {
 			// read chunk into recv_buffer
 			bytes_read = champGetDataBlocking(hDevice,recv_buffer,buffer_bytes);
 			samples_read = bytes_read/sampleSize;
+			
+			if (samples_read <= 0 && samplingRate < 50000){
+				boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+				continue;
+			}
+
 			if (samples_read > 0) {
+				
 				double now = lsl::local_clock();
+
 				// copy data into trigger_buffer and temp_buffer, and scale to microvolts
 				trigger_buffer.resize(samples_read);
-				temp_buffer.resize(samples_read,std::vector<double>(channelCount));
+				temp_buffer.resize(samples_read,std::vector<double>(channelCount+(g_sampledMarkersEEG?1:0)));
 				switch(sampleSize) {
 					case sizeof(t_champDataModelAux):
 						{
 							t_champDataModelAux *data = (t_champDataModelAux*)recv_buffer;
 							for (int s=0;s<samples_read;s++) {
 								trigger_buffer[s] = data[s].Triggers & 0xFFFF;
+								temp_buffer[s].resize(channs-eeg_count);
 								for (int c=0;c<aux_count;c++)
 									temp_buffer[s][c] = data[s].Aux[c] * AUX_scale;
 							}
@@ -813,10 +939,11 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 							t_champDataModel32 *data = (t_champDataModel32*)recv_buffer;
 							for (int s=0;s<samples_read;s++) {
 								trigger_buffer[s] = data[s].Triggers & 0xFFFF;
+								temp_buffer[s].resize(channs);
 								for (int c=0;c<eeg_count;c++)
 									temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
 								for (int c=0;c<aux_count;c++)
-									temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
+									temp_buffer[s][c+eeg_count+(g_sampledMarkersEEG?1:0)] = data[s].Aux[c] * AUX_scale;
 							}
 							break;
 						}
@@ -825,10 +952,11 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 							t_champDataModel64 *data = (t_champDataModel64*)recv_buffer;
 							for (int s=0;s<samples_read;s++) {
 								trigger_buffer[s] = data[s].Triggers & 0xFFFF;
+								temp_buffer[s].resize(channs);
 								for (int c=0;c<eeg_count;c++)
 									temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
 								for (int c=0;c<aux_count;c++)
-									temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
+									temp_buffer[s][c+eeg_count+(g_sampledMarkersEEG?1:0)] = data[s].Aux[c] * AUX_scale;
 							}
 							break;
 						}
@@ -837,10 +965,11 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 							t_champDataModel96 *data = (t_champDataModel96*)recv_buffer;
 							for (int s=0;s<samples_read;s++) {
 								trigger_buffer[s] = data[s].Triggers & 0xFFFF;
+								temp_buffer[s].resize(channs);
 								for (int c=0;c<eeg_count;c++)
 									temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
 								for (int c=0;c<aux_count;c++)
-									temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
+									temp_buffer[s][c+eeg_count+(g_sampledMarkersEEG?1:0)] = data[s].Aux[c] * AUX_scale;
 								}
 							break;
 						}
@@ -849,10 +978,11 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 							t_champDataModel128 *data = (t_champDataModel128*)recv_buffer;
 							for (int s=0;s<samples_read;s++) {
 								trigger_buffer[s] = data[s].Triggers & 0xFFFF;
+								temp_buffer[s].resize(channs);
 								for (int c=0;c<eeg_count;c++)
 									temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
 								for (int c=0;c<aux_count;c++)
-									temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
+									temp_buffer[s][c+eeg_count+(g_sampledMarkersEEG?1:0)] = data[s].Aux[c] * AUX_scale;
 							}
 							break;
 						}
@@ -861,35 +991,86 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 							t_champDataModel160 *data = (t_champDataModel160*)recv_buffer;
 							for (int s=0;s<samples_read;s++) {
 								trigger_buffer[s] = data[s].Triggers & 0xFFFF;
+								temp_buffer[s].resize(channs);
 								for (int c=0;c<eeg_count;c++)
 									temp_buffer[s][c] = data[s].Main[c] * EEG_scale;
 								for (int c=0;c<aux_count;c++)
-									temp_buffer[s][c+eeg_count] = data[s].Aux[c] * AUX_scale;
+									temp_buffer[s][c+eeg_count+(g_sampledMarkersEEG?1:0)] = data[s].Aux[c] * AUX_scale;
 							}
 							break;
 						}
 				}
-
+				
+				for (int s=0;s<samples_read;s++) {
+					if (g_sampledMarkersEEG) {
+						f_mrkr = (trigger_buffer[s] == prev_markerEEG ? 0.0 : boost::lexical_cast<float>(trigger_buffer[s]));
+						prev_markerEEG = trigger_buffer[s];
+						temp_buffer[s][channelCount] = f_mrkr;
+					}
+			
+					if (g_sampledMarkers) {
+						s_mrkr.clear();
+						s_mrkr.push_back(trigger_buffer[s] == prev_markerSampled ? "" : boost::lexical_cast<std::string>(trigger_buffer[s]));
+						marker_buffer.at(s) = s_mrkr;
+						prev_markerSampled = trigger_buffer[s];
+					}
+				}
+				
 				// optionally resample
-				if (resampler) {
-					resampler->apply_multichannel(temp_buffer,send_buffer);
+				if (_resample) {
+
+					insamples   = temp_buffer.size();
+					outchannels = temp_buffer[0].size();
+					outsamples  = resamplers[0]->neededOutCount(insamples);
+
+					// copy to transposed input buffer _temp_in
+					rs_temp_in.resize(outchannels);
+					for (int c=0,e=outchannels;c<e;c++) {
+						rs_temp_in[c].resize(insamples);
+						for (int s=0,e=insamples;s<e;s++)
+							rs_temp_in[c][s] = temp_buffer[s][c];
+						
+					}
+					std::vector<std::vector<double>> (rs_temp_in).swap(rs_temp_in);
+
+					// apply and store in output buffer _temp_out
+					rs_temp_out.resize(outchannels);
+					for (int c=0,e=outchannels;c<e;c++) {
+						rs_temp_out[c].resize(outsamples);
+						resamplers[c]->apply(&rs_temp_in[c][0],insamples,&rs_temp_out[c][0],outsamples);
+					}
+					
+					// transpose back and store in out
+					send_buffer.resize(outsamples);
+					for (int s=0,e=outsamples;s<e;s++) {
+						send_buffer[s].resize(outchannels);
+						for (int c=0,e=outchannels;c<e;c++)
+							send_buffer[s][c] = rs_temp_out[c][s];
+					}
+					
 					data_outlet.push_chunk(send_buffer,now);
+
 				} else {
+
 					data_outlet.push_chunk(temp_buffer,now);
 				}
 
-				// push markers into outlet
-				for (int s=0;s<samples_read;s++) {
-					if (int mrk=trigger_buffer[s]) {
-						if (mrk != last_mrk) {
-							std::string mrk_string = boost::lexical_cast<std::string>(mrk);
-							marker_outlet.push_sample(&mrk_string,now + (s + 1 - samples_read)/samplingRate);
-							last_mrk = mrk;
+				if(g_unsampledMarkers) {
+					for (int s=0;s<samples_read;s++) {
+						if (int mrk=trigger_buffer[s]) {
+							if (mrk != last_mrk) {
+								std::string mrk_string = boost::lexical_cast<std::string>(mrk);
+								//std::cout << "          mrkr: " << now << " " << s << " " << boost::lexical_cast<std::string>(trigger_buffer[s]) << std::endl;
+								marker_outlet->push_sample(&mrk_string,now + (s + 1 - samples_read)/samplingRate);
+								last_mrk = mrk;
+							}
 						}
 					}
 				}
 			}
 		}
+
+		
 	}
 	catch(boost::thread_interrupted &) {
 		// thread was interrupted: no error
@@ -905,8 +1086,12 @@ void MainWindow::read_thread(int deviceNumber, int channelCount, int chunkSize, 
 		champClose(hDevice);
 		hDevice = NULL;
 	}
+	if(g_unsampledMarkers)delete(marker_outlet);
+	if(g_sampledMarkers)delete(s_marker_outlet);
+	if(recv_buffer)delete(recv_buffer);
 }
 
 MainWindow::~MainWindow() {
 	delete ui;
 }
+

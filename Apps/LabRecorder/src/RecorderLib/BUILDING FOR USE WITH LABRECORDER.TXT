@@ -1,9 +1,0 @@
-To build this project for inclusion into the LabRecorder (Python project), perform the following steps:
-* Open the solution
-* Make sure you are building the Win32 Release (Project|Configuration Manager...)
-* Make sure that your project's Include and Library directories are pointing to the relevant versions of boost (1.47.0) and liblsl (1.02+).
-* Build
-* If you have changed the API of the library, you also need to copy the generated file RecorderLib.py into the src/ folder of your LabRecorder project.
-
-Side note: This library dynamically links to liblsl32.dll. Thus, if you are planning to upgrade your liblsl to a newer version, do not forget to
-update the liblsl32.dll copy in the src/ folder of the LabRecorder project, too.

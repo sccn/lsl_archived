@@ -1,3 +1,13 @@
+# if this script should fail due to ftp server/client errors (i.e. 'File not copied. IOError: [Errno ftp error] 200 Switching to Binary mode.')
+# or 'Oops! Source <path> not found' (which will resul from the download error above occuring previously, 
+# you may have to copy the folders into the subdirectory 'dependencies' with filezilla or some such other application
+# the url for the server to connect to is ftp://sccn.ucsd.edu/pub/LSL/lsl-dependencies/
+# from there simply copy external_libs, liblsl-xxx, and LSL-zips into the folder <path>/labstreaminglayer/dependencies
+# the script first downloads these files into dependencies (which you may have to do by hand)
+# then it access that local copy to place binaries into the correct folders.
+# so, once the dependencies folder exists and is populated with the correct files, run the script again and it should work
+
+
 import shutil
 import urllib
 try:
@@ -19,7 +29,7 @@ apps_dir = os.path.join(cur_dir, "Apps")
 libs_dir = os.path.join(cur_dir, "LSL")
 cache_dir = os.path.join(cur_dir, "dependencies")
 extern_dir = os.path.join(cur_dir, "external_libs")
-cur_ver = "1.11"  # current lsl version
+cur_ver = "1.12"  # current lsl version
 cur_lsl = "/liblsl-"+cur_ver+"/"
 
 
@@ -102,11 +112,13 @@ libs_d = {
 apps = [
     "AMTIForcePlate",
     "AudioCaptureWin",
-    "BAlert",  # note -- App doesn't run on my computer because I am missing a certain 'SiUSBXp.dll' -- consider providing this? -- fixed: by downloading said .dll and copying into C:\Windows\System32
+    "BAlert",  
     "BioSemi",
     "BrainProducts/ActiChamp",
     "BrainProducts/BrainAmpSeries",
     "BrainProducts/BrainVisionRDA",
+    "BrainProducts/VAmp",
+    "BrainProducts/LiveAmp",
     "Cognionics",
     "EGIAmpServer",
     "EmbarcaderoXE/bin",
@@ -123,9 +135,7 @@ apps = [
     "KinectMocap/KinectMocap",  # note -- kinect10.dll is missing from my computer -- fixed: one must install kinect runtime or the appropriate SDK
     "KinectMocap/KinectMocap/amd64",
     "KinectMocap/KinectMocap/x86",
-    "LabRecorder/src",
-    "LabRecorder/src/pylsl",
-    "LabRecorder/src/TestRecorder",
+    "LabRecorder",
     "MATLABImporter",
     "MATLABViewer",
     "MINDO",
@@ -176,7 +186,8 @@ apps_d = {
             "/external_libs/Qt/QtGui4.dll",
             cur_lsl+"bin/liblsl32.dll",
             "/external_libs/BAlert/BAlert.dll",
-            "/external_libs/BAlert/BAlert.lib"]
+            "/external_libs/BAlert/BAlert.lib",
+            "/external_libs/BAlert/SiUSBXp.dll"]
     },
 
     'BrainProducts/ActiChamp': {
@@ -185,6 +196,44 @@ apps_d = {
             "/external_libs/Qt/QtGui4.dll",
             "/external_libs/ActiChamp/ActiChamp_x86.dll",
             "/external_libs/ActiChamp/ActiChamp_x86.lib",
+            "/external_libs/ActiChamp/ActiChamp_x64.dll",
+            "/external_libs/ActiChamp/ActiChamp_x64.lib",
+            cur_lsl+"bin/liblsl32.dll",
+            cur_lsl+"bin/liblsl64.dll"]
+    },
+
+    'BrainProducts/VAmp': {
+        'win32': [
+            "/external_libs/Qt/QtCore4.dll",
+            "/external_libs/Qt/QtGui4.dll",
+            "/external_libs/VAmp/FirstAmp32.dll",
+            "/external_libs/VAmp/FilterButterworth64D.lib",
+            "/external_libs/VAmp/FilterButterworth64R.lib",
+            cur_lsl+"bin/liblsl32.dll"]
+    },
+
+    'BrainProducts/LiveAmp': {
+        'win32': [
+            "/external_libs/Qt/QtCore4.dll",
+            "/external_libs/Qt/QtGui4.dll",
+            "/external_libs/Qt/QtNetwork4.dll",
+            "/external_libs/LiveAmp/LiveAmpLib2.dll",
+            "/external_libs/LiveAmp/LiveAmpLib2.lib",
+            cur_lsl+"bin/liblsl32.dll"]
+    },
+
+    'BrainProducts/BrainAmpSeries': {
+        'win32': [
+            "/external_libs/Qt/QtCore4.dll",
+            "/external_libs/Qt/QtGui4.dll",
+            cur_lsl+"bin/liblsl32.dll"]
+    },
+
+
+    'BrainProducts/BrainVisionRDA': {
+        'win32': [
+            "/external_libs/Qt/QtCore4.dll",
+            "/external_libs/Qt/QtGui4.dll",
             cur_lsl+"bin/liblsl32.dll"]
     },
 
@@ -205,27 +254,6 @@ apps_d = {
         'linux': [
             cur_lsl+"bin/liblsl32.so",
             cur_lsl+"bin/liblsl64.so"]
-    },
-
-    'BrainProducts/BrainAmpSeries': {
-        'win32': [
-            "/external_libs/Qt/QtCore4.dll",
-            "/external_libs/Qt/QtGui4.dll",
-            cur_lsl+"bin/liblsl32.dll"]
-    },
-
-    'BrainProducts/BrainAmpSeries': {
-        'win32': [
-            "/external_libs/Qt/QtCore4.dll",
-            "/external_libs/Qt/QtGui4.dll",
-            cur_lsl+"bin/liblsl32.dll"]
-    },
-
-    'BrainProducts/BrainVisionRDA': {
-        'win32': [
-            "/external_libs/Qt/QtCore4.dll",
-            "/external_libs/Qt/QtGui4.dll",
-            cur_lsl+"bin/liblsl32.dll"]
     },
 
     'Cognionics': {
@@ -324,6 +352,7 @@ apps_d = {
         'win32': [
             "/external_libs/Qt/QtCore4.dll",
             "/external_libs/Qt/QtGui4.dll",
+            "/external_libs/g.Tec/gHIamp.lib",
             cur_lsl+"bin/liblsl32.dll"]
     },
 
@@ -373,31 +402,12 @@ apps_d = {
         'win32': ["/external_libs/Kinect/x86/Kinect10.lib"]
     },
 
-    # this program is structured very differently, so it breaks from the mold
-    'LabRecorder/src': {
-        'win32': [
-            "/external_libs/LabRecorder/src/RecorderLib32.lib",
-            "/external_libs/LabRecorder/src/RecorderLib32.dll",
-            "/external_libs/LabRecorder/src/RecorderLib64.lib",
-            "/external_libs/LabRecorder/src/RecorderLib64.dll",
-            "/external_libs/LabRecorder/src/RecorderLib64.dylib",
-            "/external_libs/LabRecorder/src/RecorderLib64.so"]
-    },
 
-    'LabRecorder/src/pylsl': {
-        'win32': [
-            cur_lsl+"bin/liblsl32.dll",
-            cur_lsl+"bin/liblsl32.dylib",
-            cur_lsl+"bin/liblsl64.dylib",
-            cur_lsl+"bin/liblsl32.so",
-            cur_lsl+"bin/liblsl64.so",
-            "/liblsl-Python/pylsl.py"]  # use the correct pylsl...
-    },
-
-    'LabRecorder/src/TestRecorder': {
+    'LabRecorder': {
         'win32': [cur_lsl+"bin/liblsl32.dll"],
         'win64': [cur_lsl+"bin/liblsl64.dll"],
-        'linux': [cur_lsl+"bin/liblsl32.so", cur_lsl+"bin/liblsl64.so"],
+        'OSX': [cur_lsl+"bin/liblsl64.dylib"],
+        'linux': [cur_lsl+"bin/liblsl64.so", cur_lsl+"bin/liblsl32.so"],
     },
 
     'MATLABImporter': {
@@ -809,7 +819,7 @@ def unstrip_all():
     # Only download files for this OS
     my_op_sys = op_sys  # ["win32", "win64", "OSX", "linux"]
     
-    if sys.platform == "linux" or sys.platform == "linux2":
+    if sys.platform == "linux" or sys.platform == "linux32":
         my_op_sys = ["linux"]
     elif sys.platform == "darwin":
         my_op_sys = ["OSX"]
@@ -826,5 +836,5 @@ def unstrip_all():
     unstrip(apps, apps_d, apps_dir, my_op_sys)
     
     # comment if you want to keep the dependencies folder 
-    if os.path.exists("./dependencies"):
-        shutil.rmtree("./dependencies")
+    #if os.path.exists("./dependencies"):
+    #    shutil.rmtree("./dependencies")

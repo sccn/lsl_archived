@@ -5,19 +5,17 @@
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <boost/shared_ptr.hpp>
-#include <boost/thread.hpp>
-#include <string>
+#include <atomic>
+#include <thread>
 #include <vector>
 
-// LSL API
-#include <lsl_cpp.h>
-
-// BrainAmp API
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <WinIoCtl.h>
-#include "BrainAmpIoCtl.h"
+#ifdef WIN32
+    #define WIN32_LEAN_AND_MEAN
+    #include <windows.h>
+#else
+	using HANDLE = void*;
+	using ULONG = unsigned long;
+#endif
 
 
 namespace Ui {
@@ -29,7 +27,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit MainWindow(QWidget *parent, const std::string &config_file);
+    explicit MainWindow(QWidget *parent, const char* config_file);
     ~MainWindow();
     
 private slots:
@@ -41,18 +39,29 @@ private slots:
     void link();
 
     // close event (potentially disabled)
-    void closeEvent(QCloseEvent *ev);
+    void closeEvent(QCloseEvent *ev) override;
 private:
     // background data reader thread
-	void read_thread(int deviceNumber, ULONG serialNumber, int impedanceMode, int resolution, int dcCoupling, int chunkSize, int channelCount, std::vector<std::string> channelLabels);
+	template<typename T>
+	void read_thread(int deviceNumber, ULONG serialNumber, int impedanceMode,
+					 int resolution, int dcCoupling, int chunkSize, int channelCount,
+					 std::vector<std::string> channelLabels);
 
     // raw config file IO
-    void load_config(const std::string &filename);
-    void save_config(const std::string &filename);
+    void load_config(QString filename);
+    void save_config(QString filename);
 	
 	HANDLE hDevice;
-	bool stop_;											// whether the reader thread is supposed to stop
-    boost::shared_ptr<boost::thread> reader_thread_;	// our reader thread
+	std::atomic<bool> stop_;						// whether the reader thread is supposed to stop
+    std::unique_ptr<std::thread> reader_thread_;	// our reader thread
+
+	bool g_unsampledMarkers;
+	bool g_sampledMarkers;
+	bool g_sampledMarkersEEG;
+
+	bool pullUpHiBits;
+	bool pullUpLowBits;
+	uint16_t g_pull_dir;
 
     Ui::MainWindow *ui;
 };

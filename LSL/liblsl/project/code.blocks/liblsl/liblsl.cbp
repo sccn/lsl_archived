@@ -8,7 +8,7 @@
 		<Build>
 			<Target title="Debug">
 				<Option platforms="Unix;" />
-				<Option output="../../../bin/liblsl64-debug" prefix_auto="1" extension_auto="1" />
+				<Option output="../../../bin/lsl64-debug" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="../../../bin" />
 				<Option object_output="../../../output/linux64/objs/debug" />
 				<Option type="3" />
@@ -21,7 +21,7 @@
 			</Target>
 			<Target title="Release">
 				<Option platforms="Unix;" />
-				<Option output="../../../bin/liblsl64" prefix_auto="1" extension_auto="1" />
+				<Option output="../../../bin/lsl64" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="../../../bin" />
 				<Option object_output="../../../output/linux64/objs/release" />
 				<Option type="3" />
@@ -30,6 +30,7 @@
 				<Option createStaticLib="1" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-std=c++0x" />
 					<Add option="-w" />
 				</Compiler>
 				<Linker>
@@ -38,14 +39,16 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-std=c++0x" />
 			<Add option="-Wall" />
-			<Add option="-fexceptions -fvisibility=hidden -fvisibility-inlines-hidden -fPIC" />
+			<Add option="-fexceptions -fvisibility=hidden -fvisibility-inlines-hidden -fPIC -fpermissive" />
 			<Add option="-DUSE_SHRINKWRAPPED_BOOST" />
 			<Add directory="../../../external" />
 		</Compiler>
 		<Linker>
 			<Add option="-pthread -lrt -fvisibility=hidden" />
 			<Add option="-fvisibility-inlines-hidden" />
+			<Add option="-z muldefs" />
 		</Linker>
 		<Unit filename="../../../external/src/chrono/src/chrono.cpp" />
 		<Unit filename="../../../external/src/filesystem/src/codecvt_error_category.cpp" />
@@ -136,6 +139,8 @@
 		<Unit filename="../../../src/stream_outlet_impl.h" />
 		<Unit filename="../../../src/tcp_server.cpp" />
 		<Unit filename="../../../src/tcp_server.h" />
+		<Unit filename="../../../src/time_postprocessor.cpp" />
+		<Unit filename="../../../src/time_postprocessor.h" />
 		<Unit filename="../../../src/time_receiver.cpp" />
 		<Unit filename="../../../src/time_receiver.h" />
 		<Unit filename="../../../src/udp_server.cpp" />

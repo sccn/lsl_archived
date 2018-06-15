@@ -1,3 +1,18 @@
+##
+# removing outdated PupilPro app
+/PupilPro
+
+##
+# for video 
+*.avi
+*.asf
+*.mov
+*.mp4
+
+## 
+# linux distro
+*.deb
+
 ## 
 # lsl external libraries to ignore all the time
 QtCore4.dll
@@ -10,6 +25,11 @@ BAlert.dll
 BAlert.lib
 ActiChamp_x86.dll
 ActiChamp_x86.lib
+ActiChamp_x64.dll
+ActiChamp_x64.lib
+FirstAmp32.dll
+FilterButterworth64D.lib
+FilterButterworth64R.lib
 alleg44.dll
 alleg44.lib
 cvWrapper.dll
@@ -120,6 +140,7 @@ external_libs/
 # unfortunately, in the case of linux, since there is no extension, we must name it
 linux/PupilPro
 linux/XDFBrowser
+linux/LabRecorder
 
 ## C++.gitignore:
 
@@ -381,16 +402,14 @@ Makefile*
 # Build results
 [Dd]ebug/
 # an exception to the 'debug' exclusion rule
-!LSL/liblsl/external/lslboost/preprocessor/debug
-!LSL/liblsl/external/lslboost/bimap/detail/debug
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
 x64/
 x86/
 # except for this one:
-!LSL/liblsl/external/lslboost/predef/architecture/x86
-!LSL/liblsl/external/lslboost/predef/architecture/x86/*
+!/LSL/liblsl/*/*boost/**/debug
+!/LSL/liblsl/*/*boost/**/x86
 build/
 bld/
 [Oo]bj/
@@ -569,3 +588,11 @@ FakesAssemblies/
 
 # Packaging artifacts (debian packages)
 *.deb
+
+
+# exceptions:
+!gUSBamp.lib
+!gHIamp.lib
+
+# stupid ds_store:
+.DS_Store

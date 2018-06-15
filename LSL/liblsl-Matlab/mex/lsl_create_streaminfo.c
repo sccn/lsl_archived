@@ -37,12 +37,12 @@ void mexFunction( int nlhs, mxArray *plhs[],
     name_len = mxGetNumberOfElements(prhs[1]);
     if (name_len+1 > sizeof(name)/sizeof(name[0]))
         mexErrMsgTxt("The given stream name is too long.");    
-    mxGetNChars_700(prhs[1], name, name_len+1);
+    mxGetString(prhs[1], name, name_len+1);
     
     type_len = mxGetNumberOfElements(prhs[2]);
     if (type_len+1 > sizeof(type)/sizeof(type[0]))
         mexErrMsgTxt("The given stream type is too long.");    
-    mxGetNChars_700(prhs[2], type, type_len+1);
+    mxGetString(prhs[2], type, type_len+1);
 
     if (mxGetClassID(prhs[3]) != mxDOUBLE_CLASS)
         mexErrMsgTxt("The channel count must be passed as a double.");
@@ -61,7 +61,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     source_id_len = mxGetNumberOfElements(prhs[6]);
     if (source_id_len+1 > sizeof(source_id)/sizeof(source_id[0]))
         mexErrMsgTxt("The given stream source id is too long.");    
-    mxGetNChars_700(prhs[6], source_id, source_id_len+1);
+    mxGetString(prhs[6], source_id, source_id_len+1);
     
     /* invoke & return */
     result = func(name,type,channel_count,nominal_srate,channel_format,source_id);

@@ -141,7 +141,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[]) {
     
     /* extract the library path */
     libpath_len = mxGetNumberOfElements(prhs[0]);
-    mxGetNChars_700(prhs[0], libpath, libpath_len+1);
+    mxGetString(prhs[0], libpath, libpath_len+1);
     
     /* load the library */
     hlib = (void*)LOAD_LIBRARY(libpath);

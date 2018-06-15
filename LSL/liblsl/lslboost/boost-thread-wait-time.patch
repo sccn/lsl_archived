@@ -1,0 +1,13 @@
+--- a/lslboost/libs/thread/src/win32/thread.cpp
++++ b/lslboost/libs/thread/src/win32/thread.cpp
+@@ -710,9 +710,7 @@ namespace lslboost
+                 timer_handle=CreateWaitableTimer(NULL,false,NULL);
+                 if(timer_handle!=0)
+                 {
+-                    ULONG tolerable=32; // Empirical testing shows Windows ignores this when <= 26
+-                    if(time_left.milliseconds/20>tolerable)  // 5%
+-                        tolerable=time_left.milliseconds/20;
++                    ULONG tolerable=1; // Hopefully this works.
+                     LARGE_INTEGER due_time=get_due_time(target_time);
+                     //bool const set_time_succeeded=detail_::SetWaitableTimerEx()(timer_handle,&due_time,0,0,0,&detail_::default_reason_context,tolerable)!=0;
+                     bool const set_time_succeeded=detail_::SetWaitableTimerEx()(timer_handle,&due_time,0,0,0,NULL,tolerable)!=0;

@@ -1,6 +1,7 @@
 #ifndef STREAM_OUTLET_IMPL_H
 #define STREAM_OUTLET_IMPL_H
 
+#include <boost/container/flat_set.hpp>
 #include "tcp_server.h"
 #include "send_buffer.h"
 #include "common.h"
@@ -13,15 +14,15 @@
 namespace lsl { 
 
 	/// pointer to a thread
-	typedef boost::shared_ptr<boost::thread> thread_p;
+	typedef lslboost::shared_ptr<lslboost::thread> thread_p;
 	/// pointer to an io_service
-	typedef boost::shared_ptr<boost::asio::io_service> io_service_p;
+	typedef lslboost::shared_ptr<lslboost::asio::io_service> io_service_p;
 
 	/**
 	* A stream outlet.
 	* Outlets are used to make streaming data (and the meta-data) available on the lab network.
 	*/
-	class stream_outlet_impl: public boost::noncopyable {
+	class stream_outlet_impl: public lslboost::noncopyable {
 	public:
 		/**
 		* Establish a new stream outlet. This makes the stream discoverable.
@@ -75,6 +76,25 @@ namespace lsl {
 		void push_sample(const char *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
 		void push_sample(const std::string *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
 
+
+	    template <typename T>
+	    inline lsl_error_code_t push_sample_noexcept(const T* data, double timestamp = 0.0,
+		                                             bool pushthrough = true) BOOST_NOEXCEPT {
+		    try {
+			    enqueue(data, timestamp, pushthrough);
+			    return lsl_no_error;
+		    } catch (std::range_error& e) {
+			    std::cerr << "Error during push_sample: " << e.what() << std::endl;
+			    return lsl_argument_error;
+		    } catch (std::invalid_argument& e) {
+			    std::cerr << "Error during push_sample: " << e.what() << std::endl;
+			    return lsl_argument_error;
+		    } catch (std::exception& e) {
+			    std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
+			    return lsl_internal_error;
+		    }
+	    }
+
 		/**
 		* Push a pointer to raw numeric data as one sample into the outlet. 
 		* This is the lowest-level function; does no checking of any kind. Do not use for variable-size/string data-formatted channels.
@@ -83,7 +103,9 @@ namespace lsl {
 		* @param pushthrough Whether to push the sample through to the receivers instead of buffering it into a chunk according to network speeds.
 		*/
 		void push_numeric_raw(void *data, double timestamp=0.0, bool pushthrough=true) { 
-			sample_p smp(sample_factory_->new_sample(timestamp==0.0 ? lsl_clock() : timestamp, pushthrough));
+			if (lsl::api_config::get_instance()->force_default_timestamps())
+				timestamp = 0.0;
+			sample_p smp(sample_factory_->new_sample(timestamp == 0.0 ? lsl_clock() : timestamp, pushthrough));
 			smp->assign_untyped(data);
 			send_buffer_->push_sample(smp);
 		}
@@ -172,7 +194,9 @@ namespace lsl {
 		* Allocate and enqueue a new sample into the send buffer.
 		*/
 		template<class T> void enqueue(T* data, double timestamp, bool pushthrough) { 
-			sample_p smp(sample_factory_->new_sample(timestamp==0.0 ? lsl_clock() : timestamp, pushthrough));
+			if (lsl::api_config::get_instance()->force_default_timestamps())
+				timestamp = 0.0;
+			sample_p smp(sample_factory_->new_sample(timestamp == 0.0 ? lsl_clock() : timestamp, pushthrough));
 			smp->assign_typed(data);
 			send_buffer_->push_sample(smp);
 		}

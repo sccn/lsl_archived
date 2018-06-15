@@ -1,7 +1,7 @@
 #include <sstream>
 #include <iostream>
-#include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/thread.hpp>
 #include "stream_info_impl.h"
 #include "api_config.h"
 
@@ -11,7 +11,7 @@
 using namespace lsl;
 using namespace pugi;
 using std::string;
-using boost::lexical_cast;
+using lslboost::lexical_cast;
 
 /// Default Constructor.
 stream_info_impl::stream_info_impl(): channel_count_(0), nominal_srate_(0), channel_format_(cf_undefined), version_(0), v4data_port_(0), v4service_port_(0), v6data_port_(0), v6service_port_(0), created_at_(0) {
@@ -184,7 +184,7 @@ void stream_info_impl::from_fullinfo_message(const std::string &m) {
 * Test whether this stream info matches the given query string.
 */
 bool stream_info_impl::matches_query(const string &query) {
-	boost::lock_guard<boost::mutex> lock(cache_mut_);
+	lslboost::lock_guard<lslboost::mutex> lock(cache_mut_);
     query_cache::left_iterator it = cached_.left.find(query);
 	if (it != cached_.left.end()) {
 		// found in cache

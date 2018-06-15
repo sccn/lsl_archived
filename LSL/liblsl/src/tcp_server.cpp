@@ -1,10 +1,11 @@
 #include <iostream>
-#include <boost/format.hpp>
+#include <boost/asio.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/serialization/split_member.hpp>
+#include <boost/container/flat_set.hpp>
 #include "tcp_server.h"
 #include "socket_utils.h"
 
@@ -12,7 +13,7 @@
 // === implementation of the tcp_server class ===
 
 using namespace lsl;
-using namespace boost::asio;
+using namespace lslboost::asio;
 
 /**
 * Construct a new TCP server for a stream outlet.
@@ -37,7 +38,7 @@ tcp_server::tcp_server(const stream_info_impl_p &info, const io_service_p &io, c
 	// and assign connection-dependent fields
 	// (note: this may be assigned multiple times by multiple TCPs during setup but does not matter)
 	info_->session_id(api_config::get_instance()->session_id());
-	info_->uid(boost::uuids::to_string(boost::uuids::random_generator()()));
+	info_->uid(lslboost::uuids::to_string(lslboost::uuids::random_generator()()));
 	info_->created_at(lsl_clock());
 	info_->hostname(ip::host_name());
     if (protocol == tcp::v4())
@@ -69,11 +70,11 @@ void tcp_server::end_serving() {
 	// the shutdown flag informs the transfer thread that we're shutting down
 	shutdown_ = true;
 	// issue closure of the server socket; this will result in a cancellation of the associated IO operations
-	io_->post(boost::bind(&tcp::acceptor::close,acceptor_));
+	io_->post(lslboost::bind(&tcp::acceptor::close,acceptor_));
 	// issue closure of all active client session sockets; cancels the related outstanding IO jobs
 	close_inflight_sockets();
 	// also notify any transfer threads that are blocked waiting for a sample by sending them one (= a ping)
-	send_buffer_->push_sample(sample_p());
+	send_buffer_->push_sample(factory_->new_sample(lsl_clock(), true));
 }
 
 
@@ -86,9 +87,9 @@ void tcp_server::accept_next_connection() {
 		client_session_p newsession(new client_session(shared_from_this()));
 		// accept a connection on the session's socket
 		acceptor_->async_accept(*newsession->socket(),
-			boost::bind(&tcp_server::handle_accept_outcome,shared_from_this(),newsession,placeholders::error));
+			lslboost::bind(&tcp_server::handle_accept_outcome,shared_from_this(),newsession,placeholders::error));
 	}  catch(std::exception &e) {
-		std::cerr << "Error during tcp_server::accept_next_connection (id: " << boost::this_thread::get_id() << "): " << e.what() << std::endl;
+		std::cerr << "Error during tcp_server::accept_next_connection (id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
 	}
 }
 
@@ -108,21 +109,36 @@ void tcp_server::handle_accept_outcome(client_session_p newsession, error_code e
 
 /// Register an in-flight (active) session socket with the server (so that we can close it when a shutdown is requested externally).
 void tcp_server::register_inflight_socket(const tcp_socket_p &sock) {
-	boost::lock_guard<boost::recursive_mutex> lock(inflight_mut_);
+	lslboost::lock_guard<lslboost::recursive_mutex> lock(inflight_mut_);
 	inflight_.insert(sock);
 }
 
 /// Unregister an in-flight session socket.
 void tcp_server::unregister_inflight_socket(const tcp_socket_p &sock) {
-	boost::lock_guard<boost::recursive_mutex> lock(inflight_mut_);
+	lslboost::lock_guard<lslboost::recursive_mutex> lock(inflight_mut_);
 	inflight_.erase(sock);
+}
+
+/// Gracefully shut down a socket.
+template<class SocketPtr, class Protocol> void shutdown_and_close(SocketPtr sock) {
+	try {
+		if (sock->is_open()) {
+			try {
+				// (in some cases shutdown may fail)
+				sock->shutdown(Protocol::socket::shutdown_both);
+			} catch(...) {}
+			sock->close();
+		}
+	}  catch(std::exception &e) {
+		std::cerr << "Error during shutdown_and_close (thread id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
+	}
 }
 
 /// Post a close of all in-flight sockets.
 void tcp_server::close_inflight_sockets() {
-	boost::lock_guard<boost::recursive_mutex> lock(inflight_mut_);
+	lslboost::lock_guard<lslboost::recursive_mutex> lock(inflight_mut_);
 	for (std::set<tcp_socket_p>::iterator i=inflight_.begin(); i!=inflight_.end(); i++)
-		io_->post(boost::bind(&shutdown_and_close<tcp_socket_p,tcp>,*i));
+		io_->post(lslboost::bind(&shutdown_and_close<tcp_socket_p,tcp>,*i));
 }
 
 
@@ -133,7 +149,9 @@ void tcp_server::close_inflight_sockets() {
 
 
 /// Instantiate a new session & its socket.
-tcp_server::client_session::client_session(const tcp_server_p &serv): registered_(false), io_(serv->io_), serv_(serv), sock_(tcp_socket_p(new tcp::socket(*serv->io_))), requeststream_(&requestbuf_), use_byte_order_(0), data_protocol_version_(100) {	}
+tcp_server::client_session::client_session(const tcp_server_p &serv):
+    registered_(false), io_(serv->io_), serv_(serv), sock_(tcp_socket_p(new tcp::socket(*serv->io_))),
+    requeststream_(&requestbuf_), use_byte_order_(0), data_protocol_version_(100) {	}
 
 /**
 * Destructor. Unregisters the socket from the server & closes it.
@@ -145,7 +163,7 @@ tcp_server::client_session::~client_session() {
 			serv_->unregister_inflight_socket(sock_);
 	}
 	catch(std::exception &e) {
-		std::cerr << "Unexpected error in client_session destructor (id: " << boost::this_thread::get_id() << "): " << e.what() << std::endl;
+		std::cerr << "Unexpected error in client_session destructor (id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
 	}
 	catch(...) {
 		std::cerr << "Severe error during client session shutdown." << std::endl;
@@ -158,15 +176,15 @@ tcp_socket_p tcp_server::client_session::socket() { return sock_; }
 /// Begin processing this session.
 void tcp_server::client_session::begin_processing() {
 	try {
-		sock_->set_option(boost::asio::ip::tcp::no_delay(true));
+		sock_->set_option(lslboost::asio::ip::tcp::no_delay(true));
 		// register this socket as "in-flight" with the server (so that any subsequent ops on it can be aborted if necessary)
 		serv_->register_inflight_socket(sock_);
 		registered_ = true;
 		// read the request line
 		async_read_until(*sock_, requestbuf_, "\r\n",
-			boost::bind(&client_session::handle_read_command_outcome,shared_from_this(),placeholders::error));
+			lslboost::bind(&client_session::handle_read_command_outcome,shared_from_this(),placeholders::error));
 	} catch(std::exception &e) {
-		std::cerr << "Error during client_session::begin_processing (id: " << boost::this_thread::get_id() << "): " << e.what() << std::endl;
+		std::cerr << "Error during client_session::begin_processing (id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
 	}
 }
 
@@ -175,30 +193,30 @@ void tcp_server::client_session::handle_read_command_outcome(error_code err) {
 	try {
 		if (!err) {
 			// parse request method
-			std::string method; getline(requeststream_,method); boost::trim(method);
+			std::string method; getline(requeststream_,method); lslboost::trim(method);
 			if (method == "LSL:shortinfo")
 				// shortinfo request: read the content query string
 				async_read_until(*sock_, requestbuf_, "\r\n",
-					boost::bind(&client_session::handle_read_query_outcome,shared_from_this(),placeholders::error));
+					lslboost::bind(&client_session::handle_read_query_outcome,shared_from_this(),placeholders::error));
 			if (method == "LSL:fullinfo")
 				// fullinfo request: reply right away
-				async_write(*sock_, boost::asio::buffer(serv_->fullinfo_msg_),
-					boost::bind(&client_session::handle_send_outcome,shared_from_this(),placeholders::error));
+				async_write(*sock_, lslboost::asio::buffer(serv_->fullinfo_msg_),
+					lslboost::bind(&client_session::handle_send_outcome,shared_from_this(),placeholders::error));
 			if (method == "LSL:streamfeed")
 				// streamfeed request (1.00): read feed parameters
 				async_read_until(*sock_, requestbuf_, "\r\n",
-					boost::bind(&client_session::handle_read_feedparams,shared_from_this(),100,"",placeholders::error));
-			if (boost::algorithm::starts_with(method,"LSL:streamfeed/")) {
+					lslboost::bind(&client_session::handle_read_feedparams,shared_from_this(),100,"",placeholders::error));
+			if (lslboost::algorithm::starts_with(method,"LSL:streamfeed/")) {
 				// streamfeed request with version: read feed parameters
-				std::vector<std::string> parts; boost::algorithm::split(parts,method,boost::algorithm::is_any_of(" \t"));
-				int request_protocol_version = boost::lexical_cast<int>(parts[0].substr(parts[0].find_first_of("/")+1));
+				std::vector<std::string> parts; lslboost::algorithm::split(parts,method,lslboost::algorithm::is_any_of(" \t"));
+				int request_protocol_version = lslboost::lexical_cast<int>(parts[0].substr(parts[0].find_first_of('/')+1));
 				std::string request_uid = (parts.size()>1) ? parts[1] : "";
 				async_read_until(*sock_, requestbuf_, "\r\n\r\n",
-					boost::bind(&client_session::handle_read_feedparams,shared_from_this(),request_protocol_version,request_uid,placeholders::error));
+					lslboost::bind(&client_session::handle_read_feedparams,shared_from_this(),request_protocol_version,request_uid,placeholders::error));
 			}
 		}
 	} catch(std::exception &e) {
-		std::cerr << "Unexpected error while parsing a client command (id: " << boost::this_thread::get_id() << "): " << e.what() << std::endl;
+		std::cerr << "Unexpected error while parsing a client command (id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
 	}
 }
 
@@ -207,14 +225,14 @@ void tcp_server::client_session::handle_read_query_outcome(error_code err) {
 	try {
 		if (!err) {
 			// read the query line
-			std::string query; getline(requeststream_,query); boost::trim(query);
+			std::string query; getline(requeststream_,query); lslboost::trim(query);
 			if (serv_->info_->matches_query(query))
 				// matches: reply (otherwise just close the stream)
-				async_write(*sock_, boost::asio::buffer(serv_->shortinfo_msg_),
-					boost::bind(&client_session::handle_send_outcome,shared_from_this(),placeholders::error));
+				async_write(*sock_, lslboost::asio::buffer(serv_->shortinfo_msg_),
+					lslboost::bind(&client_session::handle_send_outcome,shared_from_this(),placeholders::error));
 		}
 	} catch(std::exception &e) {
-		std::cerr << "Unexpected error while parsing a client request (id: " << boost::this_thread::get_id() << "): " << e.what() << std::endl;
+		std::cerr << "Unexpected error while parsing a client request (id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
 	}
 }
 
@@ -224,8 +242,8 @@ void tcp_server::client_session::handle_send_outcome(error_code err) { }
 /// Helper function to send a status message to the connected party
 void tcp_server::client_session::send_status_message(const std::string &str) {
 	string_p msg(new std::string(str));
-	async_write(*sock_, boost::asio::buffer(*msg),
-		boost::bind(&client_session::handle_status_outcome,shared_from_this(),msg,placeholders::error));
+	async_write(*sock_, lslboost::asio::buffer(*msg),
+		lslboost::bind(&client_session::handle_status_outcome,shared_from_this(),msg,placeholders::error));
 }
 
 /// Handler that gets called after finishing the sending of a message, holding a reference to the message.
@@ -236,15 +254,15 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 	try {
 		if (!err) {
 			// --- protocol negotiation ---
-			using namespace boost::algorithm;
+			using namespace lslboost::algorithm;
 
 			// check request validity
 			if (request_protocol_version/100 > api_config::get_instance()->use_protocol_version()/100) {
-				send_status_message((boost::format("LSL/%1% 505 Version not supported") % api_config::get_instance()->use_protocol_version()).str());
+				send_status_message("LSL/"+lslboost::lexical_cast<std::string>(api_config::get_instance()->use_protocol_version())+" 505 Version not supported");
 				return;
 			}
 			if (!request_uid.empty() && request_uid != serv_->info_->uid()) {
-				send_status_message((boost::format("LSL/%1% 404 Not found") % api_config::get_instance()->use_protocol_version()).str());
+				send_status_message("LSL/"+lslboost::lexical_cast<std::string>(api_config::get_instance()->use_protocol_version())+" 404 Not found");
 				return;
 			}
 
@@ -261,31 +279,31 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 				char buf[16384] = {0};
 				while (requeststream_.getline(buf,sizeof(buf)) && (buf[0] != '\r')) {
 					std::string hdrline(buf);
-					int colon = hdrline.find_first_of(":");
+					std::size_t colon = hdrline.find_first_of(':');
 					if (colon != std::string::npos) {
 						// extract key & value
 						std::string type = to_lower_copy(trim_copy(hdrline.substr(0,colon))), rest = to_lower_copy(trim_copy(hdrline.substr(colon+1)));
 						// strip off comments
-						int semicolon = rest.find_first_of(";");
+						std::size_t semicolon = rest.find_first_of(';');
 						if (semicolon != std::string::npos)
 							rest = rest.substr(0,semicolon);
 						// get the header information
 						if (type == "native-byte-order")
-							client_byte_order = boost::lexical_cast<int>(rest);
+							client_byte_order = lslboost::lexical_cast<int>(rest);
 						if (type == "endian-performance")
-							client_endian_performance = boost::lexical_cast<double>(rest);
+							client_endian_performance = lslboost::lexical_cast<double>(rest);
 						if (type == "has-ieee754-floats")
-							client_has_ieee754_floats = boost::lexical_cast<bool>(rest);
+							client_has_ieee754_floats = lslboost::lexical_cast<bool>(rest);
 						if (type == "supports-subnormals")
-							client_supports_subnormals = boost::lexical_cast<bool>(rest);
+							client_supports_subnormals = lslboost::lexical_cast<bool>(rest);
 						if (type == "value-size")
-							client_value_size = boost::lexical_cast<int>(rest);
-						if (type == "max-buffer-length") 
-							max_buffered_ = boost::lexical_cast<int>(rest);
-						if (type == "max-chunk-length") 
-							chunk_granularity_ = boost::lexical_cast<int>(rest);
-						if (type == "protocol-version") 
-							client_protocol_version = boost::lexical_cast<int>(rest);
+							client_value_size = lslboost::lexical_cast<int>(rest);
+						if (type == "max-buffer-length")
+							max_buffered_ = lslboost::lexical_cast<int>(rest);
+						if (type == "max-chunk-length")
+							chunk_granularity_ = lslboost::lexical_cast<int>(rest);
+						if (type == "protocol-version")
+							client_protocol_version = lslboost::lexical_cast<int>(rest);
 					}
 				}
 
@@ -300,10 +318,10 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 					data_protocol_version_ = 100;
 				if (data_protocol_version_ >= 110) {
 					// decide on the byte order if conflicting
-					if (BOOST_BYTE_ORDER != client_byte_order) {						
+					if (BOOST_BYTE_ORDER != client_byte_order) {
 						if (client_byte_order == 2134 && client_value_size>=8) {
 							// since we have no implementation for this byte order conversion let the client do it
-							use_byte_order_ = BOOST_BYTE_ORDER;	
+							use_byte_order_ = BOOST_BYTE_ORDER;
 						} else {
 							// let the faster party perform the endian conversion
 							use_byte_order_ = (client_value_size<=1 || (measure_endian_performance()>client_endian_performance)) ? client_byte_order : BOOST_BYTE_ORDER;
@@ -316,7 +334,7 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 
 				// send the response
 				std::ostream response_stream(&feedbuf_);
-				response_stream << "LSL/" << api_config::get_instance()->use_protocol_version() << " 200 OK\r\n"; 
+				response_stream << "LSL/" << api_config::get_instance()->use_protocol_version() << " 200 OK\r\n";
 				response_stream << "UID: " << serv_->info_->uid() << "\r\n";
 				response_stream << "Byte-Order: " << use_byte_order_ << "\r\n";
 				response_stream << "Suppress-Subnormals: " << client_suppress_subnormals << "\r\n";
@@ -339,15 +357,23 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 			}
 
 			// send test pattern samples
-			boost::scoped_ptr<sample> temp(sample::factory::new_sample_unmanaged(serv_->info_->channel_format(),serv_->info_->channel_count(),0.0,false));
-			temp->assign_test_pattern(4); if (data_protocol_version_ >= 110) temp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get()); else *outarch_ << *temp;
-			temp->assign_test_pattern(2); if (data_protocol_version_ >= 110) temp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get()); else *outarch_ << *temp;
+			lslboost::scoped_ptr<sample> temp(sample::factory::new_sample_unmanaged(serv_->info_->channel_format(),serv_->info_->channel_count(),0.0,false));
+			temp->assign_test_pattern(4);
+			if (data_protocol_version_ >= 110)
+				temp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get());
+			else
+				*outarch_ << *temp;
+			temp->assign_test_pattern(2);
+			if (data_protocol_version_ >= 110)
+				temp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get());
+			else
+				*outarch_ << *temp;
 			// send off the newly created feedheader
 			async_write(*sock_,feedbuf_.data(),
-				boost::bind(&client_session::handle_send_feedheader_outcome,shared_from_this(),placeholders::error,placeholders::bytes_transferred));
+				lslboost::bind(&client_session::handle_send_feedheader_outcome,shared_from_this(),placeholders::error,placeholders::bytes_transferred));
 		}
 	} catch(std::exception &e) {
-		std::cerr << "Unexpected error while serializing the feed header (id: " << boost::this_thread::get_id() << "): " << e.what() << std::endl;
+		std::cerr << "Unexpected error while serializing the feed header (id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
 	}
 }
 
@@ -359,10 +385,10 @@ void tcp_server::client_session::handle_send_feedheader_outcome(error_code err, 
 			// register outstanding work at the server (will be unregistered at session destruction)
 			work_.reset(new io_service::work(*serv_->io_));
 			// spawn a sample transfer thread
-			boost::thread(&client_session::transfer_samples_thread,this,shared_from_this());
+			lslboost::thread(&client_session::transfer_samples_thread,this,shared_from_this());
 		}
 	} catch(std::exception &e) {
-		std::cerr << "Unexpected error while handling the feedheader send outcome (id: " << boost::this_thread::get_id() << "): " << e.what() << std::endl;
+		std::cerr << "Unexpected error while handling the feedheader send outcome (id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
 	}
 }
 
@@ -391,16 +417,19 @@ void tcp_server::client_session::transfer_samples_thread(client_session_p) {
 					if (serv_->chunk_size_)
 						samp->pushthrough = (((++seqn)%(unsigned)serv_->chunk_size_) == 0);
 				// serialize the sample into the stream
-				if (data_protocol_version_ >= 110) samp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get()); else *outarch_ << *samp;
+				if (data_protocol_version_ >= 110)
+					samp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get());
+				else
+					*outarch_ << *samp;
 				// if the sample shall be pushed though...
 				if (samp->pushthrough) {
 					// send off the chunk that we aggregated so far
-					boost::unique_lock<boost::mutex> lock(completion_mut_);
+					lslboost::unique_lock<lslboost::mutex> lock(completion_mut_);
 					transfer_completed_ = false;
 					async_write(*sock_,feedbuf_.data(),
-						boost::bind(&client_session::handle_chunk_transfer_outcome,shared_from_this(),placeholders::error,placeholders::bytes_transferred));
+						lslboost::bind(&client_session::handle_chunk_transfer_outcome,shared_from_this(),placeholders::error,placeholders::bytes_transferred));
 					// wait for the completion condition
-					completion_cond_.wait(lock, boost::bind(&client_session::transfer_completed,this));
+					completion_cond_.wait(lock, lslboost::bind(&client_session::transfer_completed,this));
 					// handle transfer outcome
 					if (!transfer_error_) {
 						feedbuf_.consume(transfer_amount_);
@@ -409,11 +438,11 @@ void tcp_server::client_session::transfer_samples_thread(client_session_p) {
 				}
 
 			} catch(std::exception &e) {
-				std::cerr << "Unexpected glitch in transfer_samples_thread (id: " << boost::this_thread::get_id() << "): " << e.what() << std::endl;
+				std::cerr << "Unexpected glitch in transfer_samples_thread (id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
 			}
 		}
 	} catch(std::exception &e) {
-		std::cerr << "Unexpected error in transfer_samples_thread (id: " << boost::this_thread::get_id() << "): " << e.what() << "; exiting..." << std::endl;
+		std::cerr << "Unexpected error in transfer_samples_thread (id: " << lslboost::this_thread::get_id() << "): " << e.what() << "; exiting..." << std::endl;
 	}
 }
 
@@ -421,7 +450,7 @@ void tcp_server::client_session::transfer_samples_thread(client_session_p) {
 void tcp_server::client_session::handle_chunk_transfer_outcome(error_code err, std::size_t len) {
 	try {
 		{
-			boost::lock_guard<boost::mutex> lock(completion_mut_);
+			lslboost::lock_guard<lslboost::mutex> lock(completion_mut_);
 			// assign the transfer outcome
 			transfer_error_ = err;
 			transfer_amount_ = len;

@@ -48,7 +48,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="-Zm200 -w34100 -w34189"
 				Optimization="4"
-				AdditionalIncludeDirectories="&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\QtCore&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\QtGui&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include&quot;;&quot;$(BOOST_ROOT)&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\ActiveQt&quot;;debug;.;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\mkspecs\default&quot;;..\..\..\LSL\liblsl\include"
+				AdditionalIncludeDirectories="&quot;$(QTSDK)\include\QtCore&quot;;&quot;$(QTSDK)\include\QtGui&quot;;&quot;$(QTSDK)\include&quot;;&quot;$(BOOST_ROOT)&quot;;&quot;$(QTSDK)\include\ActiveQt&quot;;debug;.;&quot;$(QTSDK)\mkspecs\default&quot;;..\..\..\LSL\liblsl\include"
 				PreprocessorDefinitions="_WINDOWS,UNICODE,WIN32,QT_LARGEFILE_SUPPORT,QT_DLL,QT_GUI_LIB,QT_CORE_LIB,QT_HAVE_MMX,QT_HAVE_3DNOW,QT_HAVE_SSE,QT_HAVE_MMXEXT,QT_HAVE_SSE2,QT_THREAD_SUPPORT"
 				GeneratePreprocessedFile="0"
 				ExceptionHandling="1"
@@ -77,10 +77,10 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
 				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
-				AdditionalDependencies="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\qtmaind.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtGuid4.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtCored4.lib gHIamp.lib"
+				AdditionalDependencies="$(QTSDK)\lib\qtmaind.lib $(QTSDK)\lib\QtGuid4.lib $(QTSDK)\lib\QtCored4.lib gHIamp.lib"
 				OutputFile="$(OutDir)\gHIamp.exe"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\..\LSL\liblsl\bin;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib&quot;;&quot;$(BOOST_ROOT)\lib&quot;"
+				AdditionalLibraryDirectories="..\..\..\LSL\liblsl\bin;&quot;$(QTSDK)\lib&quot;;&quot;$(BOOST_ROOT)\lib&quot;"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=""
 				SubSystem="2"
@@ -139,7 +139,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="-Zm200 -w34100 -w34189"
 				Optimization="4"
-				AdditionalIncludeDirectories="..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\QtCore;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\QtGui;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include;..\..\..\..\boost_1_47;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\ActiveQt;debug;.;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\mkspecs\default;..\..\LSL\liblsl\include"
+				AdditionalIncludeDirectories="(QTSDK)\include\QtCore;(QTSDK)\include\QtGui;(QTSDK)\include;(BOOST_ROOT);(QTSDK)\include\ActiveQt;debug;.;(QTSDK)\mkspecs\default;..\..\LSL\liblsl\include"
 				PreprocessorDefinitions="_WINDOWS,UNICODE,WIN32,QT_LARGEFILE_SUPPORT,QT_DLL,QT_GUI_LIB,QT_CORE_LIB,QT_HAVE_MMX,QT_HAVE_3DNOW,QT_HAVE_SSE,QT_HAVE_MMXEXT,QT_HAVE_SSE2,QT_THREAD_SUPPORT"
 				GeneratePreprocessedFile="0"
 				ExceptionHandling="1"
@@ -168,10 +168,10 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
 				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
-				AdditionalDependencies="c:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\lib\qtmaind.lib c:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\lib\QtGuid4.lib c:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\lib\QtCored4.lib libowlsock.lib"
+				AdditionalDependencies="(QTSDK)\lib\qtmaind.lib (QTSDK)\lib\QtGuid4.lib (QTSDK)\lib\QtCored4.lib libowlsock.lib"
 				OutputFile="$(OutDir)\PhaseSpace.exe"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\LSL\liblsl\bin;c:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\lib;..\..\..\..\boost_1_47\lib"
+				AdditionalLibraryDirectories="..\..\LSL\liblsl\bin;(QTSDK)\lib;(BOOST_ROOT)\lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=""
 				SubSystem="2"
@@ -230,7 +230,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="-Zm200 -w34100 -w34189"
 				Optimization="2"
-				AdditionalIncludeDirectories="&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\QtCore&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\QtGui&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include&quot;;&quot;$(BOOST_ROOT)&quot;;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\include\ActiveQt&quot;;debug;.;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\mkspecs\default&quot;;..\..\..\LSL\liblsl\include"
+				AdditionalIncludeDirectories="&quot;$(QTSDK)\include\QtCore&quot;;&quot;$(QTSDK)\include\QtGui&quot;;&quot;$(QTSDK)\include&quot;;&quot;$(BOOST_ROOT)&quot;;&quot;$(QTSDK)\include\ActiveQt&quot;;debug;.;&quot;$(QTSDK)\mkspecs\default&quot;;..\..\..\LSL\liblsl\include"
 				PreprocessorDefinitions="_WINDOWS,UNICODE,WIN32,QT_LARGEFILE_SUPPORT,QT_DLL,QT_NO_DEBUG,QT_GUI_LIB,QT_CORE_LIB,QT_HAVE_MMX,QT_HAVE_3DNOW,QT_HAVE_SSE,QT_HAVE_MMXEXT,QT_HAVE_SSE2,QT_THREAD_SUPPORT,NDEBUG"
 				GeneratePreprocessedFile="0"
 				ExceptionHandling="1"
@@ -259,11 +259,11 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
 				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
-				AdditionalDependencies="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\qtmain.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtGui4.lib $(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib\QtCore4.lib gHIamp.lib"
+				AdditionalDependencies="$(QTSDK)\lib\qtmain.lib $(QTSDK)\lib\QtGui4.lib $(QTSDK)\lib\QtCore4.lib gHIamp.lib"
 				OutputFile="$(OutDir)\gHIamp.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\..\LSL\liblsl\bin;&quot;$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\lib&quot;;&quot;$(BOOST_ROOT)\lib&quot;"
+				AdditionalLibraryDirectories="..\..\..\LSL\liblsl\bin;&quot;$(QTSDK)\lib&quot;;&quot;$(BOOST_ROOT)\lib&quot;"
 				IgnoreAllDefaultLibraries="false"
 				GenerateDebugInformation="false"
 				ProgramDatabaseFile=""
@@ -323,7 +323,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="-Zm200 -w34100 -w34189"
 				Optimization="2"
-				AdditionalIncludeDirectories="..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\QtCore;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\QtGui;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include;..\..\..\..\boost_1_47;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\ActiveQt;release;.;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\mkspecs\default;..\..\LSL\liblsl\include"
+				AdditionalIncludeDirectories="(QTSDK)\include\QtCore;(QTSDK)\include\QtGui;(QTSDK)\include;(BOOST_ROOT);(QTSDK)\include\ActiveQt;release;.;(QTSDK)\mkspecs\default;..\..\LSL\liblsl\include"
 				PreprocessorDefinitions="_WINDOWS,UNICODE,WIN32,QT_LARGEFILE_SUPPORT,QT_DLL,QT_NO_DEBUG,QT_GUI_LIB,QT_CORE_LIB,QT_HAVE_MMX,QT_HAVE_3DNOW,QT_HAVE_SSE,QT_HAVE_MMXEXT,QT_HAVE_SSE2,QT_THREAD_SUPPORT,NDEBUG"
 				GeneratePreprocessedFile="0"
 				ExceptionHandling="1"
@@ -352,11 +352,11 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
 				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
-				AdditionalDependencies="c:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\lib\qtmain.lib c:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\lib\QtGui4.lib c:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\lib\QtCore4.lib"
+				AdditionalDependencies="(QTSDK)\lib\qtmain.lib (QTSDK)\lib\QtGui4.lib (QTSDK)\lib\QtCore4.lib"
 				OutputFile="$(OutDir)\PhaseSpace.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\LSL\liblsl\bin;c:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\lib;..\..\..\..\boost_1_47\lib"
+				AdditionalLibraryDirectories="..\..\LSL\liblsl\bin;(QTSDK)\lib;(BOOST_ROOT)\lib"
 				IgnoreAllDefaultLibraries="false"
 				GenerateDebugInformation="false"
 				ProgramDatabaseFile=""
@@ -422,8 +422,8 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="MOC mainwindow.h"
-						CommandLine="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -I&quot;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\QtCore&quot; -I&quot;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\QtGui&quot; -I&quot;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include&quot; -I&quot;..\..\..\..\boost_1_47&quot; -I&quot;c:\DEVEL\LSL\repo\Apps\PhaseSpace\..\..\LSL\include&quot; -I&quot;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\ActiveQt&quot; -I&quot;debug&quot; -I&quot;.&quot; -I..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\mkspecs\default -D_MSC_VER=1500 -DWIN32 mainwindow.h -o debug\moc_mainwindow.cpp&#x0D;&#x0A;"
-						AdditionalDependencies="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\bin\moc.exe;mainwindow.h"
+						CommandLine="$(QTSDK)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -I&quot;(QTSDK)\include\QtCore&quot; -I&quot;(QTSDK)\include\QtGui&quot; -I&quot;(QTSDK)\include&quot; -I&quot;(BOOST_ROOT)&quot; -I&quot;c:\DEVEL\LSL\repo\Apps\PhaseSpace\..\..\LSL\include&quot; -I&quot;(QTSDK)\include\ActiveQt&quot; -I&quot;debug&quot; -I&quot;.&quot; -I(QTSDK)\mkspecs\default -D_MSC_VER=1500 -DWIN32 mainwindow.h -o debug\moc_mainwindow.cpp&#x0D;&#x0A;"
+						AdditionalDependencies="$(QTSDK)\bin\moc.exe;mainwindow.h"
 						Outputs="debug\moc_mainwindow.cpp"
 					/>
 				</FileConfiguration>
@@ -433,8 +433,8 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="MOC mainwindow.h"
-						CommandLine="C:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -I&quot;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\QtCore&quot; -I&quot;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\QtGui&quot; -I&quot;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include&quot; -I&quot;..\..\..\..\boost_1_47&quot; -I&quot;c:\DEVEL\LSL\repo\Apps\PhaseSpace\..\..\LSL\include&quot; -I&quot;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\ActiveQt&quot; -I&quot;debug&quot; -I&quot;.&quot; -I..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\mkspecs\default -D_MSC_VER=1500 -DWIN32 mainwindow.h -o debug\moc_mainwindow.cpp&#x0D;&#x0A;"
-						AdditionalDependencies="C:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\bin\moc.exe;mainwindow.h"
+						CommandLine="(QTSDK)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -I&quot;(QTSDK)\include\QtCore&quot; -I&quot;(QTSDK)\include\QtGui&quot; -I&quot;(QTSDK)\include&quot; -I&quot;(BOOST_ROOT)&quot; -I&quot;c:\DEVEL\LSL\repo\Apps\PhaseSpace\..\..\LSL\include&quot; -I&quot;(QTSDK)\include\ActiveQt&quot; -I&quot;debug&quot; -I&quot;.&quot; -I(QTSDK)\mkspecs\default -D_MSC_VER=1500 -DWIN32 mainwindow.h -o debug\moc_mainwindow.cpp&#x0D;&#x0A;"
+						AdditionalDependencies="(QTSDK)\bin\moc.exe;mainwindow.h"
 						Outputs="debug\moc_mainwindow.cpp"
 					/>
 				</FileConfiguration>
@@ -444,8 +444,8 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="MOC mainwindow.h"
-						CommandLine="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -I&quot;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\QtCore&quot; -I&quot;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\QtGui&quot; -I&quot;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include&quot; -I&quot;..\..\..\..\boost_1_47&quot; -I&quot;c:\DEVEL\LSL\repo\Apps\PhaseSpace\..\..\LSL\include&quot; -I&quot;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\ActiveQt&quot; -I&quot;release&quot; -I&quot;.&quot; -I..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\mkspecs\default -D_MSC_VER=1500 -DWIN32 mainwindow.h -o release\moc_mainwindow.cpp&#x0D;&#x0A;"
-						AdditionalDependencies="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\bin\moc.exe;mainwindow.h"
+						CommandLine="$(QTSDK)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -I&quot;(QTSDK)\include\QtCore&quot; -I&quot;(QTSDK)\include\QtGui&quot; -I&quot;(QTSDK)\include&quot; -I&quot;(BOOST_ROOT)&quot; -I&quot;c:\DEVEL\LSL\repo\Apps\PhaseSpace\..\..\LSL\include&quot; -I&quot;(QTSDK)\include\ActiveQt&quot; -I&quot;release&quot; -I&quot;.&quot; -I(QTSDK)\mkspecs\default -D_MSC_VER=1500 -DWIN32 mainwindow.h -o release\moc_mainwindow.cpp&#x0D;&#x0A;"
+						AdditionalDependencies="$(QTSDK)\bin\moc.exe;mainwindow.h"
 						Outputs="release\moc_mainwindow.cpp"
 					/>
 				</FileConfiguration>
@@ -455,8 +455,8 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="MOC mainwindow.h"
-						CommandLine="C:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -I&quot;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\QtCore&quot; -I&quot;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\QtGui&quot; -I&quot;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include&quot; -I&quot;..\..\..\..\boost_1_47&quot; -I&quot;c:\DEVEL\LSL\repo\Apps\PhaseSpace\..\..\LSL\include&quot; -I&quot;..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\include\ActiveQt&quot; -I&quot;release&quot; -I&quot;.&quot; -I..\..\..\..\QtSDK\Desktop\Qt\4.8.1\msvc2008\mkspecs\default -D_MSC_VER=1500 -DWIN32 mainwindow.h -o release\moc_mainwindow.cpp&#x0D;&#x0A;"
-						AdditionalDependencies="C:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\bin\moc.exe;mainwindow.h"
+						CommandLine="(QTSDK)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -I&quot;(QTSDK)\include\QtCore&quot; -I&quot;(QTSDK)\include\QtGui&quot; -I&quot;(QTSDK)\include&quot; -I&quot;(BOOST_ROOT)&quot; -I&quot;c:\DEVEL\LSL\repo\Apps\PhaseSpace\..\..\LSL\include&quot; -I&quot;(QTSDK)\include\ActiveQt&quot; -I&quot;release&quot; -I&quot;.&quot; -I(QTSDK)\mkspecs\default -D_MSC_VER=1500 -DWIN32 mainwindow.h -o release\moc_mainwindow.cpp&#x0D;&#x0A;"
+						AdditionalDependencies="(QTSDK)\bin\moc.exe;mainwindow.h"
 						Outputs="release\moc_mainwindow.cpp"
 					/>
 				</FileConfiguration>
@@ -499,8 +499,8 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="UIC mainwindow.ui"
-						CommandLine="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\bin\uic.exe mainwindow.ui -o ui_mainwindow.h&#x0D;&#x0A;"
-						AdditionalDependencies="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\bin\uic.exe;mainwindow.ui"
+						CommandLine="$(QTSDK)\bin\uic.exe mainwindow.ui -o ui_mainwindow.h&#x0D;&#x0A;"
+						AdditionalDependencies="$(QTSDK)\bin\uic.exe;mainwindow.ui"
 						Outputs="ui_mainwindow.h"
 					/>
 				</FileConfiguration>
@@ -510,8 +510,8 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="UIC mainwindow.ui"
-						CommandLine="C:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\bin\uic.exe mainwindow.ui -o ui_mainwindow.h&#x0D;&#x0A;"
-						AdditionalDependencies="C:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\bin\uic.exe;mainwindow.ui"
+						CommandLine="(QTSDK)\bin\uic.exe mainwindow.ui -o ui_mainwindow.h&#x0D;&#x0A;"
+						AdditionalDependencies="(QTSDK)\bin\uic.exe;mainwindow.ui"
 						Outputs="ui_mainwindow.h"
 					/>
 				</FileConfiguration>
@@ -521,8 +521,8 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="UIC mainwindow.ui"
-						CommandLine="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\bin\uic.exe mainwindow.ui -o ui_mainwindow.h&#x0D;&#x0A;"
-						AdditionalDependencies="$(QTSDK)\Desktop\Qt\4.8.1\msvc2008\bin\uic.exe;mainwindow.ui"
+						CommandLine="$(QTSDK)\bin\uic.exe mainwindow.ui -o ui_mainwindow.h&#x0D;&#x0A;"
+						AdditionalDependencies="$(QTSDK)\bin\uic.exe;mainwindow.ui"
 						Outputs="ui_mainwindow.h"
 					/>
 				</FileConfiguration>
@@ -532,8 +532,8 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="UIC mainwindow.ui"
-						CommandLine="C:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\bin\uic.exe mainwindow.ui -o ui_mainwindow.h&#x0D;&#x0A;"
-						AdditionalDependencies="C:\DEVEL\QtSDK\Desktop\Qt\4.8.1\msvc2008\bin\uic.exe;mainwindow.ui"
+						CommandLine="(QTSDK)\bin\uic.exe mainwindow.ui -o ui_mainwindow.h&#x0D;&#x0A;"
+						AdditionalDependencies="(QTSDK)\bin\uic.exe;mainwindow.ui"
 						Outputs="ui_mainwindow.h"
 					/>
 				</FileConfiguration>
