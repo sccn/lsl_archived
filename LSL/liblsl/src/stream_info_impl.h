@@ -2,10 +2,10 @@
 #define STREAM_INFO_IMPL_H
 
 #include "common.h"
-#include <lslboost/cstdint.hpp>
-#include <lslboost/shared_ptr.hpp>
-#include <lslboost/bimap.hpp>
-#include <lslboost/thread/mutex.hpp>
+#include <boost/cstdint.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/bimap.hpp>
+#include <boost/thread/mutex.hpp>
 #include "pugixml/pugixml.hpp"
 
 namespace lsl {

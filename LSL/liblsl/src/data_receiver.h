@@ -1,7 +1,7 @@
 #ifndef DATA_RECEIVER_H
 #define DATA_RECEIVER_H
 
-#include <lslboost/thread/thread.hpp>
+#include <boost/thread/thread.hpp>
 #include "consumer_queue.h"
 #include "inlet_connection.h"
 #include "cancellable_streambuf.h"

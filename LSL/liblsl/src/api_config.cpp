@@ -1,9 +1,9 @@
 #include "api_config.h"
 #include "common.h"
 #include <iostream>
-#include <lslboost/property_tree/ptree.hpp>
-#include <lslboost/property_tree/ini_parser.hpp>
-#include <lslboost/algorithm/string.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ini_parser.hpp>
+#include <boost/algorithm/string.hpp>
 
 // === implementation of the api_config class ===
 

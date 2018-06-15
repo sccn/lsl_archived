@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <lslboost/thread/once.hpp>
+#include <boost/thread/once.hpp>
 
 
 namespace lsl {

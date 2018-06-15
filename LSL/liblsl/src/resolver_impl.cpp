@@ -1,10 +1,10 @@
 #include <sstream>
 #include <iostream>
 #include <istream>
-#include <lslboost/asio.hpp>
-#include <lslboost/bind.hpp>
-#include <lslboost/lexical_cast.hpp>
-#include <lslboost/functional/hash.hpp>
+#include <boost/asio.hpp>
+#include <boost/bind.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/functional/hash.hpp>
 #include "resolver_impl.h"
 
 

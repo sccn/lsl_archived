@@ -2,7 +2,7 @@
 #define COMMON_H
 
 #include <stdexcept>
-#include <lslboost/version.hpp>
+#include <boost/version.hpp>
 
 #ifdef _WIN32
 #define LIBLSL_CPP_API __declspec(dllexport)

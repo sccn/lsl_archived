@@ -1,7 +1,7 @@
 #include <iostream>
-#include <lslboost/asio.hpp>
-#include <lslboost/bind.hpp>
-#include <lslboost/algorithm/string.hpp>
+#include <boost/asio.hpp>
+#include <boost/bind.hpp>
+#include <boost/algorithm/string.hpp>
 #include "udp_server.h"
 #include "api_config.h"
 #include "socket_utils.h"
@@ -87,10 +87,20 @@ void udp_server::begin_serving() {
 	request_next_packet();
 }
 
+/// Gracefully close a socket.
+void close_if_open(udp_socket_p sock) {
+	try {
+		if (sock->is_open())
+			sock->close();
+	}  catch(std::exception &e) {
+		std::cerr << "Error during close_if_open (thread id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
+	}
+}
+
 /// Initiate teardown of UDP traffic.
 void udp_server::end_serving() {
 	// gracefully close the socket; this will eventually lead to the cancellation of the IO operation(s) tied to its socket
-	io_.post(lslboost::bind(&close_if_open<udp_socket_p>,socket_));
+	io_.post(lslboost::bind(&close_if_open, socket_));
 }
 
 

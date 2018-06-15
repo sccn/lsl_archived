@@ -2,7 +2,7 @@
 #include "send_buffer.h"
 #include "../include/lsl_c.h"
 #include <iostream>
-#include <lslboost/date_time/time_duration.hpp>
+#include <boost/date_time/time_duration.hpp>
 
 // === implementation of the consumer_queue class ===
 

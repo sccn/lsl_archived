@@ -2,10 +2,10 @@
 #define INLET_CONNECTION_H
 
 #include <map>
-#include <lslboost/asio/ip/tcp.hpp>
-#include <lslboost/asio/ip/udp.hpp>
-#include <lslboost/thread.hpp>
-#include <lslboost/function.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/ip/udp.hpp>
+#include <boost/thread.hpp>
+#include <boost/function.hpp>
 #include "common.h"
 #include "resolver_impl.h"
 #include "cancellation.h"

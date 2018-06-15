@@ -6,11 +6,11 @@
 #include "stream_info_impl.h"
 #include <set>
 #include <iostream>
-#include <lslboost/asio/io_service.hpp>
-#include <lslboost/asio/ip/tcp.hpp>
-#include <lslboost/asio/streambuf.hpp>
-#include <lslboost/enable_shared_from_this.hpp>
-#include <lslboost/thread.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/streambuf.hpp>
+#include <boost/enable_shared_from_this.hpp>
+#include <boost/thread.hpp>
 #include "common.h"
 
 #include "send_buffer.h"

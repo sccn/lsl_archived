@@ -2,7 +2,7 @@
 #define STREAM_INLET_IMPL_H
 
 
-#include <lslboost/bind.hpp>
+#include <boost/bind.hpp>
 #include "data_receiver.h"
 #include "time_receiver.h"
 #include "common.h"

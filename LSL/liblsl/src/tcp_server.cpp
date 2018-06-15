@@ -1,11 +1,11 @@
 #include <iostream>
-#include <lslboost/asio.hpp>
-#include <lslboost/algorithm/string.hpp>
-#include <lslboost/uuid/uuid.hpp>
-#include <lslboost/uuid/uuid_generators.hpp>
-#include <lslboost/uuid/uuid_io.hpp>
-#include <lslboost/serialization/split_member.hpp>
-#include <lslboost/container/flat_set.hpp>
+#include <boost/asio.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/container/flat_set.hpp>
 #include "tcp_server.h"
 #include "socket_utils.h"
 
@@ -117,6 +117,21 @@ void tcp_server::register_inflight_socket(const tcp_socket_p &sock) {
 void tcp_server::unregister_inflight_socket(const tcp_socket_p &sock) {
 	lslboost::lock_guard<lslboost::recursive_mutex> lock(inflight_mut_);
 	inflight_.erase(sock);
+}
+
+/// Gracefully shut down a socket.
+template<class SocketPtr, class Protocol> void shutdown_and_close(SocketPtr sock) {
+	try {
+		if (sock->is_open()) {
+			try {
+				// (in some cases shutdown may fail)
+				sock->shutdown(Protocol::socket::shutdown_both);
+			} catch(...) {}
+			sock->close();
+		}
+	}  catch(std::exception &e) {
+		std::cerr << "Error during shutdown_and_close (thread id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
+	}
 }
 
 /// Post a close of all in-flight sockets.

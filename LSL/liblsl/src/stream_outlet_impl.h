@@ -1,7 +1,7 @@
 #ifndef STREAM_OUTLET_IMPL_H
 #define STREAM_OUTLET_IMPL_H
 
-#include <lslboost/container/flat_set.hpp>
+#include <boost/container/flat_set.hpp>
 #include "tcp_server.h"
 #include "send_buffer.h"
 #include "common.h"

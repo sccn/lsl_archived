@@ -1,11 +1,9 @@
 #include <sstream>
 #include <iostream>
-#include <lslboost/lexical_cast.hpp>
-#include <lslboost/thread.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/thread.hpp>
 #include "stream_info_impl.h"
 #include "api_config.h"
-
-extern "C" { const char* lsl_library_info(); }
 
 
 // === implementation of the stream_info_impl class ===
@@ -59,7 +57,6 @@ void stream_info_impl::write_xml(xml_document &doc) {
 	info.append_child("v6data_port").append_child(node_pcdata).set_value(lexical_cast<string>(v6data_port_).c_str());
 	info.append_child("v6service_port").append_child(node_pcdata).set_value(lexical_cast<string>(v6service_port_).c_str());
 	info.append_child("desc");
-	info.append_child("lsl_library_info").append_child(node_pcdata).set_value(lsl_library_info());
 }
 
 /// Read & assign the object's fields from an XML DOM structure.

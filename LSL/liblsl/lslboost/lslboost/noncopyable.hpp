@@ -1,1 +1,0 @@
-#include <boost/noncopyable.hpp>

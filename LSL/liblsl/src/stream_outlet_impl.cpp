@@ -1,6 +1,6 @@
 #define NO_EXPLICIT_TEMPLATE_INSTANTIATION // a convention that applies when including portable_oarchive.h in multiple .cpp files.
 #include "stream_outlet_impl.h"
-#include <lslboost/bind.hpp>
+#include <boost/bind.hpp>
 
 
 // === implementation of the stream_outlet_impl class ===
