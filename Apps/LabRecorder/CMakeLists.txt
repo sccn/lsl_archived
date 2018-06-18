@@ -1,16 +1,15 @@
-# CMake version
 cmake_minimum_required(VERSION 3.5)
 
 project(LabRecorder
-    LANGUAGES CXX
-	VERSION 1.1.2)
+	LANGUAGES CXX
+	VERSION 1.12.0)
 
-# load LSLAppBoilerplate if not done already
+# set up LSL if not done already
 if(NOT TARGET LSL::lsl)
 	# when building out of tree LSL_ROOT needs to be specified on the cmd line
 	file(TO_CMAKE_PATH "${LSL_INSTALL_ROOT}" LSL_INSTALL_ROOT)
 	list(APPEND LSL_INSTALL_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../LSL/liblsl/build/install")
-	find_package(LSL HINTS ${LSL_INSTALL_ROOT}/share/LSL/)
+	find_package(LSL HINTS ${LSL_INSTALL_ROOT}/share/LSL/ ${LSL_INSTALL_ROOT}/LSL/share/LSL QUIET)
 	if(NOT LSL_FOUND)
 		message(FATAL_ERROR "Precompiled LSL was not found. Set LSL_INSTALL_ROOT to the LSL installation path ( cmake -DLSL_INSTALL_ROOT=/path/to/installed/lsl)")
 	endif()
@@ -20,12 +19,6 @@ if(NOT TARGET LSL::lsl)
 endif()
 
 # GENERAL CONFIG #
-cmake_policy(SET CMP0028 NEW) # ENABLE CMP0028: Double colon in target name means ALIAS or IMPORTED target.
-cmake_policy(SET CMP0054 NEW) # ENABLE CMP0054: Only interpret if() arguments as variables or keywords when unquoted.
-cmake_policy(SET CMP0063 NEW) # ENABLE CMP0063: Honor visibility properties for all target types.
-cmake_policy(SET CMP0042 NEW) # ENABLE CMP0042: MACOSX_RPATH is enabled by default.
-
-# Meta information about the project
 set(META_PROJECT_DESCRIPTION "Record LabStreamingLayer streams to XDF data file.")
 
 # THIRD PARTY LIBRARIES #
@@ -34,7 +27,7 @@ find_package(Qt5 REQUIRED COMPONENTS Network Widgets)
 # APPLICATION #
 
 # Target name
-set(target LabRecorder)
+set(target ${PROJECT_NAME})
 
 # Build executable
 add_executable(${target}
@@ -47,38 +40,36 @@ add_executable(${target}
     recording.h
 	recording.cpp
 )
-target_compile_features(${target} PRIVATE cxx_auto_type)
+target_compile_features(${target} PRIVATE cxx_auto_type cxx_lambda_init_captures)
 
-find_package(Boost REQUIRED COMPONENTS filesystem iostreams thread)
-set(zlib_libs "")
+find_package(Threads REQUIRED)
+find_package(Boost REQUIRED OPTIONAL_COMPONENTS iostreams)
 if(WIN32)
 	find_package(Boost OPTIONAL_COMPONENTS zlib QUIET)
 	if(TARGET Boost::zlib)
-		set(zlib_libs "Boost::zlib")
-		message(STATUS "LabRecorder: Using Boost.zlib for xdfz support")
-
+		set(ZLIB_LIBRARIES Boost::zlib)
 	endif()
 else()
 	find_package(ZLIB QUIET)
-	if(ZLIB_FOUND)
-		message(STATUS "LabRecorder: Using zlib for xdfz support")
-		set(zlib_libs ${ZLIB_LIBRARIES})
-	endif()
 endif()
 
 target_link_libraries(${target}
     PRIVATE
     Qt5::Widgets
     Qt5::Network
-    Boost::filesystem
-    Boost::iostreams
-    Boost::thread
-    ${zlib_libs}
+	Boost::boost
+    Threads::Threads
     LSL::lsl
 )
 
-# Enable xdfz support if Boost.zlib (Windows) or plain zlib (Unix) was found
-if(${zlib_libs})
+# Enable xdfz support if Boost::iostreams and Boost.zlib (Windows) or plain zlib (Unix) was found
+if(ZLIB_LIBRARIES AND TARGET Boost::iostreams)
+	message(STATUS "Found zlib, enabling support for xdfz files")
+	target_link_libraries(${target}
+		PRIVATE
+		${ZLIB_LIBRARIES}
+		Boost::iostreams
+		)
 	target_compile_definitions(${target} PRIVATE XDFZ_SUPPORT=1)
 endif()
 

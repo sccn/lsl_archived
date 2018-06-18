@@ -28,10 +28,6 @@
            <property name="text">
             <string>Start</string>
            </property>
-           <property name="icon">
-            <iconset>
-             <normaloff>../../../record.png</normaloff>../../../record.png</iconset>
-           </property>
            <property name="shortcut">
             <string>Ctrl+S</string>
            </property>
@@ -169,7 +165,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QListWidget" name="blockList"/>
+          <widget class="QComboBox" name="blockList"/>
          </item>
          <item>
           <widget class="QCheckBox" name="enableScriptedActionsCheck">
@@ -183,6 +179,13 @@
             <bool>true</bool>
            </property>
           </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </spacer>
          </item>
         </layout>
        </widget>
@@ -211,7 +214,7 @@
     <property name="title">
      <string>He&amp;lp</string>
     </property>
-    <addaction name="actionComing_Soon"/>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuHelp"/>
@@ -219,7 +222,7 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLoadConfig">
    <property name="text">
-    <string>Load configuration...</string>
+    <string>&amp;Load configuration...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
@@ -227,7 +230,7 @@
   </action>
   <action name="actionQuit">
    <property name="text">
-    <string>Quit</string>
+    <string>&amp;Quit</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
@@ -235,12 +238,7 @@
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About</string>
-   </property>
-  </action>
-  <action name="actionComing_Soon">
-   <property name="text">
-    <string>Coming Soon... :-)</string>
+    <string>&amp;About</string>
    </property>
   </action>
  </widget>
