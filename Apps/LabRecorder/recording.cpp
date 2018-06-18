@@ -1,9 +1,115 @@
 #include "recording.h"
 
-#include <boost/iostreams/device/file_descriptor.hpp>
+#include <set>
+#include <sstream>
 #ifdef XDFZ_SUPPORT
+#include <boost/iostreams/device/file_descriptor.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 #endif
+
+static const std::string boundary_uuid(reinterpret_cast<const char*>(boundary_uuid_c), 16);
+
+// Thread utilities
+
+/**
+ * @brief try_join_once		joins and deconstructs the thread if possible
+ * @param thread			unique_ptr to a std::tread. Will be reset on success
+ * @return					true if the thread was successfully joined, false otherwise
+ */
+inline bool try_join_once(std::unique_ptr<std::thread>& thread) {
+	if(thread && thread->joinable()) {
+		thread->join();
+		thread.reset();
+		return true;
+	}
+	return false;
+}
+
+/**
+ * @brief timed_join	Tries to join the passed thread until it succeeds or duration passes
+ * @param thread		unique_ptr to a std::tread. Will be reset on success
+ * @param duration		max duration to try joining
+ * @return true on success, false otherwise
+ */
+inline bool timed_join(thread_p& thread, std::chrono::milliseconds duration = max_join_wait) {
+	const auto start = std::chrono::high_resolution_clock::now();
+	while(std::chrono::high_resolution_clock::now() - start < duration) {
+		if(try_join_once(thread)) return true;
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	}
+	return false;
+}
+
+/**
+ * @brief timed_join_or_detach	Join the thread or detach it if not possible within specified duration
+ * @param thread				unique_ptr to a std::tread. Will be reset on success
+ * @param duration max			duration to try joining
+ */
+inline void timed_join_or_detach(thread_p& thread, std::chrono::milliseconds duration = max_join_wait) {
+	if(!timed_join(thread, duration)) {
+		thread->detach();
+		std::cerr << "Thread didn't join in time!" << std::endl;
+	}
+}
+
+/**
+ * @brief timed_join_or_detach	Join the thread or detach it if not possible within specified duration
+ * @param threads				list of unique_ptrs to std::threads. Guaranteed to be empty afterwards.
+ * @param duration				duration to try joining
+ */
+inline void timed_join_or_detach(std::list<thread_p>& threads, std::chrono::milliseconds duration = max_join_wait) {
+	const auto start = std::chrono::high_resolution_clock::now();
+	while(std::chrono::high_resolution_clock::now() - start < duration && !threads.empty()) {
+		for(auto it = threads.begin(); it!=threads.end();) {
+			if(try_join_once(*it)) it = threads.erase(it);
+			else ++it;
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	}
+	if(!threads.empty()) {
+		std::cout << threads.size() << " stream threads still running!" << std::endl;
+		for(auto& t: threads) t->detach();
+		threads.clear();
+	}
+}
+
+// Utilies for writing binary data to files
+
+// write a variable-length integer (int8, int32, or int64)
+inline void write_varlen_int(std::streambuf* dst, uint64_t val) {
+	if (val < 256) {
+		dst->sputc(1);
+		dst->sputc(static_cast<uint8_t>(val));
+	} else if (val <= 4294967295) {
+		dst->sputc(4);
+		write_little_endian(dst, static_cast<uint32_t>(val));
+	} else {
+		dst->sputc(8);
+		write_little_endian(dst, static_cast<uint64_t>(val));
+	}
+}
+
+// store a sample's values to a stream (numeric version) */
+template <class T>
+inline void write_sample_values(std::streambuf* dst, const std::vector<T>& sample) {
+	// [Value1] .. [ValueN] */
+	for (const T s : sample) write_little_endian(dst, s);
+}
+
+// store a sample's values to a stream (string version)
+template <>
+inline void write_sample_values(std::streambuf* dst, const std::vector<std::string>& sample) {
+	// [Value1] .. [ValueN] */
+	for (const std::string& s : sample) {
+		// [NumLengthBytes], [Length] (as varlen int)
+		write_varlen_int(dst, s.size());
+		// [StringContent] */
+		dst->sputn(s.data(), s.size());
+	}
+}
+
+
 
 recording::recording(const std::string& filename, const std::vector<lsl::stream_info>& streams, const std::vector<std::string>& watchfor, std::map<std::string, int> syncOptions, bool collect_offsets):
     offsets_enabled_(collect_offsets),
@@ -19,8 +125,11 @@ recording::recording(const std::string& filename, const std::vector<lsl::stream_
 #ifdef XDFZ_SUPPORT
 	if (boost::iends_with(filename,".xdfz"))
 		file_.push(boost::iostreams::zlib_compressor());
-#endif
 	file_.push(boost::iostreams::file_descriptor_sink(filename,std::ios::binary | std::ios::trunc));
+#else
+	file_.open(filename, std::ios::binary | std::ios::trunc);
+#endif
+
 	std::cout << "done." << std::endl;
 	// [MagicCode]
 	file_ << "XDF:";
@@ -28,27 +137,25 @@ recording::recording(const std::string& filename, const std::vector<lsl::stream_
 	write_chunk(ct_fileheader,"<?xml version=\"1.0\"?><info><version>1.0</version></info>");
 	// create a recording thread for each stream
 	for (const auto& stream: streams)
-		stream_threads_.push_back(std::make_shared<boost::thread>(&recording::record_from_streaminfo, this, stream, true));
+		stream_threads_.emplace_back(new std::thread(&recording::record_from_streaminfo, this, stream, true));
 	// create a resolve-and-record thread for each item in the watchlist
 	for (const auto& thread: watchfor)
-		stream_threads_.push_back(std::make_shared<boost::thread>(&recording::record_from_query_results, this, thread));
+		stream_threads_.emplace_back(new std::thread(&recording::record_from_query_results, this, thread));
 	// create a boundary chunk writer thread
-	boundary_thread_ = std::make_shared<boost::thread>(&recording::record_boundaries, this);
+	boundary_thread_.reset(new std::thread(&recording::record_boundaries, this));
 }
 
 recording::~recording() {
 	try {
 		// set the shutdown flag (from now on no more new streams)
-		{
-			boost::mutex::scoped_lock lock(phase_mut_);
-			shutdown_ = true;
+		shutdown_ = true;
+
+		// stop the threads
+		timed_join_or_detach(stream_threads_, max_join_wait);
+		if(!timed_join(boundary_thread_, max_join_wait+boundary_interval)) {
+			std::cout << "boundary_thread didn't finish in time!" << std::endl;
+			boundary_thread_->detach();
 		}
-		// stop the Boundary writer thread
-		boundary_thread_->interrupt();
-		boundary_thread_->timed_join(max_join_wait);
-		// wait for all stream threads to join...
-		for(auto& thread: stream_threads_)
-			thread->timed_join(max_join_wait);
 		std::cout << "Closing the file." << std::endl;
 	}
 	catch(std::exception &e) {
@@ -60,7 +167,7 @@ void recording::record_from_query_results(const std::string& query) {
 	try {
 		std::set<std::string> known_uids;		// set of previously seen stream uid's
 		std::set<std::string> known_source_ids;	// set of previously seen source id's
-		std::vector<thread_p> threads;		    // our spawned threads
+		std::list<thread_p> threads;		    // our spawned threads
 		std::cout << "Watching for a stream with properties " << query << std::endl;
 		while (!shutdown_) {
 			// periodically re-resolve the query
@@ -73,7 +180,7 @@ void recording::record_from_query_results(const std::string& query) {
 					if (!(!result.source_id().empty() && (!known_source_ids.count(result.source_id())))) {
 						std::cout << "Found a new stream named " << result.name() << ", adding it to the recording." << std::endl;
 						// start a new recording thread
-						threads.push_back(std::make_shared<boost::thread>(&recording::record_from_streaminfo, this, result, false));
+						threads.emplace_back(new std::thread(&recording::record_from_streaminfo, this, result, false));
 						// ... and add it to the lists of known id's
 						known_uids.insert(result.uid());
 						if (!result.source_id().empty())
@@ -82,10 +189,7 @@ void recording::record_from_query_results(const std::string& query) {
 			}
 		}
 		// wait for all our threads to join
-		for (auto& thread: threads)
-			thread->timed_join(max_join_wait);
-	}
-	catch(boost::thread_interrupted &) {
+		timed_join_or_detach(threads, max_join_wait);
 	}
 	catch(std::exception &e) {
 		std::cout << "Error in the record_from_query_results thread: " << e.what() << std::endl;
@@ -97,7 +201,7 @@ void recording::record_from_streaminfo(const lsl::stream_info& src, bool phase_l
 		double first_timestamp, last_timestamp;
 		uint64_t sample_count;
 		// obtain a fresh streamid
-		uint32_t streamid = fresh_streamid();
+		streamid_t streamid = fresh_streamid();
 
 		inlet_p in;
 		lsl::stream_info info;
@@ -190,7 +294,7 @@ void recording::record_from_streaminfo(const lsl::stream_info& src, bool phase_l
 			footer << "<clock_offsets>";
 			{
 				// including the clock_offset list
-				boost::mutex::scoped_lock lock(offset_mut_);
+				std::lock_guard<std::mutex> lock(offset_mut_);
 				for(const offset_list::value_type pair: offset_lists_[streamid]) {
 					footer << "<offset><time>" << pair.first << "</time><value>" << pair.second << "</value></offset>";
 				}
@@ -206,8 +310,6 @@ void recording::record_from_streaminfo(const lsl::stream_info& src, bool phase_l
 			throw;
 		}
 	}
-	catch(boost::thread_interrupted &) {
-	}
 	catch(std::exception &e) {
 		std::cout << "Error in the record_from_streaminfo thread: " << e.what() << std::endl;
 	}
@@ -217,23 +319,21 @@ void recording::record_boundaries() {
 	try {
 		while (!shutdown_) {
 			// sleep for the interval
-			boost::this_thread::sleep(boundary_interval);
+			std::this_thread::sleep_for(boundary_interval);
 			// write a [Boundary] chunk...
-			write_chunk(ct_boundary, std::string((char*)&boundary_uuid[0],16));
+			write_chunk(ct_boundary, boundary_uuid);
 		}
-	}
-	catch(boost::thread_interrupted &) {
 	}
 	catch(std::exception &e) {
 		std::cout << "Error in the record_boundaries thread: " << e.what() << std::endl;
 	}
 }
 
-void recording::record_offsets(uint32_t streamid, const inlet_p& in) {
+void recording::record_offsets(streamid_t streamid, const inlet_p& in, std::atomic<bool>& offset_shutdown) noexcept {
 	try {
-		while (!shutdown_) {
+		while (!shutdown_ && !offset_shutdown) {
 			// sleep for the interval
-			boost::this_thread::sleep(offset_interval);
+			std::this_thread::sleep_for(offset_interval);
 			// query the time offset
 			double offset, now;
 			try {
@@ -252,20 +352,19 @@ void recording::record_offsets(uint32_t streamid, const inlet_p& in) {
 			// write the chunk
 			write_chunk(ct_clockoffset,content.str());
 			// also append to the offset lists
-			boost::mutex::scoped_lock lock(offset_mut_);
+			std::lock_guard<std::mutex> lock(offset_mut_);
 			offset_lists_[streamid].emplace_back(now-offset,offset);
 		}
-	}
-	catch(boost::thread_interrupted &) {
 	}
 	catch(std::exception &e) {
 		std::cout << "Error in the record_offsets thread: " << e.what() << std::endl;
 	}
+	std::cout << "Offsets thread is finished" << std::endl;
 }
 
 void recording::write_chunk(chunk_tag_t tag, const std::string& content) {
 	// lock the file stream...
-	boost::mutex::scoped_lock lock(chunk_mut_);
+	std::lock_guard<std::mutex> lock(chunk_mut_);
 	// [NumLengthBytes], [Length] (variable-length integer)
 	std::size_t len = 2 + content.size();
 	write_varlen_int(file_.rdbuf(),len);
@@ -277,14 +376,14 @@ void recording::write_chunk(chunk_tag_t tag, const std::string& content) {
 
 void recording::enter_headers_phase(bool phase_locked) {
 	if (phase_locked) {
-		boost::mutex::scoped_lock lock(phase_mut_);
+		std::lock_guard<std::mutex> lock(phase_mut_);
 		headers_to_finish_++;
 	}
 }
 
 void recording::leave_headers_phase(bool phase_locked) {
 	if (phase_locked) {
-		boost::mutex::scoped_lock lock(phase_mut_);
+		std::unique_lock<std::mutex> lock(phase_mut_);
 		headers_to_finish_--;
 		lock.unlock();
 		ready_for_streaming_.notify_all();
@@ -293,15 +392,15 @@ void recording::leave_headers_phase(bool phase_locked) {
 
 void recording::enter_streaming_phase(bool phase_locked) {
 	if (phase_locked) {
-		boost::mutex::scoped_lock lock(phase_mut_);
-		ready_for_streaming_.timed_wait(lock, max_headers_wait, [this]() { return this->ready_for_streaming(); });
+		std::unique_lock<std::mutex> lock(phase_mut_);
+		ready_for_streaming_.wait_for(lock, max_headers_wait, [this]() { return this->ready_for_streaming(); });
 		streaming_to_finish_++;
 	}
 }
 
 void recording::leave_streaming_phase(bool phase_locked) {
 	if (phase_locked) {
-		boost::mutex::scoped_lock lock(phase_mut_);
+		std::unique_lock<std::mutex> lock(phase_mut_);
 		streaming_to_finish_--;
 		lock.unlock();
 		ready_for_footers_.notify_all();
@@ -310,7 +409,66 @@ void recording::leave_streaming_phase(bool phase_locked) {
 
 void recording::enter_footers_phase(bool phase_locked) {
 	if (phase_locked) {
-		boost::mutex::scoped_lock lock(phase_mut_);
-		ready_for_footers_.timed_wait(lock, max_footers_wait, [this]() {return this->ready_for_footers(); });
+		std::unique_lock<std::mutex> lock(phase_mut_);
+		ready_for_footers_.wait_for(lock, max_footers_wait, [this]() {return this->ready_for_footers(); });
 	}
+}
+
+template <class T>
+void recording::typed_transfer_loop(streamid_t streamid, double srate, const inlet_p& in,
+                                    double& first_timestamp, double& last_timestamp,
+                                    uint64_t& sample_count) {
+	// optionally start an offset collection thread for this stream
+	std::atomic<bool> offset_shutdown{false};
+	thread_p offset_thread(offsets_enabled_
+	                       ? new std::thread(&recording::record_offsets, this, streamid, in, std::ref(offset_shutdown))
+	                       : nullptr);
+	try {
+		first_timestamp = -1.0;
+		last_timestamp = 0.0;
+		sample_count = 0;
+		double sample_interval = srate ? 1.0 / srate : 0;
+
+		// temporary data
+		std::vector<std::vector<T>> chunk;
+		std::vector<double> timestamps;
+		while (!shutdown_) {
+			// get a chunk from the stream
+			if (in->pull_chunk(chunk, timestamps)) {
+				if (first_timestamp == -1.0) first_timestamp = timestamps[0];
+				// generate [Samples] chunk contents...
+				std::ostringstream content;
+				// [StreamId]
+				write_little_endian(content.rdbuf(), streamid);
+				// [NumSamplesBytes], [NumSamples]
+				write_varlen_int(content.rdbuf(), chunk.size());
+				// for each sample...
+				for (std::size_t s = 0; s < chunk.size(); s++) {
+					// if the time stamp can be deduced from the previous one...
+					if (last_timestamp + sample_interval == timestamps[s]) {
+						// [TimeStampBytes] (0 for no time stamp)
+						content.rdbuf()->sputc(0);
+					} else {
+						// [TimeStampBytes]
+						content.rdbuf()->sputc(8);
+						// [TimeStamp]
+						write_little_endian(content.rdbuf(), timestamps[s]);
+					}
+					// [Sample1] .. [SampleN]
+					write_sample_values<T>(content.rdbuf(), chunk[s]);
+					last_timestamp = timestamps[s];
+					sample_count++;
+				}
+				// write the actual chunk
+				write_chunk(ct_samples, content.str());
+			} else
+				std::this_thread::sleep_for(chunk_interval);
+		}
+	} catch (std::exception& e) {
+		std::cerr << "Error in transfer thread: " << e.what() << std::endl;
+		offset_shutdown = true;
+		timed_join_or_detach(offset_thread);
+		throw;
+	}
+	timed_join_or_detach(offset_thread);
 }

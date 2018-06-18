@@ -8,6 +8,7 @@
 #include <QCloseEvent>
 #include <QListWidget>
 #include <QTimer>
+#include <QStringList>
 
 #ifdef __WIN32
 
@@ -41,34 +42,32 @@ public:
 private slots:
 	void statusUpdate(void) const;
 	void closeEvent(QCloseEvent *ev) override;
-	void blockSelected(QListWidgetItem *item);
+	void blockSelected(const QString& block);
 	void refreshStreams(void);
 	void startRecording(void);
 	void stopRecording(void);
 
 private:
-
-	bool currentlyRecording;
-	recording *currentRecording;
+	std::unique_ptr<recording> currentRecording;
 	
 	int startTime;
 	std::unique_ptr<QTimer> timer;
  
 	int currentTrial;
-	std::string currentBlock;
+	QString currentBlock;
 
 	std::vector<lsl::stream_info> resolvedStreams;
 	std::vector<lsl::stream_info> checkedStreams;
-	std::vector<std::string> requiredStreams;
-	std::vector<std::string> onlineSyncStreams;
+	QStringList requiredStreams;
 	std::map<std::string, int> syncOptionsByStreamName;
-	std::vector<std::string> missingStreams;
+	QStringList missingStreams;
 
-	std::string recFilename;
+	QString recFilename;
 	FILE *p_recFile;
 
 	// function for loading config file
-	void load_config(const std::string &filename);
+	void load_config(QString filename);
+	void save_config(QString filename);
     
 	std::unique_ptr<Ui::MainWindow> ui;	// window pointer
 };
