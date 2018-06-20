@@ -10,6 +10,7 @@
 #include <mutex>
 #include <thread>
 #include <type_traits>
+#include <lsl_cpp.h>
 
 #ifdef XDFZ_SUPPORT
 #include <boost/iostreams/filtering_stream.hpp>
@@ -18,26 +19,6 @@ using outfile_t = boost::iostreams::filtering_ostream;
 #include <fstream>
 using outfile_t = std::ofstream;
 #endif
-#include <lsl_cpp.h>
-
-#if BOOST_VERSION >= 105800
-#include <boost/endian/conversion.hpp>
-using boost::endian::native_to_little_inplace;
-#else
-#include <boost/spirit/home/support/detail/endian/endian.hpp>
-template <typename T> void native_to_little_inplace(T& t) {
-	T temp;
-	boost::spirit::detail::store_little_endian<T, sizeof(T)>(&temp, t);
-	t = temp;
-}
-#endif
-
-// support for endianness and binary floating-point storage
-// this import scheme is part of the portable_archive code by
-// christian.pfligersdorffer@eos.info (under boost license)
-#include <boost/spirit/home/support/detail/math/fpclassify.hpp>
-// namespace alias fp_classify
-namespace fp = boost::spirit::math;
 
 // the currently defined chunk tags
 enum chunk_tag_t {
@@ -81,44 +62,6 @@ using offset_list = std::list<std::pair<double,double>>;
 using offset_lists = std::map<int,offset_list>;
 
 using streamid_t = uint32_t;
-
-// === writer functions ===
-// write an integer value in little endian
-// derived from portable archive code by christian.pfligersdorffer@eos.info (under boost license)
-template <typename T>
-typename std::enable_if<std::is_integral<T>::value>::type write_little_endian(std::streambuf* dst, T t) {
-	native_to_little_inplace(t);
-	if(sizeof(T) == 1) dst->sputc(t);
-	else dst->sputn((char*)(&t), sizeof(t));
-}
-
-// write a floating-point value in little endian
-// derived from portable archive code by christian.pfligersdorffer@eos.info (under boost license)
-template <typename T>
-typename std::enable_if<std::is_floating_point<T>::value>::type
-write_little_endian(std::streambuf* dst, T t) {
-	//Get a type big enough to hold
-	using traits = typename fp::detail::fp_traits<T>::type;
-	static_assert(sizeof(typename traits::bits) == sizeof(T), "floating point type can't be represented accurately");
-
-	//Just copy the value if it's in the standard IEC 559 format
-	if(std::numeric_limits<T>::is_iec559)
-		write_little_endian(dst, *reinterpret_cast<typename traits::bits*>(&t));
-	else {
-		typename traits::bits bits;
-		// remap to bit representation
-		switch (fp::fpclassify(t)) {
-		case FP_NAN: bits = traits::exponent | traits::mantissa; break;
-		case FP_INFINITE: bits = traits::exponent | (t < 0) * traits::sign; break;
-		case FP_SUBNORMAL:
-			static_assert(std::numeric_limits<T>::has_denorm, "denormalized floats not supported");
-		case FP_ZERO: // note that floats can be ±0.0
-		case FP_NORMAL: traits::get_bits(t, bits); break;
-		default: bits = 0; break;
-		}
-		write_little_endian(dst, bits);
-	}
-}
 
 /**
 * A recording process using the lab streaming layer.
