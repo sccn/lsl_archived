@@ -1,5 +1,0 @@
-The lsl library only depends on boost, and the procedure for updating this dependency on various OSs can be found in the readme.txt file found in the labstreaminglayer/LSL/liblsl/external directory. 
-
-The suite of LSL apps all have dependencies. Most require Qt4, among other things. You may automatically download all required dependencies (from the sccn ftp site) by running the python script get_deps.py. Likewise, you can strip all the dependencies (which is desirable if you are maintaining your own branch or clone of the project) with rm_deps.py. 
-
-Finally, if you want to build the MQTT-LSL apps specifically, due to the way that project was set up, these need to built locally. First you will have to grab the necessary dependencies. Then, the Visual Studio projects will work -- just hit run.
