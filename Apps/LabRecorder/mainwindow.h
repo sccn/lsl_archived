@@ -43,11 +43,13 @@ private slots:
 	void statusUpdate(void) const;
 	void closeEvent(QCloseEvent *ev) override;
 	void blockSelected(const QString& block);
-	void refreshStreams(void);
+	std::vector<lsl::stream_info> refreshStreams(void);
 	void startRecording(void);
 	void stopRecording(void);
 
 private:
+	QSet<QString> getCheckedStreams() const;
+
 	std::unique_ptr<recording> currentRecording;
 	
 	int startTime;
@@ -56,11 +58,9 @@ private:
 	int currentTrial;
 	QString currentBlock;
 
-	std::vector<lsl::stream_info> resolvedStreams;
-	std::vector<lsl::stream_info> checkedStreams;
 	QStringList requiredStreams;
 	std::map<std::string, int> syncOptionsByStreamName;
-	QStringList missingStreams;
+	QSet<QString> missingStreams;
 
 	QString recFilename;
 	FILE *p_recFile;
