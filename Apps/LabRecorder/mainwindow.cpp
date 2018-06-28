@@ -1,13 +1,13 @@
 #include "ui_mainwindow.h"
 #include "mainwindow.h"
 
-#include <iostream>
 #include <string>
 #include <vector>
 #include <QSettings>
 #include <QDateTime>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDebug>
 #include <fstream>
 
 // recording class
@@ -77,7 +77,7 @@ void MainWindow::blockSelected(const QString& block) {
 }
 
 void MainWindow::load_config(QString filename) {
-	std::cout << "loading config file " << filename.toStdString() << std::endl;
+	qInfo() << "loading config file " << filename;
 	try
     {
 		if(!QFileInfo(filename).exists()) throw std::runtime_error("Settings file doesn't exist.");
@@ -106,8 +106,7 @@ void MainWindow::load_config(QString filename) {
 				if (word == "post_ALL") { val = lsl::post_ALL; }
 			}
 			syncOptionsByStreamName[key.toStdString()] = val;
-			std::cout << "key = " << key.toStdString() << std::endl;
-			std::cout << "val = " << val << std::endl;
+			qInfo() << "stream sync options: " << key << ": " << val;
 		}
 
 		// ----------------------------
@@ -134,7 +133,7 @@ void MainWindow::load_config(QString filename) {
 			}
 		}
 	} catch(std::exception &e) {
-		std::cout << "Problem parsing config file: " << e.what() << std::endl;
+		qWarning() << "Problem parsing config file: " << e.what();
 	}
 	//std::cout << "refreshing streams ..." <<std::endl;
 	refreshStreams();
@@ -147,53 +146,46 @@ void MainWindow::save_config(QString filename)
 	// Stub.
 }
 
-void MainWindow::refreshStreams() {
-
-	//std::cout << "refreshing streams ..." <<std::endl;
-	resolvedStreams.clear();
-	resolvedStreams = lsl::resolve_streams(1.0);
-	QStringList streamNames;
-
-	for(auto& s: resolvedStreams)
-		streamNames.push_back(QString::fromStdString(s.name()+ " (" + s.hostname()+")"));
-	
-	streamNames.sort();
-
-	missingStreams.clear();
-	for(const auto& requiredStream: requiredStreams)
-		if (!streamNames.contains(requiredStream))
-			missingStreams.push_back(requiredStream); // push this string onto the missing vector
-	missingStreams.sort();
-
-	QBrush good_brush, bad_brush; 
-	good_brush.setColor(QColor(0,128,0));
-	bad_brush.setColor(QColor(255,0,0));
-
-	QStringList previouslyChecked;
+QSet<QString> MainWindow::getCheckedStreams() const
+{
+	QSet<QString> checked;
 	for(int i=0;i<ui->streamList->count();i++) {
 		QListWidgetItem* item = ui->streamList->item(i);
-		if(!streamNames.contains(item->text()) && item->checkState() == Qt::Checked)
-			previouslyChecked.push_back(item->text());
+		if(item->checkState() == Qt::Checked)
+			checked.insert(item->text());
 	}
-	
+	return checked;
+}
+
+/**
+ * @brief MainWindow::refreshStreams Find streams, generate a list of missing streams
+ * and fill the UI streamlist.
+ * @return A vector of found stream_infos
+ */
+std::vector<lsl::stream_info> MainWindow::refreshStreams() {
+	std::vector<lsl::stream_info> resolvedStreams = lsl::resolve_streams(1.0);
+
+	QSet<QString> foundStreamNames;
+	for(auto& s: resolvedStreams)
+		foundStreamNames.insert(QString::fromStdString(s.name()+ " (" + s.hostname()+")"));
+
+	QSet<QString> previouslyChecked = getCheckedStreams();
+	// Missing streams: all checked or required streams that weren't found
+	missingStreams = (previouslyChecked + requiredStreams.toSet()) - foundStreamNames;
+
+	// (Re-)Populate the UI list
+	const QBrush good_brush(QColor(0,128,0)), bad_brush(QColor(255,0,0));
 	ui->streamList->clear();
-	
-	for(auto&& streamName: streamNames) {
+	for(auto&& streamName: foundStreamNames + missingStreams) {
 		QListWidgetItem* item = new QListWidgetItem(streamName, ui->streamList);
-		item->setForeground(good_brush);
-		item->setCheckState(Qt::Unchecked);
 
-		if(previouslyChecked.contains(streamName) || requiredStreams.contains(streamName))
-			item->setCheckState(Qt::Checked);
+		item->setCheckState(previouslyChecked.contains(streamName) ? Qt::Checked : Qt::Unchecked);
+		item->setForeground(missingStreams.contains(streamName) ? bad_brush : good_brush);
+
 		ui->streamList->addItem(item);
 	}
 
-	for(auto&& missingStream: missingStreams) {
-		QListWidgetItem* item = new QListWidgetItem(missingStream, ui->streamList);
-		item->setForeground(bad_brush);
-		item->setCheckState(Qt::Checked);
-		ui->streamList->addItem(item);
-	}
+	return resolvedStreams;
 }
 
 void MainWindow::startRecording() {
@@ -201,24 +193,21 @@ void MainWindow::startRecording() {
 	if (!currentRecording ) {
 
 		// automatically refresh streams
-		refreshStreams();
+		std::vector<lsl::stream_info> resolvedStreams = refreshStreams();
+		QSet<QString> checked = getCheckedStreams();
 
-		for(int i=0; i<ui->streamList->count();i++) {
-			QListWidgetItem *item = ui->streamList->item(i);
-			// if a checked stream is now missing
-			if(item->checkState() == Qt::Checked && // if checked
-				missingStreams.contains(item->text())) {
+		// if a checked stream is now missing
+		if(checked.intersects(missingStreams)) {
 				// are you sure?
-				QMessageBox msgBox;
-				msgBox.setText("At least one of the streams that you checked seems to be offline.");
+			    QMessageBox msgBox(QMessageBox::Warning,
+				                   "Stream not found",
+				                   "At least one of the streams that you checked seems to be offline",
+				                   QMessageBox::Yes | QMessageBox::No,
+				                   this);
 				msgBox.setInformativeText("Do you want to start recording anyway?");
-				msgBox.setIcon(QMessageBox::Warning);
-				msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 				msgBox.setDefaultButton(QMessageBox::No);
 				if(msgBox.exec()!=QMessageBox::Yes)
 					return;
-				break;
-			}
 		}
 
 		// determine the experiment number block
@@ -247,7 +236,7 @@ void MainWindow::startRecording() {
 				QMessageBox::warning(this,"Permissions issue", "Can not rename the file " + recFilename + " to " + newname);
 			    return;
 			}
-			std::cout << "Moved existing file to " << newname.toStdString() << std::endl;
+			qInfo() << "Moved existing file to " << newname;
 			recFileInfo.refresh();
 		}
 
@@ -257,26 +246,17 @@ void MainWindow::startRecording() {
 			return;
 		}
 
-		std::vector<std::string> watchfor;
-
 		// go through all the listed streams
-		checkedStreams.clear();
-		for(int i=0;i<ui->streamList->count();i++)
-			// check if it is checked
-			if(ui->streamList->item(i)->checkState() == Qt::Checked){
+		std::vector<lsl::stream_info> checkedStreams;
 
-				// if checked and not missing, add it to the checkedStreams vector
-				for(const lsl::stream_info& stream: resolvedStreams)
-					if(ui->streamList->item(i)->text().toStdString() == stream.name() + " (" + stream.hostname()+")")
-						checkedStreams.push_back(stream);
+		for(const lsl::stream_info& stream: resolvedStreams)
+			if(checked.contains(QString::fromStdString(stream.name() + " (" + stream.hostname()+')')))
+				checkedStreams.push_back(stream);
 
-				// if it is checked and also missing, watch for it
-				if(missingStreams.contains(ui->streamList->item(i)->text()))
-					watchfor.push_back(ui->streamList->item(i)->text().toStdString());
-			}
-
-		for(const std::string& s: watchfor)
-			std::cout << s << std::endl;
+		std::vector<std::string> watchfor;
+		for(const QString& missing: missingStreams)
+			watchfor.push_back(missing.toStdString());
+		qInfo() << "Missing: " << missingStreams;
 
 		currentRecording.reset(new recording(recFilename.toStdString(), checkedStreams, watchfor, syncOptionsByStreamName, 1));
 		ui->stopButton->setEnabled(true);
@@ -294,13 +274,10 @@ void MainWindow::stopRecording() {
 	if(!currentRecording)
 		QMessageBox::information(this, "Not recording", "There is not ongoing recording", QMessageBox::Ok);
 	else {
-
-		// scripted action code here
-
 		try {
 			currentRecording = nullptr;
 		}catch(std::exception &e){
-			std::cout << "exception on stop: " << e.what() << std::endl;
+			qWarning() << "exception on stop: " << e.what();
 		}
 		ui->startButton->setEnabled(true);
 		ui->stopButton->setEnabled(false);
