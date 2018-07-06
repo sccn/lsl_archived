@@ -45,6 +45,3 @@ You should check the health of your device to be sure, however, for example usin
 
 If a device is displayed in red when you start recording (and it is checked), it will be added to the ongoing recording by the time when it comes online. This can be useful when a device can only be turned on while the recording is already in progress. Again, it is advisable to check that the device is in fact discoverable and added. The LabRecorder brings up a console window in the background which shows a list of all streams that are added to the recording -- this is a good place to check whether a late stream did get picked up successfully during a live recording.
 
-# Note for SCCN Users
-
-If you are at the Swartz Center you will probably want to install our preferred Python distribution, in particular if you intend to be developing for SNAP (our stimulus presentation environment). The files and instructions can be found at [ftp://sccn.ucsd.edu/pub/software/third_party/build_environment/](ftp://sccn.ucsd.edu/pub/software/third_party/build_environment/)

@@ -95,6 +95,10 @@ void MainWindow::load_config(QString filename) {
 		for(QString& oss: onlineSyncStreams) {
 			QStringList words = oss.split(' ', QString::SkipEmptyParts);
 			// The first two words ("StreamName (PC)") are the stream identifier
+			if(words.length() < 2) {
+				qInfo() << "Invalid sync stream config: " << oss;
+				continue;
+			}
 			QString key = words.takeFirst() + ' ' + words.takeFirst();
 
 			int val = 0;
@@ -169,7 +173,7 @@ std::vector<lsl::stream_info> MainWindow::refreshStreams() {
 	for(auto& s: resolvedStreams)
 		foundStreamNames.insert(QString::fromStdString(s.name()+ " (" + s.hostname()+")"));
 
-	QSet<QString> previouslyChecked = getCheckedStreams();
+	const QSet<QString> previouslyChecked = getCheckedStreams();
 	// Missing streams: all checked or required streams that weren't found
 	missingStreams = (previouslyChecked + requiredStreams.toSet()) - foundStreamNames;
 
@@ -193,16 +197,28 @@ void MainWindow::startRecording() {
 	if (!currentRecording ) {
 
 		// automatically refresh streams
-		std::vector<lsl::stream_info> resolvedStreams = refreshStreams();
-		QSet<QString> checked = getCheckedStreams();
+		const std::vector<lsl::stream_info> resolvedStreams = refreshStreams();
+		const QSet<QString> checked = getCheckedStreams();
 
 		// if a checked stream is now missing
-		if(checked.intersects(missingStreams)) {
+		// change to "checked.intersects(missingStreams) as soon as Ubuntu 16.04/Qt 5.5 is EOL
+		QSet<QString> missing = checked;
+		if(!missing.intersect(missingStreams).isEmpty()) {
 				// are you sure?
 			    QMessageBox msgBox(QMessageBox::Warning,
 				                   "Stream not found",
 				                   "At least one of the streams that you checked seems to be offline",
 				                   QMessageBox::Yes | QMessageBox::No,
+				                   this);
+				msgBox.setInformativeText("Do you want to start recording anyway?");
+				msgBox.setDefaultButton(QMessageBox::No);
+				if(msgBox.exec()!=QMessageBox::Yes)
+					return;
+		}
+
+		if(checked.isEmpty()) {
+			QMessageBox msgBox(QMessageBox::Warning, "No streams selected",
+							   "You have selected no streams", QMessageBox::Yes | QMessageBox::No,
 				                   this);
 				msgBox.setInformativeText("Do you want to start recording anyway?");
 				msgBox.setDefaultButton(QMessageBox::No);
@@ -232,8 +248,8 @@ void MainWindow::startRecording() {
 			int i = 1;
 			while(QFileInfo(rename_to.arg(i)).exists()) i++;
 			QString newname = rename_to.arg(i);
-			if(!QFile::rename(recFilename, newname)) {
-				QMessageBox::warning(this,"Permissions issue", "Can not rename the file " + recFilename + " to " + newname);
+			if(!QFile::rename(recFileInfo.absoluteFilePath(), newname)) {
+				QMessageBox::warning(this,"Permissions issue", "Can not rename the file " + recFilename + " to " + recFileInfo.path() + '/' + newname);
 			    return;
 			}
 			qInfo() << "Moved existing file to " << newname;

@@ -63,7 +63,6 @@ private:
 	QSet<QString> missingStreams;
 
 	QString recFilename;
-	FILE *p_recFile;
 
 	// function for loading config file
 	void load_config(QString filename);
