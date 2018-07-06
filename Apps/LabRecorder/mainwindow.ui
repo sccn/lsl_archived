@@ -185,6 +185,12 @@
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
           </spacer>
          </item>
         </layout>
@@ -208,6 +214,7 @@
      <string>&amp;File</string>
     </property>
     <addaction name="actionLoadConfig"/>
+    <addaction name="actionSaveConfig"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -239,6 +246,11 @@
   <action name="actionAbout">
    <property name="text">
     <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="actionSaveConfig">
+   <property name="text">
+    <string>Save configuration</string>
    </property>
   </action>
  </widget>

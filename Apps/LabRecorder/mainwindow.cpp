@@ -19,14 +19,14 @@ ui(new Ui::MainWindow) {
 
 	ui->setupUi(this);
 	connect(ui->actionQuit, &QAction::triggered, this, &QMainWindow::close);
-	connect(ui->actionLoadConfig, &QAction::triggered, [&](){
-		QString sel = QFileDialog::getOpenFileName(this,"Load Configuration File","","Configuration Files (*.cfg)");
-		if (!sel.isEmpty()) load_config(sel);
+	connect(ui->actionLoadConfig, &QAction::triggered, [this](){
+		this->load_config(QFileDialog::getOpenFileName(this,"Load Configuration File","","Configuration Files (*.cfg)"));
 	});
-	connect(ui->browseButton, &QPushButton::clicked, [&](){
-		QString sel = QFileDialog::getSaveFileName(this,"Save recordings as...", "untitled.xdf", "XDF recordings (*.xdf);;XDF compressed recordings (*.xdfz)");
-		if (!sel.isEmpty())
-			ui->locationEdit->setText(sel);
+	connect(ui->actionSaveConfig, &QAction::triggered, [this](){
+		this->save_config(QFileDialog::getSaveFileName(this, "Save Configuration File", "", "Configuration Files (*.cfg)"));
+	});
+	connect(ui->browseButton, &QPushButton::clicked, [this](){
+			this->ui->locationEdit->setText(QFileDialog::getSaveFileName(this,"Save recordings as...", "untitled.xdf", "XDF recordings (*.xdf)"));
 	});
 	connect(ui->blockList, static_cast<void(QComboBox::*)(const QString &)>(&QComboBox::activated), this, &MainWindow::blockSelected);
 	connect(ui->refreshButton, &QPushButton::clicked, this, &MainWindow::refreshStreams);
@@ -147,6 +147,8 @@ void MainWindow::save_config(QString filename)
 {
 	QSettings settings(filename, QSettings::Format::IniFormat);
 	settings.setValue("StorageLocation", ui->locationEdit->text());
+	qInfo() << requiredStreams;
+	settings.setValue("RequiredStreams", requiredStreams);
 	// Stub.
 }
 
