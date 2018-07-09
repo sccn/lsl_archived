@@ -1,10 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QDebug>
 #include <QMessageBox>
 #include <QSettings>
 #include <chrono>
-#include <iostream>
-#include <QDebug>
 #include <lsl_cpp.h>
 
 #ifdef WIN32
@@ -179,7 +178,7 @@ void MainWindow::link() {
 			// get serial number
 			ULONG serialNumber=0;
 			if(!DeviceIoControl(hDevice, IOCTL_BA_GET_SERIALNUMBER, NULL, 0, &serialNumber, sizeof(serialNumber), &bytes_returned, NULL))
-				std::cerr << "Could not get device serial number." << std::endl;
+				qWarning() << "Could not get device serial number.";
 
 			// set up device parameters
 			BA_SETUP setup = {0};
@@ -350,7 +349,8 @@ void MainWindow::read_thread(int deviceNumber, ULONG serialNumber, int impedance
 					if (g_sampledMarkers || g_unsampledMarkers) {
 						s_mrkr.clear();
 						s_mrkr.push_back(mrkr==prev_mrkr ? "" : std::to_string(mrkr));
-						if(mrkr!=prev_mrkr){std::cout << "s: " << s << " mrkr: " << s_mrkr[0] << std::endl;
+						if(mrkr!=prev_mrkr){
+							qInfo() << "s: " << s << " mrkr: " << QString::fromStdString(s_mrkr[0]);
 							if(g_unsampledMarkers)marker_outlet->push_sample(&s_mrkr[0],now + (s + 1 - chunkSize)/sampling_rate);
 						}
 						marker_buffer.at(s) = s_mrkr;
