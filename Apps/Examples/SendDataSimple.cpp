@@ -4,7 +4,7 @@
 #include <chrono>         // std::chrono::seconds
 
 /**
- * This is an example of how a simple data stream can be offered on the network. 
+ * This is an example of how a simple data stream can be offered on the network.
  * Here, the stream is named SimpleStream, has content-type EEG, and 8 channels.
  * The transmitted samples contain random numbers (and the sampling rate is irregular)
  */
@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
 	lsl::stream_outlet outlet(info);
 
 	while(!outlet.wait_for_consumers(120));
-	
+
 	// send data forever
 	float sample[nchannels];
 	while(outlet.have_consumers()) {
