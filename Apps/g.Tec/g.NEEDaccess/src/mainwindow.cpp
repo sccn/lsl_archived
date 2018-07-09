@@ -285,7 +285,7 @@ void MainWindow::on_devCfgPushButton_clicked()
 	else if (m_devConfigs[0].DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GUSBAMP)
 	{
 		GUSBDlg cfg_dlg;
-		cfg_dlg.set_configs(&m_connectionHandle, m_devConfigs, &m_chanLabels);
+		cfg_dlg.set_configs(&m_connectionHandle, m_devConfigs, &m_chanLabels, &m_chanImpedances);
 		cfg_dlg.exec();
 	}
 	else if (m_devConfigs[0].DeviceInfo.DeviceType == GDS_DEVICE_TYPE_GHIAMP)

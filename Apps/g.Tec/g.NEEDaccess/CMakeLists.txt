@@ -113,4 +113,5 @@ installLSLApp(${target})  # Will handle Qt and LSL libraries
 installLSLAuxFiles(${target} ${CMAKE_CURRENT_LIST_DIR}/gneedaccess_config.cfg)
 installLSLAuxFiles(${target} ${CMAKE_CURRENT_LIST_DIR}/gNautilus_default.cfg)
 installLSLAuxFiles(${target} ${CMAKE_CURRENT_LIST_DIR}/gHIamp_default.cfg)
+installLSLAuxFiles(${target} ${CMAKE_CURRENT_LIST_DIR}/gUSBamp_default.cfg)
 #installLSLAuxFiles(${target} ${gNEEDaccessSDK_BINARIES})  # Not necessary because g.Tec gNEEDaccess installer puts libraries on the path.
