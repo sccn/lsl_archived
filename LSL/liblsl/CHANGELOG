@@ -1,3 +1,18 @@
+Changes for liblsl 1.13
+
+* change: move error handling from C API to C++ implementation (Tristan Stenner)
+* fix: Fix possible string stream corruption on 32bit platforms (Tristan Stenner)
+* change: add some Continuous Integration and packaging configuration (Tristan Stenner)
+* change: remove the option to build liblsl against system Boost (Tristan Stenner)
+* fix: prevent undefined shift (Tristan Stenner)
+* fix: several fixes to export macros (Tristan Stenner)
+* change: a lot of work on making Qt work on OS X (Chadwick Boulay)
+* change: override default timestamps with lsl timestamps (Zechari Tempesta)
+* change: Switched the build system to CMake (Tristan Stenner, Chadwick Boulay, David Medine, Matthew Grivich)
+* fix: Fix for ipv6 link-local addresses on Linux. Previously would get a "Invalid argument" error. (Matthew Grivich)
+* fix: Added an optional time_correction prototype to return uncertainty and remote_time as well as offset. (Matthew Grivich)
+* fix: merged memory leak fixes (thanks to xloem)
+
 Changes for liblsl 1.12
 * Added support for iOS. (Matthew Grivich; de3f1318)
 * changed constructor of lsl::xml_element to have default (David Medine; fd6a87b7)
