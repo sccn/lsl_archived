@@ -1,8 +1,7 @@
 #include "../include/lsl_c.h"
 #include "stream_inlet_impl.h"
 
-
-
+extern "C" {
 // === implementation of the stream_inlet class ===
 
 using namespace lsl;
@@ -509,4 +508,5 @@ LIBLSL_C_API int lsl_smoothing_halftime(lsl_inlet in, float value) {
 	catch(std::exception &) {
 		return lsl_internal_error;
 	}
+}
 }

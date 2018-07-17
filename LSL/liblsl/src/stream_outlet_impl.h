@@ -102,7 +102,7 @@ namespace lsl {
 		* @param timestamp Optionally the capture time of the sample, in agreement with lsl_clock(); if omitted, the current time is assumed.
 		* @param pushthrough Whether to push the sample through to the receivers instead of buffering it into a chunk according to network speeds.
 		*/
-		void push_numeric_raw(void *data, double timestamp=0.0, bool pushthrough=true) { 
+		void push_numeric_raw(const void *data, double timestamp=0.0, bool pushthrough=true) {
 			if (lsl::api_config::get_instance()->force_default_timestamps())
 				timestamp = 0.0;
 			sample_p smp(sample_factory_->new_sample(timestamp == 0.0 ? lsl_clock() : timestamp, pushthrough));
