@@ -875,16 +875,16 @@ extern LIBLSL_C_API int lsl_empty(lsl_xml_ptr e);
 extern LIBLSL_C_API int  lsl_is_text(lsl_xml_ptr e);
 
 /** Name of the element. */
-extern LIBLSL_C_API char *lsl_name(lsl_xml_ptr e);
+extern LIBLSL_C_API const char *lsl_name(lsl_xml_ptr e);
 
 /** Value of the element. */
-extern LIBLSL_C_API char *lsl_value(lsl_xml_ptr e);
+extern LIBLSL_C_API const char *lsl_value(lsl_xml_ptr e);
 
 /** Get child value (value of the first child that is text). */
-extern LIBLSL_C_API char* lsl_child_value(lsl_xml_ptr e);
+extern LIBLSL_C_API const char* lsl_child_value(lsl_xml_ptr e);
 
 /** Get child value of a child with a specified name. */
-extern LIBLSL_C_API char* lsl_child_value_n(lsl_xml_ptr e, const char *name);
+extern LIBLSL_C_API const char* lsl_child_value_n(lsl_xml_ptr e, const char *name);
 
 
 /* === Data Modification === */
