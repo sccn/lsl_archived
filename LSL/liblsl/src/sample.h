@@ -4,7 +4,7 @@
 #include <boost/lexical_cast.hpp>
 #include <vector>
 #include <string>
-#include <iostream>
+#include <streambuf>
 #include <boost/type_traits.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/smart_ptr.hpp>
@@ -62,21 +62,7 @@ namespace lsl {
 		class factory {
 		public:
 			/// Create a new factory and optionally pre-allocate samples.
-			factory(channel_format_t fmt, int num_chans, int num_reserve): fmt_(fmt), num_chans_(num_chans), 
-				sample_size_(ensure_multiple(sizeof(sample)-sizeof(char)+format_sizes[fmt]*num_chans,16)), storage_size_(sample_size_*std::max(1,num_reserve)), 
-				storage_(new char[storage_size_]), sentinel_(new_sample_unmanaged(fmt,num_chans,0.0,false)), head_(sentinel_), tail_(sentinel_)
-			{
-				// pre-construct an array of samples in the storage area and chain into a freelist
-				sample *s = NULL;
-				for (char *p=storage_.get(),*e=p+storage_size_;p<e;) {
-					#pragma warning(suppress: 4291)
-					s = new((sample*)p) sample(fmt,num_chans,this);
-					s->next_ = (sample*)(p += sample_size_);
-				}
-				s->next_ = NULL;
-				head_.store(s);
-				sentinel_->next_ = (sample*)storage_.get();
-			}
+			factory(channel_format_t fmt, int num_chans, int num_reserve);
 
 			/// Destroy the factory and delete all of its samples.
 			~factory() {
@@ -88,15 +74,7 @@ namespace lsl {
 
 			/// Create a new sample with a given timestamp and pushthrough flag.
 			/// Only one thread may call this function for a given factory object.
-			sample_p new_sample(double timestamp, bool pushthrough) { 
-				sample *result = pop_freelist();
-				if (!result)
-					#pragma warning(suppress: 4291)
-					result = new(new char[sample_size_]) sample(fmt_,num_chans_,this);
-				result->timestamp = timestamp;
-				result->pushthrough = pushthrough;
-				return sample_p(result);
-			}
+			sample_p new_sample(double timestamp, bool pushthrough);
 
 			/// Reclaim a sample that's no longer used.
 			void reclaim_sample(sample *s) { 
@@ -106,13 +84,7 @@ namespace lsl {
 			}
 
 			/// Create a new sample whose memory is not managed by the factory.
-			static sample *new_sample_unmanaged(channel_format_t fmt, int num_chans, double timestamp, bool pushthrough) { 
-				#pragma warning(suppress: 4291)
-				sample *result = new(new char[ensure_multiple(sizeof(sample)-sizeof(char) + format_sizes[fmt]*num_chans,16)]) sample(fmt,num_chans,NULL);
-				result->timestamp = timestamp;
-				result->pushthrough = pushthrough;
-				return result;
-			}
+			static sample *new_sample_unmanaged(channel_format_t fmt, int num_chans, double timestamp, bool pushthrough);
 
 		private:
 			/// ensure that a given value is a multiple of some base, round up if necessary
@@ -120,30 +92,7 @@ namespace lsl {
 
 			// Pop a sample from the freelist
 			// (multi-producer/single-consumer queue by Dmitry Vjukov)
-			sample *pop_freelist(){ 
-				sample *tail=tail_, *next=tail->next_;
-				if (tail == sentinel_) { 
-					if (!next) 
-						return NULL; 
-					tail_ = next; 
-					tail = next; 
-					next = next->next_;
-				} 
-				if (next) { 
-					tail_ = next; 
-					return tail; 
-				} 
-				sample *head = head_.load(); 
-				if (tail != head)
-					return NULL; 
-				reclaim_sample(sentinel_); 
-				next = tail->next_;
-				if (next) {
-					tail_ = next; 
-					return tail; 
-				}
-				return NULL;
-			} 
+			sample *pop_freelist();
 
 			friend class sample;
 			channel_format_t fmt_;					// the channel format to construct samples with
@@ -227,7 +176,7 @@ namespace lsl {
 		// === untyped accessors ===
 
 		/// Assign numeric data to the sample.
-		sample &assign_untyped(void *newdata) { 
+		sample &assign_untyped(const void *newdata) {
 			if (format_ != cf_string)
 				memcpy(&data_,newdata,format_sizes[format_]*num_channels_);
 			else
@@ -247,19 +196,19 @@ namespace lsl {
 		// === serialization functions ===
 
 		/// Helper function to save raw binary data to a stream buffer.
-		template<class StreamBuf> static void save_raw(StreamBuf &sb, const void *address, std::size_t count) {
-			if ((std::size_t)sb.sputn((char*)address,(std::streamsize)count) != count)
+		static void save_raw(std::streambuf &sb, const void *address, std::size_t count) {
+			if ((std::size_t)sb.sputn((const char*)address,(std::streamsize)count) != count)
 				throw std::runtime_error("Output stream error.");
 		}
 
 		/// Helper function to load raw binary data from a stream buffer.
-		template<class StreamBuf> static void load_raw(StreamBuf &sb, const void *address, std::size_t count) {
+		static void load_raw(std::streambuf &sb, void *address, std::size_t count) {
 			if ((std::size_t)sb.sgetn((char*)address,(std::streamsize)count) != count)
 				throw std::runtime_error("Input stream error.");
 		}
 
 		/// Save a value to a stream buffer with correct endian treatment.
-		template<class StreamBuf, typename T> static void save_value(StreamBuf &sb, const T &v, int use_byte_order) {
+		template<typename T> static void save_value(std::streambuf &sb, const T &v, int use_byte_order) {
 			if (sizeof(T)>1 && use_byte_order != BOOST_BYTE_ORDER) {
 				T temp = lslboost::endian::reverse_value(v);
 				save_raw(sb,&temp,sizeof(temp));
@@ -268,114 +217,20 @@ namespace lsl {
 		}
 
 		/// Load a value from a stream buffer with correct endian treatment.
-		template<class StreamBuf, typename T> static void load_value(StreamBuf &sb, T &v, int use_byte_order) {
+		template<typename T> static void load_value(std::streambuf &sb, T &v, int use_byte_order) {
 			load_raw(sb,&v,sizeof(v));
 			if (use_byte_order != BOOST_BYTE_ORDER)
 				lslboost::endian::reverse(v);
 		}
 
 		/// Load a value from a stream buffer; specialization of the above.
-		template<class StreamBuf> void load_value(StreamBuf &sb, lslboost::uint8_t &v, int use_byte_order) { load_raw(sb,&v,sizeof(v)); }
+		void load_value(std::streambuf &sb, lslboost::uint8_t &v, int use_byte_order) { load_raw(sb,&v,sizeof(v)); }
 
 		/// Serialize a sample to a stream buffer (protocol 1.10).
-		template<class StreamBuf> void save_streambuf(StreamBuf &sb, int protocol_version, int use_byte_order, void *scratchpad=NULL) const {
-			// write sample header
-			if (timestamp == DEDUCED_TIMESTAMP) {
-				save_value(sb,TAG_DEDUCED_TIMESTAMP,use_byte_order);
-			} else {
-				save_value(sb,TAG_TRANSMITTED_TIMESTAMP,use_byte_order);
-				save_value(sb,timestamp,use_byte_order);
-			}
-			// write channel data
-			if (format_ == cf_string) {
-				for (std::string *p=(std::string*)&data_,*e=p+num_channels_; p<e; p++) {
-					// write string length as variable-length integer
-					if (p->size() <= 0xFF) {
-						save_value(sb,(lslboost::uint8_t)sizeof(lslboost::uint8_t),use_byte_order);
-						save_value(sb,(lslboost::uint8_t)p->size(),use_byte_order);
-					} else {
-						if (p->size() <= 0xFFFFFFFF) {
-							save_value(sb,(lslboost::uint8_t)sizeof(lslboost::uint32_t),use_byte_order);
-							save_value(sb,(lslboost::uint32_t)p->size(),use_byte_order);
-						} else {
-#ifndef BOOST_NO_INT64_T
-							save_value(sb,(lslboost::uint8_t)sizeof(lslboost::uint64_t),use_byte_order);
-							save_value(sb,(lslboost::uint64_t)p->size(),use_byte_order);
-#else
-							save_value(sb,(lslboost::uint8_t)sizeof(std::size_t),use_byte_order);
-							save_value(sb,(std::size_t)p->size(),use_byte_order);
-#endif
-						}
-					}
-					// write string contents
-					if (!p->empty())
-						save_raw(sb,p->data(),p->size());
-				}
-			} else {
-				// write numeric data in binary
-				if (use_byte_order == BOOST_BYTE_ORDER || format_sizes[format_]==1) {
-					save_raw(sb,&data_,format_sizes[format_]*num_channels_);
-				} else {
-					memcpy(scratchpad,&data_,format_sizes[format_]*num_channels_);
-					convert_endian(scratchpad);
-					save_raw(sb,scratchpad,format_sizes[format_]*num_channels_);
-				}
-			}
-		}
+		void save_streambuf(std::streambuf &sb, int protocol_version, int use_byte_order, void *scratchpad=NULL) const;
 
 		/// Deserialize a sample from a stream buffer (protocol 1.10).
-		template<class StreamBuf> void load_streambuf(StreamBuf &sb, int protocol_version, int use_byte_order, bool suppress_subnormals) {
-			// read sample header
-			lslboost::uint8_t tag; load_value(sb,tag,use_byte_order);
-			if (tag == TAG_DEDUCED_TIMESTAMP) {
-				// deduce the timestamp
-				timestamp = DEDUCED_TIMESTAMP;
-			} else {
-				// read the time stamp
-				load_value(sb,timestamp,use_byte_order);
-			}
-			// read channel data
-			if (format_ == cf_string) {
-				for (std::string *p=(std::string*)&data_,*e=p+num_channels_; p<e; p++) {
-					// read string length as variable-length integer
-					std::size_t len = 0;
-					lslboost::uint8_t lenbytes; load_value(sb,lenbytes,use_byte_order);
-					if(sizeof(std::size_t) < 8 && lenbytes > sizeof(std::size_t))
-						throw std::runtime_error("This platform does not support strings of 64-bit length.");
-					switch (lenbytes) {
-						case sizeof(lslboost::uint8_t):  { lslboost::uint8_t tmp;  load_value(sb,tmp,use_byte_order); len = tmp; }; break; 
-						case sizeof(lslboost::uint16_t): { lslboost::uint16_t tmp; load_value(sb,tmp,use_byte_order); len = tmp; }; break; 
-						case sizeof(lslboost::uint32_t): { lslboost::uint32_t tmp; load_value(sb,tmp,use_byte_order); len = tmp; }; break; 
-#ifndef BOOST_NO_INT64_T
-						case sizeof(lslboost::uint64_t): { lslboost::uint64_t tmp; load_value(sb,tmp,use_byte_order); len = tmp; }; break;
-#endif
-						default: throw std::runtime_error("Stream contents corrupted (invalid varlen int).");
-					}
-					// read string contents
-					p->resize(len);
-					if (len>0)
-						load_raw(sb,&(*p)[0],len);
-				}
-			} else {
-				// read numeric channel data
-				load_raw(sb,&data_,format_sizes[format_]*num_channels_);
-				if (use_byte_order != BOOST_BYTE_ORDER && format_sizes[format_]>1)
-					convert_endian(&data_);
-				if (suppress_subnormals && format_float[format_]) {
-					if (format_ == cf_float32) {
-						for (lslboost::uint32_t *p=(lslboost::uint32_t*)&data_,*e=p+num_channels_; p<e; p++)
-							if (*p && ((*p & UINT32_C(0x7fffffff)) <= UINT32_C(0x007fffff)))
-								*p &= UINT32_C(0x80000000);
-					} else {
-#ifndef BOOST_NO_INT64_T
-						for (lslboost::uint64_t *p=(lslboost::uint64_t*)&data_,*e=p+num_channels_; p<e; p++)
-							if (*p && ((*p & UINT64_C(0x7fffffffffffffff)) <= UINT64_C(0x000fffffffffffff)))
-								*p &= UINT64_C(0x8000000000000000);
-#endif
-					}
-				}
-			}
-		}
+		void load_streambuf(std::streambuf &sb, int protocol_version, int use_byte_order, bool suppress_subnormals);
 
 		/// Convert the endianness of channel data in-place.
 		void convert_endian(void *data) const {

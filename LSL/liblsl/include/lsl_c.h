@@ -257,7 +257,7 @@ extern LIBLSL_C_API int lsl_resolve_all(lsl_streaminfo *buffer, unsigned buffer_
 * @return The number of results written into the buffer (never more than the provided # of slots) 
 *         or a negative number if an error has occurred (values corresponding to lsl_error_code_t).
 */
-extern LIBLSL_C_API int lsl_resolve_byprop(lsl_streaminfo *buffer, unsigned buffer_elements, char *prop, char *value, int minimum, double timeout);
+extern LIBLSL_C_API int lsl_resolve_byprop(lsl_streaminfo *buffer, unsigned buffer_elements, const char *prop, const char *value, int minimum, double timeout);
 
 /**
 * Resolve all streams that match a given predicate.
@@ -277,7 +277,7 @@ extern LIBLSL_C_API int lsl_resolve_byprop(lsl_streaminfo *buffer, unsigned buff
 * @return The number of results written into the buffer (never more than the provided # of slots) 
 *         or a negative number if an error has occurred (values corresponding to lsl_error_code_t).
 */
-extern LIBLSL_C_API int lsl_resolve_bypred(lsl_streaminfo *buffer, unsigned buffer_elements, char *pred, int minimum, double timeout);
+extern LIBLSL_C_API int lsl_resolve_bypred(lsl_streaminfo *buffer, unsigned buffer_elements, const char *pred, int minimum, double timeout);
 
 /** 
 * Deallocate a string that has been transferred to the application.
@@ -310,7 +310,7 @@ extern LIBLSL_C_API void lsl_destroy_string(char *s);
 *                  May in some cases also be constructed from device settings.
 * @return A newly created streaminfo handle or NULL in the event that an error occurred.
 */
-extern LIBLSL_C_API lsl_streaminfo lsl_create_streaminfo(char *name, char *type, int channel_count, double nominal_srate, lsl_channel_format_t channel_format, char *source_id);
+extern LIBLSL_C_API lsl_streaminfo lsl_create_streaminfo(const char *name, const char *type, int channel_count, double nominal_srate, lsl_channel_format_t channel_format, const char *source_id);
 
 /**
 * Destroy a previously created streaminfo object.
@@ -329,7 +329,7 @@ extern LIBLSL_C_API lsl_streaminfo lsl_copy_streaminfo(lsl_streaminfo info);
 * Multiple streams with the same name can coexist, though potentially at the cost of ambiguity (for the recording app or experimenter).
 * @return A library-owned pointer to the string value. Modification is not permitted.
 */
-extern LIBLSL_C_API char *lsl_get_name(lsl_streaminfo info);
+extern LIBLSL_C_API const char *lsl_get_name(lsl_streaminfo info);
 
 /**
 * Content type of the stream.
@@ -339,7 +339,7 @@ extern LIBLSL_C_API char *lsl_get_name(lsl_streaminfo info);
 * Content types usually follow those pre-defined in https://github.com/sccn/xdf/wiki/Meta-Data (or web search for: XDF meta-data).
 * @return A library-owned pointer to the string value. Modification is not permitted.
 */
-extern LIBLSL_C_API char *lsl_get_type(lsl_streaminfo info);
+extern LIBLSL_C_API const char *lsl_get_type(lsl_streaminfo info);
 
 /**
 * Number of channels of the stream.
@@ -371,7 +371,7 @@ extern LIBLSL_C_API lsl_channel_format_t lsl_get_channel_format(lsl_streaminfo i
 * endpoints (such as the recording program) can re-acquire a stream automatically once it is back online.
 * @return A library-owned pointer to the string value. Modification is not permitted.
 */
-extern LIBLSL_C_API char *lsl_get_source_id(lsl_streaminfo info);
+extern LIBLSL_C_API const char *lsl_get_source_id(lsl_streaminfo info);
 
 /**
 * Protocol version used to deliver the stream.
@@ -391,7 +391,7 @@ extern LIBLSL_C_API double lsl_get_created_at(lsl_streaminfo info);
 * across multiple instantiations of the same outlet (e.g., after a re-start).
 * @return A library-owned pointer to the string value. Modification is not permitted.
 */
-extern LIBLSL_C_API char *lsl_get_uid(lsl_streaminfo info);
+extern LIBLSL_C_API const char *lsl_get_uid(lsl_streaminfo info);
 
 /**
 * Session ID for the given stream.
@@ -401,12 +401,12 @@ extern LIBLSL_C_API char *lsl_get_uid(lsl_streaminfo info);
 * (assigned via a configuration file by the experimenter, see Network Connectivity on the LSL wiki).
 * @return A library-owned pointer to the string value. Modification is not permitted.
 */
-extern LIBLSL_C_API char *lsl_get_session_id(lsl_streaminfo info);
+extern LIBLSL_C_API const char *lsl_get_session_id(lsl_streaminfo info);
 
 /**
 * Hostname of the providing machine (once bound to an outlet). Modification is not permitted.
 */
-extern LIBLSL_C_API char *lsl_get_hostname(lsl_streaminfo info);
+extern LIBLSL_C_API const char *lsl_get_hostname(lsl_streaminfo info);
 
 /**
 * Extended description of the stream.
@@ -440,7 +440,7 @@ extern LIBLSL_C_API int lsl_get_channel_bytes(lsl_streaminfo info);
 extern LIBLSL_C_API int lsl_get_sample_bytes(lsl_streaminfo info);
 
 /// Create a streaminfo object from an XML representation
-extern LIBLSL_C_API lsl_streaminfo lsl_streaminfo_from_xml(char *xml);
+extern LIBLSL_C_API lsl_streaminfo lsl_streaminfo_from_xml(const char *xml);
 
 
 
@@ -480,33 +480,33 @@ extern LIBLSL_C_API void lsl_destroy_outlet(lsl_outlet out);
 *                    Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
 * @return Error code of the operation or lsl_no_error if successful (usually attributed to the wrong data type).
 */
-extern LIBLSL_C_API int lsl_push_sample_f(lsl_outlet out, float *data);
-extern LIBLSL_C_API int lsl_push_sample_ft(lsl_outlet out, float *data, double timestamp);
-extern LIBLSL_C_API int lsl_push_sample_ftp(lsl_outlet out, float *data, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_sample_d(lsl_outlet out, double *data);
-extern LIBLSL_C_API int lsl_push_sample_dt(lsl_outlet out, double *data, double timestamp);
-extern LIBLSL_C_API int lsl_push_sample_dtp(lsl_outlet out, double *data, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_sample_l(lsl_outlet out, long *data);
-extern LIBLSL_C_API int lsl_push_sample_lt(lsl_outlet out, long *data, double timestamp);
-extern LIBLSL_C_API int lsl_push_sample_ltp(lsl_outlet out, long *data, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_sample_i(lsl_outlet out, int *data);
-extern LIBLSL_C_API int lsl_push_sample_it(lsl_outlet out, int *data, double timestamp);
-extern LIBLSL_C_API int lsl_push_sample_itp(lsl_outlet out, int *data, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_sample_s(lsl_outlet out, short *data);
-extern LIBLSL_C_API int lsl_push_sample_st(lsl_outlet out, short *data, double timestamp);
-extern LIBLSL_C_API int lsl_push_sample_stp(lsl_outlet out, short *data, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_sample_c(lsl_outlet out, char *data);
-extern LIBLSL_C_API int lsl_push_sample_ct(lsl_outlet out, char *data, double timestamp);
-extern LIBLSL_C_API int lsl_push_sample_ctp(lsl_outlet out, char *data, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_sample_str(lsl_outlet out, char **data);
-extern LIBLSL_C_API int lsl_push_sample_strt(lsl_outlet out, char **data, double timestamp);
-extern LIBLSL_C_API int lsl_push_sample_strtp(lsl_outlet out, char **data, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_sample_buf(lsl_outlet out, char **data, unsigned *lengths);
-extern LIBLSL_C_API int lsl_push_sample_buft(lsl_outlet out, char **data, unsigned *lengths, double timestamp);
-extern LIBLSL_C_API int lsl_push_sample_buftp(lsl_outlet out, char **data, unsigned *lengths, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_sample_v(lsl_outlet out, void *data);
-extern LIBLSL_C_API int lsl_push_sample_vt(lsl_outlet out, void *data, double timestamp);
-extern LIBLSL_C_API int lsl_push_sample_vtp(lsl_outlet out, void *data, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_sample_f(lsl_outlet out, const float *data);
+extern LIBLSL_C_API int lsl_push_sample_ft(lsl_outlet out, const float *data, double timestamp);
+extern LIBLSL_C_API int lsl_push_sample_ftp(lsl_outlet out, const float *data, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_sample_d(lsl_outlet out, const double *data);
+extern LIBLSL_C_API int lsl_push_sample_dt(lsl_outlet out, const double *data, double timestamp);
+extern LIBLSL_C_API int lsl_push_sample_dtp(lsl_outlet out, const double *data, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_sample_l(lsl_outlet out, const long *data);
+extern LIBLSL_C_API int lsl_push_sample_lt(lsl_outlet out, const long *data, double timestamp);
+extern LIBLSL_C_API int lsl_push_sample_ltp(lsl_outlet out, const long *data, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_sample_i(lsl_outlet out, const int *data);
+extern LIBLSL_C_API int lsl_push_sample_it(lsl_outlet out, const int *data, double timestamp);
+extern LIBLSL_C_API int lsl_push_sample_itp(lsl_outlet out, const int *data, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_sample_s(lsl_outlet out, const short *data);
+extern LIBLSL_C_API int lsl_push_sample_st(lsl_outlet out, const short *data, double timestamp);
+extern LIBLSL_C_API int lsl_push_sample_stp(lsl_outlet out, const short *data, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_sample_c(lsl_outlet out, const char *data);
+extern LIBLSL_C_API int lsl_push_sample_ct(lsl_outlet out, const char *data, double timestamp);
+extern LIBLSL_C_API int lsl_push_sample_ctp(lsl_outlet out, const char *data, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_sample_str(lsl_outlet out, const char **data);
+extern LIBLSL_C_API int lsl_push_sample_strt(lsl_outlet out, const char **data, double timestamp);
+extern LIBLSL_C_API int lsl_push_sample_strtp(lsl_outlet out, const char **data, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_sample_buf(lsl_outlet out, const char **data, const unsigned *lengths);
+extern LIBLSL_C_API int lsl_push_sample_buft(lsl_outlet out, const char **data, const unsigned *lengths, double timestamp);
+extern LIBLSL_C_API int lsl_push_sample_buftp(lsl_outlet out, const char **data, const unsigned *lengths, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_sample_v(lsl_outlet out, const void *data);
+extern LIBLSL_C_API int lsl_push_sample_vt(lsl_outlet out, const void *data, double timestamp);
+extern LIBLSL_C_API int lsl_push_sample_vtp(lsl_outlet out, const void *data, double timestamp, int pushthrough);
 
 
 /**
@@ -524,46 +524,46 @@ extern LIBLSL_C_API int lsl_push_sample_vtp(lsl_outlet out, void *data, double t
 *                    Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
 * @return Error code of the operation (usually attributed to the wrong data type).
 */
-extern LIBLSL_C_API int lsl_push_chunk_f(lsl_outlet out, float *data, unsigned long data_elements);
-extern LIBLSL_C_API int lsl_push_chunk_ft(lsl_outlet out, float *data, unsigned long data_elements, double timestamp);
-extern LIBLSL_C_API int lsl_push_chunk_ftp(lsl_outlet out, float *data, unsigned long data_elements, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_ftn(lsl_outlet out, float *data, unsigned long data_elements, double *timestamps);
-extern LIBLSL_C_API int lsl_push_chunk_ftnp(lsl_outlet out, float *data, unsigned long data_elements, double *timestamps, int pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_d(lsl_outlet out, double *data, unsigned long data_elements);
-extern LIBLSL_C_API int lsl_push_chunk_dt(lsl_outlet out, double *data, unsigned long data_elements, double timestamp);
-extern LIBLSL_C_API int lsl_push_chunk_dtp(lsl_outlet out, double *data, unsigned long data_elements, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_dtn(lsl_outlet out, double *data, unsigned long data_elements, double *timestamps);
-extern LIBLSL_C_API int lsl_push_chunk_dtnp(lsl_outlet out, double *data, unsigned long data_elements, double *timestamps, int pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_l(lsl_outlet out, long *data, unsigned long data_elements);
-extern LIBLSL_C_API int lsl_push_chunk_lt(lsl_outlet out, long *data, unsigned long data_elements, double timestamp);
-extern LIBLSL_C_API int lsl_push_chunk_ltp(lsl_outlet out, long *data, unsigned long data_elements, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_ltn(lsl_outlet out, long *data, unsigned long data_elements, double *timestamps);
-extern LIBLSL_C_API int lsl_push_chunk_ltnp(lsl_outlet out, long *data, unsigned long data_elements, double *timestamps, int pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_i(lsl_outlet out, int *data, unsigned long data_elements);
-extern LIBLSL_C_API int lsl_push_chunk_it(lsl_outlet out, int *data, unsigned long data_elements, double timestamp);
-extern LIBLSL_C_API int lsl_push_chunk_itp(lsl_outlet out, int *data, unsigned long data_elements, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_itn(lsl_outlet out, int *data, unsigned long data_elements, double *timestamps);
-extern LIBLSL_C_API int lsl_push_chunk_itnp(lsl_outlet out, int *data, unsigned long data_elements, double *timestamps, int pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_s(lsl_outlet out, short *data, unsigned long data_elements);
-extern LIBLSL_C_API int lsl_push_chunk_st(lsl_outlet out, short *data, unsigned long data_elements, double timestamp);
-extern LIBLSL_C_API int lsl_push_chunk_stp(lsl_outlet out, short *data, unsigned long data_elements, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_stn(lsl_outlet out, short *data, unsigned long data_elements, double *timestamps);
-extern LIBLSL_C_API int lsl_push_chunk_stnp(lsl_outlet out, short *data, unsigned long data_elements, double *timestamps, int pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_c(lsl_outlet out, char *data, unsigned long data_elements);
-extern LIBLSL_C_API int lsl_push_chunk_ct(lsl_outlet out, char *data, unsigned long data_elements, double timestamp);
-extern LIBLSL_C_API int lsl_push_chunk_ctp(lsl_outlet out, char *data, unsigned long data_elements, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_ctn(lsl_outlet out, char *data, unsigned long data_elements, double *timestamps);
-extern LIBLSL_C_API int lsl_push_chunk_ctnp(lsl_outlet out, char *data, unsigned long data_elements, double *timestamps, int pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_str(lsl_outlet out, char **data, unsigned long data_elements);
-extern LIBLSL_C_API int lsl_push_chunk_strt(lsl_outlet out, char **data, unsigned long data_elements, double timestamp);
-extern LIBLSL_C_API int lsl_push_chunk_strtp(lsl_outlet out, char **data, unsigned long data_elements, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_strtn(lsl_outlet out, char **data, unsigned long data_elements, double *timestamps);
-extern LIBLSL_C_API int lsl_push_chunk_strtnp(lsl_outlet out, char **data, unsigned long data_elements, double *timestamps, int pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_buf(lsl_outlet out, char **data, unsigned *lengths, unsigned long data_elements);
-extern LIBLSL_C_API int lsl_push_chunk_buft(lsl_outlet out, char **data, unsigned *lengths, unsigned long data_elements, double timestamp);
-extern LIBLSL_C_API int lsl_push_chunk_buftp(lsl_outlet out, char **data, unsigned *lengths, unsigned long data_elements, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_buftn(lsl_outlet out, char **data, unsigned *lengths, unsigned long data_elements, double *timestamps);
-extern LIBLSL_C_API int lsl_push_chunk_buftnp(lsl_outlet out, char **data, unsigned *lengths, unsigned long data_elements, double *timestamps, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_f(lsl_outlet out, const float *data, unsigned long data_elements);
+extern LIBLSL_C_API int lsl_push_chunk_ft(lsl_outlet out, const float *data, unsigned long data_elements, double timestamp);
+extern LIBLSL_C_API int lsl_push_chunk_ftp(lsl_outlet out, const float *data, unsigned long data_elements, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_ftn(lsl_outlet out, const float *data, unsigned long data_elements, const double *timestamps);
+extern LIBLSL_C_API int lsl_push_chunk_ftnp(lsl_outlet out, const float *data, unsigned long data_elements, const double *timestamps, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_d(lsl_outlet out, const double *data, unsigned long data_elements);
+extern LIBLSL_C_API int lsl_push_chunk_dt(lsl_outlet out, const double *data, unsigned long data_elements, double timestamp);
+extern LIBLSL_C_API int lsl_push_chunk_dtp(lsl_outlet out, const double *data, unsigned long data_elements, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_dtn(lsl_outlet out, const double *data, unsigned long data_elements, const double *timestamps);
+extern LIBLSL_C_API int lsl_push_chunk_dtnp(lsl_outlet out, const double *data, unsigned long data_elements, const double *timestamps, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_l(lsl_outlet out, const long *data, unsigned long data_elements);
+extern LIBLSL_C_API int lsl_push_chunk_lt(lsl_outlet out, const long *data, unsigned long data_elements, double timestamp);
+extern LIBLSL_C_API int lsl_push_chunk_ltp(lsl_outlet out, const long *data, unsigned long data_elements, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_ltn(lsl_outlet out, const long *data, unsigned long data_elements, const double *timestamps);
+extern LIBLSL_C_API int lsl_push_chunk_ltnp(lsl_outlet out, const long *data, unsigned long data_elements, const double *timestamps, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_i(lsl_outlet out, const int *data, unsigned long data_elements);
+extern LIBLSL_C_API int lsl_push_chunk_it(lsl_outlet out, const int *data, unsigned long data_elements, double timestamp);
+extern LIBLSL_C_API int lsl_push_chunk_itp(lsl_outlet out, const int *data, unsigned long data_elements, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_itn(lsl_outlet out, const int *data, unsigned long data_elements, const double *timestamps);
+extern LIBLSL_C_API int lsl_push_chunk_itnp(lsl_outlet out, const int *data, unsigned long data_elements, const double *timestamps, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_s(lsl_outlet out, const short *data, unsigned long data_elements);
+extern LIBLSL_C_API int lsl_push_chunk_st(lsl_outlet out, const short *data, unsigned long data_elements, double timestamp);
+extern LIBLSL_C_API int lsl_push_chunk_stp(lsl_outlet out, const short *data, unsigned long data_elements, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_stn(lsl_outlet out, const short *data, unsigned long data_elements, const double *timestamps);
+extern LIBLSL_C_API int lsl_push_chunk_stnp(lsl_outlet out, const short *data, unsigned long data_elements, const double *timestamps, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_c(lsl_outlet out, const char *data, unsigned long data_elements);
+extern LIBLSL_C_API int lsl_push_chunk_ct(lsl_outlet out, const char *data, unsigned long data_elements, double timestamp);
+extern LIBLSL_C_API int lsl_push_chunk_ctp(lsl_outlet out, const char *data, unsigned long data_elements, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_ctn(lsl_outlet out, const char *data, unsigned long data_elements, const double *timestamps);
+extern LIBLSL_C_API int lsl_push_chunk_ctnp(lsl_outlet out, const char *data, unsigned long data_elements, const double *timestamps, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_str(lsl_outlet out, const char **data, unsigned long data_elements);
+extern LIBLSL_C_API int lsl_push_chunk_strt(lsl_outlet out, const char **data, unsigned long data_elements, double timestamp);
+extern LIBLSL_C_API int lsl_push_chunk_strtp(lsl_outlet out, const char **data, unsigned long data_elements, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_strtn(lsl_outlet out, const char **data, unsigned long data_elements, const double *timestamps);
+extern LIBLSL_C_API int lsl_push_chunk_strtnp(lsl_outlet out, const char **data, unsigned long data_elements, const double *timestamps, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_buf(lsl_outlet out, const char **data, const unsigned *lengths, unsigned long data_elements);
+extern LIBLSL_C_API int lsl_push_chunk_buft(lsl_outlet out, const char **data, const unsigned *lengths, unsigned long data_elements, double timestamp);
+extern LIBLSL_C_API int lsl_push_chunk_buftp(lsl_outlet out, const char **data, const unsigned *lengths, unsigned long data_elements, double timestamp, int pushthrough);
+extern LIBLSL_C_API int lsl_push_chunk_buftn(lsl_outlet out, const char **data, const unsigned *lengths, unsigned long data_elements, const double *timestamps);
+extern LIBLSL_C_API int lsl_push_chunk_buftnp(lsl_outlet out, const char **data, const unsigned *lengths, unsigned long data_elements, const double *timestamps, int pushthrough);
 
 
 /**
@@ -857,13 +857,13 @@ extern LIBLSL_C_API lsl_xml_ptr lsl_parent(lsl_xml_ptr e);
 /* === XML Tree Navigation by Name === */
 
 /** Get a child with a specified name. */
-extern LIBLSL_C_API lsl_xml_ptr lsl_child(lsl_xml_ptr e, char *name);
+extern LIBLSL_C_API lsl_xml_ptr lsl_child(lsl_xml_ptr e, const char *name);
 
 /** Get the next sibling with the specified name. */
-extern LIBLSL_C_API lsl_xml_ptr lsl_next_sibling_n(lsl_xml_ptr e, char *name);
+extern LIBLSL_C_API lsl_xml_ptr lsl_next_sibling_n(lsl_xml_ptr e, const char *name);
 
 /** Get the previous sibling with the specified name. */
-extern LIBLSL_C_API lsl_xml_ptr lsl_previous_sibling_n(lsl_xml_ptr e, char *name);
+extern LIBLSL_C_API lsl_xml_ptr lsl_previous_sibling_n(lsl_xml_ptr e, const char *name);
 
 
 /* === Content Queries === */
@@ -884,7 +884,7 @@ extern LIBLSL_C_API char *lsl_value(lsl_xml_ptr e);
 extern LIBLSL_C_API char* lsl_child_value(lsl_xml_ptr e);
 
 /** Get child value of a child with a specified name. */
-extern LIBLSL_C_API char* lsl_child_value_n(lsl_xml_ptr e, char *name);
+extern LIBLSL_C_API char* lsl_child_value_n(lsl_xml_ptr e, const char *name);
 
 
 /* === Data Modification === */
@@ -892,35 +892,35 @@ extern LIBLSL_C_API char* lsl_child_value_n(lsl_xml_ptr e, char *name);
 /**
 * Append a child node with a given name, which has a (nameless) plain-text child with the given text value.
 */
-extern LIBLSL_C_API lsl_xml_ptr lsl_append_child_value(lsl_xml_ptr e, char *name, char *value);
+extern LIBLSL_C_API lsl_xml_ptr lsl_append_child_value(lsl_xml_ptr e, const char *name, const char *value);
 
 /**
 * Prepend a child node with a given name, which has a (nameless) plain-text child with the given text value.
 */
-extern LIBLSL_C_API lsl_xml_ptr lsl_prepend_child_value(lsl_xml_ptr e, char *name, char *value);
+extern LIBLSL_C_API lsl_xml_ptr lsl_prepend_child_value(lsl_xml_ptr e, const char *name, const char *value);
 
 /**
 * Set the text value of the (nameless) plain-text child of a named child node.
 */
-extern LIBLSL_C_API int lsl_set_child_value(lsl_xml_ptr e, char *name, char *value);
+extern LIBLSL_C_API int lsl_set_child_value(lsl_xml_ptr e, const char *name, const char *value);
 
 /**
 * Set the element's name.
 * @return 0 if the node is empty (or if out of memory).
 */
-extern LIBLSL_C_API int lsl_set_name(lsl_xml_ptr e, char *rhs);
+extern LIBLSL_C_API int lsl_set_name(lsl_xml_ptr e, const char *rhs);
 
 /**
 * Set the element's value.
 * @return 0 if the node is empty (or if out of memory).
 */
-extern LIBLSL_C_API int lsl_set_value(lsl_xml_ptr e, char *rhs);
+extern LIBLSL_C_API int lsl_set_value(lsl_xml_ptr e, const char *rhs);
 
 /** Append a child element with the specified name. */
-extern LIBLSL_C_API lsl_xml_ptr lsl_append_child(lsl_xml_ptr e, char *name);
+extern LIBLSL_C_API lsl_xml_ptr lsl_append_child(lsl_xml_ptr e, const char *name);
 
 /** Prepend a child element with the specified name. */
-extern LIBLSL_C_API lsl_xml_ptr lsl_prepend_child(lsl_xml_ptr e, char *name);
+extern LIBLSL_C_API lsl_xml_ptr lsl_prepend_child(lsl_xml_ptr e, const char *name);
 
 /** Append a copy of the specified element as a child. */
 extern LIBLSL_C_API lsl_xml_ptr lsl_append_copy(lsl_xml_ptr e, lsl_xml_ptr e2);
@@ -929,7 +929,7 @@ extern LIBLSL_C_API lsl_xml_ptr lsl_append_copy(lsl_xml_ptr e, lsl_xml_ptr e2);
 extern LIBLSL_C_API lsl_xml_ptr lsl_prepend_copy(lsl_xml_ptr e, lsl_xml_ptr e2);
 
 /** Remove a child element with the specified name. */
-extern LIBLSL_C_API void lsl_remove_child_n(lsl_xml_ptr e, char *name);
+extern LIBLSL_C_API void lsl_remove_child_n(lsl_xml_ptr e, const char *name);
 
 /** Remove a specified child element. */
 extern LIBLSL_C_API void lsl_remove_child(lsl_xml_ptr e, lsl_xml_ptr e2);
@@ -959,7 +959,7 @@ extern LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver(doubl
 *                     this is the time in seconds after which it is no longer reported by the resolver.
 *                     The recommended default value is 5.0.
 */
-extern LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_byprop(char *prop, char *value, double forget_after);
+extern LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_byprop(const char *prop, const char *value, double forget_after);
 
 /**
 * Construct a new continuous_resolver that resolves all streams that match a given XPath 1.0 predicate.
@@ -969,7 +969,7 @@ extern LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_bypro
 *                     this is the time in seconds after which it is no longer reported by the resolver.
 *                     The recommended default value is 5.0.
 */
-extern LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_bypred(char *pred, double forget_after);
+extern LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_bypred(const char *pred, double forget_after);
 
 /**
 * Obtain the set of currently present streams on the network (i.e. resolve result).

@@ -151,7 +151,7 @@ namespace lsl {
         *                  serving app, device or computer crashes (just by finding a stream with the same source id on the network again).
         *                  Therefore, it is highly recommended to always try to provide whatever information can uniquely identify the data source itself.
         */
-        stream_info(const std::string &name, const std::string &type, int channel_count=1, double nominal_srate=IRREGULAR_RATE, channel_format_t channel_format=cf_float32, const std::string &source_id=std::string()): obj(lsl_create_streaminfo(const_cast<char*>(name.c_str()),const_cast<char*>(type.c_str()),channel_count,nominal_srate,(lsl_channel_format_t)channel_format,const_cast<char*>(source_id.c_str()))) {}
+        stream_info(const std::string &name, const std::string &type, int channel_count=1, double nominal_srate=IRREGULAR_RATE, channel_format_t channel_format=cf_float32, const std::string &source_id=std::string()): obj(lsl_create_streaminfo((name.c_str()),(type.c_str()),channel_count,nominal_srate,(lsl_channel_format_t)channel_format,(source_id.c_str()))) {}
         stream_info(lsl_streaminfo handle): obj(handle) {}
 
 
@@ -280,7 +280,7 @@ namespace lsl {
         */
         std::string as_xml() const {
                 char *tmp = lsl_get_xml(obj);
-                std::string result = tmp;
+                std::string result(tmp);
                 lsl_destroy_string(tmp);
                 return result;
         }
@@ -307,7 +307,7 @@ namespace lsl {
         ~stream_info() { lsl_destroy_streaminfo(obj); }
 
 		/// Utility function to create a stream_info from an XML representation
-		static stream_info from_xml(const std::string &xml) { return stream_info(lsl_streaminfo_from_xml((char*)xml.c_str())); }
+		static stream_info from_xml(const std::string &xml) { return stream_info(lsl_streaminfo_from_xml(xml.c_str())); }
     private:
         mutable lsl_streaminfo obj;
     };
@@ -356,12 +356,12 @@ namespace lsl {
         * @param pushthrough Whether to push the sample through to the receivers instead of buffering it with subsequent samples.
         *                    Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
         */
-        void push_sample(const std::vector<float> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan(data.size()); lsl_push_sample_ftp(obj,const_cast<float*>(&data[0]),timestamp,pushthrough); }
-        void push_sample(const std::vector<double> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan(data.size()); lsl_push_sample_dtp(obj,const_cast<double*>(&data[0]),timestamp,pushthrough); }
-        void push_sample(const std::vector<long> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan(data.size()); lsl_push_sample_ltp(obj,const_cast<long*>(&data[0]),timestamp,pushthrough); }
-        void push_sample(const std::vector<int> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan(data.size()); lsl_push_sample_itp(obj,const_cast<int*>(&data[0]),timestamp,pushthrough); }
-        void push_sample(const std::vector<short> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan(data.size()); lsl_push_sample_stp(obj,const_cast<short*>(&data[0]),timestamp,pushthrough); }
-        void push_sample(const std::vector<char> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan(data.size()); lsl_push_sample_ctp(obj,const_cast<char*>(&data[0]),timestamp,pushthrough); }
+        void push_sample(const std::vector<float> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan(data.size()); lsl_push_sample_ftp(obj,(&data[0]),timestamp,pushthrough); }
+        void push_sample(const std::vector<double> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan(data.size()); lsl_push_sample_dtp(obj,(&data[0]),timestamp,pushthrough); }
+        void push_sample(const std::vector<long> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan(data.size()); lsl_push_sample_ltp(obj,(&data[0]),timestamp,pushthrough); }
+        void push_sample(const std::vector<int> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan(data.size()); lsl_push_sample_itp(obj,(&data[0]),timestamp,pushthrough); }
+        void push_sample(const std::vector<short> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan(data.size()); lsl_push_sample_stp(obj,(&data[0]),timestamp,pushthrough); }
+        void push_sample(const std::vector<char> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan(data.size()); lsl_push_sample_ctp(obj,(&data[0]),timestamp,pushthrough); }
         void push_sample(const std::vector<std::string> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan(data.size()); push_sample(&data[0],timestamp,pushthrough); }
 
         /**
@@ -373,12 +373,12 @@ namespace lsl {
         * @param pushthrough Whether to push the sample through to the receivers instead of buffering it with subsequent samples.
         *                    Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
         */
-        void push_sample(const float *data, double timestamp=0.0, bool pushthrough=true) { lsl_push_sample_ftp(obj,const_cast<float*>(data),timestamp,pushthrough); }
-        void push_sample(const double *data, double timestamp=0.0, bool pushthrough=true) { lsl_push_sample_dtp(obj,const_cast<double*>(data),timestamp,pushthrough); }
-        void push_sample(const long *data, double timestamp=0.0, bool pushthrough=true) { lsl_push_sample_ltp(obj,const_cast<long*>(data),timestamp,pushthrough); }
-        void push_sample(const int *data, double timestamp=0.0, bool pushthrough=true) { lsl_push_sample_itp(obj,const_cast<int*>(data),timestamp,pushthrough); }
-        void push_sample(const short *data, double timestamp=0.0, bool pushthrough=true) { lsl_push_sample_stp(obj,const_cast<short*>(data),timestamp,pushthrough); }
-        void push_sample(const char *data, double timestamp=0.0, bool pushthrough=true) { lsl_push_sample_ctp(obj,const_cast<char*>(data),timestamp,pushthrough); }
+        void push_sample(const float *data, double timestamp=0.0, bool pushthrough=true) { lsl_push_sample_ftp(obj,(data),timestamp,pushthrough); }
+        void push_sample(const double *data, double timestamp=0.0, bool pushthrough=true) { lsl_push_sample_dtp(obj,(data),timestamp,pushthrough); }
+        void push_sample(const long *data, double timestamp=0.0, bool pushthrough=true) { lsl_push_sample_ltp(obj,(data),timestamp,pushthrough); }
+        void push_sample(const int *data, double timestamp=0.0, bool pushthrough=true) { lsl_push_sample_itp(obj,(data),timestamp,pushthrough); }
+        void push_sample(const short *data, double timestamp=0.0, bool pushthrough=true) { lsl_push_sample_stp(obj,(data),timestamp,pushthrough); }
+        void push_sample(const char *data, double timestamp=0.0, bool pushthrough=true) { lsl_push_sample_ctp(obj,(data),timestamp,pushthrough); }
         void push_sample(const std::string *data, double timestamp=0.0, bool pushthrough=true) { 
             std::vector<unsigned> lengths(channel_count); 
             std::vector<const char*> pointers(channel_count); 
@@ -386,7 +386,7 @@ namespace lsl {
                 pointers[k] = data[k].c_str();
                 lengths[k] = (unsigned)data[k].size(); 
             }
-            lsl_push_sample_buftp(obj,const_cast<char**>(&pointers[0]),&lengths[0],timestamp,pushthrough); 
+            lsl_push_sample_buftp(obj,(&pointers[0]),&lengths[0],timestamp,pushthrough);
         }
 
         /**
@@ -411,7 +411,7 @@ namespace lsl {
         * @param pushthrough Whether to push the sample through to the receivers instead of buffering it with subsequent samples.
         *                    Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
         */
-        void push_numeric_raw(const void *sample, double timestamp=0.0, bool pushthrough=true) { lsl_push_sample_vtp(obj,const_cast<void*>(sample),timestamp,pushthrough); }
+        void push_numeric_raw(const void *sample, double timestamp=0.0, bool pushthrough=true) { lsl_push_sample_vtp(obj,(sample),timestamp,pushthrough); }
 
 
         // ===================================================
@@ -496,12 +496,12 @@ namespace lsl {
         * @param pushthrough Whether to push the chunk through to the receivers instead of buffering it with subsequent samples.
         *                    Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
         */
-        void push_chunk_multiplexed(const std::vector<float> &buffer, double timestamp=0.0, bool pushthrough=true) { if (!buffer.empty()) lsl_push_chunk_ftp(obj,const_cast<float*>(&buffer[0]),(unsigned long)buffer.size(),timestamp,pushthrough); }
-        void push_chunk_multiplexed(const std::vector<double> &buffer, double timestamp=0.0, bool pushthrough=true) { if (!buffer.empty()) lsl_push_chunk_dtp(obj,const_cast<double*>(&buffer[0]),(unsigned long)buffer.size(),timestamp,pushthrough); }
-        void push_chunk_multiplexed(const std::vector<long> &buffer, double timestamp=0.0, bool pushthrough=true) { if (!buffer.empty()) lsl_push_chunk_ltp(obj,const_cast<long*>(&buffer[0]),(unsigned long)buffer.size(),timestamp,pushthrough); }
-        void push_chunk_multiplexed(const std::vector<int> &buffer, double timestamp=0.0, bool pushthrough=true) { if (!buffer.empty()) lsl_push_chunk_itp(obj,const_cast<int*>(&buffer[0]),(unsigned long)buffer.size(),timestamp,pushthrough); }
-        void push_chunk_multiplexed(const std::vector<short> &buffer, double timestamp=0.0, bool pushthrough=true) { if (!buffer.empty()) lsl_push_chunk_stp(obj,const_cast<short*>(&buffer[0]),(unsigned long)buffer.size(),timestamp,pushthrough); }
-        void push_chunk_multiplexed(const std::vector<char> &buffer, double timestamp=0.0, bool pushthrough=true) { if (!buffer.empty()) lsl_push_chunk_ctp(obj,const_cast<char*>(&buffer[0]),(unsigned long)buffer.size(),timestamp,pushthrough); }
+        void push_chunk_multiplexed(const std::vector<float> &buffer, double timestamp=0.0, bool pushthrough=true) { if (!buffer.empty()) lsl_push_chunk_ftp(obj,(&buffer[0]),(unsigned long)buffer.size(),timestamp,pushthrough); }
+        void push_chunk_multiplexed(const std::vector<double> &buffer, double timestamp=0.0, bool pushthrough=true) { if (!buffer.empty()) lsl_push_chunk_dtp(obj,(&buffer[0]),(unsigned long)buffer.size(),timestamp,pushthrough); }
+        void push_chunk_multiplexed(const std::vector<long> &buffer, double timestamp=0.0, bool pushthrough=true) { if (!buffer.empty()) lsl_push_chunk_ltp(obj,(&buffer[0]),(unsigned long)buffer.size(),timestamp,pushthrough); }
+        void push_chunk_multiplexed(const std::vector<int> &buffer, double timestamp=0.0, bool pushthrough=true) { if (!buffer.empty()) lsl_push_chunk_itp(obj,(&buffer[0]),(unsigned long)buffer.size(),timestamp,pushthrough); }
+        void push_chunk_multiplexed(const std::vector<short> &buffer, double timestamp=0.0, bool pushthrough=true) { if (!buffer.empty()) lsl_push_chunk_stp(obj,(&buffer[0]),(unsigned long)buffer.size(),timestamp,pushthrough); }
+        void push_chunk_multiplexed(const std::vector<char> &buffer, double timestamp=0.0, bool pushthrough=true) { if (!buffer.empty()) lsl_push_chunk_ctp(obj,(&buffer[0]),(unsigned long)buffer.size(),timestamp,pushthrough); }
         void push_chunk_multiplexed(const std::vector<std::string> &buffer, double timestamp=0.0, bool pushthrough=true) { if (!buffer.empty()) push_chunk_multiplexed(&buffer[0],(unsigned long)buffer.size(),timestamp,pushthrough); }
 
         /**
@@ -512,12 +512,12 @@ namespace lsl {
         * @param pushthrough Whether to push the chunk through to the receivers instead of buffering it with subsequent samples.
         *                    Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
         */
-        void push_chunk_multiplexed(const std::vector<float> &buffer, const std::vector<double> &timestamps, bool pushthrough=true) { if (!buffer.empty() && !timestamps.empty()) lsl_push_chunk_ftnp(obj,const_cast<float*>(&buffer[0]),(unsigned long)buffer.size(),const_cast<double*>(&timestamps[0]),pushthrough); }
-        void push_chunk_multiplexed(const std::vector<double> &buffer, const std::vector<double> &timestamps, bool pushthrough=true) { if (!buffer.empty() && !timestamps.empty()) lsl_push_chunk_dtnp(obj,const_cast<double*>(&buffer[0]),(unsigned long)buffer.size(),const_cast<double*>(&timestamps[0]),pushthrough); }
-        void push_chunk_multiplexed(const std::vector<long> &buffer, const std::vector<double> &timestamps, bool pushthrough=true) { if (!buffer.empty() && !timestamps.empty()) lsl_push_chunk_ltnp(obj,const_cast<long*>(&buffer[0]),(unsigned long)buffer.size(),const_cast<double*>(&timestamps[0]),pushthrough); }
-        void push_chunk_multiplexed(const std::vector<int> &buffer, const std::vector<double> &timestamps, bool pushthrough=true) { if (!buffer.empty() && !timestamps.empty()) lsl_push_chunk_itnp(obj,const_cast<int*>(&buffer[0]),(unsigned long)buffer.size(),const_cast<double*>(&timestamps[0]),pushthrough); }
-        void push_chunk_multiplexed(const std::vector<short> &buffer, const std::vector<double> &timestamps, bool pushthrough=true) { if (!buffer.empty() && !timestamps.empty()) lsl_push_chunk_stnp(obj,const_cast<short*>(&buffer[0]),(unsigned long)buffer.size(),const_cast<double*>(&timestamps[0]),pushthrough); }
-        void push_chunk_multiplexed(const std::vector<char> &buffer, const std::vector<double> &timestamps, bool pushthrough=true) { if (!buffer.empty() && !timestamps.empty()) lsl_push_chunk_ctnp(obj,const_cast<char*>(&buffer[0]),(unsigned long)buffer.size(),const_cast<double*>(&timestamps[0]),pushthrough); }
+        void push_chunk_multiplexed(const std::vector<float> &buffer, const std::vector<double> &timestamps, bool pushthrough=true) { if (!buffer.empty() && !timestamps.empty()) lsl_push_chunk_ftnp(obj,(&buffer[0]),(unsigned long)buffer.size(),(&timestamps[0]),pushthrough); }
+        void push_chunk_multiplexed(const std::vector<double> &buffer, const std::vector<double> &timestamps, bool pushthrough=true) { if (!buffer.empty() && !timestamps.empty()) lsl_push_chunk_dtnp(obj,(&buffer[0]),(unsigned long)buffer.size(),(&timestamps[0]),pushthrough); }
+        void push_chunk_multiplexed(const std::vector<long> &buffer, const std::vector<double> &timestamps, bool pushthrough=true) { if (!buffer.empty() && !timestamps.empty()) lsl_push_chunk_ltnp(obj,(&buffer[0]),(unsigned long)buffer.size(),(&timestamps[0]),pushthrough); }
+        void push_chunk_multiplexed(const std::vector<int> &buffer, const std::vector<double> &timestamps, bool pushthrough=true) { if (!buffer.empty() && !timestamps.empty()) lsl_push_chunk_itnp(obj,(&buffer[0]),(unsigned long)buffer.size(),(&timestamps[0]),pushthrough); }
+        void push_chunk_multiplexed(const std::vector<short> &buffer, const std::vector<double> &timestamps, bool pushthrough=true) { if (!buffer.empty() && !timestamps.empty()) lsl_push_chunk_stnp(obj,(&buffer[0]),(unsigned long)buffer.size(),(&timestamps[0]),pushthrough); }
+        void push_chunk_multiplexed(const std::vector<char> &buffer, const std::vector<double> &timestamps, bool pushthrough=true) { if (!buffer.empty() && !timestamps.empty()) lsl_push_chunk_ctnp(obj,(&buffer[0]),(unsigned long)buffer.size(),(&timestamps[0]),pushthrough); }
         void push_chunk_multiplexed(const std::vector<std::string> &buffer, const std::vector<double> &timestamps, bool pushthrough=true) { 
             if (!buffer.empty()) { 
                 std::vector<unsigned> lengths(buffer.size()); 
@@ -526,7 +526,7 @@ namespace lsl {
                     pointers[k] = buffer[k].c_str();
                     lengths[k] = (unsigned)buffer[k].size(); 
                 }
-                lsl_push_chunk_buftnp(obj,const_cast<char**>(&pointers[0]),&lengths[0],(unsigned long)buffer.size(),const_cast<double*>(&timestamps[0]),pushthrough); 
+                lsl_push_chunk_buftnp(obj,(&pointers[0]),&lengths[0],(unsigned long)buffer.size(),(&timestamps[0]),pushthrough); 
             } 
         }
 
@@ -540,12 +540,12 @@ namespace lsl {
         * @param pushthrough Whether to push the chunk through to the receivers instead of buffering it with subsequent samples.
         *                    Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
         */
-        void push_chunk_multiplexed(const float *buffer, std::size_t buffer_elements, double timestamp=0.0, bool pushthrough=true) { lsl_push_chunk_ftp(obj,const_cast<float*>(buffer),(unsigned long)buffer_elements,timestamp,pushthrough); }
-        void push_chunk_multiplexed(const double *buffer, std::size_t buffer_elements, double timestamp=0.0, bool pushthrough=true) { lsl_push_chunk_dtp(obj,const_cast<double*>(buffer),(unsigned long)buffer_elements,timestamp,pushthrough); }
-        void push_chunk_multiplexed(const long *buffer, std::size_t buffer_elements, double timestamp=0.0, bool pushthrough=true) { lsl_push_chunk_ltp(obj,const_cast<long*>(buffer),(unsigned long)buffer_elements,timestamp,pushthrough); }
-        void push_chunk_multiplexed(const int *buffer, std::size_t buffer_elements, double timestamp=0.0, bool pushthrough=true) { lsl_push_chunk_itp(obj,const_cast<int*>(buffer),(unsigned long)buffer_elements,timestamp,pushthrough); }
-        void push_chunk_multiplexed(const short *buffer, std::size_t buffer_elements, double timestamp=0.0, bool pushthrough=true) { lsl_push_chunk_stp(obj,const_cast<short*>(buffer),(unsigned long)buffer_elements,timestamp,pushthrough); }
-        void push_chunk_multiplexed(const char *buffer, std::size_t buffer_elements, double timestamp=0.0, bool pushthrough=true) { lsl_push_chunk_ctp(obj,const_cast<char*>(buffer),(unsigned long)buffer_elements,timestamp,pushthrough); }
+        void push_chunk_multiplexed(const float *buffer, std::size_t buffer_elements, double timestamp=0.0, bool pushthrough=true) { lsl_push_chunk_ftp(obj,(buffer),(unsigned long)buffer_elements,timestamp,pushthrough); }
+        void push_chunk_multiplexed(const double *buffer, std::size_t buffer_elements, double timestamp=0.0, bool pushthrough=true) { lsl_push_chunk_dtp(obj,(buffer),(unsigned long)buffer_elements,timestamp,pushthrough); }
+        void push_chunk_multiplexed(const long *buffer, std::size_t buffer_elements, double timestamp=0.0, bool pushthrough=true) { lsl_push_chunk_ltp(obj,(buffer),(unsigned long)buffer_elements,timestamp,pushthrough); }
+        void push_chunk_multiplexed(const int *buffer, std::size_t buffer_elements, double timestamp=0.0, bool pushthrough=true) { lsl_push_chunk_itp(obj,(buffer),(unsigned long)buffer_elements,timestamp,pushthrough); }
+        void push_chunk_multiplexed(const short *buffer, std::size_t buffer_elements, double timestamp=0.0, bool pushthrough=true) { lsl_push_chunk_stp(obj,(buffer),(unsigned long)buffer_elements,timestamp,pushthrough); }
+        void push_chunk_multiplexed(const char *buffer, std::size_t buffer_elements, double timestamp=0.0, bool pushthrough=true) { lsl_push_chunk_ctp(obj,(buffer),(unsigned long)buffer_elements,timestamp,pushthrough); }
         void push_chunk_multiplexed(const std::string *buffer, std::size_t buffer_elements, double timestamp=0.0, bool pushthrough=true) { 
             if (buffer_elements) { 
                 std::vector<unsigned> lengths(buffer_elements); 
@@ -554,7 +554,7 @@ namespace lsl {
                     pointers[k] = buffer[k].c_str();
                     lengths[k] = (unsigned)buffer[k].size(); 
                 }
-                lsl_push_chunk_buftp(obj,const_cast<char**>(&pointers[0]),&lengths[0],(unsigned long)buffer_elements,timestamp,pushthrough); 
+                lsl_push_chunk_buftp(obj,(&pointers[0]),&lengths[0],(unsigned long)buffer_elements,timestamp,pushthrough); 
             } 
         }
 
@@ -567,12 +567,12 @@ namespace lsl {
         * @param pushthrough Whether to push the chunk through to the receivers instead of buffering it with subsequent samples.
         *                    Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
         */
-        void push_chunk_multiplexed(const float *data_buffer, const double *timestamp_buffer, std::size_t data_buffer_elements, bool pushthrough=true) { lsl_push_chunk_ftnp(obj,const_cast<float*>(data_buffer),(unsigned long)data_buffer_elements,const_cast<double*>(timestamp_buffer),pushthrough); }
-        void push_chunk_multiplexed(const double *data_buffer, const double *timestamp_buffer, std::size_t data_buffer_elements, bool pushthrough=true) { lsl_push_chunk_dtnp(obj,const_cast<double*>(data_buffer),(unsigned long)data_buffer_elements,const_cast<double*>(timestamp_buffer),pushthrough); }
-        void push_chunk_multiplexed(const long *data_buffer, const double *timestamp_buffer, std::size_t data_buffer_elements, bool pushthrough=true) { lsl_push_chunk_ltnp(obj,const_cast<long*>(data_buffer),(unsigned long)data_buffer_elements,const_cast<double*>(timestamp_buffer),pushthrough); }
-        void push_chunk_multiplexed(const int *data_buffer, const double *timestamp_buffer, std::size_t data_buffer_elements, bool pushthrough=true) { lsl_push_chunk_itnp(obj,const_cast<int*>(data_buffer),(unsigned long)data_buffer_elements,const_cast<double*>(timestamp_buffer),pushthrough); }
-        void push_chunk_multiplexed(const short *data_buffer, const double *timestamp_buffer, std::size_t data_buffer_elements, bool pushthrough=true) { lsl_push_chunk_stnp(obj,const_cast<short*>(data_buffer),(unsigned long)data_buffer_elements,const_cast<double*>(timestamp_buffer),pushthrough); }
-        void push_chunk_multiplexed(const char *data_buffer, const double *timestamp_buffer, std::size_t data_buffer_elements, bool pushthrough=true) { lsl_push_chunk_ctnp(obj,const_cast<char*>(data_buffer),(unsigned long)data_buffer_elements,const_cast<double*>(timestamp_buffer),pushthrough); }
+        void push_chunk_multiplexed(const float *data_buffer, const double *timestamp_buffer, std::size_t data_buffer_elements, bool pushthrough=true) { lsl_push_chunk_ftnp(obj,(data_buffer),(unsigned long)data_buffer_elements,(timestamp_buffer),pushthrough); }
+        void push_chunk_multiplexed(const double *data_buffer, const double *timestamp_buffer, std::size_t data_buffer_elements, bool pushthrough=true) { lsl_push_chunk_dtnp(obj,(data_buffer),(unsigned long)data_buffer_elements,(timestamp_buffer),pushthrough); }
+        void push_chunk_multiplexed(const long *data_buffer, const double *timestamp_buffer, std::size_t data_buffer_elements, bool pushthrough=true) { lsl_push_chunk_ltnp(obj,(data_buffer),(unsigned long)data_buffer_elements,(timestamp_buffer),pushthrough); }
+        void push_chunk_multiplexed(const int *data_buffer, const double *timestamp_buffer, std::size_t data_buffer_elements, bool pushthrough=true) { lsl_push_chunk_itnp(obj,(data_buffer),(unsigned long)data_buffer_elements,(timestamp_buffer),pushthrough); }
+        void push_chunk_multiplexed(const short *data_buffer, const double *timestamp_buffer, std::size_t data_buffer_elements, bool pushthrough=true) { lsl_push_chunk_stnp(obj,(data_buffer),(unsigned long)data_buffer_elements,(timestamp_buffer),pushthrough); }
+        void push_chunk_multiplexed(const char *data_buffer, const double *timestamp_buffer, std::size_t data_buffer_elements, bool pushthrough=true) { lsl_push_chunk_ctnp(obj,(data_buffer),(unsigned long)data_buffer_elements,(timestamp_buffer),pushthrough); }
         void push_chunk_multiplexed(const std::string *data_buffer, const double *timestamp_buffer, std::size_t data_buffer_elements, bool pushthrough=true) { 
             if (data_buffer_elements) { 
                 std::vector<unsigned> lengths(data_buffer_elements); 
@@ -581,7 +581,7 @@ namespace lsl {
                     pointers[k] = data_buffer[k].c_str();
                     lengths[k] = (unsigned)data_buffer[k].size(); 
                 }
-                lsl_push_chunk_buftnp(obj,const_cast<char**>(&pointers[0]),&lengths[0],(unsigned long)data_buffer_elements,const_cast<double*>(&timestamp_buffer[0]),pushthrough); 
+                lsl_push_chunk_buftnp(obj,(&pointers[0]),&lengths[0],(unsigned long)data_buffer_elements,(&timestamp_buffer[0]),pushthrough); 
             } 
         }
 
@@ -674,7 +674,7 @@ namespace lsl {
     * @return A vector of matching stream info objects (excluding their meta-data), any of 
     *         which can subsequently be used to open an inlet.
     */
-    inline std::vector<stream_info> resolve_stream(const std::string &prop, const std::string &value, int minimum=1, double timeout=FOREVER) { lsl_streaminfo buffer[1024]; return std::vector<stream_info>(&buffer[0],&buffer[lsl_resolve_byprop(buffer,sizeof(buffer),const_cast<char*>(prop.c_str()),const_cast<char*>(value.c_str()),minimum,timeout)]); }
+    inline std::vector<stream_info> resolve_stream(const std::string &prop, const std::string &value, int minimum=1, double timeout=FOREVER) { lsl_streaminfo buffer[1024]; return std::vector<stream_info>(&buffer[0],&buffer[lsl_resolve_byprop(buffer,sizeof(buffer),(prop.c_str()),(value.c_str()),minimum,timeout)]); }
 
     /**
     * Resolve all streams that match a given predicate.
@@ -687,7 +687,7 @@ namespace lsl {
     * @return A vector of matching stream info objects (excluding their meta-data), any of 
     *         which can subsequently be used to open an inlet.
     */
-    inline std::vector<stream_info> resolve_stream(const std::string &pred, int minimum=1, double timeout=FOREVER) { lsl_streaminfo buffer[1024]; return std::vector<stream_info>(&buffer[0],&buffer[lsl_resolve_bypred(buffer,sizeof(buffer),const_cast<char*>(pred.c_str()),minimum,timeout)]); }
+    inline std::vector<stream_info> resolve_stream(const std::string &pred, int minimum=1, double timeout=FOREVER) { lsl_streaminfo buffer[1024]; return std::vector<stream_info>(&buffer[0],&buffer[lsl_resolve_bypred(buffer,sizeof(buffer),(pred.c_str()),minimum,timeout)]); }
 
 
     // ======================
@@ -1096,13 +1096,13 @@ namespace lsl {
         // === Tree Navigation by Name ===
 
         /// Get a child with a specified name.
-        xml_element child(const std::string &name) const { return lsl_child(obj,const_cast<char*>(name.c_str())); }
+        xml_element child(const std::string &name) const { return lsl_child(obj,(name.c_str())); }
 
         /// Get the next sibling with the specified name.
-        xml_element next_sibling(const std::string &name) const { return lsl_next_sibling_n(obj,const_cast<char*>(name.c_str())); }
+        xml_element next_sibling(const std::string &name) const { return lsl_next_sibling_n(obj,(name.c_str())); }
 
         /// Get the previous sibling with the specified name.
-        xml_element previous_sibling(const std::string &name) const { return lsl_previous_sibling_n(obj,const_cast<char*>(name.c_str())); }
+        xml_element previous_sibling(const std::string &name) const { return lsl_previous_sibling_n(obj,(name.c_str())); }
 
 
         // === Content Queries ===
@@ -1123,7 +1123,7 @@ namespace lsl {
         const char* child_value() const { return lsl_child_value(obj); }
 
         /// Get child value of a child with a specified name.
-        const char* child_value(const std::string &name) const { return lsl_child_value_n(obj,const_cast<char*>(name.c_str())); }
+        const char* child_value(const std::string &name) const { return lsl_child_value_n(obj,(name.c_str())); }
 
 
         // === Modification ===
@@ -1131,35 +1131,35 @@ namespace lsl {
         /**
         * Append a child node with a given name, which has a (nameless) plain-text child with the given text value.
         */
-        xml_element append_child_value(const std::string &name, const std::string &value) { return lsl_append_child_value(obj,const_cast<char*>(name.c_str()),const_cast<char*>(value.c_str())); }
+        xml_element append_child_value(const std::string &name, const std::string &value) { return lsl_append_child_value(obj,(name.c_str()),(value.c_str())); }
 
         /**
         * Prepend a child node with a given name, which has a (nameless) plain-text child with the given text value.
         */
-        xml_element prepend_child_value(const std::string &name, const std::string &value) { return lsl_prepend_child_value(obj,const_cast<char*>(name.c_str()),const_cast<char*>(value.c_str())); }
+        xml_element prepend_child_value(const std::string &name, const std::string &value) { return lsl_prepend_child_value(obj,(name.c_str()),(value.c_str())); }
 
         /**
         * Set the text value of the (nameless) plain-text child of a named child node.
         */
-        bool set_child_value(const std::string &name, const std::string &value) { return lsl_set_child_value(obj,const_cast<char*>(name.c_str()),const_cast<char*>(value.c_str())) != 0; }
+        bool set_child_value(const std::string &name, const std::string &value) { return lsl_set_child_value(obj,(name.c_str()),(value.c_str())) != 0; }
 
         /**
         * Set the element's name.
         * @return False if the node is empty (or if out of memory).
         */
-        bool set_name(const std::string &rhs) { return lsl_set_name(obj,const_cast<char*>(rhs.c_str())) != 0; }
+        bool set_name(const std::string &rhs) { return lsl_set_name(obj,(rhs.c_str())) != 0; }
 
         /**
         * Set the element's value.
         * @return False if the node is empty (or if out of memory).
         */
-        bool set_value(const std::string &rhs) { return lsl_set_value(obj,const_cast<char*>(rhs.c_str())) != 0; }
+        bool set_value(const std::string &rhs) { return lsl_set_value(obj,(rhs.c_str())) != 0; }
 
         /// Append a child element with the specified name.
-        xml_element append_child(const std::string &name) { return lsl_append_child(obj,const_cast<char*>(name.c_str())); }
+        xml_element append_child(const std::string &name) { return lsl_append_child(obj,(name.c_str())); }
 
         /// Prepend a child element with the specified name.
-        xml_element prepend_child(const std::string &name) { return lsl_prepend_child(obj,const_cast<char*>(name.c_str())); }
+        xml_element prepend_child(const std::string &name) { return lsl_prepend_child(obj,(name.c_str())); }
 
         /// Append a copy of the specified element as a child.
         xml_element append_copy(const xml_element &e) { return lsl_append_copy(obj,e.obj); }
@@ -1168,7 +1168,7 @@ namespace lsl {
         xml_element prepend_copy(const xml_element &e) { return lsl_prepend_copy(obj,e.obj); }
 
         /// Remove a child element with the specified name.
-        void remove_child(const std::string &name) { lsl_remove_child_n(obj,const_cast<char*>(name.c_str())); }
+        void remove_child(const std::string &name) { lsl_remove_child_n(obj,(name.c_str())); }
 
         /// Remove a specified child element.
         void remove_child(const xml_element &e) { lsl_remove_child(obj,e.obj); }
@@ -1206,7 +1206,7 @@ namespace lsl {
         * @param forget_after When a stream is no longer visible on the network (e.g., because it was shut down),
         *                     this is the time in seconds after which it is no longer reported by the resolver.
         */
-        continuous_resolver(const std::string &prop, const std::string &value, double forget_after=5.0): obj(lsl_create_continuous_resolver_byprop(const_cast<char*>(prop.c_str()),const_cast<char*>(value.c_str()),forget_after)) {}
+        continuous_resolver(const std::string &prop, const std::string &value, double forget_after=5.0): obj(lsl_create_continuous_resolver_byprop((prop.c_str()),(value.c_str()),forget_after)) {}
 
         /**
         * Construct a new continuous_resolver that resolves all streams that match a given XPath 1.0 predicate.
@@ -1215,7 +1215,7 @@ namespace lsl {
         * @param forget_after When a stream is no longer visible on the network (e.g., because it was shut down),
         *                     this is the time in seconds after which it is no longer reported by the resolver.
         */
-        continuous_resolver(const std::string &pred, double forget_after=5.0): obj(lsl_create_continuous_resolver_bypred(const_cast<char*>(pred.c_str()),forget_after)) {}
+        continuous_resolver(const std::string &pred, double forget_after=5.0): obj(lsl_create_continuous_resolver_bypred((pred.c_str()),forget_after)) {}
 
         /**
         * Obtain the set of currently present streams on the network (i.e. resolve result).

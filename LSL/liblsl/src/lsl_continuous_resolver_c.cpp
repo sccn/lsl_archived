@@ -3,7 +3,7 @@
 #include "common.h"
 #include <iostream>
 
-
+extern "C" {
 // === implementation of the continuous_resolver class ===
 
 using namespace lsl;
@@ -38,7 +38,7 @@ LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver(double forge
 *				      this is the time in seconds after which it is no longer reported by the resolver.
 *					  The recommended default value is 5.0.
 */
-LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_byprop(char *prop, char *value, double forget_after) {
+LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_byprop(const char *prop, const char *value, double forget_after) {
 	try {
 		// create a new resolver
 		resolver_impl *resolver = new resolver_impl();
@@ -60,7 +60,7 @@ LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_byprop(char 
 *				      this is the time in seconds after which it is no longer reported by the resolver.
 *					  The recommended default value is 5.0.
 */
-LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_bypred(char *pred, double forget_after) {
+LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_bypred(const char *pred, double forget_after) {
 	try {
 		// create a new resolver
 		resolver_impl *resolver = new resolver_impl();
@@ -109,4 +109,4 @@ LIBLSL_C_API void lsl_destroy_continuous_resolver(lsl_continuous_resolver res) {
 		std::cerr << "Unexpected during destruction of a continuous_resolver: " << e.what() << std::endl;
 	}
 }
-
+}

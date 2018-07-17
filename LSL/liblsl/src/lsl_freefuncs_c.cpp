@@ -10,7 +10,7 @@ using namespace lsl;
 using std::string;
 using std::vector;
 
-
+extern "C" {
 /**
 * Get the protocol version.
 */
@@ -92,7 +92,7 @@ LIBLSL_C_API int lsl_resolve_all(lsl_streaminfo *buffer, unsigned buffer_element
 * @return The number of results written into the buffer (never more than the provided # of slots) or a negative number if an
 *		  error has occurred (values corresponding to lsl_error_code_t).
 */
-LIBLSL_C_API int lsl_resolve_byprop(lsl_streaminfo *buffer, unsigned buffer_elements, char *prop, char *value, int minimum, double timeout) {
+LIBLSL_C_API int lsl_resolve_byprop(lsl_streaminfo *buffer, unsigned buffer_elements, const char *prop, const char *value, int minimum, double timeout) {
 	try {
 		// create a new resolver
 		resolver_impl resolver;
@@ -126,7 +126,7 @@ LIBLSL_C_API int lsl_resolve_byprop(lsl_streaminfo *buffer, unsigned buffer_elem
 * @return The number of results written into the buffer (never more than the provided # of slots) or a negative number if an
 *		  error has occurred (values corresponding to lsl_error_code_t).
 */
-LIBLSL_C_API int lsl_resolve_bypred(lsl_streaminfo *buffer, unsigned buffer_elements, char *pred, int minimum, double timeout) {
+LIBLSL_C_API int lsl_resolve_bypred(lsl_streaminfo *buffer, unsigned buffer_elements, const char *pred, int minimum, double timeout) {
 	try {
 		// create a new resolver
 		resolver_impl resolver;
@@ -154,4 +154,5 @@ LIBLSL_C_API int lsl_resolve_bypred(lsl_streaminfo *buffer, unsigned buffer_elem
 LIBLSL_C_API void lsl_destroy_string(char *s) {
 	if (s)
 		free(s);
+}
 }
