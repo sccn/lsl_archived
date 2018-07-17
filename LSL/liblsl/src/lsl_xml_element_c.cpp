@@ -18,10 +18,10 @@ LIBLSL_C_API lsl_xml_ptr lsl_previous_sibling_n(lsl_xml_ptr e, const char *name)
 
 LIBLSL_C_API int lsl_empty(lsl_xml_ptr e) { return xml_node((xml_node_struct*)e).empty(); }
 LIBLSL_C_API int  lsl_is_text(lsl_xml_ptr e) { return xml_node((xml_node_struct*)e).type() != node_element; }
-LIBLSL_C_API char *lsl_name(lsl_xml_ptr e) { return const_cast<char*>(xml_node((xml_node_struct*)e).name()); }
-LIBLSL_C_API char *lsl_value(lsl_xml_ptr e) { return const_cast<char*>(xml_node((xml_node_struct*)e).value()); }
-LIBLSL_C_API char *lsl_child_value(lsl_xml_ptr e) { return const_cast<char*>(xml_node((xml_node_struct*)e).child_value()); }
-LIBLSL_C_API char *lsl_child_value_n(lsl_xml_ptr e, const char *name) { return const_cast<char*>(xml_node((xml_node_struct*)e).child_value(name)); }
+LIBLSL_C_API const char *lsl_name(lsl_xml_ptr e) { return xml_node((xml_node_struct*)e).name(); }
+LIBLSL_C_API const char *lsl_value(lsl_xml_ptr e) { return xml_node((xml_node_struct*)e).value(); }
+LIBLSL_C_API const char *lsl_child_value(lsl_xml_ptr e) { return xml_node((xml_node_struct*)e).child_value(); }
+LIBLSL_C_API const char *lsl_child_value_n(lsl_xml_ptr e, const char *name) { return xml_node((xml_node_struct*)e).child_value(name); }
 
 LIBLSL_C_API int lsl_set_name(lsl_xml_ptr e, const char *rhs) { return xml_node((xml_node_struct*)e).set_name(rhs); }
 LIBLSL_C_API int lsl_set_value(lsl_xml_ptr e, const char *rhs) { return xml_node((xml_node_struct*)e).set_value(rhs); }
