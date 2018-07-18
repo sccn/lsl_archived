@@ -6,7 +6,7 @@
 #define CONVERSIONS_H_
 
 #include <cstdint>
-#include <streambuf>
+#include <ostream>
 #include <vector>
 #include <limits>
 
@@ -31,16 +31,16 @@ using boost::endian::native_to_little_inplace;
 // write an integer value in little endian
 // derived from portable archive code by christian.pfligersdorffer@eos.info (under boost license)
 template <typename T>
-typename std::enable_if<std::is_integral<T>::value>::type write_little_endian(std::streambuf* dst, T t) {
+typename std::enable_if<std::is_integral<T>::value>::type write_little_endian(std::ostream& dst, T t) {
 	native_to_little_inplace(t);
-	dst->sputn((char*)(&t), sizeof(t));
+	dst->sputn(reinterpret_cast<const char*>(&t), sizeof(t));
 }
 
 // write a floating-point value in little endian
 // derived from portable archive code by christian.pfligersdorffer@eos.info (under boost license)
 template <typename T>
 typename std::enable_if<std::is_floating_point<T>::value>::type
-write_little_endian(std::streambuf* dst, T t) {
+write_little_endian(std::ostream& dst, T t) {
 	//Get a type big enough to hold
 	using traits = typename fp::detail::fp_traits<T>::type;
 	static_assert(sizeof(typename traits::bits) == sizeof(T), "floating point type can't be represented accurately");
@@ -60,9 +60,11 @@ write_little_endian(std::streambuf* dst, T t) {
 
 // store a sample's values to a stream (numeric version) */
 template <class T>
-inline void write_sample_values(std::streambuf* dst, const std::vector<T>& sample) {
+inline const T* write_sample_values(std::ostream& dst, const T* sample, std::size_t len) {
 	// [Value1] .. [ValueN] */
-	for (const T s : sample) write_little_endian(dst, s);
+	for(const T* end = sample + len; sample < end; ++sample)
+		write_little_endian(dst, *sample);
+	return sample;
 }
 
 #else
@@ -74,46 +76,65 @@ static_assert(sizeof(float) == 4, "Unexpected float size!");
 static_assert(sizeof(double) == 8, "Unexpected double size!");
 
 template <typename T>
-typename std::enable_if<sizeof(T) == 1>::type write_little_endian(std::streambuf* dst, T t) {
-	dst->sputc(t);
+typename std::enable_if<sizeof(T) == 1>::type write_little_endian(std::ostream& dst, T t) {
+	dst.put(t);
 }
 
 template <typename T>
-typename std::enable_if<sizeof(T) >= 2>::type write_little_endian(std::streambuf* dst, T t) {
-	dst->sputn(reinterpret_cast<const char*>(&t), sizeof(T));
+typename std::enable_if<sizeof(T) >= 2>::type write_little_endian(std::ostream& dst, T t) {
+	dst.write(reinterpret_cast<const char*>(&t), sizeof(T));
 }
 
 template <class T>
-inline void write_sample_values(std::streambuf* dst, const std::vector<T>& sample) {
+inline const T* write_sample_values(std::ostream& dst, const T* sample, std::size_t len) {
 	// [Value1] .. [ValueN] */
-	dst->sputn(reinterpret_cast<const char*>(sample.data()), sample.size() * sizeof(T));
+	dst.write(reinterpret_cast<const char*>(sample), len * sizeof(T));
+	return sample + len;
 }
 #endif
 
+template <class T>
+inline void write_sample_values(std::ostream& dst, const std::vector<T>& sample) {
+	write_sample_values(dst, sample.data(), sample.size());
+}
+
+template <typename T>
+inline void write_sample_values(std::ostream& buf, const std::vector<std::vector<T>>& vecs) {
+	for (const std::vector<T>& vec : vecs) write_sample_values(buf, vec);
+}
+
 // write a variable-length integer (int8, int32, or int64)
-inline void write_varlen_int(std::streambuf* dst, uint64_t val) {
+inline void write_varlen_int(std::ostream& dst, uint64_t val) {
 	if (val < 256) {
-		dst->sputc(1);
-		dst->sputc(static_cast<uint8_t>(val));
+		dst.put(1);
+		dst.put(static_cast<uint8_t>(val));
 	} else if (val <= 4294967295) {
-		dst->sputc(4);
+		dst.put(4);
 		write_little_endian(dst, static_cast<uint32_t>(val));
 	} else {
-		dst->sputc(8);
+		dst.put(8);
 		write_little_endian(dst, static_cast<uint64_t>(val));
 	}
 }
 
+template<typename T>
+inline void write_fixlen_int(std::ostream& dst, T val) {
+	dst.put(sizeof(T));
+	write_little_endian(dst, val);
+}
+
+
 // store a sample's values to a stream (string version)
 template <>
-inline void write_sample_values(std::streambuf* dst, const std::vector<std::string>& sample) {
+inline const std::string* write_sample_values(std::ostream& dst, const std::string* sample, std::size_t len) {
 	// [Value1] .. [ValueN] */
-	for (const std::string& s : sample) {
+	for(const std::string* end = sample + len; sample < end; ++sample) {
 		// [NumLengthBytes], [Length] (as varlen int)
-		write_varlen_int(dst, s.size());
+		write_varlen_int(dst, sample->size());
 		// [StringContent] */
-		dst->sputn(s.data(), s.size());
+		dst.write(sample->data(), sample->size());
 	}
+	return sample;
 }
 
 #endif

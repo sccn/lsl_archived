@@ -1,5 +1,5 @@
 #include "recording.h"
-#include "conversions.h"
+//#include "conversions.h"
 
 #include <set>
 #include <sstream>
@@ -9,9 +9,8 @@
 #include <boost/algorithm/string/predicate.hpp>
 #endif
 
-static const std::string boundary_uuid(reinterpret_cast<const char*>(boundary_uuid_c), 16);
-
 // Thread utilities
+using Clock = std::chrono::high_resolution_clock;
 
 /**
  * @brief try_join_once		joins and deconstructs the thread if possible
@@ -34,8 +33,8 @@ inline bool try_join_once(std::unique_ptr<std::thread>& thread) {
  * @return true on success, false otherwise
  */
 inline bool timed_join(thread_p& thread, std::chrono::milliseconds duration = max_join_wait) {
-	const auto start = std::chrono::high_resolution_clock::now();
-	while(std::chrono::high_resolution_clock::now() - start < duration) {
+	const auto start = Clock::now();
+	while(Clock::now() - start < duration) {
 		if(try_join_once(thread)) return true;
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
@@ -60,8 +59,8 @@ inline void timed_join_or_detach(thread_p& thread, std::chrono::milliseconds dur
  * @param duration				duration to try joining
  */
 inline void timed_join_or_detach(std::list<thread_p>& threads, std::chrono::milliseconds duration = max_join_wait) {
-	const auto start = std::chrono::high_resolution_clock::now();
-	while(std::chrono::high_resolution_clock::now() - start < duration && !threads.empty()) {
+	const auto start = Clock::now();
+	while(Clock::now() - start < duration && !threads.empty()) {
 		for(auto it = threads.begin(); it!=threads.end();) {
 			if(try_join_once(*it)) it = threads.erase(it);
 			else ++it;
@@ -76,6 +75,7 @@ inline void timed_join_or_detach(std::list<thread_p>& threads, std::chrono::mill
 }
 
 recording::recording(const std::string& filename, const std::vector<lsl::stream_info>& streams, const std::vector<std::string>& watchfor, std::map<std::string, int> syncOptions, bool collect_offsets):
+    file_(filename),
     offsets_enabled_(collect_offsets),
     unsorted_(false),
     streamid_(0),
@@ -84,21 +84,6 @@ recording::recording(const std::string& filename, const std::vector<lsl::stream_
     streaming_to_finish_(0),
     sync_options_by_stream_(std::move(syncOptions))
 {
-	// open file stream
-	std::cout << "Opening file " << filename << " ... ";
-#ifdef XDFZ_SUPPORT
-	if (boost::iends_with(filename,".xdfz"))
-		file_.push(boost::iostreams::zlib_compressor());
-	file_.push(boost::iostreams::file_descriptor_sink(filename,std::ios::binary | std::ios::trunc));
-#else
-	file_.open(filename, std::ios::binary | std::ios::trunc);
-#endif
-
-	std::cout << "done." << std::endl;
-	// [MagicCode]
-	file_ << "XDF:";
-	// [FileHeader] chunk
-	write_chunk(ct_fileheader,"<?xml version=\"1.0\"?><info><version>1.0</version></info>");
 	// create a recording thread for each stream
 	for (const auto& stream: streams)
 		stream_threads_.emplace_back(new std::thread(&recording::record_from_streaminfo, this, stream, true));
@@ -163,7 +148,7 @@ void recording::record_from_query_results(const std::string& query) {
 void recording::record_from_streaminfo(const lsl::stream_info& src, bool phase_locked) {
 	try {
 		double first_timestamp, last_timestamp;
-		uint64_t sample_count;
+		uint64_t sample_count = 0;
 		// obtain a fresh streamid
 		streamid_t streamid = fresh_streamid();
 
@@ -187,16 +172,9 @@ void recording::record_from_streaminfo(const lsl::stream_info& src, bool phase_l
 				std::cout << "Subscribing to the stream " << src.name() << " is taking relatively long; collection from this stream will be delayed." << std::endl;
 			}
 
-			// generate the [StreamHeader] chunk contents...
-			std::ostringstream hdr_content;
-			// [StreamId]
-			write_little_endian(hdr_content.rdbuf(), streamid);
-			// [Content]
 			// retrieve the stream header & get its XML version
 			info = in->info();
-			hdr_content << info.as_xml();
-			// write the actual chunk
-			write_chunk(ct_streamheader,hdr_content.str());
+			file_.write_stream_header(streamid, info.as_xml());
 			std::cout << "Received header for stream " << src.name() << "." << std::endl;
 
 			leave_headers_phase(phase_locked);
@@ -251,20 +229,17 @@ void recording::record_from_streaminfo(const lsl::stream_info& src, bool phase_l
 
 			// now generate the [StreamFooter] contents
 			std::ostringstream footer; footer.precision(16);
-			// [StreamId]
-			write_little_endian(footer.rdbuf(),streamid);
-			// [Content]
 			footer << "<?xml version=\"1.0\"?><info><first_timestamp>" << first_timestamp << "</first_timestamp><last_timestamp>" << last_timestamp << "</last_timestamp><sample_count>" << sample_count << "</sample_count>";
 			footer << "<clock_offsets>";
 			{
 				// including the clock_offset list
 				std::lock_guard<std::mutex> lock(offset_mut_);
-				for(const offset_list::value_type pair: offset_lists_[streamid]) {
+				for(const auto pair: offset_lists_[streamid]) {
 					footer << "<offset><time>" << pair.first << "</time><value>" << pair.second << "</value></offset>";
 				}
 				footer << "</clock_offsets></info>";
-				write_chunk(ct_streamfooter,footer.str());
 			}
+			file_.write_stream_footer(streamid, footer.str());
 
 			std::cout << "Wrote footer for stream " << src.name() << "." << std::endl;
 			leave_footers_phase(phase_locked);
@@ -281,11 +256,13 @@ void recording::record_from_streaminfo(const lsl::stream_info& src, bool phase_l
 
 void recording::record_boundaries() {
 	try {
+		auto next_boundary = Clock::now() + boundary_interval;
 		while (!shutdown_) {
-			// sleep for the interval
-			std::this_thread::sleep_for(boundary_interval);
-			// write a [Boundary] chunk...
-			write_chunk(ct_boundary, boundary_uuid);
+			std::this_thread::sleep_for(std::chrono::milliseconds(500));
+			if(Clock::now() > next_boundary) {
+				file_.write_boundary_chunk();
+				next_boundary = Clock::now() + boundary_interval;
+			}
 		}
 	}
 	catch(std::exception &e) {
@@ -305,16 +282,7 @@ void recording::record_offsets(streamid_t streamid, const inlet_p& in, std::atom
 				now = lsl::local_clock();
 			}
 			catch (lsl::timeout_error &) { continue; }
-			// generate the [ClockOffset] chunk contents
-			std::ostringstream content;
-			// [StreamId]
-			write_little_endian(content.rdbuf(),streamid);
-			// [CollectionTime]
-			write_little_endian(content.rdbuf(),now-offset);
-			// [OffsetValue]
-			write_little_endian(content.rdbuf(),offset);
-			// write the chunk
-			write_chunk(ct_clockoffset,content.str());
+			file_.write_stream_offset(streamid, now, offset);
 			// also append to the offset lists
 			std::lock_guard<std::mutex> lock(offset_mut_);
 			offset_lists_[streamid].emplace_back(now-offset,offset);
@@ -324,18 +292,6 @@ void recording::record_offsets(streamid_t streamid, const inlet_p& in, std::atom
 		std::cout << "Error in the record_offsets thread: " << e.what() << std::endl;
 	}
 	std::cout << "Offsets thread is finished" << std::endl;
-}
-
-void recording::write_chunk(chunk_tag_t tag, const std::string& content) {
-	// lock the file stream...
-	std::lock_guard<std::mutex> lock(chunk_mut_);
-	// [NumLengthBytes], [Length] (variable-length integer)
-	std::size_t len = 2 + content.size();
-	write_varlen_int(file_.rdbuf(),len);
-	// [Tag]
-	write_little_endian(file_.rdbuf(), static_cast<uint16_t>(tag));
-	// [Content]
-	file_ << content;
 }
 
 void recording::enter_headers_phase(bool phase_locked) {
@@ -390,7 +346,6 @@ void recording::typed_transfer_loop(streamid_t streamid, double srate, const inl
 	try {
 		first_timestamp = -1.0;
 		last_timestamp = 0.0;
-		sample_count = 0;
 		double sample_interval = srate ? 1.0 / srate : 0;
 
 		// temporary data
@@ -400,31 +355,19 @@ void recording::typed_transfer_loop(streamid_t streamid, double srate, const inl
 			// get a chunk from the stream
 			if (in->pull_chunk(chunk, timestamps)) {
 				if (first_timestamp == -1.0) first_timestamp = timestamps[0];
-				// generate [Samples] chunk contents...
-				std::ostringstream content;
-				// [StreamId]
-				write_little_endian(content.rdbuf(), streamid);
-				// [NumSamplesBytes], [NumSamples]
-				write_varlen_int(content.rdbuf(), chunk.size());
 				// for each sample...
 				for (std::size_t s = 0; s < chunk.size(); s++) {
 					// if the time stamp can be deduced from the previous one...
 					if (last_timestamp + sample_interval == timestamps[s]) {
-						// [TimeStampBytes] (0 for no time stamp)
-						content.rdbuf()->sputc(0);
-					} else {
-						// [TimeStampBytes]
-						content.rdbuf()->sputc(8);
-						// [TimeStamp]
-						write_little_endian(content.rdbuf(), timestamps[s]);
+						last_timestamp = timestamps[s] + sample_interval;
+						timestamps[s] = 0;
 					}
-					// [Sample1] .. [SampleN]
-					write_sample_values<T>(content.rdbuf(), chunk[s]);
-					last_timestamp = timestamps[s];
-					sample_count++;
+					else
+						last_timestamp = timestamps[s];
 				}
 				// write the actual chunk
-				write_chunk(ct_samples, content.str());
+				file_.write_data_chunk_nested(streamid, timestamps, chunk);
+				sample_count += timestamps.size();
 			} else
 				std::this_thread::sleep_for(chunk_interval);
 		}
