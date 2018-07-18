@@ -11,25 +11,7 @@
 #include <thread>
 #include <type_traits>
 #include <lsl_cpp.h>
-
-#ifdef XDFZ_SUPPORT
-#include <boost/iostreams/filtering_stream.hpp>
-using outfile_t = boost::iostreams::filtering_ostream;
-#else
-#include <fstream>
-using outfile_t = std::ofstream;
-#endif
-
-// the currently defined chunk tags
-enum chunk_tag_t {
-	ct_fileheader = 1,		// FileHeader chunk
-	ct_streamheader = 2,	// StreamHeader chunk
-	ct_samples = 3,			// Samples chunk
-	ct_clockoffset = 4,		// ClockOffset chunk
-	ct_boundary = 5,		// Boundary chunk
-	ct_streamfooter = 6,	// StreamFooter chunk
-	ct_undefined = 0
-};
+#include "xdfwriter.h"
 
 // timings in the recording process (e.g., rate of boundary chunks and for cases where a stream hangs)
 // approx. interval between boundary chunks
@@ -49,8 +31,7 @@ const double max_open_wait = 5;
 // maximum time that we wait to join a thread, in seconds
 const std::chrono::seconds max_join_wait(5);
 
-// the signature of the boundary chunk (next chunk begins right after this)
-const uint8_t boundary_uuid_c[] = {0x43,0xA5,0x46,0xDC,0xCB,0xF5,0x41,0x0F,0xB3,0x0E,0xD5,0x46,0x73,0x83,0xCB,0xE4};
+using streamid_t = uint32_t;
 
 // pointer to a thread
 using thread_p = std::unique_ptr<std::thread>;
@@ -59,9 +40,8 @@ using inlet_p = std::shared_ptr<lsl::stream_inlet>;
 // a list of clock offset estimates (time,value)
 using offset_list = std::list<std::pair<double,double>>;
 // a map from streamid to offset_list
-using offset_lists = std::map<int,offset_list>;
+using offset_lists = std::map<streamid_t, offset_list>;
 
-using streamid_t = uint32_t;
 
 /**
 * A recording process using the lab streaming layer.
@@ -93,8 +73,7 @@ public:
 
 private:
 	// the file stream
-	outfile_t file_;	// the file output stream
-	std::mutex chunk_mut_;
+	XDFWriter file_;	// the file output stream
 	// static information
 	bool offsets_enabled_;					// whether to collect time offset information alongside with the stream contents
 	bool unsorted_;							// whether this file may contain unsorted chunks (e.g., of late streams)
@@ -145,9 +124,6 @@ private:
 
 	// sample collection loop for a numeric stream
 	template<class T> void typed_transfer_loop(streamid_t streamid, double srate, const inlet_p& in, double &first_timestamp, double &last_timestamp, uint64_t &sample_count);
-
-	// write a generic chunk
-	void write_chunk(chunk_tag_t tag, const std::string &content);
 
 	// === phase registration & condition checks ===
 	// writing is coordinated across threads in three phases to keep the file chunks sorted

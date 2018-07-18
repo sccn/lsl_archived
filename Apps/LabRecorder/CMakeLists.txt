@@ -11,7 +11,7 @@ if(NOT TARGET LSL::lsl)
 	list(APPEND LSL_INSTALL_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../LSL/liblsl/build/install")
 	find_package(LSL HINTS ${LSL_INSTALL_ROOT}/share/LSL/ ${LSL_INSTALL_ROOT}/LSL/share/LSL QUIET)
 	if(NOT LSL_FOUND)
-		message(FATAL_ERROR "Precompiled LSL was not found. Set LSL_INSTALL_ROOT to the LSL installation path ( cmake -DLSL_INSTALL_ROOT=/path/to/installed/lsl)")
+		message(FATAL_ERROR "Precompiled LSL was not found. See https://github.com/labstreaminglayer/labstreaminglayer/blob/master/doc/BUILD.md#lsl_install_root for more information.")
 	endif()
 	list(APPEND CMAKE_MODULE_PATH ${LSL_DIR})
 	message(STATUS "Looking for LSLCMake in ${LSL_DIR}")
@@ -33,17 +33,24 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets)
 set(target ${PROJECT_NAME})
 
 # Build executable
-add_executable(${target}
-    MACOSX_BUNDLE
-    WIN32
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
-    recording.h
+add_executable(${PROJECT_NAME} MACOSX_BUNDLE WIN32
+	main.cpp
+	mainwindow.cpp
+	mainwindow.h
+	mainwindow.ui
+	recording.h
 	recording.cpp
 	conversions.h
+	xdfwriter.h
+	xdfwriter.cpp
 )
+
+add_executable(testxdfwriter
+	test_xdf_writer.cpp
+	xdfwriter.h
+	xdfwriter.cpp
+)
+
 target_compile_features(${target} PRIVATE cxx_auto_type cxx_lambda_init_captures)
 
 find_package(Threads REQUIRED)
