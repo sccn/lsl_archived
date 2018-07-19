@@ -612,7 +612,20 @@ namespace lsl {
         * Destructor.
         * The stream will no longer be discoverable after destruction and all paired inlets will stop delivering data.
         */
-        ~stream_outlet() { lsl_destroy_outlet(obj); }
+		~stream_outlet() { if(obj) lsl_destroy_outlet(obj); }
+
+#if  __cplusplus > 199711L
+		/**
+		 * @brief stream_outlet Move constructor
+		 * @param rhs Outlet to move from. Using it afterwards will dereference
+		 * a null pointer and crash your application.
+		 */
+		stream_outlet(stream_outlet&& rhs) noexcept {
+			this->obj = rhs.obj;
+			rhs.obj = nullptr;
+			this->channel_count = rhs.channel_count;
+		}
+#endif
 
     private:
         // The outlet is a non-copyable object.
