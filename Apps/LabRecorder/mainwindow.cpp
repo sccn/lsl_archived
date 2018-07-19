@@ -3,22 +3,21 @@
 
 #include <string>
 #include <vector>
-#include <QSettings>
 #include <QDateTime>
+#include <QDebug>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QDebug>
-#include <fstream>
+#include <QSettings>
 
 // recording class
 #include "recording.h"
 
-MainWindow::MainWindow(QWidget *parent, const std::string &config_file) :
+MainWindow::MainWindow(QWidget *parent, const char* config_file) :
 QMainWindow(parent),
 ui(new Ui::MainWindow) {
 
 	ui->setupUi(this);
-	connect(ui->actionQuit, &QAction::triggered, this, &QMainWindow::close);
+	connect(ui->actionQuit, &QAction::triggered, this, &MainWindow::close);
 	connect(ui->actionLoadConfig, &QAction::triggered, [this](){
 		this->load_config(QFileDialog::getOpenFileName(this,"Load Configuration File","","Configuration Files (*.cfg)"));
 	});
@@ -26,7 +25,7 @@ ui(new Ui::MainWindow) {
 		this->save_config(QFileDialog::getSaveFileName(this, "Save Configuration File", "", "Configuration Files (*.cfg)"));
 	});
 	connect(ui->browseButton, &QPushButton::clicked, [this](){
-			this->ui->locationEdit->setText(QFileDialog::getSaveFileName(this,"Save recordings as...", "untitled.xdf", "XDF recordings (*.xdf)"));
+		this->ui->locationEdit->setText(QFileDialog::getSaveFileName(this,"Save recordings as...", "untitled.xdf", "XDF recordings (*.xdf)"));
 	});
 	connect(ui->blockList, static_cast<void(QComboBox::*)(const QString &)>(&QComboBox::activated), this, &MainWindow::blockSelected);
 	connect(ui->refreshButton, &QPushButton::clicked, this, &MainWindow::refreshStreams);
@@ -38,7 +37,7 @@ ui(new Ui::MainWindow) {
 		QMessageBox::about(this, "About LabRecorder", infostr);
 	});
 
-	load_config(config_file.c_str());
+	load_config(config_file);
 
 	timer.reset(new QTimer(this));
 	connect(&*timer, &QTimer::timeout, this, &MainWindow::statusUpdate);
@@ -46,6 +45,8 @@ ui(new Ui::MainWindow) {
 	//startTime = (int)lsl::local_clock();
 
 }
+
+MainWindow::~MainWindow() noexcept = default;
 
 void MainWindow::statusUpdate() const {
 	if(currentRecording) {
@@ -221,11 +222,11 @@ void MainWindow::startRecording() {
 		if(checked.isEmpty()) {
 			QMessageBox msgBox(QMessageBox::Warning, "No streams selected",
 							   "You have selected no streams", QMessageBox::Yes | QMessageBox::No,
-				                   this);
-				msgBox.setInformativeText("Do you want to start recording anyway?");
-				msgBox.setDefaultButton(QMessageBox::No);
-				if(msgBox.exec()!=QMessageBox::Yes)
-					return;
+							   this);
+			msgBox.setInformativeText("Do you want to start recording anyway?");
+			msgBox.setDefaultButton(QMessageBox::No);
+			if(msgBox.exec()!=QMessageBox::Yes)
+				return;
 		}
 
 		// determine the experiment number block

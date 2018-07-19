@@ -24,15 +24,13 @@ option(LABRECORDER_BOOST_TYPE_CONVERSIONS "Use boost for type conversions" Off)
 # GENERAL CONFIG #
 set(META_PROJECT_DESCRIPTION "Record LabStreamingLayer streams to XDF data file.")
 
-# THIRD PARTY LIBRARIES #
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED On)
+
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
-# APPLICATION #
+find_package(Threads REQUIRED)
 
-# Target name
-set(target ${PROJECT_NAME})
-
-# Build executable
 add_executable(${PROJECT_NAME} MACOSX_BUNDLE WIN32
 	main.cpp
 	mainwindow.cpp
@@ -51,19 +49,13 @@ add_executable(testxdfwriter
 	xdfwriter.cpp
 )
 
-target_compile_features(${target} PRIVATE cxx_auto_type cxx_lambda_init_captures)
-
-find_package(Threads REQUIRED)
-
-target_link_libraries(${target}
-    PRIVATE
-    Qt5::Widgets
-    Threads::Threads
-    LSL::lsl
+target_link_libraries(${PROJECT_NAME}
+	PRIVATE
+	Qt5::Widgets
+	Threads::Threads
+	LSL::lsl
 )
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED On)
 
 # Test for floating point format and endianness
 try_run(IS_LITTLE_ENDIAN IS_IEC559
@@ -81,8 +73,8 @@ endif()
 if(LABRECORDER_BOOST_TYPE_CONVERSIONS OR NOT IS_LITTLE_ENDIAN OR NOT IS_IEC559)
 	message(STATUS "Trying to use Boost for type conversions")
 	find_package(Boost REQUIRED)
-	target_link_libraries(${target} PRIVATE Boost::boost)
-	target_compile_definitions(${target} PRIVATE EXOTIC_ARCH_SUPPORT)
+	target_link_libraries(${PROJECT_NAME} PRIVATE Boost::boost)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE EXOTIC_ARCH_SUPPORT)
 endif()
 
 # Enable xdfz support if Boost::iostreams and Boost.zlib (Windows) or plain zlib (Unix) was found
@@ -90,16 +82,19 @@ if(LABRECORDER_XDFZ)
 	find_package(Boost REQUIRED COMPONENTS iostreams)
 	if(WIN32)
 		find_package(Boost REQUIRED COMPONENTS zlib)
-		target_link_libraries(${target} PRIVATE Boost::iostreams Boost::zlib)
+		target_link_libraries(${PROJECT_NAME} PRIVATE Boost::iostreams Boost::zlib)
 	else()
 		find_package(ZLIB REQUIRED)
-		target_link_libraries(${target} PRIVATE Boost::iostreams ${ZLIB_LIBRARIES})
+		target_link_libraries(${PROJECT_NAME} PRIVATE Boost::iostreams ${ZLIB_LIBRARIES})
 	endif()
 	message(STATUS "Found zlib, enabling support for xdfz files")
-	target_compile_definitions(${target} PRIVATE XDFZ_SUPPORT=1)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE XDFZ_SUPPORT=1)
 endif()
 
-installLSLApp(${target})
-installLSLAuxFiles(${target} default_config.cfg)
+installLSLApp(${PROJECT_NAME})
+installLSLApp(testxdfwriter)
+installLSLAuxFiles(${PROJECT_NAME}
+	default_config.cfg
+)
 
 LSLGenerateCPackConfig()
