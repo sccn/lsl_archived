@@ -4,23 +4,17 @@
 // Qt
 #include "ui_mainwindow.h"
 
+#include <memory>
 #include <QMainWindow>
 #include <QCloseEvent>
 #include <QListWidget>
 #include <QTimer>
 #include <QStringList>
 
-#ifdef __WIN32
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
-
 // LSL
 #include <lsl_cpp.h>
 
-// recording class
-#include "recording.h"
+class recording;
 
 class RecorderItem {
 	
@@ -29,15 +23,13 @@ public:
 	std::string uid;
 };
 
-namespace Ui {
-class MainWindow;
-}
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent,const std::string &config_file);
+	explicit MainWindow(QWidget *parent, const char* config_file);
+	~MainWindow() noexcept override;
 
 private slots:
 	void statusUpdate(void) const;
@@ -70,7 +62,5 @@ private:
     
 	std::unique_ptr<Ui::MainWindow> ui;	// window pointer
 };
-
-
 
 #endif // MAINWINDOW_H
