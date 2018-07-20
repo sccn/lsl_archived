@@ -971,6 +971,42 @@ namespace lsl {
             return 0;
         }
 
+		/**
+		 * @brief pull_chunk_multiplexed Pull a multiplexed chunk of samples
+		 * and optionally the sample timestamps from the inlet.
+		 * @param chunk A vector to hold the multiplexed (Sample 1 Channel 1,
+		 * S1C2, S2C1, S2C2, S3C1, S3C2, ...) samples
+		 * @param timestamps A vector to hold the timestamps or nullptr
+		 * @param append (True:) Append data or (false:) clear them first
+		 * @return True if some data was obtained.
+		 * @throws lost_error (if the stream source has been lost).
+		 */
+		template <typename T>
+		bool pull_chunk_multiplexed(std::vector<T>& chunk,
+		                            std::vector<double>* timestamps = nullptr,
+									double timeout = 0.0, bool append = false) {
+			if(!append) {
+			chunk.clear();
+			if(timestamps) timestamps->clear();
+			}
+			const auto target = samples_available();
+			chunk.reserve(chunk.size() + target * this->channel_count);
+			if(timestamps)
+				timestamps->reserve(timestamps->size() + target);
+			std::vector<T> sample;
+			while (double ts = pull_sample(sample, timeout)) {
+#if  __cplusplus > 199711L
+				chunk.insert(chunk.end(),
+				             std::make_move_iterator(sample.cbegin()),
+				             std::make_move_iterator(sample.cend()));
+#else
+				chunk.insert(chunk.end(), sample.begin(), sample.end());
+#endif
+				if (timestamps) timestamps->push_back(ts);
+			}
+			return !chunk.empty();
+		}
+
         /**
         * Pull a chunk of samples from the inlet.
         * This is the most complete version, returning both the data and a timestamp for each sample.
