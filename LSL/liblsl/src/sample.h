@@ -15,6 +15,11 @@
 #include "endian/conversion.hpp"
 #include "common.h"
 
+namespace eos {
+class portable_iarchive;
+class portable_oarchive;
+}
+
 namespace lsl {
 	// if you get an error here your machine cannot represent the double-precision time-stamp format required by LSL
 	BOOST_STATIC_ASSERT(sizeof(double)==8);
@@ -121,12 +126,12 @@ namespace lsl {
 		}
 
 		/// Test for equality with another sample.
-		bool operator==(const sample &rhs);
+		bool operator==(const sample &rhs) const BOOST_NOEXCEPT ;
 
 		// === type-safe accessors ===
 
 		/// Assign an array of numeric values (with type conversions).
-		template<class T> sample &assign_typed(T *s) { 
+		template<class T> sample &assign_typed(const T *s) { 
 			if ((sizeof(T) == format_sizes[format_]) && ((lslboost::is_integral<T>::value && format_integral[format_]) || (lslboost::is_floating_point<T>::value && format_float[format_]))) {
 				memcpy(&data_,s,format_sizes[format_]*num_channels_);
 			} else {
@@ -246,49 +251,14 @@ namespace lsl {
 				default: throw std::runtime_error("Unsupported channel format for endian conversion.");
 			}
 		}
-
 		/// Serialize a sample into a portable archive (protocol 1.00).
-		template<class Archive> void save(Archive &ar, const unsigned int archive_version) const {
-			// write sample header
-			if (timestamp == DEDUCED_TIMESTAMP) {
-				ar & TAG_DEDUCED_TIMESTAMP;
-			} else {
-				ar & TAG_TRANSMITTED_TIMESTAMP & timestamp;
-			}
-			// write channel data
-			const_cast<sample*>(this)->serialize_channels(ar,archive_version);
-		}
+		void save(eos::portable_oarchive &ar, const unsigned int archive_version) const;
 
 		/// Deserialize a sample from a portable archive (protocol 1.00).
-		template<class Archive> void load(Archive &ar, const unsigned int archive_version) {
-			// read sample header
-			char tag; ar & tag;
-			if (tag == TAG_DEDUCED_TIMESTAMP) {
-				// deduce the timestamp
-				timestamp = DEDUCED_TIMESTAMP;
-			} else {
-				// read the time stamp
-				ar & timestamp;
-			}
-			// read channel data
-			serialize_channels(ar,archive_version);
-		}
+		void load(eos::portable_iarchive& ar, const unsigned int archive_version);
 
 		/// Serialize (read/write) the channel data.
-		template<class Archive> void serialize_channels(Archive &ar, const unsigned int archive_version) {
-			switch (format_) {
-				case cf_float32:  for (float          *p=(float*)         &data_,*e=p+num_channels_; p<e; ar & *p++); break;
-				case cf_double64: for (double         *p=(double*)        &data_,*e=p+num_channels_; p<e; ar & *p++); break;
-				case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; ar & *p++); break;
-				case cf_int8:     for (lslboost::int8_t  *p=(lslboost::int8_t*) &data_,*e=p+num_channels_; p<e; ar & *p++); break;
-				case cf_int16:    for (lslboost::int16_t *p=(lslboost::int16_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
-				case cf_int32:    for (lslboost::int32_t *p=(lslboost::int32_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
-#ifndef BOOST_NO_INT64_T
-				case cf_int64:    for (lslboost::int64_t *p=(lslboost::int64_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
-#endif
-				default: throw std::runtime_error("Unsupported channel format.");
-			}
-		}
+		template<class Archive> void serialize_channels(Archive &ar, const unsigned int archive_version);
 
 		BOOST_SERIALIZATION_SPLIT_MEMBER()		
 

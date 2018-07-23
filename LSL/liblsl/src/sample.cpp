@@ -1,11 +1,14 @@
 #include "sample.h"
+#include "portable_archive/portable_iarchive.hpp"
+#include "portable_archive/portable_oarchive.hpp"
+
 
 // === implementation of the sample class ===
 
 using namespace lsl;
 
 /// Compare two samples for equality (based on content).
-bool sample::operator==(const sample &rhs) {
+bool sample::operator==(const sample &rhs) const BOOST_NOEXCEPT {
 	if ((timestamp != rhs.timestamp) || (format_ != rhs.format_) || (num_channels_ != rhs.num_channels_))
 		return false;
 	if (format_ != cf_string)
@@ -170,6 +173,48 @@ void sample::load_streambuf(std::streambuf& sb, int protocol_version, int use_by
 			}
 		}
 	}
+}
+
+template<class Archive>
+void sample::serialize_channels(Archive& ar, const unsigned int archive_version)
+{
+	switch (format_) {
+		case cf_float32:  for (float          *p=(float*)         &data_,*e=p+num_channels_; p<e; ar & *p++); break;
+		case cf_double64: for (double         *p=(double*)        &data_,*e=p+num_channels_; p<e; ar & *p++); break;
+		case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; ar & *p++); break;
+		case cf_int8:     for (lslboost::int8_t  *p=(lslboost::int8_t*) &data_,*e=p+num_channels_; p<e; ar & *p++); break;
+		case cf_int16:    for (lslboost::int16_t *p=(lslboost::int16_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
+		case cf_int32:    for (lslboost::int32_t *p=(lslboost::int32_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
+#ifndef BOOST_NO_INT64_T
+		case cf_int64:    for (lslboost::int64_t *p=(lslboost::int64_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
+#endif
+		default: throw std::runtime_error("Unsupported channel format.");
+	}
+}
+
+void sample::save(eos::portable_oarchive& ar, const unsigned int archive_version) const {
+	// write sample header
+	if (timestamp == DEDUCED_TIMESTAMP) {
+		ar & TAG_DEDUCED_TIMESTAMP;
+	} else {
+		ar & TAG_TRANSMITTED_TIMESTAMP & timestamp;
+	}
+	// write channel data
+	const_cast<sample*>(this)->serialize_channels(ar,archive_version);
+}
+
+void sample::load(eos::portable_iarchive& ar, const unsigned int archive_version) {
+	// read sample header
+	char tag; ar & tag;
+	if (tag == TAG_DEDUCED_TIMESTAMP) {
+		// deduce the timestamp
+		timestamp = DEDUCED_TIMESTAMP;
+	} else {
+		// read the time stamp
+		ar & timestamp;
+	}
+	// read channel data
+	serialize_channels(ar,archive_version);
 }
 
 /// Assign a test pattern to the sample.
