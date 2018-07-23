@@ -94,6 +94,7 @@ namespace lsl {
 	class LIBLSL_CPP_API lost_error: public std::runtime_error {
 	public:
 		explicit lost_error(const std::string &msg): std::runtime_error(msg) {}
+		~lost_error();
 	};
 
 
@@ -101,6 +102,7 @@ namespace lsl {
 	class LIBLSL_CPP_API timeout_error: public std::runtime_error {
 	public:
 		explicit timeout_error(const std::string &msg): std::runtime_error(msg) {}
+		~timeout_error();
 	};
 }
 
