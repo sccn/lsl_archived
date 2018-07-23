@@ -250,13 +250,13 @@ namespace lsl {
 			}
 		}
 		/// Serialize a sample into a portable archive (protocol 1.00).
-		void save(eos::portable_oarchive &ar, const unsigned int archive_version) const;
+		void save(eos::portable_oarchive &ar, const uint32_t archive_version) const;
 
 		/// Deserialize a sample from a portable archive (protocol 1.00).
-		void load(eos::portable_iarchive& ar, const unsigned int archive_version);
+		void load(eos::portable_iarchive& ar, const uint32_t archive_version);
 
 		/// Serialize (read/write) the channel data.
-		template<class Archive> void serialize_channels(Archive &ar, const unsigned int archive_version);
+		template<class Archive> void serialize_channels(Archive &ar, const uint32_t archive_version);
 
 		BOOST_SERIALIZATION_SPLIT_MEMBER()		
 

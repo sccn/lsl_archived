@@ -16,13 +16,13 @@ namespace lsl {
 	template<class Socket, class Protocol> int bind_port_in_range(Socket &sock, Protocol protocol) {
 		for (int k=0,e=api_config::get_instance()->port_range(); k<e; k++) {
 			try {
-				sock.bind(typename Protocol::endpoint(protocol,(unsigned short)(k + api_config::get_instance()->base_port())));
+				sock.bind(typename Protocol::endpoint(protocol,(uint16_t)(k + api_config::get_instance()->base_port())));
 				return k + api_config::get_instance()->base_port();
 			} catch (lslboost::system::system_error &) { /* port occupied */ }
 		}
 		if (api_config::get_instance()->allow_random_ports()) {
 			while (true) {
-				unsigned short port = 1025 + rand()%64000;
+				uint16_t port = 1025 + rand()%64000;
 				try {
 					sock.bind(typename Protocol::endpoint(protocol,port));
 					return port;
@@ -36,14 +36,14 @@ namespace lsl {
 	template<class Socket, class Protocol> int bind_and_listen_to_port_in_range(Socket &sock, Protocol protocol, int backlog) {
 		for (int k=0,e=api_config::get_instance()->port_range(); k<e; k++) {
 			try {
-				sock.bind(typename Protocol::endpoint(protocol,(unsigned short)(k + api_config::get_instance()->base_port())));
+				sock.bind(typename Protocol::endpoint(protocol,(uint16_t)(k + api_config::get_instance()->base_port())));
                 sock.listen(backlog);
 				return k + api_config::get_instance()->base_port();
 			} catch (lslboost::system::system_error &) { /* port occupied */ }
 		}
 		if (api_config::get_instance()->allow_random_ports()) {
 			while (true) {
-				unsigned short port = 1025 + rand()%64000;
+				uint16_t port = 1025 + rand()%64000;
 				try {
 					sock.bind(typename Protocol::endpoint(protocol,port));
 					sock.listen(backlog);

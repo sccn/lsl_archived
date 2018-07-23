@@ -45,14 +45,14 @@ udp_server::udp_server(const stream_info_impl_p &info, io_service &io, const std
 	if (listen_address.empty()) {
 		// pick the default endpoint
 		if (addr.is_v4())
-			listen_endpoint = udp::endpoint(udp::v4(), (unsigned short)port);
+			listen_endpoint = udp::endpoint(udp::v4(), (uint16_t)port);
 		else
-			listen_endpoint = udp::endpoint(udp::v6(), (unsigned short)port);
+			listen_endpoint = udp::endpoint(udp::v6(), (uint16_t)port);
 	}
 	else {
 		// choose an endpoint explicitly
 		ip::address listen_addr = ip::address::from_string(listen_address);
-		listen_endpoint = udp::endpoint(listen_addr, (unsigned short)port);
+		listen_endpoint = udp::endpoint(listen_addr, (uint16_t)port);
 	}
 
 	// open the socket and make sure that we can reuse the address, and bind it
@@ -133,7 +133,7 @@ void udp_server::handle_receive_outcome(error_code err, std::size_t len) {
 					// check query
 					if (info_->matches_query(query)) {
 						// query matches: send back reply
-						udp::endpoint return_endpoint(remote_endpoint_.address(),(unsigned short)return_port);
+						udp::endpoint return_endpoint(remote_endpoint_.address(),(uint16_t)return_port);
 						string_p replymsg(new std::string((query_id += "\r\n") += shortinfo_msg_));
 						socket_->async_send_to(lslboost::asio::buffer(*replymsg), return_endpoint,
 							lslboost::bind(&udp_server::handle_send_outcome,shared_from_this(),replymsg,placeholders::error));

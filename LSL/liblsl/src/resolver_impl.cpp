@@ -28,7 +28,7 @@ resolver_impl::resolver_impl(): cfg_(api_config::get_instance()), cancelled_(fal
 	int mcast_port = cfg_->multicast_port();
 	for (unsigned k=0;k<mcast_addrs.size();k++) {
 		try {
-			mcast_endpoints_.push_back(udp::endpoint(ip::address::from_string(mcast_addrs[k]),(unsigned short)mcast_port));
+			mcast_endpoints_.push_back(udp::endpoint(ip::address::from_string(mcast_addrs[k]),(uint16_t)mcast_port));
 		} 
 		catch(std::exception &) { }
 	}

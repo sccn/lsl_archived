@@ -83,14 +83,14 @@ LIBLSL_C_API lsl_continuous_resolver lsl_create_continuous_resolver_bypred(const
 * @return The number of results written into the buffer (never more than the provided # of slots) 
 *		  or a negative number if an error has occurred (values corresponding to lsl_error_code_t).
 */
-LIBLSL_C_API int lsl_resolver_results(lsl_continuous_resolver res, lsl_streaminfo *buffer, unsigned buffer_elements) {
+LIBLSL_C_API int32_t lsl_resolver_results(lsl_continuous_resolver res, lsl_streaminfo *buffer, uint32_t buffer_elements) {
 	try {
 		// query it
 		resolver_impl *resolver = (resolver_impl*)res;
 		std::vector<stream_info_impl> tmp = resolver->results();
 		// allocate new stream_info_impl's and assign to the buffer
-		unsigned result = buffer_elements<tmp.size() ? buffer_elements : (unsigned)tmp.size();
-		for (unsigned k=0;k<result;k++)
+		uint32_t result = buffer_elements<tmp.size() ? buffer_elements : (uint32_t)tmp.size();
+		for (uint32_t k=0;k<result;k++)
 			buffer[k] = (lsl_streaminfo)new stream_info_impl(tmp[k]);
 		return result;
 	} catch(std::exception &e) {

@@ -176,7 +176,7 @@ void sample::load_streambuf(std::streambuf& sb, int protocol_version, int use_by
 }
 
 template<class Archive>
-void sample::serialize_channels(Archive& ar, const unsigned int archive_version)
+void sample::serialize_channels(Archive& ar, const uint32_t archive_version)
 {
 	switch (format_) {
 		case cf_float32:  for (float          *p=(float*)         &data_,*e=p+num_channels_; p<e; ar & *p++); break;
@@ -192,7 +192,7 @@ void sample::serialize_channels(Archive& ar, const unsigned int archive_version)
 	}
 }
 
-void sample::save(eos::portable_oarchive& ar, const unsigned int archive_version) const {
+void sample::save(eos::portable_oarchive& ar, const uint32_t archive_version) const {
 	// write sample header
 	if (timestamp == DEDUCED_TIMESTAMP) {
 		ar & TAG_DEDUCED_TIMESTAMP;
@@ -203,7 +203,7 @@ void sample::save(eos::portable_oarchive& ar, const unsigned int archive_version
 	const_cast<sample*>(this)->serialize_channels(ar,archive_version);
 }
 
-void sample::load(eos::portable_iarchive& ar, const unsigned int archive_version) {
+void sample::load(eos::portable_iarchive& ar, const uint32_t archive_version) {
 	// read sample header
 	char tag; ar & tag;
 	if (tag == TAG_DEDUCED_TIMESTAMP) {

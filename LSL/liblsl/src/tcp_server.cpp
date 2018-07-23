@@ -400,7 +400,7 @@ void tcp_server::client_session::transfer_samples_thread(client_session_p) {
 		// make a new consumer queue
 		consumer_queue_p queue = serv_->send_buffer_->new_consumer(max_buffered_);
 		// the sequence # is merely used to determine chunk boundaries (no need for int64)
-		unsigned seqn = 0;
+		uint32_t seqn = 0;
 		while (!serv_->shutdown_) {
 			try {
 				// get next sample from the sample queue (blocking)
@@ -412,10 +412,10 @@ void tcp_server::client_session::transfer_samples_thread(client_session_p) {
 					continue;
 				// optionally override the pushthrough flag by the chunk size of the receiver (if set) or of the sender (if set)
 				if (chunk_granularity_)
-					samp->pushthrough = (((++seqn)%(unsigned)chunk_granularity_) == 0);
+					samp->pushthrough = (((++seqn) % (uint32_t)chunk_granularity_) == 0);
 				else
 					if (serv_->chunk_size_)
-						samp->pushthrough = (((++seqn)%(unsigned)serv_->chunk_size_) == 0);
+						samp->pushthrough = (((++seqn) % (uint32_t)serv_->chunk_size_) == 0);
 				// serialize the sample into the stream
 				if (data_protocol_version_ >= 110)
 					samp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get());

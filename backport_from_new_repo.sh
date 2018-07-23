@@ -8,4 +8,4 @@ LSLSUBDIR=$(git rev-parse --show-prefix)
 OLDREPOPATH=$(git rev-parse --show-toplevel)
 NEWREPOPATH=$1
 COMMIT=$2
-git -C $NEWREPOPATH/$LSLSUBDIR show -p $COMMIT | git apply -p1 --directory=$LSLSUBDIR -v
+git -C $NEWREPOPATH/$LSLSUBDIR show -p $COMMIT | git apply -3 -p1 --directory=$LSLSUBDIR -v
