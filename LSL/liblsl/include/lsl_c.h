@@ -1,6 +1,16 @@
 #ifndef LSL_C_H
 #define LSL_C_H
 
+#if defined(_MSC_VER) && _MSC_VER < 1600
+typedef signed char int8_t;
+typedef signed short int16_t;
+typedef signed int int32_t;
+typedef signed long long int64_t;
+typedef unsigned int uint32_t;
+#else
+#include <stdint.h>
+#endif
+
 /**
 * C API for the lab streaming layer.
 * 

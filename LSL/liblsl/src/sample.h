@@ -5,8 +5,6 @@
 #include <vector>
 #include <string>
 #include <streambuf>
-#include <boost/type_traits.hpp>
-#include <boost/cstdint.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/atomic.hpp>
@@ -25,11 +23,11 @@ namespace lsl {
 	BOOST_STATIC_ASSERT(sizeof(double)==8);
 
 	// constants used in the network protocol
-	const lslboost::uint8_t TAG_DEDUCED_TIMESTAMP = 1;
-	const lslboost::uint8_t TAG_TRANSMITTED_TIMESTAMP = 2;
+	const uint8_t TAG_DEDUCED_TIMESTAMP = 1;
+	const uint8_t TAG_TRANSMITTED_TIMESTAMP = 2;
 
 	/// channel format properties
-	const int format_sizes[] = {0,sizeof(float),sizeof(double),sizeof(std::string),sizeof(lslboost::int32_t),sizeof(lslboost::int16_t),sizeof(lslboost::int8_t),8};
+	const int format_sizes[] = {0,sizeof(float),sizeof(double),sizeof(std::string),sizeof(int32_t),sizeof(int16_t),sizeof(int8_t),8};
 	const bool format_ieee754[] = {false,std::numeric_limits<float>::is_iec559,std::numeric_limits<double>::is_iec559,false,false,false,false,false}; 
 	const bool format_subnormal[] = {false,std::numeric_limits<float>::has_denorm!=std::denorm_absent,std::numeric_limits<double>::has_denorm!=std::denorm_absent,false,false,false,false,false}; 
 	const bool format_integral[] = {false,false,false,false,true,true,true,true}; 
@@ -93,7 +91,7 @@ namespace lsl {
 
 		private:
 			/// ensure that a given value is a multiple of some base, round up if necessary
-			static lslboost::uint32_t ensure_multiple(lslboost::uint32_t v, unsigned base) { return (v%base) ? v - (v%base) + base : v; }
+			static uint32_t ensure_multiple(uint32_t v, unsigned base) { return (v%base) ? v - (v%base) + base : v; }
 
 			// Pop a sample from the freelist
 			// (multi-producer/single-consumer queue by Dmitry Vjukov)
@@ -138,11 +136,11 @@ namespace lsl {
 				switch (format_) {
 					case cf_float32:  for (float          *p=(float*)         &data_,*e=p+num_channels_; p<e; *p++ = (float)*s++); break;
 					case cf_double64: for (double         *p=(double*)        &data_,*e=p+num_channels_; p<e; *p++ = (double)*s++); break;
-					case cf_int8:     for (lslboost::int8_t  *p=(lslboost::int8_t*) &data_,*e=p+num_channels_; p<e; *p++ = (lslboost::int8_t)*s++); break; 
-					case cf_int16:    for (lslboost::int16_t *p=(lslboost::int16_t*)&data_,*e=p+num_channels_; p<e; *p++ = (lslboost::int16_t)*s++); break; 
-					case cf_int32:    for (lslboost::int32_t *p=(lslboost::int32_t*)&data_,*e=p+num_channels_; p<e; *p++ = (lslboost::int32_t)*s++); break; 
+					case cf_int8:     for (int8_t  *p=(int8_t*) &data_,*e=p+num_channels_; p<e; *p++ = (int8_t)*s++); break;
+					case cf_int16:    for (int16_t *p=(int16_t*)&data_,*e=p+num_channels_; p<e; *p++ = (int16_t)*s++); break;
+					case cf_int32:    for (int32_t *p=(int32_t*)&data_,*e=p+num_channels_; p<e; *p++ = (int32_t)*s++); break;
 #ifndef BOOST_NO_INT64_T
-					case cf_int64:    for (lslboost::int64_t *p=(lslboost::int64_t*)&data_,*e=p+num_channels_; p<e; *p++ = (lslboost::int64_t)*s++); break; 
+					case cf_int64:    for (int64_t *p=(int64_t*)&data_,*e=p+num_channels_; p<e; *p++ = (int64_t)*s++); break;
 #endif
 					case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; *p++ = lslboost::lexical_cast<std::string>(*s++)); break; 
 					default: throw std::invalid_argument("Unsupported channel format.");
@@ -159,11 +157,11 @@ namespace lsl {
 				switch (format_) {
 					case cf_float32:  for (float          *p=(float*)         &data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
 					case cf_double64: for (double         *p=(double*)        &data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
-					case cf_int8:     for (lslboost::int8_t  *p=(lslboost::int8_t*) &data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
-					case cf_int16:    for (lslboost::int16_t *p=(lslboost::int16_t*)&data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
-					case cf_int32:    for (lslboost::int32_t *p=(lslboost::int32_t*)&data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
+					case cf_int8:     for (int8_t  *p=(int8_t*) &data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break;
+					case cf_int16:    for (int16_t *p=(int16_t*)&data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break;
+					case cf_int32:    for (int32_t *p=(int32_t*)&data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break;
 #ifndef BOOST_NO_INT64_T
-					case cf_int64:    for (lslboost::int64_t *p=(lslboost::int64_t*)&data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break; 
+					case cf_int64:    for (int64_t *p=(int64_t*)&data_,*e=p+num_channels_; p<e; *d++ = (T)*p++); break;
 #endif
 					case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; *d++ = lslboost::lexical_cast<T>(*p++)); break; 
 					default: throw std::invalid_argument("Unsupported channel format.");
@@ -229,7 +227,7 @@ namespace lsl {
 		}
 
 		/// Load a value from a stream buffer; specialization of the above.
-		void load_value(std::streambuf &sb, lslboost::uint8_t &v, int use_byte_order) { load_raw(sb,&v,sizeof(v)); }
+		void load_value(std::streambuf &sb, uint8_t &v, int use_byte_order) { load_raw(sb,&v,sizeof(v)); }
 
 		/// Serialize a sample to a stream buffer (protocol 1.10).
 		void save_streambuf(std::streambuf &sb, int protocol_version, int use_byte_order, void *scratchpad=NULL) const;
@@ -241,10 +239,10 @@ namespace lsl {
 		void convert_endian(void *data) const {
 			switch (format_sizes[format_]) {
 				case 1: break;
-				case sizeof(lslboost::int16_t): for (lslboost::int16_t *p=(lslboost::int16_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
-				case sizeof(lslboost::int32_t): for (lslboost::int32_t *p=(lslboost::int32_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
+				case sizeof(int16_t): for (int16_t *p=(int16_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
+				case sizeof(int32_t): for (int32_t *p=(int32_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
 #ifndef BOOST_NO_INT64_T
-				case sizeof(lslboost::int64_t): for (lslboost::int64_t *p=(lslboost::int64_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
+				case sizeof(int64_t): for (int64_t *p=(int64_t*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
 #else
 				case sizeof(double): for (double *p=(double*)data,*e=p+num_channels_; p<e; lslboost::endian::reverse(*p++)); break;
 #endif

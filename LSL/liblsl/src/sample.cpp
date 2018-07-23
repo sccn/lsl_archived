@@ -29,11 +29,11 @@ sample &sample::assign_typed(const std::string *s) {
 		case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; *p++ = *s++); break; 
 		case cf_float32:  for (float          *p=(float*)         &data_,*e=p+num_channels_; p<e; *p++ = lslboost::lexical_cast<float>(*s++)); break;
 		case cf_double64: for (double         *p=(double*)        &data_,*e=p+num_channels_; p<e; *p++ = lslboost::lexical_cast<double>(*s++)); break;
-		case cf_int8:     for (lslboost::int8_t  *p=(lslboost::int8_t*) &data_,*e=p+num_channels_; p<e; *p++ = lslboost::lexical_cast<lslboost::int8_t>(*s++)); break;
-		case cf_int16:    for (lslboost::int16_t *p=(lslboost::int16_t*)&data_,*e=p+num_channels_; p<e; *p++ = lslboost::lexical_cast<lslboost::int16_t>(*s++)); break;
-		case cf_int32:    for (lslboost::int32_t *p=(lslboost::int32_t*)&data_,*e=p+num_channels_; p<e; *p++ = lslboost::lexical_cast<lslboost::int32_t>(*s++)); break;
+		case cf_int8:     for (int8_t  *p=(int8_t*) &data_,*e=p+num_channels_; p<e; *p++ = lslboost::lexical_cast<int8_t>(*s++)); break;
+		case cf_int16:    for (int16_t *p=(int16_t*)&data_,*e=p+num_channels_; p<e; *p++ = lslboost::lexical_cast<int16_t>(*s++)); break;
+		case cf_int32:    for (int32_t *p=(int32_t*)&data_,*e=p+num_channels_; p<e; *p++ = lslboost::lexical_cast<int32_t>(*s++)); break;
 #ifndef BOOST_NO_INT64_T
-		case cf_int64:    for (lslboost::int64_t *p=(lslboost::int64_t*)&data_,*e=p+num_channels_; p<e; *p++ = lslboost::lexical_cast<lslboost::int64_t>(*s++)); break;
+		case cf_int64:    for (int64_t *p=(int64_t*)&data_,*e=p+num_channels_; p<e; *p++ = lslboost::lexical_cast<int64_t>(*s++)); break;
 #endif
 		default: throw std::invalid_argument("Unsupported channel format.");
 	}
@@ -46,11 +46,11 @@ sample &sample::retrieve_typed(std::string *d) {
 		case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; *d++ = *p++); break; 
 		case cf_float32:  for (float          *p=(float*)         &data_,*e=p+num_channels_; p<e; *d++ = lslboost::lexical_cast<std::string>(*p++)); break; 
 		case cf_double64: for (double         *p=(double*)        &data_,*e=p+num_channels_; p<e; *d++ = lslboost::lexical_cast<std::string>(*p++)); break; 
-		case cf_int8:     for (lslboost::int8_t  *p=(lslboost::int8_t*) &data_,*e=p+num_channels_; p<e; *d++ = lslboost::lexical_cast<std::string>(*p++)); break; 
-		case cf_int16:    for (lslboost::int16_t *p=(lslboost::int16_t*)&data_,*e=p+num_channels_; p<e; *d++ = lslboost::lexical_cast<std::string>(*p++)); break; 
-		case cf_int32:    for (lslboost::int32_t *p=(lslboost::int32_t*)&data_,*e=p+num_channels_; p<e; *d++ = lslboost::lexical_cast<std::string>(*p++)); break; 
+		case cf_int8:     for (int8_t  *p=(int8_t*) &data_,*e=p+num_channels_; p<e; *d++ = lslboost::lexical_cast<std::string>(*p++)); break;
+		case cf_int16:    for (int16_t *p=(int16_t*)&data_,*e=p+num_channels_; p<e; *d++ = lslboost::lexical_cast<std::string>(*p++)); break;
+		case cf_int32:    for (int32_t *p=(int32_t*)&data_,*e=p+num_channels_; p<e; *d++ = lslboost::lexical_cast<std::string>(*p++)); break;
 #ifndef BOOST_NO_INT64_T
-		case cf_int64:    for (lslboost::int64_t *p=(lslboost::int64_t*)&data_,*e=p+num_channels_; p<e; *d++ = lslboost::lexical_cast<std::string>(*p++)); break; 
+		case cf_int64:    for (int64_t *p=(int64_t*)&data_,*e=p+num_channels_; p<e; *d++ = lslboost::lexical_cast<std::string>(*p++)); break;
 #endif
 		default: throw std::invalid_argument("Unsupported channel format.");
 	}
@@ -70,18 +70,18 @@ void sample::save_streambuf(std::streambuf& sb, int protocol_version, int use_by
 		for (std::string *p=(std::string*)&data_,*e=p+num_channels_; p<e; p++) {
 			// write string length as variable-length integer
 			if (p->size() <= 0xFF) {
-				save_value(sb,(lslboost::uint8_t)sizeof(lslboost::uint8_t),use_byte_order);
-				save_value(sb,(lslboost::uint8_t)p->size(),use_byte_order);
+				save_value(sb,(uint8_t)sizeof(uint8_t),use_byte_order);
+				save_value(sb,(uint8_t)p->size(),use_byte_order);
 			} else {
 				if (p->size() <= 0xFFFFFFFF) {
-					save_value(sb,(lslboost::uint8_t)sizeof(lslboost::uint32_t),use_byte_order);
-					save_value(sb,(lslboost::uint32_t)p->size(),use_byte_order);
+					save_value(sb,(uint8_t)sizeof(uint32_t),use_byte_order);
+					save_value(sb,(uint32_t)p->size(),use_byte_order);
 				} else {
 #ifndef BOOST_NO_INT64_T
-					save_value(sb,(lslboost::uint8_t)sizeof(lslboost::uint64_t),use_byte_order);
-					save_value(sb,(lslboost::uint64_t)p->size(),use_byte_order);
+					save_value(sb,(uint8_t)sizeof(uint64_t),use_byte_order);
+					save_value(sb,(uint64_t)p->size(),use_byte_order);
 #else
-					save_value(sb,(lslboost::uint8_t)sizeof(std::size_t),use_byte_order);
+					save_value(sb,(uint8_t)sizeof(std::size_t),use_byte_order);
 					save_value(sb,(std::size_t)p->size(),use_byte_order);
 #endif
 				}
@@ -105,7 +105,7 @@ void sample::save_streambuf(std::streambuf& sb, int protocol_version, int use_by
 void sample::load_streambuf(std::streambuf& sb, int protocol_version, int use_byte_order,
                             bool suppress_subnormals) {
 	// read sample header
-	lslboost::uint8_t tag;
+	uint8_t tag;
 	load_value(sb, tag, use_byte_order);
 	if (tag == TAG_DEDUCED_TIMESTAMP) {
 		// deduce the timestamp
@@ -119,30 +119,30 @@ void sample::load_streambuf(std::streambuf& sb, int protocol_version, int use_by
 		for (std::string *p = (std::string*)&data_, *e = p + num_channels_; p < e; p++) {
 			// read string length as variable-length integer
 			std::size_t len = 0;
-			lslboost::uint8_t lenbytes;
+			uint8_t lenbytes;
 			load_value(sb, lenbytes, use_byte_order);
 			if (sizeof(std::size_t) < 8 && lenbytes > sizeof(std::size_t))
 				throw std::runtime_error(
 				    "This platform does not support strings of 64-bit length.");
 			switch (lenbytes) {
-			case sizeof(lslboost::uint8_t): {
-				lslboost::uint8_t tmp;
+			case sizeof(uint8_t): {
+				uint8_t tmp;
 				load_value(sb, tmp, use_byte_order);
 				len = tmp;
 			}; break;
-			case sizeof(lslboost::uint16_t): {
-				lslboost::uint16_t tmp;
+			case sizeof(uint16_t): {
+				uint16_t tmp;
 				load_value(sb, tmp, use_byte_order);
 				len = tmp;
 			}; break;
-			case sizeof(lslboost::uint32_t): {
-				lslboost::uint32_t tmp;
+			case sizeof(uint32_t): {
+				uint32_t tmp;
 				load_value(sb, tmp, use_byte_order);
 				len = tmp;
 			}; break;
 #ifndef BOOST_NO_INT64_T
-			case sizeof(lslboost::uint64_t): {
-				lslboost::uint64_t tmp;
+			case sizeof(uint64_t): {
+				uint64_t tmp;
 				load_value(sb, tmp, use_byte_order);
 				len = tmp;
 			}; break;
@@ -159,13 +159,13 @@ void sample::load_streambuf(std::streambuf& sb, int protocol_version, int use_by
 		if (use_byte_order != BOOST_BYTE_ORDER && format_sizes[format_] > 1) convert_endian(&data_);
 		if (suppress_subnormals && format_float[format_]) {
 			if (format_ == cf_float32) {
-				for (lslboost::uint32_t *p = (lslboost::uint32_t*)&data_, *e = p + num_channels_;
+				for (uint32_t *p = (uint32_t*)&data_, *e = p + num_channels_;
 				     p < e; p++)
 					if (*p && ((*p & UINT32_C(0x7fffffff)) <= UINT32_C(0x007fffff)))
 						*p &= UINT32_C(0x80000000);
 			} else {
 #ifndef BOOST_NO_INT64_T
-				for (lslboost::uint64_t *p = (lslboost::uint64_t*)&data_, *e = p + num_channels_;
+				for (uint64_t *p = (uint64_t*)&data_, *e = p + num_channels_;
 				     p < e; p++)
 					if (*p && ((*p & UINT64_C(0x7fffffffffffffff)) <= UINT64_C(0x000fffffffffffff)))
 						*p &= UINT64_C(0x8000000000000000);
@@ -182,11 +182,11 @@ void sample::serialize_channels(Archive& ar, const unsigned int archive_version)
 		case cf_float32:  for (float          *p=(float*)         &data_,*e=p+num_channels_; p<e; ar & *p++); break;
 		case cf_double64: for (double         *p=(double*)        &data_,*e=p+num_channels_; p<e; ar & *p++); break;
 		case cf_string:   for (std::string    *p=(std::string*)   &data_,*e=p+num_channels_; p<e; ar & *p++); break;
-		case cf_int8:     for (lslboost::int8_t  *p=(lslboost::int8_t*) &data_,*e=p+num_channels_; p<e; ar & *p++); break;
-		case cf_int16:    for (lslboost::int16_t *p=(lslboost::int16_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
-		case cf_int32:    for (lslboost::int32_t *p=(lslboost::int32_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
+		case cf_int8:     for (int8_t  *p=(int8_t*) &data_,*e=p+num_channels_; p<e; ar & *p++); break;
+		case cf_int16:    for (int16_t *p=(int16_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
+		case cf_int32:    for (int32_t *p=(int32_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
 #ifndef BOOST_NO_INT64_T
-		case cf_int64:    for (lslboost::int64_t *p=(lslboost::int64_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
+		case cf_int64:    for (int64_t *p=(int64_t*)&data_,*e=p+num_channels_; p<e; ar & *p++); break;
 #endif
 		default: throw std::runtime_error("Unsupported channel format.");
 	}
@@ -242,28 +242,28 @@ sample &sample::assign_test_pattern(int offset) {
 			break;
 					   }
 		case cf_int32: {
-			lslboost::int32_t *data = (lslboost::int32_t*)&data_;
+			int32_t *data = (int32_t*)&data_;
 			for (int k=0; k<num_channels_; k++)
 				data[k] = ((k + offset + 65537)%2147483647) * (k%2==0 ? 1 : -1);
 			break;
 					   }
 		case cf_int16: {
-			lslboost::int16_t *data = (lslboost::int16_t*)&data_;
+			int16_t *data = (int16_t*)&data_;
 			for (int k=0; k<num_channels_; k++)
-				data[k] = (lslboost::int16_t)(((k + offset + 257)%32767) * (k%2==0 ? 1 : -1));
+				data[k] = (int16_t)(((k + offset + 257)%32767) * (k%2==0 ? 1 : -1));
 			break;
 					   }
 		case cf_int8: {
-			lslboost::int8_t *data = (lslboost::int8_t*)&data_;
+			int8_t *data = (int8_t*)&data_;
 			for (int k=0; k<num_channels_; k++)
-				data[k] = (lslboost::int8_t)(((k + offset + 1)%127) * (k%2==0 ? 1 : -1));
+				data[k] = (int8_t)(((k + offset + 1)%127) * (k%2==0 ? 1 : -1));
 			break;
 					  }
 #ifndef BOOST_NO_INT64_T
 		case cf_int64:{
-			lslboost::int64_t *data = (lslboost::int64_t*)&data_;
+			int64_t *data = (int64_t*)&data_;
 			for (int k=0; k<num_channels_; k++)
-				data[k] = ((2 + k + (lslboost::int64_t)offset + 2147483647)) * (lslboost::int64_t)(k%2==0 ? 1 : -1);
+				data[k] = ((2 + k + (int64_t)offset + 2147483647)) * (int64_t)(k%2==0 ? 1 : -1);
 			break;
 					  }
 #endif

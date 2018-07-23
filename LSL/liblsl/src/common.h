@@ -12,12 +12,22 @@
 
 #ifdef _MSC_VER
 #pragma warning( disable : 4275 )
+#if _MSC_VER < 1600
+#include <boost/cstdint.hpp>
+using lslboost::int8_t;
+using lslboost::int16_t;
+using lslboost::int32_t;
+using lslboost::int64_t;
+using lslboost::uint8_t;
+using lslboost::uint16_t;
+using lslboost::uint32_t;
+using lslboost::uint64_t;
+#endif
 #endif
 
 #if BOOST_VERSION < 104500
 	#error "Please do not compile this with a lslboost version older than 1.45 because the library would otherwise not be protocol-compatible with builds using other versions."
 #endif
-
 
 // the highest supported protocol version
 // * 100 is the original version, supported by library versions 1.00+
