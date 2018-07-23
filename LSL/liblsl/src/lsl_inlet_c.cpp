@@ -233,10 +233,10 @@ LIBLSL_C_API double lsl_pull_sample_str(lsl_inlet in, char **buffer, int32_t buf
         if (buffer_elements < (int)tmp.size())
             throw std::range_error("The provided buffer has fewer elements than the stream's number of channels.");
 		// allocate memory and copy over into buffer
-		for (unsigned k=0;k<tmp.size();k++) {
+		for (std::size_t k=0;k<tmp.size();k++) {
 			buffer[k] = (char*)malloc(tmp[k].size()+1);
 			if (buffer[k] == NULL) {
-				for (unsigned k2=0;k2<k;k2++)
+				for (std::size_t k2=0;k2<k;k2++)
 					free(buffer[k2]);
 				*ec = lsl_internal_error;
 				return 0.0;
@@ -278,10 +278,10 @@ LIBLSL_C_API double lsl_pull_sample_buf(lsl_inlet in, char **buffer, uint32_t *b
         if (buffer_elements < (int)tmp.size())
             throw std::range_error("The provided buffer has fewer elements than the stream's number of channels.");
 		// allocate memory and copy over into buffer
-		for (unsigned k=0;k<tmp.size();k++) {
+		for (std::size_t k=0;k<tmp.size();k++) {
 			buffer[k] = (char*)malloc(tmp[k].size());
 			if (buffer[k] == NULL) {
-				for (unsigned k2=0;k2<k;k++)
+				for (std::size_t k2=0;k2<k;k++)
 					free(buffer[k2]);
 				*ec = lsl_internal_error;
 				return 0.0;
@@ -386,10 +386,10 @@ LIBLSL_C_API unsigned long lsl_pull_chunk_str(lsl_inlet in, char **data_buffer, 
 			std::vector<std::string> tmp(data_buffer_elements);
 			unsigned long result = ((stream_inlet_impl*)in)->pull_chunk_multiplexed(&tmp[0],timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout);
 			// allocate memory and copy over into buffer
-			for (unsigned k=0;k<tmp.size();k++) {
+			for (std::size_t k=0;k<tmp.size();k++) {
 				data_buffer[k] = (char*)malloc(tmp[k].size()+1);
 				if (data_buffer[k] == NULL) {
-					for (unsigned k2=0;k2<k;k2++)
+					for (std::size_t k2=0;k2<k;k2++)
 						free(data_buffer[k2]);
 					*ec = lsl_internal_error;
 					return 0;

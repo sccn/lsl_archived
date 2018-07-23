@@ -26,7 +26,7 @@ resolver_impl::resolver_impl(): cfg_(api_config::get_instance()), cancelled_(fal
 	// parse the multicast addresses into endpoints and store them
 	std::vector<std::string> mcast_addrs = cfg_->multicast_addresses();
 	int mcast_port = cfg_->multicast_port();
-	for (unsigned k=0;k<mcast_addrs.size();k++) {
+	for (std::size_t k=0;k<mcast_addrs.size();k++) {
 		try {
 			mcast_endpoints_.push_back(udp::endpoint(ip::address::from_string(mcast_addrs[k]),(uint16_t)mcast_port));
 		} 
@@ -37,7 +37,7 @@ resolver_impl::resolver_impl(): cfg_(api_config::get_instance()), cancelled_(fal
 	std::vector<std::string> peers = cfg_->known_peers();
 	udp::resolver udp_resolver(*io_);
 	// for each known peer...
-    for (unsigned k=0;k<peers.size();k++) {
+    for (std::size_t k=0;k<peers.size();k++) {
         try {
             // resolve the name
             udp::resolver::query q(peers[k],lslboost::lexical_cast<std::string>(cfg_->base_port()));
@@ -166,7 +166,7 @@ void resolver_impl::next_resolve_wave() {
 /// Start a new resolver attepmpt on the multicast hosts.
 void resolver_impl::udp_multicast_burst() {
 		// start one per IP stack under consideration
-		for (unsigned k=0,failures=0;k<udp_protocols_.size();k++) {
+		for (std::size_t k=0,failures=0;k<udp_protocols_.size();k++) {
 			try {
 				resolve_attempt_udp_p attempt(new resolve_attempt_udp(*io_,udp_protocols_[k],mcast_endpoints_,query_,results_,results_mut_,cfg_->multicast_max_rtt(),this));
 				attempt->begin();
@@ -182,7 +182,7 @@ void resolver_impl::udp_multicast_burst() {
 void resolver_impl::udp_unicast_burst(error_code err) {
 	if (err != error::operation_aborted) {
 		// start one per IP stack under consideration
-		for (unsigned k=0,failures=0;k<udp_protocols_.size();k++) {
+		for (std::size_t k=0,failures=0;k<udp_protocols_.size();k++) {
 			try {
 				resolve_attempt_udp_p attempt(new resolve_attempt_udp(*io_,udp_protocols_[k],ucast_endpoints_,query_,results_,results_mut_,cfg_->unicast_max_rtt(),this));
 				attempt->begin();

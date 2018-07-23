@@ -217,7 +217,7 @@ void inlet_connection::try_recover() {
 					// got a result
 					lslboost::unique_lock<lslboost::shared_mutex> lock(host_info_mut_);
 					// check if any of the returned streams is the one that we're currently connected to
-					for (unsigned k=0;k<infos.size();k++)
+					for (std::size_t k=0;k<infos.size();k++)
 						if (infos[k].uid() == host_info_.uid())
 							return; // in this case there is no need to recover (we're still fine)
 					// otherwise our stream is gone and we indeed need to recover:

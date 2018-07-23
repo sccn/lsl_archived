@@ -200,7 +200,7 @@ void time_receiver::result_aggregation_scheduled(error_code err) {
 			// take the estimate with the lowest error bound (=rtt), as in NTP
 			double best_offset=0, best_rtt=FOREVER;
 			double best_remote_time=0;
-			for (unsigned k=0;k<estimates_.size();k++) {
+			for (std::size_t k = 0; k < estimates_.size(); k++) {
 				if (estimates_[k].first < best_rtt) {
 					best_rtt = estimates_[k].first;
 					best_offset = estimates_[k].second;
