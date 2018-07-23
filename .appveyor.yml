@@ -1,0 +1,37 @@
+version: 1.12.{build}
+pull_requests:
+  do_not_increment_build_number: true
+skip_non_tags: true
+shallow_clone: true
+environment:
+  DODEPLOY: false
+  LSLDIST_URL: "https://dl.bintray.com/labstreaminglayer/LSL"
+  CMakeArgs: "-DLSLAPPS_Examples=1 -DLSLAPPS_LabRecorder=1"
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      VCVER: 14.0
+      QTCOMPILER: msvc2015_64
+      QTVER: 5.11
+      ARCH: x64
+      DEPLOYNAME: Win64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      VCVER: 9.0
+      ARCH: x86
+      CMakeArgs: "-DLSLAPPS_Examples=0 -DLSLAPPS_LabRecorder=0"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
+      DEPLOYNAME: Linux64-xenial
+install:
+- cmd: appveyor DownloadFile https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-win.zip -FileName ninja.zip
+- cmd: 7z x ninja.zip -oC:\projects\deps\ninja > nul
+- cmd: set PATH=C:\projects\deps\ninja;%PATH%
+- sh: sudo apt update; sudo apt install -y qt5-default libboost-{filesystem,iostreams,thread}-dev
+build_script:
+- cmd: call "C:\Program Files (x86)\Microsoft Visual Studio %VCVER%\VC\vcvarsall.bat" %ARCH%
+- mkdir build
+- cd build
+- cmd: cmake -G Ninja -DQt5_DIR=C:/Qt/%QTVER%/%QTCOMPILER%/lib/cmake/Qt5 -DBOOST_ROOT=C:/Libraries/boost_1_67_0  %CMakeArgs% ../
+- sh: cmake -DLSL_UNIXFOLDERS=1 -DLSL_LSLBOOST_PATH=lslboost ${CMakeArgs} ..
+- cmake --build . --config Release --target install
+artifacts:
+- path: build/install
+  name: lsl_%ARCH%_%QTCOMPILER%_${APPVEYOR_BUILD_WORKER_IMAGE}_${APPVEYOR_REPO_COMMIT}
