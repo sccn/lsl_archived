@@ -735,7 +735,8 @@ extern LIBLSL_C_API double lsl_pull_sample_buf(lsl_inlet in, char **buffer, unsi
 * Pull a sample from the inlet and read it into a custom struct or buffer. 
 * Overall size checking but no type checking or conversion are done. Do not use for variable-size/string-formatted streams.
 * @param in The lsl_inlet object to act on.
-* @param sample Pointer to hold the sample data. Search for #pragma pack for information on how to pack structs appropriately.
+* @param buffer Pointer to hold the sample data. Search for #pragma pack for information on how to pack structs appropriately.
+* @param buffer_bytes Length of the array held by buffer in bytes, not items
 * @param timeout The timeout for this operation, if any. Aside from LSL_FOREVER it is also permitted to use
 *                0.0 here; in this case a sample is only returned if one is currently buffered.
 * @param ec Error code: can be either no error or lsl_lost_error (if the stream source has been lost).
