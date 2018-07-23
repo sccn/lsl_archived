@@ -123,15 +123,15 @@ namespace lsl {
 		* @param pushthrough Whether to push the chunk through to the receivers instead of buffering it with subsequent samples.
 		*					 Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
 		*/
-		template<class T> void push_chunk_multiplexed(const T *data_buffer, const double *timestamp_buffer, std::size_t data_buffer_elements, bool pushthrough=true) {
-			std::size_t num_chans = info().channel_count(), num_samples = data_buffer_elements/num_chans;
+		template<class T> void push_chunk_multiplexed(const T *data_buffer, const double *timestamp_buffer, uint32_t data_buffer_elements, bool pushthrough=true) {
+			uint32_t num_chans = info().channel_count(), num_samples = data_buffer_elements/num_chans;
 			if (data_buffer_elements % num_chans != 0)
 				throw std::runtime_error("The number of buffer elements to send is not a multiple of the stream's channel count.");
 			if (!data_buffer)
 				throw std::runtime_error("The data buffer pointer must not be NULL.");
 			if (!timestamp_buffer)
 				throw std::runtime_error("The timestamp buffer pointer must not be NULL.");
-			for (std::size_t k=0; k<num_samples; k++)
+			for (uint32_t k=0; k<num_samples; k++)
 				enqueue(&data_buffer[k*num_chans],timestamp_buffer[k],pushthrough && k==num_samples-1);
 		}
 
@@ -164,8 +164,8 @@ namespace lsl {
 		* @param pushthrough Whether to push the chunk through to the receivers instead of buffering it with subsequent samples.
 		*					 Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
 		*/
-		template<class T> void push_chunk_multiplexed(const T *buffer, std::size_t buffer_elements, double timestamp=0.0, bool pushthrough=true) {
-			std::size_t num_chans = info().channel_count(), num_samples = buffer_elements/num_chans;
+		template<class T> void push_chunk_multiplexed(const T *buffer, uint32_t buffer_elements, double timestamp=0.0, bool pushthrough=true) {
+			uint32_t num_chans = info().channel_count(), num_samples = buffer_elements/num_chans;
 			if (buffer_elements % num_chans != 0)
 				throw std::runtime_error("The number of buffer elements to send is not a multiple of the stream's channel count.");
 			if (!buffer)
@@ -176,7 +176,7 @@ namespace lsl {
 				if (info().nominal_srate() != IRREGULAR_RATE)
 					timestamp = timestamp - (num_samples-1)/info().nominal_srate();
 				push_sample(buffer,timestamp,pushthrough && (num_samples==1));
-				for (std::size_t k=1; k<num_samples; k++)
+				for (uint32_t k=1; k<num_samples; k++)
 					push_sample(&buffer[k*num_chans],DEDUCED_TIMESTAMP,pushthrough && (k==num_samples-1));
 			}
 		}

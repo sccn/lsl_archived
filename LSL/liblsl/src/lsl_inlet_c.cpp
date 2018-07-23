@@ -202,31 +202,31 @@ LIBLSL_C_API int32_t lsl_set_postprocessing(lsl_inlet in, uint32_t flags) {
 *		  To remap this time stamp to the local clock, add the value returned by lsl_time_correction() to it. 
 * @param ec Error code: if nonzero, can be either lsl_timeout_error (if the timeout has expired) or lsl_lost_error (if the stream source has been lost).
 */
-LIBLSL_C_API double lsl_pull_sample_f(lsl_inlet in, float *buffer, int32_t buffer_elements, double timeout, int32_t *ec) {
+LIBLSL_C_API double lsl_pull_sample_f(lsl_inlet in, float *buffer, uint32_t buffer_elements, double timeout, int32_t *ec) {
 		return ((stream_inlet_impl*)in)->pull_sample_noexcept(buffer,buffer_elements,timeout,(lsl_error_code_t*) ec);
 }
 
-LIBLSL_C_API double lsl_pull_sample_d(lsl_inlet in, double *buffer, int32_t buffer_elements, double timeout, int32_t *ec) {
+LIBLSL_C_API double lsl_pull_sample_d(lsl_inlet in, double *buffer, uint32_t buffer_elements, double timeout, int32_t *ec) {
 		return ((stream_inlet_impl*)in)->pull_sample_noexcept(buffer,buffer_elements,timeout,(lsl_error_code_t*) ec);
 }
 
-LIBLSL_C_API double lsl_pull_sample_l(lsl_inlet in, long *buffer, int buffer_elements, double timeout, int *ec) {
+LIBLSL_C_API double lsl_pull_sample_l(lsl_inlet in, long *buffer, uint32_t buffer_elements, double timeout, int32_t *ec) {
 		return ((stream_inlet_impl*)in)->pull_sample_noexcept(buffer,buffer_elements,timeout,(lsl_error_code_t*) ec);
 }
 
-LIBLSL_C_API double lsl_pull_sample_i(lsl_inlet in, int32_t *buffer, int32_t buffer_elements, double timeout, int32_t *ec) {
+LIBLSL_C_API double lsl_pull_sample_i(lsl_inlet in, int32_t *buffer, uint32_t buffer_elements, double timeout, int32_t *ec) {
 		return ((stream_inlet_impl*)in)->pull_sample_noexcept(buffer,buffer_elements,timeout,(lsl_error_code_t*) ec);
 }
 
-LIBLSL_C_API double lsl_pull_sample_s(lsl_inlet in, short *buffer, int32_t buffer_elements, double timeout, int32_t *ec) {
+LIBLSL_C_API double lsl_pull_sample_s(lsl_inlet in, short *buffer, uint32_t buffer_elements, double timeout, int32_t *ec) {
 		return ((stream_inlet_impl*)in)->pull_sample_noexcept(buffer,buffer_elements,timeout,(lsl_error_code_t*) ec);
 }
 
-LIBLSL_C_API double lsl_pull_sample_c(lsl_inlet in, char *buffer, int32_t buffer_elements, double timeout, int32_t *ec) {
+LIBLSL_C_API double lsl_pull_sample_c(lsl_inlet in, char *buffer, uint32_t buffer_elements, double timeout, int32_t *ec) {
 		return ((stream_inlet_impl*)in)->pull_sample_noexcept(buffer,buffer_elements,timeout,(lsl_error_code_t*) ec);
 }
 
-LIBLSL_C_API double lsl_pull_sample_str(lsl_inlet in, char **buffer, int32_t buffer_elements, double timeout, int32_t *ec) {
+LIBLSL_C_API double lsl_pull_sample_str(lsl_inlet in, char **buffer, uint32_t buffer_elements, double timeout, int32_t *ec) {
 	if (ec)
 		*ec = lsl_no_error;
 	try {
@@ -272,7 +272,7 @@ LIBLSL_C_API double lsl_pull_sample_str(lsl_inlet in, char **buffer, int32_t buf
 	return 0.0;
 }
 
-LIBLSL_C_API double lsl_pull_sample_buf(lsl_inlet in, char **buffer, uint32_t *buffer_lengths, int32_t buffer_elements, double timeout, int32_t *ec) {
+LIBLSL_C_API double lsl_pull_sample_buf(lsl_inlet in, char **buffer, uint32_t *buffer_lengths, uint32_t buffer_elements, double timeout, int32_t *ec) {
 	if (ec)
 		*ec = lsl_no_error;
 	try {
@@ -359,38 +359,38 @@ LIBLSL_C_API double lsl_pull_sample_v(lsl_inlet in, void *buffer, int32_t buffer
 	return 0.0;
 }
 
-LIBLSL_C_API unsigned long lsl_pull_chunk_f(lsl_inlet in, float *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec) {
+LIBLSL_C_API uint32_t lsl_pull_chunk_f(lsl_inlet in, float *data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec) {
 	return ((stream_inlet_impl*)in)->pull_chunk_multiplexed_noexcept(data_buffer,timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout,(lsl_error_code_t*)ec);
 }
 
-LIBLSL_C_API unsigned long lsl_pull_chunk_d(lsl_inlet in, double *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec) {
+LIBLSL_C_API uint32_t lsl_pull_chunk_d(lsl_inlet in, double *data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec) {
 	return ((stream_inlet_impl*)in)->pull_chunk_multiplexed_noexcept(data_buffer,timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout,(lsl_error_code_t*)ec);
 }
 
-LIBLSL_C_API unsigned long lsl_pull_chunk_l(lsl_inlet in, long *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec) {
+LIBLSL_C_API uint32_t lsl_pull_chunk_l(lsl_inlet in, long *data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec) {
 	return ((stream_inlet_impl*)in)->pull_chunk_multiplexed_noexcept(data_buffer,timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout,(lsl_error_code_t*)ec);
 }
 
-LIBLSL_C_API unsigned long lsl_pull_chunk_i(lsl_inlet in, int *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec) {
+LIBLSL_C_API uint32_t lsl_pull_chunk_i(lsl_inlet in, int32_t *data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec) {
 	return ((stream_inlet_impl*)in)->pull_chunk_multiplexed_noexcept(data_buffer,timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout,(lsl_error_code_t*)ec);
 }
 
-LIBLSL_C_API unsigned long lsl_pull_chunk_s(lsl_inlet in, short *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec) {
+LIBLSL_C_API uint32_t lsl_pull_chunk_s(lsl_inlet in, short *data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec) {
 	return ((stream_inlet_impl*)in)->pull_chunk_multiplexed_noexcept(data_buffer,timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout,(lsl_error_code_t*)ec);
 }
 
-LIBLSL_C_API unsigned long lsl_pull_chunk_c(lsl_inlet in, char *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec) {
+LIBLSL_C_API uint32_t lsl_pull_chunk_c(lsl_inlet in, char *data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec) {
 	return ((stream_inlet_impl*)in)->pull_chunk_multiplexed_noexcept(data_buffer,timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout,(lsl_error_code_t*)ec);
 }
 
-LIBLSL_C_API unsigned long lsl_pull_chunk_str(lsl_inlet in, char **data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec) {
+LIBLSL_C_API uint32_t lsl_pull_chunk_str(lsl_inlet in, char **data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec) {
 	if (ec)
 		*ec = lsl_no_error;
 	try {
 		// capture output in a temporary string buffer
 		if (data_buffer_elements) {
 			std::vector<std::string> tmp(data_buffer_elements);
-			unsigned long result = ((stream_inlet_impl*)in)->pull_chunk_multiplexed(&tmp[0],timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout);
+			uint32_t result = ((stream_inlet_impl*)in)->pull_chunk_multiplexed(&tmp[0],timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout);
 			// allocate memory and copy over into buffer
 			for (std::size_t k=0;k<tmp.size();k++) {
 				data_buffer[k] = (char*)malloc(tmp[k].size()+1);
@@ -430,14 +430,14 @@ LIBLSL_C_API unsigned long lsl_pull_chunk_str(lsl_inlet in, char **data_buffer, 
 	return 0;
 }
 
-LIBLSL_C_API unsigned long lsl_pull_chunk_buf(lsl_inlet in, char **data_buffer, unsigned *lengths_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec) {
+LIBLSL_C_API uint32_t lsl_pull_chunk_buf(lsl_inlet in, char **data_buffer, uint32_t *lengths_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec) {
 	if (ec)
 		*ec = lsl_no_error;
 	try {
 		// capture output in a temporary string buffer
 		if (data_buffer_elements) {
 			std::vector<std::string> tmp(data_buffer_elements);
-			unsigned long result = ((stream_inlet_impl*)in)->pull_chunk_multiplexed(&tmp[0],timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout);
+			uint32_t result = ((stream_inlet_impl*)in)->pull_chunk_multiplexed(&tmp[0],timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout);
 			// allocate memory and copy over into buffer
 			for (uint32_t k=0;k<tmp.size();k++) {
 				data_buffer[k] = (char*)malloc(tmp[k].size()+1);

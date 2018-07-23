@@ -547,46 +547,46 @@ extern LIBLSL_C_API int32_t lsl_push_sample_vtp(lsl_outlet out, const void *data
 *                    Note that the chunk_size, if specified at outlet construction, takes precedence over the pushthrough flag.
 * @return Error code of the operation (usually attributed to the wrong data type).
 */
-extern LIBLSL_C_API int32_t lsl_push_chunk_f(lsl_outlet out, const float *data, unsigned long data_elements);
-extern LIBLSL_C_API int32_t lsl_push_chunk_ft(lsl_outlet out, const float *data, unsigned long data_elements, double timestamp);
-extern LIBLSL_C_API int32_t lsl_push_chunk_ftp(lsl_outlet out, const float *data, unsigned long data_elements, double timestamp, int32_t pushthrough);
-extern LIBLSL_C_API int32_t lsl_push_chunk_ftn(lsl_outlet out, const float *data, unsigned long data_elements, const double *timestamps);
-extern LIBLSL_C_API int32_t lsl_push_chunk_ftnp(lsl_outlet out, const float *data, unsigned long data_elements, const double *timestamps, int32_t pushthrough);
-extern LIBLSL_C_API int32_t lsl_push_chunk_d(lsl_outlet out, const double *data, unsigned long data_elements);
-extern LIBLSL_C_API int32_t lsl_push_chunk_dt(lsl_outlet out, const double *data, unsigned long data_elements, double timestamp);
-extern LIBLSL_C_API int32_t lsl_push_chunk_dtp(lsl_outlet out, const double *data, unsigned long data_elements, double timestamp, int32_t pushthrough);
-extern LIBLSL_C_API int32_t lsl_push_chunk_dtn(lsl_outlet out, const double *data, unsigned long data_elements, const double *timestamps);
-extern LIBLSL_C_API int32_t lsl_push_chunk_dtnp(lsl_outlet out, const double *data, unsigned long data_elements, const double *timestamps, int32_t pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_l(lsl_outlet out, const long *data, unsigned long data_elements);
-extern LIBLSL_C_API int lsl_push_chunk_lt(lsl_outlet out, const long *data, unsigned long data_elements, double timestamp);
-extern LIBLSL_C_API int lsl_push_chunk_ltp(lsl_outlet out, const long *data, unsigned long data_elements, double timestamp, int pushthrough);
-extern LIBLSL_C_API int lsl_push_chunk_ltn(lsl_outlet out, const long *data, unsigned long data_elements, const double *timestamps);
-extern LIBLSL_C_API int lsl_push_chunk_ltnp(lsl_outlet out, const long *data, unsigned long data_elements, const double *timestamps, int pushthrough);
-extern LIBLSL_C_API int32_t lsl_push_chunk_i(lsl_outlet out, const int32_t *data, unsigned long data_elements);
-extern LIBLSL_C_API int32_t lsl_push_chunk_it(lsl_outlet out, const int32_t *data, unsigned long data_elements, double timestamp);
-extern LIBLSL_C_API int32_t lsl_push_chunk_itp(lsl_outlet out, const int32_t *data, unsigned long data_elements, double timestamp, int32_t pushthrough);
-extern LIBLSL_C_API int32_t lsl_push_chunk_itn(lsl_outlet out, const int32_t *data, unsigned long data_elements, const double *timestamps);
-extern LIBLSL_C_API int32_t lsl_push_chunk_itnp(lsl_outlet out, const int32_t *data, unsigned long data_elements, const double *timestamps, int32_t pushthrough);
-extern LIBLSL_C_API int32_t lsl_push_chunk_s(lsl_outlet out, const int16_t *data, unsigned long data_elements);
-extern LIBLSL_C_API int32_t lsl_push_chunk_st(lsl_outlet out, const int16_t *data, unsigned long data_elements, double timestamp);
-extern LIBLSL_C_API int32_t lsl_push_chunk_stp(lsl_outlet out, const int16_t *data, unsigned long data_elements, double timestamp, int32_t pushthrough);
-extern LIBLSL_C_API int32_t lsl_push_chunk_stn(lsl_outlet out, const int16_t *data, unsigned long data_elements, const double *timestamps);
-extern LIBLSL_C_API int32_t lsl_push_chunk_stnp(lsl_outlet out, const int16_t *data, unsigned long data_elements, const double *timestamps, int32_t pushthrough);
-extern LIBLSL_C_API int32_t lsl_push_chunk_c(lsl_outlet out, const char *data, unsigned long data_elements);
-extern LIBLSL_C_API int32_t lsl_push_chunk_ct(lsl_outlet out, const char *data, unsigned long data_elements, double timestamp);
-extern LIBLSL_C_API int32_t lsl_push_chunk_ctp(lsl_outlet out, const char *data, unsigned long data_elements, double timestamp, int32_t pushthrough);
-extern LIBLSL_C_API int32_t lsl_push_chunk_ctn(lsl_outlet out, const char *data, unsigned long data_elements, const double *timestamps);
-extern LIBLSL_C_API int32_t lsl_push_chunk_ctnp(lsl_outlet out, const char *data, unsigned long data_elements, const double *timestamps, int32_t pushthrough);
-extern LIBLSL_C_API int32_t lsl_push_chunk_str(lsl_outlet out, const char **data, unsigned long data_elements);
-extern LIBLSL_C_API int32_t lsl_push_chunk_strt(lsl_outlet out, const char **data, unsigned long data_elements, double timestamp);
-extern LIBLSL_C_API int32_t lsl_push_chunk_strtp(lsl_outlet out, const char **data, unsigned long data_elements, double timestamp, int32_t pushthrough);
-extern LIBLSL_C_API int32_t lsl_push_chunk_strtn(lsl_outlet out, const char **data, unsigned long data_elements, const double *timestamps);
-extern LIBLSL_C_API int32_t lsl_push_chunk_strtnp(lsl_outlet out, const char **data, unsigned long data_elements, const double *timestamps, int32_t pushthrough);
-extern LIBLSL_C_API int32_t lsl_push_chunk_buf(lsl_outlet out, const char **data, const uint32_t*lengths, unsigned long data_elements);
-extern LIBLSL_C_API int32_t lsl_push_chunk_buft(lsl_outlet out, const char **data, const uint32_t *lengths, unsigned long data_elements, double timestamp);
-extern LIBLSL_C_API int32_t lsl_push_chunk_buftp(lsl_outlet out, const char **data, const uint32_t *lengths, unsigned long data_elements, double timestamp, int32_t pushthrough);
-extern LIBLSL_C_API int32_t lsl_push_chunk_buftn(lsl_outlet out, const char **data, const uint32_t *lengths, unsigned long data_elements, const double *timestamps);
-extern LIBLSL_C_API int32_t lsl_push_chunk_buftnp(lsl_outlet out, const char **data, const uint32_t *lengths, unsigned long data_elements, const double *timestamps, int32_t pushthrough);
+extern LIBLSL_C_API int32_t lsl_push_chunk_f(lsl_outlet out, const float *data, uint32_t data_elements);
+extern LIBLSL_C_API int32_t lsl_push_chunk_ft(lsl_outlet out, const float *data, uint32_t data_elements, double timestamp);
+extern LIBLSL_C_API int32_t lsl_push_chunk_ftp(lsl_outlet out, const float *data, uint32_t data_elements, double timestamp, int32_t pushthrough);
+extern LIBLSL_C_API int32_t lsl_push_chunk_ftn(lsl_outlet out, const float *data, uint32_t data_elements, const double *timestamps);
+extern LIBLSL_C_API int32_t lsl_push_chunk_ftnp(lsl_outlet out, const float *data, uint32_t data_elements, const double *timestamps, int32_t pushthrough);
+extern LIBLSL_C_API int32_t lsl_push_chunk_d(lsl_outlet out, const double *data, uint32_t data_elements);
+extern LIBLSL_C_API int32_t lsl_push_chunk_dt(lsl_outlet out, const double *data, uint32_t data_elements, double timestamp);
+extern LIBLSL_C_API int32_t lsl_push_chunk_dtp(lsl_outlet out, const double *data, uint32_t data_elements, double timestamp, int32_t pushthrough);
+extern LIBLSL_C_API int32_t lsl_push_chunk_dtn(lsl_outlet out, const double *data, uint32_t data_elements, const double *timestamps);
+extern LIBLSL_C_API int32_t lsl_push_chunk_dtnp(lsl_outlet out, const double *data, uint32_t data_elements, const double *timestamps, int32_t pushthrough);
+extern LIBLSL_C_API int32_t lsl_push_chunk_l(lsl_outlet out, const long *data, uint32_t data_elements);
+extern LIBLSL_C_API int32_t lsl_push_chunk_lt(lsl_outlet out, const long *data, uint32_t data_elements, double timestamp);
+extern LIBLSL_C_API int32_t lsl_push_chunk_ltp(lsl_outlet out, const long *data, uint32_t data_elements, double timestamp, int32_t pushthrough);
+extern LIBLSL_C_API int32_t lsl_push_chunk_ltn(lsl_outlet out, const long *data, uint32_t data_elements, const double *timestamps);
+extern LIBLSL_C_API int32_t lsl_push_chunk_ltnp(lsl_outlet out, const long *data, uint32_t data_elements, const double *timestamps, int32_t pushthrough);
+extern LIBLSL_C_API int32_t lsl_push_chunk_i(lsl_outlet out, const int32_t *data, uint32_t data_elements);
+extern LIBLSL_C_API int32_t lsl_push_chunk_it(lsl_outlet out, const int32_t *data, uint32_t data_elements, double timestamp);
+extern LIBLSL_C_API int32_t lsl_push_chunk_itp(lsl_outlet out, const int32_t *data, uint32_t data_elements, double timestamp, int32_t pushthrough);
+extern LIBLSL_C_API int32_t lsl_push_chunk_itn(lsl_outlet out, const int32_t *data, uint32_t data_elements, const double *timestamps);
+extern LIBLSL_C_API int32_t lsl_push_chunk_itnp(lsl_outlet out, const int32_t *data, uint32_t data_elements, const double *timestamps, int32_t pushthrough);
+extern LIBLSL_C_API int32_t lsl_push_chunk_s(lsl_outlet out, const int16_t *data, uint32_t data_elements);
+extern LIBLSL_C_API int32_t lsl_push_chunk_st(lsl_outlet out, const int16_t *data, uint32_t data_elements, double timestamp);
+extern LIBLSL_C_API int32_t lsl_push_chunk_stp(lsl_outlet out, const int16_t *data, uint32_t data_elements, double timestamp, int32_t pushthrough);
+extern LIBLSL_C_API int32_t lsl_push_chunk_stn(lsl_outlet out, const int16_t *data, uint32_t data_elements, const double *timestamps);
+extern LIBLSL_C_API int32_t lsl_push_chunk_stnp(lsl_outlet out, const int16_t *data, uint32_t data_elements, const double *timestamps, int32_t pushthrough);
+extern LIBLSL_C_API int32_t lsl_push_chunk_c(lsl_outlet out, const char *data, uint32_t data_elements);
+extern LIBLSL_C_API int32_t lsl_push_chunk_ct(lsl_outlet out, const char *data, uint32_t data_elements, double timestamp);
+extern LIBLSL_C_API int32_t lsl_push_chunk_ctp(lsl_outlet out, const char *data, uint32_t data_elements, double timestamp, int32_t pushthrough);
+extern LIBLSL_C_API int32_t lsl_push_chunk_ctn(lsl_outlet out, const char *data, uint32_t data_elements, const double *timestamps);
+extern LIBLSL_C_API int32_t lsl_push_chunk_ctnp(lsl_outlet out, const char *data, uint32_t data_elements, const double *timestamps, int32_t pushthrough);
+extern LIBLSL_C_API int32_t lsl_push_chunk_str(lsl_outlet out, const char **data, uint32_t data_elements);
+extern LIBLSL_C_API int32_t lsl_push_chunk_strt(lsl_outlet out, const char **data, uint32_t data_elements, double timestamp);
+extern LIBLSL_C_API int32_t lsl_push_chunk_strtp(lsl_outlet out, const char **data, uint32_t data_elements, double timestamp, int32_t pushthrough);
+extern LIBLSL_C_API int32_t lsl_push_chunk_strtn(lsl_outlet out, const char **data, uint32_t data_elements, const double *timestamps);
+extern LIBLSL_C_API int32_t lsl_push_chunk_strtnp(lsl_outlet out, const char **data, uint32_t data_elements, const double *timestamps, int32_t pushthrough);
+extern LIBLSL_C_API int32_t lsl_push_chunk_buf(lsl_outlet out, const char **data, const uint32_t *lengths, uint32_t data_elements);
+extern LIBLSL_C_API int32_t lsl_push_chunk_buft(lsl_outlet out, const char **data, const uint32_t *lengths, uint32_t data_elements, double timestamp);
+extern LIBLSL_C_API int32_t lsl_push_chunk_buftp(lsl_outlet out, const char **data, const uint32_t *lengths, uint32_t data_elements, double timestamp, int32_t pushthrough);
+extern LIBLSL_C_API int32_t lsl_push_chunk_buftn(lsl_outlet out, const char **data, const uint32_t *lengths, uint32_t data_elements, const double *timestamps);
+extern LIBLSL_C_API int32_t lsl_push_chunk_buftnp(lsl_outlet out, const char **data, const uint32_t *lengths, uint32_t data_elements, const double *timestamps, int32_t pushthrough);
 
 
 /**
@@ -728,13 +728,13 @@ extern LIBLSL_C_API int32_t lsl_set_postprocessing(lsl_inlet in, uint32_t flags)
 * @return The capture time of the sample on the remote machine, or 0.0 if no new sample was available. 
 *         To remap this time stamp to the local clock, add the value returned by lsl_time_correction() to it. 
 */
-extern LIBLSL_C_API double lsl_pull_sample_f(lsl_inlet in, float *buffer, int32_t buffer_elements, double timeout, int32_t *ec);
-extern LIBLSL_C_API double lsl_pull_sample_d(lsl_inlet in, double *buffer, int32_t buffer_elements, double timeout, int32_t *ec);
-extern LIBLSL_C_API double lsl_pull_sample_l(lsl_inlet in, long *buffer, int buffer_elements, double timeout, int *ec);
-extern LIBLSL_C_API double lsl_pull_sample_i(lsl_inlet in, int32_t *buffer, int32_t buffer_elements, double timeout, int32_t *ec);
-extern LIBLSL_C_API double lsl_pull_sample_s(lsl_inlet in, int16_t *buffer, int32_t buffer_elements, double timeout, int32_t *ec);
-extern LIBLSL_C_API double lsl_pull_sample_c(lsl_inlet in, char *buffer, int32_t buffer_elements, double timeout, int32_t *ec);
-extern LIBLSL_C_API double lsl_pull_sample_str(lsl_inlet in, char **buffer, int32_t buffer_elements, double timeout, int32_t *ec);
+extern LIBLSL_C_API double lsl_pull_sample_f(lsl_inlet in, float *buffer, uint32_t buffer_elements, double timeout, int32_t *ec);
+extern LIBLSL_C_API double lsl_pull_sample_d(lsl_inlet in, double *buffer, uint32_t buffer_elements, double timeout, int32_t *ec);
+extern LIBLSL_C_API double lsl_pull_sample_l(lsl_inlet in, long *buffer, uint32_t buffer_elements, double timeout, int32_t *ec);
+extern LIBLSL_C_API double lsl_pull_sample_i(lsl_inlet in, int32_t *buffer, uint32_t buffer_elements, double timeout, int32_t *ec);
+extern LIBLSL_C_API double lsl_pull_sample_s(lsl_inlet in, int16_t *buffer, uint32_t buffer_elements, double timeout, int32_t *ec);
+extern LIBLSL_C_API double lsl_pull_sample_c(lsl_inlet in, char *buffer, uint32_t buffer_elements, double timeout, int32_t *ec);
+extern LIBLSL_C_API double lsl_pull_sample_str(lsl_inlet in, char **buffer, uint32_t buffer_elements, double timeout, int32_t *ec);
 
 /**
 * Pull a sample from the inlet and read it into an array of binary strings. These strings may contains 0's, therefore the lengths are read into
@@ -752,7 +752,7 @@ extern LIBLSL_C_API double lsl_pull_sample_str(lsl_inlet in, char **buffer, int3
 * @return The capture time of the sample on the remote machine, or 0.0 if no new sample was available. 
 *         To remap this time stamp to the local clock, add the value returned by lsl_time_correction() to it. 
 */
-extern LIBLSL_C_API double lsl_pull_sample_buf(lsl_inlet in, char **buffer, uint32_t *buffer_lengths, int32_t buffer_elements, double timeout, int32_t *ec);
+extern LIBLSL_C_API double lsl_pull_sample_buf(lsl_inlet in, char **buffer, uint32_t *buffer_lengths, uint32_t buffer_elements, double timeout, int32_t *ec);
 
 /**
 * Pull a sample from the inlet and read it into a custom struct or buffer. 
@@ -790,13 +790,13 @@ extern LIBLSL_C_API double lsl_pull_sample_v(lsl_inlet in, void *buffer, int32_t
 *                 ec is *not* set to lsl_timeout_error (because this case is not considered an error condition).
 * @return data_elements_written Number of channel data elements written to the data buffer.
 */
-extern LIBLSL_C_API unsigned long lsl_pull_chunk_f(lsl_inlet in, float *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int32_t *ec);
-extern LIBLSL_C_API unsigned long lsl_pull_chunk_d(lsl_inlet in, double *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int32_t *ec);
-extern LIBLSL_C_API unsigned long lsl_pull_chunk_l(lsl_inlet in, long *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int *ec);
-extern LIBLSL_C_API unsigned long lsl_pull_chunk_i(lsl_inlet in, int32_t *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int32_t *ec);
-extern LIBLSL_C_API unsigned long lsl_pull_chunk_s(lsl_inlet in, int16_t *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int32_t *ec);
-extern LIBLSL_C_API unsigned long lsl_pull_chunk_c(lsl_inlet in, char *data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int32_t *ec);
-extern LIBLSL_C_API unsigned long lsl_pull_chunk_str(lsl_inlet in, char **data_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int32_t *ec);
+extern LIBLSL_C_API uint32_t lsl_pull_chunk_f(lsl_inlet in, float *data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec);
+extern LIBLSL_C_API uint32_t lsl_pull_chunk_d(lsl_inlet in, double *data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec);
+extern LIBLSL_C_API uint32_t lsl_pull_chunk_l(lsl_inlet in, long *data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec);
+extern LIBLSL_C_API uint32_t lsl_pull_chunk_i(lsl_inlet in, int32_t *data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec);
+extern LIBLSL_C_API uint32_t lsl_pull_chunk_s(lsl_inlet in, int16_t *data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec);
+extern LIBLSL_C_API uint32_t lsl_pull_chunk_c(lsl_inlet in, char *data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec);
+extern LIBLSL_C_API uint32_t lsl_pull_chunk_str(lsl_inlet in, char **data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec);
 
 /**
 * Pull a chunk of data from the inlet and read it into an array of binary strings. 
@@ -821,7 +821,7 @@ extern LIBLSL_C_API unsigned long lsl_pull_chunk_str(lsl_inlet in, char **data_b
 * @return data_elements_written Number of channel data elements written to the data buffer.
 */
 
-extern LIBLSL_C_API unsigned long lsl_pull_chunk_buf(lsl_inlet in, char **data_buffer, uint32_t *lengths_buffer, double *timestamp_buffer, unsigned long data_buffer_elements, unsigned long timestamp_buffer_elements, double timeout, int32_t *ec);
+extern LIBLSL_C_API uint32_t lsl_pull_chunk_buf(lsl_inlet in, char **data_buffer, uint32_t *lengths_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec);
 
 /**
 * Query whether samples are currently available for immediate pickup.
