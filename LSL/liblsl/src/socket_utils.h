@@ -8,7 +8,10 @@
 #include <boost/thread/thread.hpp>
 
 namespace lsl {
-    
+	inline lslboost::posix_time::millisec timeout_sec(double timeout_seconds) {
+		return lslboost::posix_time::millisec(static_cast<unsigned int>(1000*timeout_seconds));
+	}
+
     /// Bind a socket (or acceptor) to a free port in the configured port range or throw an error otherwise.
 	template<class Socket, class Protocol> int bind_port_in_range(Socket &sock, Protocol protocol) {
 		for (int k=0,e=api_config::get_instance()->port_range(); k<e; k++) {
