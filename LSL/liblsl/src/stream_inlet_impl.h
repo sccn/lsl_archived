@@ -70,7 +70,7 @@ namespace lsl {
 		*/
 		double pull_sample(std::vector<float> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(uint32_t)data.size(),timeout); }
 		double pull_sample(std::vector<double> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(uint32_t)data.size(),timeout); }
-		double pull_sample(std::vector<long> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(uint32_t)data.size(),timeout); }
+		double pull_sample(std::vector<int64_t> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(uint32_t)data.size(),timeout); }
 		double pull_sample(std::vector<int32_t> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(uint32_t)data.size(),timeout); }
 		double pull_sample(std::vector<int16_t> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(uint32_t)data.size(),timeout); }
 		double pull_sample(std::vector<char> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(uint32_t)data.size(),timeout); }
@@ -89,7 +89,7 @@ namespace lsl {
 		*/
 		double pull_sample(float *buffer, uint32_t buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
 		double pull_sample(double *buffer, uint32_t buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
-		double pull_sample(long *buffer, uint32_t buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
+		double pull_sample(int64_t *buffer, uint32_t buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
 		double pull_sample(int32_t *buffer, uint32_t buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
 		double pull_sample(int16_t *buffer, uint32_t buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
 		double pull_sample(char *buffer, uint32_t buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }

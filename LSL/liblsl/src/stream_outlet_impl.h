@@ -54,7 +54,7 @@ namespace lsl {
 		*/
 		void push_sample(const std::vector<float> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int32_t)data.size()); enqueue(&data[0],timestamp,pushthrough); }
 		void push_sample(const std::vector<double> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int32_t)data.size()); enqueue(&data[0],timestamp,pushthrough); }
-		void push_sample(const std::vector<long> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int32_t)data.size()); enqueue(&data[0],timestamp,pushthrough); }
+		void push_sample(const std::vector<int64_t> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int32_t)data.size()); enqueue(&data[0],timestamp,pushthrough); }
 		void push_sample(const std::vector<int32_t> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int32_t)data.size()); enqueue(&data[0],timestamp,pushthrough); }
 		void push_sample(const std::vector<int16_t> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int32_t)data.size()); enqueue(&data[0],timestamp,pushthrough); }
 		void push_sample(const std::vector<char> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int32_t)data.size()); enqueue(&data[0],timestamp,pushthrough); }
@@ -70,7 +70,7 @@ namespace lsl {
 		*/
 		void push_sample(const float *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
 		void push_sample(const double *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
-		void push_sample(const long *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
+		void push_sample(const int64_t *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
 		void push_sample(const int32_t *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
 		void push_sample(const int16_t *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
 		void push_sample(const char *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }

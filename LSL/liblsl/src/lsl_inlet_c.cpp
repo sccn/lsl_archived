@@ -210,7 +210,7 @@ LIBLSL_C_API double lsl_pull_sample_d(lsl_inlet in, double *buffer, uint32_t buf
 		return ((stream_inlet_impl*)in)->pull_sample_noexcept(buffer,buffer_elements,timeout,(lsl_error_code_t*) ec);
 }
 
-LIBLSL_C_API double lsl_pull_sample_l(lsl_inlet in, long *buffer, uint32_t buffer_elements, double timeout, int32_t *ec) {
+LIBLSL_C_API double lsl_pull_sample_l(lsl_inlet in, int64_t *buffer, uint32_t buffer_elements, double timeout, int32_t *ec) {
 		return ((stream_inlet_impl*)in)->pull_sample_noexcept(buffer,buffer_elements,timeout,(lsl_error_code_t*) ec);
 }
 
@@ -218,7 +218,7 @@ LIBLSL_C_API double lsl_pull_sample_i(lsl_inlet in, int32_t *buffer, uint32_t bu
 		return ((stream_inlet_impl*)in)->pull_sample_noexcept(buffer,buffer_elements,timeout,(lsl_error_code_t*) ec);
 }
 
-LIBLSL_C_API double lsl_pull_sample_s(lsl_inlet in, short *buffer, uint32_t buffer_elements, double timeout, int32_t *ec) {
+LIBLSL_C_API double lsl_pull_sample_s(lsl_inlet in, int16_t *buffer, uint32_t buffer_elements, double timeout, int32_t *ec) {
 		return ((stream_inlet_impl*)in)->pull_sample_noexcept(buffer,buffer_elements,timeout,(lsl_error_code_t*) ec);
 }
 
@@ -367,7 +367,7 @@ LIBLSL_C_API uint32_t lsl_pull_chunk_d(lsl_inlet in, double *data_buffer, double
 	return ((stream_inlet_impl*)in)->pull_chunk_multiplexed_noexcept(data_buffer,timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout,(lsl_error_code_t*)ec);
 }
 
-LIBLSL_C_API uint32_t lsl_pull_chunk_l(lsl_inlet in, long *data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec) {
+LIBLSL_C_API uint32_t lsl_pull_chunk_l(lsl_inlet in, int64_t *data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec) {
 	return ((stream_inlet_impl*)in)->pull_chunk_multiplexed_noexcept(data_buffer,timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout,(lsl_error_code_t*)ec);
 }
 
@@ -375,7 +375,7 @@ LIBLSL_C_API uint32_t lsl_pull_chunk_i(lsl_inlet in, int32_t *data_buffer, doubl
 	return ((stream_inlet_impl*)in)->pull_chunk_multiplexed_noexcept(data_buffer,timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout,(lsl_error_code_t*)ec);
 }
 
-LIBLSL_C_API uint32_t lsl_pull_chunk_s(lsl_inlet in, short *data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec) {
+LIBLSL_C_API uint32_t lsl_pull_chunk_s(lsl_inlet in, int16_t *data_buffer, double *timestamp_buffer, uint32_t data_buffer_elements, uint32_t timestamp_buffer_elements, double timeout, int32_t *ec) {
 	return ((stream_inlet_impl*)in)->pull_chunk_multiplexed_noexcept(data_buffer,timestamp_buffer,data_buffer_elements,timestamp_buffer_elements,timeout,(lsl_error_code_t*)ec);
 }
 
