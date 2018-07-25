@@ -17,8 +17,8 @@
 class recording;
 
 class RecorderItem {
-	
-public: 
+
+public:
 	QListWidgetItem listItem;
 	std::string uid;
 };
@@ -38,15 +38,17 @@ private slots:
 	std::vector<lsl::stream_info> refreshStreams(void);
 	void startRecording(void);
 	void stopRecording(void);
+	void selectAllStreams();
+	void selectNoStreams();
 
 private:
 	QSet<QString> getCheckedStreams() const;
 
 	std::unique_ptr<recording> currentRecording;
-	
+
 	int startTime;
 	std::unique_ptr<QTimer> timer;
- 
+
 	int currentTrial;
 	QString currentBlock;
 
@@ -59,7 +61,7 @@ private:
 	// function for loading config file
 	void load_config(QString filename);
 	void save_config(QString filename);
-    
+
 	std::unique_ptr<Ui::MainWindow> ui;	// window pointer
 };
 
