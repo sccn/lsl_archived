@@ -29,6 +29,8 @@ ui(new Ui::MainWindow) {
 	});
 	connect(ui->blockList, static_cast<void(QComboBox::*)(const QString &)>(&QComboBox::activated), this, &MainWindow::blockSelected);
 	connect(ui->refreshButton, &QPushButton::clicked, this, &MainWindow::refreshStreams);
+	connect(ui->selectAllButton, &QPushButton::clicked, this, &MainWindow::selectAllStreams);
+	connect(ui->selectNoneButton, &QPushButton::clicked, this, &MainWindow::selectNoStreams);
 	connect(ui->startButton, &QPushButton::clicked, this, &MainWindow::startRecording);
 	connect(ui->stopButton, &QPushButton::clicked, this, &MainWindow::stopRecording);
 	connect(ui->actionAbout, &QAction::triggered, [this](){
@@ -196,7 +198,7 @@ std::vector<lsl::stream_info> MainWindow::refreshStreams() {
 }
 
 void MainWindow::startRecording() {
-	
+
 	if (!currentRecording ) {
 
 		// automatically refresh streams
@@ -302,6 +304,20 @@ void MainWindow::stopRecording() {
 		ui->stopButton->setEnabled(false);
 		statusBar()->showMessage("Stopped");
 
+	}
+}
+
+void MainWindow::selectAllStreams() {
+	for(int i=0; i<ui->streamList->count(); i++) {
+		QListWidgetItem* item = ui->streamList->item(i);
+		item->setCheckState(Qt::Checked);
+	}
+}
+
+void MainWindow::selectNoStreams() {
+	for(int i=0; i<ui->streamList->count(); i++) {
+		QListWidgetItem* item = ui->streamList->item(i);
+		item->setCheckState(Qt::Unchecked);
 	}
 }
 
