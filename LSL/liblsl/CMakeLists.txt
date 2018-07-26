@@ -24,6 +24,8 @@ set(LSL_LSLBOOST_PATH "external" CACHE STRING "Subdirectory with lslboost")
 # Build static library
 option (LSL_BUILD_STATIC "Also build static LSL library." OFF)
 
+option(LSL_UNITTESTS "Build LSL library unit tests" OFF)
+
 set (sources
 	src/api_config.cpp
 	src/api_config.h
@@ -152,6 +154,10 @@ endif()
 
 if (MINGW)
 	target_link_libraries (${target} PUBLIC ws2_32 wsock32 winmm)
+endif()
+
+if(LSL_UNITTESTS)
+	add_subdirectory(testing/UnitTests)
 endif()
 
 if(LSL_UNIXFOLDERS)

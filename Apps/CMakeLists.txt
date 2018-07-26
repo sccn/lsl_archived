@@ -5,7 +5,6 @@ cmake_minimum_required(VERSION 3.5)
 set(CMAKE_CXX_STANDARD 11)
 
 option(LSLAPPS_Benchmarks       "Build benchmark apps"              OFF)
-option(LSLAPPS_UnitTests        "Build LSL library unit tests"      OFF)
 option(LSLAPPS_EGIAmpServer     "Build the EGI (Geodesic) app"      OFF)
 option(LSLAPPS_Examples         "Build example apps"                OFF)
 option(LSLAPPS_LabRecorder      "Build the recorder app"            OFF)
@@ -27,10 +26,6 @@ if(LSLAPPS_Benchmarks)
 endif()
 
 # add all Apps the user wants to build
-if(LSLAPPS_UnitTests)
-	add_subdirectory(UnitTests)
-endif()
-
 if(LSLAPPS_EGIAmpServer)
 	add_subdirectory(EGIAmpServer)
 endif()
