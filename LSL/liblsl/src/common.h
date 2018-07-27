@@ -22,6 +22,7 @@ using lslboost::uint8_t;
 using lslboost::uint16_t;
 using lslboost::uint32_t;
 using lslboost::uint64_t;
+#define __func__ "An unknown function"
 #endif
 #endif
 

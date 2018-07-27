@@ -69,7 +69,8 @@ LIBLSL_C_API lsl_streaminfo lsl_get_fullinfo(lsl_inlet in, double timeout, int32
 		if (ec)
 			*ec = lsl_lost_error; 
 	}
-	catch(std::exception &) { 
+	catch(std::exception &e) {
+		std::cerr << "Unexpected error in " << __func__ << ": " << e.what() << std::endl;
 		if (ec)
 			*ec = lsl_internal_error; 
 	}
@@ -98,7 +99,8 @@ LIBLSL_C_API void lsl_open_stream(lsl_inlet in, double timeout, int32_t *ec) {
 		if (ec)
 			*ec = lsl_lost_error; 
 	}
-	catch(std::exception &) { 
+	catch(std::exception &e) {
+		std::cerr << "Unexpected error in " << __func__ << ": " << e.what() << std::endl;
 		if (ec)
 			*ec = lsl_internal_error; 
 	}
@@ -141,7 +143,8 @@ LIBLSL_C_API double lsl_time_correction(lsl_inlet in, double timeout, int32_t *e
 		if (ec)
 			*ec = lsl_lost_error; 
 	}
-	catch(std::exception &) { 
+	catch(std::exception &e) {
+		std::cerr << "Unexpected error in " << __func__ << ": " << e.what() << std::endl;
 		if (ec)
 			*ec = lsl_internal_error; 
 	}
@@ -261,7 +264,8 @@ LIBLSL_C_API double lsl_pull_sample_str(lsl_inlet in, char **buffer, int32_t buf
 		if (ec)
 			*ec = lsl_argument_error; 
 	}
-	catch(std::exception &) { 
+	catch(std::exception &e) {
+		std::cerr << "Unexpected error in " << __func__ << ": " << e.what() << std::endl;
 		if (ec)
 			*ec = lsl_internal_error; 
 	}
@@ -346,7 +350,8 @@ LIBLSL_C_API double lsl_pull_sample_v(lsl_inlet in, void *buffer, int32_t buffer
 		if (ec)
 			*ec = lsl_argument_error; 
 	}
-	catch(std::exception &) { 
+	catch(std::exception &e) {
+		std::cerr << "Unexpected error in " << __func__ << ": " << e.what() << std::endl;
 		if (ec)
 			*ec = lsl_internal_error; 
 	}
@@ -416,7 +421,8 @@ LIBLSL_C_API unsigned long lsl_pull_chunk_str(lsl_inlet in, char **data_buffer, 
 		if (ec)
 			*ec = lsl_argument_error; 
 	}
-	catch(std::exception &) { 
+	catch(std::exception &e) {
+		std::cerr << "Unexpected error in " << __func__ << ": " << e.what() << std::endl;
 		if (ec)
 			*ec = lsl_internal_error; 
 	}
@@ -463,7 +469,8 @@ LIBLSL_C_API unsigned long lsl_pull_chunk_buf(lsl_inlet in, char **data_buffer, 
 		if (ec)
 			*ec = lsl_argument_error; 
 	}
-	catch(std::exception &) { 
+	catch(std::exception &e) {
+		std::cerr << "Unexpected error in " << __func__ << ": " << e.what() << std::endl;
 		if (ec)
 			*ec = lsl_internal_error; 
 	}
