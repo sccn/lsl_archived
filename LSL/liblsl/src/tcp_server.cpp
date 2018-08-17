@@ -4,11 +4,15 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include <boost/serialization/split_member.hpp>
 #include <boost/container/flat_set.hpp>
 #include "tcp_server.h"
 #include "socket_utils.h"
 
+// a convention that applies when including portable_oarchive.h in multiple .cpp files.
+// otherwise, the templates are instantiated in this file and sample.cpp which leads
+// to errors like "multiple definition of `typeinfo name"
+#define NO_EXPLICIT_TEMPLATE_INSTANTIATION
+#include "portable_archive/portable_oarchive.hpp"
 
 // === implementation of the tcp_server class ===
 
