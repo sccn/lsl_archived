@@ -107,7 +107,10 @@ namespace lsl {
 			catch (lost_error&) { *ec = lsl_lost_error; }
 			catch (std::invalid_argument&) { *ec = lsl_argument_error; }
 			catch (std::range_error&) { *ec = lsl_argument_error; }
-			catch (std::exception&) { *ec = lsl_internal_error; }
+			catch (std::exception& e) {
+				std::cerr << "Unexpected error in " << __func__ << ": " << e.what() << std::endl;
+				*ec = lsl_internal_error;
+			}
 			return 0.0;
 	    }
 
@@ -161,13 +164,16 @@ namespace lsl {
 			if(!ec) ec = &dummy;
 			*ec = lsl_no_error;
 			try {
-				return pull_chunk_multiplexed(data_buffer, timestamp_buffer, data_buffer_elements, timeout);
+				return pull_chunk_multiplexed(data_buffer, timestamp_buffer, data_buffer_elements, timestamp_buffer_elements, timeout);
 			}
 			catch (timeout_error&) { *ec = lsl_timeout_error; }
 			catch (lost_error&) { *ec = lsl_lost_error; }
 			catch (std::invalid_argument&) { *ec = lsl_argument_error; }
 			catch (std::range_error&) { *ec = lsl_argument_error; }
-			catch (std::exception&) { *ec = lsl_internal_error; }
+			catch (std::exception& e) {
+				std::cerr << "Unexpected error in " << __func__ << ": " << e.what() << std::endl;
+				*ec = lsl_internal_error;
+			}
 			return 0;
 		}
 

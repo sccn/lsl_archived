@@ -1,11 +1,15 @@
 #include <iostream>
 #include <boost/serialization/string.hpp>
-#include <boost/serialization/split_member.hpp>
 #include <boost/bind.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/algorithm/string.hpp>
 #include "data_receiver.h"
 #include "socket_utils.h"
+
+// a convention that applies when including portable_oarchive.h in multiple .cpp files.
+// otherwise, the templates are instantiated in this file and sample.cpp which leads
+// to errors like "multiple definition of `typeinfo name"
+#define NO_EXPLICIT_TEMPLATE_INSTANTIATION
 #include "portable_archive/portable_iarchive.hpp"
 
 

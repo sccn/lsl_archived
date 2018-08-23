@@ -1,5 +1,4 @@
 #include "../include/lsl_c.h"
-#define NO_EXPLICIT_TEMPLATE_INSTANTIATION // a convention that applies when including portable_oarchive.h in multiple .cpp files.
 #include "stream_outlet_impl.h"
 
 
