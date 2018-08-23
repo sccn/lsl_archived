@@ -1,3 +1,14 @@
+/*********************************************************
+
+C++ source code controlling the GUI and behavior of
+the LSL LiveAmp Connector. Declaration mainwindow class.
+
+Copyright (c) 2018 Brain Products
+
+Released under the MIT license (see LICENSE.txt)
+
+**********************************************************/
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -63,8 +74,8 @@ private slots:
 	void update_channel_labels_with_eeg(int);
 	void update_channel_labels_with_bipolar(int);
 	void update_channel_labels_aux(int);
-	void update_channel_labels_acc(bool);
-	
+	void update_channel_labels_bools(bool);
+
 	// if the device combo box item changes
 	void choose_device(int which);
 
@@ -76,6 +87,7 @@ private:
 
 	int eegChannelCount;
 	std::vector<int> usableChannelsByDevice;
+	std::vector<bool> is64ByDevice;
 	int bipolarChannelCount;
 	bool overwrite;
 	bool overrideAutoUpdate;
@@ -108,8 +120,10 @@ private:
 	bool sampledMarkers;   
 	bool sampledMarkersEEG; 
 	bool useSim;
+	bool is64;
 
 	LiveAmp *liveAmp;
+	
 	std::vector<std::string> live_amp_sns;				// live amp serial number container
 
 	boost::shared_ptr<boost::thread> reader_thread_;	// our reader thread

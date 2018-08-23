@@ -26,8 +26,8 @@
 //								  ampGetPropertyRange may also return a mask (RT_BITMASK) for the available bits.
 //								- Flash formatting device property  
 //	24.11.2017  Version 3.1		- New device error DEVICE_ERR_SYNC
+//	26.06.2018  Version 3.2		- New ChannelType CT_TIM for timestamps
 //								 
-//	
 /*------------------------------------------------------------------------------------------------*/
 
 
@@ -50,7 +50,7 @@
 /*------------------------------------------------------------------------------------------------*/
 
 #define API_MAJOR				(3)			// Application interface major version
-#define API_MINOR				(1)			// Application interface minor version
+#define API_MINOR				(2)			// Application interface minor version
 
 /*------------------------------------------------------------------------------------------------*/
 // Error codes
@@ -146,7 +146,8 @@ typedef enum ChannelType
 	CT_BIP = 1,					// Bipolar channel
 	CT_AUX = 2,					// Auxiliary channel
 	CT_TRG = 3,					// Trigger channel
-	CT_DIG = 4					// Digital channel
+	CT_DIG = 4,					// Digital channel
+	CT_TIM = 5					// Timestamp channel
 } t_ChannelType;
 
 // Channel data types
