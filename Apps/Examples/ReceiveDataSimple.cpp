@@ -1,4 +1,5 @@
 #include <lsl_cpp.h>
+#include <vector>
 
 /**
  * This is a minimal example that demonstrates how a multi-channel stream (here 128ch) of a particular name (here: SimpleStream) can be 
@@ -13,8 +14,8 @@ int main(int, char* []) {
 	stream_inlet inlet(results[0]);
 
 	// receive data & time stamps forever (not displaying them here)
-	float sample[128];
-	while (true) inlet.pull_sample(&sample[0], 128);
+	std::vector<float> sample;
+	while (true) inlet.pull_sample(sample);
 
 	return 0;
 }
