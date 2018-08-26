@@ -40,11 +40,11 @@ LIBLSL_C_API void lsl_destroy_streaminfo(lsl_streaminfo info) {
 
 LIBLSL_C_API const char *lsl_get_type(lsl_streaminfo info) { return ((stream_info_impl*)info)->type().c_str(); }
 LIBLSL_C_API const char *lsl_get_name(lsl_streaminfo info) { return ((stream_info_impl*)info)->name().c_str(); }
-LIBLSL_C_API int lsl_get_channel_count(lsl_streaminfo info) { return ((stream_info_impl*)info)->channel_count(); }
+LIBLSL_C_API int32_t lsl_get_channel_count(lsl_streaminfo info) { return ((stream_info_impl*)info)->channel_count(); }
 LIBLSL_C_API double lsl_get_nominal_srate(lsl_streaminfo info) { return ((stream_info_impl*)info)->nominal_srate(); }
 LIBLSL_C_API lsl_channel_format_t lsl_get_channel_format(lsl_streaminfo info) { return (lsl_channel_format_t)((stream_info_impl*)info)->channel_format(); }
 LIBLSL_C_API const char *lsl_get_source_id(lsl_streaminfo info) { return ((stream_info_impl*)info)->source_id().c_str(); }
-LIBLSL_C_API int lsl_get_version(lsl_streaminfo info) { return ((stream_info_impl*)info)->version(); }
+LIBLSL_C_API int32_t lsl_get_version(lsl_streaminfo info) { return ((stream_info_impl*)info)->version(); }
 LIBLSL_C_API double lsl_get_created_at(lsl_streaminfo info) { return ((stream_info_impl*)info)->created_at(); }
 LIBLSL_C_API const char *lsl_get_uid(lsl_streaminfo info) { return ((stream_info_impl*)info)->uid().c_str(); }
 LIBLSL_C_API const char *lsl_get_session_id(lsl_streaminfo info) { return ((stream_info_impl*)info)->session_id().c_str(); }

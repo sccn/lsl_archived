@@ -311,7 +311,8 @@ LIBLSL_C_API double lsl_pull_sample_buf(lsl_inlet in, char **buffer, uint32_t *b
 		if (ec)
 			*ec = lsl_argument_error; 
 	}
-	catch(std::exception &) { 
+	catch(std::exception &e) {
+		std::cerr << "Unexpected error in " << __func__ << ": " << e.what() << std::endl;
 		if (ec)
 			*ec = lsl_internal_error; 
 	}

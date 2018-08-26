@@ -51,15 +51,15 @@ LIBLSL_C_API int32_t lsl_push_sample_dtp(lsl_outlet out, const double *data, dou
 	return ((stream_outlet_impl*)out)->push_sample_noexcept(data, timestamp, pushthrough);
 }
 
-LIBLSL_C_API int lsl_push_sample_l(lsl_outlet out, const long *data) { 
+LIBLSL_C_API int32_t lsl_push_sample_l(lsl_outlet out, const long *data) {
 	return ((stream_outlet_impl*)out)->push_sample_noexcept(data);
 }
 
-LIBLSL_C_API int lsl_push_sample_lt(lsl_outlet out, const long *data, double timestamp) { 
+LIBLSL_C_API int32_t lsl_push_sample_lt(lsl_outlet out, const long *data, double timestamp) {
 	return ((stream_outlet_impl*)out)->push_sample_noexcept(data, timestamp);
 }
 
-LIBLSL_C_API int lsl_push_sample_ltp(lsl_outlet out, const long *data, double timestamp, int pushthrough) { 
+LIBLSL_C_API int32_t lsl_push_sample_ltp(lsl_outlet out, const long *data, double timestamp, int32_t pushthrough) {
 	return ((stream_outlet_impl*)out)->push_sample_noexcept(data, timestamp, pushthrough);
 }
 
@@ -157,49 +157,11 @@ LIBLSL_C_API int32_t lsl_push_sample_vtp(lsl_outlet out, const void *data, doubl
 }
 
 LIBLSL_C_API int32_t lsl_push_sample_str(lsl_outlet out, const char **data) {
-	try {
-		stream_outlet_impl* outimpl = (stream_outlet_impl*)out;
-		std::vector<std::string> tmp;
-		for (uint32_t k=0;k<(uint32_t)outimpl->info().channel_count();k++)
-			tmp.push_back(std::string(data[k]));
-		outimpl->push_sample(&tmp[0]);
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return lsl_push_sample_strtp(out, data, 0.0, true);
 }
 
 LIBLSL_C_API int32_t lsl_push_sample_strt(lsl_outlet out, const char **data, double timestamp) {
-	try {
-		stream_outlet_impl* outimpl = (stream_outlet_impl*)out;
-		std::vector<std::string> tmp;
-		for (uint32_t k=0;k<(uint32_t)outimpl->info().channel_count();k++)
-			tmp.push_back(std::string(data[k]));
-		outimpl->push_sample(&tmp[0],timestamp);
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return lsl_push_sample_strtp(out, data, timestamp, true);
 }
 
 LIBLSL_C_API int32_t lsl_push_sample_strtp(lsl_outlet out, const char **data, double timestamp, int32_t pushthrough) {
@@ -208,16 +170,7 @@ LIBLSL_C_API int32_t lsl_push_sample_strtp(lsl_outlet out, const char **data, do
 		std::vector<std::string> tmp;
 		for (uint32_t k=0;k<(uint32_t)outimpl->info().channel_count();k++)
 			tmp.push_back(std::string(data[k]));
-		outimpl->push_sample(&tmp[0],timestamp,pushthrough!=0);
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
+		return outimpl->push_sample_noexcept(&tmp[0],timestamp,pushthrough!=0);
 	}
 	catch(std::exception &e) {
 		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
@@ -226,49 +179,11 @@ LIBLSL_C_API int32_t lsl_push_sample_strtp(lsl_outlet out, const char **data, do
 }
 
 LIBLSL_C_API int32_t lsl_push_sample_buf(lsl_outlet out, const char **data, const uint32_t *lengths) {
-	try {
-		stream_outlet_impl* outimpl = (stream_outlet_impl*)out;
-		std::vector<std::string> tmp;
-		for (uint32_t k=0;k<(uint32_t)outimpl->info().channel_count();k++)
-			tmp.push_back(std::string(data[k],lengths[k]));
-		outimpl->push_sample(&tmp[0]);
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return lsl_push_sample_buftp(out, data, lengths, 0.0, true);
 }
 
 LIBLSL_C_API int32_t lsl_push_sample_buft(lsl_outlet out, const char **data, const uint32_t *lengths, double timestamp) {
-	try {
-		stream_outlet_impl* outimpl = (stream_outlet_impl*)out;
-		std::vector<std::string> tmp;
-		for (uint32_t k=0;k<(uint32_t)outimpl->info().channel_count();k++)
-			tmp.push_back(std::string(data[k],lengths[k]));
-		outimpl->push_sample(&tmp[0],timestamp);
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return lsl_push_sample_buftp(out, data, lengths, timestamp, true);
 }
 
 LIBLSL_C_API int32_t lsl_push_sample_buftp(lsl_outlet out, const char **data, const uint32_t *lengths, double timestamp, int32_t pushthrough) {
@@ -277,16 +192,7 @@ LIBLSL_C_API int32_t lsl_push_sample_buftp(lsl_outlet out, const char **data, co
 		std::vector<std::string> tmp;
 		for (uint32_t k=0;k<(uint32_t)outimpl->info().channel_count();k++)
 			tmp.push_back(std::string(data[k],lengths[k]));
-		outimpl->push_sample(&tmp[0],timestamp,pushthrough!=0);
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_sample: " << e.what() << std::endl;
-		return lsl_argument_error;
+		return outimpl->push_sample_noexcept(&tmp[0], timestamp, pushthrough);
 	}
 	catch(std::exception &e) {
 		std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
@@ -295,619 +201,131 @@ LIBLSL_C_API int32_t lsl_push_sample_buftp(lsl_outlet out, const char **data, co
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_f(lsl_outlet out, const float *data, unsigned long data_elements) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_d(lsl_outlet out, const double *data, unsigned long data_elements) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements);
 }
 
-LIBLSL_C_API int lsl_push_chunk_l(lsl_outlet out, const long *data, unsigned long data_elements) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+LIBLSL_C_API int32_t lsl_push_chunk_l(lsl_outlet out, const long *data, unsigned long data_elements) {
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_i(lsl_outlet out, const int32_t *data, unsigned long data_elements) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_s(lsl_outlet out, const int16_t *data, unsigned long data_elements) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_c(lsl_outlet out, const char *data, unsigned long data_elements) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_ft(lsl_outlet out, const float *data, unsigned long data_elements, double timestamp) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements,timestamp); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements, timestamp);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_dt(lsl_outlet out, const double *data, unsigned long data_elements, double timestamp) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements,timestamp); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements, timestamp);
 }
 
-LIBLSL_C_API int lsl_push_chunk_lt(lsl_outlet out, const long *data, unsigned long data_elements, double timestamp) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements,timestamp); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+LIBLSL_C_API int32_t lsl_push_chunk_lt(lsl_outlet out, const long *data, unsigned long data_elements, double timestamp) {
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements, timestamp);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_it(lsl_outlet out, const int32_t *data, unsigned long data_elements, double timestamp) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements,timestamp); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements, timestamp);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_st(lsl_outlet out, const int16_t *data, unsigned long data_elements, double timestamp) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements,timestamp); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements, timestamp);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_ct(lsl_outlet out, const char *data, unsigned long data_elements, double timestamp) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements,timestamp); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements, timestamp);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_ftp(lsl_outlet out, const float *data, unsigned long data_elements, double timestamp, int32_t pushthrough) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements,timestamp,pushthrough); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements, timestamp, pushthrough);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_dtp(lsl_outlet out, const double *data, unsigned long data_elements, double timestamp, int32_t pushthrough) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements,timestamp,pushthrough); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements, timestamp, pushthrough);
 }
 
-LIBLSL_C_API int lsl_push_chunk_ltp(lsl_outlet out, const long *data, unsigned long data_elements, double timestamp, int pushthrough) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements,timestamp,pushthrough); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+LIBLSL_C_API int32_t lsl_push_chunk_ltp(lsl_outlet out, const long *data, unsigned long data_elements, double timestamp, int32_t pushthrough) {
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements, timestamp, pushthrough);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_itp(lsl_outlet out, const int32_t *data, unsigned long data_elements, double timestamp, int32_t pushthrough) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements,timestamp,pushthrough); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements, timestamp, pushthrough);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_stp(lsl_outlet out, const int16_t *data, unsigned long data_elements, double timestamp, int32_t pushthrough) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements,timestamp,pushthrough); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements, timestamp, pushthrough);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_ctp(lsl_outlet out, const char *data, unsigned long data_elements, double timestamp, int32_t pushthrough) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,data_elements,timestamp,pushthrough); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data,data_elements, timestamp, pushthrough);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_ftn(lsl_outlet out, const float *data, unsigned long data_elements, const double *timestamps) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,timestamps,data_elements); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data, timestamps, data_elements);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_dtn(lsl_outlet out, const double *data, unsigned long data_elements, const double *timestamps) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,timestamps,data_elements); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data, timestamps, data_elements);
 }
 
-LIBLSL_C_API int lsl_push_chunk_ltn(lsl_outlet out, const long *data, unsigned long data_elements, const double *timestamps) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,timestamps,data_elements); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+LIBLSL_C_API int32_t lsl_push_chunk_ltn(lsl_outlet out, const long *data, unsigned long data_elements, const double *timestamps) {
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data, timestamps, data_elements);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_itn(lsl_outlet out, const int32_t *data, unsigned long data_elements, const double *timestamps) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,timestamps,data_elements); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data, timestamps, data_elements);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_stn(lsl_outlet out, const int16_t *data, unsigned long data_elements, const double *timestamps) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,timestamps,data_elements); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data, timestamps, data_elements);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_ctn(lsl_outlet out, const char *data, unsigned long data_elements, const double *timestamps) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,timestamps,data_elements); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data, timestamps, data_elements);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_ftnp(lsl_outlet out, const float *data, unsigned long data_elements, const double *timestamps, int32_t pushthrough) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,timestamps,data_elements,pushthrough); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data, timestamps, data_elements, pushthrough);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_dtnp(lsl_outlet out, const double *data, unsigned long data_elements, const double *timestamps, int32_t pushthrough) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,timestamps,data_elements,pushthrough); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data, timestamps, data_elements, pushthrough);
 }
 
-LIBLSL_C_API int lsl_push_chunk_ltnp(lsl_outlet out, const long *data, unsigned long data_elements, const double *timestamps, int pushthrough) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,timestamps,data_elements,pushthrough); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+LIBLSL_C_API int32_t lsl_push_chunk_ltnp(lsl_outlet out, const long *data, unsigned long data_elements, const double *timestamps, int32_t pushthrough) {
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data, timestamps, data_elements, pushthrough);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_itnp(lsl_outlet out, const int32_t *data, unsigned long data_elements, const double *timestamps, int32_t pushthrough) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,timestamps,data_elements,pushthrough); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data, timestamps, data_elements, pushthrough);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_stnp(lsl_outlet out, const int16_t *data, unsigned long data_elements, const double *timestamps, int32_t pushthrough) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,timestamps,data_elements,pushthrough); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data, timestamps, data_elements, pushthrough);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_ctnp(lsl_outlet out, const char *data, unsigned long data_elements, const double *timestamps, int32_t pushthrough) {
-	try {
-		((stream_outlet_impl*)out)->push_chunk_multiplexed(data,timestamps,data_elements,pushthrough); 
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return ((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(data, timestamps, data_elements, pushthrough);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_str(lsl_outlet out, const char **data, unsigned long data_elements) {
-	try {
-		std::vector<std::string> tmp;
-		for (unsigned long k=0;k<data_elements;k++)
-			tmp.push_back(std::string(data[k]));
-		if (data_elements)
-			((stream_outlet_impl*)out)->push_chunk_multiplexed(&tmp[0],tmp.size());
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return lsl_push_chunk_strtp(out, data, data_elements, 0.0, true);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_strt(lsl_outlet out, const char **data, unsigned long data_elements, double timestamp) {
-	try {
-		std::vector<std::string> tmp;
-		for (unsigned long k=0;k<data_elements;k++)
-			tmp.push_back(std::string(data[k]));
-		if (data_elements)
-			((stream_outlet_impl*)out)->push_chunk_multiplexed(&tmp[0],tmp.size(),timestamp);
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return lsl_push_chunk_strtp(out, data, data_elements, timestamp, true);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_strtp(lsl_outlet out, const char **data, unsigned long data_elements, double timestamp, int32_t pushthrough) {
@@ -916,7 +334,7 @@ LIBLSL_C_API int32_t lsl_push_chunk_strtp(lsl_outlet out, const char **data, uns
 		for (unsigned long k=0;k<data_elements;k++)
 			tmp.push_back(std::string(data[k]));
 		if (data_elements)
-			((stream_outlet_impl*)out)->push_chunk_multiplexed(&tmp[0],tmp.size(),timestamp,pushthrough);
+			((stream_outlet_impl*)out)->push_chunk_multiplexed(&tmp[0], tmp.size(), timestamp, pushthrough);
 		return lsl_no_error;
 	} 
 	catch(std::range_error &e) {
@@ -934,27 +352,7 @@ LIBLSL_C_API int32_t lsl_push_chunk_strtp(lsl_outlet out, const char **data, uns
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_strtn(lsl_outlet out, const char **data, unsigned long data_elements, const double *timestamps) {
-	try {
-		if (data_elements) {
-			std::vector<std::string> tmp;
-			for (unsigned long k=0;k<data_elements;k++)
-				tmp.push_back(std::string(data[k]));
-			((stream_outlet_impl*)out)->push_chunk_multiplexed(&tmp[0],timestamps,(std::size_t)data_elements);
-		}
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return lsl_push_chunk_strtnp(out, data, data_elements, timestamps, true);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_strtnp(lsl_outlet out, const char **data, unsigned long data_elements, const double *timestamps, int32_t pushthrough) {
@@ -963,7 +361,7 @@ LIBLSL_C_API int32_t lsl_push_chunk_strtnp(lsl_outlet out, const char **data, un
 			std::vector<std::string> tmp;
 			for (unsigned long k=0;k<data_elements;k++)
 				tmp.push_back(std::string(data[k]));
-			((stream_outlet_impl*)out)->push_chunk_multiplexed(&tmp[0],timestamps,(std::size_t)data_elements,pushthrough);
+			((stream_outlet_impl*)out)->push_chunk_multiplexed_noexcept(&tmp[0], timestamps, data_elements, pushthrough);
 		}
 		return lsl_no_error;
 	} 
@@ -982,49 +380,11 @@ LIBLSL_C_API int32_t lsl_push_chunk_strtnp(lsl_outlet out, const char **data, un
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_buf(lsl_outlet out, const char **data, const uint32_t *lengths, unsigned long data_elements) {
-	try {
-		std::vector<std::string> tmp;
-		for (unsigned long k=0;k<data_elements;k++)
-			tmp.push_back(std::string(data[k],lengths[k]));
-		if (data_elements)
-			((stream_outlet_impl*)out)->push_chunk_multiplexed(&tmp[0],tmp.size());
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return lsl_push_chunk_buftp(out, data, lengths, data_elements, 0.0, true);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_buft(lsl_outlet out, const char **data, const uint32_t *lengths, unsigned long data_elements, double timestamp) {
-	try {
-		std::vector<std::string> tmp;
-		for (unsigned long k=0;k<data_elements;k++)
-			tmp.push_back(std::string(data[k],lengths[k]));
-		if (data_elements)
-			((stream_outlet_impl*)out)->push_chunk_multiplexed(&tmp[0],tmp.size(),timestamp);
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return lsl_push_chunk_buftp(out, data, lengths, data_elements, timestamp, true);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_buftp(lsl_outlet out, const char **data, const uint32_t *lengths, unsigned long data_elements, double timestamp, int32_t pushthrough) {
@@ -1051,27 +411,7 @@ LIBLSL_C_API int32_t lsl_push_chunk_buftp(lsl_outlet out, const char **data, con
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_buftn(lsl_outlet out, const char **data, const uint32_t *lengths, unsigned long data_elements, const double *timestamps) {
-	try {
-		if (data_elements) {
-			std::vector<std::string> tmp;
-			for (unsigned long k=0;k<data_elements;k++)
-				tmp.push_back(std::string(data[k],lengths[k]));
-			((stream_outlet_impl*)out)->push_chunk_multiplexed(&tmp[0],timestamps,(std::size_t)data_elements);
-		}
-		return lsl_no_error;
-	} 
-	catch(std::range_error &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::invalid_argument &e) {
-		std::cerr << "Error during push_chunk: " << e.what() << std::endl;
-		return lsl_argument_error;
-	}
-	catch(std::exception &e) {
-		std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
-		return lsl_internal_error;
-	}
+	return lsl_push_chunk_buftnp(out, data, lengths, data_elements, timestamps, true);
 }
 
 LIBLSL_C_API int32_t lsl_push_chunk_buftnp(lsl_outlet out, const char **data, const uint32_t *lengths, unsigned long data_elements, const double *timestamps, int32_t pushthrough) {

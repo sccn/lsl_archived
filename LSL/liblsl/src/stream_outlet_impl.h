@@ -135,6 +135,25 @@ namespace lsl {
 				enqueue(&data_buffer[k*num_chans],timestamp_buffer[k],pushthrough && k==num_samples-1);
 		}
 
+		template<class T> int32_t push_chunk_multiplexed_noexcept(const T *data_buffer, const double *timestamp_buffer, std::size_t data_buffer_elements, bool pushthrough=true) BOOST_NOEXCEPT {
+			try {
+				push_chunk_multiplexed(data_buffer, timestamp_buffer, data_buffer_elements, pushthrough);
+				return lsl_no_error;
+			}
+			catch(std::range_error &e) {
+				std::cerr << "Error during push_chunk: " << e.what() << std::endl;
+				return lsl_argument_error;
+			}
+			catch(std::invalid_argument &e) {
+				std::cerr << "Error during push_chunk: " << e.what() << std::endl;
+				return lsl_argument_error;
+			}
+			catch(std::exception &e) {
+				std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
+				return lsl_internal_error;
+			}
+		}
+
 		/**
 		* Push a chunk of multiplexed samples into the send buffer. Single timestamp provided.
 		* IMPORTANT: Note that the provided buffer size is measured in channel values (e.g., floats) rather than in samples.
@@ -161,6 +180,26 @@ namespace lsl {
 					push_sample(&buffer[k*num_chans],DEDUCED_TIMESTAMP,pushthrough && (k==num_samples-1));
 			}
 		}
+
+		template<class T> int32_t push_chunk_multiplexed_noexcept(const T *data, std::size_t data_elements, double timestamp=0.0, bool pushthrough=true) BOOST_NOEXCEPT {
+			try {
+				push_chunk_multiplexed(data, data_elements, timestamp, pushthrough);
+				return lsl_no_error;
+			}
+			catch(std::range_error &e) {
+				std::cerr << "Error during push_chunk: " << e.what() << std::endl;
+				return lsl_argument_error;
+			}
+			catch(std::invalid_argument &e) {
+				std::cerr << "Error during push_chunk: " << e.what() << std::endl;
+				return lsl_argument_error;
+			}
+			catch(std::exception &e) {
+				std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
+				return lsl_internal_error;
+			}
+		}
+
 
 		//
 		// === Misc Features ===
