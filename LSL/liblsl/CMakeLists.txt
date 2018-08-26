@@ -156,10 +156,6 @@ if (MINGW)
 	target_link_libraries (${target} PUBLIC ws2_32 wsock32 winmm)
 endif()
 
-if(LSL_UNITTESTS)
-	add_subdirectory(testing/UnitTests)
-endif()
-
 if(LSL_UNIXFOLDERS)
 	set(LSLPREFIX "")
 else()
@@ -192,4 +188,9 @@ install(FILES LSLCMake.cmake
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
 include(LSLCMake)
+
+if(LSL_UNITTESTS)
+	add_subdirectory(testing/UnitTests)
+endif()
+
 LSLGenerateCPackConfig()
