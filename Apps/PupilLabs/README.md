@@ -33,6 +33,7 @@ Primitive data streams consist of 5 channels (`lsl.cf_double64`):
     - `norm_pos.y`
 
 These fields reference the fields described in this data format section: [pupil_positionscsv](https://github.com/pupil-labs/pupil-docs/blob/master/user-docs/data-format.md#pupil_positionscsv)
+
 Where, for example, `diameter` refers to the diameter that is uncorrected for perspective. To find the diameter that is corrected for perspective, use the Python representation to get the field `diameter_3d` (and many other fields not available to the Primitive representation).
 
 Python Representation streams consist of 1 channel containing the
