@@ -52,7 +52,7 @@ else ()  # WIN32
 endif ()
 
 add_library (lslboost STATIC ${Boost_FILES})
-target_compile_definitions(lslboost PUBLIC BOOST_ALL_NO_LIB=1 BOOST_THREAD_BUILD_LIB=1)
+target_compile_definitions(lslboost PUBLIC BOOST_ALL_NO_LIB BOOST_THREAD_BUILD_LIB _WIN32_WINNT=${LSL_WINVER})
 target_include_directories(lslboost SYSTEM PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 target_link_libraries(lslboost PRIVATE ${Boost_LIBRARIES})

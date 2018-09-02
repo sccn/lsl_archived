@@ -37,6 +37,7 @@ target_compile_definitions(lslboost PUBLIC
 	BOOST_ALL_NO_LIB
 	BOOST_THREAD_BUILD_LIB
 	BOOST_ASIO_ENABLE_OLD_SERVICES
+	_WIN32_WINNT=${LSL_WINVER}
 )
 target_include_directories(lslboost SYSTEM PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
