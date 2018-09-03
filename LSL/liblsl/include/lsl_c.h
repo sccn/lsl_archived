@@ -449,6 +449,19 @@ extern LIBLSL_C_API int32_t lsl_get_channel_bytes(lsl_streaminfo info);
 /// Number of bytes occupied by a sample (0 for string-typed channels).
 extern LIBLSL_C_API int32_t lsl_get_sample_bytes(lsl_streaminfo info);
 
+/**
+ * Tries to match the stream info XML element @p info against an
+ * <a href="https://en.wikipedia.org/wiki/XPath#Syntax_and_semantics_(XPath_1.0)">XPath</a> query.
+ *
+ * Example query strings:
+ * @code
+ * channel_count>5 and type='EEG'
+ * type='TestStream' or contains(name,'Brain')
+ * name='ExampleStream'
+ * @endcode
+ */
+extern LIBLSL_C_API int lsl_stream_info_matches_query(lsl_streaminfo info, const char* query);
+
 /// Create a streaminfo object from an XML representation
 extern LIBLSL_C_API lsl_streaminfo lsl_streaminfo_from_xml(const char *xml);
 
