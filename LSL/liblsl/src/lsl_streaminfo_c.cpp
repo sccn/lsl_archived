@@ -65,6 +65,10 @@ LIBLSL_C_API char *lsl_get_xml(lsl_streaminfo info) {
 LIBLSL_C_API int lsl_get_channel_bytes(lsl_streaminfo info) { return ((stream_info_impl*)info)->channel_bytes(); }
 LIBLSL_C_API int lsl_get_sample_bytes(lsl_streaminfo info) { return ((stream_info_impl*)info)->sample_bytes(); }
 
+LIBLSL_C_API int lsl_stream_info_matches_query(lsl_streaminfo info, const char* query) {
+	return ((stream_info_impl*)info)->matches_query(query);
+}
+
 LIBLSL_C_API lsl_streaminfo lsl_streaminfo_from_xml(const char *xml) {
 	try {
 		stream_info_impl *impl = new stream_info_impl(); 

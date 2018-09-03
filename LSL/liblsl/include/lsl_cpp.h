@@ -265,6 +265,11 @@ namespace lsl {
         */
 		xml_element desc();
 
+		/** @copydoc lsl_stream_info_matches_query */
+		bool matches_query(const char* query) const {
+			return lsl_stream_info_matches_query(obj, query);
+		}
+
 
         // ===============================
         // === Miscellaneous Functions ===
