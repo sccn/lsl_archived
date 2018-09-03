@@ -1,8 +1,14 @@
 # Call this script from the path corresponding to the new submodule
-# Usage: backport_to_old_repo.sh [newrepopath] [commit id]
+
+set -e
+
+if [ "$#" -ne 2 ]; then
+	printf 'Usage:\n\tcd submodule/path\n\tbackport_to_old_repo.sh [newrepopath] [commit id]\n\n'
+	printf 'Example:\n\tcd old/LSL/liblsl\n\t../../backport_to_old_repo.sh ~/src/new abc123\n'
+	exit;
+fi
 
 set -x
-set -e
 
 LSLSUBDIR=$(git rev-parse --show-prefix)
 OLDREPOPATH=$(git rev-parse --show-toplevel)
