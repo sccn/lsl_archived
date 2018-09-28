@@ -20,7 +20,7 @@ const auto boundary_interval = std::chrono::seconds(10);
 const auto offset_interval = std::chrono::seconds(5);
 // approx. interval between resolves for outstanding streams on the watchlist, in seconds
 const double resolve_interval = 5;
-// approx. interval between resolves for outstanding streams on the watchlist
+// approx. interval between pulling chunks from outlets
 const  auto chunk_interval = std::chrono::milliseconds(500);
 // maximum waiting time for moving past the headers phase while recording
 const auto max_headers_wait = std::chrono::seconds(10);

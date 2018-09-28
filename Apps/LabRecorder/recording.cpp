@@ -281,7 +281,9 @@ void recording::record_offsets(streamid_t streamid, const inlet_p& in, std::atom
 				offset = in->time_correction(2);
 				now = lsl::local_clock();
 			}
-			catch (lsl::timeout_error &) { continue; }
+			catch (lsl::timeout_error &) {
+				std::cerr << "Timeout in time correction query for stream " << streamid << std::endl;
+			}
 			file_.write_stream_offset(streamid, now, offset);
 			// also append to the offset lists
 			std::lock_guard<std::mutex> lock(offset_mut_);
@@ -344,32 +346,36 @@ void recording::typed_transfer_loop(streamid_t streamid, double srate, const inl
 	                       ? new std::thread(&recording::record_offsets, this, streamid, in, std::ref(offset_shutdown))
 	                       : nullptr);
 	try {
-		first_timestamp = -1.0;
-		last_timestamp = 0.0;
 		double sample_interval = srate ? 1.0 / srate : 0;
 
 		// temporary data
-		std::vector<std::vector<T>> chunk;
+		std::vector<T> chunk;
 		std::vector<double> timestamps;
+
+		//Pull the first sample
+		first_timestamp = last_timestamp = in->pull_sample(chunk);
+		timestamps.push_back(first_timestamp);
+		file_.write_data_chunk(streamid, timestamps, chunk, in->get_channel_count());
+
+		auto next_pull = Clock::now();
 		while (!shutdown_) {
 			// get a chunk from the stream
-			if (in->pull_chunk(chunk, timestamps)) {
-				if (first_timestamp == -1.0) first_timestamp = timestamps[0];
-				// for each sample...
-				for (std::size_t s = 0; s < chunk.size(); s++) {
-					// if the time stamp can be deduced from the previous one...
-					if (last_timestamp + sample_interval == timestamps[s]) {
-						last_timestamp = timestamps[s] + sample_interval;
-						timestamps[s] = 0;
-					}
-					else
-						last_timestamp = timestamps[s];
-				}
-				// write the actual chunk
-				file_.write_data_chunk_nested(streamid, timestamps, chunk);
-				sample_count += timestamps.size();
-			} else
-				std::this_thread::sleep_for(chunk_interval);
+			in->pull_chunk_multiplexed(chunk, &timestamps);
+			// for each sample...
+			for (double& ts : timestamps) {
+				// if the time stamp can be deduced from the previous one...
+				if (last_timestamp + sample_interval == ts) {
+					last_timestamp = ts + sample_interval;
+					ts = 0;
+				} else
+					last_timestamp = ts;
+			}
+			// write the actual chunk
+			file_.write_data_chunk(streamid, timestamps, chunk, in->get_channel_count());
+			sample_count += timestamps.size();
+
+			next_pull+=chunk_interval;
+			std::this_thread::sleep_until(next_pull);
 		}
 	} catch (std::exception& e) {
 		std::cerr << "Error in transfer thread: " << e.what() << std::endl;
