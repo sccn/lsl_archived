@@ -25,7 +25,6 @@ if(LSLAPPS_Benchmarks)
 	add_subdirectory(Benchmarks)
 endif()
 
-# add all Apps the user wants to build
 if(LSLAPPS_EGIAmpServer)
 	add_subdirectory(EGIAmpServer)
 endif()
