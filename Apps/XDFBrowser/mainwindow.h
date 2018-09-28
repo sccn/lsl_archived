@@ -30,7 +30,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit MainWindow(QWidget *parent = 0);
+	explicit MainWindow(QWidget *parent = nullptr, const char* filename = nullptr);
     ~MainWindow();
 
 
@@ -47,7 +47,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
     std::shared_ptr<XDFfile> xdfFile;
-    std::shared_ptr<StringList> chunkNameList;
+	std::shared_ptr<StringList> chunkNameList;
+	void loadfile(QString xdfFileName);
 };
 
   class OpenerThread : public QThread
@@ -77,7 +78,7 @@ private:
 				chunkNameList->append(xdfFile->getChunkName(i));
 			}
 
-		} catch (const IOException &ex) {
+		} catch (const std::exception &ex) {
 			emit errorMessageSignal(ex.what());
 		}
 
@@ -102,7 +103,7 @@ signals:
      void run() {
 		 try {
 			xdfFile->saveAs(xdfFileName, progressBar);
-		 } catch (const IOException &ex) {
+		 } catch (const std::exception &ex) {
 			emit errorMessageSignal(ex.what());
 		 }
      }

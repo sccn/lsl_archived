@@ -10,12 +10,10 @@ Written by Matthew Grivich, SCCN/UCSD, May 2014.
 #include <QApplication>
 #include "mainwindow.h"
 
-MainWindow *theWindow = nullptr;
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
+	MainWindow w(nullptr, argc > 1 ? argv[1] : nullptr);
     w.show();
     
     return a.exec();
