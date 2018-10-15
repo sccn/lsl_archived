@@ -20,6 +20,8 @@ from pyglui import ui
 
 import pylsl as lsl
 
+from msgpack import pack
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
@@ -40,20 +42,20 @@ class Pupil_LSL_Relay(Plugin):
         - norm_pos.x
         - norm_pos.y
 
-    Python Representation streams consist of 1 channel containing the
-    Python repr() string of the datum.
+    MessagePack streams consist of 1 channel containing the
+    msgpack.pack() byte string of the datum.
 
     The plugin provides following outlets:
 
         if self.relay_pupil:
             - Pupil Primitive Data - Eye 0
             - Pupil Primitive Data - Eye 1
-            - Pupil Python Representation - Eye 0
-            - Pupil Python Representation - Eye 1
+            - Pupil MessagePack Data - Eye 0
+            - Pupil MessagePack Data - Eye 1
 
         if self.relay_gaze:
             - Gaze Primitive Data
-            - Gaze Python Representation
+            - Gaze MessagePack Data
 
         if self.relay_notifications:
             - Notifications
@@ -171,9 +173,9 @@ class Pupil_LSL_Relay(Plugin):
                         outlet = pupil_outlets[eyeid*2]
                         sample = self._generate_primitive_sample(payload)
                         outlet.push_sample(sample)
-                        # push python sample
+                        # push MessagePack sample
                         outlet = pupil_outlets[eyeid*2+1]
-                        outlet.push_sample((repr(payload),))
+                        outlet.push_sample((pack(payload),))
                         del outlet  # delete reference
 
                     elif (topic.startswith(GAZE_SUB_TOPIC)
@@ -182,14 +184,14 @@ class Pupil_LSL_Relay(Plugin):
                         outlet = gaze_outlets[0]
                         sample = self._generate_primitive_sample(payload)
                         outlet.push_sample(sample)
-                        # push python sample
+                        # push MessagePack sample
                         outlet = gaze_outlets[1]
-                        outlet.push_sample((repr(payload),))
+                        outlet.push_sample((pack(payload),))
                         del outlet  # delete reference
 
                     elif (topic.startswith(NOTIFY_SUB_TOPIC)
                           and notification_outlet):
-                        sample = (payload['subject'], repr(payload))
+                        sample = (payload['subject'], pack(payload))
                         notification_outlet.push_sample(sample)
 
                     else:
@@ -242,8 +244,8 @@ class Pupil_LSL_Relay(Plugin):
         for eye_id in range(2):
             lsl_outlets.append(self._create_primitive_lsl_outlet(
                 'Pupil Primitive Data - Eye %i' % eye_id))
-            lsl_outlets.append(self._create_python_repr_lsl_outlet(
-                'Pupil Python Representation - Eye %i' % eye_id))
+            lsl_outlets.append(self._create_messagepack_lsl_outlet(
+                'Pupil MessagePack Data - Eye %i' % eye_id))
         return lsl_outlets
 
     def _create_gaze_lsl_outlets(self):
@@ -253,8 +255,8 @@ class Pupil_LSL_Relay(Plugin):
             tuple: [gaze.primitive, gaze.python]
         """
         return (self._create_primitive_lsl_outlet('Gaze Primitive Data'),
-                self._create_python_repr_lsl_outlet(
-                    'Gaze Python Representation'))
+                self._create_messagepack_lsl_outlet(
+                    'Gaze MessagePack Data'))
 
     def _create_notify_lsl_outlet(self):
         """Creates notification outlet"""
@@ -265,7 +267,7 @@ class Pupil_LSL_Relay(Plugin):
             channel_format=lsl.cf_string,
             source_id='Notifications @ %s' % self.g_pool.ipc_sub_url)
         self._append_channel_info(notification_info, ("subject",
-                                                      "Python Representation"))
+                                                      "MessagePack"))
         self._append_acquisition_info(notification_info)
         return lsl.StreamOutlet(notification_info)
 
@@ -307,14 +309,14 @@ class Pupil_LSL_Relay(Plugin):
         self._append_acquisition_info(stream_info)
         return lsl.StreamOutlet(stream_info)
 
-    def _create_python_repr_lsl_outlet(self, name):
-        """Create 1 channel python representation outlet"""
+    def _create_messagepack_lsl_outlet(self, name):
+        """Create 1 channel MessagePack outlet"""
         stream_info = lsl.StreamInfo(
             name=name,
             type='Pupil Capture',
             channel_count=1,
             channel_format=lsl.cf_string,
             source_id='%s @ %s' % (name, self.g_pool.ipc_sub_url))
-        self._append_channel_info(stream_info, ("Python Representation",))
+        self._append_channel_info(stream_info, ("MessagePack",))
         self._append_acquisition_info(stream_info)
         return lsl.StreamOutlet(stream_info)
