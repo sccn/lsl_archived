@@ -1,0 +1,77 @@
+#N canvas 535 132 1142 801 10;
+#X declare -path C:/Users/David.Medine/Devel/PdLSL/lsl_inlet;
+#X obj 693 16 declare -path C:/Users/David.Medine/Devel/PdLSL/lsl_inlet
+;
+#X obj 411 310 lsl_inlet;
+#X msg 438 132 list_by_property -name MyMarkerStream;
+#X msg 475 233 resolve_by_property -name MyMarkerStream;
+#X msg 564 293 disconnect;
+#X obj 411 363 print;
+#X obj 411 501 lsl_inlet;
+#X obj 436 549 print;
+#X msg 433 454 disconnect;
+#X floatatom 462 527 10 0 0 0 - - -, f 10;
+#X floatatom 462 332 10 0 0 0 - - -, f 10;
+#X msg 411 405 resolve_by_property -name MyFloatStream;
+#X msg 411 75 list_all;
+#X msg 423 100 connect_by_idx 0;
+#X text 134 135 https://github.com/sccn/labstreaminglayer;
+#X text 499 14 change this to your own path->;
+#X text 536 99 <-connect to a prescribed item in that list;
+#X msg 459 164 list_by_property -type Markers;
+#X msg 460 198 list_by_property -source_id myuidw43536;
+#X text 731 230 <-calling resolve_by_property will automatically connect
+to the first outlet matching the prescribed outlet property and value
+, f 59;
+#X text 638 290 <-disconnect;
+#X text 539 330 <-timestamps come out of the third outlet;
+#X text 460 361 <-the first outlet is for string markers;
+#X text 484 549 <-the second is for floats;
+#X text 26 158 Only string and float formats are supported since these
+are the only LSL data types that exist in Pd. Only sampling rates of
+0 are supported since this is a non-realtime extern.;
+#X text 45 5 ------------------------Notes------------------------
+;
+#X text 20 222 This extern runs a continuous background thread. Its
+structure is pretty simple \, but it is conceivable that there are
+situations in which this thread can get left dangling and either leak
+memory or hang Pd. Please report any bugs to the issues page on github:
+;
+#X text 146 298 https://github.com/dmedine/PdLSL/issues;
+#X text 32 39 Pure Data wrapper for an LSL inlet that can connect to
+an active marker stream. Once connected \, [lsl_inlet] will continuosuly
+list for LSL markers and automatically output them. It just forwards
+the messages in Pd-ese.;
+#X text 32 100 Please see the documentation for the labstreaminglayer
+for more details about LSL:;
+#X text 20 349 There are python scripts that send random markers (one
+for strings and one for floats). In order for these to run \, your
+system will have to be correctly setup for python's LSL wrapper. I.e.
+you need Python2.7 installed and your PYTHONPATH environment variable
+will have to point to your copy of liblsl-Python. See LSL documentation
+for more information on this.;
+#X text 20 324 Shipping with the source are a few extra doo-dads.;
+#X text 20 448 For Windows \, pthreadVC2.dll is needed in order for
+this code to run. I include it with the source. I compiled this as
+a 32-bit binary in Windows \, so this is the 32-bit version of the
+dll. If you want to compile and link a 64-bit version:;
+#X text 128 513 https://www.sourceware.org/pthreads-win32/;
+#X text 21 540 Finally \, thanks to Christian Kothe for writing LSL
+and thanks to Miller Puckette for writing Pd!!!!;
+#X text 495 74 <-list all available lsl outlets (doesn't hang Pd);
+#X text 682 129 <-list only the outlets of interest (this will change
+the list and hence the meaning of the indices as well---also \, this
+method hangs Pd);
+#X connect 1 0 5 0;
+#X connect 1 2 10 0;
+#X connect 2 0 1 0;
+#X connect 3 0 1 0;
+#X connect 4 0 1 0;
+#X connect 6 1 7 0;
+#X connect 6 2 9 0;
+#X connect 8 0 6 0;
+#X connect 11 0 6 0;
+#X connect 12 0 1 0;
+#X connect 13 0 1 0;
+#X connect 17 0 1 0;
+#X connect 18 0 1 0;
