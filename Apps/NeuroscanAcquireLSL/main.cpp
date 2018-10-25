@@ -32,7 +32,7 @@ void getMsgHandler(QtMsgType type, const QMessageLogContext& context, const QStr
         str = QString::asprintf("Msg No%u: %s (%s:%u, %s)", type, localMsg.constData(),
                                 context.file, context.line, context.function);
     }
-    fprintf(stderr, str.toStdString().c_str());
+    fprintf(stderr, "%s", str.toStdString().c_str());
     msgHandlePointer->displayMsg(str);
 }
 int main(int argc, char* argv[]) {

@@ -59,7 +59,7 @@ void NsaTransporter::data_handler() {
                                      info.mSamplingRate, lsl::cf_int32, "Neuroscan_sdetsff");
                 lslinfo.desc()
                     .append_child("settings")
-                    .append_child_value("Resolusion", std::to_string(info.mResolution));
+                    .append_child_value("Resolution", std::to_string(info.mResolution));
                 lsloutlet = new lsl::stream_outlet(lslinfo);
                 timer->start();
                 qInfo() << "autoconfig:" << info.mEEGChannels << info.mEventChannels

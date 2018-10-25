@@ -4,14 +4,14 @@ cmake_minimum_required(VERSION 3.5)
 # target_compile_features()
 set(CMAKE_CXX_STANDARD 11)
 
-option(LSLAPPS_Benchmarks       "Build benchmark apps"              OFF)
-option(LSLAPPS_EGIAmpServer     "Build the EGI (Geodesic) app"      OFF)
-option(LSLAPPS_Examples         "Build example apps"                OFF)
-option(LSLAPPS_LabRecorder      "Build the recorder app"            OFF)
-option(LSLAPPS_XDFBrowser       "Build the XDFBrowser app"          OFF)
-option(LSLAPPS_Wiimote          "Build the Wiimote app"             OFF)
-option(LSLAPPS_OpenVR           "Build the OpenVR app"              OFF)
-
+option(LSLAPPS_Benchmarks           "Build benchmark apps"              OFF)
+option(LSLAPPS_EGIAmpServer         "Build the EGI (Geodesic) app"      OFF)
+option(LSLAPPS_Examples             "Build example apps"                OFF)
+option(LSLAPPS_LabRecorder          "Build the recorder app"            OFF)
+option(LSLAPPS_XDFBrowser           "Build the XDFBrowser app"          OFF)
+option(LSLAPPS_Wiimote              "Build the Wiimote app"             OFF)
+option(LSLAPPS_OpenVR               "Build the OpenVR app"              OFF)
+option(LSLAPPS_NeuroscanAcquireLSL  "Build the NeuroscanAcquireLSL app" OFF)
 # Windows-only apps
 if(WIN32)
     option(LSLAPPS_BrainAmp     "Build the BrainAmp app"            OFF)
@@ -47,6 +47,10 @@ endif()
 
 if(LSLAPPS_OpenVR)
     add_subdirectory(OpenVR)
+endif()
+
+if(LSLAPPS_NeuroscanAcquireLSL)
+    add_subdirectory(NeuroscanAcquireLSL)
 endif()
 
 if(LSLAPPS_BrainAmp)

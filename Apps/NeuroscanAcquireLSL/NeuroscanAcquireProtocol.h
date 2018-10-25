@@ -60,7 +60,7 @@ public:
     }
 
 public:
-    int headerSize() { return 12; }
+    int headerSize() const { return 12; }
     int dataSize() { return mDataSize; }
     QByteArray& serialize() {
         buffer.clear();
