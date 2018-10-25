@@ -19,7 +19,10 @@ using namespace lslboost::asio;
 * @param recover Try to silently recover lost streams that are recoverable (=those that that have a source_id set).
 *				 In all other cases (recover is false or the stream is not recoverable) a lost_error is thrown where indicated if the stream's source is lost (e.g., due to an app or computer crash).
 */
-inlet_connection::inlet_connection(const stream_info_impl &info, bool recover): type_info_(info), host_info_(info), recovery_enabled_(recover), tcp_protocol_(tcp::v4()), udp_protocol_(udp::v4()), lost_(false), shutdown_(false), last_receive_time_(lsl_clock()), active_transmissions_(0) {
+inlet_connection::inlet_connection(const stream_info_impl &info, bool recover):
+    type_info_(info), host_info_(info), tcp_protocol_(tcp::v4()), udp_protocol_(udp::v4()),
+    recovery_enabled_(recover), lost_(false), shutdown_(false),
+    last_receive_time_(lsl_clock()), active_transmissions_(0) {
 	// if the given stream_info is already fully resolved...
 	if (!host_info_.v4address().empty() || !host_info_.v6address().empty()) {
 
@@ -109,7 +112,7 @@ tcp::endpoint inlet_connection::get_tcp_endpoint() {
 	
 	if(tcp_protocol_ == tcp::v4()) {
         std::string address = host_info_.v4address();
-        unsigned short port = host_info_.v4data_port();
+        uint16_t port = host_info_.v4data_port();
         return tcp::endpoint(ip::address::from_string(address), port);
         
     //This more complicated procedure is required when the address is an ipv6 link-local address.
@@ -139,7 +142,7 @@ udp::endpoint inlet_connection::get_udp_endpoint() {
 	
 	if(udp_protocol_ == udp::v4()) {
         std::string address = host_info_.v4address();
-        unsigned short port = host_info_.v4data_port();
+        uint16_t port = host_info_.v4data_port();
         return udp::endpoint(ip::address::from_string(address), port);
         
     //This more complicated procedure is required when the address is an ipv6 link-local address.
@@ -214,7 +217,7 @@ void inlet_connection::try_recover() {
 					// got a result
 					lslboost::unique_lock<lslboost::shared_mutex> lock(host_info_mut_);
 					// check if any of the returned streams is the one that we're currently connected to
-					for (unsigned k=0;k<infos.size();k++)
+					for (std::size_t k=0;k<infos.size();k++)
 						if (infos[k].uid() == host_info_.uid())
 							return; // in this case there is no need to recover (we're still fine)
 					// otherwise our stream is gone and we indeed need to recover:

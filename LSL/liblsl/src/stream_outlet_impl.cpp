@@ -1,7 +1,5 @@
-#define NO_EXPLICIT_TEMPLATE_INSTANTIATION // a convention that applies when including portable_oarchive.h in multiple .cpp files.
 #include "stream_outlet_impl.h"
 #include <boost/bind.hpp>
-
 
 // === implementation of the stream_outlet_impl class ===
 
@@ -44,15 +42,15 @@ stream_outlet_impl::stream_outlet_impl(const stream_info_impl &info, int chunk_s
 		throw std::runtime_error("Neither the IPv4 nor the IPv6 stack could be instantiated.");
 
 	// get the async request chains set up
-	for (unsigned k=0;k<tcp_servers_.size();k++)
+	for (std::size_t k=0;k<tcp_servers_.size();k++)
 		tcp_servers_[k]->begin_serving();
-	for (unsigned k=0;k<udp_servers_.size();k++)
+	for (std::size_t k = 0; k < udp_servers_.size(); k++)
 		udp_servers_[k]->begin_serving();
-	for (unsigned k=0;k<responders_.size();k++)
+	for (std::size_t k = 0; k < responders_.size(); k++)
 		responders_[k]->begin_serving();
 
 	// and start the IO threads to handle them
-	for (unsigned k=0;k<ios_.size();k++)
+	for (std::size_t k = 0; k < ios_.size(); k++)
 		io_threads_.push_back(thread_p(new lslboost::thread(lslboost::bind(&stream_outlet_impl::run_io,this,ios_[k]))));
 }
 
@@ -92,14 +90,14 @@ void stream_outlet_impl::instantiate_stack(tcp tcp_protocol, udp udp_protocol) {
 stream_outlet_impl::~stream_outlet_impl() {
 	try {
 		// cancel all request chains
-		for (unsigned k=0;k<tcp_servers_.size();k++)
+		for (std::size_t k=0;k<tcp_servers_.size();k++)
 			tcp_servers_[k]->end_serving();
-		for (unsigned k=0;k<udp_servers_.size();k++)
+		for (std::size_t k=0;k<udp_servers_.size();k++)
 			udp_servers_[k]->end_serving();
-		for (unsigned k=0;k<responders_.size();k++)
+		for (std::size_t k=0;k<responders_.size();k++)
 			responders_[k]->end_serving();
 		// join the IO threads
-		for (unsigned k=0;k<io_threads_.size();k++)
+		for (std::size_t k=0;k<io_threads_.size();k++)
 			if (!io_threads_[k]->try_join_for(lslboost::chrono::milliseconds(1000))) {
  				// .. using force, if necessary (should only ever happen if the CPU is maxed out)
 				std::cerr << "Tearing down stream_outlet of thread " << io_threads_[k]->get_id() << " (in id: " << lslboost::this_thread::get_id() << "): " << std::endl;

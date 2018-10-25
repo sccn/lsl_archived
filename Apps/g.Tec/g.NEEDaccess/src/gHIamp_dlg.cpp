@@ -377,8 +377,7 @@ void GHIampDlg::on_notch_pushButton_clicked()
 
 void GHIampDlg::apply_value_to_enabled_chans(int value, int widget_ix)
 {
-	GDS_GHIAMP_CONFIGURATION* dev_cfg = (GDS_GHIAMP_CONFIGURATION*)m_config.Configuration;
-for (int chan_ix = 0; chan_ix < GDS_GHIAMP_CHANNELS_MAX; chan_ix++)
+	for (int chan_ix = 0; chan_ix < GDS_GHIAMP_CHANNELS_MAX; chan_ix++)
 	{
 		QCheckBox *chan_acquire = (QCheckBox*)ui->channels_tableWidget->cellWidget(chan_ix, 1);
 		if (chan_acquire->isChecked())

@@ -1,11 +1,15 @@
 #include <iostream>
 #include <boost/serialization/string.hpp>
-#include <boost/serialization/split_member.hpp>
 #include <boost/bind.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/algorithm/string.hpp>
 #include "data_receiver.h"
 #include "socket_utils.h"
+
+// a convention that applies when including portable_oarchive.h in multiple .cpp files.
+// otherwise, the templates are instantiated in this file and sample.cpp which leads
+// to errors like "multiple definition of `typeinfo name"
+#define NO_EXPLICIT_TEMPLATE_INSTANTIATION
 #include "portable_archive/portable_iarchive.hpp"
 
 
@@ -239,8 +243,16 @@ void data_receiver::data_thread() {
 					// receive and parse two subsequent test-pattern samples and check if they are formatted as expected
 					lslboost::scoped_ptr<sample> temp[4]; 
 					for (int k=0; k<4; temp[k++].reset(sample::factory::new_sample_unmanaged(conn_.type_info().channel_format(),conn_.type_info().channel_count(),0.0,false)));
-					temp[0]->assign_test_pattern(4); if (data_protocol_version >= 110) temp[1]->load_streambuf(buffer,data_protocol_version,use_byte_order,suppress_subnormals); else *inarch >> *temp[1];
-					temp[2]->assign_test_pattern(2); if (data_protocol_version >= 110) temp[3]->load_streambuf(buffer,data_protocol_version,use_byte_order,suppress_subnormals); else *inarch >> *temp[3];
+					temp[0]->assign_test_pattern(4);
+					if (data_protocol_version >= 110)
+						temp[1]->load_streambuf(buffer, data_protocol_version, use_byte_order, suppress_subnormals);
+					else
+						*inarch >> *temp[1];
+					temp[2]->assign_test_pattern(2);
+					if (data_protocol_version >= 110)
+						temp[3]->load_streambuf(buffer, data_protocol_version, use_byte_order, suppress_subnormals);
+					else
+						*inarch >> *temp[3];
 					if (!(*temp[0].get() == *temp[1].get()) || !(*temp[2].get() == *temp[3].get()))
 						throw std::runtime_error("The received test-pattern samples do not match the specification. The protocol formats are likely incompatible.");
 				}

@@ -3,19 +3,19 @@
 #include <boost/asio.hpp>
 #include <iostream>
 #include <boost/bind.hpp>
+#include "socket_utils.h"
 
 
 // === implementation of the time_receiver class ===
 
 using namespace lsl;
 using namespace lslboost::asio;
-using lslboost::posix_time::millisec;
 
 /**
 * Construct a new time provider from an inlet connection
 */
-time_receiver::time_receiver(inlet_connection &conn): conn_(conn), timeoffset_(std::numeric_limits<double>::max()),
-       remote_time_(std::numeric_limits<double>::max()), uncertainty_(std::numeric_limits<double>::max()), was_reset_(false),
+time_receiver::time_receiver(inlet_connection &conn): conn_(conn), was_reset_(false), timeoffset_(std::numeric_limits<double>::max()),
+       remote_time_(std::numeric_limits<double>::max()), uncertainty_(std::numeric_limits<double>::max()),
 	   cfg_(api_config::get_instance()), time_sock_(time_io_), next_estimate_(time_io_), aggregate_results_(time_io_), next_packet_(time_io_) {
 	conn_.register_onlost(this,&timeoffset_upd_);
 	conn_.register_onrecover(this,lslboost::bind(&time_receiver::reset_timeoffset_on_recovery,this));
@@ -122,10 +122,10 @@ void time_receiver::start_time_estimation() {
 	send_next_packet(1);
 	receive_next_packet();
 	// schedule the aggregation of results (by the time when all replies should have been received)
-	aggregate_results_.expires_from_now(millisec(1000*(cfg_->time_probe_max_rtt() + cfg_->time_probe_interval()*cfg_->time_probe_count())));
+	aggregate_results_.expires_from_now(timeout_sec(cfg_->time_probe_max_rtt() + cfg_->time_probe_interval()*cfg_->time_probe_count()));
 	aggregate_results_.async_wait(lslboost::bind(&time_receiver::result_aggregation_scheduled,this,placeholders::error));
 	// schedule the next estimation step
-	next_estimate_.expires_from_now(millisec(1000*cfg_->time_update_interval()));
+	next_estimate_.expires_from_now(timeout_sec(cfg_->time_update_interval()));
 	next_estimate_.async_wait(lslboost::bind(&time_receiver::next_estimate_scheduled,this,placeholders::error));
 }
 
@@ -148,7 +148,7 @@ void time_receiver::send_next_packet(int packet_num) {
 	}
 	// schedule next packet
 	if (packet_num < cfg_->time_probe_count()) {
-		next_packet_.expires_from_now(millisec(1000.0*cfg_->time_probe_interval()));
+		next_packet_.expires_from_now(timeout_sec(cfg_->time_probe_interval()));
 		next_packet_.async_wait(lslboost::bind(&time_receiver::next_packet_scheduled,this,++packet_num,placeholders::error));
 	}
 }
@@ -200,7 +200,7 @@ void time_receiver::result_aggregation_scheduled(error_code err) {
 			// take the estimate with the lowest error bound (=rtt), as in NTP
 			double best_offset=0, best_rtt=FOREVER;
 			double best_remote_time=0;
-			for (unsigned k=0;k<estimates_.size();k++) {
+			for (std::size_t k = 0; k < estimates_.size(); k++) {
 				if (estimates_[k].first < best_rtt) {
 					best_rtt = estimates_[k].first;
 					best_offset = estimates_[k].second;

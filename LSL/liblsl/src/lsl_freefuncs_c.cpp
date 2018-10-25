@@ -10,7 +10,7 @@ using namespace lsl;
 using std::string;
 using std::vector;
 
-
+extern "C" {
 /**
 * Get the protocol version.
 */
@@ -20,6 +20,15 @@ LIBLSL_C_API int lsl_protocol_version() { return api_config::get_instance()->use
 * Get the library version.
 */
 LIBLSL_C_API int lsl_library_version() { return LSL_LIBRARY_VERSION; }
+
+/** Get a string containing library information */
+LIBLSL_C_API const char* lsl_library_info() {
+#ifdef LSL_LIBRARY_INFO_STR
+	return LSL_LIBRARY_INFO_STR;
+#else
+	return "Unknown (not set by build system)";
+#endif
+}
 
 /**
 * Obtain a local system time stamp in seconds. The resolution is better than a millisecond.
@@ -50,7 +59,7 @@ LIBLSL_C_API double lsl_local_clock() {
 * @return The number of results written into the buffer (never more than the provided # of slots) or a negative number if an
 *		  error has occurred (values corresponding to lsl_error_code_t).
 */
-LIBLSL_C_API int lsl_resolve_all(lsl_streaminfo *buffer, unsigned buffer_elements, double wait_time) {
+LIBLSL_C_API int lsl_resolve_all(lsl_streaminfo *buffer, uint32_t buffer_elements, double wait_time) {
 	try {
 		// create a new resolver
 		resolver_impl resolver;
@@ -58,8 +67,8 @@ LIBLSL_C_API int lsl_resolve_all(lsl_streaminfo *buffer, unsigned buffer_element
 		string sess_id = api_config::get_instance()->session_id();
 		std::vector<stream_info_impl> tmp = resolver.resolve_oneshot((string("session_id='") += sess_id) += "'",0,wait_time);
 		// allocate new stream_info_impl's and assign to the buffer
-		unsigned result = buffer_elements<tmp.size() ? buffer_elements : (unsigned)tmp.size();
-		for (unsigned k=0;k<result;k++)
+		uint32_t result = buffer_elements<tmp.size() ? buffer_elements : (uint32_t)tmp.size();
+		for (uint32_t k=0;k<result;k++)
 			buffer[k] = (lsl_streaminfo)new stream_info_impl(tmp[k]);
 		return result;
 	} catch(std::exception &e) {
@@ -83,7 +92,7 @@ LIBLSL_C_API int lsl_resolve_all(lsl_streaminfo *buffer, unsigned buffer_element
 * @return The number of results written into the buffer (never more than the provided # of slots) or a negative number if an
 *		  error has occurred (values corresponding to lsl_error_code_t).
 */
-LIBLSL_C_API int lsl_resolve_byprop(lsl_streaminfo *buffer, unsigned buffer_elements, char *prop, char *value, int minimum, double timeout) {
+LIBLSL_C_API int lsl_resolve_byprop(lsl_streaminfo *buffer, uint32_t buffer_elements, const char *prop, const char *value, int minimum, double timeout) {
 	try {
 		// create a new resolver
 		resolver_impl resolver;
@@ -92,8 +101,8 @@ LIBLSL_C_API int lsl_resolve_byprop(lsl_streaminfo *buffer, unsigned buffer_elem
 		// invoke it
 		std::vector<stream_info_impl> tmp = resolver.resolve_oneshot(os.str(),minimum,timeout);
 		// allocate new stream_info_impl's and assign to the buffer
-		unsigned result = buffer_elements<tmp.size() ? buffer_elements : (unsigned)tmp.size();
-		for (unsigned k=0;k<result;k++)
+		uint32_t result = buffer_elements<tmp.size() ? buffer_elements : (uint32_t)tmp.size();
+		for (uint32_t k=0;k<result;k++)
 			buffer[k] = (lsl_streaminfo)new stream_info_impl(tmp[k]);
 		return result;
 	} catch(std::exception &e) {
@@ -117,7 +126,7 @@ LIBLSL_C_API int lsl_resolve_byprop(lsl_streaminfo *buffer, unsigned buffer_elem
 * @return The number of results written into the buffer (never more than the provided # of slots) or a negative number if an
 *		  error has occurred (values corresponding to lsl_error_code_t).
 */
-LIBLSL_C_API int lsl_resolve_bypred(lsl_streaminfo *buffer, unsigned buffer_elements, char *pred, int minimum, double timeout) {
+LIBLSL_C_API int lsl_resolve_bypred(lsl_streaminfo *buffer, uint32_t buffer_elements, const char *pred, int minimum, double timeout) {
 	try {
 		// create a new resolver
 		resolver_impl resolver;
@@ -126,8 +135,8 @@ LIBLSL_C_API int lsl_resolve_bypred(lsl_streaminfo *buffer, unsigned buffer_elem
 		// invoke it
 		std::vector<stream_info_impl> tmp = resolver.resolve_oneshot(os.str(),minimum,timeout);
 		// allocate new stream_info_impl's and assign to the buffer
-		unsigned result = buffer_elements<tmp.size() ? buffer_elements : (unsigned)tmp.size();
-		for (unsigned k=0;k<result;k++)
+		uint32_t result = buffer_elements<tmp.size() ? buffer_elements : (uint32_t)tmp.size();
+		for (uint32_t k=0;k<result;k++)
 			buffer[k] = (lsl_streaminfo)new stream_info_impl(tmp[k]);
 		return result;
 	} catch(std::exception &e) {
@@ -145,4 +154,5 @@ LIBLSL_C_API int lsl_resolve_bypred(lsl_streaminfo *buffer, unsigned buffer_elem
 LIBLSL_C_API void lsl_destroy_string(char *s) {
 	if (s)
 		free(s);
+}
 }

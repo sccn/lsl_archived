@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AndroidStudio.iml" filepath="$PROJECT_DIR$/AndroidStudio.iml" />
       <module fileurl="file://$PROJECT_DIR$/ReceiveStringMarkers/ReceiveStringMarkers.iml" filepath="$PROJECT_DIR$/ReceiveStringMarkers/ReceiveStringMarkers.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ReceiveStringMarkers/ReceiveStringMarkers.iml" filepath="$PROJECT_DIR$/ReceiveStringMarkers/ReceiveStringMarkers.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SendStringMarkers/SendStringMarkers.iml" filepath="$PROJECT_DIR$/SendStringMarkers/SendStringMarkers.iml" />
       <module fileurl="file://$PROJECT_DIR$/SendStringMarkers/SendStringMarkers.iml" filepath="$PROJECT_DIR$/SendStringMarkers/SendStringMarkers.iml" />
     </modules>
   </component>

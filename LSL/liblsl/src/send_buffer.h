@@ -7,9 +7,6 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/condition_variable.hpp>
 #include "consumer_queue.h"
-#include "sample.h"
-
-
 
 namespace lsl {
 

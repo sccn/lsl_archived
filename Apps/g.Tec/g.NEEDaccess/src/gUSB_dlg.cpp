@@ -16,10 +16,11 @@ GUSBDlg::GUSBDlg(QWidget *parent)
 }
 
 
-void GUSBDlg::set_configs(GDS_HANDLE* connection_handle, std::vector<GDS_CONFIGURATION_BASE> configs, std::vector<std::string>* chan_labels)
+void GUSBDlg::set_configs(GDS_HANDLE* connection_handle, std::vector<GDS_CONFIGURATION_BASE> configs, std::vector<std::string>* chan_labels, std::vector<double>* impedances)
 {
 	m_pHandle = connection_handle;
 	m_pChannel_labels = chan_labels;
+	m_pChannel_impedances = impedances;
 	m_configs.clear();
 	for (size_t cfg_ix = 0; cfg_ix < configs.size(); cfg_ix++)
 	{
@@ -72,19 +73,20 @@ void GUSBDlg::create_widgets()
 		}
 
 		// Channels
-		QTableWidget *chan_table = new QTableWidget(GDS_GUSBAMP_CHANNELS_MAX, 5);
+		QTableWidget *chan_table = new QTableWidget(GDS_GUSBAMP_CHANNELS_MAX, 6);
 		QStringList h_labels;
-		h_labels << "Channel" << "Acquire" << "Bipolar" << "Bandpass" << "Notch";
+		h_labels << "Channel" << "Acquire" << "Bipolar" << "Bandpass" << "Notch" << "Impedance";
 		chan_table->setHorizontalHeaderLabels(h_labels);
 		for (int chan_ix = 0; chan_ix < GDS_GUSBAMP_CHANNELS_MAX; chan_ix++)
 		{
-			if (m_pChannel_labels->size() > chan_ix)
+			int chan_label_ix = (GDS_GUSBAMP_CHANNELS_MAX*(int)cfg_ix) + chan_ix;
+			if (m_pChannel_labels->size() > chan_label_ix)
 			{
-				chan_table->setItem(chan_ix, 0, new QTableWidgetItem(QString::fromStdString(m_pChannel_labels->at(chan_ix))));
+				chan_table->setItem(chan_ix, 0, new QTableWidgetItem(QString::fromStdString(m_pChannel_labels->at(chan_label_ix))));
 			}
 			else
 			{
-				chan_table->setItem(chan_ix, 0, new QTableWidgetItem(tr("%1").arg(chan_ix + 1)));
+				chan_table->setItem(chan_ix, 0, new QTableWidgetItem(tr("%1").arg(chan_label_ix + 1)));
 			}
 			chan_table->setCellWidget(chan_ix, 1, new QCheckBox());
 			QSpinBox* bipolar_spinbox = new QSpinBox();
@@ -93,6 +95,7 @@ void GUSBDlg::create_widgets()
 			chan_table->setCellWidget(chan_ix, 3, bandpass_spinbox);
 			QSpinBox *notch_spinbox = new QSpinBox();
 			chan_table->setCellWidget(chan_ix, 4, notch_spinbox);
+			chan_table->setItem(chan_ix, 5, new QTableWidgetItem(tr("?")));
 		}
 		
 		// Put all the widgets together on a layout.
@@ -267,6 +270,7 @@ void GUSBDlg::update_ui()
 
 void GUSBDlg::accept()
 {
+	m_pChannel_labels->clear();
 	for (size_t cfg_ix = 0; cfg_ix < m_configs.size(); cfg_ix++)
 	{
 		GDS_GUSBAMP_CONFIGURATION* dev_cfg = (GDS_GUSBAMP_CONFIGURATION*)m_configs[cfg_ix].Configuration;
@@ -299,7 +303,6 @@ void GUSBDlg::accept()
 			dev_cfg->CommonReference[grp_ix] = ref_box->isChecked();
 		}
 
-		m_pChannel_labels->clear();
 		QTableWidget *chan_table = (QTableWidget*)dev_layout->itemAt(2)->widget();
 		for (int chan_ix = 0; chan_ix < GDS_GUSBAMP_CHANNELS_MAX; chan_ix++)
 		{
@@ -578,6 +581,53 @@ void GUSBDlg::on_notch_pushButton_clicked()
 	apply_filter_to_enabled_chans(4, ui->notch_comboBox->currentIndex());
 }
 
+void GUSBDlg::update_impedance_table() 
+{
+	for (size_t cfg_ix = 0; cfg_ix < m_configs.size(); cfg_ix++)
+	{
+		QVBoxLayout *dev_layout = (QVBoxLayout*)ui->devices_layout->itemAtPosition((int)cfg_ix, 0)->layout();
+		QTableWidget *chan_table = (QTableWidget*)dev_layout->itemAt(2)->widget();
+		for (int chan_ix = 0; chan_ix < GDS_GUSBAMP_CHANNELS_MAX; chan_ix++)
+		{
+			if (m_pChannel_impedances->size() > (cfg_ix*GDS_GUSBAMP_CHANNELS_MAX) + chan_ix)
+			{
+				chan_table->item(chan_ix, 5)->setText(QString::number(m_pChannel_impedances->at(cfg_ix*GDS_GUSBAMP_CHANNELS_MAX) + chan_ix));
+			}
+		}
+	}
+}
+
+void GUSBDlg::on_impedance_pushButton_clicked() 
+{
+	ui->impedance_pushButton->setEnabled(false);
+	qApp->processEvents();
+	m_pChannel_impedances->clear();
+	for (size_t cfg_ix = 0; cfg_ix < m_configs.size(); cfg_ix++)
+	{
+		GDS_GUSBAMP_CONFIGURATION* dev_cfg = (GDS_GUSBAMP_CONFIGURATION*)m_configs[cfg_ix].Configuration;
+
+		char(*device_name)[DEVICE_NAME_LENGTH_MAX] = new char[1][DEVICE_NAME_LENGTH_MAX];
+		std::strcpy(device_name[0], m_configs[cfg_ix].DeviceInfo.Name);
+
+		QVBoxLayout *dev_layout = (QVBoxLayout*)ui->devices_layout->itemAtPosition((int)cfg_ix, 0)->layout();
+		QTableWidget *chan_table = (QTableWidget*)dev_layout->itemAt(2)->widget();
+
+		for (size_t chan_ix = 0; chan_ix < GDS_GUSBAMP_CHANNELS_MAX; chan_ix++)
+		{
+			double impedance = 0;
+			GDS_RESULT res = GDS_GUSBAMP_GetImpedance(*m_pHandle, device_name, (int)(chan_ix + 1), &impedance);
+			m_pChannel_impedances->push_back(impedance);
+
+			chan_table->item(chan_ix, 5)->setText(QString::number(m_pChannel_impedances->at(cfg_ix*GDS_GUSBAMP_CHANNELS_MAX + chan_ix)));
+			qApp->processEvents();
+		}
+		
+		delete[] device_name;
+		device_name = NULL;
+	}
+	ui->impedance_pushButton->setEnabled(true);
+	// update_impedance_table();
+}
 
 void GUSBDlg::apply_filter_to_enabled_chans(int widget_ix, int value)
 {

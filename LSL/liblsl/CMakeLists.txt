@@ -1,12 +1,16 @@
 cmake_minimum_required (VERSION 3.5)
 project (LSL
-	VERSION 1.4.0
+	VERSION 1.12.0
 	LANGUAGES CXX)
 
 cmake_policy(SET CMP0042 NEW) # ENABLE CMP0042: MACOSX_RPATH is enabled by default.
+cmake_policy(SET CMP0063 NEW) # ENABLE CMP0063: Honor visibility for all targets
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+
 if(NOT CMAKE_DEBUG_POSTFIX)
 	set(CMAKE_DEBUG_POSTFIX -debug)
 endif()
+option(LSL_UNIXFOLDERS "Use the unix folder layout for install targets" Off)
 
 # lsl uses boost, but several other projects (e.g. Matlab) also use boost.
 # To prevent clashes with different boost versions, lsl ships a subset of
@@ -19,6 +23,11 @@ set(LSL_LSLBOOST_PATH "external" CACHE STRING "Subdirectory with lslboost")
 
 # Build static library
 option (LSL_BUILD_STATIC "Also build static LSL library." OFF)
+
+set(LSL_WINVER "0x0501" CACHE STRING
+	"Windows version (_WIN32_WINNT) to target (defaults to 0x0501 for Windows XP)")
+
+option(LSL_UNITTESTS "Build LSL library unit tests" OFF)
 
 set (sources
 	src/api_config.cpp
@@ -88,6 +97,22 @@ else()
 	set(lslplatform 32)
 endif()
 
+# try to find out which revision is currently checked out
+find_package(Git)
+if(GIT_FOUND)
+	execute_process(
+		COMMAND ${GIT_EXECUTABLE} describe --tags HEAD
+		WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
+		OUTPUT_VARIABLE lslgitrevision
+		ERROR_QUIET
+		OUTPUT_STRIP_TRAILING_WHITESPACE
+	)
+else()
+	set(lslgitrevision "unknown")
+endif()
+set(LSL_VERSION_INFO "\"git:${lslgitrevision}/build:${CMAKE_BUILD_TYPE}/compiler:${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}/boost:\" BOOST_LIB_VERSION")
+set_source_files_properties("src/lsl_freefuncs_c.cpp" PROPERTIES COMPILE_DEFINITIONS LSL_LIBRARY_INFO_STR=${LSL_VERSION_INFO})
+
 set(target lsl)
 set(lsl_export_targets ${target})
 
@@ -105,6 +130,9 @@ function(lsllib_properties libname)
 		PUBLIC
 		LSLNOAUTOLINK # don't use #pragma(lib) in CMake builds
 	)
+	if(NOT MSVC)
+		target_compile_features(${libname} PRIVATE cxx_auto_type)
+	endif()
 endfunction()
 
 
@@ -115,7 +143,6 @@ set_target_properties(${target} PROPERTIES
 	VERSION ${LSL_VERSION_MAJOR}.${LSL_VERSION_MINOR}.${LSL_VERSION_PATCH}
 	PREFIX ""
 	OUTPUT_NAME "lib${target}${lslplatform}"
-	CXX_VISIBILITY_PRESET hidden
 )
 
 if(${LSL_BUILD_STATIC})
@@ -132,23 +159,41 @@ if (MINGW)
 	target_link_libraries (${target} PUBLIC ws2_32 wsock32 winmm)
 endif()
 
+if(LSL_UNIXFOLDERS)
+	set(LSLPREFIX "")
+else()
+	set(LSLPREFIX "LSL/")
+endif()
+
 install(TARGETS ${lsl_export_targets}
 	COMPONENT liblsl
-  EXPORT "${PROJECT_NAME}Config"
-  RUNTIME DESTINATION LSL/lib
-  LIBRARY DESTINATION LSL/lib
-  INCLUDES DESTINATION LSL/include
-  ARCHIVE DESTINATION LSL/lib
+	EXPORT "${PROJECT_NAME}Config"
+	RUNTIME DESTINATION ${LSLPREFIX}lib
+	LIBRARY DESTINATION ${LSLPREFIX}lib
+	INCLUDES DESTINATION ${LSLPREFIX}include
+	ARCHIVE DESTINATION ${LSLPREFIX}lib
 )
-# TODO: where to install this, see https://stackoverflow.com/a/10766438 
+
 install(EXPORT "${PROJECT_NAME}Config"
-	COMPONENT liblslheaders
-   NAMESPACE "LSL::"
-   DESTINATION LSL/cmake)
+	COMPONENT liblsl
+	NAMESPACE "LSL::"
+	DESTINATION "${LSLPREFIX}share/LSL")
 
 # install headers
 install(FILES ${headers}
-	COMPONENT "liblsl-dev"
-  DESTINATION LSL/include/
+	COMPONENT liblsl
+	DESTINATION "${LSLPREFIX}include"
 )
-set(CPACK_COMPONENT_liblsl-dev_DEPENDS liblsl GLOBAL_SCOPE)
+
+install(FILES LSLCMake.cmake
+	COMPONENT liblsl
+	DESTINATION "${LSLPREFIX}share/LSL")
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
+include(LSLCMake)
+
+if(LSL_UNITTESTS)
+	add_subdirectory(testing/UnitTests)
+endif()
+
+LSLGenerateCPackConfig()

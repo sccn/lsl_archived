@@ -12,12 +12,23 @@
 
 #ifdef _MSC_VER
 #pragma warning( disable : 4275 )
+#if _MSC_VER < 1600
+#include <boost/cstdint.hpp>
+using lslboost::int8_t;
+using lslboost::int16_t;
+using lslboost::int32_t;
+using lslboost::int64_t;
+using lslboost::uint8_t;
+using lslboost::uint16_t;
+using lslboost::uint32_t;
+using lslboost::uint64_t;
+#define __func__ "An unknown function"
+#endif
 #endif
 
 #if BOOST_VERSION < 104500
 	#error "Please do not compile this with a lslboost version older than 1.45 because the library would otherwise not be protocol-compatible with builds using other versions."
 #endif
-
 
 // the highest supported protocol version
 // * 100 is the original version, supported by library versions 1.00+
@@ -77,10 +88,24 @@ namespace lsl {
 		post_ALL = 1|2|4|8		// The combination of all possible post-processing options.
 	};
 
+#ifndef LSL_C_H
+	/**
+	* Possible error codes.
+	*/
+	typedef enum {
+	    lsl_no_error = 0,           /* No error occurred */
+	    lsl_timeout_error = -1,     /* The operation failed due to a timeout. */
+	    lsl_lost_error = -2,        /* The stream has been lost. */
+	    lsl_argument_error = -3,    /* An argument was incorrectly specified (e.g., wrong format or wrong length). */
+	    lsl_internal_error = -4     /* Some other internal error has happened. */
+	} lsl_error_code_t;
+#endif
+
 	/// Exception class that indicates that a stream inlet's source has been irrecoverably lost.
 	class LIBLSL_CPP_API lost_error: public std::runtime_error {
 	public:
 		explicit lost_error(const std::string &msg): std::runtime_error(msg) {}
+		~lost_error();
 	};
 
 
@@ -88,6 +113,7 @@ namespace lsl {
 	class LIBLSL_CPP_API timeout_error: public std::runtime_error {
 	public:
 		explicit timeout_error(const std::string &msg): std::runtime_error(msg) {}
+		~timeout_error();
 	};
 }
 

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>800</height>
+    <width>800</width>
+    <height>1000</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,8 +21,8 @@
     <rect>
      <x>5</x>
      <y>5</y>
-     <width>590</width>
-     <height>790</height>
+     <width>788</width>
+     <height>990</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,1,1">
@@ -75,6 +75,13 @@
        <widget class="QPushButton" name="notch_pushButton">
         <property name="text">
          <string>Apply Notch</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="impedance_pushButton">
+        <property name="text">
+         <string>Refresh Impedances</string>
         </property>
        </widget>
       </item>

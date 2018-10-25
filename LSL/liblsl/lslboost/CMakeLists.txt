@@ -16,7 +16,6 @@ set(lslboost_sources
 	libs/serialization/src/void_cast.cpp
 	libs/system/src/error_code.cpp
 )
-file(STRINGS lslboost_headers.txt lslboost_headers)
 if (UNIX)
 	set(lslboost_sources_platform
 		libs/thread/src/pthread/once.cpp
@@ -33,9 +32,14 @@ else ()  # WIN32
 	set(Boost_LIBRARIES "")
 endif ()
 
-add_library (lslboost STATIC ${lslboost_sources} ${lslboost_sources_platform} ${lslboost_headers})
-target_compile_definitions(lslboost PUBLIC BOOST_ALL_NO_LIB BOOST_THREAD_BUILD_LIB BOOST_ASIO_ENABLE_OLD_SERVICES)
-target_include_directories(lslboost PUBLIC
+add_library (lslboost STATIC ${lslboost_sources} ${lslboost_sources_platform})
+target_compile_definitions(lslboost PUBLIC
+	BOOST_ALL_NO_LIB
+	BOOST_THREAD_BUILD_LIB
+	BOOST_ASIO_ENABLE_OLD_SERVICES
+	_WIN32_WINNT=${LSL_WINVER}
+)
+target_include_directories(lslboost SYSTEM PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 target_link_libraries(lslboost PRIVATE ${Boost_LIBRARIES})
 set_target_properties(lslboost PROPERTIES
@@ -48,9 +52,5 @@ if(NOT MSVC)
   target_compile_features(lslboost PRIVATE cxx_auto_type)
 endif ()
 
-install(TARGETS lslboost EXPORT lslboostConfig
-	COMPONENT "liblsl-dev"
-	ARCHIVE DESTINATION LSL/lib)
-install(EXPORT lslboostConfig
-	COMPONENT "liblsl-dev"
-	DESTINATION LSL/cmake)
+export(TARGETS lslboost
+	FILE lslboostConfig.cmake)

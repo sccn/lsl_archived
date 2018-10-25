@@ -1,37 +1,29 @@
 cmake_minimum_required(VERSION 3.5)
 project(XDFBrowser
 	LANGUAGES CXX
-	VERSION 0.1.0)
+	VERSION 1.12.0)
 
-# load LSLAppBoilerplate if not done already
+
+# set up LSL if not done already
 if(NOT TARGET LSL::lsl)
-	if(NOT LSL_INSTALL_ROOT)
-		message(FATAL_ERROR "When building a single app out of tree you need to set LSL_INSTALL_ROOT ( cmake -DLSL_INSTALL_ROOT=/path/to/installed/lsl)")
+	# when building out of tree LSL_ROOT needs to be specified on the cmd line
+	file(TO_CMAKE_PATH "${LSL_INSTALL_ROOT}" LSL_INSTALL_ROOT)
+	list(APPEND LSL_INSTALL_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../LSL/liblsl/build/install")
+	find_package(LSL HINTS ${LSL_INSTALL_ROOT}/share/LSL/ ${LSL_INSTALL_ROOT}/LSL/share/LSL QUIET)
+	if(NOT LSL_FOUND)
+		message(FATAL_ERROR "Precompiled LSL was not found. See https://github.com/labstreaminglayer/labstreaminglayer/blob/master/doc/BUILD.md#lsl_install_root for more information.")
 	endif()
-	if(NOT IS_ABSOLUTE ${LSL_INSTALL_ROOT})
-		message(FATAL_ERROR "LSL_INSTALL_ROOT needs to be an absolute path")
-	endif()
-	list(APPEND CMAKE_MODULE_PATH "${LSL_INSTALL_ROOT}/cmake")
-	file(TO_CMAKE_PATH ${LSL_INSTALL_ROOT} LSL_INSTALL_ROOT)
-	include(LSLAppBoilerplate)
+	list(APPEND CMAKE_MODULE_PATH ${LSL_DIR})
+	message(STATUS "Looking for LSLCMake in ${LSL_DIR}")
+	include(LSLCMake)
 endif()
 
-# GENERAL CONFIG #
-set(META_PROJECT_DESCRIPTION "View XDF file contents")
 
-# THIRD PARTY LIBRARIES #
 
-# Qt
-find_package(Qt5 COMPONENTS Xml Widgets REQUIRED)
-find_package(Boost REQUIRED COMPONENTS filesystem)
+find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
-# APPLICATION #
 
-# Target name
-set(target XDFBrowser)
-
-# Sources
-set(sources
+add_executable(${PROJECT_NAME} MACOSX_BUNDLE WIN32
 	main.cpp
 	mainwindow.cpp
 	mainwindow.h
@@ -39,16 +31,17 @@ set(sources
 	xdffile.h
 	xdffile.cpp
 )
-
-# Build executable
-add_executable(${target} MACOSX_BUNDLE WIN32 ${sources})
-
-target_link_libraries(${target}
+target_link_libraries(${PROJECT_NAME}
 	PRIVATE
-	Qt5::Xml
 	Qt5::Widgets
-	Boost::filesystem
 	LSL::lsl
 )
 
-installLSLApp(${target})
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_auto_type cxx_noexcept)
+
+installLSLApp(${PROJECT_NAME})
+# installLSLAuxFiles(${PROJECT_NAME}
+# 	${PROJECT_NAME}.cfg
+# )
+LSLGenerateCPackConfig()
+

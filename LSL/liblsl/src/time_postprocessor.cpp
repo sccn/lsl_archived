@@ -10,8 +10,8 @@ using namespace lsl;
 
 /// Construct a new time post-processor.
 time_postprocessor::time_postprocessor(const postproc_callback_t &query_correction, const postproc_callback_t &query_srate, const reset_callback_t &query_reset): 
-	query_correction_(query_correction), query_srate_(query_srate), query_reset_(query_reset), next_query_time_(0.0),  
-	last_offset_(0.0), samples_seen_(0.0), options_(post_none), halftime_(api_config::get_instance()->smoothing_halftime()), 
+	samples_seen_(0.0), query_srate_(query_srate), options_(post_none), halftime_(api_config::get_instance()->smoothing_halftime()),
+    query_correction_(query_correction), query_reset_(query_reset), next_query_time_(0.0), last_offset_(0.0), 
 	smoothing_initialized_(false), last_value_(-std::numeric_limits<double>::infinity())
 {
 }

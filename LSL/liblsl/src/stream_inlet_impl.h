@@ -34,7 +34,7 @@ namespace lsl {
 		*				 In all other cases (recover is false or the stream is not recoverable) a lost_error is thrown where 
 		*				 indicated if the stream's source is lost (e.g., due to an app or computer crash).
 		*/
-		stream_inlet_impl(const stream_info_impl &info, int max_buflen=360, int max_chunklen=0, bool recover=true): conn_(info,recover), info_receiver_(conn_), time_receiver_(conn_), data_receiver_(conn_,max_buflen,max_chunklen),
+		stream_inlet_impl(const stream_info_impl &info, int32_t max_buflen=360, int32_t max_chunklen=0, bool recover=true): conn_(info,recover), info_receiver_(conn_), time_receiver_(conn_), data_receiver_(conn_,max_buflen,max_chunklen),
 			postprocessor_(lslboost::bind(&time_receiver::time_correction,&time_receiver_,5), 
 			lslboost::bind(&inlet_connection::current_srate,&conn_),
 			lslboost::bind(&time_receiver::was_reset,&time_receiver_)) 
@@ -68,13 +68,13 @@ namespace lsl {
 		*		   To remap this time stamp to the local clock, add the value returned by .time_correction() to it.
 		*		   This is only necessary if the clocks of the source and destination machine are not synchronized to high enough precision.
 		*/
-		double pull_sample(std::vector<float> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(int)data.size(),timeout); }
-		double pull_sample(std::vector<double> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(int)data.size(),timeout); }
-		double pull_sample(std::vector<long> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(int)data.size(),timeout); }
-		double pull_sample(std::vector<int> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(int)data.size(),timeout); }
-		double pull_sample(std::vector<short> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(int)data.size(),timeout); }
-		double pull_sample(std::vector<char> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(int)data.size(),timeout); }
-		double pull_sample(std::vector<std::string> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(int)data.size(),timeout); }
+		double pull_sample(std::vector<float> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(int32_t)data.size(),timeout); }
+		double pull_sample(std::vector<double> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(int32_t)data.size(),timeout); }
+		double pull_sample(std::vector<long> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(int32_t)data.size(),timeout); }
+		double pull_sample(std::vector<int32_t> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(int32_t)data.size(),timeout); }
+		double pull_sample(std::vector<int16_t> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(int32_t)data.size(),timeout); }
+		double pull_sample(std::vector<char> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(int32_t)data.size(),timeout); }
+		double pull_sample(std::vector<std::string> &data, double timeout=FOREVER) { data.resize(conn_.type_info().channel_count()); return pull_sample(&data[0],(int32_t)data.size(),timeout); }
 
 		/**
 		* Pull a sample from the inlet and read it into a pointer to values.
@@ -87,13 +87,32 @@ namespace lsl {
 		*		   To remap this time stamp to the local clock, add the value returned by .time_correction() to it.
 		*		   This is only necessary if the clocks of the source and destination machine are not synchronized to high enough precision.
 		*/
-		double pull_sample(float *buffer, int buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
-		double pull_sample(double *buffer, int buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
-		double pull_sample(long *buffer, int buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
-		double pull_sample(int *buffer, int buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
-		double pull_sample(short *buffer, int buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
-		double pull_sample(char *buffer, int buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
-		double pull_sample(std::string *buffer, int buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
+		double pull_sample(float *buffer, int32_t buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
+		double pull_sample(double *buffer, int32_t buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
+		double pull_sample(long *buffer, int32_t buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
+		double pull_sample(int32_t *buffer, int32_t buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
+		double pull_sample(int16_t *buffer, int32_t buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
+		double pull_sample(char *buffer, int32_t buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
+		double pull_sample(std::string *buffer, int32_t buffer_elements, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_typed(buffer,buffer_elements,timeout)); }
+
+		template<typename T>
+		double pull_sample_noexcept(T* buffer, int32_t buffer_elements, double timeout=FOREVER, lsl_error_code_t* ec=NULL) BOOST_NOEXCEPT {
+			lsl_error_code_t dummy;
+			if (!ec) ec = &dummy;
+			*ec = lsl_no_error;
+		    try {
+				return postprocess(data_receiver_.pull_sample_typed(buffer, buffer_elements, timeout));
+		    }
+			catch (timeout_error&) { *ec = lsl_timeout_error; }
+			catch (lost_error&) { *ec = lsl_lost_error; }
+			catch (std::invalid_argument&) { *ec = lsl_argument_error; }
+			catch (std::range_error&) { *ec = lsl_argument_error; }
+			catch (std::exception& e) {
+				std::cerr << "Unexpected error in " << __func__ << ": " << e.what() << std::endl;
+				*ec = lsl_internal_error;
+			}
+			return 0.0;
+	    }
 
 		/**
 		* Pull a sample from the inlet and read it into a pointer to raw data.
@@ -105,7 +124,7 @@ namespace lsl {
 		*		   To remap this time stamp to the local clock, add the value returned by .time_correction() to it.
 		*		   This is only necessary if the clocks of the source and destination machine are not synchronized to high enough precision.
 		*/
-		double pull_numeric_raw(void *sample, int buffer_bytes, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_untyped(sample,buffer_bytes,timeout)); }
+		double pull_numeric_raw(void *sample, int32_t buffer_bytes, double timeout=FOREVER) { return postprocess(data_receiver_.pull_sample_untyped(sample,buffer_bytes,timeout)); }
 
 		/**
 		* Pull a chunk of data from the inlet.
@@ -140,6 +159,24 @@ namespace lsl {
 			return samples_written*num_chans;
 		}
 
+		template<class T> std::size_t pull_chunk_multiplexed_noexcept(T *data_buffer, double *timestamp_buffer, std::size_t data_buffer_elements, std::size_t timestamp_buffer_elements, double timeout=0.0, lsl_error_code_t* ec=NULL) BOOST_NOEXCEPT {
+			lsl_error_code_t dummy;
+			if(!ec) ec = &dummy;
+			*ec = lsl_no_error;
+			try {
+				return pull_chunk_multiplexed(data_buffer, timestamp_buffer, data_buffer_elements, timestamp_buffer_elements, timeout);
+			}
+			catch (timeout_error&) { *ec = lsl_timeout_error; }
+			catch (lost_error&) { *ec = lsl_lost_error; }
+			catch (std::invalid_argument&) { *ec = lsl_argument_error; }
+			catch (std::range_error&) { *ec = lsl_argument_error; }
+			catch (std::exception& e) {
+				std::cerr << "Unexpected error in " << __func__ << ": " << e.what() << std::endl;
+				*ec = lsl_internal_error;
+			}
+			return 0;
+		}
+
 		/**
 		* Retrieve the complete information of the given stream, including the extended description.
 		* Can be invoked at any time of the stream's lifetime.
@@ -169,7 +206,7 @@ namespace lsl {
 		* @param flags An integer that is the result of bitwise OR'ing one or more options from processing_options_t 
 		*        together (e.g., post_clocksync|post_dejitter); the default is to enable all options.
 		*/
-		void set_postprocessing(unsigned flags=post_ALL) { postprocessor_.set_options(flags); }
+		void set_postprocessing(uint32_t flags=post_ALL) { postprocessor_.set_options(flags); }
 
 		/**
 		* Open a new data stream.

@@ -18,6 +18,41 @@ XDF Chunks Implementation
 
 *********************************************************************/
 
+qint8 num_length_bytes(quint64 num) {
+	if(num > std::numeric_limits<quint32>::max()) return 8;
+	else if(num > std::numeric_limits<quint8>::max()) return 4;
+	else return 1;
+}
+
+quint64 read_varlen_int(QDataStream& in) {
+	qint8 numLengthBytes;
+	in >> numLengthBytes;
+
+	switch(numLengthBytes){
+	    case 1:
+		    quint8 chunkLengthByte;
+			in >> chunkLengthByte;
+		    return chunkLengthByte;
+	    case 4:
+		    quint32 chunkLengthInt;
+			in >> chunkLengthInt;
+		    return chunkLengthInt;
+	    case 8:
+		    quint64 chunkLengthLong;
+			in >> chunkLengthLong;
+		    return chunkLengthLong;
+	    default:
+		    throw std::runtime_error(
+		        "XDF File is incorrectly formatted: numLengthBytes is an illegal value: " +
+		        std::to_string(numLengthBytes));
+	}
+}
+
+qint8 XDFChunk::thisNumLengthBytes()
+{
+	return num_length_bytes(thisChunkLength);
+}
+
 QString XDFChunk::readString(QDataStream &in, size_t length) {
 	char * buf = (char *) malloc(length+1);
 
@@ -29,13 +64,16 @@ QString XDFChunk::readString(QDataStream &in, size_t length) {
 	return str;
 }
 
+XDFChunk::~XDFChunk()
+{
+}
 
-	
+
 void XDFChunk::writeChunk(QDataStream &out){
 	quint8 chunkLengthByte = 0;
 	quint32 chunkLengthInt = 0;
-	out << thisNumLengthBytes;
-	switch(thisNumLengthBytes){
+	out << thisNumLengthBytes();
+	switch(thisNumLengthBytes()){
 		case 1:
 			chunkLengthByte = (quint8) thisChunkLength;
 			out << chunkLengthByte;
@@ -62,7 +100,7 @@ File Header Chunk Implementation
 *********************************************************************/
 
 
-FileHeaderChunk::FileHeaderChunk(QDataStream &in, quint64 chunkPosition, qint8 numLengthBytes, quint64 chunkLength) : XDFChunk(chunkPosition, numLengthBytes, chunkLength){
+FileHeaderChunk::FileHeaderChunk(QDataStream &in, quint64 chunkPosition, quint64 chunkLength) : XDFChunk(chunkPosition, chunkLength){
 	
 	chunkData = readString(in, chunkLength-2);
 }
@@ -95,7 +133,7 @@ Stream Header Chunk Implementation
 *********************************************************************/
 
 
-StreamHeaderChunk::StreamHeaderChunk(QDataStream &in, quint64 chunkPosition, qint8 numLengthBytes, quint64 chunkLength) : XDFChunk(chunkPosition, numLengthBytes, chunkLength){
+StreamHeaderChunk::StreamHeaderChunk(QDataStream &in, quint64 chunkPosition, quint64 chunkLength) : XDFChunk(chunkPosition, chunkLength){
 	in >> streamID;
 	chunkData = readString(in, chunkLength-6);
 }
@@ -130,15 +168,16 @@ Samples Chunk Implementation
 
 *********************************************************************/
 
-SamplesChunk::SamplesChunk(QDataStream &in, quint64 chunkPosition, qint8 numLengthBytes, quint64 chunkLength, bool loadData) : XDFChunk(chunkPosition, numLengthBytes, chunkLength), chunkData(NULL) {
+SamplesChunk::SamplesChunk(QDataStream &in, quint64 chunkPosition, quint64 chunkLength, bool loadData) : XDFChunk(chunkPosition, chunkLength), chunkData(nullptr) {
+	in >> streamID;
 	if(loadData) {
-		chunkData =  (char *) malloc(chunkLength-2);
+		chunkData =  (char *) malloc(chunkLength-6);
 
-		in.readRawData(chunkData, chunkLength-2);
+		in.readRawData(chunkData, chunkLength-6);
 		loaded = true;
 	} else {
-		chunkData = NULL;
-		in.skipRawData(chunkLength-2);
+		chunkData = nullptr;
+		in.skipRawData(chunkLength-6);
 		loaded = false;
 	}
 	
@@ -146,11 +185,19 @@ SamplesChunk::SamplesChunk(QDataStream &in, quint64 chunkPosition, qint8 numLeng
 
 
 QString SamplesChunk::getName() {
-	return QString("Samples Chunk");
+	if(loaded)
+		return QStringLiteral("Samples Chunk, Stream #%1").arg(streamID);
+	else
+		return QStringLiteral("Samples Chunk");
 }
 
 QString SamplesChunk::getText() {
-	return QString("Binary Data");
+	if(loaded) {
+		auto text = QStringLiteral("Binary Data, Stream %1, %2 bytes\n\n").arg(streamID).arg(thisChunkLength);
+		return text;
+	}
+	else
+		return QStringLiteral("Binary Data, not loaded");
 }
 
 void SamplesChunk::setText(const QString& text){}
@@ -158,7 +205,8 @@ void SamplesChunk::setText(const QString& text){}
 void SamplesChunk::writeChunk(QDataStream &out) {
 	XDFChunk::writeChunk(out);
 	out << SAMPLES_CHUNK;
-	out.writeRawData(chunkData, thisChunkLength -2);
+	out << streamID;
+	out.writeRawData(chunkData, thisChunkLength - 6);
 
 }
 
@@ -166,37 +214,17 @@ quint64 SamplesChunk::loadData(QFile &file) {
 	file.seek(thisChunkPosition);
 	QDataStream in(&file);
 	in.setByteOrder(QDataStream::LittleEndian);
-	qint8 numLengthBytes;
-	in >> numLengthBytes;
+	thisChunkLength = read_varlen_int(in);
 
-	thisChunkLength;
-	switch(numLengthBytes){
-		case 1:
-			quint8 chunkLengthByte;
-			in >> chunkLengthByte;
-			thisChunkLength = chunkLengthByte;
-			break;
-		case 4:
-			quint32 chunkLengthInt;
-			in >> chunkLengthInt;
-			thisChunkLength = chunkLengthInt;
-			break;
-		case 8:
-			quint64 chunkLengthLong;
-			in >> chunkLengthLong;
-			thisChunkLength = chunkLengthLong;
-			break;
-		default:
-			throw IOException("XDF File is incorrectly formatted: numLengthBytes is an illegal value.\n");
-			break;
-	}
 	quint16 tagNumber;
 	in >> tagNumber;
 
-	if(chunkData) free(chunkData);
-	chunkData =  (char *) malloc(thisChunkLength-2);
+	in >> streamID;
 
-	in.readRawData(chunkData, thisChunkLength-2);
+	if(chunkData) free(chunkData);
+	chunkData =  (char *) malloc(thisChunkLength-6);
+
+	in.readRawData(chunkData, thisChunkLength-6);
 	loaded = true;
 	return thisChunkLength;
 
@@ -204,14 +232,14 @@ quint64 SamplesChunk::loadData(QFile &file) {
 
 quint64 SamplesChunk::unloadData() {
 	if(chunkData) free(chunkData);
-	chunkData = NULL;
+	chunkData = nullptr;
 	loaded = false;
 	return thisChunkLength;
 }
 
 SamplesChunk::~SamplesChunk(){
 	if(chunkData) free(chunkData);
-	chunkData = NULL;
+	chunkData = nullptr;
 }
 
 /********************************************************************
@@ -220,7 +248,7 @@ Clock Offset Chunk Implementation
 
 *********************************************************************/
 
-ClockOffsetChunk::ClockOffsetChunk(QDataStream &in, quint64 chunkPosition, qint8 numLengthBytes, quint64 chunkLength) : XDFChunk(chunkPosition, numLengthBytes, chunkLength){
+ClockOffsetChunk::ClockOffsetChunk(QDataStream &in, quint64 chunkPosition, quint64 chunkLength) : XDFChunk(chunkPosition, chunkLength){
 
 	in >> streamID;
 	in >> collectionTime;
@@ -261,7 +289,7 @@ Boundary Chunk Implementation
 *********************************************************************/
 
 
-BoundaryChunk::BoundaryChunk(QDataStream &in, quint64 chunkPosition, qint8 numLengthBytes, quint64 chunkLength) : XDFChunk(chunkPosition, numLengthBytes, chunkLength), chunkData(NULL) {
+BoundaryChunk::BoundaryChunk(QDataStream &in, quint64 chunkPosition, quint64 chunkLength) : XDFChunk(chunkPosition, chunkLength), chunkData(nullptr) {
 	chunkData =  (quint8 *) malloc(chunkLength-2);
 	for(int i=0; i<chunkLength-2; i++) {
 		in >> chunkData[i];
@@ -308,7 +336,7 @@ void BoundaryChunk::writeChunk(QDataStream &out) {
 
 BoundaryChunk::~BoundaryChunk(){
 	if(chunkData) free(chunkData);
-	chunkData = NULL;
+	chunkData = nullptr;
 }
 
 
@@ -318,7 +346,7 @@ Stream Footer Chunk Implementation
 
 *********************************************************************/
 
-StreamFooterChunk::StreamFooterChunk(QDataStream &in, quint64 chunkPosition, qint8 numLengthBytes, quint64 chunkLength) : XDFChunk(chunkPosition, numLengthBytes, chunkLength){
+StreamFooterChunk::StreamFooterChunk(QDataStream &in, quint64 chunkPosition, quint64 chunkLength) : XDFChunk(chunkPosition, chunkLength){
 	in >> streamID;
 	chunkData = readString(in, chunkLength-6);
 }
@@ -353,7 +381,7 @@ Unrecognized Chunk Implementation
 
 *********************************************************************/
 
-UnrecognizedChunk::UnrecognizedChunk(QDataStream &in, quint64 chunkPosition, qint8 numLengthBytes, quint64 chunkLength, quint16 chunkTag) : XDFChunk(chunkPosition, numLengthBytes, chunkLength), chunkData(NULL){
+UnrecognizedChunk::UnrecognizedChunk(QDataStream &in, quint64 chunkPosition, quint64 chunkLength, quint16 chunkTag) : XDFChunk(chunkPosition, chunkLength), chunkData(nullptr){
 	chunkData =  (char *) malloc(chunkLength-2);
 	thisChunkTag = chunkTag;
 
@@ -380,7 +408,7 @@ void UnrecognizedChunk::writeChunk(QDataStream &out) {
 
 UnrecognizedChunk::~UnrecognizedChunk(){
 	if(chunkData) free(chunkData);
-	chunkData = NULL;
+	chunkData = nullptr;
 }
 
  
@@ -402,56 +430,36 @@ void XDFfile::open(QProgressBar *progressBar)  {
 	buf[4] = 0;
 	if(QString(buf).compare(QString("XDF:"))){
 		throw IOException("File is not an XDF file\n");
-		return; 
 	} else {
 		int count = 0;
 		while(true) {
-			count++;
 			quint64 chunkPosition = file.pos();
+			try {
 			if(chunkPosition >= (quint64) file.size()) break;
 
-			qint8 numLengthBytes;
-			in >> numLengthBytes;
-			quint64 chunkLength;
-			switch(numLengthBytes){
-				case 1:
-					quint8 chunkLengthByte;
-					in >> chunkLengthByte;
-					chunkLength = chunkLengthByte;
-					break;
-				case 4:
-					quint32 chunkLengthInt;
-					in >> chunkLengthInt;
-					chunkLength = chunkLengthInt;
-					break;
-				case 8:
-					quint64 chunkLengthLong;
-					in >> chunkLengthLong;
-					chunkLength = chunkLengthLong;
-					break;
-				default:
-					throw IOException("XDFFile is incorrectly formatted: numLengthBytes is an illegal value.\n");
-					break;
-			}
+			quint64 chunkLength = read_varlen_int(in);
+
+			count++;
 			quint16 tagNumber;
 			in >> tagNumber;
 
+
 			switch(tagNumber){
 				case XDFChunk::FILEHEADER_CHUNK: {
-					std::shared_ptr<FileHeaderChunk> chunk(new FileHeaderChunk(in, chunkPosition, numLengthBytes, chunkLength));
+				    std::shared_ptr<FileHeaderChunk> chunk(new FileHeaderChunk(in, chunkPosition, chunkLength));
 					chunks.push_back(chunk);
 					bytesLoaded += chunkLength;
 					break;
 					}
 				case XDFChunk::STREAMHEADER_CHUNK: {
-					std::shared_ptr<StreamHeaderChunk> chunk(new StreamHeaderChunk(in, chunkPosition, numLengthBytes, chunkLength));
+				    std::shared_ptr<StreamHeaderChunk> chunk(new StreamHeaderChunk(in, chunkPosition, chunkLength));
 					chunks.push_back(chunk);
 					bytesLoaded += chunkLength;
 					break;
 				}
 				case XDFChunk::SAMPLES_CHUNK: {
 					bool loadData = bytesLoaded < maxBytes;					
-					std::shared_ptr<SamplesChunk> chunk(new SamplesChunk(in, chunkPosition, numLengthBytes, chunkLength, loadData));
+					std::shared_ptr<SamplesChunk> chunk(new SamplesChunk(in, chunkPosition, chunkLength, loadData));
 					chunks.push_back(chunk);
 					if(loadData) {
 						bytesLoaded += chunkLength;
@@ -460,32 +468,35 @@ void XDFfile::open(QProgressBar *progressBar)  {
 					break;
 				}
 				case XDFChunk::CLOCKOFFSET_CHUNK: {
-					std::shared_ptr<ClockOffsetChunk> chunk(new ClockOffsetChunk(in, chunkPosition, numLengthBytes, chunkLength));
+				    std::shared_ptr<ClockOffsetChunk> chunk(new ClockOffsetChunk(in, chunkPosition, chunkLength));
 					chunks.push_back(chunk);
 					bytesLoaded+= chunkLength;
 					break;
 				}
 				case XDFChunk::BOUNDARY_CHUNK: {
-					std::shared_ptr<BoundaryChunk> chunk(new BoundaryChunk(in, chunkPosition, numLengthBytes, chunkLength));
+				    std::shared_ptr<BoundaryChunk> chunk(new BoundaryChunk(in, chunkPosition, chunkLength));
 					chunks.push_back(chunk);
 					bytesLoaded += chunkLength;
 					break;
 				}
 				case XDFChunk::STREAMFOOTER_CHUNK: {
-					std::shared_ptr<StreamFooterChunk> chunk(new StreamFooterChunk(in, chunkPosition, numLengthBytes, chunkLength));
+				    std::shared_ptr<StreamFooterChunk> chunk(new StreamFooterChunk(in, chunkPosition, chunkLength));
 					chunks.push_back(chunk);
 					bytesLoaded += chunkLength;
 					break;
 				}
 
 				default: {
-					std::shared_ptr<UnrecognizedChunk> chunk(new UnrecognizedChunk(in, chunkPosition, numLengthBytes, chunkLength, tagNumber));
+				    std::shared_ptr<UnrecognizedChunk> chunk(new UnrecognizedChunk(in, chunkPosition, chunkLength, tagNumber));
 					chunks.push_back(chunk);
 					bytesLoaded += chunkLength;
 					break;
 				}
-
-			
+			    }
+			} catch(const std::exception& e) {
+				throw std::runtime_error("Error in chunk loading (chunk #" + std::to_string(count) +
+				                         " starting at byte " + std::to_string(chunkPosition) +
+				                         "): " + e.what());
 			}
 			//update progress bar
 			QMetaObject::invokeMethod(progressBar, "setValue", Qt::QueuedConnection, Q_ARG(int, (chunkPosition*100)/fileSize));
@@ -580,6 +591,7 @@ void XDFfile::setChunkText(int element, const QString& text) {
 }
 
 
-
-
-
+const char*IOException::what() const noexcept
+{
+	return description;
+}

@@ -1,15 +1,18 @@
 #include <iostream>
 #include <boost/asio.hpp>
-#include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include <boost/serialization/split_member.hpp>
 #include <boost/container/flat_set.hpp>
 #include "tcp_server.h"
 #include "socket_utils.h"
 
+// a convention that applies when including portable_oarchive.h in multiple .cpp files.
+// otherwise, the templates are instantiated in this file and sample.cpp which leads
+// to errors like "multiple definition of `typeinfo name"
+#define NO_EXPLICIT_TEMPLATE_INSTANTIATION
+#include "portable_archive/portable_oarchive.hpp"
 
 // === implementation of the tcp_server class ===
 
@@ -120,6 +123,21 @@ void tcp_server::unregister_inflight_socket(const tcp_socket_p &sock) {
 	inflight_.erase(sock);
 }
 
+/// Gracefully shut down a socket.
+template<class SocketPtr, class Protocol> void shutdown_and_close(SocketPtr sock) {
+	try {
+		if (sock->is_open()) {
+			try {
+				// (in some cases shutdown may fail)
+				sock->shutdown(Protocol::socket::shutdown_both);
+			} catch(...) {}
+			sock->close();
+		}
+	}  catch(std::exception &e) {
+		std::cerr << "Error during shutdown_and_close (thread id: " << lslboost::this_thread::get_id() << "): " << e.what() << std::endl;
+	}
+}
+
 /// Post a close of all in-flight sockets.
 void tcp_server::close_inflight_sockets() {
 	lslboost::lock_guard<lslboost::recursive_mutex> lock(inflight_mut_);
@@ -135,7 +153,9 @@ void tcp_server::close_inflight_sockets() {
 
 
 /// Instantiate a new session & its socket.
-tcp_server::client_session::client_session(const tcp_server_p &serv): registered_(false), io_(serv->io_), serv_(serv), sock_(tcp_socket_p(new tcp::socket(*serv->io_))), requeststream_(&requestbuf_), use_byte_order_(0), data_protocol_version_(100) {	}
+tcp_server::client_session::client_session(const tcp_server_p &serv):
+    registered_(false), io_(serv->io_), serv_(serv), sock_(tcp_socket_p(new tcp::socket(*serv->io_))),
+    requeststream_(&requestbuf_), use_byte_order_(0), data_protocol_version_(100) {	}
 
 /**
 * Destructor. Unregisters the socket from the server & closes it.
@@ -193,7 +213,7 @@ void tcp_server::client_session::handle_read_command_outcome(error_code err) {
 			if (lslboost::algorithm::starts_with(method,"LSL:streamfeed/")) {
 				// streamfeed request with version: read feed parameters
 				std::vector<std::string> parts; lslboost::algorithm::split(parts,method,lslboost::algorithm::is_any_of(" \t"));
-				int request_protocol_version = lslboost::lexical_cast<int>(parts[0].substr(parts[0].find_first_of("/")+1));
+				int request_protocol_version = lslboost::lexical_cast<int>(parts[0].substr(parts[0].find_first_of('/')+1));
 				std::string request_uid = (parts.size()>1) ? parts[1] : "";
 				async_read_until(*sock_, requestbuf_, "\r\n\r\n",
 					lslboost::bind(&client_session::handle_read_feedparams,shared_from_this(),request_protocol_version,request_uid,placeholders::error));
@@ -242,11 +262,11 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 
 			// check request validity
 			if (request_protocol_version/100 > api_config::get_instance()->use_protocol_version()/100) {
-				send_status_message((lslboost::format("LSL/%1% 505 Version not supported") % api_config::get_instance()->use_protocol_version()).str());
+				send_status_message("LSL/"+lslboost::lexical_cast<std::string>(api_config::get_instance()->use_protocol_version())+" 505 Version not supported");
 				return;
 			}
 			if (!request_uid.empty() && request_uid != serv_->info_->uid()) {
-				send_status_message((lslboost::format("LSL/%1% 404 Not found") % api_config::get_instance()->use_protocol_version()).str());
+				send_status_message("LSL/"+lslboost::lexical_cast<std::string>(api_config::get_instance()->use_protocol_version())+" 404 Not found");
 				return;
 			}
 
@@ -263,12 +283,12 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 				char buf[16384] = {0};
 				while (requeststream_.getline(buf,sizeof(buf)) && (buf[0] != '\r')) {
 					std::string hdrline(buf);
-					int colon = hdrline.find_first_of(":");
+					std::size_t colon = hdrline.find_first_of(':');
 					if (colon != std::string::npos) {
 						// extract key & value
 						std::string type = to_lower_copy(trim_copy(hdrline.substr(0,colon))), rest = to_lower_copy(trim_copy(hdrline.substr(colon+1)));
 						// strip off comments
-						int semicolon = rest.find_first_of(";");
+						std::size_t semicolon = rest.find_first_of(';');
 						if (semicolon != std::string::npos)
 							rest = rest.substr(0,semicolon);
 						// get the header information
@@ -342,8 +362,16 @@ void tcp_server::client_session::handle_read_feedparams(int request_protocol_ver
 
 			// send test pattern samples
 			lslboost::scoped_ptr<sample> temp(sample::factory::new_sample_unmanaged(serv_->info_->channel_format(),serv_->info_->channel_count(),0.0,false));
-			temp->assign_test_pattern(4); if (data_protocol_version_ >= 110) temp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get()); else *outarch_ << *temp;
-			temp->assign_test_pattern(2); if (data_protocol_version_ >= 110) temp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get()); else *outarch_ << *temp;
+			temp->assign_test_pattern(4);
+			if (data_protocol_version_ >= 110)
+				temp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get());
+			else
+				*outarch_ << *temp;
+			temp->assign_test_pattern(2);
+			if (data_protocol_version_ >= 110)
+				temp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get());
+			else
+				*outarch_ << *temp;
 			// send off the newly created feedheader
 			async_write(*sock_,feedbuf_.data(),
 				lslboost::bind(&client_session::handle_send_feedheader_outcome,shared_from_this(),placeholders::error,placeholders::bytes_transferred));
@@ -376,7 +404,7 @@ void tcp_server::client_session::transfer_samples_thread(client_session_p) {
 		// make a new consumer queue
 		consumer_queue_p queue = serv_->send_buffer_->new_consumer(max_buffered_);
 		// the sequence # is merely used to determine chunk boundaries (no need for int64)
-		unsigned seqn = 0;
+		uint32_t seqn = 0;
 		while (!serv_->shutdown_) {
 			try {
 				// get next sample from the sample queue (blocking)
@@ -388,12 +416,15 @@ void tcp_server::client_session::transfer_samples_thread(client_session_p) {
 					continue;
 				// optionally override the pushthrough flag by the chunk size of the receiver (if set) or of the sender (if set)
 				if (chunk_granularity_)
-					samp->pushthrough = (((++seqn)%(unsigned)chunk_granularity_) == 0);
+					samp->pushthrough = (((++seqn) % (uint32_t)chunk_granularity_) == 0);
 				else
 					if (serv_->chunk_size_)
-						samp->pushthrough = (((++seqn)%(unsigned)serv_->chunk_size_) == 0);
+						samp->pushthrough = (((++seqn) % (uint32_t)serv_->chunk_size_) == 0);
 				// serialize the sample into the stream
-				if (data_protocol_version_ >= 110) samp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get()); else *outarch_ << *samp;
+				if (data_protocol_version_ >= 110)
+					samp->save_streambuf(feedbuf_,data_protocol_version_,use_byte_order_,scratch_.get());
+				else
+					*outarch_ << *samp;
 				// if the sample shall be pushed though...
 				if (samp->pushthrough) {
 					// send off the chunk that we aggregated so far

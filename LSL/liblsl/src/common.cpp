@@ -33,3 +33,6 @@ void lsl::ensure_lsl_initialized() {
 #endif
 	}
 }
+
+lsl::lost_error::~lost_error() {}
+lsl::timeout_error::~timeout_error() {}

@@ -1,10 +1,10 @@
+#include <QtGui>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <iostream>
 #include <thread>
 #include <algorithm>
 #include "lsl_cpp.h"
-#include <QtGui>
 
 #define MAX_WIIMOTES    4
 std::vector<int> wm_led = {WIIMOTE_LED_1, WIIMOTE_LED_2, WIIMOTE_LED_3, WIIMOTE_LED_4};

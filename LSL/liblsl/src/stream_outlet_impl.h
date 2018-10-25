@@ -32,7 +32,7 @@ namespace lsl {
 		* @param max_capacity The maximum number of samples buffered for unresponsive receivers. If more samples get pushed, the oldest will be dropped. 
 		*					   The default is sufficient to hold a bit more than 15 minutes of data at 512Hz, while consuming not more than ca. 512MB of RAM.
 		*/
-		stream_outlet_impl(const stream_info_impl &info, int chunk_size=0, int max_capacity=512000);
+		stream_outlet_impl(const stream_info_impl &info, int32_t chunk_size=0, int32_t max_capacity=512000);
 
 		/**
 		* Destructor.
@@ -52,13 +52,13 @@ namespace lsl {
 		* @param timestamp Optionally the capture time of the sample, in agreement with local_clock(); if omitted, the current time is assumed.
 		* @param pushthrough Whether to push the sample through to the receivers instead of buffering it into a chunk according to network speeds.
 		*/
-		void push_sample(const std::vector<float> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int)data.size()); enqueue(&data[0],timestamp,pushthrough); }
-		void push_sample(const std::vector<double> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int)data.size()); enqueue(&data[0],timestamp,pushthrough); }
-		void push_sample(const std::vector<long> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int)data.size()); enqueue(&data[0],timestamp,pushthrough); }
-		void push_sample(const std::vector<int> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int)data.size()); enqueue(&data[0],timestamp,pushthrough); }
-		void push_sample(const std::vector<short> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int)data.size()); enqueue(&data[0],timestamp,pushthrough); }
-		void push_sample(const std::vector<char> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int)data.size()); enqueue(&data[0],timestamp,pushthrough); }
-		void push_sample(const std::vector<std::string> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int)data.size()); enqueue(&data[0],timestamp,pushthrough); }
+		void push_sample(const std::vector<float> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int32_t)data.size()); enqueue(&data[0],timestamp,pushthrough); }
+		void push_sample(const std::vector<double> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int32_t)data.size()); enqueue(&data[0],timestamp,pushthrough); }
+		void push_sample(const std::vector<long> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int32_t)data.size()); enqueue(&data[0],timestamp,pushthrough); }
+		void push_sample(const std::vector<int32_t> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int32_t)data.size()); enqueue(&data[0],timestamp,pushthrough); }
+		void push_sample(const std::vector<int16_t> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int32_t)data.size()); enqueue(&data[0],timestamp,pushthrough); }
+		void push_sample(const std::vector<char> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int32_t)data.size()); enqueue(&data[0],timestamp,pushthrough); }
+		void push_sample(const std::vector<std::string> &data, double timestamp=0.0, bool pushthrough=true) { check_numchan((int32_t)data.size()); enqueue(&data[0],timestamp,pushthrough); }
 
 		/**
 		* Push a pointer to some values as a sample into the outlet.
@@ -71,10 +71,29 @@ namespace lsl {
 		void push_sample(const float *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
 		void push_sample(const double *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
 		void push_sample(const long *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
-		void push_sample(const int *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
-		void push_sample(const short *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
+		void push_sample(const int32_t *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
+		void push_sample(const int16_t *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
 		void push_sample(const char *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
 		void push_sample(const std::string *data, double timestamp=0.0, bool pushthrough=true) { enqueue(data,timestamp,pushthrough); }
+
+
+	    template <typename T>
+	    inline lsl_error_code_t push_sample_noexcept(const T* data, double timestamp = 0.0,
+		                                             bool pushthrough = true) BOOST_NOEXCEPT {
+		    try {
+			    enqueue(data, timestamp, pushthrough);
+			    return lsl_no_error;
+		    } catch (std::range_error& e) {
+			    std::cerr << "Error during push_sample: " << e.what() << std::endl;
+			    return lsl_argument_error;
+		    } catch (std::invalid_argument& e) {
+			    std::cerr << "Error during push_sample: " << e.what() << std::endl;
+			    return lsl_argument_error;
+		    } catch (std::exception& e) {
+			    std::cerr << "Unexpected error during push_sample: " << e.what() << std::endl;
+			    return lsl_internal_error;
+		    }
+	    }
 
 		/**
 		* Push a pointer to raw numeric data as one sample into the outlet. 
@@ -83,7 +102,7 @@ namespace lsl {
 		* @param timestamp Optionally the capture time of the sample, in agreement with lsl_clock(); if omitted, the current time is assumed.
 		* @param pushthrough Whether to push the sample through to the receivers instead of buffering it into a chunk according to network speeds.
 		*/
-		void push_numeric_raw(void *data, double timestamp=0.0, bool pushthrough=true) { 
+		void push_numeric_raw(const void *data, double timestamp=0.0, bool pushthrough=true) {
 			if (lsl::api_config::get_instance()->force_default_timestamps())
 				timestamp = 0.0;
 			sample_p smp(sample_factory_->new_sample(timestamp == 0.0 ? lsl_clock() : timestamp, pushthrough));
@@ -116,6 +135,25 @@ namespace lsl {
 				enqueue(&data_buffer[k*num_chans],timestamp_buffer[k],pushthrough && k==num_samples-1);
 		}
 
+		template<class T> int32_t push_chunk_multiplexed_noexcept(const T *data_buffer, const double *timestamp_buffer, std::size_t data_buffer_elements, bool pushthrough=true) BOOST_NOEXCEPT {
+			try {
+				push_chunk_multiplexed(data_buffer, timestamp_buffer, data_buffer_elements, pushthrough);
+				return lsl_no_error;
+			}
+			catch(std::range_error &e) {
+				std::cerr << "Error during push_chunk: " << e.what() << std::endl;
+				return lsl_argument_error;
+			}
+			catch(std::invalid_argument &e) {
+				std::cerr << "Error during push_chunk: " << e.what() << std::endl;
+				return lsl_argument_error;
+			}
+			catch(std::exception &e) {
+				std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
+				return lsl_internal_error;
+			}
+		}
+
 		/**
 		* Push a chunk of multiplexed samples into the send buffer. Single timestamp provided.
 		* IMPORTANT: Note that the provided buffer size is measured in channel values (e.g., floats) rather than in samples.
@@ -142,6 +180,26 @@ namespace lsl {
 					push_sample(&buffer[k*num_chans],DEDUCED_TIMESTAMP,pushthrough && (k==num_samples-1));
 			}
 		}
+
+		template<class T> int32_t push_chunk_multiplexed_noexcept(const T *data, std::size_t data_elements, double timestamp=0.0, bool pushthrough=true) BOOST_NOEXCEPT {
+			try {
+				push_chunk_multiplexed(data, data_elements, timestamp, pushthrough);
+				return lsl_no_error;
+			}
+			catch(std::range_error &e) {
+				std::cerr << "Error during push_chunk: " << e.what() << std::endl;
+				return lsl_argument_error;
+			}
+			catch(std::invalid_argument &e) {
+				std::cerr << "Error during push_chunk: " << e.what() << std::endl;
+				return lsl_argument_error;
+			}
+			catch(std::exception &e) {
+				std::cerr << "Unexpected error during push_chunk: " << e.what() << std::endl;
+				return lsl_internal_error;
+			}
+		}
+
 
 		//
 		// === Misc Features ===
@@ -186,13 +244,13 @@ namespace lsl {
 		* Check whether some given number of channels matches the stream's channel_count.
 		* Throws an error if not.
 		*/ 
-		void check_numchan(int chns) {
+		void check_numchan(int32_t chns) {
 			if (chns != info_->channel_count())
 				throw std::range_error("The provided sample data has a different length than the stream's number of channels.");	
 		}
 
 		sample::factory_p sample_factory_;			// a factory for samples of appropriate type
-		int chunk_size_;							// the preferred chunk size
+		int32_t chunk_size_;							// the preferred chunk size
 		stream_info_impl_p info_;					// stream_info shared between the various server instances
 		send_buffer_p send_buffer_;					// the single-producer, multiple-receiver send buffer
 		std::vector<io_service_p> ios_;				// the IO service objects (two per stack: one for UDP and one for TCP)

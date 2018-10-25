@@ -126,7 +126,7 @@ namespace lsl {
 		* Get the number of bytes per channel (returns 0 for string-typed channels).
 		*/
 		int channel_bytes() const {
-			const int channel_format_sizes[] = {0,sizeof(float),sizeof(double),sizeof(std::string),sizeof(lslboost::uint32_t),sizeof(lslboost::uint16_t),sizeof(lslboost::uint8_t),8};
+			const int channel_format_sizes[] = {0,sizeof(float),sizeof(double),sizeof(std::string),sizeof(int32_t),sizeof(int16_t),sizeof(int8_t),8};
 			return channel_format_sizes[channel_format_];
 		}
 
