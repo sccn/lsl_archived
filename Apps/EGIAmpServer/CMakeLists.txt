@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(EGIAmpServer
 	LANGUAGES CXX
-	VERSION 1.12.0)
+	VERSION 2.0.0)
 
 # set up LSL if not done already
 if(NOT TARGET LSL::lsl)
@@ -19,11 +19,13 @@ if(NOT TARGET LSL::lsl)
 endif()
 
 # GENERAL CONFIG #
-set(META_PROJECT_DESCRIPTION "Stream from EGI devices via Lab Streaming Layer")
+set(META_PROJECT_DESCRIPTION "Stream from Philips Neuro devices via Lab Streaming Layer")
 
 # THIRD PARTY LIBRARIES #
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Boost COMPONENTS system REQUIRED)
+find_package(Boost COMPONENTS date_time REQUIRED)
+find_package(Boost COMPONENTS regex REQUIRED)
 find_package(Threads REQUIRED)
 
 # Add executable target
@@ -39,10 +41,16 @@ target_link_libraries(${PROJECT_NAME}
 	Qt5::Widgets
 	LSL::lsl
 	Boost::system
+	Boost::date_time
+	Boost::regex
 	Threads::Threads
 )
 
+
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_auto_type)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 installLSLApp(${PROJECT_NAME})
 installLSLAuxFiles(${PROJECT_NAME}
