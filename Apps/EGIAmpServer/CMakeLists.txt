@@ -23,9 +23,7 @@ set(META_PROJECT_DESCRIPTION "Stream from Philips Neuro devices via Lab Streamin
 
 # THIRD PARTY LIBRARIES #
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Boost COMPONENTS system REQUIRED)
-find_package(Boost COMPONENTS date_time REQUIRED)
-find_package(Boost COMPONENTS regex REQUIRED)
+find_package(Boost 1.68.0 COMPONENTS system REQUIRED)
 find_package(Threads REQUIRED)
 
 # Add executable target
@@ -41,16 +39,13 @@ target_link_libraries(${PROJECT_NAME}
 	Qt5::Widgets
 	LSL::lsl
 	Boost::system
-	Boost::date_time
-	Boost::regex
 	Threads::Threads
 )
 
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_auto_type)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_14)
+add_compile_definitions(BOOST_DATE_TIME_NO_LIB BOOST_REGEX_NO_LIB)
 
 installLSLApp(${PROJECT_NAME})
 installLSLAuxFiles(${PROJECT_NAME}

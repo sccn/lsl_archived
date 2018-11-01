@@ -11,9 +11,6 @@
 #include <thread>
 #include <vector>
 
-// LSL API
-#include <lsl_cpp.h>
-
 namespace ip = boost::asio::ip;
 typedef ip::tcp::iostream socket_stream;
 
@@ -64,10 +61,8 @@ private:
 	std::atomic<bool> stop_flag;
 
 	// background data reader thread
-	void read_packet_format_2(int nChannels,
-	                          int* packetsReceived);
-	void read_packet_format_1(int nChannels,
-	                          int* packetsReceived);
+	void read_packet_format_2(int nChannels, int* packetsReceived);
+	void read_packet_format_1(int nChannels, int* packetsReceived);
 	void getNotifications();
 	bool getAmplifierDetails(int amplifierId);
 
@@ -82,7 +77,7 @@ private:
 	void load_config(const std::string& filename);
 	void save_config(const std::string& filename);
 
-	std::unique_ptr<std::thread> reader_thread_; // our reader thread
+	std::unique_ptr<std::thread> reader_thread_;       // our reader thread
 	std::unique_ptr<std::thread> notification_thread_; // our reader thread
 	// streams talking to the AmpServer
 	socket_stream commandStream_;

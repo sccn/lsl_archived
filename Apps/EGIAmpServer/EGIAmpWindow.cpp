@@ -1,5 +1,9 @@
 #include "EGIAmpWindow.h"
 #include "ui_EGIAmpWindow.h"
+
+// LSL API
+#include <lsl_cpp.h>
+
 #include <boost/endian/conversion.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -14,12 +18,14 @@
 #include <regex>
 #include <sstream>
 
+
 // hard-coded data about EGI packets
 const int block_header_bytes = 16;          // number of header bytes per block
 const int sample_format1_header_bytes = 32; // number of header bytes per sample
 
 // number of samples per chunk sent into LSL (has nothing to do with EGI)
 const int samples_per_chunk = 32;
+
 
 using namespace std::chrono_literals;
 
@@ -111,6 +117,7 @@ EGIAmpWindow::EGIAmpWindow(QWidget* parent, const std::string& config_file)
 
 	// parse startup config file
 	load_config(config_file);
+
 
 	// make GUI connections
 	QObject::connect(ui->actionQuit, &QAction::triggered, this, &EGIAmpWindow::close);
@@ -264,8 +271,6 @@ void EGIAmpWindow::link_ampserver() {
 		// indicate that we are now successfully unlinked
 		ui->linkButton->setText("Link");
 	} else {
-
-		std::thread t([this]() {
 			// === perform link action ===
 
 			// get the UI parameters...
@@ -286,12 +291,12 @@ void EGIAmpWindow::link_ampserver() {
 				// create the connections
 				commandStream_.clear();
 				commandStream_.exceptions(std::ios::eofbit | std::ios::failbit | std::ios::badbit);
-				commandStream_.expires_from_now(2s); // boost::posix_time::seconds(2));
+				commandStream_.expires_from_now(2s);
 				commandStream_.connect(
 				    ip::tcp::endpoint(ip::address::from_string(address), commandPort));
 
 				commandStream_.rdbuf()->set_option(ip::tcp::no_delay(true));
-				commandStream_.expires_from_now(8760h); // boost::posix_time::hours(24*365));
+				commandStream_.expires_from_now(8760h);
 
 				notificationStream_.clear();
 				notificationStream_.expires_from_now(2s);
@@ -328,7 +333,7 @@ void EGIAmpWindow::link_ampserver() {
 					}));
 
 					    // start reading the data
-					    reader_thread_.reset(new std::thread([this, address, amplifierId, sampleRate, nChannels]() {
+						reader_thread_ = std::make_unique<std::thread>([this, address, amplifierId, sampleRate, nChannels]() {//.reset(new std::thread([this, address, amplifierId, sampleRate, nChannels]() {
 						    emit this->appendStatusMessage("Stream Initialized...\n");
 						    try {
 							    if (packetType_ == packetType1) {
@@ -343,7 +348,7 @@ void EGIAmpWindow::link_ampserver() {
 							                     ex.what());
 						    }
 						    halt_ampserver(amplifierId);
-					    }));
+					    });
 				}
 			} catch (std::ios_base::failure& err) {
 				emit this->error("Could not initialize the AmpServer interface due to a "
@@ -362,8 +367,6 @@ void EGIAmpWindow::link_ampserver() {
 			// done, all successful
 			// ui->linkButton->setText("Unlink");
 			emit this->disableUI();
-		});
-		t.detach();
 	}
 }
 
@@ -407,14 +410,16 @@ bool EGIAmpWindow::initAmplifier(bool verbose) {
 	    this->sendCommand("cmd_DefaultAcquisitionState", std::to_string(amplifierId), "0", "0");
 
 	if (verbose) {
-		emit this->appendStatusMessage("Stop: " + QString(stopResponse.c_str()));
-		emit this->appendStatusMessage("SetPower: " + QString(setPowerOffResponse.c_str()));
+		emit this->appendStatusMessage("Stop: " + QString::fromStdString(stopResponse.c_str()));
+		emit this->appendStatusMessage("SetPower: " +
+		                               QString::fromStdString(setPowerOffResponse.c_str()));
 		emit this->appendStatusMessage("SetDecimatedRate: " +
-		                               QString(setSampleRateResponse.c_str()));
-		emit this->appendStatusMessage("SetPower: " + QString(setPowerOnResponse.c_str()));
-		emit this->appendStatusMessage("Start: " + QString(startResponse.c_str()));
+		                               QString::fromStdString(setSampleRateResponse.c_str()));
+		emit this->appendStatusMessage("SetPower: " +
+		                               QString::fromStdString(setPowerOnResponse.c_str()));
+		emit this->appendStatusMessage("Start: " + QString::fromStdString(startResponse.c_str()));
 		emit this->appendStatusMessage("DefaultAcquisitionState: " +
-		                               QString(defaultAcquisitionResponse.c_str()));
+		                               QString::fromStdString(defaultAcquisitionResponse.c_str()));
 	}
 
 	return connected;
@@ -424,7 +429,7 @@ std::string EGIAmpWindow::sendCommand(std::string command, std::string ampId, st
                                       std::string value) {
 
 	char response[4096];
-	commandStream_ << "(sendCommand " << command << " " << ampId << " " << channel << " " << value
+	commandStream_ << "(sendCommand " << command << ' ' << ampId << ' ' << channel << ' ' << value
 	               << ")\n"
 	               << std::flush;
 	commandStream_.getline(response, sizeof(response));
@@ -435,10 +440,9 @@ void EGIAmpWindow::sendDatastreamCommand(std::string command, std::string ampId,
                                          std::string channel, std::string value) {
 
 	char response[4096];
-	dataStream_ << "(sendCommand " << command << " " << ampId << " " << channel << " " << value
+	dataStream_ << "(sendCommand " << command << ' ' << ampId << ' ' << channel << ' ' << value
 	            << ")\n"
 	            << std::flush;
-	// dataStream_.getline(response, sizeof(response));
 }
 
 bool EGIAmpWindow::getAmplifierDetails(int amplifierId) {
@@ -464,7 +468,7 @@ bool EGIAmpWindow::getAmplifierDetails(int amplifierId) {
 
 		emit this->appendStatusMessage(
 		    "__________________________\n  Amplifier Details\n__________________________");
-		std::regex token("\\([a-zA-Z0-9_\\.\\s]+\\)");
+		std::regex token("\\([\\w\\.\\s]+\\)");
 		std::smatch match;
 		std::vector<std::string> tokens;
 		while (std::regex_search(details, match, token)) {
@@ -573,7 +577,7 @@ void EGIAmpWindow::read_packet_format_2(int numChannels, int* packetsReceived) {
 	// enter transmission loop
 	unsigned bytes = 0;
 	uint64_t lastPacketCounter = 0;
-	std::shared_ptr<lsl::stream_outlet> outlet;
+	std::unique_ptr<lsl::stream_outlet> outlet;
 	int nChannels = numChannels;
     bool firstPacketReceived = false;
     dataStream_.clear();
@@ -633,8 +637,7 @@ void EGIAmpWindow::read_packet_format_2(int numChannels, int* packetsReceived) {
 
 				// make a new outlet (we transmit at least every samples_per_chunk
 				// samples)
-				outlet = std::shared_ptr<lsl::stream_outlet>(
-				    new lsl::stream_outlet(info, samples_per_chunk));
+				outlet = std::make_unique<lsl::stream_outlet>(info, samples_per_chunk);
 			}
 			if (packet.packetCounter != 0 && packet.packetCounter != lastPacketCounter + 1 &&
 			    packet.packetCounter != lastPacketCounter && lastPacketCounter != 0) {
