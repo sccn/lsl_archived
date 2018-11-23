@@ -1,5 +1,5 @@
 # This is not what you want!
-This repo is a snapshot of what once was sccn/labstreaminglayer on 11.23.2018. For the current repository, please go to sccn/labstreaminglayer.
+This repo is a snapshot of what once was sccn/labstreaminglayer on 11.23.2018. For the current repository, please go to [sccn/labstreaminglayer](https://github.com/sccn/labstreaminglayer).
 
 # Summary
 
